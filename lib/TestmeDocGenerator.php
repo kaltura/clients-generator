@@ -550,7 +550,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		<h2>Kaltura API</h2>');
 		$this->appendLine('		<table class="action">');
 		$this->appendLine('			<tr>');
-		$this->appendLine("				<th colspan=\"5\" class=\"service_action_title\">$actionId.$actionId</th>");
+		$this->appendLine("				<th colspan=\"5\" class=\"service_action_title\">$serviceId.$actionId</th>");
 		$this->appendLine('			</tr>');
 		$this->appendLine('			<tr>');
 		$this->appendLine('				<td colspan="5" class="title">Description:</td>');
@@ -639,7 +639,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				<td colspan="5" class="title">Example HTTP Hit</td>');
 		$this->appendLine('			</tr>');
 		$this->appendLine('			<tr>');
-		$this->appendLine('				<td colspan="5">http://www.kaltura.com/api_v3/service/appToken/action/add<br />');
+		$this->appendLine("				<td colspan=\"5\">http://www.kaltura.com/api_v3/service/$serviceId/action/$actionId<br />");
 		$this->appendLine('				<strong>JSON object:</strong>');
 		$this->appendLine('				<pre>');
 		$this->appendLine('				<div class="post_fields">');
