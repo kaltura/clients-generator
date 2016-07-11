@@ -500,17 +500,8 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		}
 	}
 	
-	function appendJsonObject($type, $indent)
-	{
-		$xpath = new DOMXPath($this->_doc);
-		$classNodes = $xpath->query("/xml/classes/class[@name='$type']");
-		$classNode = $classNodes->item(0);
-		if(!$classNode)
-			throw new Exception("Type [$type] not found");
-
-		$this->appendLine("{");
-		$this->appendLine("{$indent}\tobjectType: \"$type\",");
-		$first = true;
+	private function appendJsonObjectAttributes(DOMElement $classNode, $indent, $first = true)
+	{	
 		foreach($classNode->childNodes as $propertyNode)
 		{
 			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
@@ -529,6 +520,35 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			}
 			$this->appendJsonType($propertyNode, "$indent\t");
 		}
+		
+		return $first;
+	}
+	
+	function appendJsonObject($type, $indent)
+	{
+		$xpath = new DOMXPath($this->_doc);
+		$classNodes = $xpath->query("/xml/classes/class[@name='$type']");
+		$classNode = $classNodes->item(0);
+		if(!$classNode)
+			throw new Exception("Type [$type] not found");
+
+		$this->appendLine("{");
+		$this->appendLine("{$indent}\tobjectType: \"$type\",");
+
+		$first = true;
+		
+		$base = $classNode->getAttribute('base');
+		if($base)
+		{
+			$baseNodes = $xpath->query("/xml/classes/class[@name='$base']");
+			$baseNode = $baseNodes->item(0);
+			if(!$baseNode)
+				throw new Exception("Type [$base] not found");
+			
+			$first = $this->appendJsonObjectAttributes($baseNode, $indent);
+		}
+		
+		$this->appendJsonObjectAttributes($classNode, $indent, $first);
 		$this->appendLine();
 		$this->append("{$indent}}");
 	}
