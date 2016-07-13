@@ -148,36 +148,4 @@ class ConfigurationTest < Test::Unit::TestCase
       assert_not_nil created_entry.id
       assert_nil @client.base_entry_service.delete(created_entry.id)
    end
-  
-  # this test is to validate the timeout configuration setting.
-  should "time out the request" do
-    
-    config = YAML.load_file("kaltura.yml")
-        
-    partner_id = config["test"]["partner_id"]
-    service_url = config["test"]["service_url"]
-    administrator_secret = config["test"]["administrator_secret"]
-    timeout = 0
-
-    config = Kaltura::KalturaConfiguration.new()
-    config.service_url = service_url
-    config.logger = Logger.new(STDOUT)
-    config.timeout = timeout
-    
-    exception = assert_raise Kaltura::KalturaAPIError do
-      @client = Kaltura::KalturaClient.new( config )
-      session = @client.session_service.start( administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id)
-      
-      @client.ks = session
-      
-      media_entry = Kaltura::KalturaMediaEntry.new
-      media_entry.name = "kaltura_test1"
-      media_entry.media_type = Kaltura::KalturaMediaType::VIDEO
-      video_file = File.open("test/media/test.wmv")
-  
-      video_token = @client.media_service.upload(video_file)
-    end
-    
-    assert_equal exception.message, 'Request Timeout'
-  end
 end
