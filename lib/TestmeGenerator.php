@@ -1,9 +1,13 @@
 <?php
 class TestmeGenerator extends ClientGeneratorFromXml
 {
+	private $formAction = '../';
+	
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/testme")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
+		if($config->formAction)
+			$this->formAction = $config->formAction;
 	}
 	
 	function generate()
@@ -373,6 +377,12 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		$this->appendLine('			} else {');
 		$this->appendLine('				myframe.onload = function(){handleResponse();};');
 		$this->appendLine('			}');
+		$this->appendLine('			');
+		$this->appendLine('			var formatSelector = $("#format");');
+		$this->appendLine('			formatSelector.change(function(){');
+		$this->appendLine('				var frm = document.getElementById("request");');
+		$this->appendLine('				frm.action = "' . $this->formAction . '?format=" + $("#format").val();');
+		$this->appendLine('			});');
 		$this->appendLine('		});');
 		$this->appendLine('');
 		$this->appendLine('		function handleResponse(){');
@@ -385,14 +395,10 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				format = formatSelector[0].options[formatSelector[0].selectedIndex].text;');
 		$this->appendLine('			}');
 		$this->appendLine('			var text ="";');
-		$this->appendLine('			if ( format == "JSON" &&');
-		$this->appendLine('				typeof doc.body != "undefined" &&');
-		$this->appendLine('				typeof doc.body.innerText != "undefined"&&');
-		$this->appendLine('				(doc.body.innerText.indexOf("{" != -1) )){');
+		$this->appendLine('			if ( format == "JSON" && typeof doc.body != "undefined" && typeof doc.body.innerText != "undefined" && doc.body.innerText.indexOf("{") != -1){');
 		$this->appendLine('				format = "json";');
 		$this->appendLine('				text = indentJSON(doc.body.innerText, "\n", " ");');
-		$this->appendLine('			} else if (format == "XML" &&');
-		$this->appendLine('				typeof doc.firstChild != "undefined" )  {');
+		$this->appendLine('			} else if (format == "XML" && typeof doc.firstChild != "undefined" )  {');
 		$this->appendLine('				if ( doc.firstChild.localName == "xml"){');
 		$this->appendLine('					var para = document.createElement("div");');
 		$this->appendLine('					para.appendChild(doc.firstChild);');
@@ -430,7 +436,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		}
 		
 		$this->appendLine('	<div class="left">');
-		$this->appendLine('		<form id="request" action="../" method="post" target="hiddenResponse" enctype="multipart/form-data">');
+		$this->appendLine('		<form id="request" action="' . $this->formAction . '" method="post" target="hiddenResponse" enctype="multipart/form-data">');
 		$this->appendLine('			<div class="left-content">');
 		$this->appendLine('				<div class="attr">');
 		$this->appendLine('					<label for="history">History: </label>');
@@ -441,7 +447,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		$this->appendLine('');
 		$this->appendLine('				<div class="param">');
 		$this->appendLine('					<label for="format">Format (int):</label>');
-		$this->appendLine('					<select name="format">');
+		$this->appendLine('					<select name="format" id="format">');
 		$this->appendLine('						<option value="2">XML</option>');
 		$this->appendLine('						<option value="1">JSON</option>');
 		$this->appendLine('					</select>');
