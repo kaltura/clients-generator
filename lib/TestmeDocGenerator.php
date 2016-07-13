@@ -9,30 +9,49 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 	function generate()
 	{
 		parent::generate();
-	
+
+		$classes = array();
+		$enums = array();
 		$xpath = new DOMXPath($this->_doc);
 
 		$enumNodes = $xpath->query("/xml/enums/enum");
 		foreach($enumNodes as $enumNode)
 		{
+			$type = $enumNode->getAttribute('name');
+			if(!$this->shouldIncludeType($type))
+				continue;
+
 			$this->writeEnum($enumNode);
+			$enums[] = $type;
 		}
+		$enumNodes = null;
 		
 		// classes
 		$classNodes = $xpath->query("/xml/classes/class");
 		foreach($classNodes as $classNode)
 		{
+			$type = $classNode->getAttribute('name');
+			if(!$this->shouldIncludeType($type) || $type == 'KalturaObject')
+				continue;
+					
 			$this->writeClass($classNode);
+			$classes[] = $type;
 		}
+		$classNodes = null;
 		
 		
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach($serviceNodes as $serviceNode)
 		{
-	    	$this->writeService($serviceNode);
+			if(!$this->shouldIncludeService($serviceNode->getAttribute('id')))
+				continue;
+
+			$this->writeService($serviceNode);
+			$services[] = $serviceNode->getAttribute('name');
 		}
+		$serviceNodes = null;
 		
-	    $this->writeMenu($serviceNodes, $enumNodes, $classNodes);
+	    $this->writeMenu($services, $enums, $classes);
 	}
 	
 	/**
@@ -62,7 +81,6 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 	function appendHeader($cssPrefix = '../', $jquery = '')
 	{
 		$headers = $this->getTextBlock();
-		$this->startNewTextBlock();
 		
 		$this->appendLine('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">');
 		$this->appendLine('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">');
@@ -89,12 +107,9 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 	function writeEnum(DOMElement $enumNode)
 	{
 		$type = $enumNode->getAttribute("name");
-		if(!$this->shouldIncludeType($type))
-			return;
-		
 		$enumType = $enumNode->getAttribute("enumType");
 
-		$this->startNewTextBlock();
+		$this->startNewFile("enums/$type.html");
 		$this->appendHeader();
 		
 		$this->appendLine('	<div id="doc">');
@@ -141,7 +156,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 	
 		$this->appendFooter();
 		
-		$this->addFile("enums/$type.html", $this->getTextBlock(), false);
+		$this->closeFile();
 	}
 	
 	function writeClassBase($class, DOMElement $classNode)
@@ -313,7 +328,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		if(!$this->shouldIncludeType($type))
 			return;
 
-		$this->startNewTextBlock();
+		$this->startNewFile("objects/$type.html");
 
 		$this->appendLine('	<script type="text/javascript">');
 		$this->appendLine('	');
@@ -400,15 +415,12 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		if($type == 'KalturaObject')
 			$type = 'KalturaObjectBase';
 		
-		$this->addFile("objects/$type.html", $this->getTextBlock(), false);
+		$this->closeFile();
 	}
 	
 	function writeService(DOMElement $serviceNode)
 	{
 		$serviceId = $serviceNode->getAttribute("id");
-		if(!$this->shouldIncludeService($serviceId))
-			return;
-		
 		$description = $serviceNode->getAttribute("description");
 		
 		$actionNodes = $serviceNode->getElementsByTagName("action");
@@ -417,7 +429,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
             $this->writeAction($serviceId, $actionNode);
 		}
 
-		$this->startNewTextBlock();
+		$this->startNewFile("services/$serviceId.html");
 		$this->appendHeader();
 		
 		$this->appendLine('	<div id="doc">');
@@ -463,10 +475,10 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 
 		$this->appendFooter();
 		
-		$this->addFile("services/$serviceId.html", $this->getTextBlock(), false);
+		$this->closeFile();
 	}
 	
-	function appendJsonType($propertyNode, $indent = "\t")
+	function appendJsonType($propertyNode, $indent = "\t", array $loadedTypes = array())
 	{
 		$name = $propertyNode->getAttribute("name");
 		$type = $propertyNode->getAttribute("type");
@@ -476,31 +488,36 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		if($this->isSimpleType($type) || $type == 'file')
 		{
 			$value = ($type == 'string' || $type == 'file') ? '"value"' : 'value';
-			$this->append("{$indent}{$name}: $value");
+			$this->append($indent);
+			$this->append("$name: ");
+			$this->append($value);
 		}
 		elseif($type == 'array')
 		{
 			$arrayType = $propertyNode->getAttribute("arrayType");
-			$this->append("{$indent}{$name}: [");
-			$this->appendJsonObject($arrayType, $indent);
+			$this->append($indent);
+			$this->append("$name: [");
+			$this->appendJsonObject($arrayType, $indent, $loadedTypes);
 			$this->append("]");
 		}
 		elseif($type == 'map')
 		{
 			$arrayType = $propertyNode->getAttribute("arrayType");
-			$this->appendLine("{$indent}{$name}: {");
-			$this->append("{$indent}\t'item1': ");
-			$this->appendJsonObject($arrayType, $indent);
+			$this->append($indent);
+			$this->appendLine("$name: {");
+			$this->append($indent);
+			$this->append("\t'item1': ");
+			$this->appendJsonObject($arrayType, $indent, $loadedTypes);
 			$this->appendLine();
 			$this->append("}");
 		}
 		else {
 			$this->append("{$indent}{$name}: ");
-			$this->appendJsonObject($type, $indent);
+			$this->appendJsonObject($type, $indent, $loadedTypes);
 		}
 	}
 	
-	private function appendJsonObjectAttributes(DOMElement $classNode, $indent, $first = true)
+	private function appendJsonObjectAttributes(DOMElement $classNode, $indent, array $loadedTypes, $first = true)
 	{	
 		foreach($classNode->childNodes as $propertyNode)
 		{
@@ -518,38 +535,45 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			{
 				$this->appendLine(',');
 			}
-			$this->appendJsonType($propertyNode, "$indent\t");
+			$this->appendJsonType($propertyNode, "$indent\t", $loadedTypes);
 		}
 		
 		return $first;
 	}
 	
-	function appendJsonObject($type, $indent)
+	function appendJsonObject($type, $indent, array $loadedTypes)
 	{
 		$xpath = new DOMXPath($this->_doc);
 		$classNodes = $xpath->query("/xml/classes/class[@name='$type']");
 		$classNode = $classNodes->item(0);
 		if(!$classNode)
 			throw new Exception("Type [$type] not found");
+		$classNodes = null;
 
 		$this->appendLine("{");
 		$this->appendLine("{$indent}\tobjectType: \"$type\",");
 
-		$first = true;
-		
-		$base = $classNode->getAttribute('base');
-		if($base)
+		if(!isset($loadedTypes[$type]))
 		{
-			$baseNodes = $xpath->query("/xml/classes/class[@name='$base']");
-			$baseNode = $baseNodes->item(0);
-			if(!$baseNode)
-				throw new Exception("Type [$base] not found");
+			$loadedTypes[$type] = true;
+			$first = true;
 			
-			$first = $this->appendJsonObjectAttributes($baseNode, $indent);
+			$base = $classNode->getAttribute('base');
+			if($base)
+			{
+				$baseNodes = $xpath->query("/xml/classes/class[@name='$base']");
+				$baseNode = $baseNodes->item(0);
+				if(!$baseNode)
+					throw new Exception("Type [$base] not found");
+				$baseNodes = null;
+				
+				$first = $this->appendJsonObjectAttributes($baseNode, $indent, $loadedTypes);
+				$baseNode = null;
+			}
+			
+			$this->appendJsonObjectAttributes($classNode, $indent, $loadedTypes, $first);
+			$this->appendLine();
 		}
-		
-		$this->appendJsonObjectAttributes($classNode, $indent, $first);
-		$this->appendLine();
 		$this->append("{$indent}}");
 	}
 	
@@ -560,10 +584,8 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			return;
 		
 		$description = $actionNode->getAttribute('description');
-		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
-		$resultType = $resultNode->getAttribute("type");
 		
-		$this->startNewTextBlock();
+		$this->startNewFile("actions/$serviceId.$actionId.html");
 		$this->appendHeader();
 		
 		$this->appendLine('	<div id="doc">');
@@ -589,6 +611,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				<th class="subtitle">Default Value</th>');
 		$this->appendLine('			</tr>');
 		
+		$description = null;
 
 		$paramNodes = $actionNode->getElementsByTagName('param');
 		foreach($paramNodes as $paramNode)
@@ -629,7 +652,9 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			$this->appendLine("				<td>$default</td>");
 			$this->appendLine('			</tr>');
 		}
-		
+
+		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
+		$resultType = $resultNode->getAttribute("type");
 		if($resultType)
 		{
 			$this->appendLine('			<tr>');
@@ -654,6 +679,8 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			}
 			$this->appendLine('			</tr>');
 		}
+		$resultNode = null;
+		$resultType = null;
 		
 		$this->appendLine('			<tr>');
 		$this->appendLine('				<td colspan="5" class="title">Example HTTP Hit</td>');
@@ -663,7 +690,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				<strong>JSON object:</strong>');
 		$this->appendLine('				<pre>');
 		$this->appendLine('				<div class="post_fields">');
-		$this->appendLine("[");
+		$this->appendLine("{");
 		
 		$first = true;
 		foreach($paramNodes as $paramNode)
@@ -683,7 +710,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		}
 		
 		$this->appendLine();
-		$this->appendLine("]");
+		$this->appendLine("}");
 		$this->appendLine('				</pre></td>');
 		$this->appendLine('			</tr>');
 		$this->appendLine('		</table>');
@@ -691,48 +718,18 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 
 		$this->appendFooter();
 		
-		$this->addFile("actions/$serviceId.$actionId.html", $this->getTextBlock(), false);
+		$this->closeFile();
 	}
 	
-	function writeMenu(DOMNodeList $serviceNodes, DOMNodeList $enumNodes, DOMNodeList $classNodes)
+	function writeMenu(array $services, array $enums, array $classes)
 	{
 		$xpath = new DOMXPath($this->_doc);
-
-		$services = array();
-		$classes = array();
-		$enums = array();
-
-		foreach($serviceNodes as $serviceNode)
-		{
-			if(!$this->shouldIncludeService($serviceNode->getAttribute('id')))
-				continue;
-					
-			$services[] = $serviceNode->getAttribute('name');
-		}
-
-		foreach($enumNodes as $enumNode)
-		{
-			$type = $enumNode->getAttribute('name');
-			if(!$this->shouldIncludeType($type))
-				continue;
-					
-			$enums[] = $type;
-		}
-
-		foreach($classNodes as $classNode)
-		{
-			$type = $classNode->getAttribute('name');
-			if(!$this->shouldIncludeType($type) || $type == 'KalturaObject')
-				continue;
-					
-			$classes[] = $type;
-		}
 
 		sort($services);
 		sort($enums);
 		sort($classes);
 		
-		$this->startNewTextBlock();
+		$this->startNewFile('menu.html');
 		
 		$this->appendLine('	<script type="text/javascript">');
 		$this->appendLine('	');
@@ -873,6 +870,6 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('	</div>');
 		$this->appendFooter();
 		
-		$this->addFile('menu.html', $this->getTextBlock(), false);
+		$this->closeFile();
 	}
 }

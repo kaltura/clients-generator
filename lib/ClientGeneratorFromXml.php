@@ -2,7 +2,7 @@
 abstract class ClientGeneratorFromXml 
 {
 	protected $_txt = "";
-	protected $_files = array();
+	protected $_file = null;
 	protected $_xmlFile = "";
 	protected $_sourcePath = "";
 	protected $_params = array();
@@ -11,6 +11,8 @@ abstract class ClientGeneratorFromXml
 	protected $package = 'External';
 	protected $subpackage = 'Kaltura';
 	protected $excludeSourcePaths = array();
+	protected $outputPath = null;
+	protected $copyPath = null;
 	
 	/**
 	 * @var array
@@ -333,9 +335,10 @@ abstract class ClientGeneratorFromXml
 			$this->addSourceFiles($this->_sourcePath, $this->_sourcePath . DIRECTORY_SEPARATOR, "");
 	}
 	
-	public function getOutputFiles()
+	public function setOutputPath($outputPath, $copyPath)
 	{
-		return $this->_files;
+		$this->outputPath = $outputPath;
+		$this->copyPath = $copyPath;
 	}
 	
 	public function setParam($key, $value)
@@ -350,7 +353,7 @@ abstract class ClientGeneratorFromXml
 		return $this->_params[$key];
 	}
 	
-	protected function addFile($fileName, $fileContents, $addLicense = true)
+	private function addFile($fileName, $fileContents, $addLicense = true)
 	{
 		if ($addLicense)
 		{
@@ -364,7 +367,38 @@ abstract class ClientGeneratorFromXml
 			}
 		}
 		
-		$this->_files[$fileName] = str_replace('@DATE@', date('y-m-d'), $fileContents);
+		$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
+		$this->writeFile($fileName, $fileContents);
+	}
+	
+	private function getFilePath($fileName)
+	{
+		$fileName = str_replace(array('/', '\\'), array(DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR), $fileName);
+		return $this->outputPath . DIRECTORY_SEPARATOR . $fileName;
+	}
+	
+	private function writeFile($fileName, $content)
+	{
+		$filePath = $this->getFilePath($fileName);
+		$dirName = dirname($filePath);
+		if (!file_exists($dirName))
+			mkdir($dirName, 0777, true);
+
+		file_put_contents($filePath, $content);
+	}
+	
+	private function copyFile($fileName)
+	{
+		$filePath = $this->getFilePath($fileName);
+		if($this->copyPath)
+		{
+			$copyFilePath = $this->copyPath . DIRECTORY_SEPARATOR . $fileName;
+			$dirName = dirname($copyFilePath);
+			if (!file_exists($dirName))
+				mkdir($dirName, 0777, true);
+				
+			copy($filePath, $copyFilePath);
+		}
 	}
 	
 	protected function addSourceFiles($directory, $rootSourceFolder, $rootDestFolder)
@@ -457,6 +491,29 @@ abstract class ClientGeneratorFromXml
 		return !$this->isSimpleType($type) && $type != 'file';
 	}
 	
+	protected function startNewFile($fileName)
+	{
+		$this->startNewTextBlock();
+		$filePath = $this->getFilePath($fileName);
+		
+		$fileDir = dirname($filePath);
+		if(!file_exists($fileDir))
+			mkdir($fileDir, 0777, true);
+		
+		$this->_file = fopen($filePath, 'w');
+		if(!$this->_file)
+			throw new Exception("Failed to open file for writing: $filePath");
+	}
+	
+	protected function closeFile()
+	{
+		if(!$this->_file)
+			throw new Exception("File was not started");
+
+		fclose($this->_file);
+		$this->_file = null;
+	}
+	
 	protected function startNewTextBlock()
 	{
 		$this->_txt = "";
@@ -464,12 +521,18 @@ abstract class ClientGeneratorFromXml
 	
 	protected function append($txt = "")
 	{
-		$this->_txt .= $txt;
+		if($this->_file)
+			fwrite($this->_file, $txt);
+		else
+			$this->_txt .= $txt;
 	}
 	
 	protected function appendLine($txt = "")
 	{
 		$this->append($txt ."\n");
+		
+		if($this->_file)
+			fflush($this->_file);
 	}
 	
 	protected function getTextBlock()
