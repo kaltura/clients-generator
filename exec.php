@@ -256,7 +256,11 @@ foreach($config as $name => $item)
 	}
 	else
 	{
-		$outputPath = fixPath("$outputPathBase/$name");
+		$destination = $name;
+		if($item->destinationName)
+			$destination = $item->destinationName;
+		
+		$outputPath = fixPath("$outputPathBase/$destination");
 		$clearPath = null;
 		if($item->get("clearPath"))
 			$clearPath = fixPath("$rootPath/app/" . $item->get("clearPath"));
