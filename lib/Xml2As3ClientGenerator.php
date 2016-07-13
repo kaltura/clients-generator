@@ -307,10 +307,11 @@ class Xml2As3ClientGenerator extends ClientGeneratorFromXml
 
 	private function createCommands ( $xml )
 	{
-		$type = $xml->attributes()->name;
-		if(!$this->shouldIncludeType($type))
+		$serviceId = $xml->attributes()->id;
+		if(!$this->shouldIncludeService($serviceId))
 			return;
-			
+
+		$type = $xml->attributes()->name;
 		foreach($xml->children() as $child)
 		{
 			if($child->result->attributes()->type == 'file') {
