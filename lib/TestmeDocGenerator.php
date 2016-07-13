@@ -517,7 +517,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		}
 	}
 	
-	private function appendJsonObjectAttributes(DOMElement $classNode, $indent, array $loadedTypes, $first = true)
+	private function appendJsonObjectAttributes(DOMElement $classNode, $indent, array $loadedTypes)
 	{	
 		foreach($classNode->childNodes as $propertyNode)
 		{
@@ -527,18 +527,9 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			if($propertyNode->getAttribute('readOnly') == '1')
 				continue;
 			
-			if($first)
-			{
-				$first = false;
-			}
-			else
-			{
-				$this->appendLine(',');
-			}
+			$this->appendLine(',');
 			$this->appendJsonType($propertyNode, "$indent\t", $loadedTypes);
 		}
-		
-		return $first;
 	}
 	
 	function appendJsonObject($type, $indent, array $loadedTypes)
@@ -551,13 +542,11 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$classNodes = null;
 
 		$this->appendLine("{");
-		$this->appendLine("{$indent}\tobjectType: \"$type\",");
+		$this->append("{$indent}\tobjectType: \"$type\"");
 
 		if(!isset($loadedTypes[$type]))
 		{
 			$loadedTypes[$type] = true;
-			$first = true;
-			
 			$base = $classNode->getAttribute('base');
 			if($base)
 			{
@@ -567,13 +556,13 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 					throw new Exception("Type [$base] not found");
 				$baseNodes = null;
 				
-				$first = $this->appendJsonObjectAttributes($baseNode, $indent, $loadedTypes);
+				$this->appendJsonObjectAttributes($baseNode, $indent, $loadedTypes);
 				$baseNode = null;
 			}
 			
-			$this->appendJsonObjectAttributes($classNode, $indent, $loadedTypes, $first);
-			$this->appendLine();
+			$this->appendJsonObjectAttributes($classNode, $indent, $loadedTypes);
 		}
+		$this->appendLine();
 		$this->append("{$indent}}");
 	}
 	
