@@ -20,8 +20,6 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 	{
 		parent::generate();
 		
-		$this->removeFilesFromSource();
-		
 		$xpath = new DOMXPath($this->_doc);
 		$this->loadClassInheritance($xpath->query("/xml/classes/class"));
 		$this->loadEnums($xpath->query("/xml/enums/enum"));
@@ -1018,20 +1016,17 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 	{
 		return array_key_exists($enum, $this->_enums);
 	}
-	
-	private function removeFilesFromSource()
+
+	protected function addFile($fileName, $fileContents, $addLicense = true)
 	{
-		$files = array_keys($this->_files);
-		foreach($files as $file)
-		{
-			if ($file == "KalturaClient.suo")
-				unset($this->_files["KalturaClient.suo"]);
-			$dirname = pathinfo($file, PATHINFO_DIRNAME);
-			if ($this->endsWith($dirname, "Debug"))
-				unset($this->_files[$file]);
-			if ($this->endsWith($dirname, "Release"))
-				unset($this->_files[$file]);
-		}
+		if ($fileName == "KalturaClient.suo")
+			return;
+		
+		$dirname = pathinfo($fileName, PATHINFO_DIRNAME);
+		if ($this->endsWith($dirname, "Debug") || $this->endsWith($dirname, "Release"))
+			return;
+		
+		parent::addFile($fileName, $fileContents, $addLicense);
 	}
 	
 	/**

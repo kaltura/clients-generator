@@ -353,7 +353,7 @@ abstract class ClientGeneratorFromXml
 		return $this->_params[$key];
 	}
 	
-	private function addFile($fileName, $fileContents, $addLicense = true)
+	protected function addFile($fileName, $fileContents, $addLicense = true)
 	{
 		if ($addLicense)
 		{

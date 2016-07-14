@@ -12,16 +12,6 @@ class AndroidClientGenerator extends JavaClientGenerator
 		return str_replace('/', DIRECTORY_SEPARATOR, $path);
 	}
 	
-	protected function removeFiles($namePrefix)
-	{
-		$namePrefix = $this->normalizeSlashes($namePrefix);
-		foreach ($this->_files as $name => $data)
-		{
-			if ($this->beginsWith($name, $namePrefix))
-				unset($this->_files[$name]);
-		}
-	}
-
 	protected function addFiles($sourcePath, $destPath)
 	{
 		$sourcePath = realpath($sourcePath);
@@ -32,20 +22,30 @@ class AndroidClientGenerator extends JavaClientGenerator
 	public function generate() 
 	{
 		$this->addFiles("sources/java/src", "KalturaClient/src/");
-		$this->removeFiles("KalturaClient/src/test");
-		$this->removeFiles("KalturaClient/src/main/java/Kaltura.java");
-		$this->removeFiles("KalturaClient/src/main/java/com/kaltura/client/KalturaLoggerLog4j.java");
 		$this->addFiles("sources/java/src/test", "KalturaClientTester/src/main/");
 
 		parent::generate();
 	}
-	
+
 	protected function addFile($fileName, $fileContents, $addLicense = true)
 	{
+		$excludePaths = array(
+			"KalturaClient/src/test",
+			"KalturaClient/src/main/java/Kaltura.java",
+			"KalturaClient/src/main/java/com/kaltura/client/KalturaLoggerLog4j.java",
+		);
+		
+		foreach($excludePaths as $excludePath)
+		{
+			if($this->beginsWith($fileName, $excludePath))
+				return;
+		}
+		
 		$fileContents = str_replace(
 				'String clientTag = "java:@DATE@"', 
 				'String clientTag = "android:@DATE@"', 
 				$fileContents);
+		
 		parent::addFile($fileName, $fileContents, $addLicense);
 	}
 }
