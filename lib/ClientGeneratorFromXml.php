@@ -3,9 +3,11 @@ abstract class ClientGeneratorFromXml
 {
 	protected $_txt = "";
 	protected $_file = null;
+	protected $_fileName = null;
 	protected $_xmlFile = "";
 	protected $_sourcePath = "";
 	protected $_params = array();
+	protected $_licenseBuffer = '';
 	
 	protected $generateDocs = false;
 	protected $package = 'External';
@@ -335,6 +337,11 @@ abstract class ClientGeneratorFromXml
 			$this->addSourceFiles($this->_sourcePath, $this->_sourcePath . DIRECTORY_SEPARATOR, "");
 	}
 	
+	public function getSourceFilePath($fileName)
+	{
+		return realpath("{$this->_sourcePath}/$fileName");
+	}
+	
 	public function setOutputPath($outputPath, $copyPath)
 	{
 		$this->outputPath = $outputPath;
@@ -371,7 +378,7 @@ abstract class ClientGeneratorFromXml
 		$this->writeFile($fileName, $fileContents);
 	}
 	
-	private function getFilePath($fileName)
+	protected function getFilePath($fileName)
 	{
 		$fileName = str_replace(array('/', '\\'), array(DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR), $fileName);
 		return $this->outputPath . DIRECTORY_SEPARATOR . $fileName;
@@ -385,6 +392,7 @@ abstract class ClientGeneratorFromXml
 			mkdir($dirName, 0777, true);
 
 		file_put_contents($filePath, $content);
+		$this->copyFile($fileName);
 	}
 	
 	private function copyFile($fileName)
@@ -503,6 +511,8 @@ abstract class ClientGeneratorFromXml
 		$this->_file = fopen($filePath, 'w');
 		if(!$this->_file)
 			throw new Exception("Failed to open file for writing: $filePath");
+		
+		$this->_fileName = $fileName;
 	}
 	
 	protected function closeFile()
@@ -511,7 +521,10 @@ abstract class ClientGeneratorFromXml
 			throw new Exception("File was not started");
 
 		fclose($this->_file);
+		$this->copyFile($this->_fileName);
+		
 		$this->_file = null;
+		$this->_fileName = null;
 	}
 	
 	protected function startNewTextBlock()
