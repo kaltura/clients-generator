@@ -719,6 +719,8 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		sort($classes);
 		
 		$this->startNewFile('menu.html');
+
+		$this->appendHeader('', '../testme/js/jquery-1.3.1.min.js');
 		
 		$this->appendLine('	<script type="text/javascript">');
 		$this->appendLine('	');
@@ -755,8 +757,6 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 
 		$this->appendLine('	</script>');
 			
-		$this->appendHeader('', '../testme/js/jquery-1.3.1.min.js');
-		
 		$this->appendLine('	<div class="left">');
 		$this->appendLine('		<div class="left-content">');
 		$this->appendLine('			<div id="general">');
