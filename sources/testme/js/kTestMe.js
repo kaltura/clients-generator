@@ -273,7 +273,7 @@ var kTestMe = {
 		{
 			this.registerClass(subTypes[i]);
 			
-			f(subTypes[i].hasOwnProperty("isArray") && subTypes[i].isArray && subTypes[i].hasOwnProperty("arrayType") && subTypes[i].arrayType.hasOwnProperty("properties"))
+			if(subTypes[i].hasOwnProperty("isArray") && subTypes[i].isArray && subTypes[i].hasOwnProperty("arrayType") && subTypes[i].arrayType.hasOwnProperty("properties"))
 			{
 				this.registerClass(subTypes[i].arrayType);
 				this.registerSubClasses(subTypes[i].arrayType.type, subTypes[i].arrayType.properties);
