@@ -554,6 +554,10 @@ kArrayField.prototype.getLevel = function(){
 kArrayField.prototype.add = function() {
 	var field;
 	var param = this.param.arrayType;
+	
+	if(!param.hasOwnProperty("description"))
+		param = kTestMe.getClass(param.type);
+	
 	param.name = 'item' + this.fieldsCount;
 	this.fieldsCount++;
 	this.enable();
