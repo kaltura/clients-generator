@@ -270,7 +270,18 @@ var kTestMe = {
 		
 		this.classes[type].subClasses = subTypes;
 		for(var i = 0; i < subTypes.length; i++)
+		{
 			this.registerClass(subTypes[i]);
+			
+			f(subTypes[i].hasOwnProperty("isArray") && subTypes[i].isArray && subTypes[i].hasOwnProperty("arrayType") && subTypes[i].arrayType.hasOwnProperty("properties"))
+			{
+				this.registerClass(subTypes[i].arrayType);
+				this.registerSubClasses(subTypes[i].arrayType.type, subTypes[i].arrayType.properties);
+			}
+			
+			if((subTypes[i].hasOwnProperty("isComplexType") && subTypes[i].isComplexType && subTypes[i].hasOwnProperty("properties")) 
+				this.registerSubClasses(subTypes[i].type, subTypes[i].properties);
+		}
 		
 		this.log.info('Class [' + type + '] sub-classes [' + subTypes.length + '] registered.');
 	},
