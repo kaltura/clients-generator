@@ -279,7 +279,7 @@ var kTestMe = {
 				this.registerSubClasses(subTypes[i].arrayType.type, subTypes[i].arrayType.properties);
 			}
 			
-			if((subTypes[i].hasOwnProperty("isComplexType") && subTypes[i].isComplexType && subTypes[i].hasOwnProperty("properties")) 
+			if(subTypes[i].hasOwnProperty("isComplexType") && subTypes[i].isComplexType && subTypes[i].hasOwnProperty("properties")) 
 				this.registerSubClasses(subTypes[i].type, subTypes[i].properties);
 		}
 		
