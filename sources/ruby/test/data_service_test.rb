@@ -26,6 +26,8 @@
 # @ignore
 # ===================================================================================================
 require 'test_helper'
+require 'net/http'
+require 'net/https'
 require 'open-uri'
 
 class DataServiceTest < Test::Unit::TestCase
@@ -43,7 +45,13 @@ class DataServiceTest < Test::Unit::TestCase
       
       file_url = @client.data_service.serve(created_entry.id)
       
-      assert_equal @content, open(file_url).read
+      uri = URI.parse(file_url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = (uri.scheme == 'https')
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request = Net::HTTP::Get.new(uri.request_uri)
+      response = http.request(request)
+      assert_true (response.class == Net::HTTPFound || response.class == Net::HTTPOK)
       
       assert_nil @client.data_service.delete(created_entry.id)
     end
@@ -60,8 +68,14 @@ class DataServiceTest < Test::Unit::TestCase
         assert_not_nil created_entry.id
 
         file_url = @client.data_service.serve(created_entry.id, nil, false)
-
-        assert_equal @content, open(file_url).read
+      
+        uri = URI.parse(file_url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = (uri.scheme == 'https')
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
+        assert_true (response.class == Net::HTTPFound || response.class == Net::HTTPOK)
 
         assert_nil @client.data_service.delete(created_entry.id)
     end

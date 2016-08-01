@@ -117,37 +117,41 @@ class Xml2As3ClientGenerator extends ClientGeneratorFromXml
 
 		foreach($xml->children() as $child)
 		{
-			$type = "*";
+			$childType = "*";
 			switch($child->attributes()->type)
 			{
 				case "string" :
-					$type = "String = null";
+					$childType = "String = null";
 					break;
 
 				case "bigint":
 				case "float" :
-					$type = "Number = Number.NEGATIVE_INFINITY";
+					$childType = "Number = Number.NEGATIVE_INFINITY";
 					break;
 					
 				case "int" :
-					$type = "int = int.MIN_VALUE";
+					$childType = "int = int.MIN_VALUE";
 					break;
 
 				case "bool" :
-					$type = "Boolean";
+					$childType = "Boolean";
 					break;
 
 				case "array" :
-					$type = "Array = null";
+					$childType = "Array = null";
 					break;
 					
 				case "map" :
-					$type = "Object = null";
+					$childType = "Object = null";
+					break;
+					
+				case "KalturaObjectBase" :
+					$childType = "BaseFlexVo";
 					break;
 					
 				default :
-					$type = $child->attributes()->type;
-					$str = $this->addImport2String( "	import com.kaltura.vo." . $type , $str );
+					$childType = $child->attributes()->type;
+					$str = $this->addImport2String( "	import com.kaltura.vo." . $childType , $str );
 					break;
 			}
 
@@ -175,7 +179,7 @@ class Xml2As3ClientGenerator extends ClientGeneratorFromXml
 				}
 				$str .= "		**/\n";
 			}
-			$str .= "		public var " . $child->attributes()->name . " : " . $type . ";\n\n";
+			$str .= "		public var " . $child->attributes()->name . " : " . $childType . ";\n\n";
 		}
 
 		//every VO can return an Array with all the his properties and is inheritance properties
@@ -307,10 +311,11 @@ class Xml2As3ClientGenerator extends ClientGeneratorFromXml
 
 	private function createCommands ( $xml )
 	{
-		$type = $xml->attributes()->name;
-		if(!$this->shouldIncludeType($type))
+		$serviceId = $xml->attributes()->id;
+		if(!$this->shouldIncludeService($serviceId))
 			return;
-			
+
+		$type = $xml->attributes()->name;
 		foreach($xml->children() as $child)
 		{
 			if($child->result->attributes()->type == 'file') {
