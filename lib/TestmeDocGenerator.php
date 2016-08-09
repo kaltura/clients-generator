@@ -329,6 +329,8 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			return;
 
 		$this->startNewFile("objects/$type.html");
+		
+		$this->appendHeader('../', '../../testme/js/jquery-1.3.1.min.js');
 
 		$this->appendLine('	<script type="text/javascript">');
 		$this->appendLine('	');
@@ -348,8 +350,6 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		});');
 		$this->appendLine('	');
 		$this->appendLine('	</script>');
-		
-		$this->appendHeader('../', '../../testme/js/jquery-1.3.1.min.js');
 
 		$this->appendLine('	<div id="doc">');
 		$this->appendLine('		<h2>Kaltura API</h2>');

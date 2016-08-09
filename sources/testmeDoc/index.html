@@ -5,6 +5,58 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css" />
 	<script type="text/javascript" src="../testme/js/jquery-1.3.1.min.js"></script>
 	<script type="text/javascript">
+
+	    function openUrl(url) {
+	        var iframe = document.getElementById("main");
+	        iframe.src = url;
+	    }
+
+	    function openService(service) {
+	        service = service.toLowerCase();
+	        openUrl("services/" + service + ".html");
+	    }
+
+	    function openAction(action) {
+	        var parts = action.split(".");
+	        var service = parts[0].toLowerCase();
+	        var action = parts[1];
+
+	        service = service.toLowerCase();
+	        openUrl("actions/" + service + "." + action + ".html");
+	    }
+
+	    function openObject(objectName) {
+	        openUrl("objects/" + objectName + ".html");
+	    }
+
+	    function openEnum(enumName) {
+	        openUrl("enums/" + enumName + ".html");
+	    }
+
+	    function handleQueryString(queryString) {
+	        var parts = queryString.substring(1).split("&");
+	        parts = parts[0].split("=");
+	        if (parts.length == 2) {
+	            switch (parts[0]) {
+	                case "service":
+	                    openService(parts[1]);
+	                    break;
+
+                    case "action":
+                        openAction(parts[1]);
+                        break;
+
+                    case "object":
+                        openObject(parts[1]);
+                        break;
+
+                    case "enum":
+                        openEnum(parts[1]);
+                        break;
+	            }
+	        }
+	    }
+
 		$(function() {
 			$(window).resize(
 					function() {
@@ -23,6 +75,9 @@
 					});
 			
 			$(window).resize();
+
+			if (document.location.search.length)
+			    handleQueryString(document.location.search);
 		});
 	</script>
 </head>
@@ -39,7 +94,7 @@
 				<iframe src="menu.html" width="100%" height="100%" scrolling="yes"></iframe>
 			</td>
 			<td>
-				<iframe src="empty.html" width="100%" height="100%" scrolling="yes" name="main"></iframe>
+				<iframe src="empty.html" width="100%" height="100%" scrolling="yes" id="main" name="main"></iframe>
 			</td>
 		</tr>
 	</table>
