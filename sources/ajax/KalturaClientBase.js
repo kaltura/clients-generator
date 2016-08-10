@@ -155,27 +155,6 @@ KalturaClientBase.prototype.log = function(msg){
 };
 
 /**
- * Abstract base class for all client objects
- */
-function KalturaObjectBase(){
-}
-
-/**
- * Abstract base class for all client services
- * Initialize the service keeping reference to the KalturaClient
- * @param KalturaClientm client
- */
-function KalturaServiceBase(){
-}
-KalturaServiceBase.prototype.init = function(client){
-	this.client = client;
-};
-/**
- * @param KalturaClient
- */
-KalturaServiceBase.prototype.client = null;
-
-/**
  * Constructs new Kaltura configuration object
  */
 function KalturaConfiguration(){
@@ -201,16 +180,15 @@ KalturaConfiguration.prototype.getLogger = function(){
 	return this.logger;
 };
 
-function KalturaRequestBuilder(client, service, action, data, files){
-	if(!client)
+function KalturaRequestBuilder(service, action, data, files){
+	if(!service)
 		return;
 	
-	this.client = client;
 	this.service = service;
 	this.action = action;
 	this.data = data;
 	this.files = files;
-	this.requestData = client.requestData;
+	this.requestData = {};
 }
 
 KalturaRequestBuilder.prototype.callback = null;
@@ -237,14 +215,13 @@ KalturaRequestBuilder.prototype.signature = function(params){
  * send the http request.
  * @return array 							the results and errors inside an array.
  */
-KalturaRequestBuilder.prototype.doHttpRequest = function(){
-	var log = this.client.log;
+KalturaRequestBuilder.prototype.doHttpRequest = function(client){
 	var json = this.getData(true);
 	var callback = this.callback;
-	var url = this.getUrl();
+	var url = this.getUrl(client);
 
-	log('URL: ' + url);
-	log('Request JSON: ' + JSON.stringify(json));
+	client.log('URL: ' + url);
+	client.log('Request JSON: ' + JSON.stringify(json));
 	
 	$.ajax({
 	    type: 'POST',
@@ -254,7 +231,7 @@ KalturaRequestBuilder.prototype.doHttpRequest = function(){
 	    contentType: 'application/json',
 	    dataType: 'json',
 	    success: function(json, textStatus, jqXHR) {
-	    	log('Response JSON: ' + JSON.stringify(json));
+	    	client.log('Response JSON: ' + JSON.stringify(json));
 	    	
 	    	if(json && typeof(json) === 'object' && json.code && json.message){
 		    	if(callback)
@@ -279,8 +256,8 @@ KalturaRequestBuilder.prototype.sign = function(){
 	this.data.kalsig = signature;
 };
 
-KalturaRequestBuilder.prototype.getUrl = function(){
-	var url = this.client.config.serviceUrl + this.client.config.serviceBase;
+KalturaRequestBuilder.prototype.getUrl = function(client){
+	var url = client.config.serviceUrl + client.config.serviceBase;
 	url += '/' + this.service + '/action/' + this.action;
 	
 	return url;
@@ -288,9 +265,8 @@ KalturaRequestBuilder.prototype.getUrl = function(){
 
 KalturaRequestBuilder.prototype.getData = function(sign){
 	this.data.format = KalturaClientBase.prototype.KALTURA_SERVICE_FORMAT_JSON;
-	
-	for(var param in this.requestData)
-		this.data[param] = this.requestData[param];
+
+	$.extend(this.data, this.requestData);
 
 	if(sign)
 		this.sign();
@@ -298,9 +274,12 @@ KalturaRequestBuilder.prototype.getData = function(sign){
 	return this.data;
 };
 
-KalturaRequestBuilder.prototype.execute = function(callback){
+KalturaRequestBuilder.prototype.execute = function(client, callback){
+	var requestData = $.extend({}, client.requestData); // clone client requestData
+	this.requestData = $.extend(requestData, this.requestData); // merge client requestData with current requestData
+	
 	this.completion(callback);
-	this.doHttpRequest();
+	this.doHttpRequest(client);
 };
 
 KalturaRequestBuilder.prototype.completion = function(callback){
@@ -309,7 +288,7 @@ KalturaRequestBuilder.prototype.completion = function(callback){
 };
 
 KalturaRequestBuilder.prototype.add = function(requestBuilder){
-	var multiRequestBuilder = new KalturaMultiRequestBuilder(this.client);
+	var multiRequestBuilder = new KalturaMultiRequestBuilder();
 	multiRequestBuilder.add(this);
 	multiRequestBuilder.add(requestBuilder);
 	return multiRequestBuilder;
@@ -317,10 +296,8 @@ KalturaRequestBuilder.prototype.add = function(requestBuilder){
 
 
 
-function KalturaMultiRequestBuilder(client){
-	this.client = client;
-	this.requestData = client.requestData;
-	
+function KalturaMultiRequestBuilder(){
+	this.requestData = {};
 	this.requests = [];
 }
 
@@ -355,8 +332,8 @@ KalturaMultiRequestBuilder.prototype.add = function(requestBuilder){
 	this.requests.push(requestBuilder);
 };
 
-KalturaMultiRequestBuilder.prototype.getUrl = function(){
-	var url = this.client.config.serviceUrl + this.client.config.serviceBase;
+KalturaMultiRequestBuilder.prototype.getUrl = function(client){
+	var url = client.config.serviceUrl + client.config.serviceBase;
 	url += '/multirequest';
 	
 	return url;
@@ -373,8 +350,7 @@ KalturaMultiRequestBuilder.prototype.getData = function(){
 		this.data[i].action = this.requests[i].action;
 	}
 
-	for(var param in this.requestData)
-		this.data[param] = this.requestData[param];
+	$.extend(this.data, this.requestData);
 	
 	this.sign();
 	return this.data;
