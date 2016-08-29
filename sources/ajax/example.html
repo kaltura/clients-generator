@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script src="jquery-3.1.0.min.js"></script>
+<script src="KalturaClient.min.js"></script>
+<script src="KalturaSessionService.min.js"></script>
+<script src="KalturaMediaService.min.js"></script>
+<script type="text/javascript">
+
+	var config = new KalturaConfiguration(1676801);
+	config.serviceUrl = "http://www.kaltura.com";
+	
+	var client = new KalturaClient(config);
+
+	var session_start_cb = function (success, ks){
+		if(!success)
+			alert(ks.message);
+	
+		client.setKs(ks);
+		document.getElementById("ks").value = ks;
+	};
+
+	function session_start(){
+		var secret = document.getElementById("secret").value;
+		var userId = null;
+		var type = 0; // KalturaSessionType.USER
+		var partnerId = document.getElementById("partnerId").value;
+		var expiry = null;
+		var privileges = null;
+		KalturaSessionService.start(secret, userId, type, partnerId, expiry, privileges).execute(client, session_start_cb);
+	}
+	
+	var media_add_cb = function (success, entry){
+		if(!success)
+			alert(entry.message);
+		
+		document.getElementById("entryId").value = entry.id;
+	};
+
+	function media_add(){
+		var entry = {
+			objectType: "KalturaMediaEntry",
+			mediaType: 1, // KalturaMediaType.VIDEO
+			name: document.getElementById("name").value,
+			description: document.getElementById("description").value,
+		}
+
+		KalturaMediaService.add(entry).execute(client, media_add_cb);
+	}
+
+	function media_delete(){
+		var entryId = document.getElementById("entryId").value;		
+		KalturaMediaService.deleteAction(entryId).execute(client);
+	}
+
+	function media_delete_error_with_cb(){
+		var entryId = "kishkush";
+		KalturaMediaService.deleteAction(entryId).execute(client, function(success, results){
+			if(success) {
+				alert("Error was expected");
+			}
+			else {
+				alert("Error received as expected: " + results.message);
+			}
+		});
+	}
+
+	function media_delete_error_without_cb(){
+		var entryId = "kishkush";
+		KalturaMediaService.deleteAction(entryId).execute(client);
+	}
+
+	function multirequest_multi_callback(){
+		var entry = {
+			objectType: "KalturaMediaEntry",
+			mediaType: 1, // KalturaMediaType.VIDEO
+			name: document.getElementById("name").value,
+			description: document.getElementById("description").value,
+		}
+
+		var addRequestBuilder = KalturaMediaService.add(entry).completion(media_add_cb);
+		var deleteRequestBuilder = KalturaMediaService.deleteAction("{1:result:id}").completion(function(success, error){
+			if(!success)
+				alert(error.message);
+		});
+		
+		addRequestBuilder.add(deleteRequestBuilder).execute(client);
+	}
+
+	function multirequest_single_callback(){
+		var entry = {
+			objectType: "KalturaMediaEntry",
+			mediaType: 1, // KalturaMediaType.VIDEO
+			name: document.getElementById("name").value,
+			description: document.getElementById("description").value,
+		}
+
+		var addRequestBuilder = KalturaMediaService.add(entry);
+		var deleteRequestBuilder = KalturaMediaService.deleteAction("{1:result:id}").completion();
+		
+		addRequestBuilder.add(deleteRequestBuilder).execute(client, function(success, results){
+			if(results.message) // general transport error
+				alert(results.message);
+			
+			for(var i = 0; i < results.length; i++){
+				if(results[i] && typeof(results[i]) == 'object' && results[i].code && results[i].message) // request error 
+					alert(results[i].message);
+				else if(i == 0) // media.add
+					document.getElementById("entryId").value = results[i].id;
+			}
+		});
+	}
+
+	function multirequest_different_style(){
+		var entry = {
+			objectType: "KalturaMediaEntry",
+			mediaType: 1, // KalturaMediaType.VIDEO
+			name: document.getElementById("name").value,
+			description: document.getElementById("description").value,
+		}
+
+		var addRequestBuilder = KalturaMediaService.add(entry);
+		var deleteRequestBuilder = KalturaMediaService.deleteAction("{1:result:id}").completion();
+		
+		var multiRequestBuilder = new KalturaMultiRequestBuilder(client);
+		multiRequestBuilder.add(addRequestBuilder);
+		multiRequestBuilder.add(deleteRequestBuilder);
+		
+		multiRequestBuilder.execute(client, function(success, results){
+			if(results.message) // general transport error
+				alert(results.message);
+			
+			for(var i = 0; i < results.length; i++){
+				if(results[i] && results[i].message) // request error 
+					alert(results[i].message);
+				else if(i == 0) // media.add
+					document.getElementById("entryId").value = results[i].id;
+			}
+		});
+	}
+	
+</script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td>Secret:</td>
+			<td><input type="text" id="secret" /></td>
+		</tr>
+		<tr>
+			<td>Partner ID:</td>
+			<td><input type="text" id="partnerId" /></td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2"><input type="button" onclick="session_start()" value="session.start" /></td>
+		</tr>
+	</table>
+	<br/>
+	<input type="text" id="ks" size="120" />
+	<br/>
+	<table>
+		<tr>
+			<td>Entry name:</td>
+			<td><input type="text" id="name" /></td>
+		</tr>
+		<tr>
+			<td>Entry description:</td>
+			<td><input type="text" id="description" /></td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2">
+				<input type="button" onclick="media_add()" value="media.add" />
+				<input type="button" onclick="media_delete()" value="media.delete" />
+			</td>
+		</tr>
+	</table>
+	<br/>
+	<input type="text" id="entryId" size="120" />
+	<br/>
+	<input type="button" onclick="media_delete_error_with_cb()" value="media.delete (error with callback)" />
+	<input type="button" onclick="media_delete_error_without_cb()" value="media.delete (error without callback)" />
+	<br/>
+	<br/>
+	<input type="button" onclick="multirequest_multi_callback()" value="multi-request (with multi callbacks)" />
+	<input type="button" onclick="multirequest_single_callback()" value="multi-request (with single callbacks)" />
+	<input type="button" onclick="multirequest_different_style()" value="multi-request (different style)" />
+	<br/>
+</body>
+</html>

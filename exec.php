@@ -48,6 +48,7 @@ require_once(__DIR__ . "/lib/infra/Zend/Config/Ini.php");
 require_once(__DIR__ . "/lib/infra/KalturaLog.php");
 
 require_once(__DIR__ . "/lib/ClientGeneratorFromXml.php");
+require_once(__DIR__ . "/lib/AjaxClientGenerator.php");
 require_once(__DIR__ . "/lib/JavaClientGenerator.php");
 require_once(__DIR__ . "/lib/AndroidClientGenerator.php");
 require_once(__DIR__ . "/lib/BpmnClientGenerator.php");
@@ -256,7 +257,11 @@ foreach($config as $name => $item)
 	}
 	else
 	{
-		$outputPath = fixPath("$outputPathBase/$name");
+		$destination = $name;
+		if($item->destinationName)
+			$destination = $item->destinationName;
+		
+		$outputPath = fixPath("$outputPathBase/$destination");
 		$clearPath = null;
 		if($item->get("clearPath"))
 			$clearPath = fixPath("$rootPath/app/" . $item->get("clearPath"));
@@ -283,6 +288,7 @@ foreach($config as $name => $item)
 	}
 		
 	KalturaLog::info("Generate client library [$name]");
+	$instance->setOutputPath($outputPath, $copyPath);
 	$instance->generate();
 	
 	KalturaLog::info("Saving client library to [$outputPath]");
@@ -290,49 +296,12 @@ foreach($config as $name => $item)
 	$oldMask = umask();
 	umask(0);
 		
-	$files = $instance->getOutputFiles();
-	foreach($files as $file => $data)
-	{
-		$file = str_replace(array('/', '\\'), array(DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR), $file);
-		$filePath = $outputPath . DIRECTORY_SEPARATOR . $file;
-		$dirName = dirname($filePath);
-		if (!file_exists($dirName))
-			mkdir($dirName, 0777, true);
-
-		file_put_contents($filePath, $data);
-		
-		if($copyPath)
-		{
-			$copyFilePath = $copyPath . DIRECTORY_SEPARATOR . $file;
-			$dirName = dirname($copyFilePath);
-			if (!file_exists($dirName))
-				mkdir($dirName, 0777, true);
-				
-			copy($filePath, $copyFilePath);
-		}
-
-		if ($file == "KalturaClient.xml")
-		{
-			# save the schema also in a filename containing the generation date
-			# KalturaClient.xml will always contain the most recent schema so that it can be served by api_schema.php
-			$filePath = "$outputPath/KalturaClient_$generatedDate.xml";
-			file_put_contents($filePath, $data);
-		}
-	}
 	$instance->done($outputPath);
 	umask($oldMask);
 	
-	if (count($files) == 0)
-	{
-		//something went wrong in this generator?
-		KalturaLog::info("No output files created [$name]");
-	}
-	else
-	{
-		//tar gzip the client library
-		if (!$shouldNotPackage) 
-			createPackage($outputPath, $name, $generatedDate);
-	}
+	//tar gzip the client library
+	if (!$shouldNotPackage) 
+		createPackage($outputPath, $name, $generatedDate);
 		
 	KalturaLog::info("$name generated successfully");
 }

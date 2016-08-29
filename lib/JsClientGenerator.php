@@ -384,6 +384,9 @@ class JsClientGenerator extends ClientGeneratorFromXml
 		$this->echoLine($this->mainClass, "\t//initialize client services:");
 		foreach($servicesNodes as $service_node)
 		{
+			if(!$this->shouldIncludeService($service_node->attributes()->id))
+				continue;
+			
 			$serviceName = $service_node->attributes()->name;
 			$serviceClassName = "Kaltura".$this->upperCaseFirstLetter($serviceName)."Service";
 			$this->echoLine($this->mainClass, "\tthis.$serviceName = new $serviceClassName(this);");
