@@ -395,7 +395,7 @@ abstract class ClientGeneratorFromXml
 		$this->copyFile($fileName);
 	}
 	
-	private function copyFile($fileName)
+	protected function copyFile($fileName)
 	{
 		$filePath = $this->getFilePath($fileName);
 		if($this->copyPath)

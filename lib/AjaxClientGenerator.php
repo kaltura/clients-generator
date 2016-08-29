@@ -13,6 +13,11 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 	 * @var SimpleXMLElement
 	 */
 	private $schemaXml;
+
+	/**
+	 * @var resource
+	 */
+	private $fullFile;
 	
 	/**
 	* Constructor.
@@ -39,19 +44,10 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 	
 		$this->schemaXml = new SimpleXMLElement(file_get_contents( $this->_xmlFile ));
 
-		$this->startNewFile('KalturaClient.js');
-
-		$includePaths = array(
-				"KalturaClientBase.js",
-				"webtoolkit.md5.js",
-		);
-		foreach($includePaths as $includePath)
-		{
-			$fileContents = file_get_contents($this->getSourceFilePath($includePath));
-			$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
-			$this->appendLine($fileContents);
-			$this->appendLine();
-		}
+		$fullFilePath = $this->getFilePath('KalturaFullClient.js');
+		$this->fullFile = fopen($fullFilePath, 'w');
+		if(!$this->fullFile)
+			throw new Exception("Failed to open file for writing: $fullFilePath");
 		
 		$configurations = null;
 		$services = null;
@@ -75,10 +71,40 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 				break;	
 			}
 		}
-
-		$this->writeMainClass($services, $configurations);
+		
+		$this->startNewFile('KalturaClient.js');
+		
+		$includePaths = array(
+				"KalturaClientBase.js",
+				"webtoolkit.md5.js",
+		);
+		foreach($includePaths as $includePath)
+		{
+			$fileContents = file_get_contents($this->getSourceFilePath($includePath));
+			$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
+			$this->appendLine($fileContents);
+			$this->appendLine();
+		}
+		
+		$this->writeMainClass($configurations);
+		
+		fclose($this->fullFile);
+		$this->copyFile($fullFilePath);
+		
 		$this->closeFile();
 		$this->minify('KalturaClient.js', 'KalturaClient.min.js');
+		$this->copyFile('KalturaClient.min.js');
+
+		$this->minify('KalturaFullClient.js', 'KalturaFullClient.min.js');
+		$this->copyFile('KalturaFullClient.min.js');
+	}
+	
+	protected function append($txt = "")
+	{
+		if($this->fullFile)
+			fwrite($this->fullFile, $txt);
+		
+		parent::append($txt);
 	}
 
 	protected function minify($fileName, $minFileName)
@@ -120,30 +146,35 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		$serviceId = $serviceNodes->attributes()->id;
 		if(!$this->shouldIncludeService($serviceId))
 			return;
-				
+
 		$serviceName = $serviceNodes->attributes()->name;
 		$serviceClassName = "Kaltura".ucfirst($serviceName)."Service";
-		$serviceClass = "function $serviceClassName(client){\r\n";
-		$serviceClass .= "\tthis.init(client);\r\n";
-		$serviceClass .= "}\r\n";
-		//$serviceClass .= "$serviceClassName.prototype = new KalturaServiceBase();\r\n";
-		//$serviceClass .= "$serviceClassName.prototype.constructor = $serviceClassName;\r\n";
-		$serviceClass .= "$serviceClassName.inheritsFrom (KalturaServiceBase);\r\n";
 		
-		$serviceClassDesc = "/**\r\n";
-		$serviceClassDesc .= " *Class definition for the Kaltura service: $serviceName.\r\n";
-		$actionsList = " * The available service actions:\r\n";
+		$this->startNewFile("$serviceClassName.js");
+
+		$this->appendLine();
+		$this->appendLine("/**");
+		$this->appendLine(" *Class definition for the Kaltura service: $serviceName.");
+		$this->appendLine(" **/");
+		$this->appendLine("var $serviceClassName = {");
 		
+		$isFirst = true;
 		//parse the service actions
 		foreach($serviceNodes->children() as $action) {
 			
 			if($action->result->attributes()->type == 'file')
 				continue;
+
+			if(!$isFirst){
+				$this->appendLine(",");
+				$this->appendLine("	");
+			}
+			$isFirst = false;
 				
-			$actionDesc = "/**\r\n";
 			$description = str_replace("\n", "\n *\t", $action->attributes()->description); // to format multi-line descriptions
-			$actionDesc .= " * $description.\r\n";
-			$actionsList .= " * @action\t".$action->attributes()->name."\t$description.\r\n";
+				
+			$this->appendLine("	/**");
+			$this->appendLine("	 * $description.");
 			
 			foreach($action->children() as $actionParam) {
 				if($actionParam->getName() == "param" ) {
@@ -165,16 +196,14 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 						$info[] = "default: $defaultValue";
 					if (count($info)>0)
 						$infoTxt = ' ('.join(', ', $info).')';
-					$vardesc = " * @param\t$paramName\t$paramType\t\t{$description}{$infoTxt}";
-					$actionDesc .= "$vardesc.\r\n";
+					$this->appendLine("	 * @param\t$paramName\t$paramType\t\t{$description}{$infoTxt}");
 				} else {
 					$rettype = $actionParam->attributes()->type;
-					$actionDesc .= " * @return\t$rettype.\r\n";
+					$this->appendLine("	 * @return\t$rettype.");
 				}
 			}
 			
-			$actionDesc .= " */";
-			$actionClass = $actionDesc . "\r\n";
+			$this->appendLine("	 **/");
 			
 			//create a service action
 			$actionName = $action->attributes()->name;
@@ -187,12 +216,10 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			
 			// action method signature
 			if (in_array($actionName, array("list", "clone", "delete", "export"))) // because list & clone are preserved in PHP And export is preserved in js
-				$actionSignature = "$serviceClassName.prototype.".$actionName."Action = function($paramNames)";
+				$this->appendLine("	{$actionName}Action: function($paramNames){");
 			else
-				$actionSignature = "$serviceClassName.prototype.".$actionName." = function($paramNames)";
-			
-			$actionClass .= $actionSignature."{\r\n";
-			
+				$this->appendLine("	$actionName: function($paramNames){");
+
 			//validate parameter default values
 			foreach($action->children() as $actionParam) {
 				if($actionParam->getName() != "param" )
@@ -223,11 +250,11 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 						break;
 				}
 				
-				$actionClass .= "\tif(!$paramName)\r\n";
-				$actionClass .= "\t\t$paramName = $defaultValue;\r\n";
+				$this->appendLine("		if(!$paramName)");
+				$this->appendLine("			$paramName = $defaultValue;");
 			}
 			 
-			$actionClass .= "\tvar kparams = new Object();\r\n";
+			$this->appendLine("		var kparams = new Object();");
 			
 			$haveFiles = false;
 			//parse the actions parameters and result types
@@ -237,7 +264,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 				$paramName = $actionParam->attributes()->name;
 				if ($haveFiles === false && $actionParam->attributes()->type == "file") {
 			        $haveFiles = true;
-		        	$actionClass .= "\tkfiles = new Object();\r\n";
+		        	$this->appendLine("		kfiles = new Object();");
 		    	}
 				switch($actionParam->attributes()->type)
 				{
@@ -247,38 +274,38 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 					case "bigint":
 					case "bool":
 					case "array":
-						$actionClass .= "\tkparams.$paramName = $paramName;\r\n";
+						$this->appendLine("		kparams.$paramName = $paramName;");
 						break;
 					case "file":
-						$actionClass .= "\tkfiles.$paramName = $paramName;\r\n";
+						$this->appendLine("		kfiles.$paramName = $paramName;");
 						break;
 					default: //is Object
 						if ($actionParam->attributes()->optional == '1') {
-							$actionClass .= "\tif ($paramName != null)\r\n\t";
+							$this->appendLine("		if ($paramName != null)");
+							$this->append("	");
 						}
-						$actionClass .= "\tkparams.$paramName = $paramName;\r\n";
+						$this->appendLine("		kparams.$paramName = $paramName;");
 						break;
 				}
 			}
 			if ($haveFiles)
-				$actionClass .= "\treturn new KalturaRequestBuilder(this.client, \"$serviceId\", \"$actionName\", kparams, kfiles);\r\n";
+				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams, kfiles);");
 			else
-				$actionClass .= "\treturn new KalturaRequestBuilder(this.client, \"$serviceId\", \"$actionName\", kparams);\r\n";
-			$actionClass .= "}";
-			$serviceClass .= $actionClass . "\r\n";
+				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams);");
+			$this->append("	}");
 		}
-		$serviceClassDesc .= $actionsList;
-		$serviceClassDesc .= "*/";
-		
-		$this->appendLine($serviceClassDesc);
-		$this->appendLine($serviceClass);
+		$this->appendLine();
+		$this->appendLine("}");
+
+		$this->minify("$serviceClassName.js", "$serviceClassName.min.js");
+		$this->copyFile("$serviceClassName.min.js");
 	}
 	
 	/**
 	* Create the main class of the client library, may parse Services and actions.
 	* initialize the service and assign to client to provide access to servcies and actions through the Kaltura client object.
 	*/
-	protected function writeMainClass(SimpleXMLElement $servicesNodes, SimpleXMLElement $configurations)
+	protected function writeMainClass(SimpleXMLElement $configurations)
 	{
 		$apiVersion = $this->schemaXml->attributes()->apiVersion;
 		$date = date('y-m-d');
@@ -294,21 +321,6 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("}");
 		$this->appendLine("KalturaClient.inheritsFrom (KalturaClientBase);");
 		
-		foreach($servicesNodes as $serviceNode)
-		{
-			if(!$this->shouldIncludeService($serviceNode->attributes()->id))
-				continue;
-				
-			$serviceName = $serviceNode->attributes()->name;
-			$serviceClassName = "Kaltura".ucfirst($serviceName)."Service";
-			$this->appendLine("/**");
-			$description = str_replace("\n", "\n *\t", $serviceNode->attributes()->description); // to format multi-line descriptions
-			$this->appendLine(" * " . $description);
-			$this->appendLine(" * @param $serviceClassName");
-			$this->appendLine(" */");
-			$this->appendLine("KalturaClient.prototype.$serviceName = null;");
-		}
-		
 		$this->appendLine("/**");
 		$this->appendLine(" * The client constructor.");
 		$this->appendLine(" * @param config the Kaltura configuration object holding partner credentials (type: KalturaConfiguration).");
@@ -316,17 +328,6 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("KalturaClient.prototype.init = function(config){");
 		$this->appendLine("\t//call the super constructor:");
 		$this->appendLine("\tKalturaClientBase.prototype.init.apply(this, arguments);");
-		$this->appendLine("\t//initialize client services:");
-		foreach($servicesNodes as $serviceNode)
-		{
-			if(!$this->shouldIncludeService($serviceNode->attributes()->id))
-				continue;
-				
-			$serviceName = $serviceNode->attributes()->name;
-			$serviceClassName = "Kaltura".ucfirst($serviceName)."Service";
-			$this->appendLine("\tthis.$serviceName = new $serviceClassName(this);");
-			$this->appendLine();
-		}
 		$this->appendLine("};");
 		$this->appendLine();
 
