@@ -29,7 +29,7 @@ package com.kaltura.client;
 
 import com.kaltura.client.enums.KalturaEnumAsInt;
 
-public enum EKalturaServiceFormat implements KalturaEnumAsInt{
+public enum KalturaServiceResponseTypeFormat implements KalturaEnumAsInt{
 
 	RESPONSE_TYPE_JSON(1),
 	RESPONSE_TYPE_XML(2),
@@ -41,11 +41,22 @@ public enum EKalturaServiceFormat implements KalturaEnumAsInt{
 	
 	private int hashCode;
 	
-	EKalturaServiceFormat(int hashCode) {
+	KalturaServiceResponseTypeFormat(int hashCode) {
 		this.hashCode = hashCode;
 	}
     
-	public int getHashCode() {
+	public int getValue() {
 		return this.hashCode;
+	}
+
+	public static KalturaServiceResponseTypeFormat get(int value) {
+		// goes over KalturaAppTokenStatus defined values and compare the inner value with the given one:
+		for (KalturaServiceResponseTypeFormat item : values()) {
+			if(item.getValue() == value) {
+				return item;
+			}
+		}
+		// in case the requested value was not found in the enum values, we return the first item as default.
+		return KalturaServiceResponseTypeFormat.values().length > 0 ? KalturaServiceResponseTypeFormat.values()[0] : null;
 	}
 }

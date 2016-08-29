@@ -27,14 +27,12 @@
 // ===================================================================================================
 package com.kaltura.client;
 
-import com.kaltura.client.KalturaLoggerLog4j;
-
-abstract public class KalturaLogger 
+abstract public class KalturaLogger
 {
 	// Creation & retrieval methods:
 	public static IKalturaLogger getLogger(String name)
 	{
-		return KalturaLoggerLog4j.get(name);
+		return KalturaLoggerOut.getLogger(name);//  KalturaLoggerNull.getLogger(name);// KalturaLoggerLog4j.get(name);
 	}
 	
 	public static IKalturaLogger getLogger(Class<?> clazz)

@@ -27,9 +27,10 @@
 // ===================================================================================================
 package com.kaltura.client.utils;
 
-import java.io.CharArrayReader;
-import java.io.IOException;
-import java.io.Reader;
+import com.kaltura.client.types.KalturaAPIException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,15 +39,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-
-import com.kaltura.client.KalturaApiException;
+import java.io.CharArrayReader;
+import java.io.IOException;
+import java.io.Reader;
 
 public class XmlUtils {
-	public static Element parseXml(String xml) throws KalturaApiException {
+	public static Element parseXml(String xml) throws KalturaAPIException {
 		//get the factory
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
@@ -65,11 +63,11 @@ public class XmlUtils {
 			return docEle;
 			
 		} catch(ParserConfigurationException pce) {
-			throw new KalturaApiException("Failed building XML parser");
+			throw new KalturaAPIException("Failed building XML parser");
 		} catch(SAXException se) {
-			throw new KalturaApiException("Failed while parsing response.");
+			throw new KalturaAPIException("Failed while parsing response.");
 		} catch(IOException ioe) {
-			throw new KalturaApiException("I/O exception while reading response");
+			throw new KalturaAPIException("I/O exception while reading response");
 		}
 	}
 		
@@ -84,5 +82,51 @@ public class XmlUtils {
                 
         return (Element)(xPath.evaluate(xPathExpression, e, XPathConstants.NODE));
         		
+	}
+
+	public static Element validateXmlResult(Element resultXml) throws KalturaAPIException {
+
+		Element resultElement = null;
+		try {
+			resultElement = getElementByXPath(resultXml, "/xml/result");
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+
+		if (resultElement != null) {
+			return resultElement;
+		} else {
+			throw new KalturaAPIException("Invalid result");
+		}
+	}
+
+	public static KalturaAPIException getExceptionOnAPIError(Element result) throws KalturaAPIException {
+		try {
+			Element errorElement = getElementByXPath(result, "error");
+
+			if (errorElement == null) {
+				return null;
+			}
+
+			Element messageElement = getElementByXPath(errorElement, "message");
+			Element codeElement = getElementByXPath(errorElement, "code");
+
+			if (messageElement == null || codeElement == null) {
+				return null;
+			}
+
+			return new KalturaAPIException(KalturaAPIException.FailureStep.OnResponse, messageElement.getTextContent(), codeElement.getTextContent());
+
+		} catch (XPathExpressionException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void throwExceptionOnAPIError(Element result) throws KalturaAPIException {
+		KalturaAPIException exception = getExceptionOnAPIError(result);
+		if (exception != null) {
+			throw exception;
+		}
 	}
 }

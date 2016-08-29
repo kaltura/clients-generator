@@ -27,12 +27,11 @@
 // ===================================================================================================
 package com.kaltura.client.test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.kaltura.client.KalturaApiException;
+import com.kaltura.client.types.KalturaAPIException;
 import com.kaltura.client.enums.KalturaUiConfCreationMode;
 import com.kaltura.client.services.KalturaUiConfService;
 import com.kaltura.client.types.KalturaUiConf;
@@ -46,7 +45,7 @@ public class UiConfServiceTest extends BaseTest {
 	// keeps track of test vids we upload so they can be cleaned up at the end
 	protected List<Integer> testUiConfIds = new ArrayList<Integer>();
 	
-	protected KalturaUiConf addUiConf(String name) throws KalturaApiException {
+	protected KalturaUiConf addUiConf(String name) throws KalturaAPIException {
 
 		KalturaUiConfService uiConfService = client.getUiConfService();
 
@@ -78,7 +77,7 @@ public class UiConfServiceTest extends BaseTest {
 			KalturaUiConf addedConf = addUiConf(name);
 			assertNotNull(addedConf);
 			
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			if (logger.isEnabled())
 				logger.error(e);
 			fail(e.getMessage());
@@ -100,7 +99,7 @@ public class UiConfServiceTest extends BaseTest {
 			KalturaUiConf retrievedConf = confService.get(addedConfId);
 			assertEquals(retrievedConf.id, addedConfId);
 			
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			if (logger.isEnabled())
 				logger.error(e);
 			fail(e.getMessage());
@@ -126,14 +125,14 @@ public class UiConfServiceTest extends BaseTest {
 			try {
 				confService.get(addedConfId);
 				fail("Getting deleted ui-conf should fail");
-			} catch (KalturaApiException kae) {
+			} catch (KalturaAPIException kae) {
 				// Wanted behavior
 			} finally {
 				// we whacked this one, so let's not keep track of it		
 				this.testUiConfIds.remove(testUiConfIds.size() - 1);
 			}
 						
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			if (logger.isEnabled())
 				logger.error(e);
 			fail(e.getMessage());
@@ -157,7 +156,7 @@ public class UiConfServiceTest extends BaseTest {
 					logger.debug("uiConf id:" + uiConf.id + " name:" + uiConf.name);
 			}
 			
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			if (logger.isEnabled())
 				logger.error(e);
 			fail(e.getMessage());

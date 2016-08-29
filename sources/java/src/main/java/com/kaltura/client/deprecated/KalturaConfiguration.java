@@ -27,26 +27,61 @@
 // ===================================================================================================
 package com.kaltura.client;
 
-public class KalturaApiException extends Exception {
-	
-	private static final long serialVersionUID = 6710104690443289367L;
-	
-	public String code = null;
+import java.io.Serializable;
+import java.util.Map;
 
-	public KalturaApiException() {
-		super();
-	}
+/**
+ * This class holds information needed by the Kaltura client to establish a session.
+ * 
+ * @author jpotts
+ *
+ */
+@SuppressWarnings("serial")
+public class KalturaConfiguration implements Serializable {
+	protected String endpoint;
+	protected int timeout = 20000;
+	protected int readTimeout = timeout;
+    protected EKalturaServiceFormat serviceFormat = EKalturaServiceFormat.RESPONSE_TYPE_JSON;
 	
-	public KalturaApiException(String message) {
-		super(message);
+	private Map<String, String> params;
+	
+	public String getEndpoint() {
+		return endpoint;
 	}
 
-	public KalturaApiException(String message, String excCode) {
-		super(message);
-		code = excCode;
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
-	
-	public KalturaApiException(Throwable exp) {
-		super(exp);
+
+	public Map<String, String> getParams() {
+		return params;
+	}
+
+	public void setParams(Map<String, String> params) {
+		this.params = params;
+	}
+
+	public EKalturaServiceFormat getServiceFormat() {
+		return serviceFormat;
+	}
+
+	public void setServiceFormat(EKalturaServiceFormat serviceFormat) {
+		this.serviceFormat = serviceFormat;
+	}
+
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	public int getReadTimeout() {
+		return readTimeout;
+	}
+
+	public void setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
 	}
 }

@@ -38,16 +38,16 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class KalturaServiceBase implements Serializable {
 
-	protected KalturaClient kalturaClient;
+	protected KalturaClientBase kalturaClient;
 	
 	public KalturaServiceBase() {		
 	}
 	
-	public KalturaServiceBase(KalturaClient kalturaClient) {
+	public KalturaServiceBase(KalturaClientBase kalturaClient) {
 		this.kalturaClient = kalturaClient;
 	}
 	
-	public void setKalturaClient(KalturaClient kalturaClient) {
+	public void setKalturaClient(KalturaClientBase kalturaClient) {
 		this.kalturaClient = kalturaClient;
 	}
 	

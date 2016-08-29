@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.kaltura.client.types.KalturaAPIException;
 import junit.framework.TestCase;
 
-import com.kaltura.client.KalturaApiException;
 import com.kaltura.client.KalturaClient;
 import com.kaltura.client.KalturaConfiguration;
 import com.kaltura.client.enums.KalturaEntryStatus;
@@ -117,13 +117,13 @@ public class BaseTest extends TestCase {
 		client.setSessionId(sessionId);
 	}
 	
-	public static void closeSession(KalturaClient client) throws KalturaApiException {
+	public static void closeSession(KalturaClient client) throws KalturaAPIException {
 		client.getSessionService().end();
 	}
 	
 	// Entry utils
 	
-	public KalturaMediaEntry addTestImage(BaseTest container, String name) throws KalturaApiException, IOException, FileNotFoundException
+	public KalturaMediaEntry addTestImage(BaseTest container, String name) throws KalturaAPIException, IOException, FileNotFoundException
 	{
 		KalturaMediaEntry entry = new KalturaMediaEntry();
 		entry.name = name;
@@ -163,7 +163,7 @@ public class BaseTest extends TestCase {
 	}
 	
 	public static KalturaMediaEntry getProcessedEntry(KalturaClient client, String id,
-			Boolean checkReady) throws KalturaApiException {
+			Boolean checkReady) throws KalturaAPIException {
 		int maxTries = 50;
 		int sleepInterval = 30 * 1000;
 		int counter = 0;

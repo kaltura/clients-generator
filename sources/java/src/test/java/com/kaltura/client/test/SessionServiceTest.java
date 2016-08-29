@@ -29,7 +29,7 @@ package com.kaltura.client.test;
 
 import java.io.IOException;
 
-import com.kaltura.client.KalturaApiException;
+import com.kaltura.client.types.KalturaAPIException;
 import com.kaltura.client.enums.KalturaSessionType;
 import com.kaltura.client.types.KalturaMediaListResponse;
 
@@ -53,7 +53,7 @@ public class SessionServiceTest extends BaseTest {
 			// Close session
 			BaseTest.closeSession(client);
 			
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
@@ -62,7 +62,7 @@ public class SessionServiceTest extends BaseTest {
 		try {
 			client.getMediaService().list();
 			fail("Listing entries without KS should fail");
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			// Should fail since the connection is closed.
 		}
 		
@@ -91,8 +91,8 @@ public class SessionServiceTest extends BaseTest {
 			client.getMediaService().list();
 			fail("Listing entries with invalid KS should fail");
 		} catch (Exception e) {
-			assertTrue(e instanceof KalturaApiException);
-			String msg = ((KalturaApiException)e).getMessage();
+			assertTrue(e instanceof KalturaAPIException);
+			String msg = ((KalturaAPIException)e).getMessage();
 			assertTrue(msg.contains("EXPIRED"));
 		}
 

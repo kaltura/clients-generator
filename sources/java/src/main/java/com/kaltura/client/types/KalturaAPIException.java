@@ -25,55 +25,66 @@
 //
 // @ignore
 // ===================================================================================================
-package com.kaltura.client;
+package com.kaltura.client.types;
 
-import java.io.Serializable;
-import java.util.Map;
+import com.google.gson.JsonObject;
+import com.kaltura.client.utils.ParseUtils;
+import com.kaltura.client.utils.response.ResponseType;
 
-/**
- * This class holds information needed by the Kaltura client to establish a session.
- * 
- * @author jpotts
- *
- */
-@SuppressWarnings("serial")
-public class KalturaConfiguration implements Serializable {
-	protected String endpoint;
-	protected int timeout = 120000;
-    protected EKalturaServiceFormat serviceFormat = EKalturaServiceFormat.RESPONSE_TYPE_XML;
+public class KalturaAPIException extends Exception implements ResponseType {
 	
-	private Map<String, String> params;
-	
-	public String getEndpoint() {
-		return endpoint;
+	private static final long serialVersionUID = 6710104690443289367L;
+
+	public enum FailureStep {
+		OnRequest("001"),
+		OnConfigure("002"),
+		OnPass("003"),
+		OnResponse("004");
+
+		public String code = "0";
+
+		FailureStep(String code){
+			this.code = code;
+		}
+
+	};
+
+
+	public String code = null;
+	public FailureStep failedOn;
+
+	public KalturaAPIException() {
+		super();
 	}
 
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
+	public KalturaAPIException(String message) {
+		super(message);
 	}
 
-	public Map<String, String> getParams() {
-		return params;
+	public KalturaAPIException(FailureStep step, String message) {
+		super(message);
+		this.code = step.code;
+		this.failedOn = step;
 	}
 
-	public void setParams(Map<String, String> params) {
-		this.params = params;
+	public KalturaAPIException(FailureStep step, String message, String excCode) {
+		super(message);
+		failedOn = step;
+		code = excCode;
 	}
 
-	public EKalturaServiceFormat getServiceFormat() {
-		return serviceFormat;
+    public KalturaAPIException(JsonObject jsonObject) {
+        super(ParseUtils.parseString(jsonObject, "message"));
+        code = ParseUtils.parseString(jsonObject, "code");
+    }
+
+	public KalturaAPIException(Throwable exp) {
+		super(exp);
 	}
 
-	public void setServiceFormat(EKalturaServiceFormat serviceFormat) {
-		this.serviceFormat = serviceFormat;
+	public KalturaAPIException(FailureStep step, Throwable exp) {
+		super(exp);
+		failedOn = step;
+		this.code = step.code;
 	}
-
-	public int getTimeout() {
-		return timeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
-	
 }

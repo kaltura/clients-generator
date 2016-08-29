@@ -27,11 +27,11 @@
 // ===================================================================================================
 package com.kaltura.client.test;
 
+import com.kaltura.client.types.KalturaAPIException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.w3c.dom.Element;
 
-import com.kaltura.client.KalturaApiException;
 import com.kaltura.client.KalturaClient;
 import com.kaltura.client.KalturaConfiguration;
 import com.kaltura.client.KalturaObjectFactory;
@@ -98,13 +98,13 @@ public class ErrorTest extends BaseTest {
 	/**
 	 * Tests case in which XML format is completely ruined
 	 */
-	public void testXmlParsingError() throws KalturaApiException {
+	public void testXmlParsingError() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		try {
 			mockClient.doQueue();
 			fail("Invalid XML response should fail");
-		} catch (KalturaApiException e) {
+		} catch (KalturaAPIException e) {
 			assertEquals("Failed while parsing response.", e.getMessage());
 		}
 	}
@@ -112,7 +112,7 @@ public class ErrorTest extends BaseTest {
 	/**
 	 * Tests case in which the response has xml format, but no object type as expected
 	 */
-	public void testTagInSimpleType() throws KalturaApiException {
+	public void testTagInSimpleType() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><sometag></sometag></result></xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		Element resultXmlElement = mockClient.doQueue();
@@ -127,7 +127,7 @@ public class ErrorTest extends BaseTest {
 	/**
 	 * Tests case in which the response has xml format, but no object
 	 */
-	public void testEmptyObjectOrException() throws KalturaApiException {
+	public void testEmptyObjectOrException() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result></result></xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		Element resultXmlElement = mockClient.doQueue();
@@ -139,7 +139,7 @@ public class ErrorTest extends BaseTest {
 		}
 	}
 	
-	public void testTagInObjectDoesntStartWithType() throws KalturaApiException {
+	public void testTagInObjectDoesntStartWithType() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><id>1234</id></result></xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		Element resultXmlElement = mockClient.doQueue();
@@ -151,7 +151,7 @@ public class ErrorTest extends BaseTest {
 		}
 	}
 	
-	public void testCharsInsteadOfObject() throws KalturaApiException {
+	public void testCharsInsteadOfObject() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result>1234</result></xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		Element resultXmlElement = mockClient.doQueue();
@@ -163,7 +163,7 @@ public class ErrorTest extends BaseTest {
 		}
 	}
 	
-	public void testUnknownObjectType() throws KalturaApiException {
+	public void testUnknownObjectType() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><objectType>UnknownObjectType</objectType></result></xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		Element resultXmlElement = mockClient.doQueue();
@@ -175,7 +175,7 @@ public class ErrorTest extends BaseTest {
 		}
 	}
 	
-	public void testNonKalturaObjectType() throws KalturaApiException {
+	public void testNonKalturaObjectType() throws KalturaAPIException {
 		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><objectType>NSString</objectType></result></xml>");
 		mockClient.queueServiceCall("system", "ping", new KalturaParams());
 		Element resultXmlElement = mockClient.doQueue();
@@ -187,7 +187,7 @@ public class ErrorTest extends BaseTest {
 		}
 	}
 	
-	public void testArrayOfUknownEntry() throws KalturaApiException {
+	public void testArrayOfUknownEntry() throws KalturaAPIException {
 		String testXml = "<xml><result><objectType>KalturaMediaListResponse</objectType><objects>" +
 				"<item><objectType>NonExistingclass</objectType><id>test1</id><name>test1</name></item>" +
 				"<item><objectType>NonExistingclass</objectType><id>test2</id><name>test2</name></item>" +

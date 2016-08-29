@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.KalturaMultiResponse;
+import com.kaltura.client.types.KalturaAPIException;
+import com.kaltura.client.utils.deprecated.KalturaMultiResponse;
 import com.kaltura.client.enums.KalturaMediaType;
 import com.kaltura.client.types.KalturaBaseEntry;
 import com.kaltura.client.types.KalturaMediaEntry;
@@ -120,7 +120,7 @@ public class MultiRequestTest extends BaseTest{
 	/**
 	 * This function tests that in a case of error in a multi request, the error is parsed correctly
 	 * and it doesn't affect the rest of the multi-request.
-	 * @throws KalturaApiException
+	 * @throws KalturaAPIException
 	 * @throws IOException 
 	 */
 	public void testMultiRequestWithError() throws Exception {
@@ -135,7 +135,7 @@ public class MultiRequestTest extends BaseTest{
 		KalturaMultiResponse multi = client.doMultiRequest();
 		assertNotNull(multi.get(0));
 		assertTrue(ParseUtils.parseBool((String)multi.get(0)));
-		assertTrue(multi.get(1) instanceof KalturaApiException);
+		assertTrue(multi.get(1) instanceof KalturaAPIException);
 		assertNotNull(multi.get(2));
 		assertTrue(ParseUtils.parseBool((String)multi.get(2)));
 		

@@ -27,10 +27,11 @@
 // ===================================================================================================
 package com.kaltura.client;
 
+import com.kaltura.client.types.KalturaAPIException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import com.kaltura.client.KalturaApiException;
+
 import java.lang.reflect.Constructor;
 
 /**
@@ -44,7 +45,7 @@ import java.lang.reflect.Constructor;
 public class KalturaObjectFactory {
     
     @SuppressWarnings("unchecked")
-	public static <T> T create(Element xmlElement, Class<T> fallbackClazz) throws KalturaApiException {
+	public static <T> T create(Element xmlElement, Class<T> fallbackClazz) throws KalturaAPIException {
     	NodeList objectTypeNodes = xmlElement.getElementsByTagName("objectType");
         Node objectTypeNode = objectTypeNodes.item(0);    
 
@@ -63,7 +64,7 @@ public class KalturaObjectFactory {
 			if(fallbackClazz != null) {
 				clazz = fallbackClazz;
 			} else {
-				throw new KalturaApiException("Invalid object type" );
+				throw new KalturaAPIException("Invalid object type" );
 			}
         }
 
@@ -71,7 +72,7 @@ public class KalturaObjectFactory {
             Constructor<?> ctor = clazz.getConstructor(Element.class);
             return (T) ctor.newInstance(xmlElement);
         } catch (Exception e) {
-        	 throw new KalturaApiException("Failed to construct object");
+        	 throw new KalturaAPIException("Failed to construct object");
         }
     }
 }

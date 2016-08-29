@@ -34,5 +34,5 @@ import java.io.Serializable;
  */
 public interface KalturaEnumAsInt extends Serializable {
 
-	 public int getHashCode();
+	 public int getValue();
 }

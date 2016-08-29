@@ -25,44 +25,13 @@
 //
 // @ignore
 // ===================================================================================================
-package com.kaltura.client;
+package com.kaltura.client.utils.deprecated;
 
-import java.io.Serializable;
-import java.util.HashMap;
+import java.util.ArrayList;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+public class KalturaMultiResponse extends ArrayList<Object>{
 
-import com.kaltura.client.types.KalturaListResponse;
-import com.kaltura.client.utils.ParseUtils;
+	private static final long serialVersionUID = 1638228065619209223L;
 
-/**
- * Ancestor class for all of the generated classes in the com.kaltura.client.types package.
- * 
- * @author jpotts
- *
- */
-@SuppressWarnings("serial")
-public class KalturaObjectBase implements Serializable {
-    public HashMap<String, KalturaListResponse> relatedObjects;
 
-    public KalturaObjectBase() {
-    }
-    
-    public KalturaObjectBase(Element node) throws KalturaApiException {
-        NodeList childNodes = node.getChildNodes();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            Node aNode = childNodes.item(i);
-            String nodeName = aNode.getNodeName();
-            if (nodeName.equals("relatedObjects")) {
-                this.relatedObjects = ParseUtils.parseMap(KalturaListResponse.class, aNode);
-            } 
-        }
-    }
-    
-	public KalturaParams toParams() throws KalturaApiException {
-		return new KalturaParams();
-	}
-	
 }

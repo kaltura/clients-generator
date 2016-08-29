@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.kaltura.client.KalturaApiException;
+import com.kaltura.client.types.KalturaAPIException;
 import com.kaltura.client.KalturaClient;
 import com.kaltura.client.enums.KalturaEntryStatus;
 import com.kaltura.client.enums.KalturaEntryType;
@@ -88,7 +88,7 @@ public class MediaServiceTest extends BaseTest {
 	}
 	
 	public KalturaMediaEntry addClipFromUrl(BaseTest testContainer,
-			KalturaClient client, String name) throws KalturaApiException {
+			KalturaClient client, String name) throws KalturaAPIException {
 
 		KalturaMediaEntry entry = new KalturaMediaEntry();
 
@@ -253,7 +253,7 @@ public class MediaServiceTest extends BaseTest {
 			KalturaMediaService mediaService = this.client.getMediaService();
 			badEntry = mediaService.get("badid");
 			fail("Getting invalid entry id should fail");
-		} catch (KalturaApiException kae) {
+		} catch (KalturaAPIException kae) {
 			// expected behavior
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -438,7 +438,7 @@ public class MediaServiceTest extends BaseTest {
 		try {
 			deletedEntry = mediaService.get(idToDelete);
 			fail("Getting deleted entry should fail");
-		} catch (KalturaApiException kae) {
+		} catch (KalturaAPIException kae) {
 			// Wanted behavior
 		} 
 		
