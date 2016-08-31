@@ -120,7 +120,6 @@ foreach($options as $option => $value)
 	elseif($option == 'dont-gzip')
 	{
 		$gzip = false;
-		echo "XXXXXXXXXXXXXXXXXXXXXX\n"; exit; 
 	}
 	array_shift($argv);
 }	 
