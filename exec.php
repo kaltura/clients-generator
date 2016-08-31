@@ -78,6 +78,7 @@ $options = getopt('hx:r:t:', array(
 	'xml:',
 	'root:',
 	'tests:',
+	'dont-gzip',
 ));
 
 function showHelpAndExit()
@@ -89,6 +90,7 @@ function showHelpAndExit()
 	echo "\t\t-x, --xml:    \tUse XML path or URL as source XML.\n";
 	echo "\t\t-r, --root:   \tRoot path, default is /opt/kaltura.\n";
 	echo "\t\t-t, --tests:  \tUse different tests configuration, valid values are OVP or OTT, default is OVP.\n";
+	echo "\t\t--dont-gzip:  \tTar the packages without gzip.\n";
 	
 	exit;
 }
@@ -96,6 +98,7 @@ function showHelpAndExit()
 $schemaXmlPath = null;
 $rootPath = realpath('/opt/kaltura');
 $testsDir = 'ovp';
+$gzip = true;
 foreach($options as $option => $value)
 {
 	if($option == 'h' || $option == 'help')
@@ -113,6 +116,11 @@ foreach($options as $option => $value)
 	elseif($option == 't' || $option == 'tests')
 	{
 		$testsDir = strtolower($value);
+	}
+	elseif($option == 'dont-gzip')
+	{
+		$gzip = false;
+		echo "XXXXXXXXXXXXXXXXXXXXXX\n"; exit; 
 	}
 	array_shift($argv);
 }	 
@@ -309,7 +317,7 @@ foreach($config as $name => $item)
 	
 	//tar gzip the client library
 	if (!$shouldNotPackage) 
-		createPackage($outputPath, $name, $generatedDate);
+		createPackage($outputPath, $name, $generatedDate, $gzip);
 		
 	KalturaLog::info("$name generated successfully");
 }
@@ -333,7 +341,7 @@ function fixPath($path)
  * @param $outputPath 		The path the client library files are located at.
  * @param $generatorName	The name of the client library.
  */
-function createPackage($outputPath, $generatorName, $generatedDate)
+function createPackage($outputPath, $generatorName, $generatedDate, $gzip)
 {
 	KalturaLog::info("Trying to package");
 	$output = shell_exec("tar --version");
@@ -345,7 +353,8 @@ function createPackage($outputPath, $generatorName, $generatedDate)
 	{
 		$fileName = "{$generatorName}_{$generatedDate}.tar.gz";
 		$gzipOutputPath = "../".$fileName;
-		$cmd = "tar -czf \"$gzipOutputPath\" ../".$generatorName;
+		$options = $gzip ? '-czf' : '-cf';
+		$cmd = "tar $options \"$gzipOutputPath\" ../".$generatorName;
 		$oldDir = getcwd();
 		
 		$outputPath = realpath($outputPath);
