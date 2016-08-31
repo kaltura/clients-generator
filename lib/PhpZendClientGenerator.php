@@ -3,7 +3,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 {
 	private $cacheTypes = array();
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/zend")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "zend")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

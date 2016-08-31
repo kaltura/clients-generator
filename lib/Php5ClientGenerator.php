@@ -1,7 +1,7 @@
 <?php
 class Php5ClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/php5")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "php5")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

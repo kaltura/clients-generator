@@ -1,7 +1,7 @@
 <?php
 class PythonClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/python")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "python")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

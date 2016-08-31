@@ -73,10 +73,11 @@ require_once(__DIR__ . "/lib/Xml2As3ClientGenerator.php");
 $summaryFileName = 'summary.kinf';
 $tmpXmlFileName = tempnam(sys_get_temp_dir(), 'kaltura.generator.');
 
-$options = getopt('hx:r:', array(
+$options = getopt('hx:r:t:', array(
 	'help',
 	'xml:',
 	'root:',
+	'tests:',
 ));
 
 function showHelpAndExit()
@@ -87,12 +88,14 @@ function showHelpAndExit()
 	echo "\t\t-h, --help:   \tShow this help.\n";
 	echo "\t\t-x, --xml:    \tUse XML path or URL as source XML.\n";
 	echo "\t\t-r, --root:   \tRoot path, default is /opt/kaltura.\n";
+	echo "\t\t-t, --tests:  \tUse different tests configuration, valid values are OVP or OTT, default is OVP.\n";
 	
 	exit;
 }
 
 $schemaXmlPath = null;
 $rootPath = realpath('/opt/kaltura');
+$testsDir = 'ovp';
 foreach($options as $option => $value)
 {
 	if($option == 'h' || $option == 'help')
@@ -106,6 +109,10 @@ foreach($options as $option => $value)
 	elseif($option == 'r' || $option == 'root')
 	{
 		$rootPath = $value;
+	}
+	elseif($option == 't' || $option == 'tests')
+	{
+		$testsDir = strtolower($value);
 	}
 	array_shift($argv);
 }	 
@@ -289,6 +296,7 @@ foreach($config as $name => $item)
 		
 	KalturaLog::info("Generate client library [$name]");
 	$instance->setOutputPath($outputPath, $copyPath);
+	$instance->setTestsPath($testsDir);
 	$instance->generate();
 	
 	KalturaLog::info("Saving client library to [$outputPath]");

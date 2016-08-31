@@ -8,7 +8,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 	
 	protected $_projectSections = array();
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/objc")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "objc")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
