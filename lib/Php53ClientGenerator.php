@@ -4,7 +4,7 @@ class Php53ClientGenerator extends ClientGeneratorFromXml
 	private $cacheEnums = array();
 	private $cacheTypes = array();
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/php53")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "php53")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

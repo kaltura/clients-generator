@@ -3,7 +3,7 @@ class PojoClientGenerator extends JavaClientGenerator
 {
 	private $javaSourcePath;
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/pojo")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "pojo")
 	{
 		$this->javaSourcePath = realpath("sources/java");
 		parent::__construct($xmlPath, $config, $sourcePath);

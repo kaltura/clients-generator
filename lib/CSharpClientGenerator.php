@@ -6,7 +6,7 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 	private $_classInheritance = array();
 	private $_enums = array();
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/csharp")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "csharp")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

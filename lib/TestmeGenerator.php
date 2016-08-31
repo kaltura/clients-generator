@@ -3,7 +3,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 {
 	private $formAction = '../';
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/testme")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "testme")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 		if($config->formAction)

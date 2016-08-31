@@ -3,7 +3,7 @@ class ErlangClientGenerator extends ClientGeneratorFromXml
 {
 	protected $reservedActionNames = array('list', 'end');
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/erlang")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "erlang")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

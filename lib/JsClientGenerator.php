@@ -16,7 +16,7 @@ class JsClientGenerator extends ClientGeneratorFromXml
 	* @param string $xmlPath path to schema xml.
 	* @link http://www.kaltura.com/api_v3/api_schema.php
 	*/
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/js")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "js")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
