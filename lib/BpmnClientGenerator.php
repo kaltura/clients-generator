@@ -10,7 +10,7 @@ class BpmnClientGenerator extends ClientGeneratorFromXml
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 		
-		$this->template = file_get_contents("$sourcePath/action.template.bpmn");
+		$this->template = file_get_contents("{$this->_sourcePath}/action.template.bpmn");
 		$this->excludeSourcePaths[] = 'action.template.bpmn';
 	}
 	
