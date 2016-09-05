@@ -45,9 +45,9 @@ import java.util.*;
  * @author jpotts
  *
  */
-public class KalturaParams extends LinkedHashMap implements Serializable  {
+public class KalturaParams extends LinkedHashMap<String, Object> implements Serializable  {
 
-	public String toQueryString() throws KalturaAPIException {
+	public String toQueryString() {
 		return toQueryString(null);
 	}
 
@@ -198,7 +198,7 @@ public class KalturaParams extends LinkedHashMap implements Serializable  {
 	public <T extends KalturaObjectBase> void add(String key, Map<String, T>  params) {
 			if (containsKey(key) && get(key) instanceof HashMap) {
 				KalturaParams existingParams = (KalturaParams) get(key);
-				existingParams.putAll((KalturaParams) params);
+				existingParams.putAll(params);
 			} else {
 				put(key, params);
 			}
@@ -208,14 +208,14 @@ public class KalturaParams extends LinkedHashMap implements Serializable  {
 		return keySet();
 	}
 
-	private void putAll(KalturaParams params) {
+	/*private void putAll(KalturaParams params) {
 		for (String key : params.getKeys()) {
 			put(key, params.get(key));
 		}
-	}
+	}*/
 
-	public void add(KalturaParams objectProperties) {
-		putAll(objectProperties);
+	public void add(String key, KalturaParams params) {
+		put(key, params);
 	}
 
 	protected void putNull(String key) {

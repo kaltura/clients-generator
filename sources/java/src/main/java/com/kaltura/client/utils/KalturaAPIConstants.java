@@ -7,13 +7,14 @@ public class KalturaAPIConstants {
 
     public static final String UrlApiVersion = "api_v3/";
 
+    public static final String DefaultContentType = "application/json";
 
     //generated client config properties
-    public static final String ConfigClientClientTag = "clientTag";
+    /*public static final String ConfigClientClientTag = "clientTag";
     public static final String ConfigClientTagValue = "java:16-08-08";
     public static final String ConfigClientAPIVersion = "apiVersion";
     public static final String ConfigClientAPIVersionValue = "3.6.287.27685";
-
+*/
     //kaltura client config properties
     //public static boolean RetryOnConnectionFailure = true;
 
@@ -33,8 +34,16 @@ public class KalturaAPIConstants {
     //response properties names:
     public static final String PropertyExecutionTime = "executionTime";
     public static final String PropertyResult = "result";
+    public static final String ResultOk = "true";
 
 
+    public static class Codes{
+        public final static int EMPTY = -1;
+
+        public final static int USER_NOT_FOUND = 2000;
+
+
+    }
 
 
 }

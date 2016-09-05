@@ -58,6 +58,10 @@ public class ConnectionConfiguration implements Serializable {
 
 	private Map<String, Object> params;
 
+	public static ConnectionConfiguration getDefaults(){
+		return new ConnectionConfiguration();
+	}
+
 	public ConnectionConfiguration(){
 		initDefaults();
 	}

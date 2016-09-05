@@ -1,7 +1,6 @@
 package com.kaltura.client.utils.request;
 
 
-import com.kaltura.client.KalturaClientBase;
 import com.kaltura.client.utils.response.base.GeneralResponse;
 
 /**
@@ -9,9 +8,9 @@ import com.kaltura.client.utils.response.base.GeneralResponse;
  */
 public interface ActionsQueue {
 
-    String queue(ActionElement action, KalturaClientBase kalturaClientBase);
+    String queue(RequestElement action);
 
-    GeneralResponse execute(ActionElement action, KalturaClientBase kalturaClientBase);
+    GeneralResponse execute(RequestElement action);
 
     void cancelAction(String actionId);
 

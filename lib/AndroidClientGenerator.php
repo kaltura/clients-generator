@@ -30,8 +30,11 @@ class AndroidClientGenerator extends JavaClientGenerator
 	protected function addFile($fileName, $fileContents, $addLicense = true)
 	{
 		$excludePaths = array(
+		    "DemoApplication",
+			"KalturaClientTester",
 			"KalturaClient/src/test",
 			"KalturaClient/src/main/java/Kaltura.java",
+			"KalturaClient/src/main/java/com/kaltura/client/deprecated",
 			"KalturaClient/src/main/java/com/kaltura/client/KalturaLoggerLog4j.java",
 		);
 		

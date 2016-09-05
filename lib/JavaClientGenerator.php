@@ -1264,7 +1264,7 @@ class JavaClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("			return ($type) this.{$configurationName}Configuration.get(\"{$paramName}\");");
 		$this->appendLine("		}");
 		$this->appendLine("		");
-		$this->appendLine("		return null;");
+		$this->appendLine("		return ".$this->getDefaultValue($type).";");
 		$this->appendLine("	}");
 		$this->appendLine("	");
 	}
@@ -1375,6 +1375,7 @@ class JavaClientGenerator extends ClientGeneratorFromXml
 		case "float":
 		case "bigint":
 		case "time":
+        case "Integer":
 			return '0';
 			
 		case "bool":

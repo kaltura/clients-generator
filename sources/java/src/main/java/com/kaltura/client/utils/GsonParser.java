@@ -1,14 +1,14 @@
 package com.kaltura.client.utils;
 
 import com.google.gson.*;
+import com.google.gson.internal.$Gson$Types;
 import com.kaltura.client.IKalturaLogger;
 import com.kaltura.client.KalturaLogger;
 import com.kaltura.client.utils.response.ObjectTypeAdapter;
 import com.kaltura.client.utils.response.ResponseType;
 import com.kaltura.client.utils.response.base.GeneralResponse;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -163,7 +163,8 @@ public class GsonParser {
         if(jsonObject.has(property)){
             JsonElement jsonElement = jsonObject.get(property);
             if(jsonElement.isJsonObject()) {
-                Type type = ParameterizedTypeImpl.make(HashMap.class, new Type[]{String.class, clz}, null);
+                ParameterizedType type = $Gson$Types.newParameterizedTypeWithOwner(null, HashMap.class, String.class, clz);
+                //Type type = ParameterizedTypeImpl.make(HashMap.class, new Type[]{String.class, clz}, null);
                 return createGson().fromJson(jsonElement, type);
             }
         }
@@ -175,7 +176,8 @@ public class GsonParser {
         if(jsonObject.has(property)){
             JsonElement jsonElement = jsonObject.get(property);
             if(jsonElement.isJsonArray()) {
-                Type type = ParameterizedTypeImpl.make(ArrayList.class, new Type[]{clz}, null);
+                ParameterizedType type = $Gson$Types.newParameterizedTypeWithOwner(null, ArrayList.class, clz);
+//                Type type = ParameterizedTypeImpl.make(ArrayList.class, new Type[]{clz}, null);
                 return createGson().fromJson(jsonObject.get(property), type);
             }
         }
@@ -190,6 +192,6 @@ public class GsonParser {
     public static GeneralResponse parseResult(String result) {
         JsonParser jsonParser = new JsonParser();
         JsonObject jo = (JsonObject) jsonParser.parse(result);
-        return GeneralResponse.getResponse(jo);
+        return new GeneralResponse.Builder().result(jo).build();
     }
 }
