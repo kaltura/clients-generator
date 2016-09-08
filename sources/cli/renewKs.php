@@ -37,6 +37,8 @@ function renewKs($input, $expiry)
 	$patterns = array(
 		'/\/ks\/([a-zA-Z0-9+_\-]+=*)/', 
 		'/&ks=([a-zA-Z0-9+\/_\-]+=*)/', 
+		'/:ks=([a-zA-Z0-9+\/_\-]+=*)/',
+                '/%3Aks=([a-zA-Z0-9+\/_\-]+=*)/',
 		'/\?ks=([a-zA-Z0-9+\/_\-]+=*)/');
 	foreach ($patterns as $pattern)
 	{
