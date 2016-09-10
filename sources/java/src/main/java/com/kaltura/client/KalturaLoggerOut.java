@@ -1,5 +1,8 @@
 package com.kaltura.client;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by tehilarozin on 24/08/2016.
  */
@@ -71,10 +74,15 @@ public class KalturaLoggerOut implements IKalturaLogger {
 
 
     private void systemOutMsg(String prefix, Object message) {
-        System.out.println(prefix + message+"\n");
+        System.out.println(getTime() + prefix + message+"\n");
     }
 
     public static IKalturaLogger getLogger(String name) {
         return new KalturaLoggerOut();
     }
+
+    public static String getTime(){
+        return new SimpleDateFormat("HH.mm.ss.SSS").format(new Date()) + ": ";
+    }
+
 }

@@ -21,7 +21,12 @@ public class ObjectTypeAdapter implements JsonDeserializer<ResponseType> {
                 if(jsonObject.has("objectType")) {
 
                     // parsing with reflection through constructors
-                    return ObjectClassFactory.getResponseObject(jsonObject.getAsJsonPrimitive("objectType").getAsString(), jsonObject);
+                    String objectType = jsonObject.getAsJsonPrimitive("objectType").getAsString();
+                    //!! due to Server bug on multirequest:
+                    if(objectType.equals("KalturaAssetInfo")){
+                        objectType = "KalturaMediaAsset"; //-> can be KalturaProgramAsset in case of type EPG
+                    }
+                    return ObjectClassFactory.getResponseObject(objectType, jsonObject);
 
                     /*-> the Gson auto parse didn't work when parsing sub classes that recognized with parent class type
                     if(jsonObject.get("objectType").getAsString().equals("done")){

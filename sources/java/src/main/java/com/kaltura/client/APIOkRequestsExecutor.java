@@ -1,28 +1,19 @@
 package com.kaltura.client;
 
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.kaltura.client.types.KalturaAPIException;
 import com.kaltura.client.utils.KalturaAPIConstants;
-import com.kaltura.client.utils.ParseUtils;
 import com.kaltura.client.utils.request.ActionsQueue;
-import com.kaltura.client.utils.request.MultiActionRequest;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.request.interceptor.GzipInterceptor;
 import com.kaltura.client.utils.request.interceptor.IdInterceptor;
-import com.kaltura.client.utils.response.base.GeneralResponse;
-import com.kaltura.client.utils.response.base.MultiResponse;
+import com.kaltura.client.utils.response.base.ExecutedRequestResponse;
+import com.kaltura.client.utils.response.base.ResponseElement;
 import okhttp3.*;
 import okio.Buffer;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
-import static com.kaltura.client.utils.ParseUtils.parseResult;
 
 /**
  * Created by tehilarozin on 21/07/2016.
@@ -50,15 +41,6 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         getOkClient();
     }
 
-    /*public boolean useCompression() {
-        return useCompression;
-    }
-
-    public void setUseCompression(boolean useCompression) {
-        this.useCompression = useCompression;
-    }
-
-*/
     private OkHttpClient getOkClient(ConnectionConfiguration configuration/*KalturaClientBase kalturaClientBase*/){
         if(configuration != null){
            // ConnectionConfiguration configuration = kalturaClientBase.getConnectionConfiguration();
@@ -66,12 +48,14 @@ public class APIOkRequestsExecutor implements ActionsQueue {
                     .connectTimeout(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS)
                     .readTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS)
                     .writeTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS)
-                    .retryOnConnectionFailure((int)configuration.getParam(ConnectionConfiguration.MaxRetry, 1) > 0);
+                    .retryOnConnectionFailure((int) configuration.getParam(ConnectionConfiguration.MaxRetry, 1) > 0);
 
-            if(!builder.interceptors().contains(idInterceptor)){
+            if (!builder.interceptors().contains(idInterceptor)) {
                 builder.addInterceptor(idInterceptor);
             }
-            if(configuration.getAcceptGzipEncoding() && !builder.interceptors().contains(gzipInterceptor)){
+
+            //!! not supported on server for now.
+            if (configuration.getAcceptGzipEncoding() && !builder.interceptors().contains(gzipInterceptor)) {
                 builder.addInterceptor(gzipInterceptor);
             }
 
@@ -105,7 +89,9 @@ public class APIOkRequestsExecutor implements ActionsQueue {
                         return;
                     }
                     // handle failures: create response from exception
-                    handleRequestError(action, request.tag().toString(), e, -1);
+                    //handleRequestError(action, request.getTag().toString(), e, -1);
+                    //action.onComplete(false, new GeneralResponse.Builder().requestId((String) call.request().getTag()).result(getErrorResponse(e)).code(-1).build());
+                    action.onComplete(new ExecutedRequestResponse().response(getErrorResponse(e)).success(false));
                 }
 
                 @Override
@@ -116,28 +102,36 @@ public class APIOkRequestsExecutor implements ActionsQueue {
                     }
 
                     // pass parsed response to action completion block
-                    action.onComplete(parseResponse(response, action)); //!! in case the response.isSuccessful is false - status code can be checked
+                    action.onComplete(parseResponse(response, action));
                 }
             });
             return (String) call.request().tag();
 
         } catch (Exception e) {
             e.printStackTrace();
-            handleRequestError(action, request.tag().toString(), e, -1);
+           // handleRequestError(action, request.getTag().toString(), e, -1);
+            action.onComplete(new ExecutedRequestResponse().response(getErrorResponse(e)).success(false));
+
         }
         //TODO - in case of exception - pass empty response
         return null; // no call id to return.
         //throw new KalturaAPIException(KalturaAPIException.FailureStep.OnRequest, "failed on request creation and queuing "+action.getUrlTail());
     }
 
+    private String getErrorResponse(Exception e) {
+        return e.getClass().getName()+": "+ e.getMessage();
+    }
+
     @Override
-    public GeneralResponse execute(RequestElement action/*, ConnectionConfiguration config*/) {
+    public ResponseElement execute(RequestElement action) {
         try {
             return parseResponse(getOkClient(action.config()).newCall(buildRestRequest(action)).execute(), action);
 
-        }catch (IOException e){
+        } catch (IOException e){
             // failure on request execution - create error response
-            return generateErrorResponse(action, KalturaAPIException.FailureStep.OnRequest, e, -1);
+             return new ExecutedRequestResponse().response(getErrorResponse(e)).success(false);
+
+            //return generateErrorResponse(action, KalturaAPIException.FailureStep.OnRequest, e, -1);
             //throw new KalturaAPIException(KalturaAPIException.FailureStep.OnRequest, e);
         }
     }
@@ -167,7 +161,7 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         return mOkClient == null || mOkClient.dispatcher().queuedCallsCount() == 0;
     }
 
-    private void handleRequestError(final RequestElement action, String requestId, Exception e, int code){
+    /*private void handleRequestError(final RequestElement action, String requestId, Exception e, int code){
         if(action != null) {
             GeneralResponse response = generateErrorResponse(action, e, code);
             response.requestId(requestId);
@@ -188,38 +182,42 @@ public class APIOkRequestsExecutor implements ActionsQueue {
                 .requestId(action.getId())
                 .build();
 
-        /*return action instanceof MultiActionRequest ?
-                new GeneralResponseList(action.getAction(), new MultiResponse(result)) : new GeneralSingleResponse(action.getAction(), result);*/
-    }
+    }*/
 
-    private GeneralResponse parseResponse(Response response, RequestElement action) {
+    private ResponseElement parseResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
 
-        try {
-            if (!response.isSuccessful()) { // in case response has failure status
-                handleRequestError(action, requestId, new KalturaAPIException(response.message()), response.code());
 
-            } else {
+        if (!response.isSuccessful()) { // in case response has failure status
+            //handleRequestError(action, requestId, new KalturaAPIException(response.message()), response.code());
+            //return new GeneralResponse.Builder().requestId(requestId).result(response.message()).code(response.code()).build();
+            return new ExecutedRequestResponse().requestId(requestId).response(response.message()).code(response.code()).success(false);
 
-                String responseString = response.body().string();
-                logger.debug("response body:\n"+responseString);
+        } else {
 
-                //responseString = responseString.replace("\"relatedObjects\":\"\"", "\"relatedObjects\":{}");
-
-                String ContentType = getContentType(response.header(KalturaAPIConstants.HeaderContentType));
-
-                GeneralResponse generalResponse = parseResult(responseString, ContentType);
-
-                if(generalResponse != null) {
-                    return generalResponse.requestId(requestId);
-                }
+            String responseString = null;
+            try {
+                responseString = response.body().string();
+            } catch (IOException e) {
+                e.printStackTrace();
+                logger.error("failed to retrieve the response body!");
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            logger.debug("response body:\n" + responseString);
 
-        return generateErrorResponse(action, new KalturaAPIException(KalturaAPIException.FailureStep.OnResponse, "Failed to parse response"), -1).requestId(requestId); // this method return type should be changed or method structure
+            //responseString = responseString.replace("\"relatedObjects\":\"\"", "\"relatedObjects\":{}");
+
+            String contentType = getContentType(response.header(KalturaAPIConstants.HeaderContentType));
+
+            return new ExecutedRequestResponse().requestId(requestId).response(responseString).contentType(contentType).code(response.code()).success(responseString != null);
+
+            //new GeneralResponse.Builder().result(responseString).contentType(contentType).code(response.code()).build();
+            /*GeneralResponse generalResponse = parseResult(responseString, ContentType);
+
+            if(generalResponse != null) {
+                return generalResponse.requestId(requestId);
+            }*/
+        }
     }
 
     private String getRequestId(Response response) {
@@ -227,19 +225,6 @@ public class APIOkRequestsExecutor implements ActionsQueue {
             return response.request().tag().toString();
         }catch (NullPointerException e){
             return "";
-        }
-    }
-
-    public static void mockResponse(String mockFile, RequestElement request) {
-        JsonParser parser = new JsonParser();
-        try {
-            JsonElement element = (JsonObject) parser.parse(new FileReader(mockFile));
-            GeneralResponse response = ParseUtils.parseResult(element.toString(), "json").requestId(request.getId());
-            if (request != null) {
-                request.onComplete(response);
-            }
-        }catch (FileNotFoundException e){
-            request.onComplete(generateErrorResponse(request, e, -1));
         }
     }
 
@@ -296,7 +281,7 @@ public class APIOkRequestsExecutor implements ActionsQueue {
                 .headers(Headers.of(action.getHeaders()))//getHeaders(/*action*/ kalturaClientBase.connectionConfiguration.getAcceptGzipEncoding()))
                 .method(action.getMethod(), body)
                 .url(url)
-                .tag(action.tag())
+                .tag(action.getTag())
                 .build();
     }
 

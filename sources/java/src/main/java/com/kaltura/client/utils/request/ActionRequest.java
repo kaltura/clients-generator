@@ -2,7 +2,6 @@ package com.kaltura.client.utils.request;
 
 import com.kaltura.client.KalturaParams;
 import com.kaltura.client.utils.response.OnCompletion;
-import com.kaltura.client.utils.response.base.GeneralResponse;
 
 
 /**
@@ -68,17 +67,9 @@ public class ActionRequest extends ActionBase {
         return urlBuilder.toString();
     }
 
-    @Override
-    public ActionRequest setCompletion(OnCompletion/*<GeneralResponse>*/ onCompletion) {
+    public ActionRequest setCompletion(OnCompletion onCompletion) {
         this.onCompletion = onCompletion;
         return this;
-    }
-
-    @Override
-    public void onComplete(GeneralResponse response) {
-        if (onCompletion != null) {
-            onCompletion.onComplete(response);
-        }
     }
 
     public ActionRequest setParam(String key, Object value) {
@@ -94,7 +85,7 @@ public class ActionRequest extends ActionBase {
     }
 
     @Override
-    protected String getTag() {
+    public String getTag() {
         return action;
     }
 }

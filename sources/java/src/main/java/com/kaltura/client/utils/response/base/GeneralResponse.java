@@ -13,7 +13,6 @@ import com.kaltura.client.utils.response.ResponseType;
 public class GeneralResponse<T> {
 
     private String requestId;
-    //private String action;
     private double executionTime;
     protected T result;
 
@@ -22,16 +21,6 @@ public class GeneralResponse<T> {
     private GeneralResponse(T result) {
         this.result = result;
     }
-
-    /*private GeneralResponse(JsonObject jsonObject) {
-        if(jsonObject == null){
-            return;
-        }
-
-        executionTime = ParseUtils.parseDouble(jsonObject, KalturaAPIConstants.PropertyExecutionTime);
-        result = jsonObject.has(KalturaAPIConstants.PropertyResult) ? parseResponse(jsonObject) : null;
-    }*/
-
 
     public static GeneralResponse empty(){
         return new GeneralResponse(null);
@@ -50,19 +39,6 @@ public class GeneralResponse<T> {
         return result;
     }
 
-    /*public void setResult(T result) {
-        this.result = result;
-    }*/
-
-    /*public String getAction() {
-        return action;
-    }
-
-    private GeneralResponse<T> setAction(String action) {
-        this.action = action;
-        return this;
-    }*/
-
     public Builder newBuilder(){
         return new Builder(this);
     }
@@ -71,19 +47,6 @@ public class GeneralResponse<T> {
     public String toString() {
         return "GeneralResponse: executionTime = "+ executionTime+", "+super.toString();
     }
-
-    /*public static GeneralResponse getResponse(JsonObject jsonObject) {
-        if(jsonObject.has(KalturaAPIConstants.PropertyResult)){
-            JsonElement result = jsonObject.get(KalturaAPIConstants.PropertyResult);
-            if(result.isJsonArray()){
-                return new GeneralResponseList(jsonObject);
-            } else if(result.isJsonObject()){
-                return new GeneralSingleResponse(jsonObject);
-            }
-            return new GeneralPrimitiveResponse(jsonObject);
-        }
-        return null;
-    }*/
 
     public boolean isSuccess() {
         return result != null && !(result instanceof KalturaAPIException);
@@ -98,29 +61,21 @@ public class GeneralResponse<T> {
         return requestId;
     }
 
-    /*protected MultiResponse parseResponse(JsonObject jsonObject) {
-        return ParseUtils.parseObject(jsonObject.get(KalturaAPIConstants.PropertyResult), MultiResponse.class);
-    }
-*/
     public static class Builder{
-        Object result;
-        String requestId;
-       // String action;
-        double executionTime;
-
+        private Object result;
+        private String requestId;
+        private double executionTime;
         public Builder(){}
 
         private Builder(Builder builder) {
             this.result = builder.result;
             this.requestId = builder.requestId;
-            //this.action = builder.action;
             this.executionTime = builder.executionTime;
         }
 
-        private Builder(GeneralResponse response){
+        private Builder(GeneralResponse response) {
             this.result = response.getResult();
             this.requestId = response.getRequestId();
-            //this.action = response.getAction();
             this.executionTime = response.getExecutionTime();
         }
 
@@ -143,18 +98,6 @@ public class GeneralResponse<T> {
             return this;
         }
 
-        /*public GeneralResponse fromResult(String action, Object result){
-            if(result instanceof MultiResponse){
-                return new GeneralResponseList(action, (MultiResponse)result);
-
-            } else if(result instanceof ResponseType){
-                return new GeneralSingleResponse(action, (ResponseType) result);
-
-            } else { // empty result (null) will be considered as ok response ("true")
-                return new GeneralPrimitiveResponse(action, result == null ? KalturaAPIConstants.ResultOk : (String)result);
-            }
-        }*/
-
         public Builder result(JsonObject jsonObject){
             return fromJson(jsonObject);
         }
@@ -176,17 +119,9 @@ public class GeneralResponse<T> {
             return this;
         }
 
-        /*public Builder action(String action){
-            this.action = action;
-            return this;
-        }*/
-
         public GeneralResponse build(){
             return new GeneralResponse<Object>(result).requestId(requestId)/*.setAction(action)*/.executionTime(executionTime);
         }
 
-        public Builder newBuilder(){
-            return new Builder(this);
-        }
-    }
+     }
 }

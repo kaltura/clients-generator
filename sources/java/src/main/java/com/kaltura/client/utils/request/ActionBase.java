@@ -8,92 +8,67 @@ import com.kaltura.client.utils.EncryptionUtils;
 import com.kaltura.client.utils.KalturaAPIConstants;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.GeneralResponse;
+import com.kaltura.client.utils.response.base.ResponseElement;
+import com.kaltura.client.utils.response.base.ResponseParser;
 
 import java.util.HashMap;
 
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public abstract class ActionBase implements OnCompletion<GeneralResponse> /*implements RequestElement<T>*/ {
+public abstract class ActionBase implements OnCompletion<GeneralResponse>, RequestElement {
 
-    protected KalturaParams params;
-    protected OnCompletion onCompletion;
-    protected HashMap<String, String> headers;
-    protected String url;
     protected String id;
+    protected String url;
+    protected KalturaParams params;
+    protected HashMap<String, String> headers;
+    private ConnectionConfiguration connectionConfig;
 
-    //boolean isMultiparts = false;
+    /**
+     * callback for the parsed response.
+     */
+    protected OnCompletion<GeneralResponse> onCompletion;
 
-    public ActionBase() {
+
+
+    protected ActionBase() {
         params = new KalturaParams();
-    }
-
-    protected ActionBase(KalturaParams params, OnCompletion onCompletion) {
-        this.params = params;
-        this.onCompletion = onCompletion;
     }
 
     protected ActionBase(KalturaParams params) {
         this.params = params;
     }
 
-    /**
-     * builds the path to forwarded response properties value
-     * @param id - id/number of the request in the multirequest, to which property value is binded
-     * @param propertyPath - keys path to the binded response property
-     * @return value pattern for the binded property (exp. [2, request number]:result:[user:name, property path]
-     */
-    public static String path(String id, String propertyPath) {
-        return id + ":result:" + propertyPath.replace(".", ":");
-    }
+
+    public abstract String getUrlTail();
+
+    public abstract String getTag();
 
 
-    //@Override
+    @Override
     public String getMethod() {
         return "POST";
     }
 
-    public abstract String getUrlTail();
-
-    //@Override
+    @Override
     public String getBody() {
         return params.toString();
     }
 
+    @Override
     public String getId() {
         return id;
     }
-
-
-    /*public boolean isMultiparts() {
-        return isMultiparts;
-    }*/
-
-    public abstract <T extends ActionBase> T setCompletion(OnCompletion onCompletion);
-
-    /*public <T extends ActionBase> T setCompletion(OnCompletion onCompletion) {
-        this.onCompletion = onCompletion;
-        return getThis();
-    }*/
-
-    /*public <T extends ActionBase> T setMultiparts(boolean multiparts) {
-        isMultiparts = multiparts;
-        return getThis();
-    }*/
 
 	public KalturaParams getParams() {
         return params;
     }
 	
-    //@Override
     public void setParams(Object objParams) {
         params.putAll((KalturaParams) objParams); // !! null params should be checked - should not appear in request body or be presented as empty string.
 	}
-	
-    /*protected <AB extends ActionBase> AB getThis(){
-        return (AB)this;
-    }*/
 
+    @Override
     public HashMap<String, String> getHeaders() {
         return headers;
     }
@@ -108,6 +83,28 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse> /*impl
         }
     }
 
+    @Override
+    public String getContentType() {
+        return headers != null ? headers.get(KalturaAPIConstants.HeaderContentType) : KalturaAPIConstants.DefaultContentType;
+    }
+
+    @Override
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public ConnectionConfiguration config() {
+        return connectionConfig;
+    }
+
+    /**
+     * Builds the final list of parameters including the default params and the configured params.
+     *
+     * @param configurations
+     * @param addSignature
+     * @return
+     */
     private KalturaParams prepareParams(KalturaClientBase configurations, boolean addSignature) {
 
         if(params == null){
@@ -141,68 +138,36 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse> /*impl
         return build(client, false);
     }
 
-    public RequestElement build(final KalturaClient client, boolean addSignature) {
-        prepareParams(client, addSignature);
-        prepareHeaders(client);
-        prepareUrl(client != null ? client.getConnectionConfiguration().getEndpoint() : "");
-
-        return new RequestElement() {
-            @Override
-            public String getContentType() {
-                return headers != null ? headers.get(KalturaAPIConstants.HeaderContentType) : KalturaAPIConstants.DefaultContentType;
-            }
-
-            @Override
-            public String getMethod() {
-                return "POST";
-            }
-
-            @Override
-            public String getUrl() {
-                return url;
-            }
-
-            @Override
-            public String getBody() {
-                return ActionBase.this.getBody();
-            }
-
-            @Override
-            public HashMap<String, String> getHeaders() {
-                return headers;
-            }
-
-            @Override
-            public String getId() {
-                return id;
-            }
-
-            @Override
-            public ConnectionConfiguration config() {
-                return client != null ? client.getConnectionConfiguration() : ConnectionConfiguration.getDefaults();
-            }
-
-            @Override
-            public String tag() {
-                return getTag();
-            }
-
-            @Override
-            public void onComplete(GeneralResponse response) {
-                ActionBase.this.onComplete(response);
-            }
-        };
-
+    @Override
+    public void onComplete(ResponseElement response) {
+        ResponseParser.parse(this, response, this);
     }
 
-    private void prepareHeaders(KalturaClient client) {
+    @Override
+    public void onComplete(GeneralResponse response) {
+        if (onCompletion != null) {
+            onCompletion.onComplete(response);
+        }
+    }
+
+    public RequestElement build(final KalturaClient client, boolean addSignature) {
+        connectionConfig = client != null ? client.getConnectionConfiguration() : ConnectionConfiguration.getDefaults();
+
+        prepareParams(client, addSignature);
+        prepareHeaders(connectionConfig);
+        prepareUrl(connectionConfig.getEndpoint());
+
+        return this;
+    }
+
+    private void prepareHeaders(ConnectionConfiguration config) {
         if (headers == null) {
             headers = new HashMap<String, String>();
         }
         addDefaultHeaders();
 
-        if (!headers.containsKey(KalturaAPIConstants.HeaderAcceptEncoding) && client.getConnectionConfiguration().getAcceptGzipEncoding()) {
-            //headers.put(KalturaAPIConstants.HeaderAcceptEncoding, KalturaAPIConstants.HeaderEncodingGzip);
+        if (!headers.containsKey(KalturaAPIConstants.HeaderAcceptEncoding) && config.getAcceptGzipEncoding()) {
+            headers.put(KalturaAPIConstants.HeaderAcceptEncoding, KalturaAPIConstants.HeaderEncodingGzip);
         }
     }
 
@@ -215,7 +180,6 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse> /*impl
         }
     }
 
-    protected abstract String getTag();
 
 }
 

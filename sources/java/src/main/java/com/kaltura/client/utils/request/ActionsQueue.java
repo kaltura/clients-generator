@@ -1,7 +1,7 @@
 package com.kaltura.client.utils.request;
 
 
-import com.kaltura.client.utils.response.base.GeneralResponse;
+import com.kaltura.client.utils.response.base.ResponseElement;
 
 /**
  * Created by tehilarozin on 08/08/2016.
@@ -10,7 +10,7 @@ public interface ActionsQueue {
 
     String queue(RequestElement action);
 
-    GeneralResponse execute(RequestElement action);
+    ResponseElement execute(RequestElement action);
 
     void cancelAction(String actionId);
 

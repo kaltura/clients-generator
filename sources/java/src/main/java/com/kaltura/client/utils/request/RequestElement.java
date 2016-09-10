@@ -2,17 +2,14 @@ package com.kaltura.client.utils.request;
 
 
 import com.kaltura.client.ConnectionConfiguration;
-import com.kaltura.client.utils.response.OnCompletion;
-import com.kaltura.client.utils.response.base.GeneralResponse;
+import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.util.HashMap;
 
 /**
  * Created by tehilarozin on 09/08/2016.
  */
-public interface RequestElement extends OnCompletion<GeneralResponse> {
-
-    //String getQuery();
+public interface RequestElement {
 
     String getContentType();
 
@@ -22,7 +19,7 @@ public interface RequestElement extends OnCompletion<GeneralResponse> {
 
     String getBody();
 
-    String tag();
+    String getTag();
 
     HashMap<String, String> getHeaders();
 
@@ -30,5 +27,5 @@ public interface RequestElement extends OnCompletion<GeneralResponse> {
 
     ConnectionConfiguration config();
 
-   // void onComplete(boolean isSuccess, String response, int code);
+    void onComplete(ResponseElement responseElement);
 }

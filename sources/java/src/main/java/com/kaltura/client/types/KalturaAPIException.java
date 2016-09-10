@@ -35,6 +35,8 @@ public class KalturaAPIException extends Exception implements ResponseType {
 	
 	private static final long serialVersionUID = 6710104690443289367L;
 
+	public static final String DefaultResponseError = "Failed getting response";
+
 	public enum FailureStep {
 		OnRequest("001"),
 		OnConfigure("002"),

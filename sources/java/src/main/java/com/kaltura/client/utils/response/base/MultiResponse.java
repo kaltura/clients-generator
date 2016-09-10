@@ -10,7 +10,7 @@ import java.util.Iterator;
 /**
  * Created by tehilarozin on 09/08/2016.
  */
-public  class MultiResponse extends ArrayList<ResponseType> {
+public class MultiResponse extends ArrayList<ResponseType> {
 
     public MultiResponse(){
         super();
