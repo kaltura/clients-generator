@@ -391,16 +391,23 @@ KalturaClientBase.prototype.sendRequestHelper = function (options, body, request
 			if (This.config.format != KalturaClientBase.KALTURA_SERVICE_FORMAT_JSON){
 				onCompleteCallback(data);
 			}else {
-				var obj = JSON.parse(data);
-				if (obj && This.isError(obj)) {
-					if (!onCompleteCallback) {
-						throw obj.code + ": " + obj.message;
-					}
-					onCompleteCallback(null, obj);
-				}
-				else {
-					onCompleteCallback(obj);
-				}
+                try
+                {
+                    var obj = JSON.parse(data);
+                    if (obj && This.isError(obj)) {
+                        if (!onCompleteCallback) {
+                            throw obj.code + ": " + obj.message;
+                        }
+                        onCompleteCallback(null, obj);
+                    }
+                    else {
+                        onCompleteCallback(obj);
+                    }
+                }
+                catch (e)
+                {
+                    onCompleteCallback(null, e);
+                }
 			}
 		});
 	});
