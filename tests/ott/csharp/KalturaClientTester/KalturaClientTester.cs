@@ -1,4 +1,4 @@
-﻿// ===================================================================================================
+// ===================================================================================================
 //                           _  __     _ _
 //                          | |/ /__ _| | |_ _  _ _ _ __ _
 //                          | ' </ _` | |  _| || | '_/ _` |
@@ -35,13 +35,17 @@ namespace Kaltura
 {
     class KalturaClientTester : IKalturaLogger
     {
-        private const int PARTNER_ID = @YOUR_PARTNER_ID@; //enter your partner id
-        private const string ADMIN_SECRET = "@YOUR_ADMIN_SECRET@"; //enter your admin secret
+        private const int PARTNER_ID = @PARTNER_ID@; //enter your partner id
+        private const string OPERATOR_USERNAME = "@OPERATOR_USERNAME@";
+        private const string OPERATOR_PASSWORD = "@OPERATOR_PASSWORD@";
+        private const string MASTER_USERNAME = "@MASTER_USERNAME@";
+        private const string MASTER_PASSWORD = "@MASTER_PASSWORD@";
+        private const string MASTER_DEVICE = "@MASTER_DEVICE@";
         private const string SERVICE_URL = "@SERVICE_URL@";
-        private const string USER_ID = "testUser";
 
-        
+
         private static string uniqueTag;
+        private static KalturaClient client;
 
         public void Log(string msg)
         {
@@ -53,6 +57,60 @@ namespace Kaltura
             Console.WriteLine("Starting C# Kaltura API Client Library");
             int code = 0;
             uniqueTag = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
+
+            KalturaConfiguration config = new KalturaConfiguration();
+            config.ServiceUrl = SERVICE_URL;
+            client = new KalturaClient(config);
+
+            try
+            {
+                Login(OPERATOR_USERNAME, OPERATOR_PASSWORD);
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed Login as operator: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                Login(MASTER_USERNAME, MASTER_PASSWORD, MASTER_DEVICE);
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed Login as master: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                ListUserRoles();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed ListUserRoles: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                ListAssets();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed ListAssets: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                ListOttUsers();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed ListOttUsers: " + e.Message);
+                code = -1;
+            }
 
             try
             {
@@ -73,11 +131,46 @@ namespace Kaltura
         }
 
         /// <summary>
+        /// Login
+        /// </summary>
+        private static void Login(string username, string password, string udid = null)
+        {
+            KalturaLoginResponse loginResponse = client.OttUserService.Login(PARTNER_ID, username, password, null, udid);
+            client.KS = loginResponse.LoginSession.Ks;
+        }
+
+        private static void ListUserRoles()
+        {
+            KalturaUserRoleListResponse userRolesList = client.UserRoleService.List();
+        }
+
+        private static void ListAssets()
+        {
+            KalturaAssetListResponse assetsList = client.AssetService.List();
+            foreach(KalturaAsset asset in assetsList.Objects)
+            {
+                KalturaAsset getAsset;
+
+                if(asset is KalturaMediaAsset)
+                    getAsset = client.AssetService.Get(asset.Id.ToString(), KalturaAssetReferenceType.MEDIA);
+
+                if (asset is KalturaProgramAsset)
+                    getAsset = client.AssetService.Get(asset.Id.ToString(), KalturaAssetReferenceType.EPG_EXTERNAL);
+            }
+        }
+
+        private static void ListOttUsers()
+        {
+            KalturaOTTUserFilter filter = new KalturaOTTUserFilter();
+            KalturaOTTUserListResponse usersList = client.OttUserService.List(filter);
+        }
+
+        /// <summary>
         /// Shows how to perform few actions in a single request
         /// </summary>
         private static void AdvancedMultiRequestExample()
         {
-        	// TODO
+            // TODO
         }
     }
 }
