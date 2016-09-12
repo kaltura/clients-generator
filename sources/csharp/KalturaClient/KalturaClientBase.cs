@@ -191,7 +191,7 @@ namespace Kaltura
             request.Method = "POST";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Headers = _Config.RequestHeaders;
-            request.Accept = "application/json";
+            request.Accept = "application/xml";
 
             // Add proxy information if required
             createProxy(request, _Config);
