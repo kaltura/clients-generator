@@ -1,7 +1,7 @@
 <?php
 class CliClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/cli")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "cli")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

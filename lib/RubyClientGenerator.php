@@ -1,7 +1,7 @@
 <?php
 class RubyClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/ruby")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "ruby")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
@@ -263,6 +263,15 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	end");
 	}
 	
+	function getRubyParamName($paramName)
+	{
+		$reservedWords = array('alias');
+		if(in_array($paramName, $reservedWords))
+			$paramName = "{$paramName}_param";
+		
+		return $this->camelCaseToUnderscoreAndLower($paramName);
+	}
+	
 	function writeAction($serviceId, DOMElement $actionNode)
 	{
 		$action = $actionNode->getAttribute("name");
@@ -299,15 +308,16 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		{
 			$paramType = $paramNode->getAttribute("type");
 			$paramName = $paramNode->getAttribute("name");
+			$rubyParamName = $this->getRubyParamName($paramName);
 			$isEnum = $paramNode->hasAttribute("enumType");
 			
 			switch ($paramType)
 			{
 				case "file":
-					$this->appendLine("			client.add_param(kfiles, '$paramName', ".$this->camelCaseToUnderscoreAndLower($paramName).")");
+					$this->appendLine("			client.add_param(kfiles, '$paramName', $rubyParamName)");
 					break;
 				default: 
-					$this->appendLine("			client.add_param(kparams, '$paramName', ".$this->camelCaseToUnderscoreAndLower($paramName).")");
+					$this->appendLine("			client.add_param(kparams, '$paramName', $rubyParamName)");
 					break;
 			}
 		}
@@ -355,7 +365,7 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$params = array();
 		foreach($paramNodes as $paramNode)
 		{
-			$paramName = $paramNode->getAttribute("name");
+			$rubyParamName = $this->getRubyParamName($paramNode->getAttribute("name"));
 			if ($paramNode->getAttribute("optional"))
 			{
 				$default = $paramNode->getAttribute("default");
@@ -365,10 +375,10 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 					$default = "''";
 				else if ($paramNode->getAttribute("type") == "string")
 					$default = "'".$default."'";
-				$params[] = $this->camelCaseToUnderscoreAndLower($paramName) . "=" . $default;
+				$params[] = "$rubyParamName=$default";
 			}
 			else
-				$params[] = $this->camelCaseToUnderscoreAndLower($paramName);
+				$params[] = $rubyParamName;
 		}
 		$signature = implode(", ", $params);
 		$signature .= ")";

@@ -1,7 +1,7 @@
 <?php
 class TestmeDocGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/testmeDoc")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "testmeDoc")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}

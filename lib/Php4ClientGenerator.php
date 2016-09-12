@@ -1,7 +1,7 @@
 <?php
 class Php4ClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/php4")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "php4")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
