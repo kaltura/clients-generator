@@ -124,7 +124,7 @@ public class MetadataUtils {
 		
 	}
 	
-	public static LinkedHashMap<String, ArrayList<String>> getValues(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	public static LinkedHashMap<String, List<String>> getValues(String xml) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
 	{
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		docBuilderFactory.setIgnoringElementContentWhitespace(true);
@@ -132,7 +132,7 @@ public class MetadataUtils {
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		Document doc = docBuilder.parse(new ByteArrayInputStream(xml.getBytes()));
 
-		LinkedHashMap<String, ArrayList<String>> values = new LinkedHashMap<String, ArrayList<String>>();
+		LinkedHashMap<String, List<String>> values = new LinkedHashMap<String, List<String>>();
 		NodeList nodeList = doc.getElementsByTagName("metadata");
 		if (nodeList.getLength() > 0) {
 			Element metadataElement = (Element)nodeList.item(0);
@@ -154,12 +154,12 @@ public class MetadataUtils {
 		return values;
 	}
 	
-	public static LinkedHashMap<String, ArrayList<String>> getValuesByXsd(String xml, String xsd) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
+	public static LinkedHashMap<String, List<String>> getValuesByXsd(String xml, String xsd) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException
 	{
 		List<String> fields = getFields(xsd);
-		LinkedHashMap<String, ArrayList<String>> values = getValues(xml);
+		LinkedHashMap<String, List<String>> values = getValues(xml);
 		
-		LinkedHashMap<String, ArrayList<String>> valuesFromXsd = new LinkedHashMap<String, ArrayList<String>>();
+		LinkedHashMap<String, List<String>> valuesFromXsd = new LinkedHashMap<String, List<String>>();
 		for (int i = 0; i < fields.size(); i++) {
 			String field = fields.get(i);
 			if (values.containsKey(field))
@@ -208,7 +208,7 @@ public class MetadataUtils {
 		metadata = client.getMetadataService().update(metadata.getId(), xml);
 	}
 	
-	public static String getXmlFromValues(LinkedHashMap<String, ArrayList<String>> values) throws ParserConfigurationException, TransformerException
+	public static String getXmlFromValues(LinkedHashMap<String, List<String>> values) throws ParserConfigurationException, TransformerException
 	{
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -219,7 +219,7 @@ public class MetadataUtils {
 		
 		for (String field : values.keySet())
 		{
-			ArrayList<String> fieldValues = values.get(field);
+			List<String> fieldValues = values.get(field);
 			if (fieldValues == null)
 				continue;
 		
