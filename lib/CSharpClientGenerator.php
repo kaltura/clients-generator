@@ -37,8 +37,6 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 			$this->writeClass($classNode);
 		}
 		
-		$this->writeObjectFactoryClass($classNodes);
-		
 		$serviceNodes = $xpath->query("/xml/services/service");
 		
 		$this->startNewTextBlock();
@@ -392,44 +390,6 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 		$file = "Types/$type.cs";
 		$this->addFile("KalturaClient/".$file, $this->getTextBlock());
 		$this->_csprojIncludes[] = $file; 
-	}
-	
-	function writeObjectFactoryClass(DOMNodeList $classNodes)
-	{
-		$this->startNewTextBlock();
-		$this->appendLine("using System;");
-		$this->appendLine("using System.Text;");
-		$this->appendLine("using System.Xml;");
-		$this->appendLine("using System.Runtime.Serialization;");
-		$this->appendLine();
-		$this->appendLine("namespace Kaltura");
-		$this->appendLine("{");
-		$this->appendLine("	public static class KalturaObjectFactory");
-		$this->appendLine("	{");
-		$this->appendLine("		public static object Create(XmlElement xmlElement, string fallbackClass)");
-		$this->appendLine("		{");
-		$this->appendLine("			if (xmlElement[\"objectType\"] == null)");
-		$this->appendLine("			{");
-		$this->appendLine("				return null;");
-		$this->appendLine("			}");
-		$this->appendLine("			string className = xmlElement[\"objectType\"].InnerText;");
-		$this->appendLine("			Type type = Type.GetType(\"Kaltura.\" + className);");
-		$this->appendLine("			if (type == null)");
-		$this->appendLine("			{");
-		$this->appendLine("				if (fallbackClass != null)");
-		$this->appendLine("					type = Type.GetType(fallbackClass);");
-		$this->appendLine("			}");
-		$this->appendLine("			");
-		$this->appendLine("			if(type == null)");
-		$this->appendLine("				throw new SerializationException(\"Invalid object type\");");
-		$this->appendLine("			return System.Activator.CreateInstance(type, xmlElement);");
-		$this->appendLine("		}");
-		$this->appendLine("	}");
-		$this->appendLine("}");
-		
-		$file = "KalturaObjectFactory.cs";
-		$this->addFile("KalturaClient/".$file, $this->getTextBlock());
-		$this->_csprojIncludes[] = $file;
 	}
 	
 	function writeCsproj()
