@@ -611,7 +611,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			$paramType = $paramNode->getAttribute('type');
 			$paramName = $paramNode->getAttribute('name');
 			$paramDescription = $paramNode->getAttribute('description');
-			$enumType = $paramNode->hasAttribute('enumType');
+			$enumType = $paramNode->getAttribute('enumType');
 			$required = $paramNode->getAttribute('optional') ? '' : 'V';
 			$default = $paramNode->hasAttribute('default');
 
@@ -626,6 +626,10 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 				{
 					$arrayType = $paramNode->getAttribute("arrayType");
 					$this->appendLine("				<td colspan=\"5\">$paramType of <a href=\"../objects/$arrayType.html\">$arrayType</a></td>");
+				}
+				else if($enumType)
+				{
+					$this->appendLine("				<td><a href=\"../enums/$paramType.html\">$paramType</a></td>");
 				}
 				else
 				{
