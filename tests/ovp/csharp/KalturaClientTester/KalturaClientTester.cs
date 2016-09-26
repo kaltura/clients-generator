@@ -587,10 +587,6 @@ namespace Kaltura
             KalturaClient client = new KalturaClient(GetConfig());
             client.KS = client.GenerateSession(ADMIN_SECRET, USER_ID, KalturaSessionType.USER, PARTNER_ID, 86400, "");
 
-		    KalturaMetadata metadata = new KalturaMetadata();
-		    metadata.MetadataObjectType = objectType;
-		    metadata.ObjectId = objectId;
-    		
 		    return client.MetadataService.Add(metadataProfileId, objectType, objectId, xmlData);
 	    }
         
