@@ -191,7 +191,7 @@ namespace Kaltura
             request.Method = "POST";
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Headers = _Config.RequestHeaders;
-            request.Accept = "application/json";
+            request.Accept = "application/xml";
 
             // Add proxy information if required
             createProxy(request, _Config);
@@ -413,7 +413,10 @@ namespace Kaltura
         {
             XmlElement error = result["error"];
             if (error != null && error["code"] != null && error["message"] != null)
+            {
+                resetRequest();
                 throw new KalturaAPIException(error["code"].InnerText, error["message"].InnerText);
+            }
         }
 
         private void PostMultiPartWithFiles(HttpWebRequest request, string json, KalturaFiles kfiles)

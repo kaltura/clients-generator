@@ -36,15 +36,17 @@ namespace Kaltura
     class KalturaClientTester : IKalturaLogger
     {
         private const int PARTNER_ID = @PARTNER_ID@; //enter your partner id
+        private const string SERVICE_URL = "@SERVICE_URL@";
         private const string OPERATOR_USERNAME = "@OPERATOR_USERNAME@";
         private const string OPERATOR_PASSWORD = "@OPERATOR_PASSWORD@";
         private const string MASTER_USERNAME = "@MASTER_USERNAME@";
         private const string MASTER_PASSWORD = "@MASTER_PASSWORD@";
         private const string MASTER_DEVICE = "@MASTER_DEVICE@";
-        private const string SERVICE_URL = "@SERVICE_URL@";
+        private const int MASTER_DEVICE_BRAND = @MASTER_DEVICE_BRAND@;
 
 
         private static string uniqueTag;
+        private static string currentUserId;
         private static KalturaClient client;
 
         public void Log(string msg)
@@ -114,6 +116,56 @@ namespace Kaltura
 
             try
             {
+                ListHouseholdUsers();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed ListHouseholdUsers: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                GetHousehold();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed GetHousehold: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                SearchCatalog();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed SearchCatalog: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                GetHouseholdDevice();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed GetHouseholdDevice: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
+                AddHouseholdDevice();
+            }
+            catch (KalturaAPIException e)
+            {
+                Console.WriteLine("Failed AddHouseholdDevice: " + e.Message);
+                code = -1;
+            }
+
+            try
+            {
                 AdvancedMultiRequestExample();
             }
             catch (KalturaAPIException e)
@@ -137,6 +189,8 @@ namespace Kaltura
         {
             KalturaLoginResponse loginResponse = client.OttUserService.Login(PARTNER_ID, username, password, null, udid);
             client.KS = loginResponse.LoginSession.Ks;
+
+            currentUserId = loginResponse.User.Id;
         }
 
         private static void ListUserRoles()
@@ -163,7 +217,54 @@ namespace Kaltura
         {
             KalturaOTTUserFilter filter = new KalturaOTTUserFilter();
             KalturaOTTUserListResponse usersList = client.OttUserService.List(filter);
+            foreach(KalturaOTTUser user in usersList.Objects)
+            {
+                if (user.Id.Equals(currentUserId) && !(user.IsHouseholdMaster.HasValue && user.IsHouseholdMaster.Value))
+                    throw new Exception("Current user is not listed as master");
+            }
         }
+
+        private static void ListHouseholdUsers()
+        {
+            KalturaHouseholdUserFilter filter = new KalturaHouseholdUserFilter();
+            KalturaHouseholdUserListResponse usersList = client.HouseholdUserService.List(filter);
+        }
+
+        private static void GetHousehold()
+        {
+            KalturaHousehold household = client.HouseholdService.Get();
+        }
+        
+        private static void SearchCatalog()
+        {
+            // pager not working
+            KalturaFilterPager pager = new KalturaFilterPager();
+            pager.PageSize = 50;
+            pager.PageIndex = 1;
+
+            KalturaSearchAssetFilter filter = new KalturaSearchAssetFilter();
+            filter.OrderBy = KalturaAssetOrderBy.NAME_DESC;
+
+            KalturaAssetListResponse list = client.AssetService.List(filter, pager);
+        }
+
+        private static void GetHouseholdDevice()
+        {
+            KalturaHouseholdDevice householdDevice = client.HouseholdDeviceService.Get();
+        }
+
+        private static void AddHouseholdDevice()
+        {
+            client.HouseholdDeviceService.Delete(MASTER_DEVICE);
+
+            KalturaHouseholdDevice newDevice = new KalturaHouseholdDevice();
+            newDevice.Name = MASTER_DEVICE;
+            newDevice.Udid = MASTER_DEVICE;
+            newDevice.BrandId = MASTER_DEVICE_BRAND;
+
+            KalturaHouseholdDevice householdDevice = client.HouseholdDeviceService.Add(newDevice);
+        }
+
 
         /// <summary>
         /// Shows how to perform few actions in a single request

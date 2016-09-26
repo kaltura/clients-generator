@@ -114,9 +114,7 @@ namespace Kaltura
 
         protected bool ParseBool(string s)
         {
-            if (s == "1")
-                return true;
-            return false;
+            return s.Equals("1") || s.ToLower().Equals("true");
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
