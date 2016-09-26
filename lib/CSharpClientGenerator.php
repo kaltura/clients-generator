@@ -402,7 +402,7 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 
 			$propName = $propertyNode->getAttribute("name");
 			$dotNetPropName = $this->upperCaseFirstLetter($propName);
-			$this->appendLine("			kparams.AddIfNotNull(\"$propName\", this.$dotNetPropName);");
+			$this->appendLine("			kparams.AddIfNotNull(\"$propName\", this._{$dotNetPropName});");
 		}
 		$this->appendLine("			return kparams;");
 		$this->appendLine("		}");
