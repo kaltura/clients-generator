@@ -263,33 +263,30 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("		#region Properties");
 		foreach($properties as $property)
 		{
-			if (!$property['readOnly'] || !$property['writeOnly'])
+			$propertyLine = "public";
+			if ($property['isNew'])
+				$propertyLine .= " new";
+
+			$propertyLine .= " {$property['type']} {$property['name']}";
+
+			$this->appendLine("		" . $propertyLine);
+			$this->appendLine("		{");
+
+			if (!isset($property['writeOnly']) || !$property['writeOnly'])
 			{
-				$propertyLine = "public";
-				if ($property['isNew'])
-					$propertyLine .= " new";
-
-				$propertyLine .= " {$property['type']} {$property['name']}";
-
-				$this->appendLine("		" . $propertyLine);
-				$this->appendLine("		{");
-
-				if (!$property['writeOnly'])
-				{
-					$this->appendLine("			get { return _{$property['name']}; }");
-				}
-
-				if (!$property['readOnly'])
-				{
-					$this->appendLine("			set ");
-					$this->appendLine("			{ ");
-					$this->appendLine("				_{$property['name']} = value;");
-					$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
-					$this->appendLine("			}");
-				}
-
-				$this->appendLine("		}");
+				$this->appendLine("			get { return _{$property['name']}; }");
 			}
+
+			if (!isset($property['readOnly']) || !$property['readOnly'])
+			{
+				$this->appendLine("			set ");
+				$this->appendLine("			{ ");
+				$this->appendLine("				_{$property['name']} = value;");
+				$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
+				$this->appendLine("			}");
+			}
+
+			$this->appendLine("		}");
 		}
 		$this->appendLine("		#endregion");
 		$this->appendLine();
@@ -402,7 +399,7 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 
 			$propName = $propertyNode->getAttribute("name");
 			$dotNetPropName = $this->upperCaseFirstLetter($propName);
-			$this->appendLine("			kparams.AddIfNotNull(\"$propName\", this.$dotNetPropName);");
+			$this->appendLine("			kparams.AddIfNotNull(\"$propName\", this._{$dotNetPropName});");
 		}
 		$this->appendLine("			return kparams;");
 		$this->appendLine("		}");
