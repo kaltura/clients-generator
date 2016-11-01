@@ -15,6 +15,7 @@ public class GeneralResponse<T> {
     private String requestId;
     private double executionTime;
     protected T result;
+    //TODO: add headers here
 
     private GeneralResponse(){}
 

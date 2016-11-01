@@ -10,8 +10,8 @@ import java.util.LinkedHashMap;
 /**
  * Created by tehilarozin on 15/08/2016.
  */
-public class MultiActionRequest extends ActionBase {
-    private static final String TAG = "MultiActionRequest";
+public class KalturaMultiRequestBuilder extends BaseRequestBuilder {
+    private static final String TAG = "KalturaMultiRequestBuilder";
 
     /**
      * the service name in the request url: "...service/multirequest"
@@ -23,11 +23,11 @@ public class MultiActionRequest extends ActionBase {
      * will be used in case a completion was not provided on the multirequest itself
      * and the completion for each inner request should be activated
      */
-    private LinkedHashMap<String, ActionRequest> calls;
+    private LinkedHashMap<String, KalturaRequestBuilder> calls;
     private int lastId = 0;
 
 
-    public MultiActionRequest() {
+    public KalturaMultiRequestBuilder() {
         super();
     }
 
@@ -35,7 +35,7 @@ public class MultiActionRequest extends ActionBase {
      * constructs instance and fill it with requests
      * @param requests
      */
-    public MultiActionRequest(ActionRequest... requests) {
+    public KalturaMultiRequestBuilder(KalturaRequestBuilder... requests) {
         super();
         add(requests);
     }
@@ -45,12 +45,12 @@ public class MultiActionRequest extends ActionBase {
      * @param requests
      * @return
      */
-    public MultiActionRequest add(ActionRequest... requests) {
+    public KalturaMultiRequestBuilder add(KalturaRequestBuilder... requests) {
         if (calls == null) {
             calls = new LinkedHashMap<>();
         }
 
-        for (ActionRequest request : requests) {
+        for (KalturaRequestBuilder request : requests) {
             lastId++;
             String reqId = lastId + "";
             request.params.add("service", request.service);
@@ -64,13 +64,13 @@ public class MultiActionRequest extends ActionBase {
     }
 
     /**
-     * Adds the requests from multiActionRequest parameter to the end of the current requests list
-     * @param multiActionRequest - another multirequests to copy requests from
+     * Adds the requests from kalturaMultiRequestBuilder parameter to the end of the current requests list
+     * @param kalturaMultiRequestBuilder - another multirequests to copy requests from
      * @return
      */
-    public MultiActionRequest add(MultiActionRequest multiActionRequest) {
-        for (String reqId : multiActionRequest.calls.keySet()) {
-            ActionRequest request = multiActionRequest.calls.get(reqId);
+    public KalturaMultiRequestBuilder add(KalturaMultiRequestBuilder kalturaMultiRequestBuilder) {
+        for (String reqId : kalturaMultiRequestBuilder.calls.keySet()) {
+            KalturaRequestBuilder request = kalturaMultiRequestBuilder.calls.get(reqId);
             int last = calls.size() + 1;
             calls.put(last + "", request);
             params.add(last + "", request.params);
@@ -85,7 +85,7 @@ public class MultiActionRequest extends ActionBase {
      * @param onCompletion
      * @return
      */
-    public MultiActionRequest setCompletion(OnCompletion onCompletion) {
+    public KalturaMultiRequestBuilder setCompletion(OnCompletion onCompletion) {
         this.onCompletion = onCompletion;
         return this;
     }
@@ -104,17 +104,17 @@ public class MultiActionRequest extends ActionBase {
 
         } else {
             for (String key : calls.keySet()) {
-                ActionRequest actionRequest = calls.get(key);
+                KalturaRequestBuilder kalturaRequestBuilder = calls.get(key);
                 if (!response.isSuccess()) {
-                    actionRequest.onComplete(response);
+                    kalturaRequestBuilder.onComplete(response);
                     return;
                 }
-
+//add headers to sub responses.
                 GeneralResponse requestResponse = response.newBuilder()
                         .result(((MultiResponse)response.getResult()).getAt(key))
                         .build();
 
-                actionRequest.onComplete(requestResponse);
+                kalturaRequestBuilder.onComplete(requestResponse);
             }
         }
     }
@@ -150,7 +150,7 @@ public class MultiActionRequest extends ActionBase {
      * @param destKey - the property that will get the result from the source request
      * @return
      */
-    public MultiActionRequest link(ActionRequest sourceRequest, int destRequestIdx, String sourceKey, String destKey) {
+    public KalturaMultiRequestBuilder link(KalturaRequestBuilder sourceRequest, int destRequestIdx, String sourceKey, String destKey) {
         try {
             return link(sourceRequest, calls.get(calls.keySet().toArray()[destRequestIdx]), sourceKey, destKey);
         } catch (NullPointerException | IndexOutOfBoundsException e) {
@@ -171,7 +171,7 @@ public class MultiActionRequest extends ActionBase {
      * @param destKey - the param property to set its value as linked.
      * @return
      */
-    public MultiActionRequest link(ActionRequest sourceRequest, ActionRequest destRequest, String sourceKey, String destKey) {
+    public KalturaMultiRequestBuilder link(KalturaRequestBuilder sourceRequest, KalturaRequestBuilder destRequest, String sourceKey, String destKey) {
         destRequest.setParam(destKey, formatLink(sourceRequest.getId(), sourceKey));
         return this;
     }

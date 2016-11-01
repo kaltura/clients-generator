@@ -8,15 +8,15 @@ import com.kaltura.client.utils.response.OnCompletion;
  * Created by tehilarozin on 14/08/2016.
  */
 
-public class ActionRequest extends ActionBase {
+public class KalturaRequestBuilder extends BaseRequestBuilder {
 
     String service;
     String action;
 
-    public ActionRequest() {
+    public KalturaRequestBuilder() {
     }
 
-    public ActionRequest(String service, String action, KalturaParams params) {
+    public KalturaRequestBuilder(String service, String action, KalturaParams params) {
         super(params);
         this.service = service;
         this.action = action;
@@ -49,13 +49,13 @@ public class ActionRequest extends ActionBase {
         return service;
     }
 
-    public MultiActionRequest add(ActionRequest another) {
+    public KalturaMultiRequestBuilder add(KalturaRequestBuilder another) {
         try {
-            return new MultiActionRequest(this, another);
+            return new KalturaMultiRequestBuilder(this, another);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new MultiActionRequest();
+        return new KalturaMultiRequestBuilder();
     }
 
     public String getUrlTail() {
@@ -67,19 +67,19 @@ public class ActionRequest extends ActionBase {
         return urlBuilder.toString();
     }
 
-    public ActionRequest setCompletion(OnCompletion onCompletion) {
+    public KalturaRequestBuilder setCompletion(OnCompletion onCompletion) {
         this.onCompletion = onCompletion;
         return this;
     }
 
-    public ActionRequest setParam(String key, Object value) {
+    public KalturaRequestBuilder setParam(String key, Object value) {
         if (params != null) {
             params.put(key, value);
         }
         return this;
     }
 
-    public ActionRequest setId(String id) {
+    public KalturaRequestBuilder setId(String id) {
         this.id = id;
         return this;
     }

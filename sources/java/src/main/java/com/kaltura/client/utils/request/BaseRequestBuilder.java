@@ -1,9 +1,9 @@
 package com.kaltura.client.utils.request;
 
-import com.kaltura.client.ConnectionConfiguration;
 import com.kaltura.client.KalturaClient;
 import com.kaltura.client.KalturaClientBase;
 import com.kaltura.client.KalturaParams;
+import com.kaltura.client.KalturaRequestConfiguration;
 import com.kaltura.client.utils.EncryptionUtils;
 import com.kaltura.client.utils.KalturaAPIConstants;
 import com.kaltura.client.utils.response.OnCompletion;
@@ -16,13 +16,13 @@ import java.util.HashMap;
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public abstract class ActionBase implements OnCompletion<GeneralResponse>, RequestElement {
+public abstract class BaseRequestBuilder implements OnCompletion<GeneralResponse>, RequestElement {
 
     protected String id;
     protected String url;
     protected KalturaParams params;
     protected HashMap<String, String> headers;
-    private ConnectionConfiguration connectionConfig;
+    private RequestConfiguration connectionConfig;
 
     /**
      * callback for the parsed response.
@@ -31,11 +31,11 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse>, Reque
 
 
 
-    protected ActionBase() {
+    protected BaseRequestBuilder() {
         params = new KalturaParams();
     }
 
-    protected ActionBase(KalturaParams params) {
+    protected BaseRequestBuilder(KalturaParams params) {
         this.params = params;
     }
 
@@ -94,7 +94,7 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse>, Reque
     }
 
     @Override
-    public ConnectionConfiguration config() {
+    public RequestConfiguration config() {
         return connectionConfig;
     }
 
@@ -151,7 +151,7 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse>, Reque
     }
 
     public RequestElement build(final KalturaClient client, boolean addSignature) {
-        connectionConfig = client != null ? client.getConnectionConfiguration() : ConnectionConfiguration.getDefaults();
+        connectionConfig = client != null ? client.getConnectionConfiguration() : KalturaRequestConfiguration.getDefaults();
 
         prepareParams(client, addSignature);
         prepareHeaders(connectionConfig);
@@ -160,7 +160,7 @@ public abstract class ActionBase implements OnCompletion<GeneralResponse>, Reque
         return this;
     }
 
-    private void prepareHeaders(ConnectionConfiguration config) {
+    private void prepareHeaders(RequestConfiguration config) {
         if (headers == null) {
             headers = new HashMap<String, String>();
         }

@@ -4,10 +4,11 @@ package com.kaltura.client;
 import com.kaltura.client.types.KalturaAPIException;
 import com.kaltura.client.utils.KalturaAPIConstants;
 import com.kaltura.client.utils.request.ActionsQueue;
+import com.kaltura.client.utils.request.RequestConfiguration;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.request.interceptor.GzipInterceptor;
 import com.kaltura.client.utils.request.interceptor.IdInterceptor;
-import com.kaltura.client.utils.response.base.ExecutedRequestResponse;
+import com.kaltura.client.utils.response.base.ExecutedResponse;
 import com.kaltura.client.utils.response.base.ResponseElement;
 import okhttp3.*;
 import okio.Buffer;
@@ -24,12 +25,6 @@ public class APIOkRequestsExecutor implements ActionsQueue {
     public static final MediaType JSON_MediaType = MediaType.parse("application/json");
     public static final MediaType XML_MediaType = MediaType.parse("application/xml");
 
-    /*private ConnectionConfiguration mKalturaConfig;
-    private Map<String, Object> mClientConfig = new HashMap<String, Object>();
-    private Map<String, Object> mRequestConfig = new HashMap<String, Object>();*/
-    //private String mEndPoint = "http://54.154.22.171:8080/v4_0/api_v3";
-    //private boolean useCompression = true;
-
     private OkHttpClient mOkClient;
     private boolean addSig;
 
@@ -41,14 +36,13 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         getOkClient();
     }
 
-    private OkHttpClient getOkClient(ConnectionConfiguration configuration/*KalturaClientBase kalturaClientBase*/){
+    private OkHttpClient getOkClient(RequestConfiguration configuration){
         if(configuration != null){
-           // ConnectionConfiguration configuration = kalturaClientBase.getConnectionConfiguration();
             OkHttpClient.Builder builder = getOkClient().newBuilder()
                     .connectTimeout(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS)
                     .readTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS)
                     .writeTimeout(configuration.getReadTimeout(), TimeUnit.MILLISECONDS)
-                    .retryOnConnectionFailure((int) configuration.getParam(ConnectionConfiguration.MaxRetry, 1) > 0);
+                    .retryOnConnectionFailure((int) configuration.getMaxRetry(1) > 0);
 
             if (!builder.interceptors().contains(idInterceptor)) {
                 builder.addInterceptor(idInterceptor);
@@ -72,10 +66,6 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         return mOkClient;
     }
 
-    /*public String queue(final RequestElement action) {
-        return queue(action, null);
-    }*/
-
     public String queue(final RequestElement action) {
 
         final Request request = buildRestRequest(action);
@@ -89,9 +79,7 @@ public class APIOkRequestsExecutor implements ActionsQueue {
                         return;
                     }
                     // handle failures: create response from exception
-                    //handleRequestError(action, request.getTag().toString(), e, -1);
-                    //action.onComplete(false, new GeneralResponse.Builder().requestId((String) call.request().getTag()).result(getErrorResponse(e)).code(-1).build());
-                    action.onComplete(new ExecutedRequestResponse().response(getErrorResponse(e)).success(false));
+                     action.onComplete(new ExecutedResponse().response(getErrorResponse(e)).success(false));
                 }
 
                 @Override
@@ -110,7 +98,7 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         } catch (Exception e) {
             e.printStackTrace();
            // handleRequestError(action, request.getTag().toString(), e, -1);
-            action.onComplete(new ExecutedRequestResponse().response(getErrorResponse(e)).success(false));
+            action.onComplete(new ExecutedResponse().response(getErrorResponse(e)).success(false));
 
         }
         //TODO - in case of exception - pass empty response
@@ -129,10 +117,7 @@ public class APIOkRequestsExecutor implements ActionsQueue {
 
         } catch (IOException e){
             // failure on request execution - create error response
-             return new ExecutedRequestResponse().response(getErrorResponse(e)).success(false);
-
-            //return generateErrorResponse(action, KalturaAPIException.FailureStep.OnRequest, e, -1);
-            //throw new KalturaAPIException(KalturaAPIException.FailureStep.OnRequest, e);
+             return new ExecutedResponse().response(getErrorResponse(e)).success(false);
         }
     }
 
@@ -161,37 +146,12 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         return mOkClient == null || mOkClient.dispatcher().queuedCallsCount() == 0;
     }
 
-    /*private void handleRequestError(final RequestElement action, String requestId, Exception e, int code){
-        if(action != null) {
-            GeneralResponse response = generateErrorResponse(action, e, code);
-            response.requestId(requestId);
-            action.onComplete(response);
-        }
-    }
-
-    private static GeneralResponse generateErrorResponse(RequestElement action, Exception e, int code) {
-        return generateErrorResponse(action, KalturaAPIException.FailureStep.OnResponse, e, code);
-    }
-
-    private static GeneralResponse generateErrorResponse(RequestElement action, KalturaAPIException.FailureStep failureStep, Exception e, int code) {
-        KalturaAPIException result = e instanceof KalturaAPIException ? (KalturaAPIException) e : new KalturaAPIException(failureStep, e.getMessage(), code+"");
-
-        return new GeneralResponse.Builder()
-                .result(action instanceof MultiActionRequest ? new MultiResponse(result) : result)
-                //.action(action.getAction())
-                .requestId(action.getId())
-                .build();
-
-    }*/
-
     private ResponseElement parseResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
 
 
         if (!response.isSuccessful()) { // in case response has failure status
-            //handleRequestError(action, requestId, new KalturaAPIException(response.message()), response.code());
-            //return new GeneralResponse.Builder().requestId(requestId).result(response.message()).code(response.code()).build();
-            return new ExecutedRequestResponse().requestId(requestId).response(response.message()).code(response.code()).success(false);
+            return new ExecutedResponse().requestId(requestId).response(response.message()).code(response.code()).success(false);
 
         } else {
 
@@ -205,18 +165,10 @@ public class APIOkRequestsExecutor implements ActionsQueue {
 
             logger.debug("response body:\n" + responseString);
 
-            //responseString = responseString.replace("\"relatedObjects\":\"\"", "\"relatedObjects\":{}");
-
             String contentType = getContentType(response.header(KalturaAPIConstants.HeaderContentType));
 
-            return new ExecutedRequestResponse().requestId(requestId).response(responseString).contentType(contentType).code(response.code()).success(responseString != null);
+            return new ExecutedResponse().requestId(requestId).response(responseString).contentType(contentType).code(response.code()).success(responseString != null);
 
-            //new GeneralResponse.Builder().result(responseString).contentType(contentType).code(response.code()).build();
-            /*GeneralResponse generalResponse = parseResult(responseString, ContentType);
-
-            if(generalResponse != null) {
-                return generalResponse.requestId(requestId);
-            }*/
         }
     }
 
@@ -233,23 +185,6 @@ public class APIOkRequestsExecutor implements ActionsQueue {
     }
 
 
-    /*private void prepareParams(RequestElement action, KalturaClientBase kalturaClientBase) {
-
-        //?? do we need this:
-        KalturaParams defaultParams = new KalturaParams();
-       // defaultParams.add("format", kalturaClientBase.connectionConfiguration.getServiceResponseTypeFormat());
-        defaultParams.add("ignoreNull", true);
-        action.setParams(defaultParams);
-
-        action.setParams(kalturaClientBase.clientConfiguration);
-        action.setParams(kalturaClientBase.requestConfiguration);
-
-        if (addSig) {
-            ((KalturaParams) action.getParams()).add("kalsig", EncryptionUtils.encryptMD5(action.getBody()));
-        }
-
-    }
-*/
     private Request buildQueryRequest(RequestElement action/*, KalturaClientBase kalturaClientBase*/) throws KalturaAPIException {
         //prepareParams(action, kalturaClientBase);
         // build url
@@ -289,17 +224,6 @@ public class APIOkRequestsExecutor implements ActionsQueue {
         //!! passing getBody as bytes to prevent OkHttp from adding "charset" definition to the "Content-Type" header declaration
         return RequestBody.create(contentType, action.getBody().getBytes());
     }
-
-    /*private Headers getHeaders(*//*RequestElement action,*//* boolean acceptEncoding) {
-        Headers headers = Headers.of(KalturaAPIConstants.HeaderAccept, "application/json",
-                KalturaAPIConstants.HeaderAcceptCharset, "utf-8,ISO-8859-1;q=0.7,*;q=0.5");
-
-        if(acceptEncoding) {
-            headers.newBuilder().set(KalturaAPIConstants.HeaderAcceptEncoding, KalturaAPIConstants.HeaderEncodingGzip);
-        }
-
-        return headers;
-    }*/
 
     public static String getRequestBody(Request request) {
         try {

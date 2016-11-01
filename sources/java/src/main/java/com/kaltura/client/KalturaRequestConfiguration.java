@@ -27,6 +27,8 @@
 // ===================================================================================================
 package com.kaltura.client;
 
+import com.kaltura.client.utils.request.RequestConfiguration;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +40,7 @@ import java.util.Map;
  *
  */
 @SuppressWarnings("serial")
-public class ConnectionConfiguration implements Serializable {
+public class KalturaRequestConfiguration implements Serializable, RequestConfiguration {
 
 	public final static String EndPoint = "endpoint";
 	public final static String ConnectTimeout = "connectTimeout";
@@ -58,21 +60,28 @@ public class ConnectionConfiguration implements Serializable {
 
 	private Map<String, Object> params;
 
-	public static ConnectionConfiguration getDefaults(){
-		return new ConnectionConfiguration();
+	public static RequestConfiguration getDefaults(){
+		return new KalturaRequestConfiguration();
 	}
 
-	public ConnectionConfiguration(){
+	public KalturaRequestConfiguration(){
 		initDefaults();
 	}
 
-	public ConnectionConfiguration(Map<String, Object> config){
+	public KalturaRequestConfiguration(Map<String, Object> config){
 		initDefaults();
 		params.putAll(config);
 	}
 
-	public ConnectionConfiguration(ConnectionConfiguration config) {
-		this(config.getParams());
+	public KalturaRequestConfiguration(RequestConfiguration config) {
+		params = new HashMap<String, Object>();
+		params.put(ConnectTimeout, config.getConnectTimeout());
+		params.put(ReadTimeout, config.getReadTimeout());
+		params.put(WriteTimeout, config.getWriteTimeout());
+		params.put(MaxRetry, config.getMaxRetry(2));
+		params.put(AcceptGzipEncoding, config.getAcceptGzipEncoding());
+		params.put(ServiceResponseTypeFormat, config.getTypeFormat());
+		params.put(EndPoint, config.getEndpoint());
 	}
 
 	private void initDefaults() {
@@ -88,6 +97,11 @@ public class ConnectionConfiguration implements Serializable {
 
 	public String getEndpoint() {
 		return (String) params.get(EndPoint);
+	}
+
+	@Override
+	public int getTypeFormat() {
+		return (int) params.get(ServiceResponseTypeFormat);
 	}
 
 	public void setEndpoint(String endpoint) {
@@ -163,4 +177,14 @@ public class ConnectionConfiguration implements Serializable {
 	public KalturaServiceResponseTypeFormat getServiceResponseTypeFormat() {
 		return KalturaServiceResponseTypeFormat.get((int) params.get(ServiceResponseTypeFormat));
 	}
+
+	public void setMaxRetry(int retry) {
+		params.put(MaxRetry, retry);
+	}
+
+	public int getMaxRetry(int defaultVal) {
+		return params.containsKey(MaxRetry) ? (int) params.get(MaxRetry) : defaultVal;
+	}
+
+
 }

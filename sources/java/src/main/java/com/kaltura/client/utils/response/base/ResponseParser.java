@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import com.kaltura.client.types.KalturaAPIException;
 import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.ParseUtils;
-import com.kaltura.client.utils.request.MultiActionRequest;
+import com.kaltura.client.utils.request.KalturaMultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.response.OnCompletion;
 
@@ -23,7 +23,7 @@ public class ResponseParser {
         GeneralResponse generalResponse = null;
 
         if(!responseElement.isSuccess()) {
-            generalResponse = generateErrorResponse(responseElement, request instanceof MultiActionRequest);
+            generalResponse = generateErrorResponse(responseElement, request instanceof KalturaMultiRequestBuilder);
         } else {
             generalResponse = parseResult(responseElement.getResponse(), responseElement.getContentType());
         }
@@ -62,18 +62,18 @@ public class ResponseParser {
 
 
 
-    public static <T> void mockResponseParsing(String mockFile, String requestId, OnCompletion<GeneralResponse<T>> completion) {
+    public static <T> void parseResponseFile(String responseFile, OnCompletion<GeneralResponse<T>> completion) {
         JsonParser parser = new JsonParser();
         try {
-            JsonElement element = (JsonObject) parser.parse(new FileReader(mockFile));
-            GeneralResponse response = ParseUtils.parseResult(element.toString(), "json").requestId(requestId);
+            JsonElement element = (JsonObject) parser.parse(new FileReader(responseFile));
+            GeneralResponse response = ParseUtils.parseResult(element.toString(), "json");
 
             if (completion != null) {
                 completion.onComplete(response);
             }
         }catch (IOException e){
             if (completion != null) {
-                completion.onComplete(generateErrorResponse(new ExecutedRequestResponse().response(e.getMessage()).contentType("json").requestId(requestId), true));
+                completion.onComplete(generateErrorResponse(new ExecutedResponse().response(e.getMessage()).contentType("json"), true));
             }
         }
     }

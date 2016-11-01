@@ -1,7 +1,6 @@
 package com.kaltura.client.utils.request;
 
 
-import com.kaltura.client.ConnectionConfiguration;
 import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public interface RequestElement {
 
     String getId();
 
-    ConnectionConfiguration config();
+    RequestConfiguration config();
 
     void onComplete(ResponseElement responseElement);
 }

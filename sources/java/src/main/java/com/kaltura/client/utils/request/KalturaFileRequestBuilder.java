@@ -8,11 +8,11 @@ import com.kaltura.client.KalturaParams;
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public class FileActionRequest extends ActionRequest {
+public class KalturaFileRequestBuilder extends KalturaRequestBuilder {
 
     KalturaFiles files;
 
-    public FileActionRequest(String service, String action, KalturaParams params, KalturaFiles files) {
+    public KalturaFileRequestBuilder(String service, String action, KalturaParams params, KalturaFiles files) {
         super(service, action, params);
 
         this.files = files;
@@ -33,7 +33,7 @@ public class FileActionRequest extends ActionRequest {
 
 
 
-    public FileActionRequest setFile(String key, KalturaFile value) {
+    public KalturaFileRequestBuilder setFile(String key, KalturaFile value) {
         if (files != null) {
             files.add(key, value);
         }

@@ -2,8 +2,10 @@ package com.kaltura.client.utils.response.base;
 
 /**
  * Created by tehilarozin on 06/09/2016.
+ *
+ * the response object passed from the requests executor to the completion callback for further parsing.
  */
-public class ExecutedRequestResponse implements ResponseElement {
+public class ExecutedResponse implements ResponseElement {
 
     String requestId;
     int code = -1;
@@ -12,27 +14,27 @@ public class ExecutedRequestResponse implements ResponseElement {
     String contentType;
 
 
-    public ExecutedRequestResponse requestId(String id) {
+    public ExecutedResponse requestId(String id) {
         this.requestId = id;
         return this;
     }
 
-    public ExecutedRequestResponse code(int code) {
+    public ExecutedResponse code(int code) {
         this.code = code;
         return this;
     }
 
-    public ExecutedRequestResponse response(String response) {
+    public ExecutedResponse response(String response) {
         this.response = response;
         return this;
     }
 
-    public ExecutedRequestResponse success(boolean success) {
+    public ExecutedResponse success(boolean success) {
         this.isSuccess = success;
         return this;
     }
 
-    public ExecutedRequestResponse contentType(String contentType) {
+    public ExecutedResponse contentType(String contentType) {
         this.contentType = contentType;
         return this;
     }
