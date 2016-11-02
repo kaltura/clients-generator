@@ -1,0 +1,9 @@
+
+# IDE folders/files
+.idea
+clients-generator.iml
+
+
+# Development files/folders
+output/
+KalturaClient.xml
