@@ -4,6 +4,11 @@ The code in this repo is used to auto generate the Kaltura client libraries for 
 [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 
 ## Deployment Instructions
+
+To run a generator you must first retrieve the kaltura api schema. You should download the relevant schema and save it in a file named `KalturaClient.xml` (under the root folder):
+- **OVP Serer Schema** can be found at `http://www.kaltura.com/api_v3/api_schema.php`.
+- **OTT Serer Schema** can be found at ``.
+
 The list of supported clients is [here] (https://github.com/kaltura/clients-generator/blob/Kajam-11.18.0/config/generator.all.ini)
 To generate one client run:
 ```
@@ -13,6 +18,11 @@ $ php /opt/kaltura/clients-generator/exec.php $CLIENT_NAME
 For example, to generate php53 run:
 ```
 php /opt/kaltura/clients-generator/exec.php php53
+```
+
+For example, to customize the destination folder, use the second parameter. for example:
+```
+php /opt/kaltura/clients-generator/exec.php php53 ./output
 ```
 
 To generate all available clients, run:
