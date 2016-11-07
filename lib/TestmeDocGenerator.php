@@ -262,6 +262,29 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		}
 	}
 	
+	function getOrderByEnum($class)
+	{
+		$enumType = preg_replace('/Filter$/', 'OrderBy', preg_replace('/BaseFilter$/', 'Filter', $class));
+
+		$xpath = new DOMXPath($this->_doc);
+		$enumNodes = $xpath->query("/xml/enums/enum[@name='$enumType']");
+		if($enumNodes->length)
+			return $enumType;
+
+		$classNodes = $xpath->query("/xml/classes/class[@name='$class']");
+		$classNode = $classNodes->item(0);
+		if($classNode && $classNode->hasAttribute('base'))
+		{
+			$parentClass = $classNode->getAttribute('base');
+			$parentNodes = $xpath->query("/xml/classes/class[@name='$parentClass']");
+			$parentNode = $parentNodes->item(0);
+			if($parentNode)
+				return $this->getOrderByEnum($parentClass);
+		}
+			
+		return null;
+	}
+	
 	function writeClassProperties($class, DOMElement $classNode)
 	{
 		$odd = false;
@@ -289,8 +312,9 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 
 			if($name == 'orderBy' && $this->endsWith($class, 'Filter') && $class != 'KalturaFilter')
 			{
-				$enumType = preg_replace('/Filter$/', 'OrderBy', preg_replace('/BaseFilter$/', 'Filter', $class));
-				$type = "<a href=\"../enums/$enumType.html\">$enumType</a>";
+				$enumType = $this->getOrderByEnum($class);
+				if($enumType)
+					$type = "<a href=\"../enums/$enumType.html\">$enumType</a>";
 			}
 			elseif($type == 'array' || $type == 'map')
 			{

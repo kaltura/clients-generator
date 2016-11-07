@@ -1,6 +1,6 @@
 {
   "name": "kaltura",
-  "version": "3.2.0",
+  "version": "3.3.3",
   "description": "Kaltura NodeJS clientlibs",
   "main": "index.js",
   "scripts": {
@@ -15,17 +15,19 @@
     "API",
     "clientlibs"
   ],
-  "author": "Kaltura Community <community@kaltura.com>",
+  "author": {
+    "name": "Kaltura Community",
+    "email": "community@kaltura.com"
+  },
   "license": "AGPLv3",
   "bugs": {
     "url": "https://github.com/kaltura/server/issues"
-  },  
+  },
   "dependencies": {
     "crypto": "*",
     "http": "*",
     "path": "*",
     "url": "*",
-    "fs": "*",
     "utils": "*"
   }
 }
