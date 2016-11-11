@@ -35,11 +35,11 @@ var fs = require('fs');
 
 /**
  * Generates a URL-encoded query string from the associative (or indexed) array provided.
- * Ported from PHP. 
- * @param formdata			May be an array or object containing properties. 
- * @param numeric_prefix	If numeric indices are used in the base array and this parameter is provided, it will be prepended to the numeric index for elements in the base array only. 
- * @param arg_separator		arg_separator.output	is used to separate arguments, unless this parameter is specified, and is then used. 
- * @return	Returns a URL-encoded string. 
+ * Ported from PHP.
+ * @param formdata			May be an array or object containing properties.
+ * @param numeric_prefix	If numeric indices are used in the base array and this parameter is provided, it will be prepended to the numeric index for elements in the base array only.
+ * @param arg_separator		arg_separator.output	is used to separate arguments, unless this parameter is specified, and is then used.
+ * @return	Returns a URL-encoded string.
  */
 
 
@@ -61,12 +61,12 @@ function http_build_query (formdata, numeric_prefix, arg_separator) {
 						return tmp.join(arg_separator);
 				} else if (typeof(val) !== "function") {
 						return key + "=" + encodeURIComponent(val);
-				} else { 
+				} else {
 				//throw new Error('There was an error processing for http_build_query().');
 						return "";
 				}
 		};
- 
+
 		if (!arg_separator) {
 		arg_separator = "&";
 		}
@@ -81,10 +81,10 @@ function http_build_query (formdata, numeric_prefix, arg_separator) {
 }
 
 /**
- * Getting the name of the constructor if the constructor hasn't been modified, 
- * which if it has modified (and is therfor invalid to use), it falls back to using Object.prototype.toString 
- * to get the class though it won't return the name of the constructor function that created it then. 
- * If you absolutely need the constructor's name, pass true as the second argument, 
+ * Getting the name of the constructor if the constructor hasn't been modified,
+ * which if it has modified (and is therfor invalid to use), it falls back to using Object.prototype.toString
+ * to get the class though it won't return the name of the constructor function that created it then.
+ * If you absolutely need the constructor's name, pass true as the second argument,
  * and it will reset the constructor if it has been modified, to get the real constructor.
  * @param obj	The object to get the constructor of.
  * @param forceConstructor	preform a deep lookup for the real constructor.
@@ -133,7 +133,7 @@ var toParams = module.exports.toParams = function(obj)
 };
 
 /**
- * Sorts an array by key, maintaining key to data correlations. This is useful mainly for associative arrays. 
+ * Sorts an array by key, maintaining key to data correlations. This is useful mainly for associative arrays.
  * @param arr The array to sort.
  * @return		The sorted array.
  */
@@ -221,7 +221,7 @@ KalturaServiceActionCall.prototype.getFilesForMultiRequest = function(multiReque
 
 /**
  * Implement to get Kaltura Client logs
- * 
+ *
  */
 var IKalturaLogger = module.exports.IKalturaLogger = function() {};
 IKalturaLogger.prototype.log = function(msg){
@@ -232,7 +232,7 @@ IKalturaLogger.prototype.log = function(msg){
 
 /**
  * Kaltura client constructor
- * 
+ *
  */
 var KalturaClientBase = module.exports.KalturaClientBase = function() {};
 
@@ -331,7 +331,7 @@ KalturaClientBase.prototype.doQueue = function(callback){
 	}
 	// reset
 	this.callsQueue = [];
-	this.useMultiRequest = false; 
+	this.useMultiRequest = false;
 	var signature = this.signature(params);
 	this.addParam(params, "kalsig", signature);
 	this.doHttpRequest(callback, url, params, files);
@@ -391,15 +391,23 @@ KalturaClientBase.prototype.sendRequestHelper = function (options, body, request
 			if (This.config.format != KalturaClientBase.KALTURA_SERVICE_FORMAT_JSON){
 				onCompleteCallback(data);
 			}else {
-				var obj = JSON.parse(data);
-				if (obj && This.isError(obj)) {
-					if (!onCompleteCallback) {
-						throw obj.code + ": " + obj.message;
+				try {
+					var obj = JSON.parse(data);
+					if (obj && This.isError(obj)) {
+						if (!onCompleteCallback) {
+							throw obj.code + ": " + obj.message;
+						}
+						onCompleteCallback(null, obj);
 					}
-					onCompleteCallback(null, obj);
-				}
-				else {
-					onCompleteCallback(obj);
+					else {
+						onCompleteCallback(obj);
+					}
+				} catch (err) {
+					console.log(err);
+					if(!onCompleteCallback){
+						throw err;
+					}
+					onCompleteCallback(null, err);
 				}
 			}
 		});
@@ -490,7 +498,7 @@ KalturaClientBase.prototype.doHttpRequest = function (callCompletedCallback, req
 };
 
 /**
- * getter for the referenced configuration object. 
+ * getter for the referenced configuration object.
  * @return KalturaConfiguration
  */
 KalturaClientBase.prototype.getConfig = function()
@@ -520,7 +528,7 @@ KalturaClientBase.prototype.addParam = function(params, paramName, paramValue){
 	if (paramValue === null) {
 		return;
 	}
-	
+
 	// native
 	if(typeof(paramValue) != "object") {
 		params[paramName] = paramValue;
@@ -540,7 +548,7 @@ KalturaClientBase.prototype.addParam = function(params, paramName, paramValue){
 		}
 		return;
 	}
-	
+
 	// array
 	if(paramValue.length){
 		for(subParamName in paramValue) {
@@ -571,11 +579,11 @@ KalturaClientBase.prototype.doMultiRequest = function(callback){
  * indicate if current mode is constructing a multirequest or single requests.
  */
 KalturaClientBase.prototype.isMultiRequest = function(){
-	return this.useMultiRequest;	
+	return this.useMultiRequest;
 };
 
 /**
- * @param string msg	client logging utility. 
+ * @param string msg	client logging utility.
  */
 KalturaClientBase.prototype.log = function(msg){
 	if (this.logEnabled) {
@@ -584,7 +592,7 @@ KalturaClientBase.prototype.log = function(msg){
 };
 
 /**
- * @param string msg	client logging utility. 
+ * @param string msg	client logging utility.
  */
 KalturaClientBase.prototype.debug = function(msg){
 	if (this.debugEnabled) {
@@ -593,7 +601,7 @@ KalturaClientBase.prototype.debug = function(msg){
 };
 
 /**
- * @param string msg	client logging utility. 
+ * @param string msg	client logging utility.
  */
 KalturaClientBase.prototype.error = function(msg){
 	if (this.logEnabled) {
