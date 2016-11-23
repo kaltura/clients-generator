@@ -96,10 +96,10 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 	}
 
 	// General functions
-	private function parseDocumentation($documentation)
+	private function createDocumentationExp($spacer, $documentation)
 	{
 		if ($documentation) {
-			return "/** " . NewLine . "  * " . wordwrap(str_replace(array("\t", "\n", "\r"), " ", $documentation), 80, NewLine ."  * ") . NewLine . "**/";
+			return "/** " . NewLine . "{$spacer}* " . wordwrap(str_replace(array("\t", "\n", "\r"), " ", $documentation), 80, NewLine ."{$spacer}* ") . NewLine . "{$spacer}**/";
 		}
 		return "";
 	}
@@ -254,13 +254,40 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 	function createService(Service $serviceData)
 	{
-		// build service actions
-		$serviceActions = "";
+		$serviceName = $this->upperCaseFirstLetter($serviceData->name);
+		$actionsFilePath = "./{$this->toLispCase($serviceName)}-actions.ts";
+		$desc = $serviceData->description;
+
+		$serviceActionsContent = $this->createServiceActionsContent($serviceData);
+		$serviceActionsContentExp = join(NewLine, $serviceActionsContent);
+
+		$imports = $this->getBanner() . NewLine;
+		$imports .= "import { Injectable } from '@angular/core';
+import * as actions from \"{$actionsFilePath}\";
+
+
+{$this->createDocumentationExp('',$desc)}
+export class {$serviceName}Service {
+
+    constructor(){
+        throw new Error('This class should not be initialized (you should use its static functions to create new requests)');
+    }
+
+	{$serviceActionsContentExp}
+}";
+
+		$file = $this->_baseClientPath . "/services/{$this->toLispCase($serviceName)}.service.ts";
+		$this->addFile($file, $imports);
+	}
+
+
+	function createServiceActionsContent($serviceData)
+	{
+		$result = array();
 
 		foreach ($serviceData->actions as $actionData) {
 
-			if (!($actionData instanceof ServiceAction))
-			{
+			if (!($actionData instanceof ServiceAction)) {
 				continue;
 			}
 
@@ -268,18 +295,14 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			$optionalParams = array();
 			$actionConstuctorParams = array();
 
-			foreach($actionData->params as $actionParam)
-			{
-				if (!($actionParam instanceof ServiceActionParam))
-				{
+			foreach ($actionData->params as $actionParam) {
+				if (!($actionParam instanceof ServiceActionParam)) {
 					continue;
 				}
 
-				if ($actionParam->optional == true)
-				{
+				if ($actionParam->optional == true) {
 					$optionalParams[] = "{$actionParam->name}? : {$actionParam->type}";
-				}else
-				{
+				} else {
 					$requiredParams[] = "{$actionParam->name} : {$actionParam->type}";
 					$actionConstuctorParams[] = "{$actionParam->name}";
 				}
@@ -288,49 +311,25 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 			$functionParams = array_merge($requiredParams);
 
-			if (count($optionalParams))
-			{
+			if (count($optionalParams)) {
 				$functionParams[] = "additional? : { " . join(', ', $optionalParams) . " }";
 				$actionConstuctorParams[] = 'additional';
 			}
 
-			$functionParamsExp = join(', ' ,$functionParams);
-			$actionConstuctorParamsExp = join(', ' ,$actionConstuctorParams);
+			$functionParamsExp = join(', ', $functionParams);
+			$actionConstuctorParamsExp = join(', ', $actionConstuctorParams);
 			$actionResultType = "{$serviceData->name}" . ucwords($actionData->name) . "Builder";
 			$functionName = lcfirst($actionData->name);
 
-			$serviceActions .= "
-{$this->parseDocumentation( $actionData->description)}
-static {$functionName}({$functionParamsExp}) : {$actionResultType}
+			$result[] = "
+	{$this->createDocumentationExp('	', $actionData->description)}
+	static {$functionName}({$functionParamsExp}) : {$actionResultType}
 	{
 		return new actions.{$actionResultType}({$actionConstuctorParamsExp});
-	}
-";
+	}";
 		}
 
-		// build service file
-		$serviceName = $this->upperCaseFirstLetter($serviceData->name);
-		$actionsFilePath = "./{$this->toLispCase($serviceName)}-actions.ts";
-		$desc = $serviceData->description;
-
-		$imports = $this->getBanner() . NewLine;
-		$imports .= "import { Injectable } from '@angular/core';
-import * as actions from \"{$actionsFilePath}\";
-
-/**
-  * {$desc}
-  **/
-export class {$serviceName}Service {
-
-    constructor(){
-        throw new Error('This class should not be initialized (you should use its static functions to create new requests)');
-    }
-
-	{$serviceActions}
-}
-";
-
-		$file = $this->_baseClientPath . "/services/{$this->toLispCase($serviceName)}.service.ts";
-		$this->addFile($file, $imports);
+		return $result;
 	}
+
 }
