@@ -1,41 +1,19 @@
 <?php
 CONST NewLine = "\n";
 
-class Service
-{
-	public $id;
-	public $name;
-	public $description;
-	public $actions = array();
-}
+require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
+require_once (__DIR__ . '/ng2-typescript/ServerMetadata.php');
+require_once (__DIR__ . '/ng2-typescript/GeneratorBase.php');
+require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 
-class ServiceAction
-{
-	public $name;
-	public $resultType;
-	public $params = array();
-	public $description;
-	public $enableInMultiRequest = 1;
-}
 
-class ServiceActionParam
-{
-	public $name;
-	public $type;
-	public $optional;
-	public $default;
-}
 
 class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 {
-	private $_csprojIncludes = array();
 	protected $_baseClientPath = "src";
 	protected $_usePrivateAttributes;
-
-	private $services = array();
-	private $enums = array();
-	private $types = array();
-
+	private $serverMetadata;
 
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "ng2-typescript")
 	{
@@ -43,11 +21,32 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$this->_usePrivateAttributes = isset($config->usePrivateAttributes) ? $config->usePrivateAttributes : false;
 	}
 
+
+
 	public function generate()
 	{
 		parent::generate();
 
+		// Convert xml strcuture to plain old php objects
+		$this->serverMetadata = new ServerMetadata();
 		$xpath = new DOMXPath ($this->_doc);
+		$this->extractData($xpath);
+
+
+		// dump schema as json for diagnostics
+		$this->addFile("services-schema.json", json_encode($this->serverMetadata,JSON_PRETTY_PRINT),false);
+
+		$files = array_merge(
+			(new ServicesGenerator($this->serverMetadata))->generate(),
+			(new ServiceActionsGenerator($this->serverMetadata))->generate()
+		);
+
+		foreach($files as $file)
+		{
+			$this->addFile($this->_baseClientPath . "/" . $file->path, $file->content);
+		}
+
+
 //		$enumNodes = $xpath->query ( "/xml/enums/enum" );
 //		foreach ( $enumNodes as $enumNode )
 //		{
@@ -60,84 +59,26 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 //			$this->writeClass ( $classNode );
 //		}
 //
-		$this->extractData();
 
-		$this->addFile("services-schema.json", json_encode($this->services,JSON_PRETTY_PRINT),false);
 
-		$this->createServices();
+		//$this->createServices();
+		//$this->createServiceActions();
 
 //
 //		$configurationNodes = $xpath->query("/xml/configurations/*");
 //		$this->writeMainClient($serviceNodes, $configurationNodes);
 	}
 
-	/////////////////////////////////////////////////////////////
-	//Private functions
-	/////////////////////////////////////////////////////////////
 
-	function toLispCase($input)
+	public function extractData($xpath)
 	{
-		preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-		$ret = $matches[0];
-		foreach ($ret as &$match) {
-			$match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
-		}
-		return implode('-', $ret);
-	}
-
-	function toSnakeCase($input)
-	{
-		preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-		$ret = $matches[0];
-		foreach ($ret as &$match) {
-			$match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
-		}
-		return implode('_', $ret);
-	}
-
-	// General functions
-	private function createDocumentationExp($spacer, $documentation)
-	{
-		if ($documentation) {
-			return "/** " . NewLine . "{$spacer}* " . wordwrap(str_replace(array("\t", "\n", "\r"), " ", $documentation), 80, NewLine ."{$spacer}* ") . NewLine . "{$spacer}**/";
-		}
-		return "";
-	}
-
-	private function getBanner()
-	{
-//		$currentFile = $_SERVER ["SCRIPT_NAME"];
-//		$parts = Explode('/', $currentFile);
-//		$currentFile = $parts [count($parts) - 1];
-//
-		$banner = "";
-//		$banner .= "/**\n";
-//		$banner .= " * This class was auto generated using $currentFile\n";
-//		$banner .= " * against an XML schema provided by Kaltura.\n";
-//		$banner .= " * \n";
-//		$banner .= " * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.\n";
-//		$banner .= " */\n";
-
-		return $banner;
-	}
-
-
-	/////////////////////////////////////////////////////////////
-	// Extract data functions
-	/////////////////////////////////////////////////////////////
-
-
-	function extractData()
-	{
-		$xpath = new DOMXPath ($this->_doc);
-
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach ($serviceNodes as $serviceNode) {
 			if ($this->shouldIncludeService($serviceNode->getAttribute("id"))) {
 				$arrayData = new Service;
-				$this->services[] = $arrayData;
+				$this->serverMetadata->services[] = $arrayData;
 
-				$arrayData->name = $this->upperCaseFirstLetter($serviceNode->getAttribute("name"));
+				$arrayData->name = $serviceNode->getAttribute("name");
 				$arrayData->id = $serviceNode->getAttribute("id");
 				$arrayData->description = $serviceNode->getAttribute("description");
 				$arrayData->actions = $this->extractServiceActionsData($serviceNode);
@@ -172,19 +113,19 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				switch ($child->nodeName) {
 					case 'param':
 
-							$paramData = new ServiceActionParam();
-							$serviceAction->params[] = $paramData;
+						$paramData = new ServiceActionParam();
+						$serviceAction->params[] = $paramData;
 
-							$paramData->name = $child->getAttribute("name");
-							$paramData->type = $this->mapToTypescriptType($child->getAttribute("type"), $child);
-							$paramData->enumType = $child->getAttribute("enumType");
-							$paramData->default = $child->getAttribute("default");
-							$paramData->optional = $child->getAttribute("optional") == "1";
+						$paramData->name = $child->getAttribute("name");
+						$paramData->type = $this->mapToTypescriptType($child->getAttribute("type"), $child);
+						$paramData->enumType = $child->getAttribute("enumType");
+						$paramData->default = $child->getAttribute("default");
+						$paramData->optional = $child->getAttribute("optional") == "1";
 
-							if (!$paramData->type) {
+						if (!$paramData->type) {
 
-								throw new Exception("Failed to extract information for service {$serviceName} / action {$serviceAction->name} / param {$paramData->name}");
-							}
+							throw new Exception("Failed to extract information for service {$serviceName} / action {$serviceAction->name} / param {$paramData->name}");
+						}
 						break;
 					case 'result':
 						$serviceAction->resultType = $this->mapToTypescriptType($child->getAttribute("type"), $child);
@@ -238,98 +179,4 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		return $result;
 	}
-
-	/////////////////////////////////////////////////////////////
-	//Service functions
-	/////////////////////////////////////////////////////////////
-
-
-
-	function createServices()
-	{
-		foreach ($this->services as $service) {
-			$this->createService($service);
-		}
-	}
-
-	function createService(Service $serviceData)
-	{
-		$serviceName = $this->upperCaseFirstLetter($serviceData->name);
-		$actionsFilePath = "./{$this->toLispCase($serviceName)}-actions.ts";
-		$desc = $serviceData->description;
-
-		$serviceActionsContent = $this->createServiceActionsContent($serviceData);
-		$serviceActionsContentExp = join(NewLine, $serviceActionsContent);
-
-		$imports = $this->getBanner() . NewLine;
-		$imports .= "import { Injectable } from '@angular/core';
-import * as actions from \"{$actionsFilePath}\";
-
-
-{$this->createDocumentationExp('',$desc)}
-export class {$serviceName}Service {
-
-    constructor(){
-        throw new Error('This class should not be initialized (you should use its static functions to create new requests)');
-    }
-
-	{$serviceActionsContentExp}
-}";
-
-		$file = $this->_baseClientPath . "/services/{$this->toLispCase($serviceName)}.service.ts";
-		$this->addFile($file, $imports);
-	}
-
-
-	function createServiceActionsContent($serviceData)
-	{
-		$result = array();
-
-		foreach ($serviceData->actions as $actionData) {
-
-			if (!($actionData instanceof ServiceAction)) {
-				continue;
-			}
-
-			$requiredParams = array();
-			$optionalParams = array();
-			$actionConstuctorParams = array();
-
-			foreach ($actionData->params as $actionParam) {
-				if (!($actionParam instanceof ServiceActionParam)) {
-					continue;
-				}
-
-				if ($actionParam->optional == true) {
-					$optionalParams[] = "{$actionParam->name}? : {$actionParam->type}";
-				} else {
-					$requiredParams[] = "{$actionParam->name} : {$actionParam->type}";
-					$actionConstuctorParams[] = "{$actionParam->name}";
-				}
-
-			}
-
-			$functionParams = array_merge($requiredParams);
-
-			if (count($optionalParams)) {
-				$functionParams[] = "additional? : { " . join(', ', $optionalParams) . " }";
-				$actionConstuctorParams[] = 'additional';
-			}
-
-			$functionParamsExp = join(', ', $functionParams);
-			$actionConstuctorParamsExp = join(', ', $actionConstuctorParams);
-			$actionResultType = "{$serviceData->name}" . ucwords($actionData->name) . "Builder";
-			$functionName = lcfirst($actionData->name);
-
-			$result[] = "
-	{$this->createDocumentationExp('	', $actionData->description)}
-	static {$functionName}({$functionParamsExp}) : {$actionResultType}
-	{
-		return new actions.{$actionResultType}({$actionConstuctorParamsExp});
-	}";
-		}
-
-		return $result;
-	}
-
 }
