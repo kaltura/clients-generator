@@ -3,10 +3,9 @@ CONST NewLine = "\n";
 
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/ServerMetadata.php');
-require_once (__DIR__ . '/ng2-typescript/GeneratorBase.php');
 require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/ServerClassTypesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/ClassTypesGenerator.php');
 
 
 
@@ -33,14 +32,10 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$xpath = new DOMXPath ($this->_doc);
 		$this->extractData($xpath);
 
-
-		// dump schema as json for diagnostics
-		$this->addFile("services-schema.json", json_encode($this->serverMetadata,JSON_PRETTY_PRINT),false);
-
 		$files = array_merge(
 			(new ServicesGenerator($this->serverMetadata))->generate(),
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
-			(new ServerClassTypesGenerator($this->serverMetadata))->generate()
+			(new ClassTypesGenerator($this->serverMetadata))->generate()
 		);
 
 		foreach($files as $file)
@@ -84,27 +79,36 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				$serviceItem->actions = $this->extractServiceActions($serviceNode);
 
 				$errors = array_merge($errors, $serviceItem->validate());
-
 			}
-
 		}
 
-		$classNodes = $xpath->query ( "/xml/classes/class" );
-		foreach ( $classNodes as $classNode )
-		{
-			if ($this->shouldIncludeType($classNode->getAttribute("name"))) {
-				$classTypeItem = new ClassType();
-				$this->serverMetadata->classTypes[] = $classTypeItem;
+//		$classNodes = $xpath->query ( "/xml/classes/class" );
+//		foreach ( $classNodes as $classNode )
+//		{
+//			if ($this->shouldIncludeType($classNode->getAttribute("name"))) {
+//				$classTypeItem = new ClassType();
+//				$this->serverMetadata->classTypes[] = $classTypeItem;
+//
+//				$classTypeItem->name = $classNode->getAttribute("name");
+//				$classTypeItem->base = $classNode->getAttribute("base");
+//				$classTypeItem->plugin = $classNode->getAttribute("plugin");
+//				$classTypeItem->description = $classNode->getAttribute("description");
+//				$classTypeItem->properties = $this->extractClassTypeProperties($classNode);
+//
+//				$errors = array_merge($errors, $classTypeItem->validate());
+//
+//			}
+//		}
 
-				$classTypeItem->name = $classNode->getAttribute("name");
-				$classTypeItem->base = $classNode->getAttribute("base");
-				$classTypeItem->plugin = $classNode->getAttribute("plugin");
-				$classTypeItem->description = $classNode->getAttribute("description");
-				$classTypeItem->properties = $this->extractClassTypeProperties($classNode);
 
-				$errors = array_merge($errors, $classTypeItem->validate());
+		// dump schema as json for diagnostics
+		$this->addFile("services-schema.json", json_encode($this->serverMetadata,JSON_PRETTY_PRINT),false);
 
-			}
+
+		$errorsCount = count($errors);
+		if ( $errorsCount != "0") {
+			$errorMessage = "Parsing from xml failed with {$errorsCount} error(s):" . NewLine . join(NewLine, $errors);
+			throw new Exception($errorMessage);
 		}
 	}
 
@@ -125,9 +129,9 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			$propertyItem->readOnly = $propertyNode->getAttribute("name") == "1";
 			$propertyItem->insertOnly = $propertyNode->getAttribute("name") == "1";
 
-			$itemTypeData = $this->mapToTypescriptType($propertyNode, "type");
+			$itemTypeData = $this->mapToTypescriptType($propertyNode,false);
 			$propertyItem->type = $itemTypeData->type;
-			$propertyItem->typeCategory = $itemTypeData->category;
+			$propertyItem->typeClassName = $itemTypeData->className;
 			$propertyItem->description = $propertyNode->getAttribute("description");
 
 			$result[] = $propertyItem;
@@ -150,15 +154,15 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			$serviceAction = new ServiceAction();
 			$serviceAction->name = $actionNode->getAttribute("name");
 			$serviceAction->params = array();
-			$serviceAction->resultType = "";
+			$serviceAction->resultClassName = "";
 			$serviceAction->description = $actionNode->getAttribute("description");
 
 			$result[] = $serviceAction;
 
+
 			foreach ($actionNode->childNodes as $child) {
 				if ($child->nodeType != XML_ELEMENT_NODE)
 					continue;
-
 
 				switch ($child->nodeName) {
 					case 'param':
@@ -167,17 +171,17 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 						$serviceAction->params[] = $paramData;
 
 						$paramData->name = $child->getAttribute("name");
-						$itemTypeData = $this->mapToTypescriptType($child, "type");
+						$itemTypeData = $this->mapToTypescriptType($child, false);
 						$paramData->type = $itemTypeData->type;
-						$paramData->typeCategory = $itemTypeData->category;
+						$paramData->typeClassName = $itemTypeData->className;
 						$paramData->optional = $child->getAttribute("optional") == "1";
 
-						$paramData->default = $this->mapToDefaultValue($child,"default",$paramData->type, $paramData->typeCategory);
+						$paramData->default = $child->getAttribute("default");
 						break;
 					case 'result':
-						$itemTypeData = $this->mapToTypescriptType($child, "type",true);
+						$itemTypeData = $this->mapToTypescriptType($child,true);
 						$serviceAction->resultType = $itemTypeData->type;
-						$serviceAction->resultTypeCategory = $itemTypeData->category;
+						$serviceAction->resultClassName = $itemTypeData->className;
 						break;
 				}
 			}
@@ -188,93 +192,63 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 	}
 
 
-	function mapToDefaultValue(DOMElement $xmlnode, $defaultAttributeName, $type, $typeCategory)
-	{
-		$result = null;
-		$defaultValue = $xmlnode->getAttribute($defaultAttributeName);
-
-		switch ($typeCategory)
-		{
-			case ServerTypeCategories::Simple:
-				if ($type == "string")
-				{
-					$result = $defaultValue ?  "\"{$defaultValue}\"" : null;
-				}else
-				{
-					$result = $defaultValue;
-				}
-				break;
-			case ServerTypeCategories::ArrayObject:
-				$result = "[]";
-				break;
-			default:
-				$result = "null";
-				break;
-
-		}
-
-		return $result;
-	}
 
 
-	function mapToTypescriptType(DOMElement $xmlnode, $typeAttributeName, $allowEmptyTypes = false)
+
+	function mapToTypescriptType(DOMElement $xmlnode, $allowEmptyTypes)
 	{
 		$result = new stdClass();
+		$result->type = KalturaServerTypes::Unknown;
+		$result->className = null;
 
-		$typeValue = $xmlnode->hasAttribute($typeAttributeName) ? $xmlnode->getAttribute($typeAttributeName) : null;
+		$typeValue = $xmlnode->hasAttribute("type") ? $xmlnode->getAttribute("type") : null;
 
 		if (!$typeValue || $typeValue == "")
 		{
 			if ($allowEmptyTypes)
 			{
-				$result->type =  "void";
-				$result->category = ServerTypeCategories::Void;
-			}else
-			{
-				$result->type =  null;
-				$result->category = ServerTypeCategories::Unknown;
+				$result->type = KalturaServerTypes::Void;
+				$result->className =  null;
 			}
 		}else if ($this->isArrayType($typeValue))
 		{
-			$result->type = $xmlnode->getAttribute("arrayType");
-			$result->category = ServerTypeCategories::ArrayObject;
+			$arrayTypeValue = $xmlnode->getAttribute("arrayType");
+			if (isset($arrayTypeValue) && $arrayTypeValue != "") {
+				$result->type = KalturaServerTypes::ArrayObject;
+				$result->className = $arrayTypeValue;
+			}
 		}else
 		{
 			switch($typeValue)
 			{
 				case "file":
-					$result->type = "";
-					$result->category = ServerTypeCategories::File;
+					$result->type = KalturaServerTypes::File;
+					$result->className = null;
 					break;
 				case "bigint":
 				case "float":
-					$result->type = "number";
-					$result->category = ServerTypeCategories::Simple;
-					break;
 				case "bool":
-					$result->type = "boolean";
-					$result->category = ServerTypeCategories::Simple;
-					break;
 				case "string":
-					$result->type = "string";
-					$result->category = ServerTypeCategories::Simple;
+					$result->type = KalturaServerTypes::Simple;
+					$result->className = $typeValue;
 					break;
 				case "int":
 					$enumType = $xmlnode->getAttribute("enumType");
 					
 					if ($enumType)
 					{
-						$result->type = $enumType;
-						$result->category = ServerTypeCategories::Enum;
+						$result->type = KalturaServerTypes::Enum;
+						$result->className = $enumType;
+
 					}else
 					{
-						$result->type = "number";
-						$result->category = ServerTypeCategories::Simple;
+						$result->type = KalturaServerTypes::Simple;
+						$result->className = "int";
 					}
 					break;
 				default:
-					$result->type = $typeValue;
-					$result->category = ServerTypeCategories::Object;
+					$result->type = KalturaServerTypes::Object;
+					$result->className = $typeValue;
 					break;
 			}
 		}

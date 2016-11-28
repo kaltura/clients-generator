@@ -1,6 +1,6 @@
 <?php
 
-class ServerTypeCategories
+class KalturaServerTypes
 {
     const Unknown = "Unknown";
     const Simple = "Simple";
@@ -25,7 +25,7 @@ class Service
 
         foreach($this->actions as $action)
         {
-            $errors[] = array_merge($errors, $action->validate($this));
+            $errors = array_merge($errors, $action->validate($this));
         }
 
         return $errors;
@@ -35,8 +35,8 @@ class Service
 class ServiceAction
 {
     public $name;
+    public $resultClassName;
     public $resultType;
-    public $resultTypeCategory;
     public $params = array();
     public $description;
     public $enableInMultiRequest = 1;
@@ -45,14 +45,14 @@ class ServiceAction
     {
         $errors = array();
 
-        if (!isset($this->resultTypeCategory) || $this->resultTypeCategory == ServerTypeCategories::Unknown)
+        if (!isset($this->resultType) || $this->resultType == KalturaServerTypes::Unknown)
         {
             $errors[] = "Unknown type for service {$service->name} > action {$this->name} > result type";
         }
 
         foreach($this->params as $param)
         {
-            $errors[] = array_merge($errors, $param->validate($service, $this));
+            $errors = array_merge($errors, $param->validate($service, $this));
         }
 
         return $errors;
@@ -92,8 +92,8 @@ class ServiceAction
 class ServiceActionParam
 {
     public $name;
+    public $typeClassName;
     public $type;
-    public $typeCategory;
     public $optional = false;
     public $default;
 
@@ -101,12 +101,12 @@ class ServiceActionParam
     {
         $errors = array();
 
-        if (!isset($this->typeCategory) || $this->typeCategory == ServerTypeCategories::Unknown)
+        if (!isset($this->type) || $this->type == KalturaServerTypes::Unknown)
         {
             $errors[] = "Unknown type for service {$service->name} > action {$action->name} > param {$this->name}";
         }
 
-        if (!$this->optional && (!isset($this->default) || $this->default == ""))
+        if ($this->optional && (!isset($this->default)))
         {
             $errors[] = "Missing default value for service {$service->name} > action {$action->name} > param {$this->name}";
         }
@@ -132,7 +132,7 @@ class ClassType
 
         foreach($this->properties as $property)
         {
-            $errors[] = array_merge($errors, $property->validate($this));
+            $errors = array_merge($errors, $property->validate($this));
         }
 
         return $errors;
@@ -173,8 +173,8 @@ class ClassTypeProperty
 {
     public $name;
     public $description = null;
-    public $type = null;
-    public $typeCategory;
+    public $typeClassName = null;
+    public $type;
     public $writeOnly = false;
     public $readOnly = false;
     public $insertOnly = false;
@@ -185,12 +185,12 @@ class ClassTypeProperty
     {
         $errors = array();
 
-        if (!isset($this->typeCategory) || $this->typeCategory == ServerTypeCategories::Unknown)
+        if (!isset($this->type) || $this->type == KalturaServerTypes::Unknown)
         {
             $errors[] = "Unknown type for class {$classType->name} > property {$this->name}";
         }
 
-        if (!$this->optional && (!isset($this->default) || $this->default == ""))
+        if ($this->optional && (!isset($this->default)))
         {
             $errors[] = "Missing default value for class  {$classType->name}  > property {$this->name}";
         }

@@ -1,9 +1,9 @@
 <?php
 
-require_once (__DIR__. '/GeneratorBase.php');
+require_once (__DIR__. '/NG2TypescriptGeneratorBase.php');
 require_once (__DIR__. '/GeneratedFileData.php');
 
-class ServerClassTypesGenerator extends GeneratorBase
+class ClassTypesGenerator extends NG2TypescriptGeneratorBase
 {
 
     function __construct($serverMetadata)
@@ -42,7 +42,7 @@ import {KalturaPermissionStatus} from \"./enums\";
     {
         $result = new GeneratedFileData();
 
-        $classTypeName = $this->upperCaseFirstLetter($class->name);
+        $classTypeName = Utils::upperCaseFirstLetter($class->name);
         $desc = $class->description;
 
         $paramsContent = $this->createPropertyContent($class);
@@ -55,25 +55,25 @@ import * as enums from \"./enums\";
 import {KalturaTypesFactory} from \"./kaltura-types-factory\";
 
 
-{$this->createDocumentationExp('',$desc)}
-export {$this->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->ifExp($class->base, $class->base,"KalturaObject")} {
+{$this->utils->createDocumentationExp('',$desc)}
+export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaObject")} {
 
     get objectType() : string{
         return '{$class->name}';
     }
 
-    {$this->buildExpression($paramsContent->properties, NewLine, 1)}
+    {$this->utils->buildExpression($paramsContent->properties, NewLine, 1)}
 
-    constructor({$this->buildExpression($paramsContent->constructor, ', ')})
+    constructor({$this->utils->buildExpression($paramsContent->constructor, ', ')})
     {
-        {$this->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
+        {$this->utils->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
     }
 
     build():any {
         return Object.assign({},
             super.build(),
             {
-                {$this->buildExpression($paramsContent->buildContent,  ',' . NewLine, 4)}
+                {$this->utils->buildExpression($paramsContent->buildContent,  ',' . NewLine, 4)}
             });
     };
 
@@ -88,8 +88,7 @@ export {$this->ifExp($class->abstract, "abstract", "")} class {$classTypeName} e
     }
 }";
 
-        $fileName = $this->toLispCase($classTypeName) . ".ts";
-        $result->path = "types/{$this->toLispCase($classTypeName)}.ts";
+        $result->path = "types/{$this->utils->toLispCase($classTypeName)}.ts";
         $result->content = $fileContent;
         return $result;
     }

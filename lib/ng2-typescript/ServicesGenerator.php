@@ -1,9 +1,9 @@
 <?php
 
-require_once (__DIR__. '/GeneratorBase.php');
+require_once (__DIR__. '/NG2TypescriptGeneratorBase.php');
 require_once (__DIR__. '/GeneratedFileData.php');
 
-class ServicesGenerator extends GeneratorBase
+class ServicesGenerator extends NG2TypescriptGeneratorBase
 {
 
     function __construct($serverMetadata)
@@ -35,8 +35,8 @@ class ServicesGenerator extends GeneratorBase
     {
         $result = new GeneratedFileData();
 
-        $serviceName = $this->upperCaseFirstLetter($serviceData->name);
-        $actionsFilePath = "./{$this->toLispCase($serviceName)}-actions.ts";
+        $serviceName = Utils::upperCaseFirstLetter($serviceData->name);
+        $actionsFilePath = "./{$this->utils->toLispCase($serviceName)}-actions.ts";
         $desc = $serviceData->description;
 
         $serviceActionsContent = $this->createServiceActionsContent($serviceData);
@@ -49,7 +49,7 @@ import { Injectable } from '@angular/core';
 import * as actions from \"{$actionsFilePath}\";
 
 
-{$this->createDocumentationExp('',$desc)}
+{$this->utils->createDocumentationExp('',$desc)}
 export class {$serviceName}Service {
 
     constructor(){
@@ -59,7 +59,7 @@ export class {$serviceName}Service {
 	{$serviceActionsContentExp}
 }";
 
-        $formattedServiceName = $this->toLispCase($serviceName);
+        $formattedServiceName = $this->utils->toLispCase($serviceName);
 
         $result->path = "services/{$formattedServiceName}/{$formattedServiceName}.service.ts";
         $result->content = $serviceContent;
@@ -87,9 +87,9 @@ export class {$serviceName}Service {
                 }
 
                 if ($actionParam->optional == true) {
-                    $optionalParams[] = "{$actionParam->name}? : {$actionParam->type}";
+                    $optionalParams[] = "{$actionParam->name}? : {$actionParam->typeClassName}";
                 } else {
-                    $requiredParams[] = "{$actionParam->name} : {$actionParam->type}";
+                    $requiredParams[] = "{$actionParam->name} : {$actionParam->typeClassName}";
                     $actionConstuctorParams[] = "{$actionParam->name}";
                 }
 
@@ -108,7 +108,7 @@ export class {$serviceName}Service {
             $functionName = lcfirst($actionData->name);
 
             $result[] = "
-	{$this->createDocumentationExp('	', $actionData->description)}
+	{$this->utils->createDocumentationExp('	', $actionData->description)}
 	static {$functionName}({$functionParamsExp}) : {$actionResultType}
 	{
 		return new actions.{$actionResultType}({$actionConstuctorParamsExp});

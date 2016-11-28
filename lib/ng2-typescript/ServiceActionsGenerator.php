@@ -1,11 +1,11 @@
 <?php
 
-require_once (__DIR__. '/GeneratorBase.php');
+require_once (__DIR__. '/NG2TypescriptGeneratorBase.php');
 require_once (__DIR__. '/GeneratedFileData.php');
 require_once (__DIR__. '/Utils.php');
 
 
-class ServiceActionsGenerator extends GeneratorBase
+class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
 {
 
     function __construct($serverMetadata)
@@ -39,42 +39,29 @@ class ServiceActionsGenerator extends GeneratorBase
     {
         $result = new GeneratedFileData();
 
-        $actionClassName = $this->upperCaseFirstLetter($serviceName) . $this->upperCaseFirstLetter($serviceAction->name) . "Action";
+        $actionClassName = Utils::upperCaseFirstLetter($serviceName) . Utils::upperCaseFirstLetter($serviceAction->name) . "Action";
         $desc = $serviceAction->description;
 
         $paramsContent = $this->createParamsContent($serviceAction);
-
-        switch($serviceAction->resultTypeCategory)
-        {
-            case ServerTypeCategories::Object:
-            case ServerTypeCategories::ArrayObject:
-                $paramsContent->importTypes[] = $serviceAction->resultType;
-                break;
-            case ServerTypeCategories::Enum:
-                $paramsContent->importEnum[] = $serviceAction->resultType;
-                break;
-            default:
-                break;
-        }
 
         $fileContent = "
 {$this->getBanner()}
 import {KalturaRequest} from \"../../kaltura-request\";
 import {NativeResponseTypes} from \"../../utils/native-response-types\";
-import {KalturaResponse} from \"../../kaltura-response\";{$this->ifExp(count($paramsContent->importTypes) != 0,"
-import {{$this->buildExpression($paramsContent->importTypes, ', ', 2)}} from \"../../types\";","")}{$this->ifExp(count($paramsContent->importEnums) != 0,"
-import {{$this->buildExpression($paramsContent->importEnums, ', ', 2)}} from \" ../../types\";","")}
+import {KalturaResponse} from \"../../kaltura-response\";{$this->utils->ifExp(count($paramsContent->importTypes) != 0,"
+import {{$this->utils->buildExpression($paramsContent->importTypes, ', ', 2)}} from \"../../types\";","")}{$this->utils->ifExp(count($paramsContent->importEnums) != 0,"
+import {{$this->utils->buildExpression($paramsContent->importEnums, ', ', 2)}} from \" ../../types\";","")}
 
-{$this->createDocumentationExp('',$desc)}
-export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultType}>{
+{$this->utils->createDocumentationExp('',$desc)}
+export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultClassName}>{
 
-    {$this->buildExpression($paramsContent->properties, NewLine, 1)}
+    {$this->utils->buildExpression($paramsContent->properties, NewLine, 1)}
 
-    constructor({$this->buildExpression($paramsContent->constructor, ', ')})
+    constructor({$this->utils->buildExpression($paramsContent->constructor, ', ')})
     {
-        super('{$serviceName}','{$serviceAction->name}',{$this->mapToKalturaResponseType($serviceAction->resultType, $serviceAction->resultTypeCategory)});
+        super('{$serviceName}','{$serviceAction->name}',{$this->mapToKalturaResponseType($serviceAction->resultType, $serviceAction->resultClassName)});
 
-        {$this->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
+        {$this->utils->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
     }
 
     setData(handler : (request :  {$actionClassName}) => void) :  {$actionClassName}
@@ -87,7 +74,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
         return this;
     }
 
-    setCompletion(callback : (response : KalturaResponse<$serviceAction->resultType>) => void) : {$actionClassName}
+    setCompletion(callback : (response : KalturaResponse<$serviceAction->resultClassName>) => void) : {$actionClassName}
     {
         this.callback = callback;
         return this;
@@ -97,38 +84,41 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
         return Object.assign({},
             super.build(),
             {
-                {$this->buildExpression($paramsContent->buildContent,  ',' . NewLine,4)}
+                {$this->utils->buildExpression($paramsContent->buildContent,  ',' . NewLine,4)}
             });
     };
 }";
 
-        $fileName = $this->toLispCase($actionClassName) . ".ts";
-        $result->path = "services/{$this->toLispCase($serviceName)}/{$fileName}";
+        $fileName = Utils::toLispCase($actionClassName) . ".ts";
+        $result->path = "services/{$this->utils->toLispCase($serviceName)}/{$fileName}";
         $result->content = $fileContent;
         return $result;
     }
 
-    function mapToKalturaResponseType($type, $typeCategory)
+
+    function mapToKalturaResponseType($type, $typeClassName)
     {
         $result = null;
 
-        switch($typeCategory)
+        switch($type)
         {
-            case ServerTypeCategories::File:
+            case KalturaServerTypes::File:
                 $result = "NativeResponseTypes.String";
                 break;
-            case ServerTypeCategories::Simple:
-            case ServerTypeCategories::Void:
-                $result = "NativeResponseTypes." . Utils::upperCaseFirstLetter($type);
+            case KalturaServerTypes::Void:
+                $result = "NativeResponseTypes.Void";
                 break;
-            case ServerTypeCategories::Enum:
-            case ServerTypeCategories::Date:
-            case ServerTypeCategories::ArrayObject:
-            case ServerTypeCategories::Object:
+            case KalturaServerTypes::Simple:
+                $result = "NativeResponseTypes." . Utils::upperCaseFirstLetter($this->toNG2TypeExp(KalturaServerTypes::Simple,$typeClassName));
+                break;
+            case KalturaServerTypes::Enum:
+            case KalturaServerTypes::Date:
+            case KalturaServerTypes::ArrayObject:
+            case KalturaServerTypes::Object:
                 $result = "\"$type\"";
                 break;
             default:
-                throw new Exception("Unknown type requested {$typeCategory} > {$type} to map to Kaltura response type");
+                throw new Exception("Unknown type  {$type} > {$typeClassName} to map to Kaltura response type");
         }
 
         return $result;
@@ -144,17 +134,30 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
         $result->importEnums = array();
         $result->importTypes = array();
 
-        foreach($serviceAction->params as $param) {
-            $result->buildContent[] = Utils::requestBuildExp($param->name, $param->type, $param->typeCategory);
+        switch($serviceAction->resultType)
+        {
+            case KalturaServerTypes::Object:
+            case KalturaServerTypes::ArrayObject:
+                $result->importTypes[] = $serviceAction->resultClassName;
+                break;
+            case KalturaServerTypes::Enum:
+                $result->importEnum[] = $serviceAction->resultClassName;
+                break;
+            default:
+                break;
+        }
 
-            switch($param->typeCategory)
+        foreach($serviceAction->params as $param) {
+            $result->buildContent[] = $this->requestBuildExp($param->name, $param->type);
+
+            switch($param->type)
             {
-                case ServerTypeCategories::ArrayObject:
-                case ServerTypeCategories::Object:
-                    $result->importTypes[] = $param->type;
+                case KalturaServerTypes::ArrayObject:
+                case KalturaServerTypes::Object:
+                    $result->importTypes[] = $param->typeClassName;
                     break;
-                case ServerTypeCategories::Enum:
-                    $result->importEnums[] = $param->type;
+                case KalturaServerTypes::Enum:
+                    $result->importEnums[] = $param->typeClassName;
                     break;
 
             }
@@ -165,10 +168,10 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
 
         foreach($requiredParams as $param)
         {
-            $ng2ParamType = $this::toNG2TypeExp($param->type);
+            $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
             $result->constructor[] = "{$param->name} : {$ng2ParamType}";
             $result->constructorContent[] =  "this.{$param->name} = {$param->name};";
-            $result->properties[] = "{$param->name} : {$ng2ParamType}{$this->ifExp($param->default, ' = ' . $param->default,"")};";
+            $result->properties[] = "{$param->name} : {$ng2ParamType}{$this->utils->ifExp($param->default, ' = ' . $param->default,"")};";
         }
 
         if (count($optionalParams) != 0)
@@ -177,12 +180,12 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
 
             foreach($optionalParams as $param)
             {
-                $ng2ParamType = $this::toNG2TypeExp($param->type);
+                $ng2ParamType = $this->toNG2TypeExp($param->type,$param->typeClassName);
 
                 $constructorOptionalParams[] = "{$param->name}? : {$ng2ParamType}";
 
                 $result->properties[] = "{$param->name} : {$ng2ParamType};";
-                $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  $param->default;";
+                $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  {$this->mapToDefaultValue($param->type, $param->typeClassName, $param->default)};";
             }
 
             $result->constructor[] = "additional? : {" . join(", ", $constructorOptionalParams) . "} = {}";
