@@ -2,6 +2,8 @@
 
 require_once (__DIR__. '/GeneratorBase.php');
 require_once (__DIR__. '/GeneratedFileData.php');
+require_once (__DIR__. '/Utils.php');
+
 
 class ServiceActionsGenerator extends GeneratorBase
 {
@@ -42,24 +44,26 @@ class ServiceActionsGenerator extends GeneratorBase
 
         $paramsContent = $this->createParamsContent($serviceAction);
 
-        $constuctorContent = "{$this->buildExpression($paramsContent->constructorContentRequired, NewLine, 2 )}";
-        if (count($paramsContent->constructorContentOptional) != 0) {
-            $constuctorContent .= "
-
-        if (additional)
+        switch($serviceAction->resultTypeCategory)
         {
-            {$this->buildExpression($paramsContent->constructorContentOptional, NewLine, 3)}
-        }";
+            case ServerTypeCategories::Object:
+            case ServerTypeCategories::ArrayObject:
+                $paramsContent->importTypes[] = $serviceAction->resultType;
+                break;
+            case ServerTypeCategories::Enum:
+                $paramsContent->importEnum[] = $serviceAction->resultType;
+                break;
+            default:
+                break;
         }
 
         $fileContent = "
 {$this->getBanner()}
-
 import {KalturaRequest} from \"../../kaltura-request\";
-import {KalturaBaseEntryListResponse} from \"../../types/index\";
-import {KalturaBaseEntryFilter} from \"../../types/index\";
-import {KalturaFilterPager} from \"../../types/index\";
-import {KalturaResponse} from \"../../kaltura-response\";
+import {NativeResponseTypes} from \"../../utils/native-response-types\";
+import {KalturaResponse} from \"../../kaltura-response\";{$this->ifExp(count($paramsContent->importTypes) != 0,"
+import {{$this->buildExpression($paramsContent->importTypes, ', ', 2)}} from \"../../types\";","")}{$this->ifExp(count($paramsContent->importEnums) != 0,"
+import {{$this->buildExpression($paramsContent->importEnums, ', ', 2)}} from \" ../../types\";","")}
 
 {$this->createDocumentationExp('',$desc)}
 export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultType}>{
@@ -68,9 +72,9 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
 
     constructor({$this->buildExpression($paramsContent->constructor, ', ')})
     {
-        super('{$serviceName}','{$serviceAction->name}','{$serviceAction->resultType}');
+        super('{$serviceName}','{$serviceAction->name}',{$this->mapToKalturaResponseType($serviceAction->resultType, $serviceAction->resultTypeCategory)});
 
-        {$constuctorContent}
+        {$this->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
     }
 
     setData(handler : (request :  {$actionClassName}) => void) :  {$actionClassName}
@@ -93,7 +97,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
         return Object.assign({},
             super.build(),
             {
-{$this->buildExpression($paramsContent->buildContent,  ', ')}
+                {$this->buildExpression($paramsContent->buildContent,  ',' . NewLine,4)}
             });
     };
 }";
@@ -104,41 +108,84 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultTy
         return $result;
     }
 
+    function mapToKalturaResponseType($type, $typeCategory)
+    {
+        $result = null;
+
+        switch($typeCategory)
+        {
+            case ServerTypeCategories::File:
+                $result = "NativeResponseTypes.String";
+                break;
+            case ServerTypeCategories::Simple:
+            case ServerTypeCategories::Void:
+                $result = "NativeResponseTypes." . Utils::upperCaseFirstLetter($type);
+                break;
+            case ServerTypeCategories::Enum:
+            case ServerTypeCategories::Date:
+            case ServerTypeCategories::ArrayObject:
+            case ServerTypeCategories::Object:
+                $result = "\"$type\"";
+                break;
+            default:
+                throw new Exception("Unknown type requested {$typeCategory} > {$type} to map to Kaltura response type");
+        }
+
+        return $result;
+    }
+
     function createParamsContent(ServiceAction $serviceAction)
     {
         $result = new stdClass();
         $result->properties = array();
         $result->constructor = array();
-        $result->constructorContentRequired = array();
-        $result->constructorContentOptional = array();
+        $result->constructorContent = array();
         $result->buildContent = array();
+        $result->importEnums = array();
+        $result->importTypes = array();
 
+        foreach($serviceAction->params as $param) {
+            $result->buildContent[] = Utils::requestBuildExp($param->name, $param->type, $param->typeCategory);
+
+            switch($param->typeCategory)
+            {
+                case ServerTypeCategories::ArrayObject:
+                case ServerTypeCategories::Object:
+                    $result->importTypes[] = $param->type;
+                    break;
+                case ServerTypeCategories::Enum:
+                    $result->importEnums[] = $param->type;
+                    break;
+
+            }
+        }
 
         $requiredParams = $serviceAction->getRequiredParams();
         $optionalParams = $serviceAction->getOptionalParams();
 
         foreach($requiredParams as $param)
         {
-            $result->constructor[] = "{$param->name} : {$param->type}";
-            $result->constructorContentRequired[] =  "this.{$param->name} = {$param->name};";
-            $result->properties[] = "{$param->name} : {$param->type};";
+            $ng2ParamType = $this::toNG2TypeExp($param->type);
+            $result->constructor[] = "{$param->name} : {$ng2ParamType}";
+            $result->constructorContent[] =  "this.{$param->name} = {$param->name};";
+            $result->properties[] = "{$param->name} : {$ng2ParamType}{$this->ifExp($param->default, ' = ' . $param->default,"")};";
         }
 
         if (count($optionalParams) != 0)
         {
             $constructorOptionalParams = array();
-            $constructorOptionalDefault = array();
 
             foreach($optionalParams as $param)
             {
-                $constructorOptionalParams[] = "{$param->name}? : {$param->type}";
-                $constructorOptionalDefault[] = "{$param->name} : {$param->default}";
+                $ng2ParamType = $this::toNG2TypeExp($param->type);
 
-                $result->properties[] = "{$param->name} : {$param->type};";
-                $result->constructorContentOptional[] = "this.{$param->name} = additional.{$param->name};";
+                $constructorOptionalParams[] = "{$param->name}? : {$ng2ParamType}";
+
+                $result->properties[] = "{$param->name} : {$ng2ParamType};";
+                $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  $param->default;";
             }
 
-            $result->constructor[] = "additional : {" . join(", ", $constructorOptionalParams) . "} = {" . join(", ", $constructorOptionalDefault) . "}";
+            $result->constructor[] = "additional? : {" . join(", ", $constructorOptionalParams) . "} = {}";
 
         }
 

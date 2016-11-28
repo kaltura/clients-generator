@@ -6,6 +6,7 @@ require_once (__DIR__ . '/ng2-typescript/ServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/GeneratorBase.php');
 require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/ServerClassTypesGenerator.php');
 
 
 
@@ -38,7 +39,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		$files = array_merge(
 			(new ServicesGenerator($this->serverMetadata))->generate(),
-			(new ServiceActionsGenerator($this->serverMetadata))->generate()
+			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
+			(new ServerClassTypesGenerator($this->serverMetadata))->generate()
 		);
 
 		foreach($files as $file)
@@ -53,11 +55,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 //			$this->writeEnum ( $enumNode );
 //		}
 //
-//		$classNodes = $xpath->query ( "/xml/classes/class" );
-//		foreach ( $classNodes as $classNode )
-//		{
-//			$this->writeClass ( $classNode );
-//		}
+
 //
 
 
@@ -72,21 +70,73 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 	public function extractData($xpath)
 	{
+		$errors = array();
+
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach ($serviceNodes as $serviceNode) {
 			if ($this->shouldIncludeService($serviceNode->getAttribute("id"))) {
-				$arrayData = new Service;
-				$this->serverMetadata->services[] = $arrayData;
+				$serviceItem = new Service;
+				$this->serverMetadata->services[] = $serviceItem;
 
-				$arrayData->name = $serviceNode->getAttribute("name");
-				$arrayData->id = $serviceNode->getAttribute("id");
-				$arrayData->description = $serviceNode->getAttribute("description");
-				$arrayData->actions = $this->extractServiceActionsData($serviceNode);
+				$serviceItem->name = $serviceNode->getAttribute("name");
+				$serviceItem->id = $serviceNode->getAttribute("id");
+				$serviceItem->description = $serviceNode->getAttribute("description");
+				$serviceItem->actions = $this->extractServiceActions($serviceNode);
+
+				$errors = array_merge($errors, $serviceItem->validate());
+
+			}
+
+		}
+
+		$classNodes = $xpath->query ( "/xml/classes/class" );
+		foreach ( $classNodes as $classNode )
+		{
+			if ($this->shouldIncludeType($classNode->getAttribute("name"))) {
+				$classTypeItem = new ClassType();
+				$this->serverMetadata->classTypes[] = $classTypeItem;
+
+				$classTypeItem->name = $classNode->getAttribute("name");
+				$classTypeItem->base = $classNode->getAttribute("base");
+				$classTypeItem->plugin = $classNode->getAttribute("plugin");
+				$classTypeItem->description = $classNode->getAttribute("description");
+				$classTypeItem->properties = $this->extractClassTypeProperties($classNode);
+
+				$errors = array_merge($errors, $classTypeItem->validate());
+
 			}
 		}
 	}
 
-	function extractServiceActionsData(DOMElement $serviceNode)
+	function extractClassTypeProperties(DOMElement $classNode)
+	{
+		$className = $classNode->getAttribute("name");
+
+		$result = array();
+
+		$propertyNodes = $classNode->childNodes;
+		foreach ($propertyNodes as $propertyNode) {
+			if ($propertyNode->nodeType != XML_ELEMENT_NODE || $propertyNode->nodeName !== 'property')
+				continue;
+
+			$propertyItem = new ClassTypeProperty();
+			$propertyItem->name = $propertyNode->getAttribute("name");
+			$propertyItem->writeOnly = $propertyNode->getAttribute("writeOnly") == "1";
+			$propertyItem->readOnly = $propertyNode->getAttribute("name") == "1";
+			$propertyItem->insertOnly = $propertyNode->getAttribute("name") == "1";
+
+			$itemTypeData = $this->mapToTypescriptType($propertyNode, "type");
+			$propertyItem->type = $itemTypeData->type;
+			$propertyItem->typeCategory = $itemTypeData->category;
+			$propertyItem->description = $propertyNode->getAttribute("description");
+
+			$result[] = $propertyItem;
+		}
+
+		return $result;
+	}
+
+	function extractServiceActions(DOMElement $serviceNode)
 	{
 		$serviceName = $serviceNode->getAttribute("name");
 
@@ -117,62 +167,114 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 						$serviceAction->params[] = $paramData;
 
 						$paramData->name = $child->getAttribute("name");
-						$paramData->type = $this->mapToTypescriptType($child->getAttribute("type"), $child);
-						$paramData->enumType = $child->getAttribute("enumType");
-						$paramData->default = $child->getAttribute("default");
+						$itemTypeData = $this->mapToTypescriptType($child, "type");
+						$paramData->type = $itemTypeData->type;
+						$paramData->typeCategory = $itemTypeData->category;
 						$paramData->optional = $child->getAttribute("optional") == "1";
 
-						if (!$paramData->type) {
-
-							throw new Exception("Failed to extract information for service {$serviceName} / action {$serviceAction->name} / param {$paramData->name}");
-						}
+						$paramData->default = $this->mapToDefaultValue($child,"default",$paramData->type, $paramData->typeCategory);
 						break;
 					case 'result':
-						$serviceAction->resultType = $this->mapToTypescriptType($child->getAttribute("type"), $child);
-
-						if (!$serviceAction->resultType) {
-
-							if ($child->hasAttribute("type")) {
-								throw new Exception("Failed to extract information for service {$serviceName} / action {$serviceAction->name} / result type");
-							}else
-							{
-								$serviceAction->resultType = "void";
-							}
-						}
+						$itemTypeData = $this->mapToTypescriptType($child, "type",true);
+						$serviceAction->resultType = $itemTypeData->type;
+						$serviceAction->resultTypeCategory = $itemTypeData->category;
 						break;
 				}
 			}
+		}
+
+
+		return $result;
+	}
+
+
+	function mapToDefaultValue(DOMElement $xmlnode, $defaultAttributeName, $type, $typeCategory)
+	{
+		$result = null;
+		$defaultValue = $xmlnode->getAttribute($defaultAttributeName);
+
+		switch ($typeCategory)
+		{
+			case ServerTypeCategories::Simple:
+				if ($type == "string")
+				{
+					$result = $defaultValue ?  "\"{$defaultValue}\"" : null;
+				}else
+				{
+					$result = $defaultValue;
+				}
+				break;
+			case ServerTypeCategories::ArrayObject:
+				$result = "[]";
+				break;
+			default:
+				$result = "null";
+				break;
 
 		}
 
 		return $result;
 	}
 
-	function mapToTypescriptType($type, $xmlnode)
+
+	function mapToTypescriptType(DOMElement $xmlnode, $typeAttributeName, $allowEmptyTypes = false)
 	{
-		$result = $type;
-		if ($this->isArrayType($type))
+		$result = new stdClass();
+
+		$typeValue = $xmlnode->hasAttribute($typeAttributeName) ? $xmlnode->getAttribute($typeAttributeName) : null;
+
+		if (!$typeValue || $typeValue == "")
 		{
-			$result = $xmlnode->getAttribute("arrayType") . "[]";
+			if ($allowEmptyTypes)
+			{
+				$result->type =  "void";
+				$result->category = ServerTypeCategories::Void;
+			}else
+			{
+				$result->type =  null;
+				$result->category = ServerTypeCategories::Unknown;
+			}
+		}else if ($this->isArrayType($typeValue))
+		{
+			$result->type = $xmlnode->getAttribute("arrayType");
+			$result->category = ServerTypeCategories::ArrayObject;
 		}else
 		{
-			switch($type)
+			switch($typeValue)
 			{
 				case "file":
-					// TODO
+					$result->type = "";
+					$result->category = ServerTypeCategories::File;
+					break;
+				case "bigint":
+				case "float":
+					$result->type = "number";
+					$result->category = ServerTypeCategories::Simple;
 					break;
 				case "bool":
-					$result = "boolean";
+					$result->type = "boolean";
+					$result->category = ServerTypeCategories::Simple;
+					break;
+				case "string":
+					$result->type = "string";
+					$result->category = ServerTypeCategories::Simple;
 					break;
 				case "int":
-					$enumType = $xmlnode->getAttribute("arrayType");
+					$enumType = $xmlnode->getAttribute("enumType");
+					
 					if ($enumType)
 					{
-						$result = $enumType;
+						$result->type = $enumType;
+						$result->category = ServerTypeCategories::Enum;
 					}else
 					{
-						$result = "number";
+						$result->type = "number";
+						$result->category = ServerTypeCategories::Simple;
 					}
+					break;
+				default:
+					$result->type = $typeValue;
+					$result->category = ServerTypeCategories::Object;
 					break;
 			}
 		}
