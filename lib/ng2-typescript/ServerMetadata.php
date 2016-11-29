@@ -116,6 +116,66 @@ class ServiceActionParam
 }
 
 
+class EnumValue
+{
+    public $name;
+    public $value;
+
+    function __construct($name, $value)
+    {
+        $this->name = $name;
+        $this->value = $value;
+    }
+}
+
+class EnumType
+{
+    public $name;
+    public $type = null;
+    public $values = array();
+
+    public function validate()
+    {
+        $errors = array();
+
+        if ($this->type != "int" && $this->type != "string")
+        {
+            $errors[] = "Unknown type '{$this->type}' for enum {$this->name}";
+        }
+
+//        if (count($this->values) == 0)
+//        {
+//            $errors[] = "Missing values for enum {$this->name}";
+//
+//        }
+
+        $processedValues = array();
+
+        foreach($this->values as $item)
+        {
+            if (!isset($item->name) || !isset($item->value))
+            {
+                $errors[] = "Invalid value in enum {$this->name}";
+            }else{
+                if (in_array($item->name, $processedValues))
+                {
+                    $errors[] = "Duplicated items in enum {$this->name}";
+                }
+                $processedValues[] = $item->name;
+            }
+        }
+
+        if (count($errors) == "0")
+        {
+            usort($this->values,function($a,$b)
+            {
+               return strcmp($a->name, $b->name);
+            });
+        }
+        return $errors;
+    }
+}
+
 class ClassType
 {
     public $name;
@@ -137,37 +197,8 @@ class ClassType
 
         return $errors;
     }
-
-    public function getOptionaProperties()
-    {
-        $result = array();
-
-        foreach($this->properties as $property)
-        {
-            if ($property->optional)
-            {
-                $result[] = $property;
-            }
-        }
-
-        return $result;
-    }
-
-    public function getRequiredProperties()
-    {
-        $result = array();
-
-        foreach($this->properties as $property)
-        {
-            if (!$property->optional)
-            {
-                $result[] = $property;
-            }
-        }
-
-        return $result;
-    }
 }
+
 
 class ClassTypeProperty
 {
@@ -203,4 +234,5 @@ class ServerMetadata
 {
     public $services = array();
     public $classTypes = array();
+    public $enumTypes = array();
 }

@@ -22,39 +22,38 @@ class ClassTypesGenerator extends NG2TypescriptGeneratorBase
 
     function createClassTypes()
     {
-        $result = array();
+        $classTypes = array();
 
         foreach ($this->serverMetadata->classTypes as $class) {
-            $result[] = $this->createClassType($class);
+            $classTypes[] = $this->createClassTypeExp($class);
         }
 
-        $fileContent="
-import {KalturaRequestObject} from \"../utils/kaltura-request-object\";
-import {KalturaSearchOperatorType} from \"./enums\";
-import {KalturaUtils} from \"../utils/kaltura-utils\";
-import {KalturaPermissionStatus} from \"./enums\";
-";
-
-        return $result;
-    }
-
-    function createClassType(ClassType $class)
-    {
-        $result = new GeneratedFileData();
-
-        $classTypeName = Utils::upperCaseFirstLetter($class->name);
-        $desc = $class->description;
-
-        $paramsContent = $this->createPropertyContent($class);
-
         $fileContent = "
-{$this->getBanner()}
 import {KalturaObject} from \"../utils/kaltura-object\";
 import {KalturaUtils} from \"../utils/kaltura-utils\";
 import * as enums from \"./enums\";
 import {KalturaTypesFactory} from \"./kaltura-types-factory\";
 
+{$this->utils->buildExpression($classTypes,NewLine . NewLine)}
+";
 
+        $result = array();
+        $file = new GeneratedFileData();
+        $file->path = "kaltura-types.ts";
+        $file->content = $fileContent;
+        $result[] = $file;
+        return $result;
+    }
+
+    function createClassTypeExp(ClassType $class)
+    {
+        $classTypeName = Utils::upperCaseFirstLetter($class->name);
+        $desc = $class->description;
+
+        $content = $this->createContentFromClass($class);
+
+        $result = "
+{$this->getBanner()}
 {$this->utils->createDocumentationExp('',$desc)}
 export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaObject")} {
 
@@ -62,22 +61,17 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
         return '{$class->name}';
     }
 
-    {$this->utils->buildExpression($paramsContent->properties, NewLine, 1)}
-
-    constructor({$this->utils->buildExpression($paramsContent->constructor, ', ')})
-    {
-        {$this->utils->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
-    }
+    {$this->utils->buildExpression($content->properties, NewLine, 1)}
 
     build():any {
         return Object.assign({},
             super.build(),
             {
-                {$this->utils->buildExpression($paramsContent->buildContent,  ',' . NewLine, 4)}
+                {$this->utils->buildExpression($content->buildContent,  ',' . NewLine, 4)}
             });
     };
 
-  setData(handler : (request :  {$classTypeName}) => void) :  {$classTypeName}
+    setData(handler : (request :  {$classTypeName}) => void) :  {$classTypeName}
     {
         if (handler)
         {
@@ -88,58 +82,37 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
     }
 }";
 
-        $result->path = "types/{$this->utils->toLispCase($classTypeName)}.ts";
-        $result->content = $fileContent;
         return $result;
     }
 
-    function createPropertyContent(ClassType $class)
+    function createContentFromClass(ClassType $class)
     {
         $result = new stdClass();
         $result->properties = array();
-        $result->constructor = array();
-        $result->constructorContent = array();
         $result->buildContent = array();
 
         $result->buildContent[] = "objectType : \"{$class->name}\"";
 
-        $requiredParams = $class->getRequiredProperties();
-        $optionalParams = $class->getOptionaProperties();
 
-        foreach($class->properties as $property)
+        if (count($class->properties) != 0)
         {
-            $result->properties[] = "
-    get {$property->name}() : {$property->type}
+            foreach($class->properties as $property) {
+                // update the build function
+                $result->buildContent[] = $this->requestBuildExp($property->name, $property->type);
+
+                // update the properties declaration
+                $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
+                $result->properties[] = "
+    get {$property->name}() : {$ng2ParamType}
     {
-        return <{$property->type}>this.objectData['{$property->name}'];
+        return <{$ng2ParamType}>this.objectData['{$property->name}'];
     }
 
-    set {$property->name}(value : {$property->type})
+    set {$property->name}(value : {$ng2ParamType})
     {
         this.objectData['{$property->name}'] = value;
     }";
-        }
-
-        foreach($requiredParams as $property)
-        {
-            $result->constructor[] = "{$property->name} : {$property->type}";
-            $result->constructorContent[] =  "this.{$property->name} = {$property->name};";
-            $result->buildContent[] = "{$property->name} : this.{$property->name}";
-        }
-
-        if (count($optionalParams) != 0)
-        {
-            $constructorOptionalParams = array();
-
-            foreach($optionalParams as $property)
-            {
-                $constructorOptionalParams[] = "{$property->name}? : {$property->type}";
-                $result->constructorContent[] = "this.{$property->name} = typeof additional.{$property->name} !== 'undefined' ?  additional.{$property->name} :  $property->default;";
-                $result->buildContent[] = "{$property->name} : this.{$property->name}";
             }
-
-            $result->constructor[] = "additional? : {" . join(", ", $constructorOptionalParams) . "} = {}";
-
         }
 
         return $result;

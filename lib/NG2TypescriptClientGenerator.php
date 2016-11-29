@@ -6,6 +6,7 @@ require_once (__DIR__ . '/ng2-typescript/ServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ClassTypesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/EnumTypesGenerator.php');
 
 
 
@@ -35,28 +36,14 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$files = array_merge(
 			(new ServicesGenerator($this->serverMetadata))->generate(),
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
-			(new ClassTypesGenerator($this->serverMetadata))->generate()
+			(new ClassTypesGenerator($this->serverMetadata))->generate(),
+			(new EnumTypesGenerator($this->serverMetadata))->generate()
 		);
 
 		foreach($files as $file)
 		{
 			$this->addFile($this->_baseClientPath . "/" . $file->path, $file->content);
 		}
-
-
-//		$enumNodes = $xpath->query ( "/xml/enums/enum" );
-//		foreach ( $enumNodes as $enumNode )
-//		{
-//			$this->writeEnum ( $enumNode );
-//		}
-//
-
-//
-
-
-		//$this->createServices();
-		//$this->createServiceActions();
-
 //
 //		$configurationNodes = $xpath->query("/xml/configurations/*");
 //		$this->writeMainClient($serviceNodes, $configurationNodes);
@@ -70,36 +57,58 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach ($serviceNodes as $serviceNode) {
 			if ($this->shouldIncludeService($serviceNode->getAttribute("id"))) {
-				$serviceItem = new Service;
-				$this->serverMetadata->services[] = $serviceItem;
+				$service = new Service;
+				$this->serverMetadata->services[] = $service;
 
-				$serviceItem->name = $serviceNode->getAttribute("name");
-				$serviceItem->id = $serviceNode->getAttribute("id");
-				$serviceItem->description = $serviceNode->getAttribute("description");
-				$serviceItem->actions = $this->extractServiceActions($serviceNode);
+				$service->name = $serviceNode->getAttribute("name");
+				$service->id = $serviceNode->getAttribute("id");
+				$service->description = $serviceNode->getAttribute("description");
+				$service->actions = $this->extractServiceActions($serviceNode);
 
-				$errors = array_merge($errors, $serviceItem->validate());
+				$errors = array_merge($errors, $service->validate());
 			}
 		}
 
-//		$classNodes = $xpath->query ( "/xml/classes/class" );
-//		foreach ( $classNodes as $classNode )
-//		{
-//			if ($this->shouldIncludeType($classNode->getAttribute("name"))) {
-//				$classTypeItem = new ClassType();
-//				$this->serverMetadata->classTypes[] = $classTypeItem;
-//
-//				$classTypeItem->name = $classNode->getAttribute("name");
-//				$classTypeItem->base = $classNode->getAttribute("base");
-//				$classTypeItem->plugin = $classNode->getAttribute("plugin");
-//				$classTypeItem->description = $classNode->getAttribute("description");
-//				$classTypeItem->properties = $this->extractClassTypeProperties($classNode);
-//
-//				$errors = array_merge($errors, $classTypeItem->validate());
-//
-//			}
-//		}
+		$classNodes = $xpath->query ( "/xml/classes/class" );
+		foreach ( $classNodes as $classNode )
+		{
+			if ($this->shouldIncludeType($classNode->getAttribute("name"))) {
+				$classType = new ClassType();
+				$this->serverMetadata->classTypes[] = $classType;
 
+				$classType->name = $classNode->getAttribute("name");
+				$classType->base = $classNode->getAttribute("base");
+				$classType->plugin = $classNode->getAttribute("plugin");
+				$classType->description = $classNode->getAttribute("description");
+				$classType->properties = $this->extractClassTypeProperties($classNode);
+
+				$errors = array_merge($errors, $classType->validate());
+
+			}
+		}
+
+		$enumNodes = $xpath->query ( "/xml/enums/enum" );
+		foreach ( $enumNodes as $enumNode ) {
+
+			if ($this->shouldIncludeType($enumNode->getAttribute("name"))) {
+				$enumType = new EnumType();
+				$this->serverMetadata->enumTypes[] = $enumType;
+
+				$enumType->name = $enumNode->getAttribute("name");
+				$enumType->type = $enumNode->getAttribute("enumType");
+
+				$enumValueNodes = $enumNode->childNodes;
+				foreach ($enumValueNodes as $enumValueNode) {
+					if ($enumValueNode->nodeName == 'const') {
+						$enumType->values[] = new EnumValue($enumValueNode->getAttribute('name'), $enumValueNode->getAttribute('value'));
+					} else {
+						//$errors[] = "enum {$enumType->name} has invalid child with type '{$enumValueNode->nodeName}'";
+					}
+				}
+
+				$errors = array_merge($errors, $enumType->validate());
+			}
+		}
 
 		// dump schema as json for diagnostics
 		$this->addFile("services-schema.json", json_encode($this->serverMetadata,JSON_PRETTY_PRINT),false);
@@ -228,10 +237,10 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				case "bigint":
 				case "float":
 				case "bool":
-				case "string":
 					$result->type = KalturaServerTypes::Simple;
 					$result->className = $typeValue;
 					break;
+				case "string":
 				case "int":
 					$enumType = $xmlnode->getAttribute("enumType");
 					
@@ -243,7 +252,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 					}else
 					{
 						$result->type = KalturaServerTypes::Simple;
-						$result->className = "int";
+						$result->className = $typeValue;
 					}
 					break;
 				default:

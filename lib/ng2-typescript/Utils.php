@@ -43,6 +43,11 @@ class Utils
     }
 
 
+    public static function fromSnakeCaseToCamelCase($str)
+    {
+        return str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', strtolower($str))));
+    }
+
     public static function ifExp($condition, $truthlyValue, $falsyValue = "")
     {
         return $condition ? $truthlyValue : $falsyValue;

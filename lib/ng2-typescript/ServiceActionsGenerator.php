@@ -42,26 +42,26 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
         $actionClassName = Utils::upperCaseFirstLetter($serviceName) . Utils::upperCaseFirstLetter($serviceAction->name) . "Action";
         $desc = $serviceAction->description;
 
-        $paramsContent = $this->createParamsContent($serviceAction);
+        $content = $this->createContentFromServiceAction($serviceAction);
 
         $fileContent = "
 {$this->getBanner()}
 import {KalturaRequest} from \"../../kaltura-request\";
 import {NativeResponseTypes} from \"../../utils/native-response-types\";
-import {KalturaResponse} from \"../../kaltura-response\";{$this->utils->ifExp(count($paramsContent->importTypes) != 0,"
-import {{$this->utils->buildExpression($paramsContent->importTypes, ', ', 2)}} from \"../../types\";","")}{$this->utils->ifExp(count($paramsContent->importEnums) != 0,"
-import {{$this->utils->buildExpression($paramsContent->importEnums, ', ', 2)}} from \" ../../types\";","")}
+import {KalturaResponse} from \"../../kaltura-response\";{$this->utils->ifExp(count($content->importTypes) != 0,"
+import {{$this->utils->buildExpression($content->importTypes, ', ', 2)}} from \"../../kaltura-types\";","")}{$this->utils->ifExp(count($content->importEnums) != 0,"
+import {{$this->utils->buildExpression($content->importEnums, ', ', 2)}} from \" ../../kaltura-enums\";","")}
 
 {$this->utils->createDocumentationExp('',$desc)}
 export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultClassName}>{
 
-    {$this->utils->buildExpression($paramsContent->properties, NewLine, 1)}
+    {$this->utils->buildExpression($content->properties, NewLine, 1)}
 
-    constructor({$this->utils->buildExpression($paramsContent->constructor, ', ')})
+    constructor({$this->utils->buildExpression($content->constructor, ', ')})
     {
         super('{$serviceName}','{$serviceAction->name}',{$this->mapToKalturaResponseType($serviceAction->resultType, $serviceAction->resultClassName)});
 
-        {$this->utils->buildExpression($paramsContent->constructorContent, NewLine, 2 )}
+        {$this->utils->buildExpression($content->constructorContent, NewLine, 2 )}
     }
 
     setData(handler : (request :  {$actionClassName}) => void) :  {$actionClassName}
@@ -84,7 +84,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
         return Object.assign({},
             super.build(),
             {
-                {$this->utils->buildExpression($paramsContent->buildContent,  ',' . NewLine,4)}
+                {$this->utils->buildExpression($content->buildContent,  ',' . NewLine,4)}
             });
     };
 }";
@@ -124,7 +124,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
         return $result;
     }
 
-    function createParamsContent(ServiceAction $serviceAction)
+    function createContentFromServiceAction(ServiceAction $serviceAction)
     {
         $result = new stdClass();
         $result->properties = array();
@@ -134,6 +134,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
         $result->importEnums = array();
         $result->importTypes = array();
 
+        // update import statements with the result type
         switch($serviceAction->resultType)
         {
             case KalturaServerTypes::Object:
@@ -148,8 +149,10 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
         }
 
         foreach($serviceAction->params as $param) {
+            // update the build function
             $result->buildContent[] = $this->requestBuildExp($param->name, $param->type);
 
+            // update the import statements
             switch($param->type)
             {
                 case KalturaServerTypes::ArrayObject:
@@ -164,30 +167,27 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
         }
 
         $requiredParams = $serviceAction->getRequiredParams();
-        $optionalParams = $serviceAction->getOptionalParams();
-
         foreach($requiredParams as $param)
         {
+            // update the constructor function & properties statements to handle REQUIRED params
             $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
             $result->constructor[] = "{$param->name} : {$ng2ParamType}";
             $result->constructorContent[] =  "this.{$param->name} = {$param->name};";
             $result->properties[] = "{$param->name} : {$ng2ParamType}{$this->utils->ifExp($param->default, ' = ' . $param->default,"")};";
         }
 
+        $optionalParams = $serviceAction->getOptionalParams();
         if (count($optionalParams) != 0)
         {
+            // update the constructor function & properties statements to handle OPTIONAL params
             $constructorOptionalParams = array();
-
             foreach($optionalParams as $param)
             {
                 $ng2ParamType = $this->toNG2TypeExp($param->type,$param->typeClassName);
-
                 $constructorOptionalParams[] = "{$param->name}? : {$ng2ParamType}";
-
                 $result->properties[] = "{$param->name} : {$ng2ParamType};";
                 $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  {$this->mapToDefaultValue($param->type, $param->typeClassName, $param->default)};";
             }
-
             $result->constructor[] = "additional? : {" . join(", ", $constructorOptionalParams) . "} = {}";
 
         }
