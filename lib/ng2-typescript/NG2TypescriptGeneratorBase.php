@@ -82,24 +82,33 @@ class NG2TypescriptGeneratorBase
                     case "string":
                         $result = 'string';
                         break;
+                    default:
+                        throw new Exception("Unknown simple type {$typeClassName}");
                 }
                 break;
-            case KalturaServerTypes::Void:
-                throw new Exception("toNG2TypeExp: invalid type value void");
             case KalturaServerTypes::ArrayObject:
-                $result = "{$typeClassName}[]";
+                $result = "kclasses.{$typeClassName}[]";
                 break;
             case KalturaServerTypes::Enum:
+                $result = 'kenums.' . "$typeClassName";
+                break;
             case KalturaServerTypes::Object:
-                $result = "$typeClassName";
+                $result = 'kclasses.' . "$typeClassName";
                 break;
             case KalturaServerTypes::Date:
                 $result = "Date";
+                break;
+            case KalturaServerTypes::Void:
+                $result = "VoidResponseResult";
                 break;
             default:
                 throw new Exception("toNG2TypeExp: Unknown type requested {$type}");
         }
 
+        if (isset($resultHandlerFunction))
+        {
+            $result = $resultHandlerFunction($type, $typeClassName, $result);
+        }
         return  $result;
     }
 

@@ -23,9 +23,14 @@ class Service
     {
         $errors = array();
 
-        foreach($this->actions as $action)
+        if (count($this->actions) == 0)
         {
-            $errors = array_merge($errors, $action->validate($this));
+            $errors[] = "Missing actions for service {$this->name}";
+        }else {
+
+            foreach ($this->actions as $action) {
+                $errors = array_merge($errors, $action->validate($this));
+            }
         }
 
         return $errors;
@@ -230,7 +235,7 @@ class ClassTypeProperty
     }
 }
 
-class ServerMetadata
+class KalturaServerMetadata
 {
     public $services = array();
     public $classTypes = array();

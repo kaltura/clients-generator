@@ -2,8 +2,9 @@
 CONST NewLine = "\n";
 
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
-require_once (__DIR__ . '/ng2-typescript/ServerMetadata.php');
+require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/TypesFactoryGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ClassTypesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumTypesGenerator.php');
@@ -29,7 +30,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		parent::generate();
 
 		// Convert xml strcuture to plain old php objects
-		$this->serverMetadata = new ServerMetadata();
+		$this->serverMetadata = new KalturaServerMetadata();
 		$xpath = new DOMXPath ($this->_doc);
 		$this->extractData($xpath);
 
@@ -37,7 +38,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			(new ServicesGenerator($this->serverMetadata))->generate(),
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
 			(new ClassTypesGenerator($this->serverMetadata))->generate(),
-			(new EnumTypesGenerator($this->serverMetadata))->generate()
+			(new EnumTypesGenerator($this->serverMetadata))->generate(),
+			(new TypesFactoryGenerator($this->serverMetadata))->generate()
 		);
 
 		foreach($files as $file)
@@ -72,7 +74,9 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$classNodes = $xpath->query ( "/xml/classes/class" );
 		foreach ( $classNodes as $classNode )
 		{
-			if ($this->shouldIncludeType($classNode->getAttribute("name"))) {
+			$className = $classNode->getAttribute("name");
+
+			if ($this->shouldIncludeType($className) && $className != "KalturaClientConfiguration") {
 				$classType = new ClassType();
 				$this->serverMetadata->classTypes[] = $classType;
 

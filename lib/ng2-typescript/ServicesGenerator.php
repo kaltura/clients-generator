@@ -20,34 +20,48 @@ class ServicesGenerator extends NG2TypescriptGeneratorBase
         return $result;
     }
 
+
     function createServices()
     {
         $result = array();
 
         foreach ($this->serverMetadata->services as $service) {
             $result[] = $this->createService($service);
+            $result[] = $this->createServiceIndex($service);
         }
 
         return $result;
     }
 
+    function createServiceIndex($serviceData)
+    {
+        $formattedServiceName = $this->utils->toLispCase($serviceData->name);
+
+        $result = new GeneratedFileData();
+        $result->path = "services/{$formattedServiceName}/index.ts";
+        $result->content = "
+export * from \"./{$formattedServiceName}.service.ts\"
+export * from \"./{$formattedServiceName}-actions.ts\"
+";
+
+        return $result;
+
+    }
+
     function createService(Service $serviceData)
     {
-        $result = new GeneratedFileData();
-
         $serviceName = Utils::upperCaseFirstLetter($serviceData->name);
-        $actionsFilePath = "./{$this->utils->toLispCase($serviceName)}-actions.ts";
+        $actionsFilePath = "./{$this->utils->toLispCase($serviceName)}-actions";
         $desc = $serviceData->description;
 
         $serviceActionsContent = $this->createServiceActionsContent($serviceData);
-        $serviceActionsContentExp = join(NewLine, $serviceActionsContent);
 
-        $serviceContent = "
-{$this->getBanner()}
-
+        $serviceContent = "{$this->getBanner()}
 import { Injectable } from '@angular/core';
-import * as actions from \"{$actionsFilePath}\";
-
+import * as kactions from \"{$actionsFilePath}\";
+import {VoidResponseResult} from \"../../utils/void-response-result\";
+import * as kclasses from \"../../kaltura-types\";
+import * as kenums from \"../../kaltura-enums\";
 
 {$this->utils->createDocumentationExp('',$desc)}
 export class {$serviceName}Service {
@@ -56,11 +70,12 @@ export class {$serviceName}Service {
         throw new Error('This class should not be initialized (you should use its static functions to create new requests)');
     }
 
-	{$serviceActionsContentExp}
+	{$this->utils->buildExpression($serviceActionsContent,NewLine . NewLine,1)}
 }";
 
         $formattedServiceName = $this->utils->toLispCase($serviceName);
 
+        $result = new GeneratedFileData();
         $result->path = "services/{$formattedServiceName}/{$formattedServiceName}.service.ts";
         $result->content = $serviceContent;
 
@@ -86,10 +101,12 @@ export class {$serviceName}Service {
                     continue;
                 }
 
+                $ng2ParamType = $this->toNG2TypeExp($actionParam->type, $actionParam->typeClassName);
+
                 if ($actionParam->optional == true) {
-                    $optionalParams[] = "{$actionParam->name}? : {$actionParam->typeClassName}";
+                    $optionalParams[] = "{$actionParam->name}? : {$ng2ParamType}";
                 } else {
-                    $requiredParams[] = "{$actionParam->name} : {$actionParam->typeClassName}";
+                    $requiredParams[] = "{$actionParam->name} : {$ng2ParamType}";
                     $actionConstuctorParams[] = "{$actionParam->name}";
                 }
 
@@ -104,15 +121,14 @@ export class {$serviceName}Service {
 
             $functionParamsExp = join(', ', $functionParams);
             $actionConstuctorParamsExp = join(', ', $actionConstuctorParams);
-            $actionResultType = "{$serviceData->name}" . ucwords($actionData->name) . "Builder";
+            $actionResultType = ucwords($serviceData->name) . ucwords($actionData->name) . "Action";
             $functionName = lcfirst($actionData->name);
 
-            $result[] = "
-	{$this->utils->createDocumentationExp('	', $actionData->description)}
-	static {$functionName}({$functionParamsExp}) : {$actionResultType}
-	{
-		return new actions.{$actionResultType}({$actionConstuctorParamsExp});
-	}";
+            $result[] = "{$this->utils->createDocumentationExp('	', $actionData->description)}
+static {$functionName}({$functionParamsExp}) : kactions.{$actionResultType}
+{
+    return new kactions.{$actionResultType}({$actionConstuctorParamsExp});
+}";
         }
 
         return $result;

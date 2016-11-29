@@ -11,6 +11,7 @@ class Utils
 
 
 
+
     public static function indent($text,$n){
         if(is_string($text) && is_int($n)){
             $indent = "";
@@ -66,7 +67,7 @@ class Utils
     public static function createDocumentationExp($spacer, $documentation)
     {
         if ($documentation) {
-            return "/** " . NewLine . "{$spacer}* " . wordwrap(str_replace(array("\t", "\n", "\r"), " ", $documentation), 80, NewLine . "{$spacer}* ") . NewLine . "{$spacer}**/";
+            return "/** " . NewLine . "* " . wordwrap(str_replace(array("\t", "\n", "\r"), " ", $documentation), 80, NewLine . "* ") . NewLine . "**/";
         }
         return "";
     }

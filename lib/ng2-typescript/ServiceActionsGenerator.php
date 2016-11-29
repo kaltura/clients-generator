@@ -27,9 +27,26 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
         $result = array();
 
         foreach ($this->serverMetadata->services as $service) {
-            foreach($service->actions as $serviceAction) {
-                $result[] = $this->createServiceAction($serviceAction, $service->name);
+
+            $actions = array();
+
+            foreach ($service->actions as $serviceAction) {
+                $actions[] = $this->createServiceAction($serviceAction, $service->name);
             }
+
+            $serviceActionsFile = new GeneratedFileData();
+            $result[] = $serviceActionsFile;
+            $formattedServiceName = $this->utils->toLispCase($service->name);
+            $serviceActionsFile->path = "services/{$formattedServiceName}/{$formattedServiceName}-actions.ts";
+            $serviceActionsFile->content = "import {KalturaRequest} from \"../../kaltura-request\";
+import {NativeResponseTypes} from \"../../utils/native-response-types\";
+import {KalturaResponse} from \"../../kaltura-response\";
+import {VoidResponseResult} from \"../../utils/void-response-result\";
+import * as kclasses from \"../../kaltura-types\";
+import * as kenums from \"../../kaltura-enums\";
+
+{$this->utils->buildExpression($actions,NewLine)}
+";
         }
 
         return $result;
@@ -37,23 +54,15 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
 
     function createServiceAction(ServiceAction $serviceAction,$serviceName)
     {
-        $result = new GeneratedFileData();
-
         $actionClassName = Utils::upperCaseFirstLetter($serviceName) . Utils::upperCaseFirstLetter($serviceAction->name) . "Action";
         $desc = $serviceAction->description;
 
         $content = $this->createContentFromServiceAction($serviceAction);
-
-        $fileContent = "
-{$this->getBanner()}
-import {KalturaRequest} from \"../../kaltura-request\";
-import {NativeResponseTypes} from \"../../utils/native-response-types\";
-import {KalturaResponse} from \"../../kaltura-response\";{$this->utils->ifExp(count($content->importTypes) != 0,"
-import {{$this->utils->buildExpression($content->importTypes, ', ', 2)}} from \"../../kaltura-types\";","")}{$this->utils->ifExp(count($content->importEnums) != 0,"
-import {{$this->utils->buildExpression($content->importEnums, ', ', 2)}} from \" ../../kaltura-enums\";","")}
+        $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
+        $result = "{$this->getBanner()}
 
 {$this->utils->createDocumentationExp('',$desc)}
-export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultClassName}>{
+export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
 
@@ -74,7 +83,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
         return this;
     }
 
-    setCompletion(callback : (response : KalturaResponse<$serviceAction->resultClassName>) => void) : {$actionClassName}
+    setCompletion(callback : (response : KalturaResponse<{$actionNG2ResultType}>) => void) : {$actionClassName}
     {
         this.callback = callback;
         return this;
@@ -89,9 +98,6 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
     };
 }";
 
-        $fileName = Utils::toLispCase($actionClassName) . ".ts";
-        $result->path = "services/{$this->utils->toLispCase($serviceName)}/{$fileName}";
-        $result->content = $fileContent;
         return $result;
     }
 
@@ -188,7 +194,7 @@ export class {$actionClassName} extends KalturaRequest<{$serviceAction->resultCl
                 $result->properties[] = "{$param->name} : {$ng2ParamType};";
                 $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  {$this->mapToDefaultValue($param->type, $param->typeClassName, $param->default)};";
             }
-            $result->constructor[] = "additional? : {" . join(", ", $constructorOptionalParams) . "} = {}";
+            $result->constructor[] = "additional : {" . join(", ", $constructorOptionalParams) . "} = {}";
 
         }
 
