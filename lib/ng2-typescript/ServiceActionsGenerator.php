@@ -40,6 +40,7 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $serviceActionsFile->path = "services/{$formattedServiceName}/{$formattedServiceName}-actions.ts";
             $serviceActionsFile->content = "import {KalturaRequest} from \"../../kaltura-request\";
 import {NativeResponseTypes} from \"../../utils/native-response-types\";
+import {KalturaUtils} from \"../../utils/kaltura-utils\";
 import {KalturaResponse} from \"../../kaltura-response\";
 import {VoidResponseResult} from \"../../utils/void-response-result\";
 import * as kclasses from \"../../kaltura-types\";
@@ -199,5 +200,25 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
         }
 
         return $result;
+    }
+
+    protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)
+    {
+        return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)
+        {
+            switch($type) {
+                case KalturaServerTypes::ArrayObject:
+                    $result = "kclasses.{$result}";
+                    break;
+                case KalturaServerTypes::Enum:
+                    $result = 'kenums.' . $result;
+                    break;
+                case KalturaServerTypes::Object:
+                    $result = 'kclasses.' . $result;
+                    break;
+            }
+
+            return $result;
+        });
     }
 }

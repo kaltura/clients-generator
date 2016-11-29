@@ -4,10 +4,10 @@ CONST NewLine = "\n";
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/TypesFactoryGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/ClassesFactoryGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/ClassTypesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/EnumTypesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
 
 
 
@@ -30,16 +30,15 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		parent::generate();
 
 		// Convert xml strcuture to plain old php objects
-		$this->serverMetadata = new KalturaServerMetadata();
 		$xpath = new DOMXPath ($this->_doc);
-		$this->extractData($xpath);
+		$this->serverMetadata = $this->extractData($xpath);
 
 		$files = array_merge(
 			(new ServicesGenerator($this->serverMetadata))->generate(),
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
-			(new ClassTypesGenerator($this->serverMetadata))->generate(),
-			(new EnumTypesGenerator($this->serverMetadata))->generate(),
-			(new TypesFactoryGenerator($this->serverMetadata))->generate()
+			(new ClassesGenerator($this->serverMetadata))->generate(),
+			(new EnumsGenerator($this->serverMetadata))->generate(),
+			(new ClassesFactoryGenerator($this->serverMetadata))->generate()
 		);
 
 		foreach($files as $file)
@@ -54,20 +53,19 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 	public function extractData($xpath)
 	{
+		$result = new KalturaServerMetadata();
 		$errors = array();
 
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach ($serviceNodes as $serviceNode) {
 			if ($this->shouldIncludeService($serviceNode->getAttribute("id"))) {
 				$service = new Service;
-				$this->serverMetadata->services[] = $service;
+				$result->services[] = $service;
 
 				$service->name = $serviceNode->getAttribute("name");
 				$service->id = $serviceNode->getAttribute("id");
 				$service->description = $serviceNode->getAttribute("description");
 				$service->actions = $this->extractServiceActions($serviceNode);
-
-				$errors = array_merge($errors, $service->validate());
 			}
 		}
 
@@ -77,17 +75,20 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			$className = $classNode->getAttribute("name");
 
 			if ($this->shouldIncludeType($className) && $className != "KalturaClientConfiguration") {
+
+				if ($className == "KalturaServerObject")
+				{
+					$errors[] = "Class name 'KalturaServerObject' cannot be generated";
+				}
+
 				$classType = new ClassType();
-				$this->serverMetadata->classTypes[] = $classType;
+				$result->classTypes[] = $classType;
 
 				$classType->name = $classNode->getAttribute("name");
 				$classType->base = $classNode->getAttribute("base");
 				$classType->plugin = $classNode->getAttribute("plugin");
 				$classType->description = $classNode->getAttribute("description");
 				$classType->properties = $this->extractClassTypeProperties($classNode);
-
-				$errors = array_merge($errors, $classType->validate());
-
 			}
 		}
 
@@ -96,7 +97,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 			if ($this->shouldIncludeType($enumNode->getAttribute("name"))) {
 				$enumType = new EnumType();
-				$this->serverMetadata->enumTypes[] = $enumType;
+				$result->enumTypes[] = $enumType;
 
 				$enumType->name = $enumNode->getAttribute("name");
 				$enumType->type = $enumNode->getAttribute("enumType");
@@ -105,17 +106,18 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				foreach ($enumValueNodes as $enumValueNode) {
 					if ($enumValueNode->nodeName == 'const') {
 						$enumType->values[] = new EnumValue($enumValueNode->getAttribute('name'), $enumValueNode->getAttribute('value'));
-					} else {
-						//$errors[] = "enum {$enumType->name} has invalid child with type '{$enumValueNode->nodeName}'";
 					}
 				}
-
-				$errors = array_merge($errors, $enumType->validate());
 			}
 		}
 
+		$errors = array_merge(
+			$errors,
+			$result->prepare()
+		);
+
 		// dump schema as json for diagnostics
-		$this->addFile("services-schema.json", json_encode($this->serverMetadata,JSON_PRETTY_PRINT),false);
+		$this->addFile("services-schema.json", json_encode($result,JSON_PRETTY_PRINT),false);
 
 
 		$errorsCount = count($errors);
@@ -123,6 +125,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			$errorMessage = "Parsing from xml failed with {$errorsCount} error(s):" . NewLine . join(NewLine, $errors);
 			throw new Exception($errorMessage);
 		}
+
+		return $result;
 	}
 
 	function extractClassTypeProperties(DOMElement $classNode)
@@ -135,6 +139,12 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		foreach ($propertyNodes as $propertyNode) {
 			if ($propertyNode->nodeType != XML_ELEMENT_NODE || $propertyNode->nodeName !== 'property')
 				continue;
+
+			// TODO: workaround, removing 'properties' of type 'KalturaObjectBase' since the xml is missing some declaration.
+			if ($propertyNode->getAttribute("type") == "KalturaObjectBase")
+			{
+				continue;
+			}
 
 			$propertyItem = new ClassTypeProperty();
 			$propertyItem->name = $propertyNode->getAttribute("name");

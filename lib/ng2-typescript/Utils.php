@@ -24,6 +24,10 @@ class Utils
         }
     }
 
+    public static function startsWithNumber($string) {
+        return strlen($string) > 0 && ctype_digit(substr($string, 0, 1));
+    }
+
     public static function toLispCase($input)
     {
         preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
@@ -44,9 +48,56 @@ class Utils
     }
 
 
+    public static function startsWith($str, $prefix)
+    {
+        return (substr($str, 0, strlen($prefix)) === $prefix);
+    }
+
+    public static function validateType($type, $typeClassName, $availableTypes, $target)
+    {
+
+        $errors = array();
+
+        if (!isset($type))
+        {
+            $errors[] = "missing type for {$target}";
+        }else
+        {
+            switch ($type)
+            {
+                case KalturaServerTypes::Simple:
+                    $supportedTypes = array('int','bool','float','bigint','string');
+
+                    if (!in_array($typeClassName,$supportedTypes))
+                    {
+                        $errors[] = "Unknown type '{$typeClassName}' for {$target}";
+
+                    }
+                    break;
+                case KalturaServerTypes::Unknown:
+                    $errors[] = "Unknown type for {$target}";
+                    break;
+                case KalturaServerTypes::Object:
+                case KalturaServerTypes::ArrayObject:
+                case KalturaServerTypes::Enum:
+                    if (!in_array($typeClassName, $availableTypes))
+                    {
+                        $errors[] = "Unknown type '{$typeClassName}' for {$target}";
+
+                    }
+                    break;
+            }
+        }
+
+        return $errors;
+    }
+
     public static function fromSnakeCaseToCamelCase($str)
     {
-        return str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', strtolower($str))));
+        $startWithSnake = Utils::startsWith($str,'_');
+        $newName =  str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', strtolower($str))));
+
+        return ($startWithSnake ? '_' : '') . $newName;
     }
 
     public static function ifExp($condition, $truthlyValue, $falsyValue = "")

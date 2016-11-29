@@ -40,8 +40,8 @@ class ServicesGenerator extends NG2TypescriptGeneratorBase
         $result = new GeneratedFileData();
         $result->path = "services/{$formattedServiceName}/index.ts";
         $result->content = "
-export * from \"./{$formattedServiceName}.service.ts\"
-export * from \"./{$formattedServiceName}-actions.ts\"
+export * from \"./{$formattedServiceName}.service\"
+export * from \"./{$formattedServiceName}-actions\"
 ";
 
         return $result;
@@ -132,5 +132,25 @@ static {$functionName}({$functionParamsExp}) : kactions.{$actionResultType}
         }
 
         return $result;
+    }
+
+    protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)
+    {
+        return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)
+        {
+            switch($type) {
+                case KalturaServerTypes::ArrayObject:
+                    $result = "kclasses.{$result}";
+                    break;
+                case KalturaServerTypes::Enum:
+                    $result = 'kenums.' . $result;
+                    break;
+                case KalturaServerTypes::Object:
+                    $result = 'kclasses.' . $result;
+                    break;
+            }
+
+            return $result;
+        });
     }
 }

@@ -19,7 +19,7 @@ class Service
     public $description;
     public $actions = array();
 
-    public function validate()
+    public function prepare($availableTypes)
     {
         $errors = array();
 
@@ -29,7 +29,7 @@ class Service
         }else {
 
             foreach ($this->actions as $action) {
-                $errors = array_merge($errors, $action->validate($this));
+                $errors = array_merge($errors, $action->prepare($availableTypes, $this));
             }
         }
 
@@ -46,18 +46,19 @@ class ServiceAction
     public $description;
     public $enableInMultiRequest = 1;
 
-    public function validate($service)
+    public function prepare($availableTypes, $service)
     {
         $errors = array();
 
-        if (!isset($this->resultType) || $this->resultType == KalturaServerTypes::Unknown)
-        {
-            $errors[] = "Unknown type for service {$service->name} > action {$this->name} > result type";
-        }
+
+        $errors = array_merge(
+            $errors,
+            Utils::validateType($this->resultType,$this->resultClassName,$availableTypes,"service {$service->name} > action {$this->name} > result type")
+        );
 
         foreach($this->params as $param)
         {
-            $errors = array_merge($errors, $param->validate($service, $this));
+            $errors = array_merge($errors, $param->prepare($availableTypes, $service, $this));
         }
 
         return $errors;
@@ -102,14 +103,15 @@ class ServiceActionParam
     public $optional = false;
     public $default;
 
-    public function validate($service, $action)
+    public function prepare($availableTypes, $service, $action)
     {
         $errors = array();
 
-        if (!isset($this->type) || $this->type == KalturaServerTypes::Unknown)
-        {
-            $errors[] = "Unknown type for service {$service->name} > action {$action->name} > param {$this->name}";
-        }
+        $errors = array_merge(
+            $errors,
+            Utils::validateType($this->type,$this->typeClassName,$availableTypes,"class {$service->name} > param {$this->name}")
+        );
+
 
         if ($this->optional && (!isset($this->default)))
         {
@@ -139,7 +141,7 @@ class EnumType
     public $type = null;
     public $values = array();
 
-    public function validate()
+    public function prepare($availableTypes)
     {
         $errors = array();
 
@@ -160,13 +162,18 @@ class EnumType
         {
             if (!isset($item->name) || !isset($item->value))
             {
-                $errors[] = "Invalid value in enum {$this->name}";
+                $errors[] = "Invalid enum value in enum {$this->name}";
             }else{
                 if (in_array($item->name, $processedValues))
                 {
                     $errors[] = "Duplicated items in enum {$this->name}";
                 }
                 $processedValues[] = $item->name;
+
+                if (Utils::startsWithNumber($item->name))
+                {
+                    $errors[] = "Invalid enum value name '{$item->name}', starts with number. enum {$this->name}";
+                }
             }
         }
 
@@ -191,13 +198,13 @@ class ClassType
     public $deprecated = false;
     public $properties = array();
 
-    public function validate()
+    public function prepare($availableTypes)
     {
         $errors = array();
 
         foreach($this->properties as $property)
         {
-            $errors = array_merge($errors, $property->validate($this));
+            $errors = array_merge($errors, $property->prepare($availableTypes,$this));
         }
 
         return $errors;
@@ -217,14 +224,14 @@ class ClassTypeProperty
     public $optional = true;
     public $default = 'null';
 
-    public function validate($classType)
+    public function prepare($availableTypes, $classType)
     {
         $errors = array();
 
-        if (!isset($this->type) || $this->type == KalturaServerTypes::Unknown)
-        {
-            $errors[] = "Unknown type for class {$classType->name} > property {$this->name}";
-        }
+        $errors = array_merge(
+            $errors,
+            Utils::validateType($this->type,$this->typeClassName,$availableTypes,"class {$classType->name} > property {$this->name}")
+        );
 
         if ($this->optional && (!isset($this->default)))
         {
@@ -240,4 +247,33 @@ class KalturaServerMetadata
     public $services = array();
     public $classTypes = array();
     public $enumTypes = array();
+
+    public function prepare()
+    {
+        $errors = array();
+        $availableTypes = array();
+
+        foreach(array_merge($this->classTypes, $this->enumTypes) as $types)
+        {
+            $availableTypes[] = $types->name;
+        }
+
+        foreach($this->classTypes as $class)
+        {
+            $errors = array_merge($errors, $class->prepare($availableTypes));
+        }
+
+        foreach($this->services as $service)
+        {
+            $errors = array_merge($errors, $service->prepare($availableTypes));
+        }
+
+        foreach($this->enumTypes as $enum)
+        {
+            $errors = array_merge($errors, $enum->prepare($availableTypes));
+        }
+
+
+        return $errors;
+    }
 }

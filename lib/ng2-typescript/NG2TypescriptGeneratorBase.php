@@ -24,9 +24,13 @@ class NG2TypescriptGeneratorBase
                 if ($typeClassName == "string")
                 {
                     $result = isset($defaultValue) ?  "\"{$defaultValue}\"" : null;
-                }else
+                }else if ($defaultValue)
                 {
                     $result = $defaultValue;
+                }else
+                {
+                    // TODO workaround, handling scenarios like param of type int without default value
+                    $result = "null";
                 }
                 break;
             case KalturaServerTypes::ArrayObject:
@@ -60,7 +64,7 @@ class NG2TypescriptGeneratorBase
         return  $result;
     }
 
-    protected function toNG2TypeExp($type, $typeClassName)
+    protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback)
     {
         $result = null;
         switch($type)
@@ -87,13 +91,11 @@ class NG2TypescriptGeneratorBase
                 }
                 break;
             case KalturaServerTypes::ArrayObject:
-                $result = "kclasses.{$typeClassName}[]";
+                $result = "{$typeClassName}[]";
                 break;
             case KalturaServerTypes::Enum:
-                $result = 'kenums.' . "$typeClassName";
-                break;
             case KalturaServerTypes::Object:
-                $result = 'kclasses.' . "$typeClassName";
+                $result = $typeClassName;
                 break;
             case KalturaServerTypes::Date:
                 $result = "Date";
@@ -105,9 +107,9 @@ class NG2TypescriptGeneratorBase
                 throw new Exception("toNG2TypeExp: Unknown type requested {$type}");
         }
 
-        if (isset($resultHandlerFunction))
+        if (isset($resultCreatedCallback))
         {
-            $result = $resultHandlerFunction($type, $typeClassName, $result);
+            $result = $resultCreatedCallback($type, $typeClassName, $result);
         }
         return  $result;
     }

@@ -3,7 +3,7 @@
 require_once (__DIR__. '/NG2TypescriptGeneratorBase.php');
 require_once (__DIR__. '/GeneratedFileData.php');
 
-class ClassTypesGenerator extends NG2TypescriptGeneratorBase
+class ClassesGenerator extends NG2TypescriptGeneratorBase
 {
 
     function __construct($serverMetadata)
@@ -29,9 +29,9 @@ class ClassTypesGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import {KalturaObject} from \"../utils/kaltura-object\";
-import {KalturaUtils} from \"../utils/kaltura-utils\";
-import * as enums from \"./enums\";
+import {KalturaServerObject} from \"./utils/kaltura-server-object\";
+import {KalturaUtils} from \"./utils/kaltura-utils\";
+import * as kenums from \"./kaltura-enums\";
 import {KalturaTypesFactory} from \"./kaltura-types-factory\";
 
 {$this->utils->buildExpression($classTypes,NewLine . NewLine)}
@@ -55,7 +55,7 @@ import {KalturaTypesFactory} from \"./kaltura-types-factory\";
         $result = "
 {$this->getBanner()}
 {$this->utils->createDocumentationExp('',$desc)}
-export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaObject")} {
+export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaServerObject")} {
 
     get objectType() : string{
         return '{$class->name}';
@@ -84,6 +84,7 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
 
         return $result;
     }
+
 
     function createContentFromClass(ClassType $class)
     {
@@ -116,5 +117,19 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
         }
 
         return $result;
+    }
+
+    protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)
+    {
+        return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)
+        {
+            switch($type) {
+                case KalturaServerTypes::Enum:
+                    $result = 'kenums.' . $result;
+                    break;
+            }
+
+            return $result;
+        });
     }
 }
