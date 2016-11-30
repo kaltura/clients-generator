@@ -40,11 +40,11 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $serviceActionsFile->path = "services/{$formattedServiceName}/{$formattedServiceName}-actions.ts";
             $serviceActionsFile->content = "import {KalturaRequest} from \"../../kaltura-request\";
 import {NativeResponseTypes} from \"../../utils/native-response-types\";
-import {KalturaUtils} from \"../../utils/kaltura-utils\";
 import {KalturaResponse} from \"../../kaltura-response\";
 import {VoidResponseResult} from \"../../utils/void-response-result\";
 import * as kclasses from \"../../kaltura-types\";
 import * as kenums from \"../../kaltura-enums\";
+import {DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \"../../utils/kaltura-server-object\";
 
 {$this->utils->buildExpression($actions,NewLine)}
 ";
@@ -84,6 +84,12 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
         return this;
     }
 
+    setDependency(...dependency : DependentProperty[]) : {$actionClassName}
+    {
+        super.setDependency(...dependency);
+        return this;
+    }
+
     setCompletion(callback : (response : KalturaResponse<{$actionNG2ResultType}>) => void) : {$actionClassName}
     {
         this.callback = callback;
@@ -91,7 +97,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
     }
 
     build():any {
-        return Object.assign({},
+        return Object.assign(
             super.build(),
             {
                 {$this->utils->buildExpression($content->buildContent,  ',' . NewLine,4)}

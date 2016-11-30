@@ -47,21 +47,20 @@ class NG2TypescriptGeneratorBase
 
     protected function requestBuildExp($name, $type)
     {
-        $result = null;
+        $enumType = 'General';
         switch($type)
         {
             case KalturaServerTypes::ArrayObject:
-                $result = "{$name} : KalturaUtils.toServerArray(this.{$name})";
+                $enumType = 'Array';
                 break;
             case KalturaServerTypes::Date:
-                $result = "{$name} : KalturaUtils.toServerDate(this.{$name})";
+                $enumType = 'Date';
                 break;
             default:
-                $result = "{$name} : this.{$name}";
                 break;
         }
 
-        return  $result;
+        return  "{$name} : this.buildPropertyValue('{$name}', this.objectData['{$name}'], KalturaPropertyTypes.{$enumType})";
     }
 
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback)

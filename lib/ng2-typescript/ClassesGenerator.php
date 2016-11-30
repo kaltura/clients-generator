@@ -29,10 +29,8 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import {KalturaServerObject} from \"./utils/kaltura-server-object\";
-import {KalturaUtils} from \"./utils/kaltura-utils\";
+import {KalturaServerObject, DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \"./utils/kaltura-server-object\";
 import * as kenums from \"./kaltura-enums\";
-import {KalturaTypesFactory} from \"./kaltura-types-factory\";
 
 {$this->utils->buildExpression($classTypes,NewLine . NewLine)}
 ";
@@ -63,8 +61,14 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
 
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
 
+    setDependency(...dependency : DependentProperty[]) : {$classTypeName}
+    {
+        super.setDependency(...dependency);
+        return this;
+    }
+
     build():any {
-        return Object.assign({},
+        return Object.assign(
             super.build(),
             {
                 {$this->utils->buildExpression($content->buildContent,  ',' . NewLine, 4)}
@@ -104,15 +108,15 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
                 // update the properties declaration
                 $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
                 $result->properties[] = "
-    get {$property->name}() : {$ng2ParamType}
-    {
-        return <{$ng2ParamType}>this.objectData['{$property->name}'];
-    }
+get {$property->name}() : {$ng2ParamType}
+{
+    return <{$ng2ParamType}>this.objectData['{$property->name}'];
+}
 
-    set {$property->name}(value : {$ng2ParamType})
-    {
-        this.objectData['{$property->name}'] = value;
-    }";
+set {$property->name}(value : {$ng2ParamType})
+{
+    this.objectData['{$property->name}'] = value;
+}";
             }
         }
 
