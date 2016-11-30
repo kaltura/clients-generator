@@ -58,8 +58,14 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
     get objectType() : string{
         return '{$class->name}';
     }
-
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
+
+    constructor()
+    {
+        super();
+
+        {$this->utils->buildExpression($content->constructorContent, NewLine, 2 )}
+    }
 
     setDependency(...dependency : DependentProperty[]) : {$classTypeName}
     {
@@ -95,6 +101,8 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
         $result = new stdClass();
         $result->properties = array();
         $result->buildContent = array();
+        $result->constructorContent = array();
+
 
         $result->buildContent[] = "objectType : \"{$class->name}\"";
 
@@ -103,7 +111,7 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
         {
             foreach($class->properties as $property) {
                 // update the build function
-                $result->buildContent[] = $this->requestBuildExp($property->name, $property->type);
+                $result->buildContent[] = $this->requestBuildExp($property->name, $property->type,false);
 
                 // update the properties declaration
                 $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
@@ -117,6 +125,9 @@ set {$property->name}(value : {$ng2ParamType})
 {
     this.objectData['{$property->name}'] = value;
 }";
+                if ($property->type == KalturaServerTypes::ArrayObject) {
+                    $result->constructorContent[] = "this.objectData['{$property->name}'] = [];";
+                }
             }
         }
 

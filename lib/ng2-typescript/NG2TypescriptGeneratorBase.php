@@ -14,7 +14,7 @@ class NG2TypescriptGeneratorBase
         $this->serverMetadata = $serverMetadata;
     }
 
-    function mapToDefaultValue($type, $typeClassName, $defaultValue)
+    function toNG2DefaultByType($type, $typeClassName, $defaultValue)
     {
         $result = null;
 
@@ -23,7 +23,7 @@ class NG2TypescriptGeneratorBase
             case KalturaServerTypes::Simple:
                 if ($typeClassName == "string")
                 {
-                    $result = isset($defaultValue) ?  "\"{$defaultValue}\"" : null;
+                    $result = $defaultValue ?  "\"{$defaultValue}\"" : "\"\"";
                 }else if ($defaultValue)
                 {
                     $result = $defaultValue;
@@ -34,10 +34,10 @@ class NG2TypescriptGeneratorBase
                 }
                 break;
             case KalturaServerTypes::ArrayObject:
-                $result = "[]";
+                $result = $defaultValue ? $defaultValue : "[]";
                 break;
             default:
-                $result = "null";
+                $result = $defaultValue ? $defaultValue : "null";
                 break;
 
         }
@@ -45,7 +45,7 @@ class NG2TypescriptGeneratorBase
         return $result;
     }
 
-    protected function requestBuildExp($name, $type)
+    protected function requestBuildExp($name, $type, $insideAction)
     {
         $enumType = 'General';
         switch($type)
@@ -60,7 +60,8 @@ class NG2TypescriptGeneratorBase
                 break;
         }
 
-        return  "{$name} : this.buildPropertyValue('{$name}', this.objectData['{$name}'], KalturaPropertyTypes.{$enumType})";
+        $valueExp = $insideAction ? "this.{$name}" : "this.objectData['{$name}']";
+        return  "{$name} : this.buildPropertyValue('{$name}', {$valueExp}, KalturaPropertyTypes.{$enumType})";
     }
 
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback)

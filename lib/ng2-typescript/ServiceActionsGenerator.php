@@ -163,7 +163,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
         foreach($serviceAction->params as $param) {
             // update the build function
-            $result->buildContent[] = $this->requestBuildExp($param->name, $param->type);
+            $result->buildContent[] = $this->requestBuildExp($param->name, $param->type,true);
 
             // update the import statements
             switch($param->type)
@@ -177,6 +177,9 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
                     break;
 
             }
+
+            $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
+            $result->properties[] = "{$param->name} : {$ng2ParamType};";
         }
 
         $requiredParams = $serviceAction->getRequiredParams();
@@ -186,7 +189,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
             $result->constructor[] = "{$param->name} : {$ng2ParamType}";
             $result->constructorContent[] =  "this.{$param->name} = {$param->name};";
-            $result->properties[] = "{$param->name} : {$ng2ParamType}{$this->utils->ifExp($param->default, ' = ' . $param->default,"")};";
+
         }
 
         $optionalParams = $serviceAction->getOptionalParams();
@@ -198,8 +201,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             {
                 $ng2ParamType = $this->toNG2TypeExp($param->type,$param->typeClassName);
                 $constructorOptionalParams[] = "{$param->name}? : {$ng2ParamType}";
-                $result->properties[] = "{$param->name} : {$ng2ParamType};";
-                $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  {$this->mapToDefaultValue($param->type, $param->typeClassName, $param->default)};";
+                $result->constructorContent[] = "this.{$param->name} =  typeof additional.{$param->name} !== 'undefined' ?  additional.{$param->name} :  {$this->toNG2DefaultByType($param->type, $param->typeClassName, $param->default)};";
             }
             $result->constructor[] = "additional : {" . join(", ", $constructorOptionalParams) . "} = {}";
 
