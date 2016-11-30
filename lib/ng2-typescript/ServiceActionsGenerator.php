@@ -128,7 +128,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             case KalturaServerTypes::Date:
             case KalturaServerTypes::ArrayObject:
             case KalturaServerTypes::Object:
-                $result = "\"$type\"";
+                $result = "\"$typeClassName\"";
                 break;
             default:
                 throw new Exception("Unknown type  {$type} > {$typeClassName} to map to Kaltura response type");
