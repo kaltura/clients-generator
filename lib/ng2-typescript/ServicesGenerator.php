@@ -17,6 +17,8 @@ class ServicesGenerator extends NG2TypescriptGeneratorBase
             $this->createServices()
         );
 
+        $result[] = $this->createServicesFolderIndex();
+
         return $result;
     }
 
@@ -27,13 +29,30 @@ class ServicesGenerator extends NG2TypescriptGeneratorBase
 
         foreach ($this->serverMetadata->services as $service) {
             $result[] = $this->createService($service);
-            $result[] = $this->createServiceIndex($service);
+            $result[] = $this->createServiceFolderIndex($service);
         }
 
         return $result;
     }
 
-    function createServiceIndex($serviceData)
+    function createServicesFolderIndex()
+    {
+        $fileContent = array();
+
+        foreach ($this->serverMetadata->services as $service) {
+            $formattedServiceName = $this->utils->toLispCase($service->name);
+
+            $fileContent[] = "export * from \"./{$formattedServiceName}\"";
+        }
+
+        $result = new GeneratedFileData();
+        $result->path = "services/index.ts";
+        $result->content = join(NewLine,$fileContent);
+
+        return $result;
+    }
+
+    function createServiceFolderIndex($serviceData)
     {
         $formattedServiceName = $this->utils->toLispCase($serviceData->name);
 
@@ -43,6 +62,7 @@ class ServicesGenerator extends NG2TypescriptGeneratorBase
 export * from \"./{$formattedServiceName}.service\"
 export * from \"./{$formattedServiceName}-actions\"
 ";
+
 
         return $result;
 
