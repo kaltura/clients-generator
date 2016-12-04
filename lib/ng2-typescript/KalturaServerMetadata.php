@@ -5,7 +5,7 @@ class KalturaServerTypes
     const Unknown = "Unknown";
     const Simple = "Simple";
     const Object = "Object";
-    const ArrayObject = "ArrayObject";
+    const ArrayOfObjects = "ArrayOfObjects";
     const Void = "Void";
     const EnumOfInt = "EnumOfInt";
     const EnumOfString = "EnumOfString";
@@ -51,11 +51,12 @@ class ServiceAction
     {
         $errors = array();
 
-
         $errors = array_merge(
             $errors,
             Utils::validateType($this->resultType,$this->resultClassName,$availableTypes,"service {$service->name} > action {$this->name} > result type")
         );
+
+
 
         foreach($this->params as $param)
         {
@@ -107,6 +108,11 @@ class ServiceActionParam
     public function prepare($availableTypes, $service, $action)
     {
         $errors = array();
+
+        if ($this->typeClassName == KalturaServerTypes::Void)
+        {
+            $errors[] = "service '{$service->name}' action '{$action->name}' param '{$this->name}' has invalid type void";
+        }
 
         $errors = array_merge(
             $errors,
@@ -228,6 +234,12 @@ class ClassTypeProperty
     public function prepare($availableTypes, $classType)
     {
         $errors = array();
+
+        if ($this->typeClassName == KalturaServerTypes::Void)
+        {
+            $errors[] = "class '{$classType->name}' property '{$this->name}' has invalid type void";
+        }
+
 
         $errors = array_merge(
             $errors,

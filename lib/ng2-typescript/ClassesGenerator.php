@@ -74,16 +74,6 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
 
         {$this->utils->buildExpression($content->constructorContent, NewLine, 1)}
     }
-
-    setData(handler : (request :  {$classTypeName}) => void) :  {$classTypeName}
-    {
-        if (handler)
-        {
-            handler(this);
-        }
-
-        return this;
-    }
 }";
 
         return $result;
@@ -106,7 +96,7 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
                 $result->buildContent[] = "\"{$property->name}\"";// $this->requestBuildExp($property->name, $property->type,false);
 
                 // update constructor content
-                if ($property->type == KalturaServerTypes::ArrayObject)
+                if ($property->type == KalturaServerTypes::ArrayOfObjects)
                 {
                     $result->constructorContent[] = "this.{$property->name} = []";
                 }
@@ -115,7 +105,7 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
                 $decorator = null;
                 switch($property->type)
                 {
-                    case KalturaServerTypes::ArrayObject:
+                    case KalturaServerTypes::ArrayOfObjects:
                         $decorator = "@JsonMember({elements : {$property->typeClassName}})";
                         break;
                     default:

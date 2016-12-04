@@ -3,7 +3,6 @@ CONST NewLine = "\n";
 
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
-require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
@@ -33,7 +32,6 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$this->serverMetadata = $this->extractData($xpath);
 
 		$files = array_merge(
-			(new ServicesGenerator($this->serverMetadata))->generate(),
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
 			(new ClassesGenerator($this->serverMetadata))->generate(),
 			(new EnumsGenerator($this->serverMetadata))->generate()
@@ -251,7 +249,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		{
 			$arrayTypeValue = $xmlnode->getAttribute("arrayType");
 			if (isset($arrayTypeValue) && $arrayTypeValue != "") {
-				$result->type = KalturaServerTypes::ArrayObject;
+				$result->type = KalturaServerTypes::ArrayOfObjects;
 				$result->className = $arrayTypeValue;
 			}
 		}else

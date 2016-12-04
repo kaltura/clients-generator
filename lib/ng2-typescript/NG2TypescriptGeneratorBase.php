@@ -33,7 +33,7 @@ class NG2TypescriptGeneratorBase
                     $result = "null";
                 }
                 break;
-            case KalturaServerTypes::ArrayObject:
+            case KalturaServerTypes::ArrayOfObjects:
                 $result = $defaultValue ? $defaultValue : "[]";
                 break;
             default:
@@ -50,7 +50,7 @@ class NG2TypescriptGeneratorBase
         $enumType = 'General';
         switch($type)
         {
-            case KalturaServerTypes::ArrayObject:
+            case KalturaServerTypes::ArrayOfObjects:
                 $enumType = 'Array';
                 break;
             case KalturaServerTypes::Date:
@@ -90,7 +90,7 @@ class NG2TypescriptGeneratorBase
                         throw new Exception("Unknown simple type {$typeClassName}");
                 }
                 break;
-            case KalturaServerTypes::ArrayObject:
+            case KalturaServerTypes::ArrayOfObjects:
                 $result = "{$typeClassName}[]";
                 break;
             case KalturaServerTypes::EnumOfInt:
@@ -102,7 +102,7 @@ class NG2TypescriptGeneratorBase
                 $result = "Date";
                 break;
             case KalturaServerTypes::Void:
-                $result = "VoidResponseResult";
+                $result = "void";
                 break;
             default:
                 throw new Exception("toNG2TypeExp: Unknown type requested {$type}");

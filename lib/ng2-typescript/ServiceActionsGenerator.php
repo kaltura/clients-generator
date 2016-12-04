@@ -19,6 +19,25 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $this->createServiceActions()
         );
 
+        $result[] = $this->createServicesFolderIndex();
+
+        return $result;
+    }
+
+    function createServicesFolderIndex()
+    {
+        $fileContent = array();
+
+        foreach ($this->serverMetadata->services as $service) {
+            $formattedServiceName = $this->utils->toLispCase($service->name);
+
+            $fileContent[] = "export * from \"./{$formattedServiceName}\"";
+        }
+
+        $result = new GeneratedFileData();
+        $result->path = "services/index.ts";
+        $result->content = join(NewLine,$fileContent);
+
         return $result;
     }
 
@@ -37,14 +56,12 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $serviceActionsFile = new GeneratedFileData();
             $result[] = $serviceActionsFile;
             $formattedServiceName = $this->utils->toLispCase($service->name);
-            //$serviceActionsFile->path = "services/{$formattedServiceName}/{$formattedServiceName}-actions.ts";
-            $serviceActionsFile->path = "services/{$formattedServiceName}/index.ts";
-            $serviceActionsFile->content = "import {KalturaRequest} from \"../../kaltura-request\";
-import {KalturaResponse} from \"../../kaltura-response\";
-import {VoidResponseResult} from \"../../utils/void-response-result\";
-import * as kclasses from \"../../kaltura-types\";
-import * as kenums from \"../../kaltura-enums\";
-import {DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \"../../utils/kaltura-server-object\";
+            $serviceActionsFile->path = "services/{$formattedServiceName}.ts";
+            $serviceActionsFile->content = "import {KalturaRequest} from \"../kaltura-request\";
+import {KalturaResponse} from \"../kaltura-response\";
+import * as kclasses from \"../kaltura-types\";
+import * as kenums from \"../kaltura-enums\";
+import {DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \"../utils/kaltura-server-object\";
 
 {$this->utils->buildExpression($actions,NewLine)}
 ";
@@ -60,6 +77,7 @@ import {DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \
 
         $content = $this->createContentFromServiceAction($serviceAction);
         $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
+        $baseNG2ResultType = $this->mapToKalturaResponseType($serviceAction->resultType, $serviceAction->resultClassName);;
         $result = "{$this->getBanner()}
 
 {$this->utils->createDocumentationExp('',$desc)}
@@ -69,31 +87,9 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
     constructor($content->constructor)
     {
-        super('{$serviceName}','{$serviceAction->name}', data);
+        super('{$serviceName}','{$serviceAction->name}',{$baseNG2ResultType}, data);
 
         {$this->utils->buildExpression($content->constructorContent, NewLine, 2 )}
-    }
-
-    setData(handler : (request :  {$actionClassName}) => void) :  {$actionClassName}
-    {
-        if (handler)
-        {
-            handler(this);
-        }
-
-        return this;
-    }
-
-    setDependency(...dependency : DependentProperty[]) : {$actionClassName}
-    {
-        super.setDependency(...dependency);
-        return this;
-    }
-
-    setCompletion(callback : (response : KalturaResponse<{$actionNG2ResultType}>) => void) : {$actionClassName}
-    {
-        this.callback = callback;
-        return this;
     }
 }";
 
@@ -101,36 +97,36 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
     }
 
 
-    // TODO [kmc] remove if not needed
-//,{$this->mapToKalturaResponseType($serviceAction->resultType, $serviceAction->resultClassName)}
-//    function mapToKalturaResponseType($type, $typeClassName)
-//    {
-//        $result = null;
-//
-//        switch($type)
-//        {
-//            case KalturaServerTypes::File:
-//                $result = "NativeResponseTypes.String";
-//                break;
-//            case KalturaServerTypes::Void:
-//                $result = "NativeResponseTypes.Void";
-//                break;
-//            case KalturaServerTypes::Simple:
-//                $result = "NativeResponseTypes." . Utils::upperCaseFirstLetter($this->toNG2TypeExp(KalturaServerTypes::Simple,$typeClassName));
-//                break;
-//            case KalturaServerTypes::EnumAsString:
-//            case KalturaServerTypes::EnumAsInt:
-//            case KalturaServerTypes::Date:
-//            case KalturaServerTypes::ArrayObject:
-//            case KalturaServerTypes::Object:
-//                $result = "\"$typeClassName\"";
-//                break;
-//            default:
-//                throw new Exception("Unknown type  {$type} > {$typeClassName} to map to Kaltura response type");
-//        }
-//
-//        return $result;
-//    }
+    function mapToKalturaResponseType($type, $typeClassName)
+    {
+        $result = null;
+
+        switch($type)
+        {
+            case KalturaServerTypes::File:
+                $result = "\"string\"";
+                break;
+            case KalturaServerTypes::Void:
+                $result = "null";
+                break;
+            case KalturaServerTypes::Simple:
+                $result = "\"" . $this->toNG2TypeExp(KalturaServerTypes::Simple,$typeClassName) . "\"";
+                break;
+            case KalturaServerTypes::EnumOfString:
+            case KalturaServerTypes::EnumOfInt:
+                $result = "kenums.$typeClassName";
+            break;
+            case KalturaServerTypes::ArrayOfObjects:
+            case KalturaServerTypes::Object:
+                $result = "kclasses.$typeClassName";
+            break;
+            case KalturaServerTypes::Date:
+            default:
+                throw new Exception("Unknown type  {$type} > {$typeClassName} to map to Kaltura response type");
+        }
+
+        return $result;
+    }
 
     function createContentFromServiceAction(ServiceAction $serviceAction)
     {
@@ -147,7 +143,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
         switch($serviceAction->resultType)
         {
             case KalturaServerTypes::Object:
-            case KalturaServerTypes::ArrayObject:
+            case KalturaServerTypes::ArrayOfObjects:
                 $result->importTypes[] = $serviceAction->resultClassName;
                 break;
             case KalturaServerTypes::EnumOfString:
@@ -164,7 +160,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             // update the import statements
             switch($param->type)
             {
-                case KalturaServerTypes::ArrayObject:
+                case KalturaServerTypes::ArrayOfObjects:
                 case KalturaServerTypes::Object:
                     $result->importTypes[] = $param->typeClassName;
                     break;
@@ -179,7 +175,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             $decorator = null;
 //            switch($param->type)
 //            {
-//                case KalturaServerTypes::ArrayObject:
+//                case KalturaServerTypes::ArrayOfObjects:
 //                    $decorator = "@JsonMember({elements : {$param->typeClassName}})";
 //                    break;
 //                default:
@@ -255,15 +251,15 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
         return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)
         {
             switch($type) {
-                case KalturaServerTypes::ArrayObject:
+                case KalturaServerTypes::Object:
+                case KalturaServerTypes::ArrayOfObjects:
                     $result = "kclasses.{$result}";
                     break;
                 case KalturaServerTypes::EnumOfInt:
                 case KalturaServerTypes::EnumOfString:
                     $result = 'kenums.' . $result;
                     break;
-                case KalturaServerTypes::Object:
-                    $result = 'kclasses.' . $result;
+                default:
                     break;
             }
 

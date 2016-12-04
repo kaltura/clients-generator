@@ -78,7 +78,7 @@ class Utils
                     $errors[] = "Unknown type for {$target}";
                     break;
                 case KalturaServerTypes::Object:
-                case KalturaServerTypes::ArrayObject:
+                case KalturaServerTypes::ArrayOfObjects:
                 case KalturaServerTypes::EnumOfString:
                 case KalturaServerTypes::EnumOfInt:
                     if (!in_array($typeClassName, $availableTypes))
