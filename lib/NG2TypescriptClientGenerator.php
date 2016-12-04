@@ -4,7 +4,6 @@ CONST NewLine = "\n";
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ServicesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/ClassesFactoryGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
@@ -37,17 +36,13 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			(new ServicesGenerator($this->serverMetadata))->generate(),
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
 			(new ClassesGenerator($this->serverMetadata))->generate(),
-			(new EnumsGenerator($this->serverMetadata))->generate(),
-			(new ClassesFactoryGenerator($this->serverMetadata))->generate()
+			(new EnumsGenerator($this->serverMetadata))->generate()
 		);
 
 		foreach($files as $file)
 		{
 			$this->addFile($this->_baseClientPath . "/" . $file->path, $file->content);
 		}
-//
-//		$configurationNodes = $xpath->query("/xml/configurations/*");
-//		$this->writeMainClient($serviceNodes, $configurationNodes);
 	}
 
 
@@ -108,6 +103,25 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 						$enumType->values[] = new EnumValue($enumValueNode->getAttribute('name'), $enumValueNode->getAttribute('value'));
 					}
 				}
+			}
+		}
+
+		$requestConfigurationNodes = $xpath->query("/xml/configurations/request");
+
+		foreach($requestConfigurationNodes as $requestConfigurationNode)
+		{
+			$children = $requestConfigurationNode->childNodes;
+			foreach ($children as $childrenNode) {
+				if ($childrenNode->nodeType != XML_ELEMENT_NODE) {
+					continue;
+				}
+				$item = new stdClass();
+				$result->requestSharedParameters[] = $item;
+				$item->name = $childrenNode->nodeName;
+				$item->description = $childrenNode->getAttribute("description");
+				$itemTypeData = $this->mapToTypescriptType($childrenNode,false);
+				$item->type = $itemTypeData->type;
+				$item->typeClassName = $itemTypeData->className;
 			}
 		}
 
@@ -260,7 +274,14 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 					
 					if ($enumType)
 					{
-						$result->type = KalturaServerTypes::Enum;
+						if ($typeValue == "string")
+						{
+							$result->type = KalturaServerTypes::EnumOfString;
+						}else
+						{
+							$result->type = KalturaServerTypes::EnumOfInt;
+						}
+
 						$result->className = $enumType;
 
 					}else

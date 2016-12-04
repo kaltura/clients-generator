@@ -79,7 +79,8 @@ class Utils
                     break;
                 case KalturaServerTypes::Object:
                 case KalturaServerTypes::ArrayObject:
-                case KalturaServerTypes::Enum:
+                case KalturaServerTypes::EnumOfString:
+                case KalturaServerTypes::EnumOfInt:
                     if (!in_array($typeClassName, $availableTypes))
                     {
                         $errors[] = "Unknown type '{$typeClassName}' for {$target}";
@@ -90,6 +91,24 @@ class Utils
         }
 
         return $errors;
+    }
+
+    public static function findInArrayByName($searchedValue, $array)
+    {
+        $neededObject = array_filter(
+            $array,
+            function ($e) use (&$searchedValue) {
+                return $e->name == $searchedValue;
+            }
+        );
+
+        if (count($neededObject) == "1")
+        {
+            return $neededObject[0];
+        }else
+        {
+            return null;
+        }
     }
 
     public static function fromSnakeCaseToCamelCase($str)

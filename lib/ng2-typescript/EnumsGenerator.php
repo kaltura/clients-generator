@@ -32,6 +32,9 @@ class EnumsGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
+import {KalturaUtils} from \"./utils/kaltura-utils\";
+import { JsonObject } from './utils/typed-json';
+
 {$this->utils->buildExpression($enumTypes,NewLine . NewLine)}
 ";
 
@@ -65,13 +68,16 @@ export enum {$enumTypeName} {
                 $values = array();
                 foreach ($enum->values as $item) {
                     $enumName = Utils::fromSnakeCaseToCamelCase($item->name);
-                    $values[] = "static {$enumName} = new {$enumTypeName}('{$enumName}', '{$item->value}');";
+                    $values[] = "static {$enumName} = new {$enumTypeName}('{$item->value}');";
                 }
 
                 $result = "
 {$this->getBanner()}
+
+
+@JsonObject({serializer : KalturaUtils.FromEnumOfStringToValue})
 export class {$enumTypeName} {
-    protected constructor(public name : string, private value:string){
+    constructor(private value?:string){
     }
 
     toString(){

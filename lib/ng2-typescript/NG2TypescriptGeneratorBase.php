@@ -93,7 +93,8 @@ class NG2TypescriptGeneratorBase
             case KalturaServerTypes::ArrayObject:
                 $result = "{$typeClassName}[]";
                 break;
-            case KalturaServerTypes::Enum:
+            case KalturaServerTypes::EnumOfInt:
+            case KalturaServerTypes::EnumOfString:
             case KalturaServerTypes::Object:
                 $result = $typeClassName;
                 break;

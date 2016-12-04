@@ -27,10 +27,10 @@ class ServicesGenerator extends NG2TypescriptGeneratorBase
     {
         $result = array();
 
-        foreach ($this->serverMetadata->services as $service) {
-            $result[] = $this->createService($service);
-            $result[] = $this->createServiceFolderIndex($service);
-        }
+//        foreach ($this->serverMetadata->services as $service) {
+//            $result[] = $this->createService($service);
+//            $result[] = $this->createServiceFolderIndex($service);
+//        }
 
         return $result;
     }
@@ -162,7 +162,8 @@ static {$functionName}({$functionParamsExp}) : kactions.{$actionResultType}
                 case KalturaServerTypes::ArrayObject:
                     $result = "kclasses.{$result}";
                     break;
-                case KalturaServerTypes::Enum:
+                case KalturaServerTypes::EnumOfInt:
+                case KalturaServerTypes::EnumOfString:
                     $result = 'kenums.' . $result;
                     break;
                 case KalturaServerTypes::Object:

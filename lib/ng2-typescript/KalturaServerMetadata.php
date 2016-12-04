@@ -7,7 +7,8 @@ class KalturaServerTypes
     const Object = "Object";
     const ArrayObject = "ArrayObject";
     const Void = "Void";
-    const Enum = "Enum";
+    const EnumOfInt = "EnumOfInt";
+    const EnumOfString = "EnumOfString";
     const Date = "Date";
     const File = "File";
 }
@@ -247,6 +248,7 @@ class KalturaServerMetadata
     public $services = array();
     public $classTypes = array();
     public $enumTypes = array();
+    public $requestSharedParameters = array();
 
     public function prepare()
     {
