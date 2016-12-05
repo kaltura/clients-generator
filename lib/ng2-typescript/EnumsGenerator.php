@@ -75,13 +75,13 @@ export enum {$enumTypeName} {
 {$this->getBanner()}
 
 
-@JsonObject({serializer : KalturaUtils.FromEnumOfStringToValue})
+@JsonObject({serializer : KalturaUtils.fromEnumOfStringToValue, initializer :  KalturaUtils.toEnumOfStringToValue})
 export class {$enumTypeName} {
-    constructor(private value?:string){
+    constructor(private value?:string | number){
     }
 
     toString(){
-        return this.value;
+        return this.value + '';
     }
 
     {$this->utils->buildExpression($values, NewLine, 1)}
