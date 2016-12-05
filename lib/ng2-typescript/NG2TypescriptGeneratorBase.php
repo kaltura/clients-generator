@@ -115,6 +115,23 @@ class NG2TypescriptGeneratorBase
         return  $result;
     }
 
+    protected function getPropertyDecorator($type, $typeClassName, $className = "")
+    {
+        $result = null;
+
+        switch($type)
+        {
+            case KalturaServerTypes::ArrayOfObjects:
+                $result = "@JsonMember({elements : {$className}{$typeClassName}})";
+                break;
+            default:
+                $result = "@JsonMember";
+                break;
+        }
+
+        return $result;
+    }
+
     protected function getBanner()
     {
         $banner = "";

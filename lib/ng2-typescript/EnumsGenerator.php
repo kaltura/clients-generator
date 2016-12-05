@@ -77,11 +77,18 @@ export enum {$enumTypeName} {
 
 @JsonObject({serializer : KalturaUtils.fromEnumOfStringToValue, initializer :  KalturaUtils.toEnumOfStringToValue})
 export class {$enumTypeName} {
-    constructor(private value?:string | number){
+    private _value : string;
+    constructor( value?:string | number){
+        this._value = value + '';
+    }
+
+    equals(obj : this) : boolean
+    {
+        return obj && obj.toString() === this._value;
     }
 
     toString(){
-        return this.value + '';
+        return this._value;
     }
 
     {$this->utils->buildExpression($values, NewLine, 1)}

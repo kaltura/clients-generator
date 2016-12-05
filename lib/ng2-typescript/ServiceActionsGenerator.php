@@ -58,10 +58,9 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $formattedServiceName = $this->utils->toLispCase($service->name);
             $serviceActionsFile->path = "services/{$formattedServiceName}.ts";
             $serviceActionsFile->content = "import {KalturaRequest} from \"../kaltura-request\";
-import {KalturaResponse} from \"../kaltura-response\";
 import * as kclasses from \"../kaltura-types\";
 import * as kenums from \"../kaltura-enums\";
-import {DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \"../utils/kaltura-server-object\";
+import {JsonMember,JsonSerializableObject} from \"../utils/typed-json\";
 
 {$this->utils->buildExpression($actions,NewLine)}
 ";
@@ -81,15 +80,19 @@ import {DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \
         $result = "{$this->getBanner()}
 
 {$this->utils->createDocumentationExp('',$desc)}
+@JsonSerializableObject({onSerializedFunction : 'onSerialized', requireTypeHints : false})
 export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
 
-    constructor($content->constructor)
+    constructor(data : $content->constructor)
     {
         super('{$serviceName}','{$serviceAction->name}',{$baseNG2ResultType}, data);
 
-        {$this->utils->buildExpression($content->constructorContent, NewLine, 2 )}
+        if (data)
+        {
+            {$this->utils->buildExpression($content->constructorContent, NewLine, 3 )}
+        }
     }
 }";
 
@@ -171,21 +174,10 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
             }
 
-            // TODO [kmc]
-            $decorator = null;
-//            switch($param->type)
-//            {
-//                case KalturaServerTypes::ArrayOfObjects:
-//                    $decorator = "@JsonMember({elements : {$param->typeClassName}})";
-//                    break;
-//                default:
-//                    $decorator = "@JsonMember";
-//                    break;
-//            }
-
             if (!$this->isPropertyOfBaseRequest($param->name)) {
                 // handle only properties that are not in base to prevent duplication in declaration
                 $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
+                $decorator = $this->getPropertyDecorator($param->type,$param->typeClassName, 'kclasses.');
                 $result->properties[] = "{$decorator} {$param->name} : {$ng2ParamType};";
             }
         }
@@ -231,7 +223,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             }
         }
 
-        $result->constructor = "data : {" . join(", ", $constructorParameters) . "}";
+        $result->constructor = "{" . join(", ", $constructorParameters) . "}";
         if (count($requiredParams) == "0" && count($optionalParamsHandled) !== 0)
         {
             // mark the data parameter as optional if we have optional parameters without any required parameters

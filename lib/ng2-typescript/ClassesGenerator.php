@@ -33,7 +33,7 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import {KalturaServerObject, DependentProperty, DependentPropertyTarget, KalturaPropertyTypes} from \"./utils/kaltura-server-object\";
+import {KalturaServerObject} from \"./utils/kaltura-server-object\";
 import * as kenums from \"./kaltura-enums\";
 import { JsonMember, JsonObject } from './utils/typed-json';
 
@@ -58,7 +58,7 @@ import { JsonMember, JsonObject } from './utils/typed-json';
         $result = "
 {$this->getBanner()}
 {$this->utils->createDocumentationExp('',$desc)}
-@JsonObject
+@JsonObject({onSerializedFunction : 'onSerialized'})
 export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaServerObject")} {
 
     get objectType() : string
@@ -102,16 +102,7 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
                 }
 
                 // update the properties declaration
-                $decorator = null;
-                switch($property->type)
-                {
-                    case KalturaServerTypes::ArrayOfObjects:
-                        $decorator = "@JsonMember({elements : {$property->typeClassName}})";
-                        break;
-                    default:
-                        $decorator = "@JsonMember";
-                        break;
-                }
+                $decorator = $this->getPropertyDecorator($property->type,$property->typeClassName);
                 $result->properties[] = "{$decorator} {$property->name} : {$ng2ParamType};";
             }
         }
