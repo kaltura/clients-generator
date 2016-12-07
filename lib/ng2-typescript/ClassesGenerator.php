@@ -71,7 +71,6 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
     constructor()
     {
         super();
-
         {$this->utils->buildExpression($content->constructorContent, NewLine, 1)}
     }
 }";

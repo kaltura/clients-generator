@@ -21,7 +21,7 @@ class NG2TypescriptGeneratorBase
         switch ($type)
         {
             case KalturaServerTypes::Simple:
-                if ($typeClassName == "string")
+                if ($typeClassName == "string" && $defaultValue !== "null")
                 {
                     $result = $defaultValue ?  "\"{$defaultValue}\"" : "\"\"";
                 }else if ($defaultValue)
