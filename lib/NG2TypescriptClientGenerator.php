@@ -5,6 +5,7 @@ require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/KalturaBaseRequestGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
 
 
@@ -34,6 +35,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$files = array_merge(
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
 			(new ClassesGenerator($this->serverMetadata))->generate(),
+			(new KalturaBaseRequestGenerator($this->serverMetadata))->generate(),
 			(new EnumsGenerator($this->serverMetadata))->generate()
 		);
 
@@ -77,8 +79,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				$classType = new ClassType();
 				$result->classTypes[] = $classType;
 
-				$classType->name = $classNode->getAttribute("name");
-				$classType->base = $classNode->getAttribute("base");
+				$classType->name = $this->fixKalturaTypeName($classNode->getAttribute("name"));
+				$classType->base = $this->fixKalturaTypeName($classNode->getAttribute("base"));
 				$classType->plugin = $classNode->getAttribute("plugin");
 				$classType->description = $classNode->getAttribute("description");
 				$classType->properties = $this->extractClassTypeProperties($classNode);
@@ -92,7 +94,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				$enumType = new EnumType();
 				$result->enumTypes[] = $enumType;
 
-				$enumType->name = $enumNode->getAttribute("name");
+				$enumType->name = $this->fixKalturaTypeName($enumNode->getAttribute("name"));
 				$enumType->type = $enumNode->getAttribute("enumType");
 
 				$enumValueNodes = $enumNode->childNodes;
@@ -106,6 +108,24 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		$requestConfigurationNodes = $xpath->query("/xml/configurations/request");
 
+		$item = new stdClass();
+		$result->requestSharedParameters["service"] = $item;
+		$item->name = "service";
+		$item->description = "";
+		$item->transparentToUser = true;
+		$item->optional = false;
+		$item->type = KalturaServerTypes::Simple;
+		$item->typeClassName = "string";
+
+		$item = new stdClass();
+		$result->requestSharedParameters["action"] = $item;
+		$item->name = "action";
+		$item->description = "";
+		$item->transparentToUser = true;
+		$item->optional = false;
+		$item->type = KalturaServerTypes::Simple;
+		$item->typeClassName = "string";
+
 		foreach($requestConfigurationNodes as $requestConfigurationNode)
 		{
 			$children = $requestConfigurationNode->childNodes;
@@ -114,8 +134,10 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 					continue;
 				}
 				$item = new stdClass();
-				$result->requestSharedParameters[] = $item;
+				$result->requestSharedParameters[$childrenNode->nodeName] = $item;
 				$item->name = $childrenNode->nodeName;
+				$item->transparentToUser = false;
+				$item->optional = true;
 				$item->description = $childrenNode->getAttribute("description");
 				$itemTypeData = $this->mapToTypescriptType($childrenNode,false);
 				$item->type = $itemTypeData->type;
@@ -143,20 +165,12 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 	function extractClassTypeProperties(DOMElement $classNode)
 	{
-		$className = $classNode->getAttribute("name");
-
 		$result = array();
 
 		$propertyNodes = $classNode->childNodes;
 		foreach ($propertyNodes as $propertyNode) {
 			if ($propertyNode->nodeType != XML_ELEMENT_NODE || $propertyNode->nodeName !== 'property')
 				continue;
-
-			// TODO: workaround, removing 'properties' of type 'KalturaObjectBase' since the xml is missing some declaration.
-			if ($propertyNode->getAttribute("type") == "KalturaObjectBase")
-			{
-				continue;
-			}
 
 			$propertyItem = new ClassTypeProperty();
 			$propertyItem->name = $propertyNode->getAttribute("name");
@@ -173,6 +187,12 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		}
 
 		return $result;
+	}
+
+	function fixKalturaTypeName($name)
+	{
+		return $name;
+		//return $name == "KalturaObjectBase" ? "KalturaObjectBase" : preg_replace('/^Kaltura/', '',$name);
 	}
 
 	function extractServiceActions(DOMElement $serviceNode)
@@ -247,7 +267,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			}
 		}else if ($this->isArrayType($typeValue))
 		{
-			$arrayTypeValue = $xmlnode->getAttribute("arrayType");
+			$arrayTypeValue = $this->fixKalturaTypeName($xmlnode->getAttribute("arrayType"));
 			if (isset($arrayTypeValue) && $arrayTypeValue != "") {
 				$result->type = KalturaServerTypes::ArrayOfObjects;
 				$result->className = $arrayTypeValue;
@@ -280,7 +300,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 							$result->type = KalturaServerTypes::EnumOfInt;
 						}
 
-						$result->className = $enumType;
+						$result->className = $this->fixKalturaTypeName($enumType);
 
 					}else
 					{
@@ -290,7 +310,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 					break;
 				default:
 					$result->type = KalturaServerTypes::Object;
-					$result->className = $typeValue;
+					$result->className = $this->fixKalturaTypeName( $typeValue);
 					break;
 			}
 		}

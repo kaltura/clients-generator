@@ -53,63 +53,6 @@ class Utils
         return (substr($str, 0, strlen($prefix)) === $prefix);
     }
 
-    public static function validateType($type, $typeClassName, $availableTypes, $target)
-    {
-
-        $errors = array();
-
-        if (!isset($type))
-        {
-            $errors[] = "missing type for {$target}";
-        }else
-        {
-            switch ($type)
-            {
-                case KalturaServerTypes::Simple:
-                    $supportedTypes = array('int','bool','float','bigint','string');
-
-                    if (!in_array($typeClassName,$supportedTypes))
-                    {
-                        $errors[] = "Unknown type '{$typeClassName}' for {$target}";
-
-                    }
-                    break;
-                case KalturaServerTypes::Unknown:
-                    $errors[] = "Unknown type for {$target}";
-                    break;
-                case KalturaServerTypes::Object:
-                case KalturaServerTypes::ArrayOfObjects:
-                case KalturaServerTypes::EnumOfString:
-                case KalturaServerTypes::EnumOfInt:
-                    if (!in_array($typeClassName, $availableTypes))
-                    {
-                        $errors[] = "Unknown type '{$typeClassName}' for {$target}";
-
-                    }
-                    break;
-            }
-        }
-
-        return $errors;
-    }
-
-    public static function findInArrayByName($searchedValue, $array)
-    {
-        $neededObject = array_filter(
-            $array,
-            function ($e) use (&$searchedValue) {
-                return $e->name == $searchedValue;
-            }
-        );
-
-        if (count($neededObject) == "1")
-        {
-            return $neededObject[0];
-        }else
-        {
-            return null;
-        }
-    }
 
     public static function fromSnakeCaseToCamelCase($str)
     {

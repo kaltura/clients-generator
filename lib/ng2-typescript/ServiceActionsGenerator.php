@@ -89,10 +89,8 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
     {
         super('{$serviceName}','{$serviceAction->name}',{$baseNG2ResultType}, data);
 
-        if (data)
-        {
-            {$this->utils->buildExpression($content->constructorContent, NewLine, 3 )}
-        }
+        {$this->utils->buildExpression($content->constructorContent, NewLine, 2 )}
+
     }
 }";
 
@@ -210,13 +208,13 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
                 if (!$this->isPropertyOfBaseRequest($param->name)) {
                     // handle only properties that are not in base to prevent handling in both places
-                    $result->constructorContent[] = "this.{$param->name} =  typeof data.{$param->name} !== 'undefined' ?  data.{$param->name} :  {$this->toNG2DefaultByType($param->type, $param->typeClassName, $param->default)};";
+                    $result->constructorContent[] = "this.{$param->name} =  data && typeof data.{$param->name} !== 'undefined' ?  data.{$param->name} :  {$this->toNG2DefaultByType($param->type, $param->typeClassName, $param->default)};";
                 }
             }
         }
 
         foreach ($this->serverMetadata->requestSharedParameters as $param) {
-            if (!in_array($param->name, $actionProperties)) {
+            if (!in_array($param->name, $actionProperties) && !$param->transparentToUser) {
                 $optionalParamsHandled[] = $param->name;
                 $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
                 $constructorParameters[] = "{$param->name}? : {$ng2ParamType}";
@@ -235,9 +233,9 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
     private function isPropertyOfBaseRequest($propertyName)
     {
-        return Utils::findInArrayByName($propertyName,$this->serverMetadata->requestSharedParameters);
-
+        return isset($this->serverMetadata->requestSharedParameters[$propertyName]);
     }
+
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)
     {
         return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)

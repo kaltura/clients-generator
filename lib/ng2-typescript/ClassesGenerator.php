@@ -33,7 +33,7 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import {KalturaServerObject} from \"./utils/kaltura-server-object\";
+import {KalturaObjectBase} from \"./utils/kaltura-object-base\";
 import * as kenums from \"./kaltura-enums\";
 import { JsonMember, JsonObject } from './utils/typed-json';
 
@@ -59,7 +59,7 @@ import { JsonMember, JsonObject } from './utils/typed-json';
 {$this->getBanner()}
 {$this->utils->createDocumentationExp('',$desc)}
 @JsonObject({onSerializedFunction : 'onSerialized'})
-export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaServerObject")} {
+export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaObjectBase")} {
 
     get objectType() : string
     {

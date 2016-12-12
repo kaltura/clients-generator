@@ -1,5 +1,45 @@
 <?php
 
+function validateType($type, $typeClassName, $availableTypes, $target)
+{
+
+    $errors = array();
+
+    if (!isset($type))
+    {
+        $errors[] = "missing type for {$target}";
+    }else
+    {
+        switch ($type)
+        {
+            case KalturaServerTypes::Simple:
+                $supportedTypes = array('int','bool','float','bigint','string');
+
+                if (!in_array($typeClassName,$supportedTypes))
+                {
+                    $errors[] = "Unknown type '{$typeClassName}' for {$target}";
+
+                }
+                break;
+            case KalturaServerTypes::Unknown:
+                $errors[] = "Unknown type for {$target}";
+                break;
+            case KalturaServerTypes::Object:
+            case KalturaServerTypes::ArrayOfObjects:
+            case KalturaServerTypes::EnumOfString:
+            case KalturaServerTypes::EnumOfInt:
+                if (!in_array($typeClassName, $availableTypes) && $typeClassName != "KalturaObjectBase")
+                {
+                    $errors[] = "Unknown type '{$typeClassName}' for {$target}";
+
+                }
+                break;
+        }
+    }
+
+    return $errors;
+}
+
 class KalturaServerTypes
 {
     const Unknown = "Unknown";
@@ -53,7 +93,7 @@ class ServiceAction
 
         $errors = array_merge(
             $errors,
-            Utils::validateType($this->resultType,$this->resultClassName,$availableTypes,"service {$service->name} > action {$this->name} > result type")
+            validateType($this->resultType,$this->resultClassName,$availableTypes,"service {$service->name} > action {$this->name} > result type")
         );
 
 
@@ -116,7 +156,7 @@ class ServiceActionParam
 
         $errors = array_merge(
             $errors,
-            Utils::validateType($this->type,$this->typeClassName,$availableTypes,"class {$service->name} > param {$this->name}")
+            validateType($this->type,$this->typeClassName,$availableTypes,"class {$service->name} > param {$this->name}")
         );
 
 
@@ -243,7 +283,7 @@ class ClassTypeProperty
 
         $errors = array_merge(
             $errors,
-            Utils::validateType($this->type,$this->typeClassName,$availableTypes,"class {$classType->name} > property {$this->name}")
+            validateType($this->type,$this->typeClassName,$availableTypes,"class {$classType->name} > property {$this->name}")
         );
 
         if ($this->optional && (!isset($this->default)))
