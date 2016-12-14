@@ -54,6 +54,7 @@ require_once(__DIR__ . "/lib/AndroidClientGenerator.php");
 require_once(__DIR__ . "/lib/BpmnClientGenerator.php");
 require_once(__DIR__ . "/lib/CliClientGenerator.php");
 require_once(__DIR__ . "/lib/CSharpClientGenerator.php");
+require_once(__DIR__ . "/lib/CSharp2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ErlangClientGenerator.php");
 require_once(__DIR__ . "/lib/JsClientGenerator.php");
 require_once(__DIR__ . "/lib/NodeClientGenerator.php");
