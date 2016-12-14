@@ -459,6 +459,13 @@ KalturaClientBase.prototype.doHttpRequest = function (callCompletedCallback, req
 		headers : {}
 	};
 
+	if(this.proxy && this.proxy.host) {
+		options.host = this.proxy.host;
+		options.port = this.proxy.port;
+		options.path = urlInfo.href;
+		options.headers.Host = urlInfo.host;
+	}
+
 	Object.keys(this.customHeaders).forEach(function(key) {
 		var currHeader = This.customHeaders[key];
 		options.headers[key] = currHeader.value;
@@ -627,6 +634,14 @@ KalturaClientBase.prototype.removeCustomHeader = function(key)
 	delete this.customHeaders[key];
 }
 
+/**
+ * @param host - hostname or ip address of proxy
+ * @param port - port of proxy
+ */
+KalturaClientBase.prototype.setProxy = function(host, port)
+{
+	this.proxy = { 'host': host, 'port': port };
+}
 
 /**
  * Abstract base class for all client objects
