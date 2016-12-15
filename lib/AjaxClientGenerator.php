@@ -197,9 +197,6 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 					if (count($info)>0)
 						$infoTxt = ' ('.join(', ', $info).')';
 					$this->appendLine("	 * @param\t$paramName\t$paramType\t\t{$description}{$infoTxt}");
-				} else {
-					$rettype = $actionParam->attributes()->type;
-					$this->appendLine("	 * @return\t$rettype.");
 				}
 			}
 			
