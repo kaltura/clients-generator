@@ -289,6 +289,7 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 		// comments
 		$this->writeComments("		# ", $actionNode);
+		$this->appendLine("		# @return [$resultType]");
 	
 		$this->appendLine("		$signaturePrefix$signature");
 		$this->appendLine("			kparams = {}");
