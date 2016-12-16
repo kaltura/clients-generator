@@ -459,9 +459,9 @@ KalturaClientBase.prototype.doHttpRequest = function (callCompletedCallback, req
 		headers : {}
 	};
 
-	if(this.proxy && this.proxy.host) {
-		options.host = this.proxy.host;
-		options.port = this.proxy.port;
+	if(this.config && this.config.proxy && this.config.proxy.host) {
+		options.host = this.config.proxy.host;
+		options.port = this.config.proxy.port;
 		options.path = urlInfo.href;
 		options.headers.Host = urlInfo.host;
 	}
@@ -635,15 +635,6 @@ KalturaClientBase.prototype.removeCustomHeader = function(key)
 }
 
 /**
- * @param host - hostname or ip address of proxy
- * @param port - port of proxy
- */
-KalturaClientBase.prototype.setProxy = function(host, port)
-{
-	this.proxy = { 'host': host, 'port': port };
-}
-
-/**
  * Abstract base class for all client objects
  */
 var KalturaObjectBase = module.exports.KalturaObjectBase = function() {};
@@ -672,6 +663,7 @@ var KalturaConfiguration = module.exports.KalturaConfiguration = function (){
 	this.format = KalturaClientBase.KALTURA_SERVICE_FORMAT_JSON;
 	this.timeout = 90000;
 	this.logger = null;
+	this.proxy = null;
 };
 
 /**
@@ -689,3 +681,12 @@ KalturaConfiguration.prototype.setLogger = function(logger){
 KalturaConfiguration.prototype.getLogger = function(){
 	return this.logger;
 };
+
+/**
+ * @param host - hostname or ip address of proxy
+ * @param port - port of proxy
+ */
+KalturaConfiguration.prototype.setProxy = function(host, port)
+{
+	this.proxy = { 'host': host, 'port': port };
+}
