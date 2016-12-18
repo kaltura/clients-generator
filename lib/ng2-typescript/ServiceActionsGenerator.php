@@ -19,7 +19,7 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $this->createServiceActions()
         );
 
-        $result[] = $this->createServicesFolderIndex();
+        //$result[] = $this->createServicesFolderIndex();
 
         return $result;
     }

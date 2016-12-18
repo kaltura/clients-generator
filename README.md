@@ -9,7 +9,7 @@ To run a generator you must first retrieve the kaltura api schema. You should do
 - **OVP Serer Schema** can be found at `http://www.kaltura.com/api_v3/api_schema.php`.
 - **OTT Serer Schema** can be found at ``.
 
-The list of supported clients is [here] (https://github.com/kaltura/clients-generator/blob/Kajam-11.18.0/config/generator.all.ini)
+The list of supported clients is [here](https://github.com/kaltura/clients-generator/blob/Kajam-11.18.0/config/generator.all.ini)
 To generate one client run:
 ```
 $ php /opt/kaltura/clients-generator/exec.php $CLIENT_NAME
