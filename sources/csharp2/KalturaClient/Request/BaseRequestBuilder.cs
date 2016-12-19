@@ -117,7 +117,7 @@ namespace Kaltura.Request
             // Add proxy information if required
             CreateProxy(request);
 
-            IAsyncResult r = (IAsyncResult)request.BeginGetRequestStream(new AsyncCallback(RequestCallback), this);
+            request.BeginGetRequestStream(new AsyncCallback(RequestCallback), this);
         }
 
         private void RequestCallback(IAsyncResult result)
@@ -160,7 +160,7 @@ namespace Kaltura.Request
             }
             postStream.Close();
 
-            IAsyncResult r = (IAsyncResult)request.BeginGetResponse(new AsyncCallback(ResponseCallback), this);
+            request.BeginGetResponse(new AsyncCallback(ResponseCallback), this);
         }
 
         private byte[] BuildMultiPartParamsBuffer(string json)
@@ -220,7 +220,7 @@ namespace Kaltura.Request
             responseStream = response.GetResponseStream();
 
             //  Pass rs.BufferRead to BeginRead. Read data into rs.BufferRead
-            IAsyncResult iarRead = responseStream.BeginRead(bufferRead, 0, BUFFER_SIZE, new AsyncCallback(ReadCallBack), this);
+            responseStream.BeginRead(bufferRead, 0, BUFFER_SIZE, new AsyncCallback(ReadCallBack), this);
         }
 
         private void ReadCallBack(IAsyncResult result)
@@ -234,18 +234,15 @@ namespace Kaltura.Request
 
                 // Convert byte stream to Char array and then to String.
                 // len contains the number of characters converted to Unicode.
-                int len =
-                   streamDecode.GetChars(bufferRead, 0, read, charBuffer, 0);
-
-                string str = new string(charBuffer, 0, len);
-
+                int len = streamDecode.GetChars(bufferRead, 0, read, charBuffer, 0);
+                
                 // Append the recently read data to the RequestData stringbuilder
                 // object contained in RequestState.
                 requestData.Append(Encoding.ASCII.GetString(bufferRead, 0, read));
 
                 // Continue reading data until 
                 // responseStream.EndRead returns –1.
-                IAsyncResult ar = responseStream.BeginRead(bufferRead, 0, BUFFER_SIZE, new AsyncCallback(ReadCallBack), this);
+                responseStream.BeginRead(bufferRead, 0, BUFFER_SIZE, new AsyncCallback(ReadCallBack), this);
             }
             else
             {

@@ -501,7 +501,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		{
 			$this->appendLine("			foreach (XmlElement propertyNode in node.ChildNodes)");
 			$this->appendLine("			{");
-			$this->appendLine("				string txt = propertyNode.InnerText;");
 			$this->appendLine("				switch (propertyNode.Name)");
 			$this->appendLine("				{");
 			foreach($classNode->childNodes as $propertyNode)
@@ -517,32 +516,32 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				switch($propType)
 				{
 					case "bigint":
-						$this->appendLine("						this._$dotNetPropName = ParseLong(txt);");
+						$this->appendLine("						this._$dotNetPropName = ParseLong(propertyNode.InnerText);");
 						break;
 					case "int":
 					case "time":
 						if ($isEnum)
 						{
 							$enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-							$this->appendLine("						this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), txt);");
+							$this->appendLine("						this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), propertyNode.InnerText);");
 						}
 						else
-							$this->appendLine("						this._$dotNetPropName = ParseInt(txt);");
+							$this->appendLine("						this._$dotNetPropName = ParseInt(propertyNode.InnerText);");
 						break;
 					case "string":
 						if ($isEnum)
 						{
 							$enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-							$this->appendLine("						this._$dotNetPropName = ($enumType)StringEnum.Parse(typeof($enumType), txt);");
+							$this->appendLine("						this._$dotNetPropName = ($enumType)StringEnum.Parse(typeof($enumType), propertyNode.InnerText);");
 						}
 						else
-							$this->appendLine("						this._$dotNetPropName = txt;");
+							$this->appendLine("						this._$dotNetPropName = propertyNode.InnerText;");
 						break;
 					case "bool":
-						$this->appendLine("						this._$dotNetPropName = ParseBool(txt);");
+						$this->appendLine("						this._$dotNetPropName = ParseBool(propertyNode.InnerText);");
 						break;
 					case "float":
-						$this->appendLine("						this._$dotNetPropName = ParseFloat(txt);");
+						$this->appendLine("						this._$dotNetPropName = ParseFloat(propertyNode.InnerText);");
 						break;
 					case "array":
 						$arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
