@@ -500,15 +500,23 @@ abstract class ClientGeneratorFromXml
 		return ucwords($str); 
 	}
 	
-	protected function camelCaseToUnderscoreAndLower($value)
+	protected function camelCaseToUnderscore($value)
 	{
 		$separator = '_';
 		$matchPattern = array('#(?<=(?:[A-Z]))([A-Z]+)([A-Z][A-z])#', '#(?<=(?:[a-z]))([A-Z])#');
 		$replacement = array('\1' . $separator . '\2', $separator . '\1');
 		$newValue = preg_replace($matchPattern, $replacement, $value);
-		return strtolower($newValue);
-		//$filter = new Zend_Filter_Word_CamelCaseToUnderscore();
-		//return strtolower($filter->filter($value));
+		return $newValue;
+	}
+	
+	protected function camelCaseToUnderscoreAndLower($value)
+	{
+		return strtolower($this->camelCaseToUnderscore($value));
+	}
+	
+	protected function camelCaseToUnderscoreAndUpper($value)
+	{
+		return strtoupper($this->camelCaseToUnderscore($value));
 	}
 	
 	protected function isArrayType($type)
