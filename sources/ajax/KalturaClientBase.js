@@ -143,7 +143,7 @@ KalturaClientBase.prototype.setConfig = function(config){
  * return a new multi-request builder
  */
 KalturaClientBase.prototype.startMultiRequest = function(){
-	return new KalturaMultiRequestBuilder(this);
+	return new KalturaMultiRequestBuilder();
 };
 
 /**
