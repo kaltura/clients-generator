@@ -44,16 +44,21 @@ class Test::Unit::TestCase
         
     partner_id = config_file["test"]["partner_id"]
     service_url = config_file["test"]["service_url"]
-    administrator_secret = config_file["test"]["administrator_secret"]
+    username = config_file["test"]["username"]
+    password = config_file["test"]["password"]
     timeout = config_file["test"]["timeout"]
+	
+    @media_asset_id = config_file["test"]["media_asset_id"]
     
     config = Kaltura::KalturaConfiguration.new()
     config.service_url = service_url
     config.logger = Logger.new(STDOUT)
     config.timeout = timeout
     
-    @client = Kaltura::KalturaClient.new( config )
-    @client.generate_session(administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id )
+    @client = Kaltura::KalturaClient.new(config)
+	response = @client.ott_user_service.login(partner_id, username, password)
+	
+    @client.ks = response.login_session.ks
   end
 
 end
