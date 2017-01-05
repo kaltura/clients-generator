@@ -212,19 +212,21 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 			
 			$propName = $propertyNode->getAttribute("name");
 			$propType = $propertyNode->getAttribute("type");
+			$this->appendLine("			if xml_element.elements['$propName'] != nil");
 			if($this->isSimpleType($propType))
 			{
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = xml_element.elements['$propName'].text");
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = xml_element.elements['$propName'].text");
 			}
 			elseif($propType == 'array' || $propType == 'map')
 			{
 				$propArrayType = $propertyNode->getAttribute("arrayType");
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propArrayType')");	
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propArrayType')");	
 			}
 			else
 			{
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propType')");	
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propType')");	
 			}
+			$this->appendLine("			end");
 		}	
 		$this->appendLine("		end");
 		$this->appendLine();
