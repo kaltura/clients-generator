@@ -96,7 +96,7 @@ module Kaltura
 					end
 				else
 					call = @calls_queue[0]
-					url += "service/#{call.service}/action/#{call.action}/"
+					url += "service/#{call.service}/action/#{call.action}"
 					params.merge!(call.params)
 					files = call.files
 				end
