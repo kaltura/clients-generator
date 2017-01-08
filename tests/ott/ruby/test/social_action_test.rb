@@ -30,9 +30,19 @@ class SocialActionTest < Test::Unit::TestCase
     assert_not_nil response
 	
 	social_id = response.objects[0].id
-    response = @client.social_action_service.delete(social_id)
+	
+    @client.social_action_service.delete(social_id)
+  end
 
-    assert_nil response
+  should "delete invalid social action" do
+  
+    begin
+		@client.social_action_service.delete("kishkush")
+		raise "Expected error"
+	rescue Kaltura::KalturaAPIError => e
+		assert_equal "7016", e.code # SocialActionIdDoseNotExists
+	end
+
   end
   
 end

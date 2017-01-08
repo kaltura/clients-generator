@@ -282,6 +282,9 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
 		$resultType = $resultNode->getAttribute("type");
+		$expectedType = $resultType;
+		if($resultNode->getAttribute("arrayType"))
+			$expectedType = $resultNode->getAttribute("arrayType");
 		
 		$signaturePrefix = "def ".$this->camelCaseToUnderscoreAndLower($action)."(";
 			
@@ -327,11 +330,11 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		
 		if ($haveFiles)
 		{
-			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$resultType', kparams, kfiles)");
+			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$expectedType', kparams, kfiles)");
 		}
 		else
 		{
-			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$resultType', kparams)");
+			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$expectedType', kparams)");
 		}
 		
 		if($resultType == 'file'){
