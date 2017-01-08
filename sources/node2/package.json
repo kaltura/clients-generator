@@ -24,10 +24,12 @@
     "url": "https://github.com/kaltura/server/issues"
   },
   "dependencies": {
-    "chai": "^3.5.0",
     "http": "*",
     "md5": "*",
-    "mocha": "^3.2.0",
     "url": "*"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
   }
 }
