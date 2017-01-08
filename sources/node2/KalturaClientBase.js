@@ -28,8 +28,12 @@
 // ===================================================================================================
 
 const md5 = require('md5');
+const fs = require('fs');
 const url = require('url');
+const path = require('path');
 const http = require('http');
+const querystring = require("querystring");
+
 const kaltura = require('./KalturaRequestData');
 
 
@@ -176,12 +180,19 @@ class ClientBase extends kaltura.RequestData {
 	}
 
 	/**
-	 * @param string
-	 *            msg client logging utility.
+	 * @param string msg client logging utility.
 	 */
 	log(msg) {
 		if (this.shouldLog)
 			this.config.getLogger().log(msg);
+	}
+
+	/**
+	 * @param string msg client logging utility.
+	 */
+	debug(msg) {
+		if (this.shouldLog)
+			this.config.getLogger().debug(msg);
 	}
 }
 
@@ -235,12 +246,10 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 	 */
 	doHttpRequest(client) {
 		let json = this.getData(true);
+		let files = this.getFiles();
 		let callback = this.callback;
 		let requestUrl = this.getUrl(client);
-		let postData = JSON.stringify(json, (key, value) => (value === null ? undefined : value));
 
-		client.log('URL: ' + requestUrl + ', JSON: ' + postData);
-	
 		let options = url.parse(requestUrl);
 		options.timeout = client.config.timeout;
 		options.method = 'POST';
@@ -248,14 +257,63 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			'Accept' : 'application/json',
 			'Content-Type' : 'application/json',
 		};
-		let request = http.request(options, (response) => {
+
+		let jsonBody = JSON.stringify(json, (key, value) => (value === null ? undefined : value));
+		client.log('URL: ' + requestUrl + ', JSON: ' + jsonBody);
+		
+		let body;
+		if(files && Object.keys(files).length > 0){
+			let crlf = '\r\n';
+			let boundary = '---------------------------' + Math.random();
+			let delimiter = crlf + '--' + boundary;
+			let postData = [];
+
+			postData.push();
+			postData.push(new Buffer(delimiter + crlf + 'Content-Disposition: form-data; name="json"' + crlf + crlf));
+			postData.push(new Buffer(jsonBody));
+			
+			for(let key in files) {
+				if(typeof(files[key]) === 'function'){
+					continue;
+				}
+				
+				let filePath = files[key];
+				let fileName = path.basename(filePath);
+				let data = fs.readFileSync(filePath);
+				let headers = [ 'Content-Disposition: form-data; name="' + key + '"; filename="' + fileName + '"' + crlf, 'Content-Type: application/octet-stream' + crlf ];
+
+				postData.push(new Buffer(delimiter + crlf + headers.join('') + crlf));
+				postData.push(new Buffer(data));
+			}
+			postData.push(new Buffer(delimiter + '--'));
+			body = Buffer.concat(postData);
+
+			options.headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary;
+		}
+		else {
+			body = jsonBody;
+		}
+
+		var request = http.request(options, function(response) {
 			response.setEncoding('utf8');
-			let data = '';
-			response.on('data', (chunk) => {
+
+			var data = '';
+			response.on('data', function(chunk) {
 				data += chunk;
 			});
-			response.on('end', () => {
-				client.log('Response: ' + data);
+			response.on('end', function() {
+				let sessionId;
+				let serverId;
+				for ( var header in response.headers) {
+					if(header === 'x-me') {
+						serverId = response.headers[header];
+					}
+					else if(header === 'x-kaltura-session') {
+						sessionId = response.headers[header];
+					}
+				}
+				client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + data);
+ 
 				let json = JSON.parse(data);
 				if (json && typeof (json) === 'object' && json.code && json.message) {
 					if (callback) {
@@ -264,21 +322,23 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 					else {
 						throw new Error(json.message);
 					}
-				} 
+				}
 				else if (callback) {
 					callback(true, json);
 				}
 			});
 		});
-		
-		request.on('error', (e) => {
-			if (callback)
-				callback(false, e);
-			else
-				throw e;
+		request.on('error', function(err) {
+			if (callback) {
+				callback(false, err);
+			}
+			else {
+				throw new Error(json.message);
+			}
 		});
-		
-		request.write(postData);
+
+		request.setTimeout(client.config.timeout);
+		request.write(body);
 		request.end();
 	}
 
@@ -292,6 +352,10 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 		requestUrl += '/' + this.service + '/action/' + this.action;
 
 		return requestUrl;
+	}
+
+	getFiles() {
+		return this.files;
 	}
 
 	getData(sign) {
@@ -386,6 +450,7 @@ class MultiRequestBuilder extends RequestBuilder {
 
 	add(requestBuilder) {
 		this.requests.push(requestBuilder);
+		return this;
 	}
 
 	getUrl(client) {
@@ -410,6 +475,23 @@ class MultiRequestBuilder extends RequestBuilder {
 
 		this.sign();
 		return this.data;
+	}
+
+	getFiles() {
+		this.files = {};
+
+		for (let i = 0; i < this.requests.length; i++) {
+			let requestFiles = this.requests[i].getFiles();
+			if(requestFiles) {
+				for(let key in requestFiles) {
+					if(typeof(requestFiles[key]) !== 'function') {
+						this.files[i + ':' + key] = requestFiles[key];
+					}
+				}
+			}
+		}
+		
+		return this.files;
 	}
 
 	execute(client, callback) {

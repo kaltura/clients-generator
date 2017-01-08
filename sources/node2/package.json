@@ -4,7 +4,7 @@
   "description": "Kaltura NodeJS clientlibs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --timeout 60000"
   },
   "repository": {
     "type": "git",
@@ -24,8 +24,10 @@
     "url": "https://github.com/kaltura/server/issues"
   },
   "dependencies": {
-    "md5": "*",
+    "chai": "^3.5.0",
     "http": "*",
+    "md5": "*",
+    "mocha": "^3.2.0",
     "url": "*"
   }
 }
