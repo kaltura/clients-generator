@@ -1,5 +1,0 @@
-{
-	"secret": "@SECRET@",
-	"partnerId": @PARTNER_ID@,
-	"serviceUrl": "@SERVICE_URL@"
-}
