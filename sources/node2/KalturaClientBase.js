@@ -32,6 +32,7 @@ const fs = require('fs');
 const url = require('url');
 const path = require('path');
 const http = require('http');
+const https = require('https');
 const querystring = require("querystring");
 
 const kaltura = require('./KalturaRequestData');
@@ -294,7 +295,8 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			body = jsonBody;
 		}
 
-		var request = http.request(options, function(response) {
+		var httpInterface = options.protocol === 'http:' ? http : https;
+		var request = httpInterface.request(options, function(response) {
 			response.setEncoding('utf8');
 
 			var data = '';
