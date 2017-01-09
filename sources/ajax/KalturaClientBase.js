@@ -336,6 +336,7 @@ KalturaMultiRequestBuilder.prototype.completion = function(callback){
 
 KalturaMultiRequestBuilder.prototype.add = function(requestBuilder){
 	this.requests.push(requestBuilder);
+	return this;
 };
 
 KalturaMultiRequestBuilder.prototype.getUrl = function(client){

@@ -1,0 +1,25 @@
+{
+  "name": "kaltura-ajax-client-library",
+  "version": "1.0.0",
+  "description": "Kaltura JavaScript API Client Library.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.3.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-firefox-launcher": "^1.0.0",
+    "karma-ie-launcher": "^1.0.0",
+    "karma-jasmine": "^1.1.0",
+    "karma-safari-launcher": "^1.0.0",
+    "requirejs": "^2.3.2"
+  },
+  "scripts": {
+    "test": "karma start"
+  },
+  "author": "",
+  "license": "ISC"
+}
