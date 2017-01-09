@@ -143,7 +143,7 @@ KalturaClientBase.prototype.setConfig = function(config){
  * return a new multi-request builder
  */
 KalturaClientBase.prototype.startMultiRequest = function(){
-	return new KalturaMultiRequestBuilder(this);
+	return new KalturaMultiRequestBuilder();
 };
 
 /**
@@ -336,6 +336,7 @@ KalturaMultiRequestBuilder.prototype.completion = function(callback){
 
 KalturaMultiRequestBuilder.prototype.add = function(requestBuilder){
 	this.requests.push(requestBuilder);
+	return this;
 };
 
 KalturaMultiRequestBuilder.prototype.getUrl = function(client){

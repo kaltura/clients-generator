@@ -22,7 +22,7 @@
 
 				println("Generating ks for partner [" + partnerId + "]");
 
-				var ks = client.generateSessionV2(adminSecret, "bpm", sessionType, partnerId, 86400, "");
+				var ks = client.generateSessionV2(adminSecret, "bpm", sessionType, partnerId, 86400, "*,disableentitlement");
 				client.setSessionId(ks);
 
 				println("Generated ks [" + ks + "]");
