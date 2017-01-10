@@ -55,10 +55,10 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
 
-
+    plugins : ['karma-jasmine', 'karma-phantomjs-launcher'],
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome', 'Firefox', 'Safari', 'IE'],
+    browsers: ['Chrome', 'Firefox', 'Safari', 'IE', 'PhantomJS'],
 
 
     // Continuous Integration mode
