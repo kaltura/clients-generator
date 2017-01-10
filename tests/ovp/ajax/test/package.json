@@ -20,7 +20,7 @@
     "phantomjs-prebuilt": "*"
   },
   "scripts": {
-    "test": "karma start"
+    "test": "./node_modules/.bin/karma start --browsers PhantomJS --single-run"
   },
   "author": "",
   "license": "ISC"
