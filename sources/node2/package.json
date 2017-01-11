@@ -6,6 +6,9 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --timeout 60000"
   },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsNodeJS"
