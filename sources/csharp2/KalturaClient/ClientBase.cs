@@ -26,6 +26,7 @@
 // @ignore
 // ===================================================================================================
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
@@ -45,6 +46,12 @@ namespace Kaltura
     {
         protected ClientConfiguration clientConfiguration = new ClientConfiguration();
         protected RequestConfiguration requestConfiguration = new RequestConfiguration();
+
+        private const int BLOCK_SIZE = 16;        
+        private const string FIELD_EXPIRY = "_e";
+        private const string FIELD_USER = "_u";
+	    private const string FIELD_TYPE = "_t";
+	    private const int RANDOM_SIZE = 16; 
 
         public Configuration Configuration
         {
@@ -69,6 +76,11 @@ namespace Kaltura
 
         public string GenerateSession(int partnerId, string adminSecretForSigning, string userId = "", SessionType type = SessionType.USER, int expiry = 86400, string privileges = "")
         {
+            return GenerateSessionV2(partnerId, adminSecretForSigning, userId, type, expiry, privileges);
+        }
+
+        public string GenerateSessionV1(int partnerId, string adminSecretForSigning, string userId = "", SessionType type = SessionType.USER, int expiry = 86400, string privileges = "")
+        {
             string ks = string.Format("{0};{0};{1};{2};{3};{4};{5};", partnerId, UnixTimeNow() + expiry, type.GetHashCode(), DateTime.Now.Ticks, userId, privileges);
 
             SHA1 sha = new SHA1CryptoServiceProvider();
@@ -86,6 +98,125 @@ namespace Kaltura
             return EncodeTo64(ks);
         }
 
+        public string GenerateSessionV2(int partnerId, string adminSecretForSigning, string userId = "", SessionType type = SessionType.USER, int expiry = 86400, string privileges = "")
+        {
+		    // build fields array
+            Dictionary<string, string> fields = new Dictionary<string,string>();
+		    string[] privilegesArr = privileges.Split(',');
+		    foreach (string curPriv in privilegesArr) 
+            {
+			    string privilege = curPriv.Trim();
+			    if(privilege.Length == 0)
+                {
+				    continue;
+                }
+			    if(privilege.Equals("*"))
+                {
+				    privilege = "all:*";
+                }
+			
+			    string[] splittedPriv = privilege.Split(':');
+			    if(splittedPriv.Length > 1) 
+                {
+				    fields.Add(splittedPriv[0], HttpUtility.UrlEncode(splittedPriv[1], Encoding.UTF8));
+			    } 
+                else 
+                {
+				    fields.Add(splittedPriv[0], "");
+			    }
+		    }
+		
+		    long expiryTime = (UnixTimeNow() + expiry);
+		    fields.Add(FIELD_EXPIRY,  expiryTime.ToString());
+		    fields.Add(FIELD_TYPE, ((int) type).ToString());
+		    fields.Add(FIELD_USER, userId);
+		
+		    // build fields string
+		    byte[] randomBytes = createRandomByteArray(RANDOM_SIZE);
+            string fieldsString = string.Join("&", fields.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
+            byte[] fieldsByteArray = Encoding.ASCII.GetBytes(fieldsString);
+		    int totalLength = randomBytes.Length + fieldsByteArray.Length;
+
+		    byte[] fieldsAndRandomBytes = new byte[totalLength];
+		    Array.Copy(randomBytes, 0, fieldsAndRandomBytes, 0, randomBytes.Length);
+            Array.Copy(fieldsByteArray, 0, fieldsAndRandomBytes, randomBytes.Length, fieldsByteArray.Length);
+
+		    byte[] infoSignature = signInfoWithSHA1(fieldsAndRandomBytes);
+		    byte[] input = new byte[infoSignature.Length + fieldsAndRandomBytes.Length];
+            Array.Copy(infoSignature, 0, input, 0, infoSignature.Length);
+            Array.Copy(fieldsAndRandomBytes, 0, input, infoSignature.Length, fieldsAndRandomBytes.Length);
+		
+		    // encrypt and encode
+		    byte[] encryptedFields = aesEncrypt(adminSecretForSigning, input);
+		    string prefix = "v2|" + partnerId + "|";
+            byte[] prefixBytes = Encoding.ASCII.GetBytes(prefix);
+		
+		    byte[] output = new byte[encryptedFields.Length + prefix.Length];
+            Array.Copy(prefixBytes, 0, output, 0, prefix.Length);
+		    Array.Copy(encryptedFields,0,output,prefix.Length, encryptedFields.Length);
+
+            string encodedKs = EncodeTo64(output);
+		    encodedKs = encodedKs.Replace("\\+", "-");
+            encodedKs = encodedKs.Replace("/", "_");
+		    encodedKs = encodedKs.Replace("\n", "");
+		    encodedKs = encodedKs.Replace("\r", "");
+		
+		    return encodedKs;
+        }
+	
+	    private byte[] aesEncrypt(String secretForSigning, byte[] text)
+        {
+            byte[] hashedKey = signInfoWithSHA1(secretForSigning);
+            byte[] keyBytes = new byte[BLOCK_SIZE];
+            Array.Copy(hashedKey, 0, keyBytes, 0, BLOCK_SIZE);
+
+            //IV
+            byte[] ivBytes = new byte[BLOCK_SIZE];
+
+            // Text
+            int textSize = ((text.Length + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
+            byte[] textAsBytes = new byte[textSize];
+            Array.Copy(text, 0, textAsBytes, 0, text.Length);
+
+            // Encrypt
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = keyBytes;
+                aesAlg.IV = ivBytes;
+                aesAlg.Mode = CipherMode.CBC;
+                aesAlg.Padding = PaddingMode.None;
+
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cst = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                    {
+                        cst.Write(textAsBytes, 0, textSize);
+                        return ms.ToArray();
+                    }
+                }
+            }
+	    }
+
+	    private byte[] signInfoWithSHA1(string text) 
+        {
+            return signInfoWithSHA1(Encoding.ASCII.GetBytes(text));
+	    }
+	
+	    private byte[] signInfoWithSHA1(byte[] data) 
+        {
+            SHA1 sha = new SHA1CryptoServiceProvider();
+            return sha.ComputeHash(data);
+	    }
+
+        private byte[] createRandomByteArray(int size)
+        {
+            byte[] b = new byte[size];
+            new Random().NextBytes(b);
+            return b;
+        }
+
         public long UnixTimeNow()
         {
             TimeSpan _TimeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0));
@@ -94,8 +225,12 @@ namespace Kaltura
 
         private string EncodeTo64(string toEncode)
         {
-            byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
-            string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
+            return EncodeTo64(Encoding.ASCII.GetBytes(toEncode));
+        }
+
+        private string EncodeTo64(byte[] toEncode)
+        {
+            string returnValue = System.Convert.ToBase64String(toEncode);
             return returnValue;
         }
     }
