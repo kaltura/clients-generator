@@ -21,7 +21,7 @@ while read CLIENT;do php /opt/kaltura/clients-generator/exec.php $CLIENT;done < 
 ```
 
 ## Getting started with the API
-To learn how to use the Kaltura API, go to [developer.kaltura.com] (developer.kaltura.com)
+To learn how to use the Kaltura API, go to [developer.kaltura.com](https://developer.kaltura.com/)
 
 ## How you can help (guidelines for contributors) 
 Thank you for helping Kaltura grow! If you'd like to contribute please follow these steps:
