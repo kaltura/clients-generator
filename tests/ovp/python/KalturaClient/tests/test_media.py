@@ -1,8 +1,10 @@
+from __future__ import absolute_import
+
 import unittest
 
-from utils import GetConfig
-from utils import KalturaBaseTest
-from utils import getTestFile
+from .utils import GetConfig
+from .utils import KalturaBaseTest
+from .utils import getTestFile
 
 from KalturaClient.Plugins.Core import KalturaMediaListResponse
 from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaType

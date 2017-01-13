@@ -25,13 +25,14 @@
 #
 # @ignore
 # ===================================================================================================
+from __future__ import absolute_import
 
 import os
 
-from utils import GetConfig
-from utils import getTestFile
-from utils import KalturaBaseTest
-from utils import KalturaLogger
+from .utils import GetConfig
+from .utils import getTestFile
+from .utils import KalturaBaseTest
+from .utils import KalturaLogger
 
 from KalturaClient import *
 
@@ -176,8 +177,8 @@ class SingleRequestTests(KalturaBaseTest):
         print "XML: " + xmlquoted
 
 
-from utils import PARTNER_ID, SERVICE_URL
-from utils import ADMIN_SECRET, USER_NAME
+from .utils import PARTNER_ID, SERVICE_URL
+from .utils import ADMIN_SECRET, USER_NAME
 
 class MultiRequestTests(KalturaBaseTest):
     

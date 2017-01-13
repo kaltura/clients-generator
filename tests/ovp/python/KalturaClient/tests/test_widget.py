@@ -1,5 +1,7 @@
-from utils import GetConfig
-from utils import KalturaBaseTest
+from __future__ import absolute_import
+
+from .utils import GetConfig
+from .utils import KalturaBaseTest
 
 from KalturaClient.Plugins.Core import KalturaWidgetListResponse
 

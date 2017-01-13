@@ -25,8 +25,10 @@
 #
 # @ignore
 # ===================================================================================================
-from Plugins.Core import *
-from Base import *
+from __future__ import absolute_import
+
+from .Plugins.Core import *
+from .Base import *
 from xml.parsers.expat import ExpatError
 from xml.dom import minidom
 from threading import Timer

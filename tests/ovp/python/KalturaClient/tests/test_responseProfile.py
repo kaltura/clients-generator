@@ -1,9 +1,11 @@
+from __future__ import absolute_import
+
 import uuid
 import unittest
 
-from utils import GetConfig
-from utils import KalturaBaseTest
-from utils import getTestFile
+from .utils import GetConfig
+from .utils import KalturaBaseTest
+from .utils import getTestFile
 
 from KalturaClient.Plugins.Core import KalturaFilterPager, KalturaResponseProfile, KalturaResponseProfileMapping, KalturaDetachedResponseProfile, KalturaResponseProfileHolder, KalturaResponseProfileType
 from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaEntryFilter, KalturaBaseEntryListResponse, KalturaMediaType, KalturaEntryStatus
