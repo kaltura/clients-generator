@@ -250,7 +250,7 @@ class KalturaClient(object):
 
         try:
             f = urllib2.urlopen(request)
-        except Exception, e:
+        except Exception as e:
             raise KalturaClientException(e, KalturaClientException.ERROR_CONNECTION_FAILED)
         return f
 
@@ -262,15 +262,15 @@ class KalturaClient(object):
         try:
             try:
                 data = f.read()
-            except AttributeError, e:      # socket was closed while reading
+            except AttributeError as e:      # socket was closed while reading
                 raise KalturaClientException(e, KalturaClientException.ERROR_READ_TIMEOUT)
-            except Exception, e:
+            except Exception as e:
                 raise KalturaClientException(e, KalturaClientException.ERROR_READ_FAILED)
             if f.info().get('Content-Encoding') == 'gzip':
                 gzipFile = gzip.GzipFile(fileobj=StringIO(data))
                 try:
                     data = gzipFile.read()
-                except IOError, e:
+                except IOError as e:
                     raise KalturaClientException(e, KalturaClientException.ERROR_READ_GZIP_FAILED)
         finally:
             if requestTimeout != None:
@@ -304,7 +304,7 @@ class KalturaClient(object):
 
         try:        
             resultXml = minidom.parseString(postResult)
-        except ExpatError, e:
+        except ExpatError as e:
             raise KalturaClientException(e, KalturaClientException.ERROR_INVALID_XML)
             
         resultNode = getChildNodeByXPath(resultXml, 'xml/result')

@@ -212,7 +212,7 @@ class MultiRequestTests(KalturaBaseTest):
         try:
             mediaEntry = self.client.media.get('invalid entry id')
             assert(False)
-        except KalturaException, e:
+        except KalturaException as e:
             assert(e.code == 'ENTRY_ID_NOT_FOUND')                    
            
         # multi request error
