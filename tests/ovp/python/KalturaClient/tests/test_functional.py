@@ -29,12 +29,12 @@ from __future__ import absolute_import
 
 import os
 
+import requests
+
 from .utils import GetConfig
 from .utils import getTestFile
 from .utils import KalturaBaseTest
 from .utils import KalturaLogger
-
-from KalturaClient import *
 
 from KalturaClient.Base import KalturaConfiguration
 
@@ -76,8 +76,8 @@ class SingleRequestTests(KalturaBaseTest):
         dataEntry.setDataContent(DATA_ENTRY_CONTENT)
         addedDataEntry = self.client.data.add(dataEntry)
         serveUrl = self.client.data.serve(addedDataEntry.id)
-        f = urllib.urlopen(serveUrl)
-        assert(DATA_ENTRY_CONTENT == f.read())
+        f = requests.get(serveUrl)
+        assert(DATA_ENTRY_CONTENT == f.text)
     
     
     def test_SampleMetadataOperations(self):
