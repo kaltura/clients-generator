@@ -180,7 +180,7 @@ class ResponseProfileTests(KalturaBaseTest):
         
         for entry in list.objects:
             self.assertNotEqual(entry.relatedObjects, NotImplemented)
-            self.assertTrue(entry.relatedObjects.has_key(metadataResponseProfile.name))
+            self.assertIn(metadataResponseProfile.name, entry.relatedObjects)
             metadataList = entry.relatedObjects[metadataResponseProfile.name]
             self.assertIsInstance(metadataList, KalturaMetadataListResponse)
             self.assertEqual(len(metadataProfiles), len(metadataList.objects))

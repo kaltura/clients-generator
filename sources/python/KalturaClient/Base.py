@@ -217,7 +217,7 @@ class KalturaObjectFactory(object):
         if objTypeNode == None:
             return None
         objType = getXmlNodeText(objTypeNode)
-        if not KalturaObjectFactory.objectFactories.has_key(objType):
+        if objType not in KalturaObjectFactory.objectFactories:
             objType = expectedType.__name__        
         result = KalturaObjectFactory.objectFactories[objType]()
         if not isinstance(result, expectedType):
@@ -262,7 +262,7 @@ class KalturaObjectBase(object):
     def fromXmlImpl(self, node, propList):
         for childNode in node.childNodes:
             nodeName = childNode.nodeName
-            if not propList.has_key(nodeName):
+            if nodeName not in propList:
                 continue
             propLoader = propList[nodeName]
             if type(propLoader) == tuple:
@@ -367,7 +367,7 @@ class KalturaEnumsFactory(object):
 
     @staticmethod
     def create(enumValue, enumType):
-        if not KalturaEnumsFactory.enumFactories.has_key(enumType):
+        if enumType not in KalturaEnumsFactory.enumFactories:
             raise KalturaClientException("Unrecognized enum '%s'" % enumType, KalturaClientException.ERROR_INVALID_OBJECT_TYPE)
         return KalturaEnumsFactory.enumFactories[enumType](enumValue)
 
