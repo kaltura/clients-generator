@@ -6,4 +6,5 @@ clients-generator.iml
 
 # Development files/folders
 output/
+npm-debug*.log
 KalturaClient*.xml
