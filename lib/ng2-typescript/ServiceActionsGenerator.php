@@ -50,7 +50,7 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $actions = array();
 
             foreach ($service->actions as $serviceAction) {
-                $actions[] = $this->createServiceAction($serviceAction, $service->name);
+                $actions[] = $this->createServiceAction($serviceAction, $service);
             }
 
             $serviceActionsFile = new GeneratedFileData();
@@ -69,9 +69,9 @@ import {JsonMember,JsonSerializableObject} from \"../utils/typed-json\";
         return $result;
     }
 
-    function createServiceAction(ServiceAction $serviceAction,$serviceName)
+    function createServiceAction(ServiceAction $serviceAction,$service)
     {
-        $actionClassName = Utils::upperCaseFirstLetter($serviceName) . Utils::upperCaseFirstLetter($serviceAction->name) . "Action";
+        $actionClassName = Utils::upperCaseFirstLetter($service->name) . Utils::upperCaseFirstLetter($serviceAction->name) . "Action";
         $desc = $serviceAction->description;
 
         $content = $this->createContentFromServiceAction($serviceAction);
@@ -87,7 +87,7 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
     constructor(data : $content->constructor)
     {
-        super('{$serviceName}','{$serviceAction->name}',{$baseNG2ResultType}, data);
+        super('{$service->id}','{$serviceAction->name}',{$baseNG2ResultType}, data);
 
         {$this->utils->buildExpression($content->constructorContent, NewLine, 2 )}
 
@@ -122,6 +122,8 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
                 $result = "kclasses.$typeClassName";
             break;
             case KalturaServerTypes::Date:
+                $result = "\"date\"";
+            break;
             default:
                 throw new Exception("Unknown type  {$type} > {$typeClassName} to map to Kaltura response type");
         }

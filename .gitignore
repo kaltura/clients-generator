@@ -6,4 +6,4 @@ clients-generator.iml
 
 # Development files/folders
 output/
-KalturaClient.xml
+KalturaClient*.xml

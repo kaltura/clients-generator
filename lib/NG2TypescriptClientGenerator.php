@@ -87,6 +87,9 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			}
 		}
 
+		// TODO - should adjust logic to sort also by properties types dependencies (not only by inheritance)
+		//$result->classTypes = $this->sortClassesByDependencies($result->classTypes);
+
 		$enumNodes = $xpath->query ( "/xml/enums/enum" );
 		foreach ( $enumNodes as $enumNode ) {
 
@@ -108,9 +111,23 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		$requestConfigurationNodes = $xpath->query("/xml/configurations/request");
 
+
 		$item = new stdClass();
 		$result->requestSharedParameters["service"] = $item;
 		$item->name = "service";
+		$item->readonly = false;
+		$item->defaultValue = "";
+		$item->description = "";
+		$item->transparentToUser = true;
+		$item->optional = false;
+		$item->type = KalturaServerTypes::Simple;
+		$item->typeClassName = "string";
+
+		$item = new stdClass();
+		$result->requestSharedParameters["apiVersion"] = $item;
+		$item->name = "apiVersion";
+		$item->readonly = true;
+		$item->defaultValue = $xpath->query("/xml")->item(0)->getAttribute('apiVersion');
 		$item->description = "";
 		$item->transparentToUser = true;
 		$item->optional = false;
@@ -120,6 +137,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$item = new stdClass();
 		$result->requestSharedParameters["action"] = $item;
 		$item->name = "action";
+		$item->readonly = false;
+		$item->defaultValue = "";
 		$item->description = "";
 		$item->transparentToUser = true;
 		$item->optional = false;
@@ -138,6 +157,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				$item->name = $childrenNode->nodeName;
 				$item->transparentToUser = false;
 				$item->optional = true;
+				$item->readonly = false;
+				$item->defaultValue = "";
 				$item->description = $childrenNode->getAttribute("description");
 				$itemTypeData = $this->mapToTypescriptType($childrenNode,false);
 				$item->type = $itemTypeData->type;
@@ -289,8 +310,14 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				case "string":
 				case "int":
 					$enumType = $xmlnode->getAttribute("enumType");
-					
-					if ($enumType)
+					$isTime = $xmlnode->getAttribute("isTime");
+//
+//					if ($isTime == "1")
+//					{
+//						$result->type = KalturaServerTypes::Date;
+//						$result->className = "";
+//					}else
+						if ($enumType)
 					{
 						if ($typeValue == "string")
 						{
@@ -316,5 +343,45 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		}
 
 		return $result;
+	}
+
+	function sortClassesByDependencies(array $classTypes)
+	{
+		// Create empty lists for sorted and unsorted vertices/edges
+		$unsorted = [];
+		$sorted = [];
+
+		// Move any non-edged nodes to the unsorted list.
+		// Nodes without edges should be run before any other
+		// nodes, in no particular order.
+		for ($i=count($classTypes)-1; $i>=0; $i--) {
+			if ($classTypes[$i]->base == "") {			// Non-arrays are unedged vertices
+				array_push($unsorted, array_splice($classTypes, $i, 1)[0]);
+			}
+		}
+
+		// While there are vertices left to sort
+		while(count($unsorted)) {
+
+			// pull the first and push it on to the sorted list
+			$item = array_shift($unsorted);
+			array_push($sorted, $item);
+
+			// loop backwards through remaining contexts
+			for ($i=count($classTypes)-1; $i>=0; $i--) {
+				// move nodes whose incoming edge has been moved to sorted
+				// to the unsorted list
+				if($classTypes[$i]->base == $item->name) {
+					array_push($unsorted, array_splice($classTypes, $i, 1)[0]);
+				}
+			}
+		}
+
+		if (count($classTypes) != 0)
+		{
+			throw new Exception("circular dependency detected between class types. First invalid item named {$classTypes[0]->name}");
+		}
+
+		return $sorted;
 	}
 }

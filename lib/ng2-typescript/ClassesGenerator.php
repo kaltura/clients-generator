@@ -92,7 +92,7 @@ export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classType
                 $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
 
                 // update the build function
-                $result->buildContent[] = "\"{$property->name}\"";// $this->requestBuildExp($property->name, $property->type,false);
+                $result->buildContent[] = "\"{$property->name}\"";
 
                 // update constructor content
                 if ($property->type == KalturaServerTypes::ArrayOfObjects)

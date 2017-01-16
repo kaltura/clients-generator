@@ -68,15 +68,24 @@ export abstract class KalturaRequestBase extends KalturaObjectBase{
 
         foreach ($this->serverMetadata->requestSharedParameters as $param) {
             $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
-            $result->properties[] = "@JsonMember {$param->name} : {$ng2ParamType};";
+            //$result->properties[] = "@JsonMember {$param->name} : {$ng2ParamType} {$this->utils->ifExp($param->defaultValue," = '" .$param->defaultValue . "'",'')};";
 
-            if ($param->optional)
+            if (!$param->readonly) {
+                $result->properties[] = "@JsonMember {$param->name} : {$ng2ParamType};";
+
+                if ($param->optional) {
+                    $result->constructorOptionalContent[] = "this.{$param->name} = data.{$param->name};";
+                } else {
+                    $constructorParameters[] = "{$param->name} : {$ng2ParamType}";
+                    $result->constructorRequiredContent[] = "this.{$param->name} = {$param->name};";
+                }
+            }else if ($param->readonly && $param->defaultValue != "")
             {
-                $result->constructorOptionalContent[] = "this.{$param->name} = data.{$param->name};";
-            }else
-            {
-                $constructorParameters[] =  "{$param->name} : {$ng2ParamType}";
-                $result->constructorRequiredContent[] = "this.{$param->name} = {$param->name};";
+                $result->properties[] ="@JsonMember
+public get {$param->name}() : string
+{
+    return '{$param->defaultValue}';
+}";
             }
         }
 

@@ -45,24 +45,6 @@ class NG2TypescriptGeneratorBase
         return $result;
     }
 
-    protected function requestBuildExp($name, $type, $insideAction)
-    {
-        $enumType = 'General';
-        switch($type)
-        {
-            case KalturaServerTypes::ArrayOfObjects:
-                $enumType = 'Array';
-                break;
-            case KalturaServerTypes::Date:
-                $enumType = 'Date';
-                break;
-            default:
-                break;
-        }
-
-        $valueExp = $insideAction ? "this.{$name}" : "this.objectData['{$name}']";
-        return  "{$name} : this.buildPropertyValue('{$name}', {$valueExp}, KalturaPropertyTypes.{$enumType})";
-    }
 
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback)
     {
