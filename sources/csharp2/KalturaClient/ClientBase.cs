@@ -164,7 +164,7 @@ namespace Kaltura
 		    return encodedKs;
         }
 	
-	    private byte[] aesEncrypt(String secretForSigning, byte[] text)
+	    private byte[] aesEncrypt(string secretForSigning, byte[] text)
         {
             byte[] hashedKey = signInfoWithSHA1(secretForSigning);
             byte[] keyBytes = new byte[BLOCK_SIZE];
