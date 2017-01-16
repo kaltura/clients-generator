@@ -5,19 +5,22 @@ The code in this repo is used to auto generate the Kaltura client libraries for 
 
 ## Deployment Instructions
 The list of supported clients is [here] (https://github.com/kaltura/clients-generator/blob/Kajam-11.18.0/config/generator.all.ini)
+
+Download the API scheme XML from http://www.kaltura.com/api_v3/api_schema.php.
+
 To generate one client run:
 ```
-$ php /opt/kaltura/clients-generator/exec.php $CLIENT_NAME
+$ php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml $CLIENT_NAME
 ```
 
 For example, to generate php53 run:
 ```
-php /opt/kaltura/clients-generator/exec.php php53
+php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml php53
 ```
 
 To generate all available clients, run:
 ```
-while read CLIENT;do php /opt/kaltura/clients-generator/exec.php $CLIENT;done < /opt/kaltura/clients-generator/config/generator.all.ini
+while read CLIENT;do php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml $CLIENT;done < /opt/kaltura/clients-generator/config/generator.all.ini
 ```
 
 ## Getting started with the API
