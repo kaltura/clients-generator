@@ -774,7 +774,7 @@ class KalturaClientBase
 			return;
 		}
 
-		if(!is_array($paramValue))
+		if(!is_array($paramValue) && !is_object($paramValue))
 		{
 			$params[$paramName] = (string)$paramValue;
 			return;
