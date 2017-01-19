@@ -156,7 +156,7 @@ namespace Kaltura
 		    Array.Copy(encryptedFields,0,output,prefix.Length, encryptedFields.Length);
 
             string encodedKs = EncodeTo64(output);
-		    encodedKs = encodedKs.Replace("\\+", "-");
+		    encodedKs = encodedKs.Replace("+", "-");
             encodedKs = encodedKs.Replace("/", "_");
 		    encodedKs = encodedKs.Replace("\n", "");
 		    encodedKs = encodedKs.Replace("\r", "");
