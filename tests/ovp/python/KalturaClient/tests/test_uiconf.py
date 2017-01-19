@@ -1,12 +1,17 @@
 from __future__ import absolute_import
 
 import re
+import unittest
 
-from .utils import GetConfig
 from .utils import KalturaBaseTest
 
-from KalturaClient.Plugins.Core import KalturaUiConf, KalturaUiConfObjType, KalturaUiConfFilter
-from KalturaClient.Plugins.Core import KalturaUiConfListResponse
+from KalturaClient.Plugins.Core import (
+    KalturaUiConf,
+    KalturaUiConfFilter,
+    KalturaUiConfListResponse,
+    KalturaUiConfObjType,
+)
+
 
 class UiConfTests(KalturaBaseTest):
      
@@ -101,9 +106,6 @@ class UiConfTests(KalturaBaseTest):
         
         
         
-
-
-import unittest
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(UiConfTests),

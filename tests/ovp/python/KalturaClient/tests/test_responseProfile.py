@@ -3,14 +3,28 @@ from __future__ import absolute_import
 import uuid
 import unittest
 
-from .utils import GetConfig
 from .utils import KalturaBaseTest
-from .utils import getTestFile
 
-from KalturaClient.Plugins.Core import KalturaFilterPager, KalturaResponseProfile, KalturaResponseProfileMapping, KalturaDetachedResponseProfile, KalturaResponseProfileHolder, KalturaResponseProfileType
-from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaEntryFilter, KalturaBaseEntryListResponse, KalturaMediaType, KalturaEntryStatus
-from KalturaClient.Plugins.Metadata import KalturaMetadata, KalturaMetadataProfile, KalturaMetadataFilter, KalturaMetadataListResponse, KalturaMetadataObjectType
-
+from KalturaClient.Plugins.Core import (
+    KalturaBaseEntryListResponse,
+    KalturaDetachedResponseProfile,
+    KalturaEntryStatus,
+    KalturaFilterPager,
+    KalturaMediaEntry,
+    KalturaMediaEntryFilter,
+    KalturaMediaType,
+    KalturaResponseProfile,
+    KalturaResponseProfileHolder,
+    KalturaResponseProfileMapping,
+    KalturaResponseProfileType,
+)
+from KalturaClient.Plugins.Metadata import (
+    KalturaMetadata,
+    KalturaMetadataFilter,
+    KalturaMetadataListResponse,
+    KalturaMetadataObjectType,
+    KalturaMetadataProfile,
+)
 
 
 class ResponseProfileTests(KalturaBaseTest):

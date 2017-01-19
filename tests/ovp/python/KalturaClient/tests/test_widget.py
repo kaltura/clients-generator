@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
-from .utils import GetConfig
+import unittest
+
 from .utils import KalturaBaseTest
 
 from KalturaClient.Plugins.Core import KalturaWidgetListResponse
@@ -12,7 +13,6 @@ class WidgetTests(KalturaBaseTest):
         self.assertIsInstance(widgets, KalturaWidgetListResponse)
 
 
-import unittest
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(WidgetTests),

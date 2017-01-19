@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
-from .utils import GetConfig
+import unittest
+
 from .utils import KalturaBaseTest
 
 from KalturaClient.Plugins.Core import KalturaFlavorAssetListResponse
@@ -20,7 +21,6 @@ class FlavorAssetTests(KalturaBaseTest):
         
         
 
-import unittest
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(FlavorAssetTests),

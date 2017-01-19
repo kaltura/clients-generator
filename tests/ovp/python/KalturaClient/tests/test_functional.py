@@ -27,30 +27,27 @@
 # ===================================================================================================
 from __future__ import absolute_import
 
-import os
+import re
 
 import requests
 
-from .utils import GetConfig
-from .utils import getTestFile
-from .utils import KalturaBaseTest
-from .utils import KalturaLogger
+from .utils import (GetConfig, getTestFile, KalturaBaseTest)
 
-from KalturaClient.Base import KalturaConfiguration
+from KalturaClient import KalturaClient
+from KalturaClient.Plugins.Core import (
+    API_VERSION,
+    KalturaDataEntry,
+    KalturaException,
+    KalturaFilterPager,
+    KalturaMediaEntry,
+    KalturaMediaEntryFilter,
+    KalturaMediaEntryOrderBy,
+    KalturaMediaType,
+    KalturaSessionType,
+)
 
-from KalturaClient.Plugins.Core import KalturaSessionType
-from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaEntryFilter, KalturaMediaEntryOrderBy
-from KalturaClient.Plugins.Core import KalturaMediaType
-from KalturaClient.Plugins.Core import KalturaDataEntry
-from KalturaClient.Plugins.Core import KalturaException
-from KalturaClient.Plugins.Core import KalturaFilterPager
-
-from KalturaClient.Plugins.Core import API_VERSION
 testString = "API Test ver %s" % (API_VERSION,)
 
-import urllib
-import time
-import re
 
 class SingleRequestTests(KalturaBaseTest):
     """These Tests Are legacy tests migrated from the first test suite TestCode/PythonTester.py

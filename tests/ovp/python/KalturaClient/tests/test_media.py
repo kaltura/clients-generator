@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 import unittest
 
-from .utils import GetConfig
 from .utils import KalturaBaseTest
 from .utils import getTestFile
 
