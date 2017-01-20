@@ -25,7 +25,7 @@
 #
 # @ignore
 # ===================================================================================================
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import re
 
@@ -100,7 +100,7 @@ class SingleRequestTests(KalturaBaseTest):
         pager.setPageSize(10)
         pager.setPageIndex(1)
     
-        print "List videos, get the first one..."
+        print("List videos, get the first one...")
     
         # Get 10 video entries, but we'll just use the first one returned
         entries = self.client.media.list(search, pager).objects
@@ -124,9 +124,13 @@ class SingleRequestTests(KalturaBaseTest):
         name = entries[0].getName()
         id = entries[0].getId()
         if metadata[0].getXsd() != None:
-            print "1. There are custom fields for video: " + name + ", entryid: " + id
+            print(
+                "1. There are custom fields for video: {}, entryid: {}".format(
+                    name, id))
         else:
-            print "1. There are no custom fields for video: " + name + ", entryid: " + id
+            print(
+                "1. There are no custom fields for video: {}, entryid: {}"\
+                .format(name, id))
     
         # Add a custom data entry in the KMC  (Settings -> Custom Data)
         profile = KalturaMetadataProfile()
@@ -146,9 +150,9 @@ class SingleRequestTests(KalturaBaseTest):
     
         assert(metadata2.xml != None)
         
-        print "3. Successfully added the custom data field for video: " + name + ", entryid: " + id
+        print("3. Successfully added the custom data field for video: {}, entryid: {}".format(name, id))
         xmlStr = metadata2.xml
-        print "XML used: " + xmlStr
+        print("XML used: %s" % xmlStr)
     
         # Now lets change the value (update) of the custom field
         # Get the metadata for the video
@@ -158,9 +162,10 @@ class SingleRequestTests(KalturaBaseTest):
         metadataList = self.client.metadata.metadata.list(filter3).objects
         assert(metadataList[0].xml != None)
     
-        print "4. Current metadata for video: " + name + ", entryid: " + id
+        print(
+            "4. Current metadata for video: {}, entryid: {}".format(name, id))
         xmlquoted = metadataList[0].xml
-        print "XML: " + xmlquoted
+        print("XML: {}".format(xmlquoted))
         xml = metadataList[0].xml
         # Make sure we find the old value in the current metadata
         pos = xml.find("<" + metaDataFieldName + ">" + fieldValue + "</" + metaDataFieldName + ">")
@@ -169,9 +174,9 @@ class SingleRequestTests(KalturaBaseTest):
         pattern = re.compile("<" + metaDataFieldName + ">([^<]+)</" + metaDataFieldName + ">")
         xml = pattern.sub("<" + metaDataFieldName + ">Ogg Writ</" + metaDataFieldName + ">", xml)
         rc = self.client.metadata.metadata.update(metadataList[0].id, xml)
-        print "5. Updated metadata for video: " + name + ", entryid: " + id
+        print("5. Updated metadata for video: {}, entryid: {}".format(name, id))
         xmlquoted = rc.xml
-        print "XML: " + xmlquoted
+        print("XML: {}".format(xmlquoted))
 
 
 from .utils import PARTNER_ID, SERVICE_URL
@@ -202,7 +207,7 @@ class MultiRequestTests(KalturaBaseTest):
         listResult = self.client.baseEntry.list()
 
         multiResult = self.client.doMultiRequest()
-        print multiResult[1].totalCount
+        print(multiResult[1].totalCount)
         self.client.setKs(multiResult[0])
         
         # error
@@ -279,7 +284,7 @@ class MultiRequestTests(KalturaBaseTest):
         assert(isinstance(response[1], KalturaMixEntry))
         mixEntry = response[1]
         
-        print "The new mix entry id is: " + mixEntry.id
+        print("The new mix entry id is: {}".format(mixEntry.id))
 
 
 import unittest

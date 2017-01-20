@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 import time
 
@@ -316,11 +316,11 @@ class DynamicPlaylistTests(KalturaBaseTest):
         kplaylist = self.client.playlist.add(kplaylist)
         self.addCleanup(self.client.playlist.delete, kplaylist.getId())
         
-        print "Waiting for Media Entry to be 'Ready'"
+        print("Waiting for Media Entry to be 'Ready'")
         sleeptime=5
         mediaEntry = self.client.media.get(mediaEntry.getId())
         while mediaEntry.getStatus().getValue() != '2':
-            print "media entry status is %s " % (mediaEntry.getStatus().getValue())
+            print("media entry status is {}".format(mediaEntry.getStatus().getValue()))
             time.sleep(sleeptime)
             mediaEntry = self.client.media.get(mediaEntry.getId())
         
