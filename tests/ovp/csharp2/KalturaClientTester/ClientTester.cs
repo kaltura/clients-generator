@@ -78,7 +78,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("API error: " + error.Message);
+                    Console.WriteLine("ERROR: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -160,7 +160,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed chunk upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed chunk upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -177,7 +177,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed chunk upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed chunk upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -202,7 +202,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed chunk upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed chunk upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -225,7 +225,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed chunk upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed chunk upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -260,7 +260,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed chunk upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed chunk upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -284,7 +284,7 @@ namespace Kaltura.Tester
 
             public void OnContentAddError(Exception error)
             {
-                Console.WriteLine("Failed chunk upload: " + error.Message);
+                Console.WriteLine("ERROR: Failed chunk upload: " + error.Message);
                 code = -1;
                 done(id);
                 return;
@@ -312,7 +312,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed create listing entries: " + error.Message);
+                    Console.WriteLine("ERROR: Failed create listing entries: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -320,7 +320,7 @@ namespace Kaltura.Tester
 
                 if (entriesCount != baseEntryListResponse.Objects.Count)
                 {
-                    Console.WriteLine("entriesTotalCount[" + entriesCount + "] != list.Count[" + baseEntryListResponse.Objects.Count + "]");
+                    Console.WriteLine("ERROR: entriesTotalCount[" + entriesCount + "] != list.Count[" + baseEntryListResponse.Objects.Count + "]");
                     code = -1;
                     done(id);
                     return;
@@ -330,7 +330,7 @@ namespace Kaltura.Tester
                 {
                     if (entry.RelatedObjects == null)
                     {
-                        Console.WriteLine("Related objects are missing");
+                        Console.WriteLine("ERROR: Related objects are missing");
                         code = -1;
                         done(id);
                         return;
@@ -338,7 +338,7 @@ namespace Kaltura.Tester
 
                     if (!entry.RelatedObjects.ContainsKey(metadataResponseProfile.Name))
                     {
-                        Console.WriteLine("Related object [" + metadataResponseProfile.Name + "] is missing");
+                        Console.WriteLine("ERROR: Related object [" + metadataResponseProfile.Name + "] is missing");
                         code = -1;
                         done(id);
                         return;
@@ -346,7 +346,7 @@ namespace Kaltura.Tester
 
                     if (!(entry.RelatedObjects[metadataResponseProfile.Name] is ListResponse<Metadata>))
                     {
-                        Console.WriteLine("Related object [" + metadataResponseProfile.Name + "] has wrong type [" + entry.RelatedObjects[metadataResponseProfile.Name].GetType() + "]");
+                        Console.WriteLine("ERROR: Related object [" + metadataResponseProfile.Name + "] has wrong type [" + entry.RelatedObjects[metadataResponseProfile.Name].GetType() + "]");
                         code = -1;
                         done(id);
                         return;
@@ -355,7 +355,7 @@ namespace Kaltura.Tester
 
                     if (metadataListResponse.Objects.Count != metadataProfileCount)
                     {
-                        Console.WriteLine("Related object [" + metadataResponseProfile.Name + "] has wrong number of objects");
+                        Console.WriteLine("ERROR: Related object [" + metadataResponseProfile.Name + "] has wrong number of objects");
                         code = -1;
                         done(id);
                         return;
@@ -365,7 +365,7 @@ namespace Kaltura.Tester
                     {
                         if (metadata.ObjectId != entry.Id)
                         {
-                            Console.WriteLine("Related object [" + metadataResponseProfile.Name + "] metadata [" + metadata.Id + "] related to wrong object [" + metadata.ObjectId + "]");
+                            Console.WriteLine("ERROR: Related object [" + metadataResponseProfile.Name + "] metadata [" + metadata.Id + "] related to wrong object [" + metadata.ObjectId + "]");
                             code = -1;
                             done(id);
                             return;
@@ -418,7 +418,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed create response profile: " + error.Message);
+                    Console.WriteLine("ERROR: Failed create response profile: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -537,7 +537,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed create metadata profile: " + error.Message);
+                    Console.WriteLine("ERROR: Failed create metadata profile: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -550,7 +550,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed create entry: " + error.Message);
+                    Console.WriteLine("ERROR: Failed create entry: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -563,7 +563,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed create entries: " + error.Message);
+                    Console.WriteLine("ERROR: Failed create entries: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -613,7 +613,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create upload-token: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create upload-token: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -630,7 +630,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -648,7 +648,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create entry: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create entry: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -667,7 +667,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to add entry content: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to add entry content: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -692,7 +692,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to list asset-params: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to list asset-params: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -722,7 +722,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create caption upload-token: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create caption upload-token: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -748,7 +748,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create caption upload-token: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create caption upload-token: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -766,7 +766,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create caption upload-token: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create caption upload-token: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -782,7 +782,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create caption upload-token: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create caption upload-token: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -813,7 +813,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to list flavor-assets: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to list flavor-assets: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -849,7 +849,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to get download URL: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to get download URL: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -876,7 +876,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed add upload-token: " + error.Message);
+                    Console.WriteLine("ERROR: Failed add upload-token: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -892,7 +892,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -910,7 +910,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed upload: " + error.Message);
+                    Console.WriteLine("ERROR: Failed upload: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -951,7 +951,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to list entries: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to list entries: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -978,7 +978,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create metadata profile: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create metadata profile: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -998,7 +998,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create metadata: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create metadata: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -1018,7 +1018,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed to create metadata: " + error.Message);
+                    Console.WriteLine("ERROR: Failed to create metadata: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -1026,7 +1026,7 @@ namespace Kaltura.Tester
 
                 if (metadataList.TotalCount == 0 || metadataList.Objects.Count == 0)
                 {
-                    Console.WriteLine("Failed to find metadata for entryid: " + entry.Id);
+                    Console.WriteLine("ERROR: Failed to find metadata for entryid: " + entry.Id);
                     code = -1;
                     done(id);
                     return;
@@ -1066,7 +1066,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed multi-request: " + error.Message);
+                    Console.WriteLine("ERROR: Failed multi-request: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -1076,7 +1076,7 @@ namespace Kaltura.Tester
                 {
                     if (result is APIException)
                     {
-                        Console.WriteLine("Error occurred: " + ((APIException)result).Message);
+                        Console.WriteLine("ERROR: " + ((APIException)result).Message);
                         code = -1;
                         done(id);
                         return;
@@ -1112,7 +1112,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed multi-request: " + error.Message);
+                    Console.WriteLine("ERROR: Failed multi-request: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -1122,7 +1122,7 @@ namespace Kaltura.Tester
                 {
                     if (result is APIException)
                     {
-                        Console.WriteLine("Error occurred: " + ((APIException)result).Message);
+                        Console.WriteLine("ERROR: " + ((APIException)result).Message);
                         code = -1;
                         done(id);
                         return;
@@ -1161,7 +1161,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed multi-request: " + error.Message);
+                    Console.WriteLine("ERROR: Failed multi-request: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -1171,7 +1171,7 @@ namespace Kaltura.Tester
                 {
                     if (result is APIException)
                     {
-                        Console.WriteLine("Error occurred: " + ((APIException)result).Message);
+                        Console.WriteLine("ERROR: " + ((APIException)result).Message);
                         code = -1;
                         done(id);
                         return;
@@ -1180,7 +1180,7 @@ namespace Kaltura.Tester
 
                 if (!(results[1] is Playlist))
                 {
-                    Console.WriteLine("Expected playlist, got " + results[1].GetType().Name);
+                    Console.WriteLine("ERROR: Expected playlist, got " + results[1].GetType().Name);
                     code = -1;
                     done(id);
                     return;
@@ -1198,7 +1198,7 @@ namespace Kaltura.Tester
             {
                 if (error != null)
                 {
-                    Console.WriteLine("Failed multi-request: " + error.Message);
+                    Console.WriteLine("ERROR: Failed multi-request: " + error.Message);
                     code = -1;
                     done(id);
                     return;
@@ -1208,14 +1208,14 @@ namespace Kaltura.Tester
                 {
                     if (result is APIException)
                     {
-                        Console.WriteLine("Error occurred: " + ((APIException)result).Message);
+                        Console.WriteLine("ERROR: " + ((APIException)result).Message);
                         code = -1;
                         done(id);
                         return;
                     }
                     if (!(result is IList<BaseEntry>))
                     {
-                        Console.WriteLine("Expected base-entry list, got " + result.GetType().Name);
+                        Console.WriteLine("ERROR: Expected base-entry list, got " + result.GetType().Name);
                         code = -1;
                         done(id);
                         return;
@@ -1265,7 +1265,8 @@ namespace Kaltura.Tester
                 Thread.Sleep(100);
             }
 
-            Console.WriteLine("Done");
+            Console.WriteLine("Done. Exit code was "+code);
+
             Environment.Exit(code);
         }
 
