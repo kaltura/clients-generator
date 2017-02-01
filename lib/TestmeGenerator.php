@@ -284,7 +284,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 				$paramType = $enumType;
 			
 			$xpath = new DOMXPath($this->_doc);
-			if ($paramType == 'array' && $paramNode->hasAttribute("arrayType"))
+			if (($paramType == 'array' || $paramType == 'map') && $paramNode->hasAttribute("arrayType"))
 			{
 				$paramArrayType = $paramNode->getAttribute('arrayType');
 				$classNodes = $xpath->query("/xml/classes/class[@name='$paramArrayType']");
