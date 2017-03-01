@@ -57,10 +57,10 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $result[] = $serviceActionsFile;
             $formattedServiceName = $this->utils->toLispCase($service->name);
             $serviceActionsFile->path = "services/{$formattedServiceName}.ts";
-            $serviceActionsFile->content = "import {KalturaRequest} from \"../kaltura-request\";
+            $serviceActionsFile->content = "import { KalturaRequest } from \"../kaltura-request\";
 import * as kclasses from \"../kaltura-types\";
 import * as kenums from \"../kaltura-enums\";
-import {JsonMember,JsonSerializableObject} from \"../utils/typed-json\";
+import { JsonMember,JsonSerializableObject } from \"../utils/typed-json\";
 
 {$this->utils->buildExpression($actions,NewLine)}
 ";

@@ -32,7 +32,7 @@ class EnumsGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import {KalturaUtils} from \"./utils/kaltura-utils\";
+import { KalturaUtils } from \"./utils/kaltura-utils\";
 import { JsonObject } from './utils/typed-json';
 
 {$this->utils->buildExpression($enumTypes,NewLine . NewLine)}

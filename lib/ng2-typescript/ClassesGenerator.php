@@ -33,7 +33,7 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import {KalturaObjectBase} from \"./utils/kaltura-object-base\";
+import { KalturaObjectBase } from \"./utils/kaltura-object-base\";
 import * as kenums from \"./kaltura-enums\";
 import { JsonMember, JsonObject } from './utils/typed-json';
 

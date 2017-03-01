@@ -22,9 +22,9 @@ class KalturaBaseRequestGenerator extends NG2TypescriptGeneratorBase
         $file = new GeneratedFileData();
         $result[] = $file;
         $file->path = "utils/kaltura-request-base.ts";
-        $file->content = "import {KalturaObjectBase} from \"./kaltura-object-base\";
+        $file->content = "import { KalturaObjectBase } from \"./kaltura-object-base\";
 import * as ktypes from \"../types\";
-import {JsonMember} from './typed-json';
+import { JsonMember } from './typed-json';
 
 
 export abstract class KalturaRequestBase extends KalturaObjectBase{
