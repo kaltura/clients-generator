@@ -284,8 +284,10 @@ class TestmeGenerator extends ClientGeneratorFromXml
 				$paramType = $enumType;
 			
 			$xpath = new DOMXPath($this->_doc);
+			$isArray = false;
 			if (($paramType == 'array' || $paramType == 'map') && $paramNode->hasAttribute("arrayType"))
 			{
+				$isArray = true;
 				$paramArrayType = $paramNode->getAttribute('arrayType');
 				$classNodes = $xpath->query("/xml/classes/class[@name='$paramArrayType']");
 			}
@@ -295,6 +297,11 @@ class TestmeGenerator extends ClientGeneratorFromXml
 			if($classNode)
 			{
 				$paramData = $this->getClassJson($classNode);
+				if ($isArray)
+				{
+					$paramData['arrayType'] = $this->getClassJson($classNode);
+					$paramData['isArray'] = true;
+				}
 			}
 			else 
 			{
