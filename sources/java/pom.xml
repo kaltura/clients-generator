@@ -13,6 +13,9 @@
 	<groupId>com.kaltura</groupId>
 	<artifactId>KalturaClient</artifactId>
 	<version>3.3.1</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<!-- Project description -->
 	<name>KalturaClient Java Library</name>
@@ -140,6 +143,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
