@@ -2,6 +2,8 @@ from __future__ import absolute_import, print_function
 
 import time
 
+import six
+
 from .utils import getTestFile, KalturaBaseTest
 
 from KalturaClient.Plugins.Core import (
@@ -31,7 +33,7 @@ class PlaylistTests(KalturaBaseTest):
         kplaylist = self.client.playlist.add(kplaylist)        
         self.assertIsInstance(kplaylist, KalturaPlaylist)
         
-        self.assertIsInstance(kplaylist.getId(), unicode)
+        self.assertIsInstance(kplaylist.getId(), six.text_type)
         
         #cleanup
         self.client.playlist.delete(kplaylist.getId())
@@ -39,7 +41,7 @@ class PlaylistTests(KalturaBaseTest):
     #def test_listEntries(self):
     #    playlistId = '1_qv2ed7vm'
     #    kplaylist = self.client.playlist.get(playlistId)
-    #    assertIsInstance(kplaylist.playlistContent, unicode)
+    #    assertIsInstance(kplaylist.playlistContent, six.text_type)
     #    assertIsInstance(kplaylist.playlistContent.split(','), list)
         
         
@@ -172,7 +174,7 @@ class DynamicPlaylistTests(KalturaBaseTest):
         kplaylist = self.client.playlist.add(kplaylist)        
         self.assertIsInstance(kplaylist, KalturaPlaylist)
         
-        self.assertIsInstance(kplaylist.getId(), unicode)
+        self.assertIsInstance(kplaylist.getId(), six.text_type)
         
         #cleanup
         self.client.playlist.delete(kplaylist.getId())        

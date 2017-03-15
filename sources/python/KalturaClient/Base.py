@@ -25,8 +25,11 @@
 #
 # @ignore
 # ===================================================================================================
+import binascii
 import hashlib
 import json
+
+import six
 
 # Service response formats
 KALTURA_SERVICE_FORMAT_JSON = 1
@@ -88,10 +91,10 @@ class KalturaParams(object):
     def put(self, key, value = None):
         if value == None:
             self.params[key + '__null'] = ''
-        elif isinstance(value, unicode):
-            self.params[key] = value.encode('utf8')
+        elif isinstance(value, six.binary_type):
+            self.params[key] = value.decode('utf8')
         else:
-            self.params[key] = str(value)
+            self.params[key] = six.text_type(value)
 
     def update(self, props):
         self.params.update(props)
@@ -117,7 +120,7 @@ class KalturaParams(object):
             self.params[key] = {'-': ''}
         else:
             arr = []
-            for curIndex in xrange(len(array)):
+            for curIndex in six.moves.range(len(array)):
                 arr.append(array[curIndex].toParams().get())
             self.params[key] = arr
 
@@ -171,7 +174,7 @@ class KalturaParams(object):
             if isinstance(params[key], dict):
                 params[key] = self.sort(params[key])
                 
-        sortedKeys = sorted(params.keys())
+        sortedKeys = sorted(params.keys(), key=lambda x: six.text_type(x))
         sortedDict = {}
         for key in sortedKeys:
             sortedDict[key] = params[key]
@@ -188,10 +191,11 @@ class KalturaParams(object):
         return self.md5(self.toJson())
 
     @staticmethod
-    def md5(str):
+    def md5(str_):
         m = hashlib.md5()
-        m.update(str)
-        return m.digest().encode('hex')
+        m.update(
+            str_ if isinstance(str_, six.binary_type) else str_.encode("utf8"))
+        return binascii.hexlify(m.digest())
 
 # Request files container
 class KalturaFiles(object):

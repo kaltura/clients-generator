@@ -31,6 +31,7 @@ from .Plugins.Core import *
 from .Base import *
 from xml.parsers.expat import ExpatError
 from xml.dom import minidom
+import binascii
 import hashlib
 import mimetypes
 import random
@@ -42,6 +43,7 @@ import os
 
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+import six
 
 try:
     from Crypto import Random
@@ -187,7 +189,7 @@ class KalturaClient(object):
         self.callsQueue = []
 
         if params != None:
-            result += '?' + urllib.urlencode(params.get())
+            result += '?' + six.moves.urllib.parse.urlencode(params.get())
         self.log("Returned url [%s]" % result)
         return result        
         
@@ -410,14 +412,15 @@ class KalturaClient(object):
             self.config.getLogger().log(msg)
 
     @staticmethod
-    def generateSession(adminSecretForSigning, userId, type, partnerId, expiry = 86400, privileges = ''):
+    def generateSession(adminSecretForSigning, userId, type_, partnerId, expiry = 86400, privileges = ''):
         rand = random.randint(0, 0x10000)
         expiry = int(time.time()) + expiry
-        fields = [partnerId, partnerId, expiry, type, rand, userId, privileges]
-        fields = map(lambda x: str(x), fields)
-        info = ';'.join(fields)
-        signature = KalturaClient.hash(adminSecretForSigning + info).encode('hex')
-        decodedKS = signature + "|" + info
+        fields = [partnerId, partnerId, expiry, type_, rand, userId, privileges]
+        fields = [x if isinstance(x, six.binary_type) else six.text_type(x).encode("utf8") for x in fields]
+        info = six.b(';').join(fields)
+        signature = binascii.hexlify(
+            KalturaClient.hash(adminSecretForSigning.encode("utf8") + info))
+        decodedKS = signature + six.b("|") + info
         KS = base64.b64encode(decodedKS)
         return KS
 
