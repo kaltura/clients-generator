@@ -33,9 +33,10 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         }
 
         $fileContent = "
-import { KalturaObjectBase } from \"./utils/kaltura-object-base\";
 import * as kenums from \"./kaltura-enums\";
-import { JsonMember, JsonObject } from './utils/typed-json';
+import { KalturaObjectBase } from './kaltura-object-base';
+import { KalturaObjectsMeta } from './utils/kaltura-objects-meta';
+
 
 {$this->utils->buildExpression($classTypes,NewLine)}
 ";
@@ -54,55 +55,35 @@ import { JsonMember, JsonObject } from './utils/typed-json';
         $desc = $class->description;
 
         $content = $this->createContentFromClass($class);
+        $types = "'" . implode("', '", $class->types) . "'";
 
         $result = "
 {$this->getBanner()}
 {$this->utils->createDocumentationExp('',$desc)}
-@JsonObject({onSerializedFunction : 'onSerialized'})
-export {$this->utils->ifExp($class->abstract, "abstract", "")} class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaObjectBase")} {
-
-    get objectType() : string
-    {
-        return '{$class->name}';
-    }
-
+export interface {$classTypeName} {$this->utils->ifExp($class->base, "extends " . $class->base,"")} {
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
-
-    constructor()
-    {
-        super();
-        {$this->utils->buildExpression($content->constructorContent, NewLine, 1)}
-    }
-}";
+}
+KalturaObjectsMeta.setMeta('{$classTypeName}',
+{
+    types: [{$types}]
+});
+";
 
         return $result;
     }
-
 
     function createContentFromClass(ClassType $class)
     {
         $result = new stdClass();
         $result->properties = array();
-        $result->buildContent = array();
-        $result->constructorContent = array();
 
         if (count($class->properties) != 0)
         {
             foreach($class->properties as $property) {
                 $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
 
-                // update the build function
-                $result->buildContent[] = "\"{$property->name}\"";
-
-                // update constructor content
-                if ($property->type == KalturaServerTypes::ArrayOfObjects)
-                {
-                    $result->constructorContent[] = "this.{$property->name} = []";
-                }
-
                 // update the properties declaration
-                $decorator = $this->getPropertyDecorator($property->type,$property->typeClassName);
-                $result->properties[] = "{$decorator} {$property->name} : {$ng2ParamType};";
+                $result->properties[] = "{$property->name}? : {$ng2ParamType};";
             }
         }
 

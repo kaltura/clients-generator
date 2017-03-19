@@ -239,19 +239,27 @@ class ClassType
 {
     public $name;
     public $base = null;
+    public $types = array();
     public $plugin = null;
     public $description = null;
     public $abstract = false;
     public $deprecated = false;
     public $properties = array();
 
-    public function prepare($availableTypes)
+    public function prepare(KalturaServerMetadata $serverMetadata, $availableTypes)
     {
         $errors = array();
 
         foreach($this->properties as $property)
         {
             $errors = array_merge($errors, $property->prepare($availableTypes,$this));
+        }
+
+        $classType = $this;
+        while (isset($classType))
+        {
+            array_push($this->types, $classType->name);
+            $classType = $serverMetadata->classTypes[$classType->base];
         }
 
         return $errors;
@@ -314,7 +322,7 @@ class KalturaServerMetadata
 
         foreach($this->classTypes as $class)
         {
-            $errors = array_merge($errors, $class->prepare($availableTypes));
+            $errors = array_merge($errors, $class->prepare($this, $availableTypes));
         }
 
         foreach($this->services as $service)

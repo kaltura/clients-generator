@@ -73,12 +73,23 @@ class NG2TypescriptGeneratorBase
                 }
                 break;
             case KalturaServerTypes::ArrayOfObjects:
-                $result = "{$typeClassName}[]";
+                if ($typeClassName == "KalturaObjectBase") {
+                    $result = "KalturaObjectBase<void>[]";
+                }else{
+                    $result = "KalturaObjectBase<{$typeClassName}>[]";
+                }
                 break;
             case KalturaServerTypes::EnumOfInt:
             case KalturaServerTypes::EnumOfString:
-            case KalturaServerTypes::Object:
                 $result = $typeClassName;
+                break;
+            case KalturaServerTypes::Object:
+                if ($typeClassName == "KalturaObjectBase") {
+                    $result = "KalturaObjectBase<void>";
+                }else{
+                    $result = "KalturaObjectBase<{$typeClassName}>";
+
+                }
                 break;
             case KalturaServerTypes::Date:
                 $result = "Date";
