@@ -176,7 +176,7 @@ class Zend2ClientTester
     	
     	// execute playlist from filters
     	$playlistFilter = new MediaEntryFilterForPlaylist();
-    	$playlistFilter->idEqual = $imageEntry->id;
+    	$playlistFilter->freeText = $imageEntry->id;
     	$filterArray = array();
     	$filterArray[] = $playlistFilter;
     	$playlistExecute = $this->_client->getPlaylistService()->executeFromFilters($filterArray, 10);
