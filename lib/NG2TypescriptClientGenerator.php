@@ -5,7 +5,6 @@ require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ServiceActionsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/KalturaObjectsGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaBaseRequestGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
 
@@ -36,7 +35,6 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		$files = array_merge(
 			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
 			(new ClassesGenerator($this->serverMetadata))->generate(),
-			(new KalturaObjectsGenerator($this->serverMetadata))->generate(),
 			(new KalturaBaseRequestGenerator($this->serverMetadata))->generate(),
 			(new EnumsGenerator($this->serverMetadata))->generate()
 		);
@@ -81,12 +79,13 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				$classType = new ClassType();
 
 				$classType->name = $this->fixKalturaTypeName($classNode->getAttribute("name"));
+				$classType->abstract = $classNode->getAttribute("abstract") == 1;
 				$classType->base = $this->fixKalturaTypeName($classNode->getAttribute("base"));
 				$classType->plugin = $classNode->getAttribute("plugin");
 				$classType->description = $classNode->getAttribute("description");
 				$classType->properties = $this->extractClassTypeProperties($classNode);
 
-				$result->classTypes[$classType->name] = $classType;
+				$result->classTypes[] = $classType;
 			}
 		}
 

@@ -24,7 +24,6 @@ class KalturaBaseRequestGenerator extends NG2TypescriptGeneratorBase
         $file->path = "utils/kaltura-request-base.ts";
         $file->content = "import { KalturaObjectBase } from \"./kaltura-object-base\";
 import * as ktypes from \"../types\";
-import { JsonMember } from './typed-json';
 
 
 export abstract class KalturaRequestBase extends KalturaObjectBase{
@@ -68,10 +67,10 @@ export abstract class KalturaRequestBase extends KalturaObjectBase{
 
         foreach ($this->serverMetadata->requestSharedParameters as $param) {
             $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
-            //$result->properties[] = "@JsonMember {$param->name} : {$ng2ParamType} {$this->utils->ifExp($param->defaultValue," = '" .$param->defaultValue . "'",'')};";
+
 
             if (!$param->readonly) {
-                $result->properties[] = "@JsonMember {$param->name} : {$ng2ParamType};";
+                $result->properties[] = "{$param->name} : {$ng2ParamType};";
 
                 if ($param->optional) {
                     $result->constructorOptionalContent[] = "this.{$param->name} = data.{$param->name};";
@@ -81,8 +80,7 @@ export abstract class KalturaRequestBase extends KalturaObjectBase{
                 }
             }else if ($param->readonly && $param->defaultValue != "")
             {
-                $result->properties[] ="@JsonMember
-public get {$param->name}() : string
+                $result->properties[] = "public get {$param->name}() : string
 {
     return '{$param->defaultValue}';
 }";

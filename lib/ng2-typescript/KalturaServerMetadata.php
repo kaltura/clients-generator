@@ -239,7 +239,6 @@ class ClassType
 {
     public $name;
     public $base = null;
-    public $types = array();
     public $plugin = null;
     public $description = null;
     public $abstract = false;
@@ -253,13 +252,6 @@ class ClassType
         foreach($this->properties as $property)
         {
             $errors = array_merge($errors, $property->prepare($availableTypes,$this));
-        }
-
-        $classType = $this;
-        while (isset($classType))
-        {
-            array_push($this->types, $classType->name);
-            $classType = $serverMetadata->classTypes[$classType->base];
         }
 
         return $errors;

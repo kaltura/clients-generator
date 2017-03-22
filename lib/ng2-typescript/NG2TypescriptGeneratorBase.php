@@ -49,14 +49,12 @@ class NG2TypescriptGeneratorBase
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback)
     {
         $result = null;
-        switch($type)
-        {
+        switch ($type) {
             case KalturaServerTypes::File:
                 $result = 'string';
                 break;
             case KalturaServerTypes::Simple:
-                switch($typeClassName)
-                {
+                switch ($typeClassName) {
                     case "bool":
                         $result = "boolean";
                         break;
@@ -73,23 +71,12 @@ class NG2TypescriptGeneratorBase
                 }
                 break;
             case KalturaServerTypes::ArrayOfObjects:
-                if ($typeClassName == "KalturaObjectBase") {
-                    $result = "KalturaObjectBase<void>[]";
-                }else{
-                    $result = "KalturaObjectBase<{$typeClassName}>[]";
-                }
+                $result = "{$typeClassName}[]";
                 break;
             case KalturaServerTypes::EnumOfInt:
             case KalturaServerTypes::EnumOfString:
-                $result = $typeClassName;
-                break;
             case KalturaServerTypes::Object:
-                if ($typeClassName == "KalturaObjectBase") {
-                    $result = "KalturaObjectBase<void>";
-                }else{
-                    $result = "KalturaObjectBase<{$typeClassName}>";
-
-                }
+                $result = $typeClassName;
                 break;
             case KalturaServerTypes::Date:
                 $result = "Date";
@@ -101,30 +88,11 @@ class NG2TypescriptGeneratorBase
                 throw new Exception("toNG2TypeExp: Unknown type requested {$type}");
         }
 
-        if (isset($resultCreatedCallback))
-        {
+        if (isset($resultCreatedCallback)) {
             $result = $resultCreatedCallback($type, $typeClassName, $result);
         }
-        return  $result;
-    }
-
-    protected function getPropertyDecorator($type, $typeClassName, $className = "")
-    {
-        $result = null;
-
-        switch($type)
-        {
-            case KalturaServerTypes::ArrayOfObjects:
-                $result = "@JsonMember({elements : {$className}{$typeClassName}})";
-                break;
-            default:
-                $result = "@JsonMember";
-                break;
-        }
-
         return $result;
     }
-
     protected function getBanner()
     {
         $banner = "";

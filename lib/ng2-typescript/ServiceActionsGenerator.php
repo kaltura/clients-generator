@@ -60,7 +60,6 @@ class ServiceActionsGenerator extends NG2TypescriptGeneratorBase
             $serviceActionsFile->content = "import { KalturaRequest } from \"../kaltura-request\";
 import * as kclasses from \"../kaltura-types\";
 import * as kenums from \"../kaltura-enums\";
-import { JsonMember,JsonSerializableObject } from \"../utils/typed-json\";
 
 {$this->utils->buildExpression($actions,NewLine)}
 ";
@@ -80,7 +79,6 @@ import { JsonMember,JsonSerializableObject } from \"../utils/typed-json\";
         $result = "{$this->getBanner()}
 
 {$this->utils->createDocumentationExp('',$desc)}
-@JsonSerializableObject({onSerializedFunction : 'onSerialized', requireTypeHints : false})
 export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
 
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
@@ -177,8 +175,8 @@ export class {$actionClassName} extends KalturaRequest<{$actionNG2ResultType}>{
             if (!$this->isPropertyOfBaseRequest($param->name)) {
                 // handle only properties that are not in base to prevent duplication in declaration
                 $ng2ParamType = $this->toNG2TypeExp($param->type, $param->typeClassName);
-                $decorator = $this->getPropertyDecorator($param->type,$param->typeClassName, 'kclasses.');
-                $result->properties[] = "{$decorator} {$param->name} : {$ng2ParamType};";
+
+                $result->properties[] = "{$param->name} : {$ng2ParamType};";
             }
         }
 

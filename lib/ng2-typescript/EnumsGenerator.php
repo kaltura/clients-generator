@@ -33,7 +33,6 @@ class EnumsGenerator extends NG2TypescriptGeneratorBase
 
         $fileContent = "
 import { KalturaUtils } from \"./utils/kaltura-utils\";
-import { JsonObject } from './utils/typed-json';
 
 {$this->utils->buildExpression($enumTypes,NewLine . NewLine)}
 ";
@@ -73,9 +72,6 @@ export enum {$enumTypeName} {
 
                 $result = "
 {$this->getBanner()}
-
-
-@JsonObject({serializer : KalturaUtils.fromEnumOfStringToValue, initializer :  KalturaUtils.toEnumOfStringToValue})
 export class {$enumTypeName} {
     private _value : string;
     constructor( value?:string | number){
