@@ -9,9 +9,6 @@ class Utils
 
 
 
-
-
-
     public static function indent($text,$n){
         if(is_string($text) && is_int($n)){
             $indent = "";
@@ -46,7 +43,6 @@ class Utils
             return "";
         }
     }
-
 
     public static function startsWith($str, $prefix)
     {

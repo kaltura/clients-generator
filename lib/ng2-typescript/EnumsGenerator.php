@@ -13,35 +13,15 @@ class EnumsGenerator extends NG2TypescriptGeneratorBase
 
     public function generate()
     {
-        $result = array_merge(
-            $this->createEnumTypes()
-        );
-
-        return $result;
-    }
-
-    function createEnumTypes()
-    {
-        $enumTypes = array();
+        $result = array();
 
         foreach ($this->serverMetadata->enumTypes as $enum) {
             if (count($enum->values) != "0") {
                 // ignore enums without values
-                $enumTypes[] = $this->createEnumTypeExp($enum);
+                $result[] = $this->createEnumTypeExp($enum);
             }
         }
 
-        $fileContent = "
-import { KalturaUtils } from \"./utils/kaltura-utils\";
-
-{$this->utils->buildExpression($enumTypes,NewLine . NewLine)}
-";
-
-        $result = array();
-        $file = new GeneratedFileData();
-        $file->path = "kaltura-enums.ts";
-        $file->content = $fileContent;
-        $result[] = $file;
         return $result;
     }
 
@@ -57,7 +37,7 @@ import { KalturaUtils } from \"./utils/kaltura-utils\";
                     $values[] = Utils::fromSnakeCaseToCamelCase($item->name) . "=" . $item->value;
                 }
 
-                $result = "
+                $fileContent = "
 {$this->getBanner()}
 export enum {$enumTypeName} {
     {$this->utils->buildExpression($values,',' . NewLine, 1)}
@@ -70,7 +50,7 @@ export enum {$enumTypeName} {
                     $values[] = "static {$enumName} = new {$enumTypeName}('{$item->value}');";
                 }
 
-                $result = "
+                $fileContent = "
 {$this->getBanner()}
 export class {$enumTypeName} {
     private _value : string;
@@ -92,6 +72,11 @@ export class {$enumTypeName} {
                 break;
         }
 
-        return $result;
+        $file = new GeneratedFileData();
+        $fileName = $this->utils->toLispCase($enumTypeName);
+        $file->path = "enum/{$fileName}.ts";
+        $file->content = $fileContent;
+        $result[] = $file;
+        return $file;
     }
 }

@@ -13,56 +13,75 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
 
     public function generate()
     {
-        $result = array_merge(
-            $this->createClassTypes()
-        );
+        foreach ($this->serverMetadata->services as $service) {
+            foreach ($service->actions as $serviceAction) {
+                $result[] = $this->createServiceActionType($service, $serviceAction);
+            }
+        }
+
+        foreach ($this->serverMetadata->classTypes as $class) {
+            $result[] = $this->createClassType($class);
+        }
 
         return $result;
     }
 
-    function createClassTypes()
+    function createClassType(ClassType $class)
     {
-        $classTypes = array();
-
-        $kalturaKnownTypes = array();
-
-        foreach ($this->serverMetadata->classTypes as $class) {
-            $classTypes[] = $this->createClassTypeExp($class);
-
-            $classTypeName = Utils::upperCaseFirstLetter($class->name);
-        }
+        $classBody = $this->createClass($class->name, $class->description, $class->base, $class->properties);
 
         $fileContent = "
 import { KalturaObjectBase } from \"./utils/kaltura-object-base\";
 import * as kenums from \"./kaltura-enums\";
 import { KalturaObjects } from \"./utils/kaltura-objects\";
 
-{$this->utils->buildExpression($classTypes,NewLine)}
+{$classBody}
 ";
 
-        $result = array();
         $file = new GeneratedFileData();
-        $file->path = "kaltura-types.ts";
+        $fileName = $this->utils->toLispCase($class->name);
+        $file->path = "class/{$fileName}.ts";
         $file->content = $fileContent;
         $result[] = $file;
-        return $result;
+        return $file;
     }
 
-    function createClassTypeExp(ClassType $class)
+    function createServiceActionType(Service $service,ServiceAction $serviceAction)
     {
-        $classTypeName = Utils::upperCaseFirstLetter($class->name);
-        $desc = $class->description;
+        $className = $service->name . ucfirst($serviceAction->name);
+        $classBody = $this->createClass($className, $serviceAction->description, null, $serviceAction->params);
 
-        $content = $this->createContentFromClass($class);
+        $fileContent = "
+import { KalturaObjectBase } from \"./utils/kaltura-object-base\";
+import * as kenums from \"./kaltura-enums\";
+import { KalturaObjects } from \"./utils/kaltura-objects\";
+
+{$classBody}
+";
+
+        $file = new GeneratedFileData();
+        $fileName = $this->utils->toLispCase($className);
+        $file->path = "action/{$fileName}.ts";
+        $file->content = $fileContent;
+        $result[] = $file;
+        return $file;
+    }
+
+    function createClass($name, $description, $base, $properties)
+    {
+        $classTypeName = Utils::upperCaseFirstLetter($name);
+        $desc = $description;
+
+        $content = $this->createContent($properties);
         $classMetadata = "KalturaObjects.add('{$classTypeName}',{$classTypeName},{abstract : true, enums : {}, arrays : {}});";
 
         $result = "
-export interface {$classTypeName}Args {$this->utils->ifExp($class->base, " extends " . $class->base . "Args","")} {
+export interface {$classTypeName}Args {$this->utils->ifExp($base, " extends " . $base . "Args","")} {
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
 }
 {$this->getBanner()}
 {$this->utils->createDocumentationExp('',$desc)}
-export class {$classTypeName} extends {$this->utils->ifExp($class->base, $class->base,"KalturaObjectBase")} {
+export class {$classTypeName} extends {$this->utils->ifExp($base, $base,"KalturaObjectBase")} {
 
     objectType : string;
     {$this->utils->buildExpression($content->properties, NewLine, 1)}
@@ -81,16 +100,16 @@ export class {$classTypeName} extends {$this->utils->ifExp($class->base, $class-
     }
 
 
-    function createContentFromClass(ClassType $class)
+    function createContent($properties)
     {
         $result = new stdClass();
         $result->properties = array();
         $result->buildContent = array();
         $result->constructorContent = array();
 
-        if (count($class->properties) != 0)
+        if (count($properties) != 0)
         {
-            foreach($class->properties as $property) {
+            foreach($properties as $property) {
                 $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
 
                 // update the build function
