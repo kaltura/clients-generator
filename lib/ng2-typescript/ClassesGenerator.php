@@ -141,6 +141,7 @@ import { KalturaRequest } from \"../kaltura-request\";
         $name = $args->name;
         $description = $args->description;
         $base = isset($args->base) ? $args->base : null;
+        $abstract = isset($args->abstract) ? $args->abstract : false;
         $defaultBase = $args->defaultBase;
         $defaultBasePath = $args->defaultBasePath;
         $typesPath = $args->typesPath;
@@ -186,7 +187,17 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
     {
         super({$superArgs});
         Object.assign(this, data || {}, { objectType : '{$classTypeName}' });
+    }
 
+    protected getObjectMetadata(metadata : KalturaObjectMetadata) : void
+    {
+        super.getObjectMetadata(metadata);
+        metadata.isAbstract = {$this->utils->ifExp($abstract,"true","false")};
+        metadata.properties.push(
+            [
+                {$this->utils->buildExpression($content->propertiesMetadata,',' . NewLine,4)}
+            ]
+        );
     }
 }
 ";
@@ -205,6 +216,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
         $result = new stdClass();
         $result->properties = array();
         $result->propertiesWithDefaults = array();
+        $result->propertiesMetadata = array();
         $result->imports = array();
         $result->buildContent = array();
         $result->constructorContent = array();
@@ -219,7 +231,9 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
                 // update the properties declaration
                 $result->properties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType};";
                 $result->propertiesWithDefaults[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType}" . ($default ? " = {$default}" : "") . ";";
-
+                $isPropertyReadOnly = isset($property->readOnly) ? ($property->readOnly ? 'true' : 'false') : 'false';
+                $propertyMetadataType = $this->toPropertyTypeToken($property->type, $property->typeClassName);
+                $result->propertiesMetadata[] = "{ name : '{$property->name}', readOnly : {$isPropertyReadOnly}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
                 $getImportExpForTypeArgs = new stdClass();
                 $getImportExpForTypeArgs->enumPath = $enumPath;
                 $getImportExpForTypeArgs->typesPath = $typesPath;
@@ -272,6 +286,59 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
 
         return $result;
     }
+
+    protected function toPropertyTypeToken($type, $typeClassName)
+    {
+        $result = new stdClass();
+
+        switch ($type) {
+            case KalturaServerTypes::File:
+                $result->type = 'f';
+                break;
+            case KalturaServerTypes::Simple:
+                switch ($typeClassName) {
+                    case "bool":
+                        $result->type = "b";
+                        break;
+                    case "bigint":
+                    case "float":
+                    case "int":
+                        $result->type = 'n';
+                        break;
+                    case "string":
+                        $result->type = 's';
+                        break;
+                    default:
+                        throw new Exception("toPropertyTypeToken: Unknown simple type {$typeClassName}");
+                }
+                break;
+            case KalturaServerTypes::ArrayOfObjects:
+                $result->type = "a";
+                $result->subType = $typeClassName;
+                break;
+            case KalturaServerTypes::EnumOfInt:
+                $result->type = "ei";
+                $result->subType = $typeClassName;
+                break;
+            case KalturaServerTypes::EnumOfString:
+                $result->type = "es";
+                $result->subType = $typeClassName;
+                break;
+            case KalturaServerTypes::Object:
+                $result->type = "o";
+                $result->subType = $typeClassName;
+                break;
+            case KalturaServerTypes::Date:
+                $result->type = "d";
+                break;
+            case KalturaServerTypes::Void:
+            default:
+                throw new Exception("toPropertyTypeToken: Unknown type requested {$type}");
+        }
+
+        return $result;
+    }
+
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)
     {
         return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)
