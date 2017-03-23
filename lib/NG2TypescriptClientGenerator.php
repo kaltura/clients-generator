@@ -4,7 +4,6 @@ CONST NewLine = "\n";
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/KalturaBaseRequestGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
 
 
@@ -33,7 +32,6 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		$files = array_merge(
 			(new ClassesGenerator($this->serverMetadata))->generate(),
-			(new KalturaBaseRequestGenerator($this->serverMetadata))->generate(),
 			(new EnumsGenerator($this->serverMetadata))->generate()
 		);
 
@@ -111,37 +109,12 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		$requestConfigurationNodes = $xpath->query("/xml/configurations/request");
 
-
-		$item = new stdClass();
-		$result->requestSharedParameters["service"] = $item;
-		$item->name = "service";
-		$item->readonly = false;
-		$item->defaultValue = "";
-		$item->description = "";
-		$item->transparentToUser = true;
-		$item->optional = false;
-		$item->type = KalturaServerTypes::Simple;
-		$item->typeClassName = "string";
-
 		$item = new stdClass();
 		$result->requestSharedParameters["apiVersion"] = $item;
 		$item->name = "apiVersion";
-		$item->readonly = true;
-		$item->defaultValue = $xpath->query("/xml")->item(0)->getAttribute('apiVersion');
+		$item->readOnly = true;
+		$item->default = $xpath->query("/xml")->item(0)->getAttribute('apiVersion');
 		$item->description = "";
-		$item->transparentToUser = true;
-		$item->optional = false;
-		$item->type = KalturaServerTypes::Simple;
-		$item->typeClassName = "string";
-
-		$item = new stdClass();
-		$result->requestSharedParameters["action"] = $item;
-		$item->name = "action";
-		$item->readonly = false;
-		$item->defaultValue = "";
-		$item->description = "";
-		$item->transparentToUser = true;
-		$item->optional = false;
 		$item->type = KalturaServerTypes::Simple;
 		$item->typeClassName = "string";
 
@@ -155,10 +128,9 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				$item = new stdClass();
 				$result->requestSharedParameters[$childrenNode->nodeName] = $item;
 				$item->name = $childrenNode->nodeName;
-				$item->transparentToUser = false;
 				$item->optional = true;
-				$item->readonly = false;
-				$item->defaultValue = "";
+				$item->readOnly = false;
+				$item->default = "";
 				$item->description = $childrenNode->getAttribute("description");
 				$itemTypeData = $this->mapToTypescriptType($childrenNode,false);
 				$item->type = $itemTypeData->type;
@@ -196,8 +168,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 			$propertyItem = new ClassTypeProperty();
 			$propertyItem->name = $propertyNode->getAttribute("name");
 			$propertyItem->writeOnly = $propertyNode->getAttribute("writeOnly") == "1";
-			$propertyItem->readOnly = $propertyNode->getAttribute("name") == "1";
-			$propertyItem->insertOnly = $propertyNode->getAttribute("name") == "1";
+			$propertyItem->readOnly = $propertyNode->getAttribute("readOnly") == "1";
+			$propertyItem->insertOnly = $propertyNode->getAttribute("insertOnly") == "1";
 
 			$itemTypeData = $this->mapToTypescriptType($propertyNode,false);
 			$propertyItem->type = $itemTypeData->type;

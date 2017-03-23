@@ -18,29 +18,30 @@ class NG2TypescriptGeneratorBase
     {
         $result = null;
 
-        switch ($type)
+        if ($defaultValue === "null")
         {
-            case KalturaServerTypes::Simple:
-                if ($typeClassName == "string" && $defaultValue !== "null")
-                {
-                    $result = $defaultValue ?  "\"{$defaultValue}\"" : "\"\"";
-                }else if ($defaultValue)
-                {
-                    $result = $defaultValue;
-                }else
-                {
-                    // TODO workaround, handling scenarios like param of type int without default value
-                    $result = "null";
-                }
-                break;
-            case KalturaServerTypes::ArrayOfObjects:
-                $result = $defaultValue ? $defaultValue : "[]";
-                break;
-            default:
-                $result = $defaultValue ? $defaultValue : "null";
-                break;
-
+            // null values are treated as properties to be deleted. cannot be used as default value
+            $defaultValue = "";
         }
+
+            switch ($type) {
+                case KalturaServerTypes::Simple:
+                    if ($typeClassName == "string") {
+                        $result = $defaultValue ? "\"{$defaultValue}\"" : "";
+                } else if ($defaultValue) {
+                        $result = $defaultValue;
+                    } else {
+                        // TODO workaround, handling scenarios like param of type int without default value
+                        $result = "";
+                    }
+                    break;
+                case KalturaServerTypes::ArrayOfObjects:
+                    $result = "[]";
+                    break;
+                default:
+                    $result = $defaultValue ? $defaultValue : "";
+                    break;
+            }
 
         return $result;
     }
