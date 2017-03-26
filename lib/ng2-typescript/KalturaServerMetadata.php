@@ -105,36 +105,6 @@ class ServiceAction
 
         return $errors;
     }
-
-    public function getOptionalParams()
-    {
-        $result = array();
-
-        foreach($this->params as $param)
-        {
-            if ($param->optional)
-            {
-                $result[] = $param;
-            }
-        }
-
-        return $result;
-    }
-
-    public function getRequiredParams()
-    {
-        $result = array();
-
-        foreach($this->params as $param)
-        {
-            if (!$param->optional)
-            {
-                $result[] = $param;
-            }
-        }
-
-        return $result;
-    }
 }
 
 class ServiceActionParam

@@ -38,19 +38,30 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         $content = $this->createContent($createContentArgs);
 
         $fileContent = "{$this->getBanner()}
-import { KalturaObjectBase } from './kaltura-object-base';
+import { KalturaObjectBase, KalturaObjectMetadata } from './kaltura-object-base';
 {$this->utils->buildExpression($content->imports,NewLine)}
 export class KalturaRequestBase extends KalturaObjectBase {
 
     readonly service : string;
     readonly action : string;
-    {$this->utils->buildExpression($content->propertiesWithDefaults, NewLine, 1)}
+    {$this->utils->buildExpression($content->classProperties, NewLine, 1)}
 
     constructor(service : string, action : string)
     {
         super();
         this.service = service;
         this.action = action;
+    }
+
+     protected _getObjectMetadata(metadata : KalturaObjectMetadata) : void
+    {
+        super._getObjectMetadata(metadata);
+        metadata.isAbstract = true;
+        metadata.properties.push(
+            ...[
+                {$this->utils->buildExpression($content->propertiesMetadata,',' . NewLine,4)}
+            ]
+        );
     }
 }
 ";
@@ -172,16 +183,17 @@ import { KalturaRequest } from \"../kaltura-request\";
             $content->imports[] = $baseImport;
         }
 
-        $result = "{$this->utils->buildExpression($content->imports,NewLine)}
+        $result = "import { KalturaObjectMetadata } from '../kaltura-object-base';
+{$this->utils->buildExpression($content->imports,NewLine)}
 
 export interface {$classTypeName}Args {$this->utils->ifExp($base, " extends " . $base . "Args","")} {
-    {$this->utils->buildExpression($content->properties, NewLine, 1)}
+    {$this->utils->buildExpression($content->constructorArgs, NewLine, 1)}
 }
 
 {$this->utils->createDocumentationExp('',$desc)}
 export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$defaultBase)} {
 
-    {$this->utils->buildExpression($content->propertiesWithDefaults, NewLine, 1)}
+    {$this->utils->buildExpression($content->classProperties, NewLine, 1)}
 
     constructor(data? : {$classTypeName}Args)
     {
@@ -189,12 +201,12 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
         Object.assign(this, data || {}, { objectType : '{$classTypeName}' });
     }
 
-    protected getObjectMetadata(metadata : KalturaObjectMetadata) : void
+    protected _getObjectMetadata(metadata : KalturaObjectMetadata) : void
     {
-        super.getObjectMetadata(metadata);
+        super._getObjectMetadata(metadata);
         metadata.isAbstract = {$this->utils->ifExp($abstract,"true","false")};
         metadata.properties.push(
-            [
+            ...[
                 {$this->utils->buildExpression($content->propertiesMetadata,',' . NewLine,4)}
             ]
         );
@@ -214,8 +226,8 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
         $importedItems = &$args->importedItems;
 
         $result = new stdClass();
-        $result->properties = array();
-        $result->propertiesWithDefaults = array();
+        $result->constructorArgs = array();
+        $result->classProperties = array();
         $result->propertiesMetadata = array();
         $result->imports = array();
         $result->buildContent = array();
@@ -229,11 +241,15 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
                 $readOnly = isset($property->readOnly) && $property->readOnly;
 
                 // update the properties declaration
-                $result->properties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType};";
-                $result->propertiesWithDefaults[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType}" . ($default ? " = {$default}" : "") . ";";
-                $isPropertyReadOnly = isset($property->readOnly) ? ($property->readOnly ? 'true' : 'false') : 'false';
+                if (!$readOnly) {
+                    $isOptional = isset($property->optional) && $property->optional;
+                    $result->constructorArgs[] = "{$property->name}{$this->utils->ifExp($isOptional,"?","")} : {$ng2ParamType};";
+                }
+
+                $result->classProperties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType}" . ($default ? " = {$default}" : "") . ";";
+                $isPropertyReadOnly = (isset($property->readOnly) && $property->readOnly) ? ', readOnly : true' : '';
                 $propertyMetadataType = $this->toPropertyTypeToken($property->type, $property->typeClassName);
-                $result->propertiesMetadata[] = "{ name : '{$property->name}', readOnly : {$isPropertyReadOnly}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
+                $result->propertiesMetadata[] = "{ name : '{$property->name}' {$isPropertyReadOnly}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
                 $getImportExpForTypeArgs = new stdClass();
                 $getImportExpForTypeArgs->enumPath = $enumPath;
                 $getImportExpForTypeArgs->typesPath = $typesPath;

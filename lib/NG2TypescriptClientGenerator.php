@@ -4,6 +4,7 @@ CONST NewLine = "\n";
 require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
+require_once (__DIR__ . '/ng2-typescript/IndexFilesGenerator.php');
 require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
 
 
@@ -32,6 +33,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		$files = array_merge(
 			(new ClassesGenerator($this->serverMetadata))->generate(),
+			(new IndexFilesGenerator($this->serverMetadata))->generate(),
 			(new EnumsGenerator($this->serverMetadata))->generate()
 		);
 
