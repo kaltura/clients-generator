@@ -192,10 +192,16 @@ $apiVersion = $documentElement->getAttribute("apiVersion");
 $generatedDate = date('d-m-Y', $documentElement->getAttribute("generatedDate"));
 KalturaLog::info("Generating from api version: $apiVersion, generated at: $generatedDate");
 
-$generatedClients = array(
+if (file_exists($outputPathBase."/".$summaryFileName)){
+    $generatedClients=unserialize(file_get_contents($outputPathBase."/".$summaryFileName));
+    $generatedClients['generatedDate']=$generatedDate;
+    $generatedClients['apiVersion']=$apiVersion;
+}else{
+    $generatedClients = array(
 	'generatedDate' => $generatedDate,
 	'apiVersion' => $apiVersion,
-);
+    );
+}
 
 // Loop through the config.ini and generate the client libraries -
 foreach($config as $name => $item)
