@@ -197,6 +197,10 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 			{
 				$dotNetPropType  = "int";
 			}
+			else if ($propType == "float")
+			{
+				$dotNetPropType  = "double";
+			}
 			else
 			{
 				$dotNetPropType = $propType;
@@ -345,7 +349,7 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 						$this->appendLine("						this._$dotNetPropName = ParseBool(txt);");
 						break;
 					case "float":
-						$this->appendLine("						this._$dotNetPropName = ParseFloat(txt);");
+						$this->appendLine("						this._$dotNetPropName = ParseDouble(txt);");
 						break;
 					case "array":
 						$arrayType = $propertyNode->getAttribute("arrayType");
@@ -513,6 +517,9 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 				break;
 			case "bigint":
 				$dotNetOutputType = "long";
+				break;
+			case "float":
+				$dotNetOutputType = "double";
 				break;
 			default:
 				$dotNetOutputType = $resultType;
@@ -734,6 +741,9 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 				case "bigint":
 					$dotNetType = "long";
 					break;
+				case "float":
+					$dotNetType = "double";
+					break;
 				case "int":
 					if ($isEnum)
 						$dotNetType = $paramNode->getAttribute("enumType");
@@ -879,7 +889,9 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 			case 'float':
 				$null = 'float.MinValue';
 				break;
-
+			case 'double':
+				$null = 'double.MinValue';
+				break;
 			case 'bigint':
 				$type = 'long';
 				$null = 'long.MinValue';

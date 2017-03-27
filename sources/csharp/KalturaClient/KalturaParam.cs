@@ -43,6 +43,7 @@ namespace Kaltura
         private long _LongValue;
         private int _IntValue;
         private float _FloatValue;
+        private double _DoubleValue;
 
 
         private string _ParamType;
@@ -51,6 +52,7 @@ namespace Kaltura
         private const string PARAM_TYPE_LONG = "long";
         private const string PARAM_TYPE_INT = "int";
         private const string PARAM_TYPE_FLOAT = "float";
+        private const string PARAM_TYPE_DOUBLE = "double";
 
 
         #endregion
@@ -84,6 +86,12 @@ namespace Kaltura
             _ParamType = PARAM_TYPE_FLOAT;
         }
 
+        public KalturaParam(double value)
+        {
+            _DoubleValue = value;
+            _ParamType = PARAM_TYPE_DOUBLE;
+        }
+
         #endregion
 
         public string ToJson()
@@ -98,6 +106,8 @@ namespace Kaltura
                     return _LongValue.ToString();
                 case PARAM_TYPE_FLOAT:
                     return String.Format(CultureInfo.InvariantCulture,"{0:F20}", _FloatValue);
+                case PARAM_TYPE_DOUBLE:
+                    return String.Format(CultureInfo.InvariantCulture,"{0:F20}", _DoubleValue);
                 case PARAM_TYPE_STRING:
                 default:
                     return "\"" + _Value.Replace("\"", "\\\"").Replace("\r", "").Replace("\t", "\\t").Replace("\n", "\\n") + "\"";
