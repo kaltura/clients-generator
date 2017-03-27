@@ -98,6 +98,13 @@ namespace Kaltura
             Single.TryParse(s, out i);
             return i;
         }
+
+        protected Single ParseDouble(string s)
+        {
+            Single i = Single.MinValue;
+            Single.TryParse(s, out i);
+            return i;
+        }
         
         protected long ParseLong(string s)
         {
