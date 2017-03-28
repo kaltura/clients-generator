@@ -28,42 +28,26 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         return $result;
     }
 
+
+
     function createRequestBaseFile()
     {
-        $createContentArgs = new stdClass();
-        $createContentArgs->enumPath = "./enum/";
-        $createContentArgs->typesPath = "./class/";
-        $createContentArgs->properties = $this->serverMetadata->requestSharedParameters;
-        $createContentArgs->importedItems = array('KalturaRequestBase','KalturaObjectBase');
-        $content = $this->createContent($createContentArgs);
+        $createClassArgs = new stdClass();
+        $createClassArgs->name = "KalturaRequestBase";
+        $createClassArgs->description = "";
+        $createClassArgs->base = "KalturaObjectBase";
+        $createClassArgs->basePath = "./";
+        $createClassArgs->enumPath = "../enum/";
+        $createClassArgs->typesPath = "./class/";
+        $createClassArgs->importedItems = array();
+
+        $createClassArgs->properties = $this->serverMetadata->requestSharedParameters;
+
+        $classBody = $this->createClassExp($createClassArgs);
 
         $fileContent = "{$this->getBanner()}
-import { KalturaObjectBase, KalturaObjectMetadata } from './kaltura-object-base';
-{$this->utils->buildExpression($content->imports,NewLine)}
-export class KalturaRequestBase extends KalturaObjectBase {
-
-    readonly service : string;
-    readonly action : string;
-    {$this->utils->buildExpression($content->classProperties, NewLine, 1)}
-
-    constructor(service : string, action : string)
-    {
-        super();
-        this.service = service;
-        this.action = action;
-    }
-
-     protected _getObjectMetadata(metadata : KalturaObjectMetadata) : void
-    {
-        super._getObjectMetadata(metadata);
-        metadata.isAbstract = true;
-        metadata.properties.push(
-            ...[
-                {$this->utils->buildExpression($content->propertiesMetadata,',' . NewLine,4)}
-            ]
-        );
-    }
-}
+import { KalturaObjectMetadata } from './kaltura-object-base';
+{$classBody}
 ";
 
         $file = new GeneratedFileData();
@@ -78,17 +62,17 @@ export class KalturaRequestBase extends KalturaObjectBase {
         $createClassArgs = new stdClass();
         $createClassArgs->name = $class->name;
         $createClassArgs->description = $class->description;
-        $createClassArgs->base = $class->base;
-        $createClassArgs->defaultBase = "KalturaObjectBase";
-        $createClassArgs->defaultBasePath = "../";
+        $createClassArgs->base = $class->base ? $class->base : 'KalturaObjectBase';
+        $createClassArgs->basePath = $class->base ? "./" : "../";
         $createClassArgs->enumPath = "../enum/";
         $createClassArgs->typesPath = "./";
         $createClassArgs->properties = $class->properties;
         $createClassArgs->importedItems = array();
-
-        $classBody = $this->createClass($createClassArgs);
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('objectType',false,KalturaServerTypes::Simple,'constant', $class->name);
+        $classBody = $this->createClassExp($createClassArgs);
 
         $fileContent = "{$this->getBanner()}
+import { KalturaObjectMetadata } from '../kaltura-object-base';
 {$classBody}
 ";
 
@@ -120,20 +104,21 @@ export class KalturaRequestBase extends KalturaObjectBase {
         $createClassArgs = new stdClass();
         $createClassArgs->name = $className;
         $createClassArgs->description = $serviceAction->description;
-        $createClassArgs->defaultBase = "KalturaRequest<{$actionNG2ResultType}>";
-        $createClassArgs->defaultBasePath = null; // will be added manually
+        $createClassArgs->base = "KalturaRequest<{$actionNG2ResultType}>";
+        $createClassArgs->basePath = "../";
         $createClassArgs->enumPath = "../enum/";
         $createClassArgs->typesPath = "../class/";
         $createClassArgs->properties = $serviceAction->params;
-        $createClassArgs->superArgs = "'{$service->name}','{$serviceAction->name}'";
         $createClassArgs->importedItems = &$importedItems;
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->name);
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action',false,KalturaServerTypes::Simple,'constant', $serviceAction->name);
 
-        $classBody = $this->createClass($createClassArgs);
+        $classBody = $this->createClassExp($createClassArgs);
 
       ;
 
         $fileContent = "{$this->getBanner()}
-import { KalturaRequest } from \"../kaltura-request\";
+import { KalturaObjectMetadata } from '../kaltura-object-base';
 {$importResultType}
 
 {$classBody}
@@ -147,58 +132,58 @@ import { KalturaRequest } from \"../kaltura-request\";
         return $file;
     }
 
-    function createClass($args)
+    function createClassExp($args)
     {
         $name = $args->name;
         $description = $args->description;
         $base = isset($args->base) ? $args->base : null;
+        $strippedBase = isset($base) ? preg_replace('/<.+>/i','',$base) : null;
+        $basePath = isset($args->basePath) ? $args->basePath : null;
+        $customMetadataProperties = isset($args->customMetadataProperties) ? $args->customMetadataProperties : array();
         $abstract = isset($args->abstract) ? $args->abstract : false;
-        $defaultBase = $args->defaultBase;
-        $defaultBasePath = $args->defaultBasePath;
-        $typesPath = $args->typesPath;
         $classTypeName = Utils::upperCaseFirstLetter($name);
         $desc = $description;
-        $superArgs = isset($args->superArgs) ? $args->superArgs : null;
         $importedItems = &$args->importedItems;
 
         $importedItems[] = $name;
 
         $baseImport = null;
-        if ($base)
+        if ($strippedBase && $basePath)
         {
-            $importedItems[] = $base;
-            $baseFileName = $this->utils->toLispCase($base);
-            $baseImport = "import { {$base}, {$base}Args } from '{$typesPath}{$baseFileName}';";
-
-        }else if ($defaultBase && $defaultBasePath)
-        {
-            $importedItems[] = $defaultBase;
-            $baseFileName = $this->utils->toLispCase($defaultBase);
-            $baseImport = "import { {$defaultBase} } from '{$defaultBasePath}{$baseFileName}';";
+            $importedItems[] = $strippedBase;
+            $importFilePath = $basePath . utils::toLispCase($strippedBase);
+            $baseImport = "import { {$strippedBase}, {$strippedBase}Args } from '{$importFilePath}';";
         }
 
-        $content = $this->createContent($args);
+        $aggregatedData = $this->aggregateClassData($args);
 
         if ($baseImport) {
-            $content->imports[] = $baseImport;
+            $aggregatedData->imports[] = $baseImport;
         }
 
-        $result = "import { KalturaObjectMetadata } from '../kaltura-object-base';
-{$this->utils->buildExpression($content->imports,NewLine)}
+        $classMetadataProperties = array_merge(
+            $customMetadataProperties,
+            $aggregatedData->propertiesMetadata
+        );
 
-export interface {$classTypeName}Args {$this->utils->ifExp($base, " extends " . $base . "Args","")} {
-    {$this->utils->buildExpression($content->constructorArgs, NewLine, 1)}
+        $result = "{$this->utils->buildExpression($aggregatedData->imports,NewLine)}
+
+export interface {$classTypeName}Args {$this->utils->ifExp($strippedBase, " extends " . $strippedBase . "Args","")} {
+    {$this->utils->buildExpression($aggregatedData->constructorArgs, NewLine, 1)}
 }
 
 {$this->utils->createDocumentationExp('',$desc)}
-export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$defaultBase)} {
+export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
-    {$this->utils->buildExpression($content->classProperties, NewLine, 1)}
+    {$this->utils->buildExpression($aggregatedData->classProperties, NewLine, 1)}
 
     constructor(data? : {$classTypeName}Args)
     {
-        super({$superArgs});
-        Object.assign(this, data || {}, { objectType : '{$classTypeName}' });
+        super();
+        if (data)
+        {
+            Object.assign(this, data);
+        }
     }
 
     protected _getObjectMetadata(metadata : KalturaObjectMetadata) : void
@@ -207,7 +192,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
         metadata.isAbstract = {$this->utils->ifExp($abstract,"true","false")};
         metadata.properties.push(
             ...[
-                {$this->utils->buildExpression($content->propertiesMetadata,',' . NewLine,4)}
+                {$this->utils->buildExpression($classMetadataProperties,',' . NewLine,4)}
             ]
         );
     }
@@ -218,7 +203,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
     }
 
 
-    function createContent($args)
+    function aggregateClassData($args)
     {
         $typesPath = $args->typesPath;
         $enumPath = $args->enumPath;
@@ -247,9 +232,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
                 }
 
                 $result->classProperties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType}" . ($default ? " = {$default}" : "") . ";";
-                $isPropertyReadOnly = (isset($property->readOnly) && $property->readOnly) ? ', readOnly : true' : '';
-                $propertyMetadataType = $this->toPropertyTypeToken($property->type, $property->typeClassName);
-                $result->propertiesMetadata[] = "{ name : '{$property->name}' {$isPropertyReadOnly}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
+                $result->propertiesMetadata[] = $this->createMetadataProperty($property->name, isset($property->readOnly) ? $property->readOnly : false,$property->type,$property->typeClassName);
                 $getImportExpForTypeArgs = new stdClass();
                 $getImportExpForTypeArgs->enumPath = $enumPath;
                 $getImportExpForTypeArgs->typesPath = $typesPath;
@@ -264,6 +247,14 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
         }
 
         return $result;
+    }
+
+    private function createMetadataProperty($name, $readOnly, $type, $typeClassName, $defaultValue = null)
+    {
+        $readOnlyExp = (isset($readOnly) && $readOnly) ? ', readOnly : true' : '';
+        $defaultValueExp = isset($defaultValue) ? ", default : '{$defaultValue}'" : '';
+        $propertyMetadataType = $this->toPropertyTypeToken($type, $typeClassName);
+        return "{ name : '{$name}' {$readOnlyExp} {$defaultValueExp}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
     }
 
     private function getImportExpForType($args, &$importedItems)
@@ -313,6 +304,9 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
                 break;
             case KalturaServerTypes::Simple:
                 switch ($typeClassName) {
+                    case "constant":
+                        $result->type = "c";
+                        break;
                     case "bool":
                         $result->type = "b";
                         break;
@@ -363,3 +357,5 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,$default
         });
     }
 }
+
+
