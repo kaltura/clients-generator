@@ -52,9 +52,13 @@ export enum {$enumTypeName} {
 
                 $fileContent = "
 {$this->getBanner()}
-export class {$enumTypeName} {
+import { KalturaObjectBase } from '../kaltura-object-base';
+import { KalturaTypesFactory } from '../kaltura-types-factory';
+
+export class {$enumTypeName} extends KalturaObjectBase {
     private _value : string;
     constructor( value?:string | number){
+        super();
         this._value = value + '';
     }
 
@@ -68,7 +72,8 @@ export class {$enumTypeName} {
     }
 
     {$this->utils->buildExpression($values, NewLine, 1)}
-}";
+}
+KalturaTypesFactory.registerType('$enum->name',$enumTypeName);";
                 break;
         }
 

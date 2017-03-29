@@ -71,9 +71,12 @@ import { KalturaObjectMetadata } from './kaltura-object-base';
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('objectType',false,KalturaServerTypes::Simple,'constant', $class->name);
         $classBody = $this->createClassExp($createClassArgs);
 
+        $classFunctionName = ucfirst($class->name);
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from '../kaltura-object-base';
+import { KalturaTypesFactory } from '../kaltura-types-factory';
 {$classBody}
+KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 ";
 
         $file = new GeneratedFileData();
@@ -110,8 +113,10 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
         $createClassArgs->typesPath = "../class/";
         $createClassArgs->properties = $serviceAction->params;
         $createClassArgs->importedItems = &$importedItems;
-        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->name);
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->id);
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action',false,KalturaServerTypes::Simple,'constant', $serviceAction->name);
+        $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
+        $createClassArgs->superArgs = "'{$resultType->type}', '{$resultType->subType}'";
 
         $classBody = $this->createClassExp($createClassArgs);
 
@@ -143,6 +148,7 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
         $abstract = isset($args->abstract) ? $args->abstract : false;
         $classTypeName = Utils::upperCaseFirstLetter($name);
         $desc = $description;
+        $superArgs = isset($args->superArgs) ? $args->superArgs : '';
         $importedItems = &$args->importedItems;
 
         $importedItems[] = $name;
@@ -179,17 +185,16 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
     constructor(data? : {$classTypeName}Args)
     {
-        super();
+        super({$superArgs});
         if (data)
         {
             Object.assign(this, data);
         }
     }
 
-    protected _getObjectMetadata(metadata : KalturaObjectMetadata) : void
+    protected _syncMetadata(metadata : KalturaObjectMetadata) : void
     {
-        super._getObjectMetadata(metadata);
-        metadata.isAbstract = {$this->utils->ifExp($abstract,"true","false")};
+        super._syncMetadata(metadata);
         metadata.properties.push(
             ...[
                 {$this->utils->buildExpression($classMetadataProperties,',' . NewLine,4)}
@@ -253,7 +258,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
     {
         $readOnlyExp = (isset($readOnly) && $readOnly) ? ', readOnly : true' : '';
         $defaultValueExp = isset($defaultValue) ? ", default : '{$defaultValue}'" : '';
-        $propertyMetadataType = $this->toPropertyTypeToken($type, $typeClassName);
+        $propertyMetadataType = $this->toApplicationType($type, $typeClassName);
         return "{ name : '{$name}' {$readOnlyExp} {$defaultValueExp}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
     }
 
@@ -294,9 +299,11 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         return $result;
     }
 
-    protected function toPropertyTypeToken($type, $typeClassName)
+    protected function toApplicationType($type, $typeClassName)
     {
         $result = new stdClass();
+        $result->type = null;
+        $result->subType = null;
 
         switch ($type) {
             case KalturaServerTypes::File:
@@ -319,7 +326,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                         $result->type = 's';
                         break;
                     default:
-                        throw new Exception("toPropertyTypeToken: Unknown simple type {$typeClassName}");
+                        throw new Exception("toApplicationType: Unknown simple type {$typeClassName}");
                 }
                 break;
             case KalturaServerTypes::ArrayOfObjects:
@@ -327,7 +334,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 $result->subType = $typeClassName;
                 break;
             case KalturaServerTypes::EnumOfInt:
-                $result->type = "ei";
+                $result->type = "en";
                 $result->subType = $typeClassName;
                 break;
             case KalturaServerTypes::EnumOfString:
@@ -342,8 +349,10 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 $result->type = "d";
                 break;
             case KalturaServerTypes::Void:
+                $result->type = "v";
+                break;
             default:
-                throw new Exception("toPropertyTypeToken: Unknown type requested {$type}");
+                throw new Exception("toApplicationType: Unknown type requested {$type}");
         }
 
         return $result;
