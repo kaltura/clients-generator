@@ -31,10 +31,10 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		// Convert xml strcuture to plain old php objects
 		$xpath = new DOMXPath ($this->_doc);
 		$this->serverMetadata = $this->extractData($xpath);
-		$serviceActionsGenerator = new ServiceActionsGenerator();
-		$classesGenerator = new ClassesGenerator();
-		$kalturaBaseRequestGenerator = new KalturaBaseRequestGenerator();
-		$enumsGenerator = new EnumsGenerator();
+		$serviceActionsGenerator = new ServiceActionsGenerator($this->serverMetadata);
+		$classesGenerator = new ClassesGenerator($this->serverMetadata);
+		$kalturaBaseRequestGenerator = new KalturaBaseRequestGenerator($this->serverMetadata);
+		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
 			$serviceActionsGenerator->generate(),
 			$classesGenerator->generate(),
@@ -175,7 +175,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		);
 
 		// dump schema as json for diagnostics
-		$this->addFile("services-schema.json", json_encode($result,JSON_PRETTY_PRINT),false);
+		$this->addFile("services-schema.json", json_encode($result),false);
 
 
 		$errorsCount = count($errors);
