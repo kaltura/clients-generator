@@ -175,7 +175,6 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		);
 
 		// dump schema as json for diagnostics
-		//$this->addFile("services-schema.json", print_r(json_encode($result,true),true),false);
 		$this->addFile("services-schema.json", self::json_readable_encode($result),false);
 
 
