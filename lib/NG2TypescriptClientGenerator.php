@@ -31,12 +31,15 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		// Convert xml strcuture to plain old php objects
 		$xpath = new DOMXPath ($this->_doc);
 		$this->serverMetadata = $this->extractData($xpath);
-
+		$serviceActionsGenerator = new ServiceActionsGenerator();
+		$classesGenerator = new ClassesGenerator();
+		$kalturaBaseRequestGenerator = new KalturaBaseRequestGenerator();
+		$enumsGenerator = new EnumsGenerator();
 		$files = array_merge(
-			(new ServiceActionsGenerator($this->serverMetadata))->generate(),
-			(new ClassesGenerator($this->serverMetadata))->generate(),
-			(new KalturaBaseRequestGenerator($this->serverMetadata))->generate(),
-			(new EnumsGenerator($this->serverMetadata))->generate()
+			$serviceActionsGenerator->generate(),
+			$classesGenerator->generate(),
+			$kalturaBaseRequestGenerator->generate(),
+			$enumsGenerator->generate()
 		);
 
 		foreach($files as $file)
@@ -348,15 +351,16 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 	function sortClassesByDependencies(array $classTypes)
 	{
 		// Create empty lists for sorted and unsorted vertices/edges
-		$unsorted = [];
-		$sorted = [];
+		$unsorted = array();
+		$sorted = array();
 
 		// Move any non-edged nodes to the unsorted list.
 		// Nodes without edges should be run before any other
 		// nodes, in no particular order.
 		for ($i=count($classTypes)-1; $i>=0; $i--) {
 			if ($classTypes[$i]->base == "") {			// Non-arrays are unedged vertices
-				array_push($unsorted, array_splice($classTypes, $i, 1)[0]);
+				$spliced=array_splice($classTypes, $i, 1);
+				array_push($unsorted, $spliced[0]);
 			}
 		}
 
@@ -372,7 +376,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				// move nodes whose incoming edge has been moved to sorted
 				// to the unsorted list
 				if($classTypes[$i]->base == $item->name) {
-					array_push($unsorted, array_splice($classTypes, $i, 1)[0]);
+					$spliced=array_splice($classTypes, $i, 1);
+					array_push($unsorted, $spliced[0]);
 				}
 			}
 		}
