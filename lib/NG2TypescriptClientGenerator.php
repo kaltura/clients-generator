@@ -175,7 +175,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		);
 
 		// dump schema as json for diagnostics
-		$this->addFile("services-schema.json", json_encode($result),false);
+		//$this->addFile("services-schema.json", print_r(json_encode($result,true),true),false);
+		$this->addFile("services-schema.json", self::json_readable_encode($result),false);
 
 
 		$errorsCount = count($errors);
@@ -185,6 +186,74 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		}
 
 		return $result;
+	}
+	public static function json_readable_encode($in, $indent = 0, Closure $_escape = null)
+	{
+	    if (__CLASS__ && isset($this))
+	    {
+		$_myself = array($this, __FUNCTION__);
+	    }
+	    elseif (__CLASS__)
+	    {
+		$_myself = array('self', __FUNCTION__);
+	    }
+	    else
+	    {
+		$_myself = __FUNCTION__;
+	    }
+
+	    if (is_null($_escape))
+	    {
+		$_escape = function ($str)
+		{
+		    return str_replace(
+			array('\\', '"', "\n", "\r", "\b", "\f", "\t", '/', '\\\\u'),
+			array('\\\\', '\\"', "\\n", "\\r", "\\b", "\\f", "\\t", '\\/', '\\u'),
+			$str);
+		};
+	    }
+
+	    $out = '';
+
+	    foreach ($in as $key=>$value)
+	    {
+		$out .= str_repeat("\t", $indent + 1);
+		$out .= "\"".$_escape((string)$key)."\": ";
+
+		if (is_object($value) || is_array($value))
+		{
+		    $out .= "\n";
+		    $out .= call_user_func($_myself, $value, $indent + 1, $_escape);
+		}
+		elseif (is_bool($value))
+		{
+		    $out .= $value ? 'true' : 'false';
+		}
+		elseif (is_null($value))
+		{
+		    $out .= 'null';
+		}
+		elseif (is_string($value))
+		{
+		    $out .= "\"" . $_escape($value) ."\"";
+		}
+		else
+		{
+		    $out .= $value;
+		}
+
+		$out .= ",\n";
+	    }
+
+	    if (!empty($out))
+	    {
+		$out = substr($out, 0, -2);
+	    }
+
+	    $out = str_repeat("\t", $indent) . "{\n" . $out;
+	    $out .= "\n" . str_repeat("\t", $indent) . "}";
+
+	    return $out;
 	}
 
 	function extractClassTypeProperties(DOMElement $classNode)
