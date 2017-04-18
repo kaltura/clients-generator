@@ -40,8 +40,8 @@ class ClassesGenerator extends NG2TypescriptGeneratorBase
         $createClassArgs->enumPath = "../enum/";
         $createClassArgs->typesPath = "./class/";
         $createClassArgs->importedItems = array();
-
         $createClassArgs->properties = $this->serverMetadata->requestSharedParameters;
+        $createClassArgs->requireDataInCtor = true;
 
         $classBody = $this->createClassExp($createClassArgs);
 
@@ -69,6 +69,8 @@ import { KalturaObjectMetadata } from './kaltura-object-base';
         $createClassArgs->properties = $class->properties;
         $createClassArgs->importedItems = array();
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('objectType',false,KalturaServerTypes::Simple,'constant', $class->name);
+        $createClassArgs->requireDataInCtor = false;
+
         $classBody = $this->createClassExp($createClassArgs);
 
         $classFunctionName = ucfirst($class->name);
@@ -90,7 +92,12 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
     function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
         $className = $service->name . ucfirst($serviceAction->name) . "Action";
-        $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
+        if ($serviceAction->resultType === KalturaServerTypes::File) {
+            $actionNG2ResultType = "string";
+        }else {
+            $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
+        }
+
         $importedItems = array($className,'KalturaRequest');
 
         $getImportExpForTypeArgs = new stdClass();
@@ -107,7 +114,6 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $createClassArgs = new stdClass();
         $createClassArgs->name = $className;
         $createClassArgs->description = $serviceAction->description;
-        $createClassArgs->base = "KalturaRequest<{$actionNG2ResultType}>";
         $createClassArgs->basePath = "../";
         $createClassArgs->enumPath = "../enum/";
         $createClassArgs->typesPath = "../class/";
@@ -115,12 +121,20 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $createClassArgs->importedItems = &$importedItems;
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->id);
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action',false,KalturaServerTypes::Simple,'constant', $serviceAction->name);
+
+        if ($this->hasFileProperty($serviceAction->params))
+        {
+            $createClassArgs->base = "KalturaUploadRequest<{$actionNG2ResultType}>";
+        }else {
+            $createClassArgs->base = "KalturaRequest<{$actionNG2ResultType}>";
+        }
+
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
         $createClassArgs->superArgs = "'{$resultType->type}', '{$resultType->subType}'";
+        $createClassArgs->requireDataInCtor = $this->hasRequiredProperty($serviceAction->params);
 
         $classBody = $this->createClassExp($createClassArgs);
 
-      ;
 
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from '../kaltura-object-base';
@@ -145,13 +159,22 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
         $strippedBase = isset($base) ? preg_replace('/<.+>/i','',$base) : null;
         $basePath = isset($args->basePath) ? $args->basePath : null;
         $customMetadataProperties = isset($args->customMetadataProperties) ? $args->customMetadataProperties : array();
-        $abstract = isset($args->abstract) ? $args->abstract : false;
         $classTypeName = Utils::upperCaseFirstLetter($name);
         $desc = $description;
         $superArgs = isset($args->superArgs) ? $args->superArgs : '';
-        $importedItems = &$args->importedItems;
+        $requireDataInCtor = $args->requireDataInCtor;
 
+        $importedItems = &$args->importedItems;
         $importedItems[] = $name;
+
+        // enrich super args
+        if ($superArgs === '')
+        {
+            $superArgs = 'data';
+        }else
+        {
+            $superArgs =  'data, ' . $superArgs;
+        }
 
         $baseImport = null;
         if ($strippedBase && $basePath)
@@ -183,13 +206,9 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
     {$this->utils->buildExpression($aggregatedData->classProperties, NewLine, 1)}
 
-    constructor(data? : {$classTypeName}Args)
+    constructor(data{$this->utils->ifExp($requireDataInCtor,"","?")} : {$classTypeName}Args)
     {
         super({$superArgs});
-        if (data)
-        {
-            Object.assign(this, data);
-        }
     }
 
     protected _syncMetadata(metadata : KalturaObjectMetadata) : void
@@ -226,7 +245,11 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         if (count($properties) != 0)
         {
             foreach($properties as $property) {
-                $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
+                if ($property->type === KalturaServerTypes::File) {
+                    $ng2ParamType = "File";
+                }else {
+                    $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
+                }
                 $default = $this->toNG2DefaultByType($property->type, $property->typeClassName, $property->default);
                 $readOnly = isset($property->readOnly) && $property->readOnly;
 
@@ -356,6 +379,31 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         }
 
         return $result;
+    }
+
+    private function hasFileProperty($array)
+    {
+        $searchedValue = KalturaServerTypes::File;
+        $neededObject = array_filter(
+            $array,
+            function ($e) use (&$searchedValue) {
+                return $e->type === $searchedValue;
+            }
+        );
+
+        return $neededObject !== null && !empty($neededObject);
+    }
+
+    private function hasRequiredProperty($array)
+    {
+        $neededObject = array_filter(
+            $array,
+            function ($e)  {
+                return !$e->optional;
+            }
+        );
+
+        return $neededObject !== null && !empty($neededObject);
     }
 
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)

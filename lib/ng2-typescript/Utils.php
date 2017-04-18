@@ -58,6 +58,11 @@ class Utils
         return ($startWithSnake ? '_' : '') . $newName;
     }
 
+    public static function fromSnakeCaseToLowerCamelCase($str)
+    {
+        return lcfirst(Utils::fromSnakeCaseToCamelCase($str));
+    }
+
     public static function ifExp($condition, $truthlyValue, $falsyValue = "")
     {
         return $condition ? $truthlyValue : $falsyValue;

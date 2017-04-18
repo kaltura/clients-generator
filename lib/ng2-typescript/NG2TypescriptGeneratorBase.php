@@ -52,7 +52,7 @@ class NG2TypescriptGeneratorBase
         $result = null;
         switch ($type) {
             case KalturaServerTypes::File:
-                $result = 'string';
+                trigger_error('Kaltura server type "File" must be handled manually');
                 break;
             case KalturaServerTypes::Simple:
                 switch ($typeClassName) {

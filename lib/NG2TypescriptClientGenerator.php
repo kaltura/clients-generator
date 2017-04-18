@@ -39,7 +39,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 
 		foreach($files as $file)
 		{
-			$this->addFile($this->_baseClientPath . "/" . $file->path, $file->content);
+			$this->addFile($this->_baseClientPath . "/" . $file->path, $file->content,false);
 		}
 	}
 

@@ -25,6 +25,18 @@ class EnumsGenerator extends NG2TypescriptGeneratorBase
         return $result;
     }
 
+    function getEnumValueName(EnumValue $item)
+    {
+        $value = Utils::fromSnakeCaseToLowerCamelCase($item->name);
+
+        // handle reserved names in javascript
+        if ($value === 'name')
+        {
+            $value = "_name";
+        }
+
+        return $value;
+    }
     function createEnumTypeExp(EnumType $enum)
     {
         $enumTypeName = Utils::upperCaseFirstLetter($enum->name);
@@ -34,7 +46,8 @@ class EnumsGenerator extends NG2TypescriptGeneratorBase
             case 'int':
                 $values = array();
                 foreach ($enum->values as $item) {
-                    $values[] = Utils::fromSnakeCaseToCamelCase($item->name) . "=" . $item->value;
+                    $enumValueName = $this->getEnumValueName($item);
+                    $values[] = $enumValueName . "=" . $item->value;
                 }
 
                 $fileContent = "
@@ -46,8 +59,8 @@ export enum {$enumTypeName} {
             case 'string':
                 $values = array();
                 foreach ($enum->values as $item) {
-                    $enumName = Utils::fromSnakeCaseToCamelCase($item->name);
-                    $values[] = "static {$enumName} = new {$enumTypeName}('{$item->value}');";
+                    $enumValueName = $this->getEnumValueName($item);
+                    $values[] = "static {$enumValueName} = new {$enumTypeName}('{$item->value}');";
                 }
 
                 $fileContent = "
