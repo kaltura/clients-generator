@@ -30,11 +30,15 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		// Convert xml strcuture to plain old php objects
 		$xpath = new DOMXPath ($this->_doc);
 		$this->serverMetadata = $this->extractData($xpath);
-
+		$serviceActionsGenerator = new ServiceActionsGenerator($this->serverMetadata);
+		$classesGenerator = new ClassesGenerator($this->serverMetadata);
+		$kalturaBaseRequestGenerator = new KalturaBaseRequestGenerator($this->serverMetadata);
+		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
-			(new ClassesGenerator($this->serverMetadata))->generate(),
-			(new IndexFilesGenerator($this->serverMetadata))->generate(),
-			(new EnumsGenerator($this->serverMetadata))->generate()
+			$serviceActionsGenerator->generate(),
+			$classesGenerator->generate(),
+			$kalturaBaseRequestGenerator->generate(),
+			$enumsGenerator->generate()
 		);
 
 		foreach($files as $file)
@@ -146,7 +150,7 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		);
 
 		// dump schema as json for diagnostics
-		$this->addFile("services-schema.json", json_encode($result,JSON_PRETTY_PRINT),false);
+		$this->addFile("services-schema.json", self::json_readable_encode($result),false);
 
 
 		$errorsCount = count($errors);
@@ -156,6 +160,94 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		}
 
 		return $result;
+	}
+
+	static function json_readable_encode($in, $indent_string = "    ", $indent = 0, Closure $_escape = null)
+	{
+	    if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+	      $ret = json_encode($in, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+	      $ret = preg_replace("/\[\s+\]/", "", $ret);
+	      $ret = preg_replace("/\{\s+\}/", "", $ret);
+	    }
+	    if (__CLASS__ && isset($this))
+	    {
+		$_myself = array($this, __FUNCTION__);
+	    }
+	    elseif (__CLASS__)
+	    {
+		$_myself = array('self', __FUNCTION__);
+	    }
+	    else
+	    {
+		$_myself = __FUNCTION__;
+	    }
+	    if (is_null($_escape))
+	    {
+		$_escape = function ($str)
+		{
+		    return str_replace(
+			array('\\', '"', "\n", "\r", "\b", "\f", "\t", '\\\\u'),
+			array('\\\\', '\\"', "\\n", "\\r", "\\b", "\\f", "\\t", '\\u'),
+			$str);
+		};
+	    }
+	    $out = '';
+	    // TODO: format value (unicode, slashes, ...)
+	    if((!is_array($in)) && (!is_object($in)))
+	      return json_encode($in);
+	    // see http://stackoverflow.com/a/173479
+	    if(is_array($in)){
+		$is_assoc = array_keys($in) !== range(0, count($in) -1);
+	    }else{
+		$is_assoc = get_object_vars($in);
+	    }
+	    foreach ($in as $key=>$value)
+	    {
+		if($is_assoc) {
+		  $out .= str_repeat($indent_string, $indent + 1);
+		  $out .= "\"".$_escape((string)$key)."\": ";
+		}
+		else {
+		  $out .= str_repeat($indent_string, $indent + 1);
+		}
+		if ((is_object($value) || is_array($value)) && (!count($value))) {
+		    $out .= "[]";
+		}
+		elseif (is_object($value) || is_array($value))
+		{
+		    $out .= call_user_func($_myself, $value, $indent_string, $indent + 1, $_escape);
+		}
+		elseif (is_bool($value))
+		{
+		    $out .= $value ? 'true' : 'false';
+		}
+		elseif (is_null($value))
+		{
+		    $out .= 'null';
+		}
+		elseif (is_string($value))
+		{
+		    $out .= "\"" . $_escape($value) ."\"";
+		}
+		else
+		{
+		    $out .= $value;
+		}
+		$out .= ",\n";
+	    }
+	    if (!empty($out))
+	    {
+		$out = substr($out, 0, -2);
+	    }
+	    if($is_assoc) {
+	      $out =  "{\n" . $out;
+	      $out .= "\n" . str_repeat($indent_string, $indent) . "}";
+	    }
+	    else {
+	      $out = "[\n" . $out;
+	      $out .= "\n" . str_repeat($indent_string, $indent) . "]";
+	    }
+	    return $out;
 	}
 
 	function extractClassTypeProperties(DOMElement $classNode)
@@ -322,15 +414,16 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 	function sortClassesByDependencies(array $classTypes)
 	{
 		// Create empty lists for sorted and unsorted vertices/edges
-		$unsorted = [];
-		$sorted = [];
+		$unsorted = array();
+		$sorted = array();
 
 		// Move any non-edged nodes to the unsorted list.
 		// Nodes without edges should be run before any other
 		// nodes, in no particular order.
 		for ($i=count($classTypes)-1; $i>=0; $i--) {
 			if ($classTypes[$i]->base == "") {			// Non-arrays are unedged vertices
-				array_push($unsorted, array_splice($classTypes, $i, 1)[0]);
+				$spliced=array_splice($classTypes, $i, 1);
+				array_push($unsorted, $spliced[0]);
 			}
 		}
 
@@ -346,7 +439,8 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 				// move nodes whose incoming edge has been moved to sorted
 				// to the unsorted list
 				if($classTypes[$i]->base == $item->name) {
-					array_push($unsorted, array_splice($classTypes, $i, 1)[0]);
+					$spliced=array_splice($classTypes, $i, 1);
+					array_push($unsorted, $spliced[0]);
 				}
 			}
 		}
