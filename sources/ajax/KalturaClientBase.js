@@ -143,7 +143,7 @@ KalturaClientBase.prototype.setConfig = function(config){
  * return a new multi-request builder
  */
 KalturaClientBase.prototype.startMultiRequest = function(){
-	return new KalturaMultiRequestBuilder(this);
+	return new KalturaMultiRequestBuilder();
 };
 
 /**
@@ -278,7 +278,9 @@ KalturaRequestBuilder.prototype.execute = function(client, callback){
 	var requestData = $.extend({}, client.requestData); // clone client requestData
 	this.requestData = $.extend(requestData, this.requestData); // merge client requestData with current requestData
 	
-	this.completion(callback);
+	if(callback)
+		this.completion(callback);
+	
 	this.doHttpRequest(client);
 };
 
@@ -299,37 +301,42 @@ KalturaRequestBuilder.prototype.add = function(requestBuilder){
 function KalturaMultiRequestBuilder(){
 	this.requestData = {};
 	this.requests = [];
-}
-
-KalturaMultiRequestBuilder.inheritsFrom (KalturaRequestBuilder);
-
-KalturaMultiRequestBuilder.prototype.completion = function(callback){
+	this.generalCallback = null;
+	
 	var This = this;
-	if(callback){
-		This.callback = callback;
-	}
-	else {
-		This.callback = function(success, results){
-			if(!success) {
-				throw new Error(results);
-			}
+	This.callback = function(success, results){
+		if(!success)
+			throw new Error(results);
 
-			for(var i = 0; i < This.requests.length; i++){
+		for(var i = 0; i < This.requests.length; i++){
 				if(This.requests[i].callback){
 					if(results[i] && typeof(results[i]) == 'object' && results[i].code && results[i].message)
 						This.requests[i].callback(false, results[i]);
 					else
 						This.requests[i].callback(true, results[i]);
 				}
-			}
-		};
-	}
+		}
+		
+		if(This.generalCallback) {
+			if(results && typeof(results) == 'object' && results.code && results.message)
+				This.generalCallback(false, results)
+			else
+				This.generalCallback(true, results)
+		}
+	};
+}
+
+KalturaMultiRequestBuilder.inheritsFrom (KalturaRequestBuilder);
+
+KalturaMultiRequestBuilder.prototype.completion = function(callback){
+	this.generalCallback = callback;
 	
 	return this;
 };
 
 KalturaMultiRequestBuilder.prototype.add = function(requestBuilder){
 	this.requests.push(requestBuilder);
+	return this;
 };
 
 KalturaMultiRequestBuilder.prototype.getUrl = function(client){

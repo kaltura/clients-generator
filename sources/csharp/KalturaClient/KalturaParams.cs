@@ -29,6 +29,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
+using System.Globalization;
+
 
 namespace Kaltura
 {
@@ -149,6 +151,10 @@ namespace Kaltura
         {
             this.Add(key, new KalturaParam(value));
         }
+        public void Add(string key, double value)
+        {
+            this.Add(key, new KalturaParam(value));
+        }
 
         public void AddIfNotNull(string key, string value)
         {
@@ -167,6 +173,12 @@ namespace Kaltura
         {
             if (value != Single.MinValue)
                 this.Add(key, value);
+        }
+
+        public void AddIfNotNull(string key, double value)
+        {
+            if (value != Single.MinValue)
+                this.Add(key, String.Format(CultureInfo.InvariantCulture,"{0:F20}", value));
         }
 
         public void AddIfNotNull(string key, long value)

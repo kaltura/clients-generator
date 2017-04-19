@@ -212,19 +212,21 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 			
 			$propName = $propertyNode->getAttribute("name");
 			$propType = $propertyNode->getAttribute("type");
+			$this->appendLine("			if xml_element.elements['$propName'] != nil");
 			if($this->isSimpleType($propType))
 			{
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = xml_element.elements['$propName'].text");
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = xml_element.elements['$propName'].text");
 			}
 			elseif($propType == 'array' || $propType == 'map')
 			{
 				$propArrayType = $propertyNode->getAttribute("arrayType");
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propArrayType')");	
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propArrayType')");	
 			}
 			else
 			{
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propType')");	
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propType')");	
 			}
+			$this->appendLine("			end");
 		}	
 		$this->appendLine("		end");
 		$this->appendLine();
@@ -280,6 +282,9 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
 		$resultType = $resultNode->getAttribute("type");
+		$expectedType = $resultType;
+		if($resultNode->getAttribute("arrayType"))
+			$expectedType = $resultNode->getAttribute("arrayType");
 		
 		$signaturePrefix = "def ".$this->camelCaseToUnderscoreAndLower($action)."(";
 			
@@ -289,6 +294,7 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 		// comments
 		$this->writeComments("		# ", $actionNode);
+		$this->appendLine("		# @return [$resultType]");
 	
 		$this->appendLine("		$signaturePrefix$signature");
 		$this->appendLine("			kparams = {}");
@@ -324,11 +330,11 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		
 		if ($haveFiles)
 		{
-			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$resultType', kparams, kfiles)");
+			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$expectedType', kparams, kfiles)");
 		}
 		else
 		{
-			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$resultType', kparams)");
+			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$expectedType', kparams)");
 		}
 		
 		if($resultType == 'file'){

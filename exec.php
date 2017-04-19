@@ -61,10 +61,12 @@ require_once(__DIR__ . "/lib/AndroidClientGenerator.php");
 require_once(__DIR__ . "/lib/BpmnClientGenerator.php");
 require_once(__DIR__ . "/lib/CliClientGenerator.php");
 require_once(__DIR__ . "/lib/CSharpClientGenerator.php");
+require_once(__DIR__ . "/lib/CSharp2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ErlangClientGenerator.php");
 require_once(__DIR__ . "/lib/JsClientGenerator.php");
 require_once(__DIR__ . "/lib/NG2TypescriptClientGenerator.php");
 require_once(__DIR__ . "/lib/NodeClientGenerator.php");
+require_once(__DIR__ . "/lib/Node2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ObjCClientGenerator.php");
 require_once(__DIR__ . "/lib/Php4ClientGenerator.php");
 require_once(__DIR__ . "/lib/Php53ClientGenerator.php");
@@ -198,10 +200,16 @@ $apiVersion = $documentElement->getAttribute("apiVersion");
 $generatedDate = date('d-m-Y', $documentElement->getAttribute("generatedDate"));
 KalturaLog::info("Generating from api version: $apiVersion, generated at: $generatedDate");
 
-$generatedClients = array(
+if (file_exists($outputPathBase."/".$summaryFileName)){
+    $generatedClients=unserialize(file_get_contents($outputPathBase."/".$summaryFileName));
+    $generatedClients['generatedDate']=$generatedDate;
+    $generatedClients['apiVersion']=$apiVersion;
+}else{
+    $generatedClients = array(
 	'generatedDate' => $generatedDate,
 	'apiVersion' => $apiVersion,
-);
+    );
+}
 
 // Loop through the config.ini and generate the client libraries -
 foreach($config as $name => $item)

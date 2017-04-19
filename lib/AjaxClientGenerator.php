@@ -165,6 +165,18 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			if($action->result->attributes()->type == 'file')
 				continue;
 
+			$haveFiles = false;
+			foreach($action->children() as $actionParam)
+			{
+				if ($actionParam->attributes()->type == "file") 
+				{
+					$haveFiles = true;
+					break;
+				}
+			}
+			if($haveFiles)
+				continue;
+			
 			if(!$isFirst){
 				$this->appendLine(",");
 				$this->appendLine("	");
@@ -197,9 +209,6 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 					if (count($info)>0)
 						$infoTxt = ' ('.join(', ', $info).')';
 					$this->appendLine("	 * @param\t$paramName\t$paramType\t\t{$description}{$infoTxt}");
-				} else {
-					$rettype = $actionParam->attributes()->type;
-					$this->appendLine("	 * @return\t$rettype.");
 				}
 			}
 			
@@ -210,8 +219,10 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			
 			$paramNames = array();
 			foreach($action->children() as $actionParam)
+			{
 				if($actionParam->getName() == "param" ) 
 					$paramNames[] = $actionParam->attributes()->name;
+			}
 			$paramNames = join(', ', $paramNames);
 			
 			// action method signature
@@ -256,16 +267,11 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			 
 			$this->appendLine("		var kparams = new Object();");
 			
-			$haveFiles = false;
 			//parse the actions parameters and result types
 			foreach($action->children() as $actionParam) {
 				if($actionParam->getName() != "param" ) 
 					continue;
 				$paramName = $actionParam->attributes()->name;
-				if ($haveFiles === false && $actionParam->attributes()->type == "file") {
-			        $haveFiles = true;
-		        	$this->appendLine("		kfiles = new Object();");
-		    	}
 				switch($actionParam->attributes()->type)
 				{
 					case "string":
@@ -288,10 +294,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 						break;
 				}
 			}
-			if ($haveFiles)
-				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams, kfiles);");
-			else
-				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams);");
+			$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams);");
 			$this->append("	}");
 		}
 		$this->appendLine();
