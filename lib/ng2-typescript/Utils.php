@@ -57,7 +57,7 @@ class Utils
     public static function fromSnakeCaseToCamelCase($str)
     {
         $startWithSnake = Utils::startsWith($str,'_');
-        $newName =  str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', strtolower($str))));
+        $newName =  str_replace(' ', '', ucwords(str_replace(array('-', '_'), ' ', strtolower($str))));
 
         return ($startWithSnake ? '_' : '') . $newName;
     }
