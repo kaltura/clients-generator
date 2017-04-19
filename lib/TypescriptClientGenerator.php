@@ -1,21 +1,21 @@
 <?php
 CONST NewLine = "\n";
 
-require_once (__DIR__ . '/ng2-typescript/GeneratedFileData.php');
-require_once (__DIR__ . '/ng2-typescript/KalturaServerMetadata.php');
-require_once (__DIR__ . '/ng2-typescript/ClassesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/IndexFilesGenerator.php');
-require_once (__DIR__ . '/ng2-typescript/EnumsGenerator.php');
+require_once (__DIR__ . '/typescript/GeneratedFileData.php');
+require_once (__DIR__ . '/typescript/KalturaServerMetadata.php');
+require_once (__DIR__ . '/typescript/ClassesGenerator.php');
+require_once (__DIR__ . '/typescript/IndexFilesGenerator.php');
+require_once (__DIR__ . '/typescript/EnumsGenerator.php');
 
 
 
-class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
+class TypescriptClientGenerator extends ClientGeneratorFromXml
 {
 	protected $_baseClientPath = "src";
 	protected $_usePrivateAttributes;
 	private $serverMetadata;
 
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "ng2-typescript")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "typescript")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 		$this->_usePrivateAttributes = isset($config->usePrivateAttributes) ? $config->usePrivateAttributes : false;
@@ -30,14 +30,13 @@ class NG2TypescriptClientGenerator extends ClientGeneratorFromXml
 		// Convert xml strcuture to plain old php objects
 		$xpath = new DOMXPath ($this->_doc);
 		$this->serverMetadata = $this->extractData($xpath);
-		$serviceActionsGenerator = new ServiceActionsGenerator($this->serverMetadata);
+
 		$classesGenerator = new ClassesGenerator($this->serverMetadata);
-		$kalturaBaseRequestGenerator = new KalturaBaseRequestGenerator($this->serverMetadata);
+		$indexFilesGenerator = new IndexFilesGenerator($this->serverMetadata);
 		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
-			$serviceActionsGenerator->generate(),
 			$classesGenerator->generate(),
-			$kalturaBaseRequestGenerator->generate(),
+			$indexFilesGenerator->generate(),
 			$enumsGenerator->generate()
 		);
 

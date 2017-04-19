@@ -3,7 +3,7 @@
 require_once (__DIR__. '/Utils.php');
 
 
-class NG2TypescriptGeneratorBase
+class TypescriptGeneratorBase
 {
     protected $serverMetadata;
     protected $utils;

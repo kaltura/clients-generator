@@ -1,9 +1,9 @@
 <?php
 
-require_once (__DIR__. '/NG2TypescriptGeneratorBase.php');
+require_once (__DIR__. '/TypescriptGeneratorBase.php');
 require_once (__DIR__. '/GeneratedFileData.php');
 
-class EnumsGenerator extends NG2TypescriptGeneratorBase
+class EnumsGenerator extends TypescriptGeneratorBase
 {
 
     function __construct($serverMetadata)
