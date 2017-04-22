@@ -36,7 +36,7 @@ def GetConfig():
 
 def getTestFile(filename, mode='rb'):
     testFileDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    return file(testFileDir+'/'+filename, mode)
+    return open(testFileDir+'/'+filename, mode)
     
     
 
