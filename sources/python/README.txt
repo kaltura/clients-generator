@@ -26,8 +26,10 @@ The API library depends on the following python modules (included with python by
 
 The API library depends on the following python modules that are not included by default with python:
  - setuptools - can be downloaded from https://pypi.python.org/pypi/setuptools
- - requests - can be downloaded from https://pypi.python.org/pypi/requests/
+ - requests (2.4.2 or above) - can be downloaded from https://pypi.python.org/pypi/requests/
 	installed by running: python setup.py requests
+ - requests-toolbelt - https://pypi.python.org/pypi/requests-toolbelt
+ - six - https://pypi.python.org/pypi/six
 
 requests is used to handle API calls to Kaltura. This means that if you want
 to do multi part file uploads, you should pass through the file path rather
