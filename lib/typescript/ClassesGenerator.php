@@ -211,14 +211,16 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         super({$superArgs});
     }
 
-    protected _syncMetadata(metadata : KalturaObjectMetadata) : void
+    protected _getMetadata() : KalturaObjectMetadata
     {
-        super._syncMetadata(metadata);
-        metadata.properties.push(
-            ...[
+        const result = super._getMetadata();
+        Object.assign(
+            result.properties,
+            {
                 {$this->utils->buildExpression($classMetadataProperties,',' . NewLine,4)}
-            ]
+            }
         );
+        return result;
     }
 }
 ";
@@ -282,7 +284,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         $readOnlyExp = (isset($readOnly) && $readOnly) ? ', readOnly : true' : '';
         $defaultValueExp = isset($defaultValue) ? ", default : '{$defaultValue}'" : '';
         $propertyMetadataType = $this->toApplicationType($type, $typeClassName);
-        return "{ name : '{$name}' {$readOnlyExp} {$defaultValueExp}, type : '{$propertyMetadataType->type}'" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
+        return "{$name} : { type : '{$propertyMetadataType->type}' {$defaultValueExp} {$readOnlyExp}" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
     }
 
     private function getImportExpForType($args, &$importedItems)
