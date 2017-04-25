@@ -1,11 +1,14 @@
+from __future__ import absolute_import, print_function
+
 import time
 
-from utils import GetConfig
-from utils import KalturaBaseTest
-from utils import getTestFile
+import six
 
-from KalturaClient.Plugins.Core import KalturaPlaylist, KalturaPlaylistType
-from KalturaClient.Plugins.Core import KalturaPlaylistListResponse
+from .utils import getTestFile, KalturaBaseTest
+
+from KalturaClient.Plugins.Core import (
+    KalturaPlaylist, KalturaPlaylistType, KalturaPlaylistListResponse)
+
 
 class PlaylistTests(KalturaBaseTest):
      
@@ -30,7 +33,7 @@ class PlaylistTests(KalturaBaseTest):
         kplaylist = self.client.playlist.add(kplaylist)        
         self.assertIsInstance(kplaylist, KalturaPlaylist)
         
-        self.assertIsInstance(kplaylist.getId(), unicode)
+        self.assertIsInstance(kplaylist.getId(), six.text_type)
         
         #cleanup
         self.client.playlist.delete(kplaylist.getId())
@@ -38,7 +41,7 @@ class PlaylistTests(KalturaBaseTest):
     #def test_listEntries(self):
     #    playlistId = '1_qv2ed7vm'
     #    kplaylist = self.client.playlist.get(playlistId)
-    #    assertIsInstance(kplaylist.playlistContent, unicode)
+    #    assertIsInstance(kplaylist.playlistContent, six.text_type)
     #    assertIsInstance(kplaylist.playlistContent.split(','), list)
         
         
@@ -171,7 +174,7 @@ class DynamicPlaylistTests(KalturaBaseTest):
         kplaylist = self.client.playlist.add(kplaylist)        
         self.assertIsInstance(kplaylist, KalturaPlaylist)
         
-        self.assertIsInstance(kplaylist.getId(), unicode)
+        self.assertIsInstance(kplaylist.getId(), six.text_type)
         
         #cleanup
         self.client.playlist.delete(kplaylist.getId())        
@@ -315,11 +318,11 @@ class DynamicPlaylistTests(KalturaBaseTest):
         kplaylist = self.client.playlist.add(kplaylist)
         self.addCleanup(self.client.playlist.delete, kplaylist.getId())
         
-        print "Waiting for Media Entry to be 'Ready'"
+        print("Waiting for Media Entry to be 'Ready'")
         sleeptime=5
         mediaEntry = self.client.media.get(mediaEntry.getId())
         while mediaEntry.getStatus().getValue() != '2':
-            print "media entry status is %s " % (mediaEntry.getStatus().getValue())
+            print("media entry status is {}".format(mediaEntry.getStatus().getValue()))
             time.sleep(sleeptime)
             mediaEntry = self.client.media.get(mediaEntry.getId())
         

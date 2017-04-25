@@ -25,31 +25,29 @@
 #
 # @ignore
 # ===================================================================================================
+from __future__ import absolute_import, print_function
 
-import os
+import re
 
-from utils import GetConfig
-from utils import getTestFile
-from utils import KalturaBaseTest
-from utils import KalturaLogger
+import requests
 
-from KalturaClient import *
+from .utils import (GetConfig, getTestFile, KalturaBaseTest)
 
-from KalturaClient.Base import KalturaConfiguration
+from KalturaClient import KalturaClient
+from KalturaClient.Plugins.Core import (
+    API_VERSION,
+    KalturaDataEntry,
+    KalturaException,
+    KalturaFilterPager,
+    KalturaMediaEntry,
+    KalturaMediaEntryFilter,
+    KalturaMediaEntryOrderBy,
+    KalturaMediaType,
+    KalturaSessionType,
+)
 
-from KalturaClient.Plugins.Core import KalturaSessionType
-from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaEntryFilter, KalturaMediaEntryOrderBy
-from KalturaClient.Plugins.Core import KalturaMediaType
-from KalturaClient.Plugins.Core import KalturaDataEntry
-from KalturaClient.Plugins.Core import KalturaException
-from KalturaClient.Plugins.Core import KalturaFilterPager
-
-from KalturaClient.Plugins.Core import API_VERSION
 testString = "API Test ver %s" % (API_VERSION,)
 
-import urllib
-import time
-import re
 
 class SingleRequestTests(KalturaBaseTest):
     """These Tests Are legacy tests migrated from the first test suite TestCode/PythonTester.py
@@ -75,8 +73,8 @@ class SingleRequestTests(KalturaBaseTest):
         dataEntry.setDataContent(DATA_ENTRY_CONTENT)
         addedDataEntry = self.client.data.add(dataEntry)
         serveUrl = self.client.data.serve(addedDataEntry.id)
-        f = urllib.urlopen(serveUrl)
-        assert(DATA_ENTRY_CONTENT == f.read())
+        f = requests.get(serveUrl)
+        assert(DATA_ENTRY_CONTENT == f.text)
     
     
     def test_SampleMetadataOperations(self):
@@ -102,7 +100,7 @@ class SingleRequestTests(KalturaBaseTest):
         pager.setPageSize(10)
         pager.setPageIndex(1)
     
-        print "List videos, get the first one..."
+        print("List videos, get the first one...")
     
         # Get 10 video entries, but we'll just use the first one returned
         entries = self.client.media.list(search, pager).objects
@@ -126,9 +124,13 @@ class SingleRequestTests(KalturaBaseTest):
         name = entries[0].getName()
         id = entries[0].getId()
         if metadata[0].getXsd() != None:
-            print "1. There are custom fields for video: " + name + ", entryid: " + id
+            print(
+                "1. There are custom fields for video: {}, entryid: {}".format(
+                    name, id))
         else:
-            print "1. There are no custom fields for video: " + name + ", entryid: " + id
+            print(
+                "1. There are no custom fields for video: {}, entryid: {}"\
+                .format(name, id))
     
         # Add a custom data entry in the KMC  (Settings -> Custom Data)
         profile = KalturaMetadataProfile()
@@ -148,9 +150,9 @@ class SingleRequestTests(KalturaBaseTest):
     
         assert(metadata2.xml != None)
         
-        print "3. Successfully added the custom data field for video: " + name + ", entryid: " + id
+        print("3. Successfully added the custom data field for video: {}, entryid: {}".format(name, id))
         xmlStr = metadata2.xml
-        print "XML used: " + xmlStr
+        print("XML used: %s" % xmlStr)
     
         # Now lets change the value (update) of the custom field
         # Get the metadata for the video
@@ -160,9 +162,10 @@ class SingleRequestTests(KalturaBaseTest):
         metadataList = self.client.metadata.metadata.list(filter3).objects
         assert(metadataList[0].xml != None)
     
-        print "4. Current metadata for video: " + name + ", entryid: " + id
+        print(
+            "4. Current metadata for video: {}, entryid: {}".format(name, id))
         xmlquoted = metadataList[0].xml
-        print "XML: " + xmlquoted
+        print("XML: {}".format(xmlquoted))
         xml = metadataList[0].xml
         # Make sure we find the old value in the current metadata
         pos = xml.find("<" + metaDataFieldName + ">" + fieldValue + "</" + metaDataFieldName + ">")
@@ -171,13 +174,13 @@ class SingleRequestTests(KalturaBaseTest):
         pattern = re.compile("<" + metaDataFieldName + ">([^<]+)</" + metaDataFieldName + ">")
         xml = pattern.sub("<" + metaDataFieldName + ">Ogg Writ</" + metaDataFieldName + ">", xml)
         rc = self.client.metadata.metadata.update(metadataList[0].id, xml)
-        print "5. Updated metadata for video: " + name + ", entryid: " + id
+        print("5. Updated metadata for video: {}, entryid: {}".format(name, id))
         xmlquoted = rc.xml
-        print "XML: " + xmlquoted
+        print("XML: {}".format(xmlquoted))
 
 
-from utils import PARTNER_ID, SERVICE_URL
-from utils import ADMIN_SECRET, USER_NAME
+from .utils import PARTNER_ID, SERVICE_URL
+from .utils import ADMIN_SECRET, USER_NAME
 
 class MultiRequestTests(KalturaBaseTest):
     
@@ -204,14 +207,14 @@ class MultiRequestTests(KalturaBaseTest):
         listResult = self.client.baseEntry.list()
 
         multiResult = self.client.doMultiRequest()
-        print multiResult[1].totalCount
+        print(multiResult[1].totalCount)
         self.client.setKs(multiResult[0])
         
         # error
         try:
             mediaEntry = self.client.media.get('invalid entry id')
             assert(False)
-        except KalturaException, e:
+        except KalturaException as e:
             assert(e.code == 'ENTRY_ID_NOT_FOUND')                    
            
         # multi request error
@@ -281,7 +284,7 @@ class MultiRequestTests(KalturaBaseTest):
         assert(isinstance(response[1], KalturaMixEntry))
         mixEntry = response[1]
         
-        print "The new mix entry id is: " + mixEntry.id
+        print("The new mix entry id is: {}".format(mixEntry.id))
 
 
 import unittest
