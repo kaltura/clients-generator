@@ -37,8 +37,8 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $createClassArgs->description = "";
         $createClassArgs->base = "KalturaObjectBase";
         $createClassArgs->basePath = "./";
-        $createClassArgs->enumPath = "../enum/";
-        $createClassArgs->typesPath = "./class/";
+        $createClassArgs->enumPath = "./types/";
+        $createClassArgs->typesPath = "./types/";
         $createClassArgs->importedItems = array();
         $createClassArgs->properties = $this->serverMetadata->requestSharedParameters;
         $createClassArgs->requireDataInCtor = true;
@@ -63,8 +63,10 @@ import { KalturaObjectMetadata } from './kaltura-object-base';
         $createClassArgs->name = $class->name;
         $createClassArgs->description = $class->description;
         $createClassArgs->base = $class->base ? $class->base : 'KalturaObjectBase';
+        $createClassArgs->baseIsGenerated = $class->base ? true : false;
+
         $createClassArgs->basePath = $class->base ? "./" : "../";
-        $createClassArgs->enumPath = "../enum/";
+        $createClassArgs->enumPath = "./";
         $createClassArgs->typesPath = "./";
         $createClassArgs->properties = $class->properties;
         $createClassArgs->importedItems = array();
@@ -82,8 +84,8 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 ";
 
         $file = new GeneratedFileData();
-        $fileName = $this->utils->toLispCase($class->name);
-        $file->path = "class/{$fileName}.ts";
+        $fileName = $class->name; //$this->utils->toLispCase($class->name);
+        $file->path = "types/{$fileName}.ts";
         $file->content = $fileContent;
         $result[] = $file;
         return $file;
@@ -91,7 +93,7 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 
     function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
-        $className = $service->name . ucfirst($serviceAction->name) . "Action";
+        $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
         if ($serviceAction->resultType === KalturaServerTypes::File) {
             $actionNG2ResultType = "string";
         }else {
@@ -101,8 +103,8 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $importedItems = array($className,'KalturaRequest');
 
         $getImportExpForTypeArgs = new stdClass();
-        $getImportExpForTypeArgs->enumPath = "../enum/";
-        $getImportExpForTypeArgs->typesPath = "../class/";
+        $getImportExpForTypeArgs->enumPath = "./";
+        $getImportExpForTypeArgs->typesPath = "./";
         $getImportExpForTypeArgs->type = $serviceAction->resultType;
         $getImportExpForTypeArgs->typeClassName = $serviceAction->resultClassName;
         $importResultType = $this->getImportExpForType($getImportExpForTypeArgs,$importedItems);
@@ -115,8 +117,8 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $createClassArgs->name = $className;
         $createClassArgs->description = $serviceAction->description;
         $createClassArgs->basePath = "../";
-        $createClassArgs->enumPath = "../enum/";
-        $createClassArgs->typesPath = "../class/";
+        $createClassArgs->enumPath = "./";
+        $createClassArgs->typesPath = "./";
         $createClassArgs->properties = $serviceAction->params;
         $createClassArgs->importedItems = &$importedItems;
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->id);
@@ -144,8 +146,8 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
 ";
 
         $file = new GeneratedFileData();
-        $fileName = $this->utils->toLispCase($className);
-        $file->path = "action/{$fileName}.ts";
+        $fileName = $className; //$this->utils->toLispCase($className);
+        $file->path = "types/{$fileName}.ts";
         $file->content = $fileContent;
         $result[] = $file;
         return $file;
@@ -156,7 +158,8 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
         $name = $args->name;
         $description = $args->description;
         $base = isset($args->base) ? $args->base : null;
-        $strippedBase = isset($base) ? preg_replace('/<.+>/i','',$base) : null;
+        $baseStrippedClassName = isset($base) ? preg_replace('/<.+>/i','',$base) : null;
+        $baseIsGenerated = isset($args->baseIsGenerated) ? $args->baseIsGenerated : false;
         $basePath = isset($args->basePath) ? $args->basePath : null;
         $customMetadataProperties = isset($args->customMetadataProperties) ? $args->customMetadataProperties : array();
         $classTypeName = Utils::upperCaseFirstLetter($name);
@@ -177,11 +180,17 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
         }
 
         $baseImport = null;
-        if ($strippedBase && $basePath)
+        if ($baseStrippedClassName && $basePath)
         {
-            $importedItems[] = $strippedBase;
-            $importFilePath = $basePath . utils::toLispCase($strippedBase);
-            $baseImport = "import { {$strippedBase}, {$strippedBase}Args } from '{$importFilePath}';";
+            $importedItems[] = $baseStrippedClassName;
+            if ($baseIsGenerated)
+            {
+                $importFilePath = $basePath . $baseStrippedClassName; //utils::toLispCase($strippedBase);
+            }else
+            {
+                $importFilePath = $basePath . utils::toLispCase($baseStrippedClassName);
+            }
+            $baseImport = "import { {$baseStrippedClassName}, {$baseStrippedClassName}Args } from '{$importFilePath}';";
         }
 
         $aggregatedData = $this->aggregateClassData($args);
@@ -197,7 +206,7 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
 
         $result = "{$this->utils->buildExpression($aggregatedData->imports,NewLine)}
 
-export interface {$classTypeName}Args {$this->utils->ifExp($strippedBase, " extends " . $strippedBase . "Args","")} {
+export interface {$classTypeName}Args {$this->utils->ifExp($baseStrippedClassName, " extends " . $baseStrippedClassName . "Args","")} {
     {$this->utils->buildExpression($aggregatedData->constructorArgs, NewLine, 1)}
 }
 
@@ -208,7 +217,14 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
     constructor(data{$this->utils->ifExp($requireDataInCtor,"","?")} : {$classTypeName}Args)
     {
-        super({$superArgs});
+        super({$superArgs});";
+
+        if (count($aggregatedData->assignPropertiesDefault)) {
+            $result .= "
+        {$this->utils->buildExpression($aggregatedData->assignPropertiesDefault, NewLine, 2)}";
+        }
+
+    $result .= "
     }
 
     protected _getMetadata() : KalturaObjectMetadata
@@ -243,6 +259,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         $result->imports = array();
         $result->buildContent = array();
         $result->constructorContent = array();
+        $result->assignPropertiesDefault = array();
 
         if (count($properties) != 0)
         {
@@ -261,7 +278,13 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                     $result->constructorArgs[] = "{$property->name}{$this->utils->ifExp($isOptional,"?","")} : {$ng2ParamType};";
                 }
 
-                $result->classProperties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType}" . ($default ? " = {$default}" : "") . ";";
+                $result->classProperties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType};";
+
+                if ($default)
+                {
+                    $result->assignPropertiesDefault[] = "if (typeof this.{$property->name} === 'undefined') this.{$property->name} = {$default};";
+                }
+
                 $result->propertiesMetadata[] = $this->createMetadataProperty($property->name, isset($property->readOnly) ? $property->readOnly : false,$property->type,$property->typeClassName);
                 $getImportExpForTypeArgs = new stdClass();
                 $getImportExpForTypeArgs->enumPath = $enumPath;
@@ -300,7 +323,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
             case KalturaServerTypes::EnumOfString:
             if (in_array($typeClassName,$importedItems) === false) {
                 $importedItems[] = $typeClassName;
-                $fileName = $this->utils->toLispCase($typeClassName);
+                $fileName = $typeClassName; //$this->utils->toLispCase($typeClassName);
                 $result = "import { {$typeClassName} } from '{$enumPath}{$fileName}';";
             }
             break;
@@ -312,8 +335,12 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                     if ($typeClassName === 'KalturaObjectBase')
                     {
                         $typesPath = "../";
+                        $fileName = $this->utils->toLispCase($typeClassName);
+                    }else
+                    {
+                        $fileName = $typeClassName; //$this->utils->toLispCase($typeClassName);
+
                     }
-                    $fileName = $this->utils->toLispCase($typeClassName);
                     $result = "import { {$typeClassName} } from '{$typesPath}{$fileName}';";
                 }
                 break;

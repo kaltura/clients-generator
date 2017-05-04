@@ -91,8 +91,8 @@ KalturaTypesFactory.registerType('$enum->name',$enumTypeName);";
         }
 
         $file = new GeneratedFileData();
-        $fileName = $this->utils->toLispCase($enumTypeName);
-        $file->path = "enum/{$fileName}.ts";
+        $fileName = $enumTypeName; //$this->utils->toLispCase($enumTypeName);
+        $file->path = "types/{$fileName}.ts";
         $file->content = $fileContent;
         $result[] = $file;
         return $file;

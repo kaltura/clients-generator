@@ -24,7 +24,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         $fileContent = $classIndex->content . $enumIndex->content . $actionIndex->content;
 
         $file = new GeneratedFileData();
-        $file->path = "./types.ts";
+        $file->path = "./types/index.ts";
         $file->content = $fileContent;
         $result[] = $file;
 
@@ -39,9 +39,9 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
 
         foreach ($this->serverMetadata->classTypes as $class) {
             $className = ucfirst($class->name);
-            $classFileName = $this->utils->toLispCase($className);
+            $classFileName = $className; // $this->utils->toLispCase($className);
 
-            $fileContent .= "export { {$className} } from './class/{$classFileName}'" . NewLine;
+            $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
         }
 
         $file = new GeneratedFileData();
@@ -58,9 +58,9 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         foreach ($this->serverMetadata->enumTypes as $enum) {
             if (count($enum->values) != "0") {
                 $className = ucfirst($enum->name);
-                $classFileName = $this->utils->toLispCase($className);
+                $classFileName = $className; //$this->utils->toLispCase($className);
 
-                $fileContent .= "export { {$className} } from './enum/{$classFileName}'" . NewLine;
+                $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
             }
         }
 
@@ -78,9 +78,9 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         foreach ($this->serverMetadata->services as $service) {
             foreach ($service->actions as $serviceAction) {
                 $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
-                $classFileName = $this->utils->toLispCase($className);
+                $classFileName = $className ; //$this->utils->toLispCase($className);
 
-                $fileContent .= "export { {$className} } from './action/{$classFileName}'" . NewLine;
+                $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
             }
         }
 
