@@ -376,12 +376,12 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 				case "int":
 					$enumType = $xmlnode->getAttribute("enumType");
 					$isTime = $xmlnode->getAttribute("isTime");
-//
-//					if ($isTime == "1")
-//					{
-//						$result->type = KalturaServerTypes::Date;
-//						$result->className = "";
-//					}else
+
+					if ($isTime == "1")
+					{
+						$result->type = KalturaServerTypes::Date;
+						$result->className = "";
+					}else
 						if ($enumType)
 					{
 						if ($typeValue == "string")
