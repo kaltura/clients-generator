@@ -1,14 +1,30 @@
+from __future__ import absolute_import
+
 import uuid
 import unittest
 
-from utils import GetConfig
-from utils import KalturaBaseTest
-from utils import getTestFile
+from .utils import KalturaBaseTest
 
-from KalturaClient.Plugins.Core import KalturaFilterPager, KalturaResponseProfile, KalturaResponseProfileMapping, KalturaDetachedResponseProfile, KalturaResponseProfileHolder, KalturaResponseProfileType
-from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaEntryFilter, KalturaBaseEntryListResponse, KalturaMediaType, KalturaEntryStatus
-from KalturaClient.Plugins.Metadata import KalturaMetadata, KalturaMetadataProfile, KalturaMetadataFilter, KalturaMetadataListResponse, KalturaMetadataObjectType
-
+from KalturaClient.Plugins.Core import (
+    KalturaBaseEntryListResponse,
+    KalturaDetachedResponseProfile,
+    KalturaEntryStatus,
+    KalturaFilterPager,
+    KalturaMediaEntry,
+    KalturaMediaEntryFilter,
+    KalturaMediaType,
+    KalturaResponseProfile,
+    KalturaResponseProfileHolder,
+    KalturaResponseProfileMapping,
+    KalturaResponseProfileType,
+)
+from KalturaClient.Plugins.Metadata import (
+    KalturaMetadata,
+    KalturaMetadataFilter,
+    KalturaMetadataListResponse,
+    KalturaMetadataObjectType,
+    KalturaMetadataProfile,
+)
 
 
 class ResponseProfileTests(KalturaBaseTest):
@@ -178,7 +194,7 @@ class ResponseProfileTests(KalturaBaseTest):
         
         for entry in list.objects:
             self.assertNotEqual(entry.relatedObjects, NotImplemented)
-            self.assertTrue(entry.relatedObjects.has_key(metadataResponseProfile.name))
+            self.assertIn(metadataResponseProfile.name, entry.relatedObjects)
             metadataList = entry.relatedObjects[metadataResponseProfile.name]
             self.assertIsInstance(metadataList, KalturaMetadataListResponse)
             self.assertEqual(len(metadataProfiles), len(metadataList.objects))

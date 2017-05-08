@@ -3,7 +3,6 @@ This source contains:
  - Auto generated core APIs (KalturaCoreClient.py)
  - Auto generated plugin APIs (KalturaPlugins/*.py)
  - Python library test code and data files (TestCode/*)
- - The 'poster' python module (used by KalturaClient.py)
 
 == STANDARD DEPENDENCIES ==
 
@@ -27,8 +26,14 @@ The API library depends on the following python modules (included with python by
 
 The API library depends on the following python modules that are not included by default with python:
  - setuptools - can be downloaded from https://pypi.python.org/pypi/setuptools
- - poster - can be downloaded from https://pypi.python.org/pypi/poster/
-	installed by running: python setup.py install
+ - requests (2.4.2 or above) - can be downloaded from https://pypi.python.org/pypi/requests/
+	installed by running: python setup.py requests
+ - requests-toolbelt - https://pypi.python.org/pypi/requests-toolbelt
+ - six - https://pypi.python.org/pypi/six
+
+requests is used to handle API calls to Kaltura. This means that if you want
+to do multi part file uploads, you should pass through the file path rather
+than an open file handle.
 
 == INSTALLATION ==
 
@@ -41,6 +46,7 @@ See KalturaClient/tests/README.txt
 
 == RELEASE NOTES ==
 
+Jan 2017 - Python 3 support. Replaced poster with requests.
 Sep 2015 - support JSON requests, compatible with Kaltura server version 10.20.0 and above. 
 Aug 2013 - the library was refactored to make it installable as a PyPI package.
 	This refactoring changed the way Kaltura client plugin modules are loaded -
