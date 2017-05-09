@@ -112,16 +112,11 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 			}
 		}
 
-		$requestConfigurationNodes = $xpath->query("/xml/configurations/request");
 
-		$item = new stdClass();
-		$result->requestSharedParameters["apiVersion"] = $item;
-		$item->name = "apiVersion";
-		$item->readOnly = true;
-		$item->default = $xpath->query("/xml")->item(0)->getAttribute('apiVersion');
-		$item->description = "";
-		$item->type = KalturaServerTypes::Simple;
-		$item->typeClassName = "string";
+		$result->apiVersion = $xpath->query("/xml")->item(0)->getAttribute('apiVersion');
+
+
+		$requestConfigurationNodes = $xpath->query("/xml/configurations/request");
 
 		foreach($requestConfigurationNodes as $requestConfigurationNode)
 		{

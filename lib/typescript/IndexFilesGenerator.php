@@ -24,7 +24,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         $fileContent = $classIndex->content . $enumIndex->content . $actionIndex->content;
 
         $file = new GeneratedFileData();
-        $file->path = "./types/index.ts";
+        $file->path = "./types/all.ts";
         $file->content = $fileContent;
         $result[] = $file;
 

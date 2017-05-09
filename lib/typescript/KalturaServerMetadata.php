@@ -267,6 +267,7 @@ class ClassTypeProperty
 
 class KalturaServerMetadata
 {
+    public $apiVersion;
     public $services = array();
     public $classTypes = array();
     public $enumTypes = array();

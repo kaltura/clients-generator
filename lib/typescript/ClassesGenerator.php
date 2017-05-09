@@ -23,14 +23,14 @@ class ClassesGenerator extends TypescriptGeneratorBase
             $result[] = $this->createClassFile($class);
         }
 
-        $result[] = $this->createRequestBaseFile();
+        $result[] = $this->createRequestBaseFile($this->serverMetadata->apiVersion);
 
         return $result;
     }
 
 
 
-    function createRequestBaseFile()
+    function createRequestBaseFile($apiVersion)
     {
         $createClassArgs = new stdClass();
         $createClassArgs->name = "KalturaRequestBase";
@@ -40,7 +40,23 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $createClassArgs->enumPath = "./types/";
         $createClassArgs->typesPath = "./types/";
         $createClassArgs->importedItems = array();
-        $createClassArgs->properties = $this->serverMetadata->requestSharedParameters;
+        $createClassArgs->customMetadataProperties = array();
+
+        // create a property named 'acceptedTypes' which holds relevant 'KalturaObjectBase' to that request.
+        // note that this property is marked as local property
+        $acceptedTypes = new stdClass();
+        $acceptedTypes->name = "acceptedTypes";
+        $acceptedTypes->localProperty = true;
+        $acceptedTypes->optional = true;
+        $acceptedTypes->type = KalturaServerTypes::ArrayOfObjects;
+        $acceptedTypes->typeClassName = "KalturaObjectBase";
+        $customProperties = array();
+        $customProperties[] = $acceptedTypes;
+
+        $createClassArgs->properties = array_merge(
+            $customProperties,
+            $this->serverMetadata->requestSharedParameters
+        );
         $createClassArgs->requireDataInCtor = true;
 
         $classBody = $this->createClassExp($createClassArgs);
@@ -132,7 +148,13 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         }
 
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
-        $createClassArgs->superArgs = "'{$resultType->type}', '{$resultType->subType}'";
+
+        if (isset($resultType->subType)) {
+            $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : {$resultType->subType}  }";
+        }else
+        {
+            $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : null }";
+        }
         $createClassArgs->requireDataInCtor = $this->hasRequiredProperty($serviceAction->params);
 
         $classBody = $this->createClassExp($createClassArgs);
@@ -269,8 +291,9 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 }else {
                     $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
                 }
-                $default = $this->toNG2DefaultByType($property->type, $property->typeClassName, $property->default);
+                $default = $this->toNG2DefaultByType($property->type, $property->typeClassName, isset($property->default) ? $property->default : null);
                 $readOnly = isset($property->readOnly) && $property->readOnly;
+                $localProperty = isset($property->localProperty) && $property->localProperty;
 
                 // update the properties declaration
                 if (!$readOnly) {
@@ -285,7 +308,10 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                     $result->assignPropertiesDefault[] = "if (typeof this.{$property->name} === 'undefined') this.{$property->name} = {$default};";
                 }
 
-                $result->propertiesMetadata[] = $this->createMetadataProperty($property->name, isset($property->readOnly) ? $property->readOnly : false,$property->type,$property->typeClassName);
+                if (!$localProperty) {
+                    $result->propertiesMetadata[] = $this->createMetadataProperty($property->name, isset($property->readOnly) ? $property->readOnly : false, $property->type, $property->typeClassName);
+                }
+
                 $getImportExpForTypeArgs = new stdClass();
                 $getImportExpForTypeArgs->enumPath = $enumPath;
                 $getImportExpForTypeArgs->typesPath = $typesPath;
@@ -307,7 +333,8 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         $readOnlyExp = (isset($readOnly) && $readOnly) ? ', readOnly : true' : '';
         $defaultValueExp = isset($defaultValue) ? ", default : '{$defaultValue}'" : '';
         $propertyMetadataType = $this->toApplicationType($type, $typeClassName);
-        return "{$name} : { type : '{$propertyMetadataType->type}' {$defaultValueExp} {$readOnlyExp}" . (isset($propertyMetadataType->subType) ? ", subType : '{$propertyMetadataType->subType}'}" : "}");
+        $subType = isset($propertyMetadataType->subType) ? ", subTypeConstructor : {$propertyMetadataType->subType}, subType : '{$propertyMetadataType->subType}'" : '';
+        return "{$name} : { type : '{$propertyMetadataType->type}'{$defaultValueExp}{$readOnlyExp}{$subType} }";
     }
 
     private function getImportExpForType($args, &$importedItems)
