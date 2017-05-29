@@ -30,7 +30,7 @@
     "md5": "*",
     "url": "*",
     "path": "*",
-    "http": "*"
+    "http": "*",
     "https": "*",
     "querystring": "*"
   },
