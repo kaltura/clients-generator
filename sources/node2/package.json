@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "md5": "*",
-    "url": "*",,
+    "url": "*",
     "path": "*",
     "http": "*"
     "https": "*",
