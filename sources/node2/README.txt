@@ -1,6 +1,6 @@
 ## Kaltura node.js API Client Library.
 Compatible with Kaltura server version 10.20.0 and above.
-This client library replaces the older architecture that presented in previous node.js client librariy.
+This client library replaces the older architecture that presented in previous node.js client library.
 
 ## Very Basic sanity
 - Edit tests/config.js and set partner_id, secret and service_url to match your ENV
