@@ -27,7 +27,6 @@
     "url": "https://github.com/kaltura/clients-generator/issues"
   },
   "dependencies": {
-    "fs": "*",
     "md5": "*",
     "url": "*",,
     "path": "*",
