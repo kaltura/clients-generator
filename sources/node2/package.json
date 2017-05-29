@@ -27,9 +27,13 @@
     "url": "https://github.com/kaltura/clients-generator/issues"
   },
   "dependencies": {
-    "http": "*",
+    "fs": "*",
     "md5": "*",
-    "url": "*"
+    "url": "*",,
+    "path": "*",
+    "http": "*"
+    "https": "*",
+    "querystring": "*"
   },
   "devDependencies": {
     "shortid": "^2.2.8",
