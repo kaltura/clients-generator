@@ -114,7 +114,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		
 		$sCode = file_get_contents($filePath);
 		$jsMin = new JSMin($sCode, false);
-// 		file_put_contents($minFilePath, $jsMin->minify());
+		file_put_contents($minFilePath, $jsMin->minify());
 	}
 
 	/**
