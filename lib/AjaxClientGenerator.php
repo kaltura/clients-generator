@@ -114,7 +114,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		
 		$sCode = file_get_contents($filePath);
 		$jsMin = new JSMin($sCode, false);
-		file_put_contents($minFilePath, $jsMin->minify());
+// 		file_put_contents($minFilePath, $jsMin->minify());
 	}
 
 	/**
@@ -174,8 +174,6 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 					break;
 				}
 			}
-			if($haveFiles)
-				continue;
 			
 			if(!$isFirst){
 				$this->appendLine(",");
@@ -191,8 +189,9 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			foreach($action->children() as $actionParam) {
 				if($actionParam->getName() == "param" ) {
 					$paramType = $actionParam->attributes()->type;
-					
 					$paramType = $this->getJSType($paramType);
+					if($paramType == 'file')
+						$paramType = 'HTMLElement';
 					
 					$paramName = $actionParam->attributes()->name;
 					$optionalp = (boolean)$actionParam->attributes()->optional;
@@ -266,6 +265,10 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			}
 			 
 			$this->appendLine("		var kparams = new Object();");
+			if($haveFiles)
+			{
+				$this->appendLine("		var kfiles = new Object();");
+			}
 			
 			//parse the actions parameters and result types
 			foreach($action->children() as $actionParam) {
@@ -294,7 +297,14 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 						break;
 				}
 			}
-			$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams);");
+			if($haveFiles)
+			{
+				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams, kfiles);");			
+			}
+			else 
+			{
+				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams);");
+			}
 			$this->append("	}");
 		}
 		$this->appendLine();
@@ -402,7 +412,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		{	
 			case "bigint" :
 				return "int";
-				
+
 			default :
 				return $propType;
 		}
