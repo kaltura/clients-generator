@@ -6,6 +6,7 @@
 <script src="KalturaClient.min.js"></script>
 <script src="KalturaSessionService.min.js"></script>
 <script src="KalturaMediaService.min.js"></script>
+<script src="KalturaUploadTokenService.min.js"></script>
 <script type="text/javascript">
 
 	
@@ -43,7 +44,7 @@
 		
 		document.getElementById("entryId").value = entry.id;
 		alert("Entry created: " + entry.id);
-	};
+	}
 
 	function media_add(){
 		var entry = {
@@ -56,6 +57,31 @@
 		KalturaMediaService.add(entry)
 			.completion(media_add_cb)
 			.execute(client);
+	}
+
+	function upload(){
+		
+		var filepath = document.getElementById("fileData").value;
+		var filename = filepath.replace(/^.*[\\\/]/, '');
+		
+		var uploadToken = {
+			objectType: "KalturaUploadToken",
+			fileName: filename
+		}
+
+		KalturaUploadTokenService.add(uploadToken)
+			.completion(upload_token_add_cb)
+			.execute(client);
+	}
+
+	function upload_token_add_cb(success, uploadToken){
+		KalturaUploadTokenService.upload(uploadToken.id, document.getElementById("fileData"))
+			.completion(upload_token_upload_cb)
+			.execute(client);
+	}
+
+	function upload_token_upload_cb(success, uploadToken){
+		alert('File uploaded');
 	}
 
 	function media_delete(){
@@ -200,6 +226,12 @@
 			<td align="center" colspan="2">
 				<input type="button" onclick="media_add()" value="media.add" />
 				<input type="button" onclick="media_delete()" value="media.delete" />
+			</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2">
+				<input type="file" id="fileData" name="filedata" />
+				<input type="button" onclick="upload()" value="upload" />
 			</td>
 		</tr>
 	</table>
