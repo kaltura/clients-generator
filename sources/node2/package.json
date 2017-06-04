@@ -1,8 +1,8 @@
 {
   "name": "kaltura-client",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Kaltura NodeJS client library (new implementation)",
-  "main": "index.js",
+  "main": "KalturaClient.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --timeout 60000"
   },
