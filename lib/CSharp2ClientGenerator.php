@@ -1179,6 +1179,16 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine(" 				{$configurationName}Configuration.$paramName = value;");
 		$this->appendLine(" 			}");
 		$this->appendLine(" 		}");
+		$this->appendLine("			");
+		$this->appendLine(" 		public void set{$name}($type value)");
+		$this->appendLine(" 		{");
+		$this->appendLine(" 			$name = value;");
+		$this->appendLine(" 		}");
+		$this->appendLine("			");
+		$this->appendLine(" 		public $type get{$name}()");
+		$this->appendLine(" 		{");
+		$this->appendLine(" 			return $name;");
+		$this->appendLine(" 		}");
 	}
 
 	private function loadEnums(DOMNodeList $enums)
