@@ -46,7 +46,7 @@ class KalturaDatabaseSecretRepository implements KalturaSecretRepositoryBase
 	{
 		$resultSet = mysqli_query($this->link, $query) or die('Error: Select query failed: ' . mysqli_error($this->link) . "\n");
 		// for php7 support.
-        $resulttype = defined(MYSQL_NUM) ? MYSQL_NUM : MYSQLI_NUM;
+		$resulttype = defined(MYSQL_NUM) ? MYSQL_NUM : MYSQLI_NUM;
 		$result = mysqli_fetch_array($resultSet, $resulttype);
 		mysqli_free_result($resultSet);
 		return $result;
