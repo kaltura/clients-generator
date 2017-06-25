@@ -96,7 +96,7 @@ module Kaltura
 					end
 				else
 					call = @calls_queue[0]
-					url += "service/#{call.service}/action/#{call.action}/"
+					url += "service/#{call.service}/action/#{call.action}"
 					params.merge!(call.params)
 					files = call.files
 				end
@@ -198,6 +198,9 @@ module Kaltura
 		end
 
 		def self.object_from_xml(xml_element, return_type = nil)
+			if xml_element == nil
+				return nil
+			end
 			instance = nil
 			if xml_element.elements.size > 0
 				if xml_element.elements[1].name == 'item' # array or map

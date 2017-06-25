@@ -1,7 +1,7 @@
 <?php
 class RubyClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/ruby")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "ruby")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
@@ -212,19 +212,21 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 			
 			$propName = $propertyNode->getAttribute("name");
 			$propType = $propertyNode->getAttribute("type");
+			$this->appendLine("			if xml_element.elements['$propName'] != nil");
 			if($this->isSimpleType($propType))
 			{
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = xml_element.elements['$propName'].text");
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = xml_element.elements['$propName'].text");
 			}
 			elseif($propType == 'array' || $propType == 'map')
 			{
 				$propArrayType = $propertyNode->getAttribute("arrayType");
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propArrayType')");	
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propArrayType')");	
 			}
 			else
 			{
-				$this->appendLine("			self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propType')");	
+				$this->appendLine("				self.".$this->camelCaseToUnderscoreAndLower($propName)." = KalturaClientBase.object_from_xml(xml_element.elements['$propName'], '$propType')");	
 			}
+			$this->appendLine("			end");
 		}	
 		$this->appendLine("		end");
 		$this->appendLine();
@@ -263,6 +265,15 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	end");
 	}
 	
+	function getRubyParamName($paramName)
+	{
+		$reservedWords = array('alias');
+		if(in_array($paramName, $reservedWords))
+			$paramName = "{$paramName}_param";
+		
+		return $this->camelCaseToUnderscoreAndLower($paramName);
+	}
+	
 	function writeAction($serviceId, DOMElement $actionNode)
 	{
 		$action = $actionNode->getAttribute("name");
@@ -271,6 +282,9 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
 		$resultType = $resultNode->getAttribute("type");
+		$expectedType = $resultType;
+		if($resultNode->getAttribute("arrayType"))
+			$expectedType = $resultNode->getAttribute("arrayType");
 		
 		$signaturePrefix = "def ".$this->camelCaseToUnderscoreAndLower($action)."(";
 			
@@ -280,6 +294,7 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 		// comments
 		$this->writeComments("		# ", $actionNode);
+		$this->appendLine("		# @return [$resultType]");
 	
 		$this->appendLine("		$signaturePrefix$signature");
 		$this->appendLine("			kparams = {}");
@@ -299,26 +314,27 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		{
 			$paramType = $paramNode->getAttribute("type");
 			$paramName = $paramNode->getAttribute("name");
+			$rubyParamName = $this->getRubyParamName($paramName);
 			$isEnum = $paramNode->hasAttribute("enumType");
 			
 			switch ($paramType)
 			{
 				case "file":
-					$this->appendLine("			client.add_param(kfiles, '$paramName', ".$this->camelCaseToUnderscoreAndLower($paramName).")");
+					$this->appendLine("			client.add_param(kfiles, '$paramName', $rubyParamName)");
 					break;
 				default: 
-					$this->appendLine("			client.add_param(kparams, '$paramName', ".$this->camelCaseToUnderscoreAndLower($paramName).")");
+					$this->appendLine("			client.add_param(kparams, '$paramName', $rubyParamName)");
 					break;
 			}
 		}
 		
 		if ($haveFiles)
 		{
-			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$resultType', kparams, kfiles)");
+			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$expectedType', kparams, kfiles)");
 		}
 		else
 		{
-			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$resultType', kparams)");
+			$this->appendLine("			client.queue_service_action_call('$serviceId', '$action', '$expectedType', kparams)");
 		}
 		
 		if($resultType == 'file'){
@@ -355,7 +371,7 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$params = array();
 		foreach($paramNodes as $paramNode)
 		{
-			$paramName = $paramNode->getAttribute("name");
+			$rubyParamName = $this->getRubyParamName($paramNode->getAttribute("name"));
 			if ($paramNode->getAttribute("optional"))
 			{
 				$default = $paramNode->getAttribute("default");
@@ -365,10 +381,10 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 					$default = "''";
 				else if ($paramNode->getAttribute("type") == "string")
 					$default = "'".$default."'";
-				$params[] = $this->camelCaseToUnderscoreAndLower($paramName) . "=" . $default;
+				$params[] = "$rubyParamName=$default";
 			}
 			else
-				$params[] = $this->camelCaseToUnderscoreAndLower($paramName);
+				$params[] = $rubyParamName;
 		}
 		$signature = implode(", ", $params);
 		$signature .= ")";
@@ -463,12 +479,20 @@ class RubyClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("			@{$configurationName}['$paramName'] = value");
 		$this->appendLine("		end");
 		$this->appendLine("		");
+		$this->appendLine("		def set_{$name}(value)");
+		$this->appendLine("			self.$name = value");
+		$this->appendLine("		end");
+		$this->appendLine("		");
 		$this->appendLine("		def $name()");
 		$this->appendLine("			if(@{$configurationName}.has_key?('$paramName'))");
 		$this->appendLine("				return @{$configurationName}['$paramName']");
 		$this->appendLine("			end");
 		$this->appendLine("			");
 		$this->appendLine("			return KalturaNotImplemented");
+		$this->appendLine("		end");
+		$this->appendLine("		");
+		$this->appendLine("		def get_{$name}()");
+		$this->appendLine("			return self.$name");
 		$this->appendLine("		end");
 		$this->appendLine("		");
 		$this->appendLine("	");

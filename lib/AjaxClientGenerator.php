@@ -24,7 +24,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 	* @param string $xmlPath path to schema xml.
 	* @link http://www.kaltura.com/api_v3/api_schema.php
 	*/
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/ajax")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "ajax")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
@@ -165,6 +165,16 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			if($action->result->attributes()->type == 'file')
 				continue;
 
+			$haveFiles = false;
+			foreach($action->children() as $actionParam)
+			{
+				if ($actionParam->attributes()->type == "file") 
+				{
+					$haveFiles = true;
+					break;
+				}
+			}
+			
 			if(!$isFirst){
 				$this->appendLine(",");
 				$this->appendLine("	");
@@ -179,8 +189,9 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			foreach($action->children() as $actionParam) {
 				if($actionParam->getName() == "param" ) {
 					$paramType = $actionParam->attributes()->type;
-					
 					$paramType = $this->getJSType($paramType);
+					if($paramType == 'file')
+						$paramType = 'HTMLElement';
 					
 					$paramName = $actionParam->attributes()->name;
 					$optionalp = (boolean)$actionParam->attributes()->optional;
@@ -197,9 +208,6 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 					if (count($info)>0)
 						$infoTxt = ' ('.join(', ', $info).')';
 					$this->appendLine("	 * @param\t$paramName\t$paramType\t\t{$description}{$infoTxt}");
-				} else {
-					$rettype = $actionParam->attributes()->type;
-					$this->appendLine("	 * @return\t$rettype.");
 				}
 			}
 			
@@ -210,8 +218,10 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			
 			$paramNames = array();
 			foreach($action->children() as $actionParam)
+			{
 				if($actionParam->getName() == "param" ) 
 					$paramNames[] = $actionParam->attributes()->name;
+			}
 			$paramNames = join(', ', $paramNames);
 			
 			// action method signature
@@ -255,17 +265,16 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 			}
 			 
 			$this->appendLine("		var kparams = new Object();");
+			if($haveFiles)
+			{
+				$this->appendLine("		var kfiles = new Object();");
+			}
 			
-			$haveFiles = false;
 			//parse the actions parameters and result types
 			foreach($action->children() as $actionParam) {
 				if($actionParam->getName() != "param" ) 
 					continue;
 				$paramName = $actionParam->attributes()->name;
-				if ($haveFiles === false && $actionParam->attributes()->type == "file") {
-			        $haveFiles = true;
-		        	$this->appendLine("		kfiles = new Object();");
-		    	}
 				switch($actionParam->attributes()->type)
 				{
 					case "string":
@@ -288,10 +297,14 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 						break;
 				}
 			}
-			if ($haveFiles)
-				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams, kfiles);");
-			else
+			if($haveFiles)
+			{
+				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams, kfiles);");			
+			}
+			else 
+			{
 				$this->appendLine("		return new KalturaRequestBuilder(\"$serviceId\", \"$actionName\", kparams);");
+			}
 			$this->append("	}");
 		}
 		$this->appendLine();
@@ -399,7 +412,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 		{	
 			case "bigint" :
 				return "int";
-				
+
 			default :
 				return $propType;
 		}

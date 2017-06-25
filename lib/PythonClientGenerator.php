@@ -1,7 +1,7 @@
 <?php
 class PythonClientGenerator extends ClientGeneratorFromXml
 {
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/python")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "python")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 	}
@@ -57,14 +57,17 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			$this->appendLine("# @package $this->package");
 			$this->appendLine("# @subpackage $this->subpackage");
 		}
+
+        $this->appendLine('from __future__ import absolute_import');
+        $this->appendLine('');
 		
 		if ($pluginName != '')
 		{
-			$this->appendLine('from Core import *');
+			$this->appendLine('from .Core import *');
 
 			$dependencyNodes = $xpath->query("/xml/plugins/plugin[@name = '$pluginName']/dependency");
 			foreach($dependencyNodes as $dependencyNode)
-				$this->appendLine('from ' .
+				$this->appendLine('from .' .
 					ucfirst($dependencyNode->getAttribute("pluginName")) . 
 					' import *');
 		}

@@ -42,6 +42,7 @@
     <Compile Include="KalturaFiles.cs" />
     <Compile Include="KalturaMultiResponse.cs" />
     <Compile Include="KalturaObjectBase.cs" />
+    <Compile Include="KalturaObjectFactory.cs" />
     <Compile Include="KalturaServiceActionCall.cs" />
     <Compile Include="KalturaServiceBase.cs" />
     <Compile Include="IKalturaLogger.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="KalturaConfiguration.cs" />
     <Compile Include="KalturaParam.cs" />
     <Compile Include="KalturaParams.cs" />
+    <Compile Include="KalturaPublishEventArgs.cs" />
     <Compile Include="KalturaStringEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

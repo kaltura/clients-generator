@@ -4,24 +4,27 @@ The code in this repo is used to auto generate the Kaltura client libraries for 
 [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 
 ## Deployment Instructions
-The list of supported clients is [here] (https://github.com/kaltura/clients-generator/blob/Kajam-11.18.0/config/generator.all.ini)
+The list of supported clients is [here](https://github.com/kaltura/clients-generator/blob/Lynx-12.19.0/config/generator.all.ini)
+
+Download the API scheme XML from http://www.kaltura.com/api_v3/api_schema.php.
+
 To generate one client run:
 ```
-$ php /opt/kaltura/clients-generator/exec.php $CLIENT_NAME
+$ php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml $CLIENT_NAME
 ```
 
 For example, to generate php53 run:
 ```
-php /opt/kaltura/clients-generator/exec.php php53
+php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml php53
 ```
 
 To generate all available clients, run:
 ```
-while read CLIENT;do php /opt/kaltura/clients-generator/exec.php $CLIENT;done < /opt/kaltura/clients-generator/config/generator.all.ini
+while read CLIENT;do php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml $CLIENT;done < /opt/kaltura/clients-generator/config/generator.all.ini
 ```
 
 ## Getting started with the API
-To learn how to use the Kaltura API, go to [developer.kaltura.com] (developer.kaltura.com)
+To learn how to use the Kaltura API, go to [developer.kaltura.com](https://developer.kaltura.com/)
 
 ## How you can help (guidelines for contributors) 
 Thank you for helping Kaltura grow! If you'd like to contribute please follow these steps:
@@ -42,4 +45,4 @@ We'd love to hear from you!
 All code in this project is released under the [AGPLv3 license](http://www.gnu.org/licenses/agpl-3.0.html) unless a different license for a particular library is specified in the applicable library path.   
 
 Copyright © Kaltura Inc. All rights reserved.   
-Authors and contributors: See [GitHub contributors list](https://github.com/kaltura/mwEmbed/graphs/contributors).  
+Authors and contributors: See [GitHub contributors list](https://github.com/kaltura/clients-generator/graphs/contributors).  

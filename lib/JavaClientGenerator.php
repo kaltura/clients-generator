@@ -13,7 +13,7 @@ class JavaClientGenerator extends ClientGeneratorFromXml
 	protected $_baseClientPath = "src/main/java/com/kaltura/client";
 	protected $_usePrivateAttributes;
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/java")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "java")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 		$this->_usePrivateAttributes = isset($config->usePrivateAttributes) ? $config->usePrivateAttributes : false;

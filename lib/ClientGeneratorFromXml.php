@@ -5,6 +5,7 @@ abstract class ClientGeneratorFromXml
 	protected $_file = null;
 	protected $_fileName = null;
 	protected $_xmlFile = "";
+	protected $_sourceName = "";
 	protected $_sourcePath = "";
 	protected $_params = array();
 	protected $_licenseBuffer = '';
@@ -15,6 +16,7 @@ abstract class ClientGeneratorFromXml
 	protected $excludeSourcePaths = array();
 	protected $outputPath = null;
 	protected $copyPath = null;
+	protected $testsPath = null;
 	
 	/**
 	 * @var array
@@ -65,12 +67,13 @@ abstract class ClientGeneratorFromXml
 	{
 		$this->_xmlFile = realpath($xmlFile);
 		$this->_config = $config;
-		$this->_sourcePath = realpath($sourcePath);
+		$this->_sourceName = $sourcePath;
+		$this->_sourcePath = realpath("sources/$sourcePath");
 		
 		if (!file_exists($this->_xmlFile))
 			throw new Exception("The file [" . $this->_xmlFile . "] was not found");
 			
-		if (!file_exists($sourcePath))
+		if (!file_exists($this->_sourcePath))
 			throw new Exception("Source path was not found [$sourcePath]");
 
 		$this->_doc = new DOMDocument();
@@ -334,18 +337,42 @@ abstract class ClientGeneratorFromXml
 	public function generate()
 	{
 		if (is_dir($this->_sourcePath))
+		{
+			KalturaLog::info("Copy sources from [$this->_sourcePath]");
 			$this->addSourceFiles($this->_sourcePath, $this->_sourcePath . DIRECTORY_SEPARATOR, "");
+		}
+
+		if ($this->testsPath && is_dir($this->testsPath))
+		{
+			KalturaLog::info("Copy tests from [$this->_sourcePath]");
+			$this->addSourceFiles($this->testsPath, $this->testsPath . DIRECTORY_SEPARATOR, "");
+		}
 	}
 	
 	public function getSourceFilePath($fileName)
 	{
-		return realpath("{$this->_sourcePath}/$fileName");
+		$realpath = realpath("{$this->_sourcePath}/$fileName");
+		if($realpath && file_exists($realpath))
+			return $realpath;
+
+		$realpath = realpath("{$this->testsPath}/$fileName");
+		if($realpath && file_exists($realpath))
+			return $realpath;
+		
+		throw new Exception("File [$fileName] not found");
 	}
 	
 	public function setOutputPath($outputPath, $copyPath)
 	{
 		$this->outputPath = $outputPath;
 		$this->copyPath = $copyPath;
+	}
+	
+	public function setTestsPath($testsDir)
+	{
+		$testsPath = realpath("tests/$testsDir");
+		if(file_exists("$testsPath/{$this->_sourceName}"))
+			$this->testsPath = realpath("$testsPath/{$this->_sourceName}");
 	}
 	
 	public function setParam($key, $value)
@@ -473,15 +500,23 @@ abstract class ClientGeneratorFromXml
 		return ucwords($str); 
 	}
 	
-	protected function camelCaseToUnderscoreAndLower($value)
+	protected function camelCaseToUnderscore($value)
 	{
 		$separator = '_';
 		$matchPattern = array('#(?<=(?:[A-Z]))([A-Z]+)([A-Z][A-z])#', '#(?<=(?:[a-z]))([A-Z])#');
 		$replacement = array('\1' . $separator . '\2', $separator . '\1');
 		$newValue = preg_replace($matchPattern, $replacement, $value);
-		return strtolower($newValue);
-		//$filter = new Zend_Filter_Word_CamelCaseToUnderscore();
-		//return strtolower($filter->filter($value));
+		return $newValue;
+	}
+	
+	protected function camelCaseToUnderscoreAndLower($value)
+	{
+		return strtolower($this->camelCaseToUnderscore($value));
+	}
+	
+	protected function camelCaseToUnderscoreAndUpper($value)
+	{
+		return strtoupper($this->camelCaseToUnderscore($value));
 	}
 	
 	protected function isArrayType($type)

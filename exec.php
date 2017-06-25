@@ -54,9 +54,11 @@ require_once(__DIR__ . "/lib/AndroidClientGenerator.php");
 require_once(__DIR__ . "/lib/BpmnClientGenerator.php");
 require_once(__DIR__ . "/lib/CliClientGenerator.php");
 require_once(__DIR__ . "/lib/CSharpClientGenerator.php");
+require_once(__DIR__ . "/lib/CSharp2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ErlangClientGenerator.php");
 require_once(__DIR__ . "/lib/JsClientGenerator.php");
 require_once(__DIR__ . "/lib/NodeClientGenerator.php");
+require_once(__DIR__ . "/lib/Node2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ObjCClientGenerator.php");
 require_once(__DIR__ . "/lib/Php4ClientGenerator.php");
 require_once(__DIR__ . "/lib/Php53ClientGenerator.php");
@@ -73,10 +75,12 @@ require_once(__DIR__ . "/lib/Xml2As3ClientGenerator.php");
 $summaryFileName = 'summary.kinf';
 $tmpXmlFileName = tempnam(sys_get_temp_dir(), 'kaltura.generator.');
 
-$options = getopt('hx:r:', array(
+$options = getopt('hx:r:t:', array(
 	'help',
 	'xml:',
 	'root:',
+	'tests:',
+	'dont-gzip',
 ));
 
 function showHelpAndExit()
@@ -87,12 +91,16 @@ function showHelpAndExit()
 	echo "\t\t-h, --help:   \tShow this help.\n";
 	echo "\t\t-x, --xml:    \tUse XML path or URL as source XML.\n";
 	echo "\t\t-r, --root:   \tRoot path, default is /opt/kaltura.\n";
+	echo "\t\t-t, --tests:  \tUse different tests configuration, valid values are OVP or OTT, default is OVP.\n";
+	echo "\t\t--dont-gzip:  \tTar the packages without gzip.\n";
 	
 	exit;
 }
 
 $schemaXmlPath = null;
 $rootPath = realpath('/opt/kaltura');
+$testsDir = 'ovp';
+$gzip = true;
 foreach($options as $option => $value)
 {
 	if($option == 'h' || $option == 'help')
@@ -106,6 +114,14 @@ foreach($options as $option => $value)
 	elseif($option == 'r' || $option == 'root')
 	{
 		$rootPath = $value;
+	}
+	elseif($option == 't' || $option == 'tests')
+	{
+		$testsDir = strtolower($value);
+	}
+	elseif($option == 'dont-gzip')
+	{
+		$gzip = false;
 	}
 	array_shift($argv);
 }	 
@@ -176,10 +192,16 @@ $apiVersion = $documentElement->getAttribute("apiVersion");
 $generatedDate = date('d-m-Y', $documentElement->getAttribute("generatedDate"));
 KalturaLog::info("Generating from api version: $apiVersion, generated at: $generatedDate");
 
-$generatedClients = array(
+if (file_exists($outputPathBase."/".$summaryFileName)){
+    $generatedClients=unserialize(file_get_contents($outputPathBase."/".$summaryFileName));
+    $generatedClients['generatedDate']=$generatedDate;
+    $generatedClients['apiVersion']=$apiVersion;
+}else{
+    $generatedClients = array(
 	'generatedDate' => $generatedDate,
 	'apiVersion' => $apiVersion,
-);
+    );
+}
 
 // Loop through the config.ini and generate the client libraries -
 foreach($config as $name => $item)
@@ -289,6 +311,7 @@ foreach($config as $name => $item)
 		
 	KalturaLog::info("Generate client library [$name]");
 	$instance->setOutputPath($outputPath, $copyPath);
+	$instance->setTestsPath($testsDir);
 	$instance->generate();
 	
 	KalturaLog::info("Saving client library to [$outputPath]");
@@ -301,7 +324,7 @@ foreach($config as $name => $item)
 	
 	//tar gzip the client library
 	if (!$shouldNotPackage) 
-		createPackage($outputPath, $name, $generatedDate);
+		createPackage($outputPath, $name, $generatedDate, $gzip);
 		
 	KalturaLog::info("$name generated successfully");
 }
@@ -325,7 +348,7 @@ function fixPath($path)
  * @param $outputPath 		The path the client library files are located at.
  * @param $generatorName	The name of the client library.
  */
-function createPackage($outputPath, $generatorName, $generatedDate)
+function createPackage($outputPath, $generatorName, $generatedDate, $gzip)
 {
 	KalturaLog::info("Trying to package");
 	$output = shell_exec("tar --version");
@@ -337,7 +360,8 @@ function createPackage($outputPath, $generatorName, $generatedDate)
 	{
 		$fileName = "{$generatorName}_{$generatedDate}.tar.gz";
 		$gzipOutputPath = "../".$fileName;
-		$cmd = "tar -czf \"$gzipOutputPath\" ../".$generatorName;
+		$options = $gzip ? '-czf' : '-cf';
+		$cmd = "tar $options \"$gzipOutputPath\" ../".$generatorName;
 		$oldDir = getcwd();
 		
 		$outputPath = realpath($outputPath);

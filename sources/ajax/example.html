@@ -6,12 +6,11 @@
 <script src="KalturaClient.min.js"></script>
 <script src="KalturaSessionService.min.js"></script>
 <script src="KalturaMediaService.min.js"></script>
+<script src="KalturaUploadTokenService.min.js"></script>
 <script type="text/javascript">
 
-	var config = new KalturaConfiguration(1676801);
-	config.serviceUrl = "http://www.kaltura.com";
 	
-	var client = new KalturaClient(config);
+	var client;
 
 	var session_start_cb = function (success, ks){
 		if(!success)
@@ -19,16 +18,24 @@
 	
 		client.setKs(ks);
 		document.getElementById("ks").value = ks;
+		alert("Seesion started: " + ks);
 	};
 
 	function session_start(){
+		var config = new KalturaConfiguration(document.getElementById("partnerId").value);
+		config.serviceUrl = "http://www.kaltura.com";
+		
+		client = new KalturaClient(config);
+		
 		var secret = document.getElementById("secret").value;
 		var userId = null;
 		var type = 0; // KalturaSessionType.USER
 		var partnerId = document.getElementById("partnerId").value;
 		var expiry = null;
 		var privileges = null;
-		KalturaSessionService.start(secret, userId, type, partnerId, expiry, privileges).execute(client, session_start_cb);
+		KalturaSessionService.start(secret, userId, type, partnerId, expiry, privileges)
+			.completion(session_start_cb)
+			.execute(client);
 	}
 	
 	var media_add_cb = function (success, entry){
@@ -36,7 +43,8 @@
 			alert(entry.message);
 		
 		document.getElementById("entryId").value = entry.id;
-	};
+		alert("Entry created: " + entry.id);
+	}
 
 	function media_add(){
 		var entry = {
@@ -46,12 +54,40 @@
 			description: document.getElementById("description").value,
 		}
 
-		KalturaMediaService.add(entry).execute(client, media_add_cb);
+		KalturaMediaService.add(entry)
+			.completion(media_add_cb)
+			.execute(client);
+	}
+
+	function upload(){
+		
+		var filepath = document.getElementById("fileData").value;
+		var filename = filepath.replace(/^.*[\\\/]/, '');
+		
+		var uploadToken = {
+			objectType: "KalturaUploadToken",
+			fileName: filename
+		}
+
+		KalturaUploadTokenService.add(uploadToken)
+			.completion(upload_token_add_cb)
+			.execute(client);
+	}
+
+	function upload_token_add_cb(success, uploadToken){
+		KalturaUploadTokenService.upload(uploadToken.id, document.getElementById("fileData"))
+			.completion(upload_token_upload_cb)
+			.execute(client);
+	}
+
+	function upload_token_upload_cb(success, uploadToken){
+		alert('File uploaded');
 	}
 
 	function media_delete(){
 		var entryId = document.getElementById("entryId").value;		
-		KalturaMediaService.deleteAction(entryId).execute(client);
+		KalturaMediaService.deleteAction(entryId)
+			.execute(client);
 	}
 
 	function media_delete_error_with_cb(){
@@ -79,13 +115,18 @@
 			description: document.getElementById("description").value,
 		}
 
-		var addRequestBuilder = KalturaMediaService.add(entry).completion(media_add_cb);
-		var deleteRequestBuilder = KalturaMediaService.deleteAction("{1:result:id}").completion(function(success, error){
-			if(!success)
-				alert(error.message);
-		});
-		
-		addRequestBuilder.add(deleteRequestBuilder).execute(client);
+		KalturaMediaService.add(entry)
+			.completion(media_add_cb)
+			.add(KalturaMediaService.deleteAction("{1:result:id}")
+				.completion(function(success, error){
+					if(!success) {
+						alert(error.message);
+					}
+					else {
+						alert("Entry deleted");
+					}
+				}))
+			.execute(client);
 	}
 
 	function multirequest_single_callback(){
@@ -96,20 +137,27 @@
 			description: document.getElementById("description").value,
 		}
 
-		var addRequestBuilder = KalturaMediaService.add(entry);
-		var deleteRequestBuilder = KalturaMediaService.deleteAction("{1:result:id}").completion();
-		
-		addRequestBuilder.add(deleteRequestBuilder).execute(client, function(success, results){
-			if(results.message) // general transport error
-				alert(results.message);
-			
-			for(var i = 0; i < results.length; i++){
-				if(results[i] && typeof(results[i]) == 'object' && results[i].code && results[i].message) // request error 
-					alert(results[i].message);
-				else if(i == 0) // media.add
-					document.getElementById("entryId").value = results[i].id;
-			}
-		});
+		KalturaMediaService.add(entry)
+			.add(KalturaMediaService.deleteAction("{1:result:id}"))
+			.execute(client, function(success, results){
+				if(results.message) { // general transport error
+					alert(results.message);
+					return;
+				}
+				
+				for(var i = 0; i < results.length; i++){
+					if(results[i] && typeof(results[i]) == 'object' && results[i].code && results[i].message) { // request error
+						alert(results[i].message);
+					}
+					else if(i == 0) { // media.add
+						document.getElementById("entryId").value = results[i].id;
+						alert("Entry created: " + results[i].id);
+					}
+					else {
+						alert("Entry deleted");
+					}
+				}
+			});
 	}
 
 	function multirequest_different_style(){
@@ -132,10 +180,16 @@
 				alert(results.message);
 			
 			for(var i = 0; i < results.length; i++){
-				if(results[i] && results[i].message) // request error 
+				if(results[i] && results[i].message) { // request error 
 					alert(results[i].message);
-				else if(i == 0) // media.add
+				}
+				else if(i == 0) { // media.add
 					document.getElementById("entryId").value = results[i].id;
+					alert("Entry created: " + results[i].id);
+				}
+				else {
+					alert("Entry deleted");
+				}
 			}
 		});
 	}
@@ -172,6 +226,12 @@
 			<td align="center" colspan="2">
 				<input type="button" onclick="media_add()" value="media.add" />
 				<input type="button" onclick="media_delete()" value="media.delete" />
+			</td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2">
+				<input type="file" id="fileData" name="filedata" />
+				<input type="button" onclick="upload()" value="upload" />
 			</td>
 		</tr>
 	</table>

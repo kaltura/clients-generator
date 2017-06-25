@@ -443,6 +443,7 @@ class Base
 	public function setRequestConfiguration(\Kaltura\Client\Type\RequestConfiguration $configuration)
 	{
 		$params = get_class_vars('\Kaltura\Client\Type\RequestConfiguration');
+		$params = array_keys($params);
 		foreach($params as $param)
 		{
 			if(is_null($configuration->$param))

@@ -3,7 +3,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 {
 	private $formAction = '../';
 	
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "sources/testme")
+	function __construct($xmlPath, Zend_Config $config, $sourcePath = "testme")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
 		if($config->formAction)
@@ -284,11 +284,24 @@ class TestmeGenerator extends ClientGeneratorFromXml
 				$paramType = $enumType;
 			
 			$xpath = new DOMXPath($this->_doc);
-			$classNodes = $xpath->query("/xml/classes/class[@name='$paramType']");
+			$isArray = false;
+			if (($paramType == 'array' || $paramType == 'map') && $paramNode->hasAttribute("arrayType"))
+			{
+				$isArray = true;
+				$paramArrayType = $paramNode->getAttribute('arrayType');
+				$classNodes = $xpath->query("/xml/classes/class[@name='$paramArrayType']");
+			}
+			else
+				$classNodes = $xpath->query("/xml/classes/class[@name='$paramType']");
 			$classNode = $classNodes->item(0);
 			if($classNode)
 			{
 				$paramData = $this->getClassJson($classNode);
+				if ($isArray)
+				{
+					$paramData['arrayType'] = $this->getClassJson($classNode);
+					$paramData['isArray'] = true;
+				}
 			}
 			else 
 			{
