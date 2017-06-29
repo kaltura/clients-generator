@@ -1,5 +1,7 @@
 package com.kaltura.client.utils.request;
 
+import java.util.HashMap;
+
 import com.kaltura.client.Client;
 import com.kaltura.client.Files;
 import com.kaltura.client.Params;
@@ -15,10 +17,6 @@ public class RequestBuilder<T> extends BaseRequestBuilder<T> {
     String service;
     String action;
 
-    public RequestBuilder(Class<T> type) {
-    	super(type);
-    }
-
     public RequestBuilder(Class<T> type, String service, String action, Params params, Files files) {
         super(type, params, files);
         this.service = service;
@@ -26,21 +24,19 @@ public class RequestBuilder<T> extends BaseRequestBuilder<T> {
     }
 
     public RequestBuilder(Class<T> type, String service, String action, Params params) {
-        super(type, params);
-        this.service = service;
-        this.action = action;
+        this(type, service, action, params, null);
+    }
+    
+    public RequestBuilder(Class<T> type) {
+        this(type, null, null, null);
     }
 
     public RequestBuilder(String service, String action, Params params, Files files) {
-        super(params, files);
-        this.service = service;
-        this.action = action;
+        this(null, service, action, params, files);
     }
 
     public RequestBuilder(String service, String action, Params params) {
-        super(params);
-        this.service = service;
-        this.action = action;
+        this(service, action, params, null);
     }
 
     //@Override

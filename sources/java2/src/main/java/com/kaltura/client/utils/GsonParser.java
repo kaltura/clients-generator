@@ -47,6 +47,25 @@ public class GsonParser {
     public static <T> T parseObject(String result, Class<T> clz) throws APIException {
         JsonParser jsonParser = new JsonParser();
         JsonElement jsonElement = jsonParser.parse(result);
+        
+        if(jsonElement.isJsonPrimitive()) {
+        	if(clz == String.class) {
+        		return (T)jsonElement.getAsString();
+        	}
+        	if(clz == Integer.class) {
+        		return (T)(Integer)jsonElement.getAsInt();
+        	}
+        	if(clz == Long.class) {
+        		return (T)(Long)jsonElement.getAsLong();
+        	}
+        	if(clz == Boolean.class) {
+        		return (T)(Boolean)jsonElement.getAsBoolean();
+        	}
+        	if(clz == Double.class) {
+        		return (T)(Double)jsonElement.getAsDouble();
+        	}
+        }
+        
     	return parseObject(jsonElement.getAsJsonObject(), clz);
     }
 

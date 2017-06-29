@@ -1,5 +1,7 @@
 package com.kaltura.client.utils.request;
 
+import java.util.HashMap;
+
 import com.kaltura.client.Files;
 import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;

@@ -1,6 +1,7 @@
 package com.kaltura.client.utils.request;
 
 
+import com.kaltura.client.Files;
 import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.util.HashMap;
@@ -19,6 +20,8 @@ public interface RequestElement {
     String getBody();
 
     String getTag();
+
+    Files getFiles();
 
     HashMap<String, String> getHeaders();
 

@@ -28,10 +28,11 @@
 package com.kaltura.client.test;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -52,6 +53,7 @@ import com.kaltura.client.enums.SessionType;
 import com.kaltura.client.services.MediaService;
 import com.kaltura.client.services.UploadTokenService;
 import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.GeoTimeLiveStats;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.types.UploadedFileTokenResource;
@@ -66,17 +68,28 @@ public class BaseTest extends TestCase {
 	protected Client client;
 	
 	// keeps track of test vids we upload so they can be cleaned up at the end
-	protected List<String> testIds = new ArrayList<String>();
+	protected List<String> testIds = Collections.synchronizedList(new ArrayList<String>());
 
 	protected boolean doCleanup = true;
 	private ExecutorService executor;
 
 	private static ILogger logger = Logger.getLogger(BaseTest.class);
 
+	protected class CompletionException extends Exception {
+		
+		public CompletionException(String message) {
+			super(message);
+		}
+		
+		@Override
+		public String toString() {
+			return getMessage();
+		}
+	}
+	
 	protected class Completion{
 		
 		private CompletableFuture future;
-		private Exception error = null;
 		
 		public Completion() {
 			future = new CompletableFuture();
@@ -84,7 +97,7 @@ public class BaseTest extends TestCase {
 		
 		public void run(Runnable runnable) throws InterruptedException, ExecutionException {
 			executor.submit(runnable);
-			future.get();
+			Exception error = (Exception) future.get();
 
 			if(error != null) {
 				throw new AssertionError(error);
@@ -92,30 +105,52 @@ public class BaseTest extends TestCase {
 		}
 		
 		public void complete() {
-			future.complete(true);
+			future.complete(null);
 		}
 		
-		public void fail() {
-			future.complete(false);
-			error = new Exception("Test failed");
-			throw new RuntimeException("Test failed");
+		public void fail(String message) {
+			future.complete(new CompletionException(message));
+			throw new RuntimeException(message);
 		}
 		
 		public void assertTrue(boolean condition) {
+			this.assertTrue(condition, null);
+		}
+		
+		public void assertTrue(boolean condition, String message) {
 			if(!condition) {
-				this.fail();
+				this.fail(message);
 			}
 		}
 		
+		public void assertNull(Exception exception) {
+			if(exception == null) {
+				return;
+			}
+			this.assertTrue(false, exception.getMessage());
+		}
+		
 		public void assertNull(Object object) {
-			this.assertTrue(object == null);
+			this.assertNull(object, null);
+		}
+		
+		public void assertNull(Object object, String message) {
+			this.assertTrue(object == null, message);
+		}
+		
+		public void assertNotNull(Object object, String message) {
+			this.assertTrue(object != null, message);
 		}
 		
 		public void assertNotNull(Object object) {
-			this.assertTrue(object != null);
+			this.assertNotNull(object, null);
 		}
 
 		public void assertEquals(int expected, int actual) {
+			this.assertTrue(expected == actual);
+		}
+
+		public void assertEquals(long expected, long actual) {
 			this.assertTrue(expected == actual);
 		}
 
@@ -151,30 +186,16 @@ public class BaseTest extends TestCase {
 				logger.info("Deleting " + id);
 			}
 
-			final Completion completion = new Completion();
-			completion.run(new Runnable() {
+			RequestBuilder<Void> requestBuilder = MediaService.delete(id)
+			.setCompletion(new OnCompletion<Void>() {
+
 				@Override
-				public void run() {
-					getProcessedEntry(completion, id, new OnCompletion<MediaEntry>() {
-		
-						@Override
-						public void onComplete(MediaEntry response, APIException error) {
-							assertNull(error);
-		
-							RequestBuilder<Void> requestBuilder = MediaService.delete(response.getId())
-							.setCompletion(new OnCompletion<Void>() {
-		
-								@Override
-								public void onComplete(Void response, APIException error) {
-									assertNull(error);
-								}
-							});
-							APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
-						}
-					});
+				public void onComplete(Void response, APIException error) {
+					assertNull(error);
 				}
 			});
-		} //next id
+			APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		}
 	}
 	
 	
@@ -205,11 +226,11 @@ public class BaseTest extends TestCase {
 		entry.setMediaType(MediaType.IMAGE);
 		entry.setReferenceId(getUniqueString());
 		
-		final InputStream fileData;
-		final int fileSize;
+		final File fileData;
+		final long fileSize;
 		try {
-			fileData = TestUtils.getTestImage();
-			fileSize = fileData.available();
+			fileData = TestUtils.getTestImageFile();
+			fileSize = fileData.length();
 		} catch (IOException e) {
 			fail(e.getMessage());
 			return;
@@ -246,24 +267,21 @@ public class BaseTest extends TestCase {
 								completion.assertNotNull(entry);
 								
 								// upload
-//								TODO
-//								RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, testConfig.getUploadImage(), fileSize, false)
-//								.setCompletion(new OnCompletion<UploadToken>() {
-//
-//									@Override
-//									public void onComplete(UploadToken token, APIException error) {
-//										completion.assertNull(error);
-//										completion.assertNotNull(token);
-//												
-//										testIds.add(entry.getId());
-//										MediaService.get(entry.getId());
-//										
-//										onCompletion.onComplete(entry, null);
-//									}
-//								});
-//								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+								RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
+								.setCompletion(new OnCompletion<UploadToken>() {
 
-								onCompletion.onComplete(entry, null);
+									@Override
+									public void onComplete(UploadToken token, APIException error) {
+										completion.assertNull(error);
+										completion.assertNotNull(token);
+												
+										testIds.add(entry.getId());
+										MediaService.get(entry.getId());
+										
+										onCompletion.onComplete(entry, null);
+									}
+								});
+								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 							}
 						});
 						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));

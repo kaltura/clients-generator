@@ -33,6 +33,7 @@ public class FileHolder implements Serializable {
     private long size;
     private File file;
     private InputStream inputStream;
+	private String mimeType;
 
     /**
      * Create a KF from a File object
@@ -48,6 +49,12 @@ public class FileHolder implements Serializable {
         this.file = file;
         this.name = this.file.getName();
         this.size = this.file.length();
+        
+        try {
+			this.mimeType = this.file.toURI().toURL().openConnection().getContentType();
+		} catch (IOException e) {
+			this.mimeType = "application/octet-stream";
+		}
     }
 
     /**
@@ -55,7 +62,7 @@ public class FileHolder implements Serializable {
      * @param fileInputStream the file stream (must not be null)
      * @param name the file name
      */
-    public FileHolder(FileInputStream fileInputStream, String name) {
+    public FileHolder(FileInputStream fileInputStream, String mimeType, String name) {
         if (fileInputStream == null) {
             throw new IllegalArgumentException("fileInputStream must be set");
         }
@@ -64,6 +71,7 @@ public class FileHolder implements Serializable {
         }
         this.inputStream = fileInputStream;
         this.name = name;
+        this.mimeType = mimeType;
         try {
             this.size = fileInputStream.getChannel().size();
         } catch (IOException e) {
@@ -78,7 +86,7 @@ public class FileHolder implements Serializable {
      * @param name the file name
      * @param size the file size
      */
-    public FileHolder(InputStream inputStream, String name, long size) {
+    public FileHolder(InputStream inputStream, String mimeType, String name, long size) {
         if (inputStream == null) {
             throw new IllegalArgumentException("fileInputStream must be set");
         }
@@ -90,6 +98,7 @@ public class FileHolder implements Serializable {
         }
         this.inputStream = inputStream;
         this.name = name;
+        this.mimeType = mimeType;
         this.size = size;
     }
 
@@ -112,6 +121,13 @@ public class FileHolder implements Serializable {
      */
     public long getSize() {
         return size;
+    }
+
+    /**
+     * @return the mime-type this file
+     */
+    public String getMimeType() {
+        return mimeType;
     }
 
     /**

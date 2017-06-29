@@ -23,7 +23,7 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
     protected String id;
     protected String url;
     protected Params params;
-    protected Files files;
+    protected Files files = null;
     protected HashMap<String, String> headers;
     private ConnectionConfiguration connectionConfig;
 
@@ -32,31 +32,27 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
      */
     protected OnCompletion<T> onCompletion;
 
-
-
-    protected BaseRequestBuilder(Class<T> type) {
-    	this.type = type;
-        this.params = new Params();
-    }
-
-    protected BaseRequestBuilder(Class<T> type, Params params) {
-    	this.type = type;
-        this.params = params;
-    }
-
     protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
-    	this(type, params);
-    }
-
-    protected BaseRequestBuilder(Params params) {
+    	this.type = type;
         this.params = params;
-    }
-
-    protected BaseRequestBuilder(Params params, Files files) {
-        this(params);
         this.files = files;
     }
 
+    protected BaseRequestBuilder(Class<T> type, Params params) {
+    	this(type, params, null);
+    }
+    
+    protected BaseRequestBuilder(Class<T> type) {
+    	this(type, null);
+    }
+
+    protected BaseRequestBuilder(Params params, Files files) {
+    	this(null, params, files);
+    }
+
+    protected BaseRequestBuilder(Params params) {
+    	this(null, params);
+    }
 
     public abstract String getUrlTail();
 
@@ -96,6 +92,11 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
     @Override
     public HashMap<String, String> getHeaders() {
         return headers;
+    }
+
+    @Override
+    public Files getFiles() {
+        return files;
     }
 
     public void setHeaders(HashMap<String, String> headers) {
@@ -185,6 +186,9 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
     }
     
     protected Object parse(String response) throws APIException {
+    	if(response.length() == 0 || response.toLowerCase().equals("null")) {
+    		return null;
+    	}
     	return GsonParser.parseObject(response, type);
     }
     
@@ -202,7 +206,7 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
         return this;
     }
 
-    private void prepareHeaders(ConnectionConfiguration config) {
+    protected void prepareHeaders(ConnectionConfiguration config) {
         if (headers == null) {
             headers = new HashMap<String, String>();
         }

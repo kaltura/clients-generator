@@ -17,17 +17,18 @@ public class ServeRequestBuilder extends RequestBuilder<String> {
 
 	@Override
     public String getMethod() {
-    	return "GEt";
+    	return "GET";
     }
 
     @Override
     public String getBody() {
-        return "";
+        return null;
     }
 
 	@Override
     public RequestElement build(final Client client, boolean addSignature) {
 		Params kParams = prepareParams(client, true);
+		prepareHeaders(client.getConnectionConfiguration());
 
 		url = client.getConnectionConfiguration().getEndpoint() + "api_v3";
 		url += "/service/" + service + "/action/" + action;

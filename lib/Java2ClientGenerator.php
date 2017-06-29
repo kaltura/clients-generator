@@ -680,8 +680,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				$fileOverloads = array(   
 					array('' => 'FileHolder'),
 					array('' => 'File'),
-					array('' => 'InputStream', 'Name' => 'String', 'Size' => 'long'),
-					array('' => 'FileInputStream', 'Name' => 'String'),
+					array('' => 'InputStream', 'MimeType' => 'String', 'Name' => 'String', 'Size' => 'long'),
+					array('' => 'FileInputStream', 'MimeType' => 'String', 'Name' => 'String'),
 				);
 			}
 			else

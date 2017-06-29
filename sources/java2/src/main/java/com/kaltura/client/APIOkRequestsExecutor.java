@@ -1,7 +1,10 @@
 package com.kaltura.client;
 
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -18,11 +21,17 @@ import okhttp3.ConnectionPool;
 import okhttp3.Dispatcher;
 import okhttp3.Headers;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.MultipartBody.Builder;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.Util;
 import okio.Buffer;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 /**
  * @hide
@@ -80,6 +89,42 @@ public class APIOkRequestsExecutor implements RequestQueue {
 			return UUID.randomUUID().toString() + "::" + (factor!=null ? factor : System.currentTimeMillis());
 		}
     };
+    
+    private static class InputStreamRequestBody extends RequestBody {
+
+    	private InputStream inputStream;
+		private MediaType mediaType;
+
+		public InputStreamRequestBody(MediaType mediaType, InputStream inputStream) {
+    		this.mediaType = mediaType;
+    		this.inputStream = inputStream;
+    	}
+    	
+		@Override
+		public MediaType contentType() {
+			return mediaType;
+		}
+
+        @Override
+        public long contentLength() {
+            try {
+                return inputStream.available();
+            } catch (IOException e) {
+                return 0;
+            }
+        }
+
+        @Override
+        public void writeTo(BufferedSink sink) throws IOException {
+            Source source = null;
+            try {
+                source = Okio.source(inputStream);
+                sink.writeAll(source);
+            } finally {
+                Util.closeQuietly(source);
+            }
+        }
+    }
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
@@ -150,7 +195,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     @Override
     public String queue(final RequestElement requestElement) {
-        final Request request = buildRestRequest(requestElement, BodyBuilder.Default);
+        final Request request = buildRestRequest(requestElement);
         return queue(request, requestElement);
     }
 
@@ -202,7 +247,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     @Override
     public ResponseElement execute(RequestElement request) {
         try {
-            Response response = getOkClient(request.config()).newCall(buildRestRequest(request, BodyBuilder.Default)).execute();
+            Response response = getOkClient(request.config()).newCall(buildRestRequest(request)).execute();
             return onGotResponse(response, request);
 
         } catch (IOException e) {
@@ -305,15 +350,38 @@ public class APIOkRequestsExecutor implements RequestQueue {
         };
     }
 
-    private Request buildRestRequest(RequestElement request, BodyBuilder bodyBuilder) {
+    private Request buildRestRequest(RequestElement request) {
 
+    	RequestBody body;
+    	Files files = request.getFiles();
+    	if(files == null) {
+	        body = BodyBuilder.Default.build(request);
+    	}
+    	else {
+    		Builder bodyBuilder = new MultipartBody.Builder()
+	        .setType(MultipartBody.FORM)
+	        .addFormDataPart("json", request.getBody());
+    		
+    		for(String fieldName : files.keySet()) {
+    			FileHolder fileHolder = files.get(fieldName);
+    			MediaType mediaType = MediaType.parse(fileHolder.getMimeType()); 
+    			
+    			if(fileHolder.getFile() != null) { 
+    				bodyBuilder.addFormDataPart(fieldName, fileHolder.getName(), RequestBody.create(mediaType, fileHolder.getFile()));
+    			}
+    			else if(fileHolder.getInputStream() != null) {
+    				bodyBuilder.addFormDataPart(fieldName, fileHolder.getName(), new InputStreamRequestBody(mediaType, fileHolder.getInputStream()));
+    			}
+    		}
+    		body = bodyBuilder.build();
+    	}
+    	
         String url = request.getUrl();
 
         if (enableLogs) {
 //            Log.d(TAG, "request url: " + url + "\nrequest body:\n" + request.getBody() + "\n");
         }
 
-        RequestBody body = bodyBuilder.build(request);// RequestBody.create(JSON_MediaType, action.getBody().getBytes());
 
         return new Request.Builder()
                 .headers(Headers.of(request.getHeaders()))
