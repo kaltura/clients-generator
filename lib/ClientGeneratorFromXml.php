@@ -459,6 +459,12 @@ abstract class ClientGeneratorFromXml
 		if (is_dir($directory)){
 		    $dir = dir($directory);
 		}
+		
+		if(!$dir)
+		{
+			return;
+		}
+		
 		//                                                         
 		$sourceFilesPaths = array();
 		while (get_class($dir)==='Directory' && (false !== $entry = $dir->read())) 
