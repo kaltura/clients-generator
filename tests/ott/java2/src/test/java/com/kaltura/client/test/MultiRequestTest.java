@@ -1,16 +1,23 @@
 package com.kaltura.client.test;
 
 import com.app.DataFactory;
-import com.kaltura.client.enums.KalturaAssetReferenceType;
-import com.kaltura.client.services.KalturaAssetService;
-import com.kaltura.client.services.KalturaOttUserService;
-import com.kaltura.client.types.KalturaAsset;
-import com.kaltura.client.types.KalturaLoginResponse;
-import com.kaltura.client.utils.request.KalturaMultiRequestBuilder;
-import com.kaltura.client.utils.request.KalturaRequestBuilder;
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.enums.AssetReferenceType;
+import com.kaltura.client.services.AssetService;
+import com.kaltura.client.services.OttUserService;
+import com.kaltura.client.test.TestCommon.Completion;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.LoginResponse;
+import com.kaltura.client.types.OTTUser;
+import com.kaltura.client.utils.request.MultiRequestBuilder;
+import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
-import com.kaltura.client.utils.response.base.GeneralResponse;
-import com.kaltura.client.utils.response.base.MultiResponse;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.Test;
 
 /**
@@ -19,63 +26,65 @@ import org.junit.Test;
 public class MultiRequestTest extends TestCommon {
 
     @Test
-    public void testMultiRequest() {
+    public void testMultiRequest() throws InterruptedException, ExecutionException {
         logger.info("testMultiRequest\n");
 
-        DataFactory.UserLogin userLogin = DataFactory.getUser();
-        KalturaRequestBuilder loginReq = KalturaOttUserService.login(PartnerId, userLogin.username, userLogin.password).setCompletion(new OnCompletion<GeneralResponse<KalturaLoginResponse>>() {
-            @Override
-            public void onComplete(GeneralResponse<KalturaLoginResponse> response) {
-                logger.debug("onComplete login request [" + response.getRequestId() + "] :\n" + response.toString());
-                if (response.isSuccess()) {
-                    kalturaClient.setKs(response.getResult().getLoginSession().getKs());
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				final AtomicInteger counter = new AtomicInteger(0);
+		        DataFactory.UserLogin userLogin = DataFactory.getUser();
+		        
+		        RequestBuilder<LoginResponse> ottUserLoginRequestBuilder = OttUserService.login(PartnerId, userLogin.username, userLogin.password)
+		        .setCompletion(new OnCompletion<LoginResponse>() {
+					
+					@Override
+					public void onComplete(LoginResponse loginResponse, APIException error) {
+						completion.assertNull(error);
+						counter.incrementAndGet();						
+					}
+				});
 
-                    String reqId = actionsQueue.queue(KalturaAssetService.get(MediaId, KalturaAssetReferenceType.MEDIA).setCompletion(new OnCompletion<GeneralResponse<KalturaAsset>>() {
-                        @Override
-                        public void onComplete(GeneralResponse<KalturaAsset> response) {
-                            assertTrue(response.isSuccess());
-                            logger.debug("onComplete request get asset [" + response.getRequestId() + "] " + response.getResult().getName() + " info\n" + response.getResult().toParams().toString());
+                RequestBuilder<Asset> assetGetRequestBuilder = AssetService.get(MediaId, AssetReferenceType.MEDIA)
+                .setCompletion(new OnCompletion<Asset>() {
+					
+					@Override
+					public void onComplete(Asset asset, APIException error) {
+						completion.assertNull(error);
+						counter.incrementAndGet();
+					}
+				});
 
-
-                        }
-                    }).build(kalturaClient));
-                } else {
-                    logger.error("Failed on testMultiRequest: loginReq failed");
-                }
-
-            }
-        });
-
-        KalturaRequestBuilder userInfoReq = KalturaOttUserService.get().setCompletion(new OnCompletion() {
-            @Override
-            public void onComplete(Object response) {
-                logger.debug("onComplete request get user info:\n" + response.toString());
-            }
-        });
-
-        KalturaMultiRequestBuilder kalturaMultiRequestBuilder = new KalturaMultiRequestBuilder(loginReq, userInfoReq)
-                .link(loginReq, userInfoReq, "loginSession.ks", "ks")
-                .setCompletion(  // will be activated when request returns with response
-                        new OnCompletion<GeneralResponse<MultiResponse>>() {
-                            @Override
-                            public void onComplete(GeneralResponse<MultiResponse> response) {
-                                logger.debug("onComplete multirequest ["+response.getRequestId()+"] - one total completion  \n" + response.toString());
-
-                                assertTrue(response.isSuccess());
-                                assertNotNull(response.getResult());
-                                assertEquals(response.getResult().size(), 3);
-                                resume();
-                            }
-                        })
-                // addition of multirequest to another, adds its inner requests.
-                .add(new KalturaMultiRequestBuilder(KalturaAssetService.get(MediaId2, KalturaAssetReferenceType.MEDIA)
-                           .setParam("ks", "1:result:loginSession:ks")));
-
-        String mReqId = actionsQueue.queue(kalturaMultiRequestBuilder.build(kalturaClient));
-        logger.debug("creating multirequest [" + mReqId + "] one completion: login + userInfo + assetInfo");
-        assertNotNull(mReqId);
-        assertNotSame(mReqId, "");
-        wait(1);
+                RequestBuilder<OTTUser> ottUserGetRequestBuilder = OttUserService.get()
+                .setCompletion(new OnCompletion<OTTUser>() {
+					
+					@Override
+					public void onComplete(OTTUser response, APIException error) {
+						completion.assertNull(error);
+						counter.incrementAndGet();
+					}
+				});
+		        
+                MultiRequestBuilder requestBuilder = new MultiRequestBuilder(ottUserLoginRequestBuilder, assetGetRequestBuilder, ottUserGetRequestBuilder);
+                requestBuilder.link(ottUserLoginRequestBuilder, assetGetRequestBuilder, "loginSession.ks", "ks");
+                requestBuilder.link(ottUserLoginRequestBuilder, ottUserGetRequestBuilder, "loginSession.ks", "ks");
+                
+                requestBuilder.setCompletion(new OnCompletion<List<Object>>() {
+					
+					@Override
+					public void onComplete(List<Object> multi, APIException error) {
+						completion.assertNull(error);
+						completion.assertEquals(3, counter.get());
+						completion.assertEquals(3, multi.size());
+		
+						completion.complete();
+						
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
     }
 
 }

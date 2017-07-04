@@ -1,13 +1,20 @@
 package com.kaltura.client.test;
 
 import com.app.DataFactory;
-import com.kaltura.client.services.KalturaOttUserService;
-import com.kaltura.client.types.KalturaLoginResponse;
-import com.kaltura.client.types.KalturaOTTUser;
-import com.kaltura.client.utils.request.KalturaRequestBuilder;
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.services.FavoriteService;
+import com.kaltura.client.services.OttUserService;
+import com.kaltura.client.test.TestCommon.Completion;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.Favorite;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.LoginResponse;
+import com.kaltura.client.types.OTTUser;
+import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
-import com.kaltura.client.utils.response.ResponseType;
-import com.kaltura.client.utils.response.base.GeneralResponse;
+
+import java.util.concurrent.ExecutionException;
+
 import org.junit.Test;
 
 /**
@@ -19,39 +26,78 @@ public class SingleRequestTest extends TestCommon{
     /**
      * synced requests: activates login request and if succeeded, activating another request to fetch user data
      */
-    public void testRequestWithinRequest(){
+    public void testRequestWithinRequest() throws InterruptedException, ExecutionException{
         logger.info("testLogin");
 
-        DataFactory.UserLogin userLogin = DataFactory.getUser();
-        KalturaRequestBuilder loginReq = KalturaOttUserService.login(PartnerId, userLogin.username, userLogin.password)
-                .setCompletion(new OnCompletion<GeneralResponse<KalturaLoginResponse>>() {
-                    @Override
-                    public void onComplete(GeneralResponse<KalturaLoginResponse> response) {
-                        logger.debug("onComplete login request [" + response.getRequestId() + "] :\n" + response.toString());
-                        if (response.isSuccess()) {
-                            kalturaClient.setKs(response.getResult().getLoginSession().getKs());
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+		        DataFactory.UserLogin userLogin = DataFactory.getUser();
+		        
+		        RequestBuilder<LoginResponse> requestBuilder = OttUserService.login(PartnerId, userLogin.username, userLogin.password)
+		        .setCompletion(new OnCompletion<LoginResponse>() {
+					
+					@Override
+					public void onComplete(LoginResponse loginResponse, APIException error) {
+						completion.assertNull(error);
 
-                            KalturaOTTUser ottUser = response.getResult().getUser();
-                            logger.debug("Hello " + ottUser.getFirstName() + " " + ottUser.getLastName() + ", username: " + ottUser.getUsername() + ", ");
+                        client.setKs(loginResponse.getLoginSession().getKs());
 
-                            logger.debug("fetching user info: ");
-                            actionsQueue.queue(KalturaOttUserService.get().setCompletion(new OnCompletion() {
-                                @Override
-                                public void onComplete(Object response) {
-                                    logger.debug("onComplete request get user info:\n" + response.toString());
-                                    resume();
-                                }
-                            }).build(kalturaClient));
+                        OTTUser ottUser = loginResponse.getUser();
+                        logger.debug("Hello " + ottUser.getFirstName() + " " + ottUser.getLastName() + ", username: " + ottUser.getUsername() + ", ");
 
-                        } else {
-                            logger.error("Failed on testSingleRequest");
-                            assertNotNull(response);
-                            assertTrue(response.getResult() instanceof ResponseType);
-                            resume();
-                        }
-                    }
-        });
-        actionsQueue.queue(loginReq.build(kalturaClient));
-        wait(1);
+                        logger.debug("fetching user info: ");
+                        RequestBuilder<OTTUser> requestBuilder = OttUserService.get()
+                        .setCompletion(new OnCompletion<OTTUser>() {
+							
+							@Override
+							public void onComplete(OTTUser response, APIException error) {
+								completion.assertNull(error);
+								completion.complete();
+							}
+						});
+        				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
+    }
+
+    @Test
+    public void testList() throws InterruptedException, ExecutionException {
+        logger.info("testCancelRequest");
+
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+		        DataFactory.UserLogin userLogin = DataFactory.getUser();
+		        
+		        RequestBuilder<LoginResponse> requestBuilder = OttUserService.login(PartnerId, userLogin.username, userLogin.password)
+		        .setCompletion(new OnCompletion<LoginResponse>() {
+					
+					@Override
+					public void onComplete(LoginResponse loginResponse, APIException error) {
+						completion.assertNull(error);
+
+                        client.setKs(loginResponse.getLoginSession().getKs());
+
+				        RequestBuilder<ListResponse<Favorite>> requestBuilder = FavoriteService.list()
+		                .setCompletion(new OnCompletion<ListResponse<Favorite>>() {
+		        			
+		        			@Override
+		        			public void onComplete(ListResponse<Favorite> response, APIException error) {
+								completion.assertNull(error);
+								completion.complete();
+		        			}
+		        		});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+        			}
+        		});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
     }
 }
