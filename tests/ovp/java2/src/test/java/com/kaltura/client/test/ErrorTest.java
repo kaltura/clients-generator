@@ -27,187 +27,236 @@
 // ===================================================================================================
 package com.kaltura.client.test;
 
-import com.kaltura.client.types.KalturaAPIException;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.w3c.dom.Element;
+import java.util.concurrent.ExecutionException;
 
-import com.kaltura.client.KalturaClient;
-import com.kaltura.client.KalturaConfiguration;
-import com.kaltura.client.KalturaObjectFactory;
-import com.kaltura.client.KalturaParams;
-import com.kaltura.client.types.KalturaMediaEntry;
-import com.kaltura.client.types.KalturaMediaListResponse;
-
-
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.Client;
+import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.SystemService;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.BaseEntry;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.utils.request.ExecutedRequest;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.RequestElement;
+import com.kaltura.client.utils.response.OnCompletion;
 
 public class ErrorTest extends BaseTest {
 
-	public void testInvalidServiceId() {
+	public void testInvalidServiceId() throws InterruptedException, ExecutionException {
 		this.kalturaConfig.setEndpoint("http://2.2.2.2");
-		this.kalturaConfig.setTimeout(2000);
+		this.kalturaConfig.setConnectTimeout(2000);
 		
-		try {
-			this.client = new KalturaClient(this.kalturaConfig);
-			client.getSystemService().ping();
-			fail("Ping to invalid end-point should fail");
-		} catch (Exception e) {
-			// Expected behavior
-		}
+		final Client invalidClient = new Client(this.kalturaConfig);
+
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+				.setCompletion(new OnCompletion<Boolean>() {
+					
+					@Override
+					public void onComplete(Boolean response, APIException error) {
+						completion.assertNotNull(error, "Ping to invalid end-point should fail");
+						completion.assertNull(response, "Ping to invalid end-point should fail");
+						
+						completion.complete();
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(invalidClient));
+			}
+		});
 	}
 	
-	public void testInvalidServerDnsName() {
+	public void testInvalidServerDnsName() throws InterruptedException, ExecutionException {
 		this.kalturaConfig.setEndpoint("http://www.nonexistingkaltura.com");
-		this.kalturaConfig.setTimeout(2000);
-		
-		try {
-			this.client = new KalturaClient(this.kalturaConfig);
-			client.getSystemService().ping();
-			fail("Ping to invalid end-point should fail");
-		} catch (Exception e) {
-			// Expected behavior
-		}
+		this.kalturaConfig.setConnectTimeout(2000);
+
+		final Client invalidClient = new Client(this.kalturaConfig);
+
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+				.setCompletion(new OnCompletion<Boolean>() {
+					
+					@Override
+					public void onComplete(Boolean response, APIException error) {
+						completion.assertNotNull(error, "Ping to invalid end-point should fail");
+						completion.assertNull(response, "Ping to invalid end-point should fail");
+						
+						completion.complete();
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(invalidClient));
+			}
+		});
 	}
 	
-	@SuppressWarnings("serial")
-	private class KalturaClientMock extends KalturaClient {
+	private class ExecutorMock {
 		
 		String resultToReturn;
 
-		public KalturaClientMock(KalturaConfiguration config, String res) {
-			super(config);
+		public ExecutorMock(String res) {
 			resultToReturn = res;
 		}
-		
-		@Override
-		protected String executeMethod(HttpClient client, PostMethod method) {
-			return resultToReturn;
-		}
 
-		@Override
-		protected HttpClient createHttpClient() {
-			return null;
-		}
-		
-		@Override
-		protected void closeHttpClient(HttpClient client) {
-			return;
-		}
+	    public void queue(RequestElement action) {
+            ExecutedRequest responseElement = new ExecutedRequest().response(resultToReturn).success(true);
+            action.onComplete(responseElement);
+	    }
 	}
 
 	/**
-	 * Tests case in which XML format is completely ruined
+	 * Tests case in which JSON format is completely ruined
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
-	public void testXmlParsingError() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		try {
-			mockClient.doQueue();
-			fail("Invalid XML response should fail");
-		} catch (KalturaAPIException e) {
-			assertEquals("Failed while parsing response.", e.getMessage());
-		}
+	public void testJsonParsingError() throws InterruptedException, ExecutionException {
+		final ExecutorMock mockClient = new ExecutorMock("Invalid JSON");
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+				.setCompletion(new OnCompletion<Boolean>() {
+					
+					@Override
+					public void onComplete(Boolean response, APIException error) {
+						completion.assertNotNull(error, "Invalid JSON should fail");
+						completion.assertNull(response, "Invalid JSON should fail");
+						
+						completion.complete();
+					}
+				});
+				mockClient.queue(requestBuilder.build(client));
+			}
+		});
 	}
 	
 	/**
-	 * Tests case in which the response has xml format, but no object type as expected
+	 * Tests case in which the response has JSON format, but no object type as expected
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
-	public void testTagInSimpleType() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><sometag></sometag></result></xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaObjectFactory.create(resultXmlElement, null);
-			fail("Invalid XML response should fail");
-		} catch (Exception e) {
-			// Expected behavior
-		}
+	public void testTagInSimpleType() throws InterruptedException, ExecutionException {
+		final ExecutorMock mockClient = new ExecutorMock("{sometag: 1}");
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+				.setCompletion(new OnCompletion<Boolean>() {
+					
+					@Override
+					public void onComplete(Boolean response, APIException error) {
+						completion.assertNotNull(error, "Invalid JSON should fail");
+						completion.assertNull(response, "Invalid JSON should fail");
+						
+						completion.complete();
+					}
+				});
+				mockClient.queue(requestBuilder.build(client));
+			}
+		});
 	}
 	
 	/**
-	 * Tests case in which the response has xml format, but no object
+	 * Tests case in which the response has JSON format, but no object
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 */
-	public void testEmptyObjectOrException() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result></result></xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaObjectFactory.create(resultXmlElement, null);
-			fail("Invalid XML response should fail");
-		} catch (Exception e) {
-			// Expected behavior
-		}
+	public void testEmptyObjectOrException() throws InterruptedException, ExecutionException {
+		final ExecutorMock mockClient = new ExecutorMock("\"bla bla\"");
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+				.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+					
+					@Override
+					public void onComplete(ListResponse<MediaEntry> response, APIException error) {
+						completion.assertNotNull(error, "Invalid JSON type should fail");
+						completion.assertNull(response, "Invalid JSON type should fail");
+						
+						completion.complete();
+					}
+				});
+				mockClient.queue(requestBuilder.build(client));
+			}
+		});
 	}
 	
-	public void testTagInObjectDoesntStartWithType() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><id>1234</id></result></xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaObjectFactory.create(resultXmlElement, null);
-			fail("Invalid XML response should fail");
-		} catch (Exception e) {
-			// Expected behavior
-		}
+	public void testUnknownObjectType() throws InterruptedException, ExecutionException  {
+
+		final ExecutorMock mockClient = new ExecutorMock("{objectType: \"UnknownObjectType\"}");
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<MediaEntry> requestBuilder = MediaService.get("invalid-id")
+				.setCompletion(new OnCompletion<MediaEntry>() {
+					
+					@Override
+					public void onComplete(MediaEntry response, APIException error) {
+						completion.assertNull(error);
+						completion.assertTrue(response instanceof MediaEntry);
+						
+						completion.complete();
+					}
+				});
+				mockClient.queue(requestBuilder.build(client));
+			}
+		});
 	}
 	
-	public void testCharsInsteadOfObject() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result>1234</result></xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaObjectFactory.create(resultXmlElement, null);
-			fail("Invalid XML response should fail");
-		} catch (Exception e) {
-			// Expected behavior
-		}
-	}
-	
-	public void testUnknownObjectType() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><objectType>UnknownObjectType</objectType></result></xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaObjectFactory.create(resultXmlElement, null);
-			fail("Invalid XML response should fail");
-		} catch (Exception e) {
-			assertEquals("Invalid object type", e.getMessage());
-		}
-	}
-	
-	public void testNonKalturaObjectType() throws KalturaAPIException {
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, "<xml><result><objectType>NSString</objectType></result></xml>");
-		mockClient.queueServiceCall("system", "ping", new KalturaParams());
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaObjectFactory.create(resultXmlElement, null);
-			fail("Invalid XML response should fail");
-		} catch (Exception e) {
-			assertEquals("Invalid object type", e.getMessage());
-		}
-	}
-	
-	public void testArrayOfUknownEntry() throws KalturaAPIException {
-		String testXml = "<xml><result><objectType>KalturaMediaListResponse</objectType><objects>" +
-				"<item><objectType>NonExistingclass</objectType><id>test1</id><name>test1</name></item>" +
-				"<item><objectType>NonExistingclass</objectType><id>test2</id><name>test2</name></item>" +
-				"</objects><totalCount>2</totalCount></result></xml>";
-		
-		KalturaClientMock mockClient = new KalturaClientMock(this.kalturaConfig, testXml);
-		mockClient.queueServiceCall("system", "ping", new KalturaParams()); // Just since we need something in the queue
-		Element resultXmlElement = mockClient.doQueue();
-		try {
-			KalturaMediaListResponse res = (KalturaMediaListResponse) KalturaObjectFactory.create(resultXmlElement, null);
-			assertEquals(2, res.totalCount);
-			KalturaMediaEntry entry1 = res.objects.get(0);
-			KalturaMediaEntry entry2 = res.objects.get(1);
-			assertTrue(entry1.id.equals("test1"));
-			assertTrue(entry1.name.equals("test1"));
-			assertTrue(entry2.id.equals("test2"));
-			assertTrue(entry2.name.equals("test2"));
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+	public void testArrayOfUknownEntry() throws InterruptedException, ExecutionException {
+		String testJson = "{objectType: \"KalturaMediaListResponse\", objects: [" +
+				"{objectType: \"NonExistingclass\", id: \"test1\", name: \"test1\"}," +
+				"{objectType: \"NonExistingclass\", id: \"test2\", name: \"test2\"}," +
+				"{objectType: \"KalturaMediaEntry\", id: \"test3\", name: \"test3\"}" +
+				"], totalCount: 3}";
+
+		final ExecutorMock mockClient = new ExecutorMock(testJson);
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<ListResponse<BaseEntry>> requestBuilder = BaseEntryService.list()
+				.setCompletion(new OnCompletion<ListResponse<BaseEntry>>() {
+					
+					@Override
+					public void onComplete(ListResponse<BaseEntry> res, APIException error) {
+
+						completion.assertEquals(3, res.getTotalCount());
+						completion.assertEquals(3, res.getObjects().size());
+						
+						BaseEntry entry1 = res.getObjects().get(0);
+						BaseEntry entry2 = res.getObjects().get(1);
+						BaseEntry entry3 = res.getObjects().get(2);
+
+						assertTrue(entry1 instanceof BaseEntry);
+						assertEquals("test1", entry1.getId());
+						assertEquals("test1", entry1.getName());
+
+						assertTrue(entry2 instanceof BaseEntry);
+						assertEquals("test2", entry2.getId());
+						assertEquals("test2", entry2.getName());
+
+						assertTrue(entry3 instanceof MediaEntry);
+						assertEquals("test3", entry3.getId());
+						assertEquals("test3", entry3.getName());
+
+						completion.complete();
+					}
+				});
+				mockClient.queue(requestBuilder.build(client));
+			}
+		});
 	}
 }

@@ -31,138 +31,155 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.kaltura.client.types.KalturaAPIException;
-import com.kaltura.client.enums.KalturaUiConfCreationMode;
-import com.kaltura.client.services.KalturaUiConfService;
-import com.kaltura.client.types.KalturaUiConf;
-import com.kaltura.client.types.KalturaUiConfListResponse;
-import com.kaltura.client.IKalturaLogger;
-import com.kaltura.client.KalturaLogger;
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.ILogger;
+import com.kaltura.client.Logger;
+import com.kaltura.client.enums.UiConfCreationMode;
+import com.kaltura.client.services.UiConfService;
+import com.kaltura.client.test.BaseTest.Completion;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.UiConf;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
 
 public class UiConfServiceTest extends BaseTest {
-	private IKalturaLogger logger = KalturaLogger.getLogger(UiConfServiceTest.class);
+	private ILogger logger = Logger.getLogger(UiConfServiceTest.class);
 
 	// keeps track of test vids we upload so they can be cleaned up at the end
 	protected List<Integer> testUiConfIds = new ArrayList<Integer>();
 	
-	protected KalturaUiConf addUiConf(String name) throws KalturaAPIException {
+	protected void addUiConf(String name, final OnCompletion<UiConf> onCompletion) {
 
-		KalturaUiConfService uiConfService = client.getUiConfService();
-
-		KalturaUiConf uiConf = new KalturaUiConf();
-		uiConf.name = name;
-		uiConf.description = "Ui conf unit test";
-		uiConf.height = 373;
-		uiConf.width = 750;
-		uiConf.creationMode = KalturaUiConfCreationMode.ADVANCED;
-		uiConf.confFile = "NON_EXISTING_CONF_FILE";
+		UiConf uiConf = new UiConf();
+		uiConf.setName(name);
+		uiConf.setDescription("Ui conf unit test");
+		uiConf.setHeight(373);
+		uiConf.setWidth(750);
+		uiConf.setCreationMode(UiConfCreationMode.ADVANCED);
+		uiConf.setConfFile("NON_EXISTING_CONF_FILE");
 		
 		// this uiConf won't be editable in the KMC until it gets a config added to it, I think
 		
-		KalturaUiConf addedConf = uiConfService.add(uiConf);
+		RequestBuilder<UiConf> requestBuilder = UiConfService.add(uiConf)
+		.setCompletion(new OnCompletion<UiConf>() {
+			
+			@Override
+			public void onComplete(UiConf addedConf, APIException error) {
+
+				testUiConfIds.add(addedConf.getId());
 				
-		this.testUiConfIds.add(addedConf.id);
-		
-		return addedConf;
-		
+				onCompletion.onComplete(addedConf, error);
+			}
+		});
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 	}
 	
 	public void testAddUiConf() throws Exception {
 		if (logger.isEnabled())
 			logger.info("Starting ui conf add test");
-		
-		try {			
-			startAdminSession();
-			String name = "Test UI Conf (" + new Date() + ")";
-			KalturaUiConf addedConf = addUiConf(name);
-			assertNotNull(addedConf);
-			
-		} catch (KalturaAPIException e) {
-			if (logger.isEnabled())
-				logger.error(e);
-			fail(e.getMessage());
-		}
-		
+
+		startAdminSession();
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				String name = "Test UI Conf (" + new Date() + ")";
+				addUiConf(name, new OnCompletion<UiConf>() {
+
+					@Override
+					public void onComplete(UiConf addedConf, APIException error) {
+						completion.assertNull(error);
+						completion.assertNotNull(addedConf);
+						completion.complete();
+					}
+				});
+			}
+		});
 	}
 	
 	public void testGetUiConf() throws Exception {
 		if (logger.isEnabled())
 			logger.info("Starting ui get test");
-		
-		try {			
-			startAdminSession();
-			String name = "Test UI Conf (" + new Date() + ")";
-			KalturaUiConf addedConf = addUiConf(name);
-			
-			int addedConfId = addedConf.id;
-			KalturaUiConfService confService = this.client.getUiConfService();
-			KalturaUiConf retrievedConf = confService.get(addedConfId);
-			assertEquals(retrievedConf.id, addedConfId);
-			
-		} catch (KalturaAPIException e) {
-			if (logger.isEnabled())
-				logger.error(e);
-			fail(e.getMessage());
-		}
-		
+
+		startAdminSession();
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				String name = "Test UI Conf (" + new Date() + ")";
+				addUiConf(name, new OnCompletion<UiConf>() {
+
+					@Override
+					public void onComplete(final UiConf addedConf, APIException error) {
+						completion.assertNull(error);
+						completion.assertNotNull(addedConf);
+						
+						RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
+						.setCompletion(new OnCompletion<UiConf>() {
+							
+							@Override
+							public void onComplete(UiConf retrievedConf, APIException error) {
+								completion.assertNull(error);
+
+								completion.assertEquals(retrievedConf.getId(), addedConf.getId());
+								
+								completion.complete();
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+			}
+		});
 	}
 	
 	public void testDeleteUiConf() throws Exception {
 		if (logger.isEnabled())
 			logger.info("Starting ui conf delete test");
-		
-		try {			
-			startAdminSession();
-			String name = "Test UI Conf (" + new Date() + ")";
-			KalturaUiConf addedConf = addUiConf(name);
-			
-			int addedConfId = addedConf.id;
-			
-			KalturaUiConfService confService = this.client.getUiConfService();
-			
-			confService.delete(addedConfId);
-			
-			try {
-				confService.get(addedConfId);
-				fail("Getting deleted ui-conf should fail");
-			} catch (KalturaAPIException kae) {
-				// Wanted behavior
-			} finally {
-				// we whacked this one, so let's not keep track of it		
-				this.testUiConfIds.remove(testUiConfIds.size() - 1);
-			}
+
+		startAdminSession();
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				String name = "Test UI Conf (" + new Date() + ")";
+				addUiConf(name, new OnCompletion<UiConf>() {
+
+					@Override
+					public void onComplete(final UiConf addedConf, APIException error) {
+						completion.assertNull(error);
+						completion.assertNotNull(addedConf);
 						
-		} catch (KalturaAPIException e) {
-			if (logger.isEnabled())
-				logger.error(e);
-			fail(e.getMessage());
-		}
+						RequestBuilder<Void> requestBuilder = UiConfService.delete(addedConf.getId())
+						.setCompletion(new OnCompletion<Void>() {
+							
+							@Override
+							public void onComplete(Void response, APIException error) {
+								completion.assertNull(error);
+
+								testUiConfIds.remove(addedConf.getId());
+
+								RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
+								.setCompletion(new OnCompletion<UiConf>() {
+									
+									@Override
+									public void onComplete(UiConf retrievedConf, APIException error) {
+										completion.assertNull(retrievedConf, "Getting deleted ui-conf should fail");
+										completion.assertNotNull(error, "Getting deleted ui-conf should fail");
+
+										completion.complete();
+									}
+								});
+								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+			}
+		});
 	}
 
-	public void testListUiConf() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting ui conf list test");
-		
-		try {
-			startAdminSession();
-			KalturaUiConfService uiConfService = client.getUiConfService();
-			assertNotNull(uiConfService);
-			
-			KalturaUiConfListResponse listResponse = uiConfService.list();
-			assertNotNull(listResponse);
-			
-			for (KalturaUiConf uiConf : listResponse.objects) {
-				if (logger.isEnabled())
-					logger.debug("uiConf id:" + uiConf.id + " name:" + uiConf.name);
-			}
-			
-		} catch (KalturaAPIException e) {
-			if (logger.isEnabled())
-				logger.error(e);
-			fail(e.getMessage());
-		}
-	}
-	
 	@Override
 	protected void tearDown() throws Exception {
 		
@@ -173,16 +190,12 @@ public class UiConfServiceTest extends BaseTest {
 		if (logger.isEnabled())
 			logger.info("Cleaning up test UI Conf entries after test");
 		
-		KalturaUiConfService uiConfService = this.client.getUiConfService();
 		for (Integer id : this.testUiConfIds) {
 			if (logger.isEnabled())
 				logger.debug("Deleting UI conf " + id);
-			try {
-				uiConfService.delete(id);			
-			} catch (Exception e) {
-				if (logger.isEnabled())
-					logger.error("Couldn't delete " + id, e);
-			}
+
+			RequestBuilder<Void> requestBuilder = UiConfService.delete(id);
+			APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 		} //next id
 	}
 }

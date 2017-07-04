@@ -1,10 +1,8 @@
 package com.kaltura.client;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -333,10 +331,6 @@ public class APIOkRequestsExecutor implements RequestQueue {
         } catch (NullPointerException e) {
             return "";
         }
-    }
-
-    private String getContentType(String header) {
-        return header.contains("application/xml") ? "xml" : "json";
     }
 
     private interface BodyBuilder {

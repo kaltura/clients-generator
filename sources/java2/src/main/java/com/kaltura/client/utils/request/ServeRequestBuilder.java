@@ -3,7 +3,6 @@ package com.kaltura.client.utils.request;
 import com.kaltura.client.Client;
 import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
-import com.kaltura.client.utils.response.base.ResponseElement;
 
 public class ServeRequestBuilder extends RequestBuilder<String> {
 
@@ -38,10 +37,8 @@ public class ServeRequestBuilder extends RequestBuilder<String> {
     }
 	
 	@Override
-    public void onComplete(ResponseElement response) {
-        if(onCompletion != null) {
-        	onCompletion.onComplete(response.getResponse(), null);
-        }
+    protected Object parse(String response) throws APIException {
+    	return response;
     }
 }
 

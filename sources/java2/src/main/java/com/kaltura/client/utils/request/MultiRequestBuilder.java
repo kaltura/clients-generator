@@ -1,15 +1,19 @@
 package com.kaltura.client.utils.request;
 
+import com.kaltura.client.Files;
 import com.kaltura.client.Logger;
-import com.kaltura.client.utils.response.OnCompletion;
-import com.kaltura.client.utils.response.base.MultiResponse;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.utils.GsonParser;
 
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * Created by tehilarozin on 15/08/2016.
  */
-public class MultiRequestBuilder extends BaseRequestBuilder<MultiResponse> {
+public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
     private static final String TAG = "KalturaMultiRequestBuilder";
 
     /**
@@ -22,12 +26,12 @@ public class MultiRequestBuilder extends BaseRequestBuilder<MultiResponse> {
      * will be used in case a completion was not provided on the multirequest itself
      * and the completion for each inner request should be activated
      */
-    private LinkedHashMap<String, RequestBuilder<?>> calls;
+    private LinkedHashMap<String, RequestBuilder<?>> calls = new LinkedHashMap<>();
     private int lastId = 0;
 
 
     public MultiRequestBuilder() {
-        super(MultiResponse.class);
+        super(Object.class);
     }
 
     /**
@@ -35,7 +39,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<MultiResponse> {
      * @param requests
      */
     public MultiRequestBuilder(RequestBuilder<?>... requests) {
-        super(MultiResponse.class);
+        this();
         add(requests);
     }
 
@@ -45,19 +49,27 @@ public class MultiRequestBuilder extends BaseRequestBuilder<MultiResponse> {
      * @return
      */
     public MultiRequestBuilder add(RequestBuilder<?>... requests) {
-        if (calls == null) {
-            calls = new LinkedHashMap<>();
+        for (RequestBuilder<?> request : requests) {
+        	add(request);
         }
 
-        for (RequestBuilder<?> request : requests) {
-            lastId++;
-            String reqId = lastId + "";
-            request.params.add("service", request.service);
-            request.params.add("action", request.action);
-            params.add(reqId, request.params);
-            calls.put(reqId, request);
-            request.setId(reqId);
+        return this;
+    }
+
+    public MultiRequestBuilder add(RequestBuilder<?> request) {
+        lastId++;
+        String reqId = lastId + "";
+        request.params.add("service", request.service);
+        request.params.add("action", request.action);
+        params.add(reqId, request.params);
+        if(request.files != null) {
+        	if(files == null) {
+        		files = new Files();
+        	}
+        	files.add(reqId, request.files);
         }
+        calls.put(reqId, request);
+        request.setId(reqId);
 
         return this;
     }
@@ -78,26 +90,49 @@ public class MultiRequestBuilder extends BaseRequestBuilder<MultiResponse> {
         return this;
     }
 
-    /**
-     * Sets the callback for the Multirequest parsed response.
-     *
-     * @param onCompletion
-     * @return
-     */
-    public MultiRequestBuilder setCompletion(OnCompletion<MultiResponse> onCompletion) {
-        this.onCompletion = onCompletion;
-        return this;
+    @SuppressWarnings("unchecked")
+	@Override
+    protected void complete(Object result, APIException error) {
+    	
+    	List<Object> results = null;
+    	if(result != null) {
+        	results = (List<Object>) result;
+	    	int index = 0;
+	    	for(RequestBuilder<?> call : calls.values()) {
+	    		Object item = results.get(index++);
+	    		if(item instanceof APIException) {
+	    			call.complete(null, (APIException) item);
+	    		}
+	    		else {
+	    			call.complete(item, null);
+	    		}
+	    	}
+    	}
+    	
+        if(onCompletion != null) {
+        	onCompletion.onComplete(results, error);
+        }
     }
+    
+    @Override
+    protected Object parse(String response) throws APIException {
+    	Class[] types = calls.values().stream().map(new Function<RequestBuilder<?>, Class<?>>() {
 
-    /**
-     * Returns a formatted string for the linked property's value.
-     *
-     * @param id - id/number of the request in the multirequest, to which property value is binded (starts from index <strong>1</strong>)
-     * @param propertyPath - keys path to the binded response property
-     * @return value pattern for the binded property (exp. [2, request number]:result:[user:name, property path]
-     */
-    private static String formatLink(String id, String propertyPath) {
-        return id + ":result:" + propertyPath.replace(".", ":");
+			@Override
+			public Class<?> apply(RequestBuilder<?> t) {
+				return t.getType();
+			}
+		})
+    	.toArray(new IntFunction<Class[]>() {
+
+			@Override
+			public Class[] apply(int value) {
+				// TODO Auto-generated method stub
+				return new Class[calls.size()];
+			}
+		});
+    	
+    	return GsonParser.parseArray(response, types);
     }
 
     /**
@@ -142,7 +177,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<MultiResponse> {
      * @return
      */
     public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, RequestBuilder<?> destRequest, String sourceKey, String destKey) {
-        destRequest.setParam(destKey, formatLink(sourceRequest.getId(), sourceKey));
+        destRequest.link(destKey, sourceRequest.getId(), sourceKey);
         return this;
     }
 

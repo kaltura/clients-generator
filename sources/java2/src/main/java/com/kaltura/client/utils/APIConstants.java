@@ -9,15 +9,6 @@ public class APIConstants {
 
     public static final String DefaultContentType = "application/json";
 
-    //generated client config properties
-    /*public static final String ConfigClientClientTag = "clientTag";
-    public static final String ConfigClientTagValue = "java:16-08-08";
-    public static final String ConfigClientAPIVersion = "apiVersion";
-    public static final String ConfigClientAPIVersionValue = "3.6.287.27685";
-*/
-    //kaltura client config properties
-    //public static boolean RetryOnConnectionFailure = true;
-
     //generated Request config properties:
     public static final String ConfigRequestPartnerId = "partnerId";
     public static final String ConfigRequestKs = "ks";

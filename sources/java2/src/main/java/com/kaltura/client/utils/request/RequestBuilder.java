@@ -1,8 +1,5 @@
 package com.kaltura.client.utils.request;
 
-import java.util.HashMap;
-
-import com.kaltura.client.Client;
 import com.kaltura.client.Files;
 import com.kaltura.client.Params;
 import com.kaltura.client.utils.response.OnCompletion;
@@ -77,10 +74,8 @@ public class RequestBuilder<T> extends BaseRequestBuilder<T> {
         return this;
     }
 
-    public RequestBuilder<T> setParam(String key, Object value) {
-        if (params != null) {
-            params.put(key, value);
-        }
+    public RequestBuilder<T> link(String destKey, String requestId, String sourceKey) {
+        params.link(destKey, requestId, sourceKey);
         return this;
     }
 

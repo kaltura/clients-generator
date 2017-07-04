@@ -29,16 +29,23 @@ package com.kaltura.client.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import com.kaltura.client.enums.KalturaContainerFormat;
-import com.kaltura.client.enums.KalturaNullableBoolean;
-import com.kaltura.client.enums.KalturaSiteRestrictionType;
-import com.kaltura.client.types.KalturaAccessControl;
-import com.kaltura.client.types.KalturaBaseRestriction;
-import com.kaltura.client.types.KalturaConversionProfile;
-import com.kaltura.client.types.KalturaCountryRestriction;
-import com.kaltura.client.types.KalturaSiteRestriction;
-import com.kaltura.client.types.KalturaThumbParams;
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.enums.ContainerFormat;
+import com.kaltura.client.enums.SiteRestrictionType;
+import com.kaltura.client.services.AccessControlService;
+import com.kaltura.client.services.ConversionProfileService;
+import com.kaltura.client.services.ThumbParamsService;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.AccessControl;
+import com.kaltura.client.types.BaseRestriction;
+import com.kaltura.client.types.ConversionProfile;
+import com.kaltura.client.types.CountryRestriction;
+import com.kaltura.client.types.SiteRestriction;
+import com.kaltura.client.types.ThumbParams;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
 
 public class MediaServiceFieldsTest extends BaseTest {
 
@@ -52,40 +59,76 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		startAdminSession();
 
-		final String testString = "Kaltura test string";
-		final int testInt = 42;
-		final KalturaNullableBoolean testEnumAsInt = KalturaNullableBoolean.FALSE_VALUE;
-		final KalturaContainerFormat testEnumAsString = KalturaContainerFormat.ISMV;
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				final String testString = "Kaltura test string";
+				final int testInt = 42;
+				final Boolean testEnumAsInt = false;
+				final ContainerFormat testEnumAsString = ContainerFormat.ISMV;
 
-		KalturaThumbParams params = new KalturaThumbParams();
-		params.name = testString;
-		params.description = testString;
-		params.density = testInt;
-		params.isSystemDefault = testEnumAsInt;
-		params.format = testEnumAsString;
+				ThumbParams paramsAdd = new ThumbParams();
+				paramsAdd.setName(testString);
+				paramsAdd.setDescription(testString);
+				paramsAdd.setDensity(testInt);
+				paramsAdd.setIsSystemDefault(testEnumAsInt);
+				paramsAdd.setFormat(testEnumAsString);
 
-		// Regular update works
-		params = client.getThumbParamsService().add(params);
+				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+				.setCompletion(new OnCompletion<ThumbParams>() {
+					
+					@Override
+					public void onComplete(final ThumbParams paramsAdded, APIException error) {
+						completion.assertNull(error);
 
-		assertEquals(testString, params.description);
-		assertEquals(testInt, params.density);
-		assertEquals(testEnumAsInt, params.isSystemDefault);
-		assertEquals(testEnumAsString, params.format);
+						completion.assertEquals(testString, paramsAdded.getDescription());
+						completion.assertEquals(testInt, (int) paramsAdded.getDensity());
+						completion.assertEquals(testEnumAsInt, paramsAdded.getIsSystemDefault());
+						completion.assertEquals(testEnumAsString, paramsAdded.getFormat());
 
-		// Null value not passed
-		KalturaThumbParams params2 = new KalturaThumbParams();
-		params2.description = null;
-		params2.density = Integer.MIN_VALUE;
-		params2.isSystemDefault = null;
-		params2.format = null;
+						// Null value not passed
+						ThumbParams paramsUpdate = new ThumbParams();
+						paramsUpdate.setDescription(null);
+						paramsUpdate.setDensity(Integer.MIN_VALUE);
+						paramsUpdate.setIsSystemDefault(null);
+						paramsUpdate.setFormat(null);
 
-		params2 = client.getThumbParamsService().update(params.id, params2);
-		assertEquals(testString, params2.description);
-		assertEquals(testInt, params2.density);
-		assertEquals(testEnumAsInt, params2.isSystemDefault);
-		assertEquals(testEnumAsString, params2.format);
+						RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
+						.setCompletion(new OnCompletion<ThumbParams>() {
+							
+							@Override
+							public void onComplete(ThumbParams paramsUpdated, APIException error) {
+								completion.assertNull(error);
 
-		client.getThumbParamsService().delete(params.id);
+								RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.get(paramsAdded.getId())
+								.setCompletion(new OnCompletion<ThumbParams>() {
+									
+									@Override
+									public void onComplete(ThumbParams paramsGot, APIException error) {
+										completion.assertNull(error);
+								
+										assertEquals(testString, paramsGot.getDescription());
+										assertEquals(testInt, (int) paramsGot.getDensity());
+										assertEquals(testEnumAsInt, paramsGot.getIsSystemDefault());
+										assertEquals(testEnumAsString, paramsGot.getFormat());
+		
+										RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
+										APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+
+										completion.complete();
+									}
+								});
+								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
+
 	}
 
 	
@@ -100,24 +143,49 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		final String testString = "Kaltura test string";
 
-		KalturaThumbParams params = new KalturaThumbParams();
-		params.name = testString;
-		params.description = testString;
-
-		// Regular update works
-		params = client.getThumbParamsService().add(params);
-
-		assertEquals(testString, params.description);
-
-		// Set to null
-		KalturaThumbParams params2 = new KalturaThumbParams();
-		params2.description = "__null_string__";
-
-		params2 = client.getThumbParamsService().update(params.id, params2);
-		assertNull(params2.description);
-
-		client.getThumbParamsService().delete(params.id);
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				ThumbParams paramsAdd = new ThumbParams();
+				paramsAdd.setName(testString);
+				paramsAdd.setDescription(testString);
 		
+				// Regular update works
+				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+				.setCompletion(new OnCompletion<ThumbParams>() {
+					
+					@Override
+					public void onComplete(final ThumbParams paramsAdded, APIException error) {
+						completion.assertNull(error);
+
+						completion.assertEquals(testString, paramsAdded.getDescription());
+
+						// Set to null
+						ThumbParams paramsUpdate = new ThumbParams();
+						paramsUpdate.setDescription("__null_string__");
+
+						RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
+						.setCompletion(new OnCompletion<ThumbParams>() {
+							
+							@Override
+							public void onComplete(ThumbParams paramsUpdated, APIException error) {
+								completion.assertNull(error);
+						
+								completion.assertNull(paramsUpdated.getDescription());
+
+								RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
+								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+
+								completion.complete();
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
 	}
 	
 	/**
@@ -128,28 +196,53 @@ public class MediaServiceFieldsTest extends BaseTest {
 	public void testSetFieldsToNullInt() throws Exception {
 
 		startAdminSession();
-		final int testInt = 42;
 
-		KalturaConversionProfile profile = new KalturaConversionProfile();
-		profile.name = "Kaltura test string";
-		profile.flavorParamsIds = "0";
-		profile.storageProfileId = testInt;
-
-		// Regular update works
-		profile = client.getConversionProfileService().add(profile);
-
-		assertEquals(testInt, profile.storageProfileId);
-
-		// Set to null
-		KalturaConversionProfile profile2 = new KalturaConversionProfile();
-		profile2.storageProfileId = Integer.MAX_VALUE;
-
-		profile2 = client.getConversionProfileService().update(profile.id, profile2);
-		assertEquals(Integer.MIN_VALUE, profile2.storageProfileId);
-
-		client.getConversionProfileService().delete(profile.id);
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				final int testInt = 42;
 		
-		
+				ConversionProfile profileAdd = new ConversionProfile();
+				profileAdd.setName("Kaltura test string");
+				profileAdd.setFlavorParamsIds("0");
+				profileAdd.setStorageProfileId(testInt);
+
+				// Regular update works
+				RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.add(profileAdd)
+				.setCompletion(new OnCompletion<ConversionProfile>() {
+					
+					@Override
+					public void onComplete(ConversionProfile profileAdded, APIException error) {
+						completion.assertNull(error);
+						
+						completion.assertEquals(testInt, (int) profileAdded.getStorageProfileId());
+						
+						// Set to null
+						ConversionProfile profileUpdate = new ConversionProfile();
+						profileUpdate.setStorageProfileId(Integer.MAX_VALUE);
+				
+						RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.update(profileAdded.getId(), profileUpdate)
+						.setCompletion(new OnCompletion<ConversionProfile>() {
+							
+							@Override
+							public void onComplete(ConversionProfile profileUpdated, APIException error) {
+								completion.assertNull(error);
+								
+								completion.assertTrue(profileUpdated.getStorageProfileId() == null);
+						
+								RequestBuilder<Void> requestBuilder = ConversionProfileService.delete(profileUpdated.getId());
+								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+
+								completion.complete();
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
 	}
 	
 	/**
@@ -157,45 +250,81 @@ public class MediaServiceFieldsTest extends BaseTest {
 	 * tests empty array, Null array & full array.
 	 */
 	public void testArrayConversion() throws Exception {
-		
-		KalturaSiteRestriction resA = new KalturaSiteRestriction();
-		resA.siteRestrictionType = KalturaSiteRestrictionType.RESTRICT_SITE_LIST;
-		resA.siteList = "ResA";
-		KalturaCountryRestriction resB = new KalturaCountryRestriction();
-		resB.countryList = "IllegalCountry";
-		
-		ArrayList<KalturaBaseRestriction> restrictions = new ArrayList<KalturaBaseRestriction>();
-		restrictions.add(resA);
-		restrictions.add(resB);
-		
-		KalturaAccessControl accessControl = new KalturaAccessControl();
-		accessControl.name = "test access control";
-		accessControl.restrictions = restrictions;
-		
-		startAdminSession();
-		accessControl = client.getAccessControlService().add(accessControl);
-		
-		assertNotNull(accessControl.restrictions);
-		assertEquals(2, accessControl.restrictions.size());
-		
-		// Test null update - shouldn't update
-		KalturaAccessControl accessControl2 = new KalturaAccessControl();
-		accessControl2.name = "updated access control";
-		accessControl2.restrictions = null; 
-		accessControl2 = client.getAccessControlService().update(accessControl.id, accessControl2);
-		
-		assertEquals(2, accessControl2.restrictions.size());
-		
-		// Test update Empty array - should update
-		KalturaAccessControl accessControl3 = new KalturaAccessControl();
-		accessControl3.name = "reset access control";
-		accessControl3.restrictions = new ArrayList<KalturaBaseRestriction>(); 
-		accessControl3 = client.getAccessControlService().update(accessControl.id, accessControl3);
-		
-		assertEquals(0, accessControl3.restrictions.size());
 
-		// Delete entry
-		client.getAccessControlService().delete(accessControl.id);
+		startAdminSession();
+
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				SiteRestriction resA = new SiteRestriction();
+				resA.setSiteRestrictionType(SiteRestrictionType.RESTRICT_SITE_LIST);
+				resA.setSiteList("ResA");
+				CountryRestriction resB = new CountryRestriction();
+				resB.setCountryList("IllegalCountry");
+				
+				List<BaseRestriction> restrictions = new ArrayList<BaseRestriction>();
+				restrictions.add(resA);
+				restrictions.add(resB);
+				
+				AccessControl accessControlAdd = new AccessControl();
+				accessControlAdd.setName("test access control");
+				accessControlAdd.setRestrictions(restrictions);
+				
+				RequestBuilder<AccessControl> requestBuilder = AccessControlService.add(accessControlAdd)
+				.setCompletion(new OnCompletion<AccessControl>() {
+					
+					@Override
+					public void onComplete(AccessControl accessControlAdded, APIException error) {
+						completion.assertNull(error);
+						
+						completion.assertNotNull(accessControlAdded.getRestrictions());
+						completion.assertEquals(2, accessControlAdded.getRestrictions().size());
+						
+						// Test null update - shouldn't update
+						AccessControl accessControlUpdate = new AccessControl();
+						accessControlUpdate.setName("updated access control");
+						accessControlUpdate.setRestrictions(null); 
+
+						RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlAdded.getId(), accessControlUpdate)
+						.setCompletion(new OnCompletion<AccessControl>() {
+							
+							@Override
+							public void onComplete(AccessControl accessControlUpdated, APIException error) {
+								completion.assertNull(error);
+				
+								completion.assertEquals(2, accessControlUpdated.getRestrictions().size());
+								
+								// Test update Empty array - should update
+								AccessControl accessControlUpdateAgain = new AccessControl();
+								accessControlUpdateAgain.setName("reset access control");
+								accessControlUpdateAgain.setRestrictions(new ArrayList<BaseRestriction>()); 
+
+								RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlUpdated.getId(), accessControlUpdateAgain)
+								.setCompletion(new OnCompletion<AccessControl>() {
+									
+									@Override
+									public void onComplete(AccessControl accessControlUpdatedAgain, APIException error) {
+										completion.assertNull(error);
+								
+										completion.assertEquals(0, accessControlUpdatedAgain.getRestrictions().size());
+								
+										// Delete entry
+										RequestBuilder<Void> requestBuilder = AccessControlService.delete(accessControlUpdatedAgain.getId());
+										APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+										
+										completion.complete();
+									}
+								});
+								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
 	}
 
 }

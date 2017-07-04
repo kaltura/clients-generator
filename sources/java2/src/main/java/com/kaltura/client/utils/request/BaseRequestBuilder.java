@@ -1,6 +1,7 @@
 package com.kaltura.client.utils.request;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
@@ -17,12 +18,11 @@ import com.kaltura.client.utils.response.base.ResponseElement;
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public abstract class BaseRequestBuilder<T> implements RequestElement {
+public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement {
 
 	private Class<T> type;
     protected String id;
     protected String url;
-    protected Params params;
     protected Files files = null;
     protected HashMap<String, String> headers;
     private ConnectionConfiguration connectionConfig;
@@ -33,8 +33,8 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
     protected OnCompletion<T> onCompletion;
 
     protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
+    	super(params);
     	this.type = type;
-        this.params = params;
         this.files = files;
     }
 
@@ -43,7 +43,7 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
     }
     
     protected BaseRequestBuilder(Class<T> type) {
-    	this(type, null);
+    	this(type, new Params());
     }
 
     protected BaseRequestBuilder(Params params, Files files) {
@@ -58,6 +58,9 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
 
     public abstract String getTag();
 
+	public Class<?> getType() {
+		return type;
+	}
 
     @Override
     public String getMethod() {
@@ -78,8 +81,8 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
         return params;
     }
 	
-    public void setParams(Object objParams) {
-        params.putAll((Params) objParams); // !! null params should be checked - should not appear in request body or be presented as empty string.
+    public void setParams(Map<String, Object> objParams) {
+        params.putAll(objParams); // !! null params should be checked - should not appear in request body or be presented as empty string.
 	}
 
     public BaseRequestBuilder<T> setFile(String key, FileHolder value) {
@@ -166,7 +169,7 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
 
     @SuppressWarnings("unchecked")
 	@Override
-    public void onComplete(ResponseElement response) {
+    final public void onComplete(ResponseElement response) {
         T result = null;
         APIException error = null;
         
@@ -180,8 +183,13 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
 			}
         }
 
+        complete(result, error);
+    }
+    
+    @SuppressWarnings("unchecked")
+	protected void complete(Object result, APIException error) {
         if(onCompletion != null) {
-        	onCompletion.onComplete(result, error);
+        	onCompletion.onComplete((T) result, error);
         }
     }
     
@@ -193,7 +201,9 @@ public abstract class BaseRequestBuilder<T> implements RequestElement {
     }
     
     protected APIException generateErrorResponse(ResponseElement response) {
-    	return GsonParser.parseException(response.getResponse());
+    	APIException exception = new APIException(response.getError().getMessage());
+    	exception.setCode(String.valueOf(response.getError().getCode()));
+    	return exception;
     }
     
     public RequestElement build(final Client client, boolean addSignature) {

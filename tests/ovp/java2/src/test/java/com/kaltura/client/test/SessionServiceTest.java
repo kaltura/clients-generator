@@ -29,9 +29,13 @@ package com.kaltura.client.test;
 
 import java.io.IOException;
 
-import com.kaltura.client.types.KalturaAPIException;
-import com.kaltura.client.enums.KalturaSessionType;
-import com.kaltura.client.types.KalturaMediaListResponse;
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.services.MediaService;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
 
 public class SessionServiceTest extends BaseTest {
 
@@ -41,60 +45,41 @@ public class SessionServiceTest extends BaseTest {
 	 */
 	public void testSession() throws Exception {
 
-		try {
-			
-			// test open session
-			startUserSession();
-			assertNotNull(client.getSessionId());
-			
-			KalturaMediaListResponse response = client.getMediaService().list();
-			assertNotNull(response);
-			
-			// Close session
-			BaseTest.closeSession(client);
-			
-		} catch (KalturaAPIException e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-		
-		// Test close connection
-		try {
-			client.getMediaService().list();
-			fail("Listing entries without KS should fail");
-		} catch (KalturaAPIException e) {
-			// Should fail since the connection is closed.
-		}
-		
-	}
-	
-	public void testExpiredSession() {
-		try {
-			String KS = client.generateSession(testConfig.getAdminSecret(),
-					"asdasd", KalturaSessionType.USER,
-					testConfig.getPartnerId(), 60 * 60 * 24);
-			client.setSessionId(KS);
+		startUserSession();
+		assertNotNull(client.getSessionId());
 
-			KalturaMediaListResponse response = client.getMediaService().list();
-			assertNotNull(response);
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+				.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+					
+					@Override
+					public void onComplete(ListResponse<MediaEntry> response, APIException error) {
+						completion.assertNull(error);
+						completion.assertNotNull(response);
 
-		try {
-			String KS = client.generateSession(testConfig.getAdminSecret(),
-					"asdasd", KalturaSessionType.USER,
-					testConfig.getPartnerId(), -60 * 60 * 24);
-			client.setSessionId(KS);
+						// Close session
+						client.setSessionId(null);;
 
-			client.getMediaService().list();
-			fail("Listing entries with invalid KS should fail");
-		} catch (Exception e) {
-			assertTrue(e instanceof KalturaAPIException);
-			String msg = ((KalturaAPIException)e).getMessage();
-			assertTrue(msg.contains("EXPIRED"));
-		}
+						RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+						.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+							
+							@Override
+							public void onComplete(ListResponse<MediaEntry> response, APIException error) {
+								completion.assertNotNull(error);
+								completion.assertNull(response);
 
+								
+								completion.complete();
+							}
+						});
+						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			}
+		});
 	}
 }

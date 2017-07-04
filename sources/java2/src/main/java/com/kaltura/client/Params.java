@@ -33,10 +33,10 @@ import com.kaltura.client.enums.EnumAsString;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.ObjectBase;
 import com.kaltura.client.utils.request.RequestBuilder;
-import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Helper class that provides a collection of Kaltura parameters (key-value
@@ -48,6 +48,8 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class Params extends LinkedHashMap<String, Object> implements Serializable  {
 
+	private static Gson gson = new Gson();
+	
 	public String toQueryString() {
 		return toQueryString(null);
 	}
@@ -167,13 +169,75 @@ public class Params extends LinkedHashMap<String, Object> implements Serializabl
 			emptyParams.put("-", "");
 			put(key, emptyParams);
 
-		} else {
-			JSONArray arrayParams = new JSONArray();
-			for (ObjectBase baseObj : array) {
-				arrayParams.put(baseObj.toParams());
+		} else if(array.get(0) instanceof ObjectBase) {
+			Object[] arr = array.stream().map(new Function<ObjectBase, Params>() {
+				@Override
+				public Params apply(ObjectBase t) {
+					return t.toParams();
+				}
+			})
+			.toArray();
+			put(key, Arrays.asList(arr));
+		}
+		else {
+			Object[] arr = array.stream().map(new Function<Object, String>() {
+				@Override
+				public String apply(Object t) {
+					return t.toString();
+				}
+			})
+			.toArray();
+			put(key, Arrays.asList(arr));
+		}
+	}
+
+	public void link(String destKey, String requestId, String sourceKey) {
+		String source = "{" + requestId + ":result:" + sourceKey.replace(".", ":") + "}";
+		Deque<String> destinationKeys = new LinkedList<String>(Arrays.asList(destKey.split("\\.")));
+		link(destinationKeys, source);
+    }
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void link(Deque<String> destinationKeys, String source) {
+		String destination = destinationKeys.pollFirst();
+		if(destinationKeys.size() == 0) {
+			put(destination, source);
+		}
+		else if(destinationKeys.getFirst().matches("^\\d+$")) {
+			int index = Integer.valueOf(destinationKeys.pollFirst());
+			List destinationList;
+			if(containsKey(destination) && get(destination) instanceof List) {
+				destinationList = (List) get(destination);
+			}
+			else {
+				destinationList = new ArrayList();
 			}
 
-			put(key, arrayParams);
+			if(destinationKeys.size() == 0) {
+				destinationList.set(index, source);
+			}
+			else {
+				Params destinationParams;
+				if(destinationList.size() > index && destinationList.get(index) instanceof Params) {
+					destinationParams = (Params) destinationList.get(index);
+				}
+				else {
+					destinationParams = new Params();
+					destinationList.add(destinationParams);
+				}
+				destinationParams.link(destinationKeys, source);
+			}
+		}
+		else {
+			Params destinationParams = null;
+			if(containsKey(destination) && get(destination) instanceof Params) {
+				destinationParams = (Params) get(destination);
+			}
+			else {
+				destinationParams = new Params();
+				put(destination, destinationParams);
+			}
+			destinationParams.link(destinationKeys, source);
 		}
 	}
 
@@ -243,7 +307,7 @@ public class Params extends LinkedHashMap<String, Object> implements Serializabl
 
 	@Override
 	public String toString() {
-		return new Gson().toJson(this, Map.class);
+		return gson.toJson(this);
 	}
 
 	public void add(String key, RequestBuilder<?> request) {

@@ -1,7 +1,5 @@
 package com.kaltura.client.utils.request;
 
-import java.util.HashMap;
-
 import com.kaltura.client.Files;
 import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
@@ -21,6 +19,10 @@ public class ListResponseRequestBuilder<T> extends RequestBuilder<ListResponse<T
         super(service, action, params, files);
     	this.type = type;
     }
+
+	public Class<?> getType() {
+		return type;
+	}
 
     protected Object parse(String response) throws APIException {
     	return GsonParser.parseListResponse(response, type);

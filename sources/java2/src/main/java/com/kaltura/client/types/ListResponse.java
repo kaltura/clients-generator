@@ -29,7 +29,10 @@ package com.kaltura.client.types;
 
 import java.util.List;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.kaltura.client.Params;
+import com.kaltura.client.utils.GsonParser;
 
 
 /**
@@ -64,6 +67,23 @@ public class ListResponse<T> extends ObjectBase {
 
     public ListResponse() {
        super();
+    }
+    
+    @SuppressWarnings("unchecked")
+	public ListResponse(JsonObject jsonObject) throws APIException {
+        if(jsonObject == null) 
+        	return;
+
+        Class<ObjectBase> cls = ObjectBase.class;
+        JsonPrimitive objectTypeElement = jsonObject.getAsJsonPrimitive("objectType");
+        if(objectTypeElement != null) {
+	        String objectType = objectTypeElement.getAsString().replaceAll("ListResponse$", "");
+	        cls = GsonParser.getObjectClass(objectType, cls);
+        }
+        
+        // set members values:
+        totalCount = GsonParser.parseInt(jsonObject.get("totalCount"));
+        objects = (List<T>) GsonParser.parseArray(jsonObject.getAsJsonArray("objects"), cls);
     }
 
     public Params toParams() {

@@ -35,7 +35,6 @@ public class KalturaTestSuite extends TestSuite
 	public static Test suite()
 	{
 		TestSuite suite = new TestSuite();
-		suite.addTestSuite(SystemServiceTest.class);
 		suite.addTestSuite(SessionServiceTest.class);
 		suite.addTestSuite(MediaServiceTest.class);
 		suite.addTestSuite(MediaServiceFieldsTest.class);

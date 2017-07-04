@@ -40,6 +40,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		$configurationNodes = $xpath->query("/xml/configurations/*");
 	    $this->writeMainClient($serviceNodes, $configurationNodes);
+	    $this->writeRequestBuilderData($configurationNodes);
 	}
 	
 	//Private functions
@@ -60,7 +61,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	function writeEnum(DOMElement $enumNode) 
 	{
 		$enumName = $enumNode->getAttribute("name");
-		if(!$this->shouldIncludeType($enumName))
+		if(!$this->shouldIncludeType($enumName) || $enumName === 'KalturaNullableBoolean')
 			return;
 		
 		$enumName = $this->getJavaTypeName($enumName);
@@ -286,7 +287,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			
 			$javaType = $this->getJavaType($propertyNode, true);
 
-			if($isEnum) 
+			if($isEnum && $javaType != 'Boolean') 
 				$arrImportsEnums[] = $this->getJavaTypeName($javaType); 
 			
 			if($propType == "array")
@@ -416,6 +417,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
             case "string":
                 $primitiveType = $propType;
                 $propEnumType = $propertyNode->hasAttribute("enumType") ? $this->getJavaTypeName($propertyNode->getAttribute("enumType")): null;
+                if($propEnumType === 'Boolean') 
+                {
+                	$primitiveType = 'boolean';
+                	$propEnumType = null;
+                }
             break;
 
             case "map":
@@ -736,99 +742,6 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			}
 		}
 	}
-
-	public function writeActionOverloadsOld($signaturePrefix, $action, $resultType, $paramNodes, &$serviceImports)
-	{
-		$returnStmt = '';
-		if($resultType)
-			$returnStmt = 'return ';
-
-		// split the parameters into mandatory and optional
-		$mandatoryParams = array();
-		$optionalParams = array();
-		foreach($paramNodes as $paramNode)
-		{
-			$optional = $paramNode->getAttribute("optional");
-			if($optional == "1")
-				$optionalParams [] = $paramNode;
-			else
-				$mandatoryParams [] = $paramNode;
-		}
-
-		for($overloadNumber = 0; $overloadNumber < count($optionalParams) + 1; $overloadNumber ++)
-		{
-			$prototypeParams = array_slice($paramNodes, 0, count($mandatoryParams) + $overloadNumber);
-			$callParams = array_slice($paramNodes, 0, count($mandatoryParams) + $overloadNumber + 1);
-
-			// find which file overloads need to be generated
-			$hasFiles = false;
-			foreach($prototypeParams as $paramNode)
-			{
-				if($paramNode->getAttribute("type") == "file")
-					$hasFiles = true;
-			}
-
-			if($hasFiles)
-			{
-				$fileOverloads = array(
-					array('' => 'FileHolder'),
-					array('' => 'File'),
-					array('' => 'InputStream', 'Name' => 'String', 'Size' => 'long'),
-					array('' => 'FileInputStream', 'Name' => 'String'),
-				);
-			}
-			else
-			{
-				$fileOverloads = array(
-					array('' => 'FileHolder'),
-				);
-			}
-
-			foreach($fileOverloads as $fileOverload)
-			{
-				if(reset($fileOverload) == 'FileHolder' && $overloadNumber == count($optionalParams))
-					continue;			// this is the main overload
-
-				// build the function prototype
-				$signature = $this->getSignature($prototypeParams, $fileOverload, $serviceImports);
-
-				// build the call parameters
-				$params = array();
-				foreach($callParams as $paramNode)
-				{
-					$optional = $paramNode->getAttribute("optional");
-					$paramName = $paramNode->getAttribute("name");
-					$paramType = $paramNode->getAttribute("type");
-
-					if($optional == "1" && ! in_array($paramNode, $prototypeParams, true))
-					{
-						$params[] = $this->getDefaultParamValue($paramNode);
-						continue;
-					}
-
-					if($paramType != "file" || reset($fileOverload) == 'FileHolder')
-					{
-						$params[] = $paramName;
-						continue;
-					}
-
-					$fileParams = array();
-					foreach($fileOverload as $namePostfix => $paramType)
-					{
-						$fileParams[] = $paramName . $namePostfix;
-					}
-					$params[] = "new FileHolder(" . implode(', ', $fileParams) . ")";
-				}
-				$paramsStr = implode(', ', $params);
-
-				// write the result
-				$this->appendLine();
-				$this->appendLine("    $signaturePrefix$signature throws APIException {");
-				$this->appendLine("        {$returnStmt}this.$action($paramsStr);");
-				$this->appendLine("    }");
-			}
-		}
-	}
 	
 	public function generateActionBodyServiceCall($serviceId, $action, $paramNodes, &$serviceImports, $javaOutputType, $fallbackClass)
 	{
@@ -865,6 +778,76 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
         }
     }
 	
+    function writeRequestBuilderData(DOMNodeList $configurationNodes)
+    {
+		$imports = "";
+		$imports .= "package com.kaltura.client.utils.request;\n";
+		$imports .= "\n";
+		$imports .= "import com.kaltura.client.Params;\n";
+		
+		$this->startNewTextBlock();
+		$this->appendLine($this->getBanner());
+		$this->appendLine("public class RequestBuilderData {");
+		$this->appendLine("	");
+		$this->appendLine("	protected Params params;");
+		$this->appendLine("	");
+		$this->appendLine("	protected RequestBuilderData(Params params) {");
+		$this->appendLine("		this.params = params;");
+		$this->appendLine("	}");
+		$this->appendLine("	");
+		
+	
+		//$volatileProperties = array();
+		foreach($configurationNodes as $configurationNode)
+		{
+			/* @var $configurationNode DOMElement */
+			$configurationName = $configurationNode->nodeName;
+			$attributeName = lcfirst($configurationName) . "Configuration";
+
+            $constantsPropertiesKeys = "";
+
+			foreach($configurationNode->childNodes as $configurationPropertyNode)
+			{
+				/* @var $configurationPropertyNode DOMElement */
+				
+				if($configurationPropertyNode->nodeType != XML_ELEMENT_NODE)
+					continue;
+			
+				$configurationProperty = $configurationPropertyNode->localName;
+
+                $constantsPropertiesKeys .= "public static final String ". ucwords($configurationName)." = \"$configurationName\";\n";
+
+				$type = $configurationPropertyNode->getAttribute("type");
+				if(!$this->isSimpleType($type) && !$this->isArrayType($type))
+				{
+					$type = $this->getJavaTypeName($type);
+					$imports .= "import com.kaltura.client.types.$type;\n";
+				}
+				
+				$type = $this->getJavaType($configurationPropertyNode, true);
+				$description = null;
+				
+				if($configurationPropertyNode->hasAttribute('description'))
+				{
+					$description = $configurationPropertyNode->getAttribute('description');
+				}
+				
+				$this->writeConfigurationParam($configurationProperty, $configurationProperty, $type, $description);
+				
+				if($configurationPropertyNode->hasAttribute('alias'))
+				{
+					$this->writeConfigurationParam($configurationPropertyNode->getAttribute('alias'), $configurationProperty, $type, $description);					
+				}
+			}
+		}
+		
+		$this->appendLine("}");
+		
+		$imports .= "\n";
+		
+		$this->addFile($this->_baseClientPath . "/utils/request/RequestBuilderData.java", $imports . $this->getTextBlock());
+    }
+    
 	function writeMainClient(DOMNodeList $serviceNodes, DOMNodeList $configurationNodes) 
 	{
 		$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion'); //located at input file top
@@ -885,6 +868,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("		");
 		$this->appendLine("		this.setClientTag(\"java:$date\");");
 		$this->appendLine("		this.setApiVersion(\"$apiVersion\");");
+		$this->appendLine("		this.clientConfiguration.put(\"format\", 1); // JSON");
 		$this->appendLine("	}");
 		$this->appendLine("	");
 		
@@ -938,6 +922,24 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$imports .= "\n";
 		
 		$this->addFile($this->_baseClientPath . "/Client.java", $imports . $this->getTextBlock());
+	}
+	
+	protected function writeConfigurationParam($name, $paramName, $type, $description)
+	{
+		$methodsName = ucfirst($name);
+		
+		$this->appendLine("	/**");
+		if($description)
+		{
+			$this->appendLine("	 * $description");
+			$this->appendLine("	 * ");
+		}
+		$this->appendLine("	 * @param $name");
+		$this->appendLine("	 */");
+		$this->appendLine("	public void set{$methodsName}($type $name){");
+		$this->appendLine("		params.add(\"$paramName\", $name);");
+		$this->appendLine("	}");
+		$this->appendLine("	");
 	}
 	
 	protected function writeConfigurationProperty($configurationName, $name, $paramName, $type, $description)
@@ -1001,7 +1003,10 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			elseif($enumType)
 			{
 				$enumType = $this->getJavaTypeName($enumType);
-				$serviceImports[] = "com.kaltura.client.enums.$enumType";
+				if($enumType != 'Boolean') 
+				{
+					$serviceImports[] = "com.kaltura.client.enums.$enumType";
+				}
 			}
 			
 			if($paramType == "file")
@@ -1126,9 +1131,21 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				$value = "Integer.MIN_VALUE";
 			
 			if($paramNode->hasAttribute("enumType")) 
-				return $this->getJavaTypeName($paramNode->getAttribute("enumType")) . ".get(" . $value . ")";
-			else 
+			{
+				$enumType = $this->getJavaTypeName($paramNode->getAttribute("enumType"));
+				if($enumType === 'Boolean')
+				{
+					return $defaultValue == 1 ? 'true' : ($defaultValue == 0 ? 'false' : 'null');
+				}
+				else 
+				{
+					return "$enumType.get($value)";
+				}
+			}
+			else
+			{
 				return $value;
+			}
 				
 		case "file":
 			return '(FileHolder)null';
@@ -1199,6 +1216,9 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	
 	public function getJavaTypeName($type)
 	{
+		if($type === 'KalturaNullableBoolean'){
+			return 'Boolean';
+		}
 		if($type === 'KalturaString'){
 			$type = 'KalturaStringHolder';
 		}

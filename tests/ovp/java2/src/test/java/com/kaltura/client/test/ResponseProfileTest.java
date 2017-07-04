@@ -28,257 +28,288 @@
 package com.kaltura.client.test;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import com.kaltura.client.enums.KalturaMediaType;
-import com.kaltura.client.enums.KalturaMetadataObjectType;
-import com.kaltura.client.types.KalturaCategory;
-import com.kaltura.client.types.KalturaCategoryEntry;
-import com.kaltura.client.types.KalturaCategoryEntryFilter;
-import com.kaltura.client.types.KalturaCategoryEntryListResponse;
-import com.kaltura.client.types.KalturaDetachedResponseProfile;
-import com.kaltura.client.types.KalturaMediaEntry;
-import com.kaltura.client.types.KalturaMetadata;
-import com.kaltura.client.types.KalturaMetadataFilter;
-import com.kaltura.client.types.KalturaMetadataListResponse;
-import com.kaltura.client.types.KalturaMetadataProfile;
-import com.kaltura.client.types.KalturaResponseProfile;
-import com.kaltura.client.types.KalturaResponseProfileHolder;
-import com.kaltura.client.types.KalturaResponseProfileMapping;
-
+import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.enums.MediaType;
+import com.kaltura.client.enums.MetadataObjectType;
+import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.CategoryEntryService;
+import com.kaltura.client.services.CategoryService;
+import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MetadataProfileService;
+import com.kaltura.client.services.MetadataService;
+import com.kaltura.client.services.ResponseProfileService;
+import com.kaltura.client.test.BaseTest.Completion;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.Category;
+import com.kaltura.client.types.CategoryEntry;
+import com.kaltura.client.types.CategoryEntryFilter;
+import com.kaltura.client.types.DetachedResponseProfile;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.Metadata;
+import com.kaltura.client.types.MetadataFilter;
+import com.kaltura.client.types.MetadataProfile;
+import com.kaltura.client.types.ResponseProfile;
+import com.kaltura.client.types.ResponseProfileHolder;
+import com.kaltura.client.types.ResponseProfileMapping;
+import com.kaltura.client.utils.request.MultiRequestBuilder;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
 
 public class ResponseProfileTest extends BaseTest{
 
 	public void testEntryCategoriesAndMetadata() throws Exception {
-		KalturaMediaEntry entry = null;
-		KalturaCategory category = null;
-		KalturaMetadataProfile categoryMetadataProfile = null;
-		KalturaResponseProfile responseProfile = null;
+		startAdminSession();
+
+		final Completion completion = new Completion();
+		completion.run(new Runnable() {
+			@Override
+			public void run() {
+
+				String xsd = "<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n";
+				xsd += "	<xsd:element name=\"metadata\">\n";
+				xsd += "		<xsd:complexType>\n";
+				xsd += "			<xsd:sequence>\n";
+				xsd += "				<xsd:element name=\"Choice\" minOccurs=\"0\" maxOccurs=\"1\">\n";
+				xsd += "					<xsd:annotation>\n";
+				xsd += "						<xsd:documentation></xsd:documentation>\n";
+				xsd += "						<xsd:appinfo>\n";
+				xsd += "							<label>Example choice</label>\n";
+				xsd += "							<key>choice</key>\n";
+				xsd += "							<searchable>true</searchable>\n";
+				xsd += "							<description>Example choice</description>\n";
+				xsd += "						</xsd:appinfo>\n";
+				xsd += "					</xsd:annotation>\n";
+				xsd += "					<xsd:simpleType>\n";
+				xsd += "						<xsd:restriction base=\"listType\">\n";
+				xsd += "							<xsd:enumeration value=\"on\" />\n";
+				xsd += "							<xsd:enumeration value=\"off\" />\n";
+				xsd += "						</xsd:restriction>\n";
+				xsd += "					</xsd:simpleType>\n";
+				xsd += "				</xsd:element>\n";
+				xsd += "				<xsd:element name=\"FreeText\" minOccurs=\"0\" maxOccurs=\"1\" type=\"textType\">\n";
+				xsd += "					<xsd:annotation>\n";
+				xsd += "						<xsd:documentation></xsd:documentation>\n";
+				xsd += "						<xsd:appinfo>\n";
+				xsd += "							<label>Free text</label>\n";
+				xsd += "							<key>freeText</key>\n";
+				xsd += "							<searchable>true</searchable>\n";
+				xsd += "							<description>Free text</description>\n";
+				xsd += "						</xsd:appinfo>\n";
+				xsd += "					</xsd:annotation>\n";
+				xsd += "				</xsd:element>\n";
+				xsd += "			</xsd:sequence>\n";
+				xsd += "		</xsd:complexType>\n";
+				xsd += "	</xsd:element>\n";
+				xsd += "	<xsd:complexType name=\"textType\">\n";
+				xsd += "		<xsd:simpleContent>\n";
+				xsd += "			<xsd:extension base=\"xsd:string\" />\n";
+				xsd += "		</xsd:simpleContent>\n";
+				xsd += "	</xsd:complexType>\n";
+				xsd += "	<xsd:complexType name=\"objectType\">\n";
+				xsd += "		<xsd:simpleContent>\n";
+				xsd += "			<xsd:extension base=\"xsd:string\" />\n";
+				xsd += "		</xsd:simpleContent>\n";
+				xsd += "	</xsd:complexType>\n";
+				xsd += "	<xsd:simpleType name=\"listType\">\n";
+				xsd += "		<xsd:restriction base=\"xsd:string\" />\n";
+				xsd += "	</xsd:simpleType>\n";
+				xsd += "</xsd:schema>";
+				
+				final String xml = "<metadata><Choice>on</Choice><FreeText>example text </FreeText></metadata>";
+
+				
+				RequestBuilder<MediaEntry> entryRequest = createEntry();
+				RequestBuilder<Category> categoryRequest = createCategory();
+				RequestBuilder<MetadataProfile> categoryMetadataProfileRequest = createMetadataProfile(MetadataObjectType.CATEGORY, xsd);
+
+				MetadataFilter metadataFilter = new MetadataFilter();
+				metadataFilter.setMetadataObjectTypeEqual(MetadataObjectType.CATEGORY);
+				//metadataFilter.setMetadataProfileIdEqual("{3:result:id}"); - responseProfile.relatedProfiles.0.relatedProfiles.0.filter.metadataProfileIdEqual
+
+				ResponseProfileMapping metadataMapping = new ResponseProfileMapping();
+				metadataMapping.setFilterProperty("objectIdEqual");
+				metadataMapping.setParentProperty("categoryId");
+				
+				List<ResponseProfileMapping> metadataMappings = new ArrayList<ResponseProfileMapping>();
+				metadataMappings.add(metadataMapping);
 		
-		try{
-			String xsd = "<xsd:schema xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n";
-			xsd += "	<xsd:element name=\"metadata\">\n";
-			xsd += "		<xsd:complexType>\n";
-			xsd += "			<xsd:sequence>\n";
-			xsd += "				<xsd:element name=\"Choice\" minOccurs=\"0\" maxOccurs=\"1\">\n";
-			xsd += "					<xsd:annotation>\n";
-			xsd += "						<xsd:documentation></xsd:documentation>\n";
-			xsd += "						<xsd:appinfo>\n";
-			xsd += "							<label>Example choice</label>\n";
-			xsd += "							<key>choice</key>\n";
-			xsd += "							<searchable>true</searchable>\n";
-			xsd += "							<description>Example choice</description>\n";
-			xsd += "						</xsd:appinfo>\n";
-			xsd += "					</xsd:annotation>\n";
-			xsd += "					<xsd:simpleType>\n";
-			xsd += "						<xsd:restriction base=\"listType\">\n";
-			xsd += "							<xsd:enumeration value=\"on\" />\n";
-			xsd += "							<xsd:enumeration value=\"off\" />\n";
-			xsd += "						</xsd:restriction>\n";
-			xsd += "					</xsd:simpleType>\n";
-			xsd += "				</xsd:element>\n";
-			xsd += "				<xsd:element name=\"FreeText\" minOccurs=\"0\" maxOccurs=\"1\" type=\"textType\">\n";
-			xsd += "					<xsd:annotation>\n";
-			xsd += "						<xsd:documentation></xsd:documentation>\n";
-			xsd += "						<xsd:appinfo>\n";
-			xsd += "							<label>Free text</label>\n";
-			xsd += "							<key>freeText</key>\n";
-			xsd += "							<searchable>true</searchable>\n";
-			xsd += "							<description>Free text</description>\n";
-			xsd += "						</xsd:appinfo>\n";
-			xsd += "					</xsd:annotation>\n";
-			xsd += "				</xsd:element>\n";
-			xsd += "			</xsd:sequence>\n";
-			xsd += "		</xsd:complexType>\n";
-			xsd += "	</xsd:element>\n";
-			xsd += "	<xsd:complexType name=\"textType\">\n";
-			xsd += "		<xsd:simpleContent>\n";
-			xsd += "			<xsd:extension base=\"xsd:string\" />\n";
-			xsd += "		</xsd:simpleContent>\n";
-			xsd += "	</xsd:complexType>\n";
-			xsd += "	<xsd:complexType name=\"objectType\">\n";
-			xsd += "		<xsd:simpleContent>\n";
-			xsd += "			<xsd:extension base=\"xsd:string\" />\n";
-			xsd += "		</xsd:simpleContent>\n";
-			xsd += "	</xsd:complexType>\n";
-			xsd += "	<xsd:simpleType name=\"listType\">\n";
-			xsd += "		<xsd:restriction base=\"xsd:string\" />\n";
-			xsd += "	</xsd:simpleType>\n";
-			xsd += "</xsd:schema>";
-			
-			String xml = "<metadata>\n";
-			xml += "	<Choice>on</Choice>\n";
-			xml += "	<FreeText>example text </FreeText>\n";
-			xml += "</metadata>";
+				final DetachedResponseProfile metadataResponseProfile = new DetachedResponseProfile();
+				metadataResponseProfile.setName("metadata");
+				metadataResponseProfile.setFilter(metadataFilter);
+				metadataResponseProfile.setMappings(metadataMappings);
+				
+				List<DetachedResponseProfile> categoryEntryRelatedProfiles = new ArrayList<DetachedResponseProfile>();
+				categoryEntryRelatedProfiles.add(metadataResponseProfile);
+
+				CategoryEntryFilter categoryEntryFilter = new CategoryEntryFilter();
+				
+				ResponseProfileMapping categoryEntryMapping = new ResponseProfileMapping();
+				categoryEntryMapping.setFilterProperty("entryIdEqual");
+				categoryEntryMapping.setParentProperty("id");
+				
+				List<ResponseProfileMapping> categoryEntryMappings = new ArrayList<ResponseProfileMapping>();
+				categoryEntryMappings.add(categoryEntryMapping);
+				
+				final DetachedResponseProfile categoryEntryResponseProfile = new DetachedResponseProfile();
+				categoryEntryResponseProfile.setName("categoryEntry");
+				categoryEntryResponseProfile.setRelatedProfiles(categoryEntryRelatedProfiles);
+				categoryEntryResponseProfile.setFilter(categoryEntryFilter);
+				categoryEntryResponseProfile.setMappings(categoryEntryMappings);
+				
+				List<DetachedResponseProfile> entryRelatedProfiles = new ArrayList<DetachedResponseProfile>();
+				entryRelatedProfiles.add(categoryEntryResponseProfile);
+				
+				ResponseProfile responseProfile = new ResponseProfile();
+				responseProfile.setName("rp" + System.currentTimeMillis());
+				responseProfile.setSystemName(responseProfile.getName());
+				responseProfile.setRelatedProfiles(entryRelatedProfiles);
+				
+				RequestBuilder<ResponseProfile> responseProfileRequest = ResponseProfileService.add(responseProfile);
+
+				CategoryEntry categoryEntry = new CategoryEntry();
+				categoryEntry.setEntryId("{1:result:id}");
+//				categoryEntry.setCategoryId("{2:result:id}");
+				
+				RequestBuilder<CategoryEntry> categoryEntryRequest = CategoryEntryService.add(categoryEntry);
+
+				RequestBuilder<Metadata> metadataRequest = MetadataService.add(Integer.MIN_VALUE, MetadataObjectType.CATEGORY, "{2:result:id}", xml);
+
+				RequestBuilder<MediaEntry> getEntryRequest = MediaService.get("{1:result:id}");
+
+				ResponseProfileHolder responseProfileHolder = new ResponseProfileHolder();
+//				responseProfileHolder.setId("{4:result:id}");
+
+				getEntryRequest.setResponseProfile(responseProfileHolder);
+				
+				MultiRequestBuilder multiRequestBuilder = new MultiRequestBuilder(entryRequest, categoryRequest, categoryMetadataProfileRequest, responseProfileRequest, categoryEntryRequest, metadataRequest, getEntryRequest);
+				multiRequestBuilder.link(categoryMetadataProfileRequest, responseProfileRequest, "id", "addResponseProfile.relatedProfiles.0.relatedProfiles.0.filter.metadataProfileIdEqual");
+				multiRequestBuilder.link(categoryRequest, categoryEntryRequest, "id", "categoryEntry.categoryId");
+				multiRequestBuilder.link(categoryMetadataProfileRequest, metadataRequest, "id", "metadataProfileId");
+				multiRequestBuilder.link(responseProfileRequest, getEntryRequest, "id", "responseProfile.id");
+				
+				multiRequestBuilder.setCompletion(new OnCompletion<List<Object>>() {
+					
+					@Override
+					public void onComplete(List<Object> response, APIException error) {
 						
-			entry = createEntry();
-			category = createCategory();
-			categoryMetadataProfile = createMetadataProfile(KalturaMetadataObjectType.CATEGORY, xsd);
+						MediaEntry entry = (MediaEntry) response.get(0);
 
-			KalturaMetadataFilter metadataFilter = new KalturaMetadataFilter();
-			metadataFilter.metadataObjectTypeEqual = KalturaMetadataObjectType.CATEGORY;
-			metadataFilter.metadataProfileIdEqual = categoryMetadataProfile.id;
+						Category category = (Category) response.get(1);
 
-			KalturaResponseProfileMapping metadataMapping = new KalturaResponseProfileMapping();
-			metadataMapping.filterProperty = "objectIdEqual";
-			metadataMapping.parentProperty = "categoryId";
-			
-			ArrayList<KalturaResponseProfileMapping> metadataMappings = new ArrayList<KalturaResponseProfileMapping>();
-			metadataMappings.add(metadataMapping);
+						MetadataProfile categoryMetadataProfile = (MetadataProfile) response.get(2);
+						
+						ResponseProfile responseProfile = (ResponseProfile) response.get(3);
+						completion.assertNotNull(responseProfile.getId());
+						completion.assertNotNull(responseProfile.getRelatedProfiles());
+						completion.assertEquals(1, responseProfile.getRelatedProfiles().size());
 
-			KalturaDetachedResponseProfile metadataResponseProfile = new KalturaDetachedResponseProfile();
-			metadataResponseProfile.name = "metadata";
-			metadataResponseProfile.filter = metadataFilter;
-			metadataResponseProfile.mappings = metadataMappings;
-			
-			ArrayList<KalturaDetachedResponseProfile> categoryEntryRelatedProfiles = new ArrayList<KalturaDetachedResponseProfile>();
-			categoryEntryRelatedProfiles.add(metadataResponseProfile);
+						CategoryEntry categoryEntry = (CategoryEntry) response.get(4);
 
-			KalturaCategoryEntryFilter categoryEntryFilter = new KalturaCategoryEntryFilter();
-			
-			KalturaResponseProfileMapping categoryEntryMapping = new KalturaResponseProfileMapping();
-			categoryEntryMapping.filterProperty = "entryIdEqual";
-			categoryEntryMapping.parentProperty = "id";
-			
-			ArrayList<KalturaResponseProfileMapping> categoryEntryMappings = new ArrayList<KalturaResponseProfileMapping>();
-			categoryEntryMappings.add(categoryEntryMapping);
-			
-			KalturaDetachedResponseProfile categoryEntryResponseProfile = new KalturaDetachedResponseProfile();
-			categoryEntryResponseProfile.name = "categoryEntry";
-			categoryEntryResponseProfile.relatedProfiles = categoryEntryRelatedProfiles;
-			categoryEntryResponseProfile.filter = categoryEntryFilter;
-			categoryEntryResponseProfile.mappings = categoryEntryMappings;
-			
-			ArrayList<KalturaDetachedResponseProfile> entryRelatedProfiles = new ArrayList<KalturaDetachedResponseProfile>();
-			entryRelatedProfiles.add(categoryEntryResponseProfile);
-			
-			responseProfile = new KalturaResponseProfile();
-			responseProfile.name = "rp" + System.currentTimeMillis();
-			responseProfile.systemName = responseProfile.name;
-			responseProfile.relatedProfiles = entryRelatedProfiles;
-			
-			responseProfile = client.getResponseProfileService().add(responseProfile);
-			assertNotNull(responseProfile.id);
-			assertNotNull(responseProfile.relatedProfiles);
-			assertEquals(1, responseProfile.relatedProfiles.size());
-			
-			KalturaCategoryEntry categoryEntry = addEntryToCategory(entry.id, category.id);
-			KalturaMetadata categoryMetadata = createMetadata(KalturaMetadataObjectType.CATEGORY, Integer.toString(category.id), categoryMetadataProfile.id, xml);
-			
-			KalturaResponseProfileHolder responseProfileHolder = new KalturaResponseProfileHolder();
-			responseProfileHolder.id = responseProfile.id;
-	
-			startAdminSession();
-			client.setResponseProfile(responseProfileHolder);
-			KalturaMediaEntry getEntry = client.getMediaService().get(entry.id);
-			assertEquals(getEntry.id, entry.id);
-			
-			assertNotNull(getEntry.relatedObjects);
-			assertTrue(getEntry.relatedObjects.containsKey(categoryEntryResponseProfile.name));
-			KalturaCategoryEntryListResponse categoryEntryList = (KalturaCategoryEntryListResponse) getEntry.relatedObjects.get(categoryEntryResponseProfile.name);
-			assertEquals(1, categoryEntryList.totalCount);
-			KalturaCategoryEntry getCategoryEntry = categoryEntryList.objects.get(0);
-			assertEquals(getCategoryEntry.createdAt, categoryEntry.createdAt);
-
-			assertNotNull(getCategoryEntry.relatedObjects);
-			assertTrue(getCategoryEntry.relatedObjects.containsKey(metadataResponseProfile.name));
-			KalturaMetadataListResponse metadataList = (KalturaMetadataListResponse) getCategoryEntry.relatedObjects.get(metadataResponseProfile.name);
-			assertEquals(1, metadataList.totalCount);
-			KalturaMetadata getMetadata = metadataList.objects.get(0);
-			assertEquals(categoryMetadata.id, getMetadata.id);
-			assertEquals(xml, getMetadata.xml);
-		}
-		finally{
-			if(responseProfile != null && responseProfile.id > 0)
-				deleteResponseProfile(responseProfile.id);
-
-			if(entry != null && entry.id != null)
-				deleteEntry(entry.id);
-
-			if(category != null && category.id > 0)
-				deleteCategory(category.id);
-
-			if(categoryMetadataProfile != null && categoryMetadataProfile.id > 0)
-				deleteMetadataProfile(categoryMetadataProfile.id);
-		}
+						Metadata categoryMetadata = (Metadata) response.get(5);
+						
+						MediaEntry getEntry = (MediaEntry) response.get(6);
+						completion.assertEquals(getEntry.getId(), entry.getId());
+						
+						completion.assertNotNull(getEntry.getRelatedObjects());
+						completion.assertTrue(getEntry.getRelatedObjects().containsKey(categoryEntryResponseProfile.getName()));
+						
+						@SuppressWarnings("unchecked")
+						ListResponse<CategoryEntry> categoryEntryList = (ListResponse<CategoryEntry>) getEntry.getRelatedObjects().get(categoryEntryResponseProfile.getName());
+						completion.assertEquals(1, categoryEntryList.getTotalCount());
+						
+						CategoryEntry getCategoryEntry = categoryEntryList.getObjects().get(0);
+						completion.assertEquals(getCategoryEntry.getCreatedAt(), categoryEntry.getCreatedAt());
+				
+						completion.assertNotNull(getCategoryEntry.getRelatedObjects());
+						completion.assertTrue(getCategoryEntry.getRelatedObjects().containsKey(metadataResponseProfile.getName()));
+						
+						@SuppressWarnings("unchecked")
+						ListResponse<Metadata> metadataList = (ListResponse<Metadata>) getCategoryEntry.getRelatedObjects().get(metadataResponseProfile.getName());
+						completion.assertEquals(1, metadataList.getTotalCount());
+						Metadata getMetadata = metadataList.getObjects().get(0);
+						completion.assertEquals(categoryMetadata.getId(), getMetadata.getId());
+						completion.assertEquals(xml, getMetadata.getXml());
+					
+						try {
+							if(responseProfile != null && responseProfile.getId() > 0)
+								deleteResponseProfile(responseProfile.getId());
+					
+							if(entry != null && entry.getId() != null)
+								deleteEntry(entry.getId());
+					
+							if(category != null && category.getId() > 0)
+								deleteCategory(category.getId());
+					
+							if(categoryMetadataProfile != null && categoryMetadataProfile.getId() > 0)
+								deleteMetadataProfile(categoryMetadataProfile.getId());
+						}
+						catch(Exception e) {
+							completion.fail(e);
+						}
+						
+						completion.complete();
+					}
+				});
+				APIOkRequestsExecutor.getSingleton().queue(multiRequestBuilder.build(client));
+			}
+		});
 	}
 
-	protected KalturaMetadata createMetadata(KalturaMetadataObjectType objectType, String objectId, int metadataProfileId, String xmlData) throws Exception {
-		startAdminSession();
-
-		KalturaMetadata metadata = client.getMetadataService().add(metadataProfileId, objectType, objectId, xmlData);
-		assertNotNull(metadata.id);
+	protected RequestBuilder<MetadataProfile> createMetadataProfile(MetadataObjectType objectType, String xsdData) {
+		MetadataProfile metadataProfile = new MetadataProfile();
+		metadataProfile.setMetadataObjectType(objectType);
+		metadataProfile.setName("mp" + System.currentTimeMillis());
 		
-		return metadata;
+		return MetadataProfileService.add(metadataProfile, xsdData);
 	}
 
-	protected KalturaMetadataProfile createMetadataProfile(KalturaMetadataObjectType objectType, String xsdData) throws Exception {
-		startAdminSession();
-
-		KalturaMetadataProfile metadataProfile = new KalturaMetadataProfile();
-		metadataProfile.metadataObjectType = objectType;
-		metadataProfile.name = "mp" + System.currentTimeMillis();
+	protected RequestBuilder<CategoryEntry> addEntryToCategory(String entryId, int categoryId) throws Exception {
+		CategoryEntry categoryEntry = new CategoryEntry();
+		categoryEntry.setEntryId(entryId);
+		categoryEntry.setCategoryId(categoryId);
 		
-		metadataProfile = client.getMetadataProfileService().add(metadataProfile, xsdData);
-		assertNotNull(metadataProfile.id);
-		
-		return metadataProfile;
+		return CategoryEntryService.add(categoryEntry);
 	}
 
-	protected KalturaCategoryEntry addEntryToCategory(String entryId, int categoryId) throws Exception {
-		startAdminSession();
-
-		KalturaCategoryEntry categoryEntry = new KalturaCategoryEntry();
-		categoryEntry.entryId = entryId;
-		categoryEntry.categoryId = categoryId;
+	protected RequestBuilder<MediaEntry> createEntry() {
+		MediaEntry entry = new MediaEntry();
+		entry.setMediaType(MediaType.VIDEO);
 		
-		categoryEntry = client.getCategoryEntryService().add(categoryEntry);
-		assertNotNull(categoryEntry.createdAt);
-		
-		return categoryEntry;
+		return MediaService.add(entry);
 	}
 
-	protected KalturaMediaEntry createEntry() throws Exception {
-		startAdminSession();
-
-		KalturaMediaEntry entry = new KalturaMediaEntry();
-		entry.mediaType = KalturaMediaType.VIDEO;
+	protected RequestBuilder<Category> createCategory() {
+		Category category = new Category();
+		category.setName("c" + System.currentTimeMillis());
 		
-		entry = client.getMediaService().add(entry);
-		assertNotNull(entry.id);
-		
-		return entry;
-	}
-
-	protected KalturaCategory createCategory() throws Exception {
-		startAdminSession();
-
-		KalturaCategory category = new KalturaCategory();
-		category.name = "c" + System.currentTimeMillis();
-		
-		category = client.getCategoryService().add(category);
-		assertNotNull(category.id);
-		
-		return category;
+		return CategoryService.add(category);
 	}
 
 	protected void deleteCategory(int id) throws Exception {
 		startAdminSession();
-		client.getCategoryService().delete(id);
+		RequestBuilder<Void> requestBuilder = CategoryService.delete(id);
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 	}
 
 	protected void deleteEntry(String id) throws Exception {
 		startAdminSession();
-		client.getBaseEntryService().delete(id);
+		RequestBuilder<Void> requestBuilder = BaseEntryService.delete(id);
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 	}
 
 	protected void deleteResponseProfile(int id) throws Exception {
 		startAdminSession();
-		client.getResponseProfileService().delete(id);
+		RequestBuilder<Void> requestBuilder = ResponseProfileService.delete(id);
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 	}
 
 	protected void deleteMetadataProfile(int id) throws Exception {
 		startAdminSession();
-		client.getMetadataProfileService().delete(id);
+		RequestBuilder<Void> requestBuilder = MetadataProfileService.delete(id);
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 	}
 	
 }

@@ -30,7 +30,6 @@ package com.kaltura.client.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +52,6 @@ import com.kaltura.client.enums.SessionType;
 import com.kaltura.client.services.MediaService;
 import com.kaltura.client.services.UploadTokenService;
 import com.kaltura.client.types.APIException;
-import com.kaltura.client.types.GeoTimeLiveStats;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.types.UploadedFileTokenResource;
@@ -75,6 +73,7 @@ public class BaseTest extends TestCase {
 
 	private static ILogger logger = Logger.getLogger(BaseTest.class);
 
+	@SuppressWarnings("serial")
 	protected class CompletionException extends Exception {
 		
 		public CompletionException(String message) {
@@ -89,8 +88,10 @@ public class BaseTest extends TestCase {
 	
 	protected class Completion{
 		
+		@SuppressWarnings("rawtypes")
 		private CompletableFuture future;
 		
+		@SuppressWarnings("rawtypes")
 		public Completion() {
 			future = new CompletableFuture();
 		}
@@ -104,10 +105,18 @@ public class BaseTest extends TestCase {
 			}
 		}
 		
+		@SuppressWarnings("unchecked")
 		public void complete() {
 			future.complete(null);
 		}
 		
+		@SuppressWarnings("unchecked")
+		public void fail(Exception e) {
+			future.complete(new CompletionException(e.getMessage()));
+			throw new RuntimeException(e);
+		}
+		
+		@SuppressWarnings("unchecked")
 		public void fail(String message) {
 			future.complete(new CompletionException(message));
 			throw new RuntimeException(message);
@@ -147,15 +156,15 @@ public class BaseTest extends TestCase {
 		}
 
 		public void assertEquals(int expected, int actual) {
-			this.assertTrue(expected == actual);
+			this.assertTrue(expected == actual, actual + " is different than " + expected);
 		}
 
 		public void assertEquals(long expected, long actual) {
-			this.assertTrue(expected == actual);
+			this.assertTrue(expected == actual, actual + " is different than " + expected);
 		}
 
 		public void assertEquals(Object expected, Object actual) {
-			this.assertTrue(expected.equals(actual));
+			this.assertTrue(expected.equals(actual), actual + " is different than " + expected);
 		}
 	}
 	
