@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,9 +29,11 @@ import android.widget.Toast;
 
 import com.kaltura.bar.ActionBar;
 import com.kaltura.boxAdapter.BoxAdapterAllEntries;
-import com.kaltura.client.enums.KalturaMediaType;
-import com.kaltura.client.types.KalturaMediaEntry;
-import com.kaltura.client.types.KalturaMediaEntryFilter;
+import com.kaltura.client.enums.MediaType;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.MediaEntryFilter;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.components.GridForLand;
 import com.kaltura.components.GridForPort;
 import com.kaltura.enums.States;
@@ -42,16 +45,17 @@ import com.kaltura.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class MostPopular extends TemplateActivity implements Observer {
 
-    private List<KalturaMediaEntry> listEntries;
-    private List<KalturaMediaEntry> copyEntries;
+    private List<MediaEntry> listEntries;
+    private List<MediaEntry> copyEntries;
     private BoxAdapterAllEntries gridAllEntries;
     private EditText etSearch;
     private SearchTextEntry searchText;
-    private KalturaMediaEntry mostPlaysEntry;
+    private MediaEntry mostPlaysEntry;
     private RelativeLayout rl_category;
     private DownloadListCatigoriesTask downloadTask;
     private View search;
@@ -67,7 +71,7 @@ public class MostPopular extends TemplateActivity implements Observer {
     private View itemTopRight;
     private List<GridForLand> contentLand;
     private List<GridForPort> contentPort;
-    private KalturaMediaEntry rightTopEntry;
+    private MediaEntry rightTopEntry;
     private Bitmap rightTopBimap;
     private boolean listCategoriesIsLoaded = false;
     private Activity activity;
@@ -77,8 +81,8 @@ public class MostPopular extends TemplateActivity implements Observer {
     int k = 0;
 
     public MostPopular() {
-        listEntries = new ArrayList<KalturaMediaEntry>();
-        copyEntries = new ArrayList<KalturaMediaEntry>();
+        listEntries = new ArrayList<MediaEntry>();
+        copyEntries = new ArrayList<MediaEntry>();
         searchText = new SearchTextEntry();
         searchText.addObserver(this);
         downloadTask = new DownloadListCatigoriesTask();
@@ -244,7 +248,7 @@ public class MostPopular extends TemplateActivity implements Observer {
                 finish();
                 break;
             case R.id.iv_thumbnail:
-                getActivityMediator().showInfo(mostPlaysEntry.id, getString(R.string.most_popular));
+                getActivityMediator().showInfo(mostPlaysEntry.getId(), getString(R.string.most_popular));
                 break;
             case R.id.iv_bar_search:
                 if (search.getVisibility() == View.GONE) {
@@ -258,12 +262,13 @@ public class MostPopular extends TemplateActivity implements Observer {
         }
     }
 
-    private class DownloadListCatigoriesTask extends AsyncTask<Void, States, List<KalturaMediaEntry>> {
+    private class DownloadListCatigoriesTask extends AsyncTask<Void, States, List<MediaEntry>> {
 
         private String message;
 
         @Override
-        protected List<KalturaMediaEntry> doInBackground(Void... params) {
+        protected List<MediaEntry> doInBackground(Void... params) {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             // Test for connection
             try {
                 if (Utils.checkInternetConnection(getApplicationContext())) {
@@ -274,11 +279,17 @@ public class MostPopular extends TemplateActivity implements Observer {
                     /**
                      * Getting list of all entries category
                      */
-                    KalturaMediaEntryFilter filter = new KalturaMediaEntryFilter();
-                    filter.mediaTypeEqual = KalturaMediaType.VIDEO;
-                    listEntries = Media.listAllEntriesByIdCategories(TAG, filter, 1, 500);
+                    MediaEntryFilter filter = new MediaEntryFilter();
+                    filter.setMediaTypeEqual(MediaType.VIDEO);
+                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<List<MediaEntry>>() {
+                        @Override
+                        public void onComplete(List<MediaEntry> response, APIException error) {
+                            listEntries = response;
+                            listCategoriesIsLoaded = true;
+                            doneSignal.countDown();
+                        }
+                    });
                 }
-                listCategoriesIsLoaded = true;
                 Log.w(TAG, "thread is end");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -286,11 +297,17 @@ public class MostPopular extends TemplateActivity implements Observer {
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
             }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return listEntries;
         }
 
         @Override
-        protected void onPostExecute(List<KalturaMediaEntry> listCategory) {
+        protected void onPostExecute(List<MediaEntry> listCategory) {
             progressDialog.hide();
             if (listEntries.size() != 0) {
                 searchText.init(TAG, etSearch, listEntries);
@@ -327,17 +344,15 @@ public class MostPopular extends TemplateActivity implements Observer {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity)
                 .threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2).memoryCacheSize(150000000) // 150 Mb
                 .discCacheSize(50000000) // 50 Mb
-                .httpReadTimeout(10000) // 10 s
                 .denyCacheImageMultipleSizesInMemory().defaultDisplayImageOptions(options).build();
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config);
-        ImageLoader.getInstance().enableLogging(); // Not necessary in common
         imageLoader.init(config);
 
         final List<String> url = new ArrayList<String>();
         view = new ArrayList<ImageView>();
         progressBar = new ArrayList<ProgressBar>();
-        url.add(mostPlaysEntry.thumbnailUrl + "/width/" + new Integer(display.getWidth()).toString() + "/height/" + new Integer(250).toString());
+        url.add(mostPlaysEntry.getThumbnailUrl() + "/width/" + new Integer(display.getWidth()).toString() + "/height/" + new Integer(250).toString());
         ImageView thumb = ((ImageView) findViewById(R.id.iv_thumbnail));
         thumb.getLayoutParams().width = display.getWidth();
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -350,7 +365,7 @@ public class MostPopular extends TemplateActivity implements Observer {
         progressBar.add(pb_loading);
 
         if (orientation == Configuration.ORIENTATION_LANDSCAPE && rightTopEntry != null) {
-            url.add(rightTopEntry.thumbnailUrl + "/width/" + new Integer(250/*
+            url.add(rightTopEntry.getThumbnailUrl() + "/width/" + new Integer(250/*
                      * display.getWidth()
                      */).toString() + "/height/" + new Integer(250/*
                      * display.getHeight()/2
@@ -371,13 +386,13 @@ public class MostPopular extends TemplateActivity implements Observer {
 
                 public void onClick(View view) {
                     Log.w(TAG, "click on thumb");
-                    getActivityMediator().showInfo(rightTopEntry.id, "Most Popular");
+                    getActivityMediator().showInfo(rightTopEntry.getId(), "Most Popular");
                 }
             });
         }
 
-        for (KalturaMediaEntry entry : copyEntries) {
-            url.add(entry.thumbnailUrl + "/width/" + new Integer(250/*
+        for (MediaEntry entry : copyEntries) {
+            url.add(entry.getThumbnailUrl() + "/width/" + new Integer(250/*
                      * display.getWidth()/2
                      */).toString() + "/height/" + new Integer(250/*
                      * display.getWidth()/2
@@ -450,20 +465,20 @@ public class MostPopular extends TemplateActivity implements Observer {
             imageLoader.displayImage(string, view.get(count), new ImageLoadingListener() {
 
                 @Override
-                public void onLoadingStarted() {
+                public void onLoadingStarted(String imageUri, View view) {
                     // do nothing
                     Log.w(TAG, "onLoadingStarted");
                 }
 
                 @Override
-                public void onLoadingFailed() {
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                     Log.w(TAG, "onLoadingFailed");
                     imageLoader.clearMemoryCache();
                     imageLoader.clearDiscCache();
                 }
 
                 @Override
-                public void onLoadingComplete() {
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     // do nothing
                     if (k < progressBar.size()) {
                         progressBar.get(k++).setVisibility(View.GONE);
@@ -474,8 +489,11 @@ public class MostPopular extends TemplateActivity implements Observer {
                     if (k >= url.size()) {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     }
+                }
 
-
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+                    Log.w(TAG, "onLoadingCancelled");
                 }
             });
             count++;
@@ -483,18 +501,18 @@ public class MostPopular extends TemplateActivity implements Observer {
 
     }
 
-    private void updateData(List<KalturaMediaEntry> listEntries) {
-        copyEntries = new ArrayList<KalturaMediaEntry>();
+    private void updateData(List<MediaEntry> listEntries) {
+        copyEntries = new ArrayList<MediaEntry>();
         copyEntries.addAll(listEntries);
 
         if (copyEntries.size() > 0) {
             sizeListentry = copyEntries.size();
-            for (KalturaMediaEntry kalturaMediaEntry : copyEntries) {
-                Log.w(TAG, "before sort: " + kalturaMediaEntry.plays);
+            for (MediaEntry MediaEntry : copyEntries) {
+                Log.w(TAG, "before sort: " + MediaEntry.getPlays());
             }
-            Collections.sort(copyEntries, new Sort<KalturaMediaEntry>("plays", "reverse"));
-            for (KalturaMediaEntry kalturaMediaEntry : copyEntries) {
-                Log.w(TAG, "after sort: " + kalturaMediaEntry.plays);
+            Collections.sort(copyEntries, new Sort<MediaEntry>("plays", "reverse"));
+            for (MediaEntry MediaEntry : copyEntries) {
+                Log.w(TAG, "after sort: " + MediaEntry.getPlays());
             }
             mostPlaysEntry = copyEntries.get(0);
             copyEntries.remove(mostPlaysEntry);
@@ -517,8 +535,8 @@ public class MostPopular extends TemplateActivity implements Observer {
                 if (listEntries.size() > 1) {
                     itemTopRight.setVisibility(View.VISIBLE);
                     rightTopEntry = copyEntries.get(0);
-                    ((TextView) itemTopRight.findViewById(R.id.tv_name)).setText(rightTopEntry.name);
-                    ((TextView) itemTopRight.findViewById(R.id.tv_episode)).setText(Utils.durationInSecondsToString(rightTopEntry.duration));
+                    ((TextView) itemTopRight.findViewById(R.id.tv_name)).setText(rightTopEntry.getName());
+                    ((TextView) itemTopRight.findViewById(R.id.tv_episode)).setText(Utils.durationInSecondsToString(rightTopEntry.getDuration()));
                     copyEntries.remove(0);
                 } else {
                     itemTopRight.setVisibility(View.GONE);
@@ -575,8 +593,8 @@ public class MostPopular extends TemplateActivity implements Observer {
                 ll_base.addView(templateContent.getRowGrid());
 
                 if (templateContent.getOffset() + 0 < copyEntries.size()) {
-                    templateContent.getLeftItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 0).name);
-                    templateContent.getLeftItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 0).duration));
+                    templateContent.getLeftItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 0).getName());
+                    templateContent.getLeftItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 0).getDuration()));
                     templateContent.getLeftItemGrid().getThumb().getLayoutParams().width = display.getWidth() / 2;
                     templateContent.getLeftItemGrid().getThumb().getLayoutParams().height = (int) (display.getWidth() / 2 * scale);
                     templateContent.getLeftItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -585,8 +603,8 @@ public class MostPopular extends TemplateActivity implements Observer {
                     Log.w(TAG, "no right element");
                 }
                 if (templateContent.getOffset() + 1 < copyEntries.size()) {
-                    templateContent.getRightItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 1).name);
-                    templateContent.getRightItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 1).duration));
+                    templateContent.getRightItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 1).getName());
+                    templateContent.getRightItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 1).getDuration()));
                     templateContent.getRightItemGrid().getThumb().getLayoutParams().width = this.width;
                     templateContent.getRightItemGrid().getThumb().getLayoutParams().height = (int) (display.getWidth() / 2 * scale);
                     templateContent.getRightItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -604,7 +622,7 @@ public class MostPopular extends TemplateActivity implements Observer {
                     public void onClick(View view) {
 
                         if (templateContent.getOffset() + 0 < copyEntries.size()) {
-                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 0).id, "Most Popular");
+                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 0).getId(), "Most Popular");
                             Log.w(TAG, "click first" + templateContent.getOffset());
                         }
                     }
@@ -614,7 +632,7 @@ public class MostPopular extends TemplateActivity implements Observer {
                     public void onClick(View view) {
                         Log.w(TAG, "click second");
                         if (templateContent.getOffset() + 1 < copyEntries.size()) {
-                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 1).id, "Most Popular");
+                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 1).getId(), "Most Popular");
                             Log.w(TAG, "click first" + templateContent.getOffset() + 1);
                         }
                     }
@@ -666,8 +684,8 @@ public class MostPopular extends TemplateActivity implements Observer {
                 ll_base.addView(templateContent.getRowGrid());
 
                 if (templateContent.getOffset() + 0 < copyEntries.size()) {
-                    templateContent.getLeftItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 0).name);
-                    templateContent.getLeftItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 0).duration));
+                    templateContent.getLeftItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 0).getName());
+                    templateContent.getLeftItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 0).getDuration()));
                     templateContent.getLeftItemGrid().getThumb().getLayoutParams().width = display.getWidth() / 3;
                     templateContent.getLeftItemGrid().getThumb().getLayoutParams().height = (int) (display.getWidth() / 3 * scale);
                     templateContent.getLeftItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -677,8 +695,8 @@ public class MostPopular extends TemplateActivity implements Observer {
                 }
 
                 if (templateContent.getOffset() + 1 < copyEntries.size()) {
-                    templateContent.getCenterItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 1).name);
-                    templateContent.getCenterItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 1).duration));
+                    templateContent.getCenterItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 1).getName());
+                    templateContent.getCenterItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 1).getDuration()));
                     templateContent.getCenterItemGrid().getThumb().getLayoutParams().width = display.getWidth() / 3;
                     templateContent.getCenterItemGrid().getThumb().getLayoutParams().height = (int) (display.getWidth() / 3 * scale);
                     templateContent.getCenterItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -692,8 +710,8 @@ public class MostPopular extends TemplateActivity implements Observer {
                 }
 
                 if (templateContent.getOffset() + 2 < copyEntries.size()) {
-                    templateContent.getRightItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 2).name);
-                    templateContent.getRightItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 2).duration));
+                    templateContent.getRightItemGrid().getName().setText(copyEntries.get(templateContent.getOffset() + 2).getName());
+                    templateContent.getRightItemGrid().getEpisode().setText(Utils.durationInSecondsToString(copyEntries.get(templateContent.getOffset() + 2).getDuration()));
                     templateContent.getRightItemGrid().getThumb().getLayoutParams().width = display.getWidth() / 3;
                     templateContent.getRightItemGrid().getThumb().getLayoutParams().height = (int) (display.getWidth() / 3 * scale);
                     templateContent.getRightItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -712,7 +730,7 @@ public class MostPopular extends TemplateActivity implements Observer {
                     public void onClick(View view) {
 
                         if (templateContent.getOffset() + 0 < copyEntries.size()) {
-                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 0).id, "Most Popular");
+                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 0).getId(), "Most Popular");
                             Log.w(TAG, "click first" + templateContent.getOffset());
                         }
                     }
@@ -722,7 +740,7 @@ public class MostPopular extends TemplateActivity implements Observer {
                     public void onClick(View view) {
 
                         if (templateContent.getOffset() + 0 < copyEntries.size()) {
-                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 0).id, "Most Popular");
+                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 0).getId(), "Most Popular");
                             Log.w(TAG, "click first" + templateContent.getOffset());
                         }
                     }
@@ -732,7 +750,7 @@ public class MostPopular extends TemplateActivity implements Observer {
                     public void onClick(View view) {
                         Log.w(TAG, "click second");
                         if (templateContent.getOffset() + 1 < copyEntries.size()) {
-                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 1).id, "Most Popular");
+                            getActivityMediator().showInfo(copyEntries.get(templateContent.getOffset() + 1).getId(), "Most Popular");
                             Log.w(TAG, "click first" + templateContent.getOffset() + 1);
                         }
                     }
@@ -749,9 +767,9 @@ public class MostPopular extends TemplateActivity implements Observer {
         if (sizeListentry != 0) {
             rl_category.setVisibility(View.VISIBLE);
             try {
-                ((TextView) findViewById(R.id.tv_name)).setText(mostPlaysEntry.name);
+                ((TextView) findViewById(R.id.tv_name)).setText(mostPlaysEntry.getName());
                 ((TextView) findViewById(R.id.tv_episode)).setText("");
-                ((TextView) findViewById(R.id.tv_duration)).setText(Utils.durationInSecondsToString(mostPlaysEntry.duration));
+                ((TextView) findViewById(R.id.tv_duration)).setText(Utils.durationInSecondsToString(mostPlaysEntry.getDuration()));
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.w(TAG, "err: " + e.getMessage());
@@ -761,6 +779,6 @@ public class MostPopular extends TemplateActivity implements Observer {
 
     @Override
     public void update(Observable paramObservable, Object paramObject) {
-        updateData((List<KalturaMediaEntry>) paramObject);
+        updateData((List<MediaEntry>) paramObject);
     }
 }

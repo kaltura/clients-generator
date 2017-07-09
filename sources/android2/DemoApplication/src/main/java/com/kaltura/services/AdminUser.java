@@ -4,10 +4,13 @@ package com.kaltura.services;
 import android.os.Handler;
 import android.util.Log;
 
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.KalturaClient;
-import com.kaltura.client.KalturaConfiguration;
-import com.kaltura.client.services.KalturaAdminUserService;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.Client;
+import com.kaltura.client.Configuration;
+import com.kaltura.client.services.UserService;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.utils.ApiHelper;
 //</editor-fold>
 
 /**
@@ -16,26 +19,7 @@ import com.kaltura.client.services.KalturaAdminUserService;
  */
 public class AdminUser {
 
-    private static KalturaClient client;
     private static boolean userIsLogin;
-    /**
-     * Contains the session if the user has successfully logged
-     */
-    public static String ks;
-    /**
-     * 
-     * api host
-     */
-    public static String host;
-    
-    public static String cdnHost;
-
-    /**
-     *
-     */
-    public static KalturaClient getClient() {
-        return client;
-    }
 
     /**
      */
@@ -51,7 +35,7 @@ public class AdminUser {
      * @param email
      * @param password
      *
-     * @throws KalturaApiException
+     * @throws APIException
      */
     public static void login(final String TAG, final String email, final String password, final LoginTaskListener loginTaskListener) {
         final Handler handler = new Handler();
@@ -59,39 +43,40 @@ public class AdminUser {
 
             @Override
             public void run() {
-                try {
-                    // set a new configuration object
-                    KalturaConfiguration config = new KalturaConfiguration();
-                    config.setTimeout(10000);
-                    config.setEndpoint(host);
+                final Client client = ApiHelper.getClient();
 
-                    client = new KalturaClient(config);
+                RequestBuilder<String> requestBuilder = UserService.loginByLoginId(email, password)
+                .setCompletion(new OnCompletion<String>() {
+                    @Override
+                    public void onComplete(String ks, final APIException e) {
+                        if(ks != null) {
+                            Log.w(TAG, ks);
+                            // set the kaltura client to use the recieved ks as default for all future operations
+                            client.setSessionId(ks);
+                            userIsLogin = true;
+                            handler.post(new Runnable() {
 
-                    KalturaAdminUserService userService = new KalturaAdminUserService(client);
-                    ks = userService.login(email, password);
-                    Log.w(TAG, ks);
-                    // set the kaltura client to use the recieved ks as default for all future operations
-                    client.setSessionId(ks);
-                    userIsLogin = true;
-                    handler.post(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            loginTaskListener.onLoginSuccess();
+                                @Override
+                                public void run() {
+                                    loginTaskListener.onLoginSuccess();
+                                }
+                            });
                         }
-                    });
-                } catch (final KalturaApiException e) {
-                    e.printStackTrace();
-                    Log.w(TAG, "Login error: " + e.getMessage() + " error code: " + e.code);
-                    userIsLogin = false;
-                    handler.post(new Runnable() {
+                        else if(e != null) {
+                            e.printStackTrace();
+                            Log.w(TAG, "Login error: " + e.getMessage() + " error code: " + e.getCode());
+                            userIsLogin = false;
+                            handler.post(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            loginTaskListener.onLoginError(e.getMessage());
+                                @Override
+                                public void run() {
+                                    loginTaskListener.onLoginError(e.getMessage());
+                                }
+                            });
                         }
-                    });
-                }
+                    }
+                });
+                ApiHelper.getRequestQueue().queue(requestBuilder.build(client));
             }
         };
         new Thread(runnable).start();

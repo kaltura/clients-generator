@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -37,15 +38,18 @@ import android.widget.Toast;
 
 import com.kaltura.bar.ActionBar;
 import com.kaltura.boxAdapter.BoxAdapterAllCategories;
-import com.kaltura.client.enums.KalturaMediaType;
-import com.kaltura.client.types.KalturaCategory;
-import com.kaltura.client.types.KalturaMediaEntry;
-import com.kaltura.client.types.KalturaMediaEntryFilter;
+import com.kaltura.client.enums.MediaType;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.Category;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.MediaEntryFilter;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.components.GridForLandLargeScreen;
 import com.kaltura.components.GridForPortLargeScreen;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
-import com.kaltura.services.Category;
+import com.kaltura.services.Categories;
 import com.kaltura.services.Media;
 import com.kaltura.sharing.Sharing;
 import com.kaltura.utils.SearchTextCategory;
@@ -54,12 +58,13 @@ import com.kaltura.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class VideoCategories extends TemplateActivity implements Observer, ListView.OnItemClickListener {
 
     private ListView lvAllCategories;
-    private List<KalturaCategory> listCategory;
+    private List<Category> listCategory;
     private BoxAdapterAllCategories listAllCategories;
     private EditText etSearch;
     private SearchTextCategory searchText;
@@ -67,8 +72,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
     private TextView tv_bar;
     private LinearLayout ll_categories;
     private int categoryId;
-    private List<KalturaMediaEntry> listEntries;
-    private HashMap<KalturaMediaEntry, Bitmap> listBitmap;
+    private List<MediaEntry> listEntries;
+    private HashMap<MediaEntry, Bitmap> listBitmap;
     private int textColor;
     private int arrow;
     private List<GridForPortLargeScreen> contentPort;
@@ -79,7 +84,7 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
     private boolean largeScreen;
     private static int save = -1;
     private boolean isSet = false;
-    private List<KalturaMediaEntry> listMostPopular;
+    private List<MediaEntry> listMostPopular;
     private boolean listCategoriesIsLoaded = false;
     private boolean isMostPopular = false;
     private Activity activity;
@@ -98,12 +103,12 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
     private static int countShowDialog = 0;
 
     public VideoCategories() {
-        listMostPopular = new ArrayList<KalturaMediaEntry>();
+        listMostPopular = new ArrayList<MediaEntry>();
         searchText = new SearchTextCategory();
         searchText.addObserver(this);
-        listCategory = new ArrayList<KalturaCategory>();
-        listEntries = new ArrayList<KalturaMediaEntry>();
-        listBitmap = new HashMap<KalturaMediaEntry, Bitmap>();
+        listCategory = new ArrayList<Category>();
+        listEntries = new ArrayList<MediaEntry>();
+        listBitmap = new HashMap<MediaEntry, Bitmap>();
         contentPort = new ArrayList<GridForPortLargeScreen>();
     }
 
@@ -456,8 +461,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                 templateContent.getRowGrid().getLayoutParams().height = display.getHeight() / 3;
 
                 if (templateContent.getOffset() + 0 < listEntries.size()) {
-                    templateContent.getFirstItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 0).name);
-                    templateContent.getFirstItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 0).duration));
+                    templateContent.getFirstItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 0).getName());
+                    templateContent.getFirstItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 0).getDuration()));
                     templateContent.getFirstItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getFirstItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getFirstItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -467,8 +472,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "first iteam grid not created");
                 }
                 if (templateContent.getOffset() + 1 < listEntries.size()) {
-                    templateContent.getSecondItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 1).name);
-                    templateContent.getSecondItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 1).duration));
+                    templateContent.getSecondItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 1).getName());
+                    templateContent.getSecondItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 1).getDuration()));
                     templateContent.getSecondItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getSecondItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getSecondItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -478,8 +483,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "second iteam grid not created");
                 }
                 if (templateContent.getOffset() + 2 < listEntries.size()) {
-                    templateContent.getThirdItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 2).name);
-                    templateContent.getThirdItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 2).duration));
+                    templateContent.getThirdItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 2).getName());
+                    templateContent.getThirdItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 2).getDuration()));
                     templateContent.getThirdItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getThirdItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getThirdItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -489,8 +494,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "third iteam grid not created");
                 }
                 if (templateContent.getOffset() + 3 < listEntries.size()) {
-                    templateContent.getFourthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 3).name);
-                    templateContent.getFourthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 3).duration));
+                    templateContent.getFourthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 3).getName());
+                    templateContent.getFourthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 3).getDuration()));
                     templateContent.getFourthItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getFourthItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getFourthItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -588,8 +593,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                 templateContent.getRowGrid().getLayoutParams().height = display.getHeight() / 2;
 
                 if (templateContent.getOffset() + 0 < listEntries.size()) {
-                    templateContent.getFirstItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 0).name);
-                    templateContent.getFirstItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 0).duration));
+                    templateContent.getFirstItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 0).getName());
+                    templateContent.getFirstItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 0).getDuration()));
                     templateContent.getFirstItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getFirstItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getFirstItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -599,8 +604,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "first iteam grid not created");
                 }
                 if (templateContent.getOffset() + 1 < listEntries.size()) {
-                    templateContent.getSecondItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 1).name);
-                    templateContent.getSecondItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 1).duration));
+                    templateContent.getSecondItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 1).getName());
+                    templateContent.getSecondItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 1).getDuration()));
                     templateContent.getSecondItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getSecondItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getSecondItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -610,8 +615,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "second iteam grid not created");
                 }
                 if (templateContent.getOffset() + 2 < listEntries.size()) {
-                    templateContent.getThirdItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 2).name);
-                    templateContent.getThirdItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 2).duration));
+                    templateContent.getThirdItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 2).getName());
+                    templateContent.getThirdItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 2).getDuration()));
                     templateContent.getThirdItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getThirdItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getThirdItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -621,8 +626,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "third iteam grid not created");
                 }
                 if (templateContent.getOffset() + 3 < listEntries.size()) {
-                    templateContent.getFourthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 3).name);
-                    templateContent.getFourthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 3).duration));
+                    templateContent.getFourthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 3).getName());
+                    templateContent.getFourthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 3).getDuration()));
                     templateContent.getFourthItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getFourthItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getFourthItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -632,8 +637,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "fourth iteam grid not created");
                 }
                 if (templateContent.getOffset() + 4 < listEntries.size()) {
-                    templateContent.getFifthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 4).name);
-                    templateContent.getFifthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 4).duration));
+                    templateContent.getFifthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 4).getName());
+                    templateContent.getFifthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 4).getDuration()));
                     templateContent.getFifthItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getFifthItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getFifthItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -643,8 +648,8 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     Log.w(TAG, "fifth iteam grid not created");
                 }
                 if (templateContent.getOffset() + 5 < listEntries.size()) {
-                    templateContent.getSixthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 5).name);
-                    templateContent.getSixthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 5).duration));
+                    templateContent.getSixthItemGrid().getName().setText(listEntries.get(templateContent.getOffset() + 5).getName());
+                    templateContent.getSixthItemGrid().getEpisode().setText(Utils.durationInSecondsToString(listEntries.get(templateContent.getOffset() + 5).getDuration()));
                     templateContent.getSixthItemGrid().getThumb().setScaleType(ImageView.ScaleType.CENTER_CROP);
                     templateContent.getSixthItemGrid().getName().setVisibility(View.VISIBLE);
                     templateContent.getSixthItemGrid().getEpisode().setVisibility(View.VISIBLE);
@@ -722,7 +727,7 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
         }
     }
 
-    private void showUploadDialog(final KalturaMediaEntry entry) {
+    private void showUploadDialog(final MediaEntry entry) {
         //set up dialogVideoInfo
         if (countShowDialog < 1) {
             countShowDialog++;
@@ -736,21 +741,21 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
             ll_info.getLayoutParams().height = (int) Math.round((float) display.getHeight() * 0.6);
             if (display.getHeight() > display.getWidth()) {
                 ll_info.getLayoutParams().width = display.getWidth() / 2;
-                url = entry.thumbnailUrl + "/width/" + Integer.valueOf(display.getWidth() / 2).toString();
+                url = entry.getThumbnailUrl() + "/width/" + Integer.valueOf(display.getWidth() / 2).toString();
             } else {
                 ll_info.getLayoutParams().width = display.getHeight() / 2;
-                url = entry.thumbnailUrl + "/width/" + Integer.valueOf(display.getHeight() / 2).toString();
+                url = entry.getThumbnailUrl() + "/width/" + Integer.valueOf(display.getHeight() / 2).toString();
             }
             new DownloadThumb().execute();
 
             TextView tv_name = (TextView) dialogUpload.findViewById(R.id.tv_name);
-            tv_name.setText(entry.name);
+            tv_name.setText(entry.getName());
 
             TextView tv_duration = (TextView) dialogUpload.findViewById(R.id.tv_duration);
-            tv_duration.setText(Utils.durationInSecondsToString(entry.duration));
+            tv_duration.setText(Utils.durationInSecondsToString(entry.getDuration()));
 
             TextView tv_description = (TextView) dialogUpload.findViewById(R.id.tv_description);
-            tv_description.setText(entry.description);
+            tv_description.setText(entry.getDescription());
 
             ImageView iv_button_facebook = (ImageView) dialogUpload.findViewById(R.id.iv_button_facebook);
             ImageView iv_button_twitter = (ImageView) dialogUpload.findViewById(R.id.iv_button_twitter);
@@ -793,9 +798,9 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
 
                 @Override
                 public void onClick(View v) {
-                    String url = entry.thumbnailUrl + "/width/" + Integer.valueOf(display.getWidth()).toString() + "/height/" + Integer.valueOf(display.getHeight() / 2).toString();
+                    String url = entry.getThumbnailUrl() + "/width/" + Integer.valueOf(display.getWidth()).toString() + "/height/" + Integer.valueOf(display.getHeight() / 2).toString();
                     countShowDialog = 0;
-                    getActivityMediator().showPlayer(entry.id, entry.downloadUrl, entry.duration, url, entry.partnerId);
+                    getActivityMediator().showPlayer(entry.getId(), entry.getDownloadUrl(), entry.getDuration(), url, entry.getPartnerId());
                     dialogUpload.cancel();
                 }
             });
@@ -847,19 +852,17 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
         //  ImageLoaderConfiguration.createDefault(this);
         // method.
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity).threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2).memoryCacheSize(1500000000) // 150 Mb
-                .httpReadTimeout(10000) // 10 s
                 .denyCacheImageMultipleSizesInMemory().build();
         // Initialize ImageLoaderForPort with configuration.
         ImageLoader.getInstance().init(config);
-        ImageLoader.getInstance().enableLogging(); // Not necessary in common
         imageLoader.init(config);
 
         final List<String> url = new ArrayList<String>();
         view = new ArrayList<ImageView>();
         progressBar = new ArrayList<ProgressBar>();
 
-        for (KalturaMediaEntry entry : listEntries) {
-            url.add(entry.thumbnailUrl + "/width/" + Integer.valueOf(/*
+        for (MediaEntry entry : listEntries) {
+            url.add(entry.getThumbnailUrl() + "/width/" + Integer.valueOf(/*
                      * display.getWidth()
                      */300).toString() + "/height/" + Integer.valueOf(/*
                      * display.getHeight()/2
@@ -914,20 +917,20 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
             imageLoader.displayImage(string, view.get(count), options, new ImageLoadingListener() {
 
                 @Override
-                public void onLoadingStarted() {
+                public void onLoadingStarted(String imageUri, View view) {
                     // do nothing
                     Log.w(TAG, "onLoadingStarted");
                 }
 
                 @Override
-                public void onLoadingFailed() {
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                     Log.w(TAG, "onLoadingFailed");
                     imageLoader.clearMemoryCache();
                     imageLoader.clearDiscCache();
                 }
 
                 @Override
-                public void onLoadingComplete() {
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     // do nothing
                     if (k < progressBar.size()) {
                         progressBar.get(k++).setVisibility(View.GONE);
@@ -936,6 +939,11 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     if (k >= url.size() && determineScreenSize() != Configuration.SCREENLAYOUT_SIZE_LARGE) {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     }
+                }
+
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+                    Log.w(TAG, "onLoadingCancelled: " + imageUri);
                 }
             });
             count++;
@@ -955,19 +963,17 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
         //  ImageLoaderConfiguration.createDefault(this);
         // method.
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity).threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2).memoryCacheSize(1500000000) // 150 Mb
-                .httpReadTimeout(10000) // 10 s
                 .denyCacheImageMultipleSizesInMemory().build();
         // Initialize ImageLoaderForPort with configuration.
         ImageLoader.getInstance().init(config);
-        ImageLoader.getInstance().enableLogging(); // Not necessary in common
         imageLoader.init(config);
 
         final List<String> url = new ArrayList<String>();
         view = new ArrayList<ImageView>();
         progressBar = new ArrayList<ProgressBar>();
 
-        for (KalturaMediaEntry entry : listEntries) {
-            url.add(entry.thumbnailUrl + "/width/" + Integer.valueOf(/*
+        for (MediaEntry entry : listEntries) {
+            url.add(entry.getThumbnailUrl() + "/width/" + Integer.valueOf(/*
                      * display.getWidth()
                      */300).toString() + "/height/" + Integer.valueOf(/*
                      * display.getHeight()/2
@@ -1036,20 +1042,20 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
             imageLoader.displayImage(string, view.get(count), options, new ImageLoadingListener() {
 
                 @Override
-                public void onLoadingStarted() {
+                public void onLoadingStarted(String imageUri, View view) {
                     // do nothing
                     Log.w(TAG, "onLoadingStarted");
                 }
 
                 @Override
-                public void onLoadingFailed() {
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                     Log.w(TAG, "onLoadingFailed");
                     imageLoader.clearMemoryCache();
                     imageLoader.clearDiscCache();
                 }
 
                 @Override
-                public void onLoadingComplete() {
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     // do nothing
                     if (k < progressBar.size()) {
                         progressBar.get(k++).setVisibility(View.GONE);
@@ -1058,7 +1064,11 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     if (k >= url.size() && determineScreenSize() != Configuration.SCREENLAYOUT_SIZE_LARGE) {
                         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     }
+                }
 
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+                    Log.w(TAG, "onLoadingCancelled: " + imageUri);
                 }
             });
             count++;
@@ -1096,12 +1106,12 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
         /**
          * Sort by name
          */
-        Collections.sort(listCategory, new Sort<KalturaCategory>("name", "compareTo"));
+        Collections.sort(listCategory, new Sort<Category>("name", "compareTo"));
         listAllCategories = new BoxAdapterAllCategories(context, listCategory, textColor, arrow, Color.argb(transparentColor, 1, 18, 35));
         if (largeScreen) {
-            KalturaCategory mp = new KalturaCategory();
-            mp.name = "Most Popular";
-            mp.id = 1;
+            Category mp = new Category();
+            mp.setName("Most Popular");
+            mp.setId(1);
             listCategory.add(0, mp);
         }
 
@@ -1231,26 +1241,33 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
         /**
          * Sort by name
          */
-        Collections.sort((List<KalturaCategory>) paramObject, new Sort<KalturaCategory>("name", "compareTo"));
-        listAllCategories = new BoxAdapterAllCategories(context, (List<KalturaCategory>) paramObject, textColor, arrow, Color.argb(0, 1, 18, 35));
+        Collections.sort((List<Category>) paramObject, new Sort<Category>("name", "compareTo"));
+        listAllCategories = new BoxAdapterAllCategories(context, (List<Category>) paramObject, textColor, arrow, Color.argb(0, 1, 18, 35));
         lvAllCategories.setAdapter(listAllCategories);
     }
 
-    private class DownloadListCatigoriesTask extends AsyncTask<Void, States, List<KalturaCategory>> {
+    private class DownloadListCatigoriesTask extends AsyncTask<Void, States, Void> {
 
         private String message;
 
         @Override
-        protected List<KalturaCategory> doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             // Test for connection
             Log.w(TAG, "Thread is start.");
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             try {
                 if (Utils.checkInternetConnection(getApplicationContext())) {
                     /**
                      * Getting list of all categories
                      */
                     publishProgress(States.LOADING_DATA);
-                    listCategory = Category.listAllCategories(TAG, 1, 500);
+                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<ListResponse<Category>>() {
+                        @Override
+                        public void onComplete(ListResponse<Category> response, APIException error) {
+                            listCategory = response.getObjects();
+                            doneSignal.countDown();
+                        }
+                    });
                     Log.w(TAG, "Thread is end.");
                 }
             } catch (Exception e) {
@@ -1261,11 +1278,17 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                 }
                 publishProgress(States.NO_CONNECTION);
             }
-            return listCategory;
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         @Override
-        protected void onPostExecute(final List<KalturaCategory> listCategory) {
+        protected void onPostExecute(final Void listCategory) {
             progressDialog.hide();
             // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
 
@@ -1382,6 +1405,7 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
 
         @Override
         protected Void doInBackground(Void... params) {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             // Test for connection
             try {
                 if (Utils.checkInternetConnection(getApplicationContext())) {
@@ -1389,12 +1413,26 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
 
                     publishProgress(States.LOADING_DATA);
                     //Getting list of all entries category
-                    KalturaMediaEntryFilter filter = new KalturaMediaEntryFilter();
-                    filter.mediaTypeEqual = KalturaMediaType.VIDEO;
+                    MediaEntryFilter filter = new MediaEntryFilter();
+                    filter.setMediaTypeEqual(MediaType.VIDEO);
                     if (!isMostPopular) {
-                        filter.categoriesIdsMatchAnd = Integer.valueOf(categoryId).toString();
+                        filter.setCategoriesIdsMatchAnd(Integer.valueOf(categoryId).toString());
                     }
-                    listEntries = Media.listAllEntriesByIdCategories(TAG, filter, 1, 500);
+                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<List<MediaEntry>>() {
+                        @Override
+                        public void onComplete(List<MediaEntry> response, APIException e) {
+                            if(e != null) {
+                                e.printStackTrace();
+                                message = e.getMessage();
+                                Log.w(TAG, message);
+                                publishProgress(States.NO_CONNECTION);
+                            }
+                            else {
+                                listEntries = response;
+                            }
+                            doneSignal.countDown();
+                        }
+                    });
                 }
                 Log.w(TAG, "Thread is end!");
             } catch (Exception e) {
@@ -1402,6 +1440,12 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                 message = e.getMessage();
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
+            }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }

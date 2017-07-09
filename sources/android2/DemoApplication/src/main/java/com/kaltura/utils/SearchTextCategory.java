@@ -9,7 +9,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.kaltura.client.types.KalturaCategory;
+import com.kaltura.client.types.Category;
 
 /**
  * Seeking a string entered in the search for the category
@@ -17,8 +17,8 @@ import com.kaltura.client.types.KalturaCategory;
 public class SearchTextCategory extends Observable implements TextWatcher {
 
     private int textlength;
-    private List<KalturaCategory> copyList;
-    private List<KalturaCategory> listCategory;
+    private List<Category> copyList;
+    private List<Category> listCategory;
     private List<String> copyListInLowerCase;
     private EditText editText;
     private String TAG;
@@ -26,18 +26,18 @@ public class SearchTextCategory extends Observable implements TextWatcher {
     public SearchTextCategory() {
     }
 
-    public void init(String TAG, EditText editText, List<KalturaCategory> listCategory) {
+    public void init(String TAG, EditText editText, List<Category> listCategory) {
         this.TAG = TAG;
         this.editText = editText;
         this.listCategory = listCategory;
         textlength = 0;
-        copyList = new ArrayList<KalturaCategory>();
+        copyList = new ArrayList<Category>();
         copyListInLowerCase = new ArrayList<String>();
         try {
             copyList.addAll(listCategory);
 
-            for (KalturaCategory kalturaCategory : listCategory) {
-                copyListInLowerCase.add(kalturaCategory.name.toLowerCase());
+            for (Category Category : listCategory) {
+                copyListInLowerCase.add(Category.getName().toLowerCase());
             }
 
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class SearchTextCategory extends Observable implements TextWatcher {
 
         listCategory.clear();
         for (int i = 0; i < copyList.size(); i++) {
-            Log.w(TAG, "search - str: " + copyList.get(i).name);
+            Log.w(TAG, "search - str: " + copyList.get(i).getName());
 
             if (copyListInLowerCase.get(i).indexOf(editText.getText().toString().toLowerCase()) != -1) {
                 listCategory.add(copyList.get(i));

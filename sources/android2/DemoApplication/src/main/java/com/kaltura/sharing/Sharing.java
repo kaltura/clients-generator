@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.MediaEntry;
 import com.nostra13.socialsharing.common.AuthListener;
 import com.nostra13.socialsharing.common.LogoutListener;
 import com.nostra13.socialsharing.common.PostListener;
@@ -54,9 +54,9 @@ public class Sharing {
         TwitterEvents.removeLogoutListener(logoutListener);
     }
 
-    public void sendToFacebook(final KalturaMediaEntry entry) {
+    public void sendToFacebook(final MediaEntry entry) {
         if (facebook.isAuthorized()) {
-            facebook.publishMessage(entry.name, "", entry.dataUrl, entry.description, entry.dataUrl);
+            facebook.publishMessage(entry.getName(), "", entry.getDataUrl(), entry.getDescription(), entry.getDataUrl());
 
         } else {
             // Start authentication dialog and publish message after successful authentication
@@ -64,7 +64,7 @@ public class Sharing {
 
                 @Override
                 public void onAuthSucceed() {
-                    facebook.publishMessage(entry.name, "", entry.dataUrl, entry.description, entry.dataUrl);
+                    facebook.publishMessage(entry.getName(), "", entry.getDataUrl(), entry.getDescription(), entry.getDataUrl());
 
                 }
 
@@ -76,16 +76,16 @@ public class Sharing {
         }
     }
 
-    public void sendToTwitter(final KalturaMediaEntry entry) {
+    public void sendToTwitter(final MediaEntry entry) {
         if (twitter.isAuthorized()) {
-            twitter.publishMessage(entry.name + " " + entry.dataUrl);
+            twitter.publishMessage(entry.getName() + " " + entry.getDataUrl());
         } else {
             // Start authentication dialog and publish message after successful authentication
             twitter.authorize(new AuthListener() {
 
                 @Override
                 public void onAuthSucceed() {
-                    twitter.publishMessage(entry.name + " " + entry.dataUrl);
+                    twitter.publishMessage(entry.getName() + " " + entry.getDataUrl());
                 }
 
                 @Override
@@ -160,11 +160,11 @@ public class Sharing {
         });
     }
 
-    public void sendToMail(KalturaMediaEntry entry) {
+    public void sendToMail(MediaEntry entry) {
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("text/plain");
-        i.putExtra(Intent.EXTRA_SUBJECT, entry.name);
-        i.putExtra(Intent.EXTRA_TEXT, entry.description + " " + entry.dataUrl);
+        i.putExtra(Intent.EXTRA_SUBJECT, entry.getName());
+        i.putExtra(Intent.EXTRA_TEXT, entry.getDescription() + " " + entry.getDataUrl());
         try {
             activity.startActivity(Intent.createChooser(i, "Send mail..."));
         } catch (android.content.ActivityNotFoundException ex) {

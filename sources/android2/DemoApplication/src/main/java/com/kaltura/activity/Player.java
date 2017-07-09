@@ -3,6 +3,7 @@ package com.kaltura.activity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -16,11 +17,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.types.KalturaFlavorAsset;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.EntryContextDataResult;
+import com.kaltura.client.types.FlavorAsset;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
-import com.kaltura.services.FlavorAsset;
+import com.kaltura.services.FlavorAssets;
 import com.kaltura.utils.Sort;
 import com.kaltura.utils.Utils;
 
@@ -34,8 +37,8 @@ public class Player extends TemplateActivity implements SurfaceHolder.Callback {
 	private int duration;
 	private Activity activity;
 	private int partnerId;
-	private List<KalturaFlavorAsset> listFlavorAssets = new ArrayList<KalturaFlavorAsset>();
-	private List<KalturaFlavorAsset> copyListFlavorAssets;
+	private List<FlavorAsset> listFlavorAssets = new ArrayList<FlavorAsset>();
+	private List<FlavorAsset> copyListFlavorAssets;
 	private String url;
 
 	@Override
@@ -185,42 +188,50 @@ public class Player extends TemplateActivity implements SurfaceHolder.Callback {
 
 		@Override
 		protected Void doInBackground(Void... params) {
+			final CountDownLatch doneSignal = new CountDownLatch(1);
 			// Test for connection
 			try {
 				if (Utils.checkInternetConnection(getApplicationContext())) {
 					// Getting list of all entries category
 					publishProgress(States.LOADING_DATA);
-					try {
-						listFlavorAssets = FlavorAsset
-								.listAllFlavorsFromContext(TAG, entryId,
-										"widevine_mbr,widevine,iphonenew");
-						copyListFlavorAssets =  new ArrayList<KalturaFlavorAsset>(); 
-						Collections.sort(listFlavorAssets,
-								new Sort<KalturaFlavorAsset>("bitrate",
-										"reverse"));
-						for (KalturaFlavorAsset f : listFlavorAssets) {
-							Log.w(TAG, "FLAVORS:  containerFormat: "
-									+ f.containerFormat + " description: "
-									+ f.description + " bitrate: " + f.bitrate
-									+ " frameRate: " + f.frameRate + " size: "
-									+ f.size + " height: " + f.height
-									+ " width: " + f.width + " fileExt "
-									+ f.fileExt + " partnerDescription "
-									+ f.partnerDescription + " tags: " + f.tags
-									+ " videoCodecId " + f.videoCodecId);
-						}
-						for (KalturaFlavorAsset kalturaFlavorAsset : listFlavorAssets) {
-							if (!new Integer(
-									Math.round(kalturaFlavorAsset.bitrate / 100) * 100)
-									.equals(0)) {
-								copyListFlavorAssets.add(kalturaFlavorAsset);
-							}
-						}
-					} catch (KalturaApiException e) {
-						e.printStackTrace();
-						Log.w(TAG, "err: " + e.getMessage(), e);
-					}
 
+					FlavorAssets.listAllFlavorsFromContext(TAG, entryId, "widevine_mbr,widevine,iphonenew", new OnCompletion<EntryContextDataResult>() {
+						@Override
+						public void onComplete(EntryContextDataResult response, APIException e) {
+							if(e != null){
+								e.printStackTrace();
+								Log.w(TAG, "err: " + e.getMessage(), e);
+								doneSignal.countDown();
+								return;
+							}
+
+							listFlavorAssets = response.getFlavorAssets();
+
+							copyListFlavorAssets =  new ArrayList<FlavorAsset>();
+							Collections.sort(listFlavorAssets,
+									new Sort<FlavorAsset>("bitrate",
+											"reverse"));
+							for (FlavorAsset f : listFlavorAssets) {
+								Log.w(TAG, "FLAVORS:  containerFormat: "
+										+ f.getContainerFormat() + " description: "
+										+ f.getDescription() + " bitrate: " + f.getBitrate()
+										+ " frameRate: " + f.getFrameRate() + " size: "
+										+ f.getSize() + " height: " + f.getHeight()
+										+ " width: " + f.getWidth() + " fileExt "
+										+ f.getFileExt() + " partnerDescription "
+										+ f.getPartnerDescription() + " tags: " + f.getTags()
+										+ " videoCodecId " + f.getVideoCodecId());
+							}
+							for (FlavorAsset FlavorAsset : listFlavorAssets) {
+								if (!new Integer(
+										Math.round(FlavorAsset.getBitrate() / 100) * 100)
+										.equals(0)) {
+									copyListFlavorAssets.add(FlavorAsset);
+								}
+							}
+							doneSignal.countDown();
+						}
+					});
 				}
 				Log.w(TAG, "Thread is end!");
 			} catch (Exception e) {
@@ -228,6 +239,12 @@ public class Player extends TemplateActivity implements SurfaceHolder.Callback {
 				message = e.getMessage();
 				Log.w(TAG, "" + message);
 				publishProgress(States.NO_CONNECTION);
+			}
+
+			try {
+				doneSignal.await();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 			return null;
 		}
@@ -237,14 +254,14 @@ public class Player extends TemplateActivity implements SurfaceHolder.Callback {
 			progressDialog.hide();
 
 			Log.w(TAG, "----------------");
-			for (KalturaFlavorAsset f : copyListFlavorAssets) {
-				Log.w(TAG, "FLAVORS:  containerFormat: " + f.containerFormat
-						+ " description: " + f.description + " bitrate: "
-						+ f.bitrate + " frameRate: " + f.frameRate + " size: "
-						+ f.size + " height: " + f.height + " width: "
-						+ f.width + " fileExt " + f.fileExt
-						+ " partnerDescription " + f.partnerDescription
-						+ " tags " + f.tags + " videoCodecId " + f.videoCodecId);
+			for (FlavorAsset f : copyListFlavorAssets) {
+				Log.w(TAG, "FLAVORS:  containerFormat: " + f.getContainerFormat()
+						+ " description: " + f.getDescription() + " bitrate: "
+						+ f.getBitrate() + " frameRate: " + f.getFrameRate() + " size: "
+						+ f.getSize() + " height: " + f.getHeight() + " width: "
+						+ f.getWidth() + " fileExt " + f.getFileExt()
+						+ " partnerDescription " + f.getPartnerDescription()
+						+ " tags " + f.getTags() + " videoCodecId " + f.getVideoCodecId());
 
 			}
 			if (viewPlayer != null) {

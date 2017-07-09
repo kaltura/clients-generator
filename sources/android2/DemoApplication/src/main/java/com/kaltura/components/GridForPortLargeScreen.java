@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.MediaEntry;
 
 /**
  *
@@ -31,8 +31,8 @@ public class GridForPortLargeScreen {
     private ItemGrid itemThird;
     private ItemGrid itemFourth;
     private int offset;
-    private HashMap<KalturaMediaEntry, Bitmap> listBitmap;
-    private List<KalturaMediaEntry> listKeys;
+    private HashMap<MediaEntry, Bitmap> listBitmap;
+    private List<MediaEntry> listKeys;
 
     public GridForPortLargeScreen(String TAG, Activity activity, int offset) {
         this.TAG = TAG;

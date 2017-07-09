@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.CountDownLatch;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -31,15 +32,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.types.KalturaCategory;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.Category;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.UploadToken;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.AdminUser;
-import com.kaltura.services.Category;
+import com.kaltura.services.Categories;
 import com.kaltura.services.Media;
-import com.kaltura.services.UploadToken;
+import com.kaltura.services.FileUploader;
 import com.kaltura.utils.Utils;
 
 public class Main extends TemplateActivity {
@@ -63,7 +67,7 @@ public class Main extends TemplateActivity {
     private RelativeLayout rl_upload;
     private TextView tv_uploading;
     private boolean startUpload;
-    private UploadToken uploadToken;
+    private FileUploader fileUploader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -319,7 +323,7 @@ public class Main extends TemplateActivity {
         final EditText et_description = (EditText) dialogVideoInfo.findViewById(R.id.et_description);
         final EditText et_tags = (EditText) dialogVideoInfo.findViewById(R.id.et_tags);
 
-        uploadToken = new UploadToken(TAG, 5);
+        fileUploader = new FileUploader(TAG, 5);
         //set up button
         ImageView iv_close = (ImageView) dialogVideoInfo.findViewById(R.id.iv_close);
         rl_upload = (RelativeLayout) dialogVideoInfo.findViewById(R.id.rl_upload);
@@ -336,7 +340,7 @@ public class Main extends TemplateActivity {
                 pb_uploading.setVisibility(View.GONE);
                 tv_uploading.setVisibility(View.GONE);
                 dialogVideoInfo.cancel();
-                uploadToken.setStartUpload(false);
+                fileUploader.setStartUpload(false);
                 Log.w(TAG, "close video info dialog");
             }
         });
@@ -354,7 +358,7 @@ public class Main extends TemplateActivity {
                     Main.this.title = et_title.getText().toString();
                     Main.this.description = et_description.getText().toString();
                     Main.this.tags = et_tags.getText().toString();
-                    uploadToken.setStartUpload(true);
+                    fileUploader.setStartUpload(true);
                     new UploadDataTask().execute();
                 }
             }
@@ -456,11 +460,12 @@ public class Main extends TemplateActivity {
         private int progress = 0;
 
         public UploadDataTask() {
-            uploadToken.addObserver(this);
+            fileUploader.addObserver(this);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             // Test for connection
             try {
                 if (Utils.checkInternetConnection(getApplicationContext())) {
@@ -471,9 +476,21 @@ public class Main extends TemplateActivity {
 
                     if (pathfromURI != null && category != null && title != null && description != null && tags != null) {
                         message = "Create new entry";
-                        KalturaMediaEntry newEntry = Media.addEmptyEntry(TAG, category, title, description, tags);
+                        Media.addEmptyEntry(TAG, category, title, description, tags, new OnCompletion<MediaEntry>() {
+                            @Override
+                            public void onComplete(MediaEntry newEntry, APIException error) {
+                                fileUploader.upload(newEntry, pathfromURI, new FileUploader.OnUploadCompletion() {
+                                    @Override
+                                    public void onComplete(UploadToken uploadToken, Exception error) {
+                                        if(error == null && uploadToken != null) {
+                                            isUploaded = true;
+                                        }
+                                        doneSignal.countDown();
+                                    }
+                                });
+                            }
+                        });
                         message = "Uploading data";
-                        isUploaded = uploadToken.uploadMediaFileAndAttachToEmptyEntry(TAG, newEntry, pathfromURI);
                     } else {
                         message = "data null";
                         publishProgress(States.ERR);
@@ -484,6 +501,12 @@ public class Main extends TemplateActivity {
                 message = e.getMessage();
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
+            }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -535,29 +558,45 @@ public class Main extends TemplateActivity {
     private class DownloadListCatigoriesTask extends AsyncTask<Void, States, Void> {
 
         private String message;
-        private List<KalturaCategory> listCategory;
+        private List<Category> listCategory;
 
         @Override
         protected Void doInBackground(Void... params) {
-            // Test for connection
-            try {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
+            try{
+                // Test for connection
                 if (Utils.checkInternetConnection(getApplicationContext())) {
                     /**
                      * Getting list of all categories
                      */
                     publishProgress(States.LOADING_DATA);
-                    listCategory = Category.listAllCategories(TAG, 1, 500);
+                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<ListResponse<Category>>() {
+                        @Override
+                        public void onComplete(ListResponse<Category> response, APIException e) {
+                            if(e != null) {
+                                e.printStackTrace();
+                                message = e.getMessage();
+                                Log.w(TAG, message);
+                                publishProgress(States.ERR);
+                            }
+                            else if(response != null) {
+                                listCategory = response.getObjects();
+                            }
+                            doneSignal.countDown();
+                        }
+                    });
                 }
-            } catch (KalturaApiException e) {
-                e.printStackTrace();
-                message = e.getMessage();
-                Log.w(TAG, message);
-                publishProgress(States.ERR);
             } catch (Exception e) {
                 e.printStackTrace();
                 message = e.getMessage();
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
+            }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -568,8 +607,8 @@ public class Main extends TemplateActivity {
 
             if (listCategory != null) {
                 ls = new ArrayList<String>();
-                for (KalturaCategory list : listCategory) {
-                    ls.add(list.name);
+                for (Category list : listCategory) {
+                    ls.add(list.getName());
                 }
                 spinner = (Spinner) dialogVideoInfo.findViewById(R.id.sp_category);
                 adapter = new ArrayAdapter<String>(Main.this, android.R.layout.simple_spinner_item, ls);

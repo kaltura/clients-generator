@@ -1,7 +1,7 @@
 package com.kaltura.player;
 
 import java.util.ArrayList;
-import com.kaltura.client.types.KalturaWidevineFlavorAsset;
+import com.kaltura.client.types.WidevineFlavorAsset;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -9,6 +9,7 @@ import java.util.Observer;
 import org.apache.commons.codec.binary.Base64;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -30,14 +31,16 @@ import android.widget.TextView;
 
 import com.kaltura.activity.R;
 import com.kaltura.boxAdapter.BoxAdapterRate;
-import com.kaltura.client.types.KalturaFlavorAsset;
+import com.kaltura.client.types.FlavorAsset;
 import com.kaltura.services.AdminUser;
+import com.kaltura.utils.ApiHelper;
 import com.kaltura.utils.Utils;
 import com.kaltura.widevine.WidevineHandler;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 /**
  * Performs the mapping of elements of the player, handling control events
@@ -165,33 +168,36 @@ public class ViewPlayer implements Observer, OnClickListener, SeekBar.OnSeekBarC
         // method.
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity).threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2).memoryCacheSize(150000000) // 150 Mb
                 .discCacheSize(50000000) // 50 Mb
-                .httpReadTimeout(10000) // 10 s
                 .denyCacheImageMultipleSizesInMemory().build();
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config);
-        ImageLoader.getInstance().enableLogging(); // Not necessary in common
         imageLoader.init(config);
         iv_thumb.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         imageLoader.displayImage(url, iv_thumb, options, new ImageLoadingListener() {
 
             @Override
-            public void onLoadingStarted() {
+            public void onLoadingStarted(String imageUri, View view) {
                 // do nothing
                 Log.w(TAG, "onLoadingStarted");
             }
 
             @Override
-            public void onLoadingFailed() {
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                 Log.w(TAG, "onLoadingFailed");
                 imageLoader.clearMemoryCache();
                 imageLoader.clearDiscCache();
             }
 
             @Override
-            public void onLoadingComplete() {
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 // do nothing
                 Log.w(TAG, "onLoadingComplete: ");
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+                Log.w(TAG, "onLoadingCancelled: " + imageUri);
             }
         });
     }
@@ -311,11 +317,11 @@ public class ViewPlayer implements Observer, OnClickListener, SeekBar.OnSeekBarC
     /**
      * Passed a list to display the bitrates
      */
-    public void addListRates(List<KalturaFlavorAsset> listRates) {
+    public void addListRates(List<FlavorAsset> listRates) {
         if (listRates != null) {
             boxAdapterRate = new BoxAdapterRate(activity, listRates, R.drawable.background_selected_rate);
         } else {
-            listRates = new ArrayList<KalturaFlavorAsset>();
+            listRates = new ArrayList<FlavorAsset>();
             boxAdapterRate = new BoxAdapterRate(activity, listRates, R.drawable.background_selected_rate);
         }
         boxAdapterRate.setVisiblityHighlight(true);
@@ -441,8 +447,8 @@ public class ViewPlayer implements Observer, OnClickListener, SeekBar.OnSeekBarC
     }
 
     public void selectBitrate(int position, int state) {
-    	KalturaFlavorAsset flavor = boxAdapterRate.getFlavor(position);
-        flavorId = flavor.id;
+    	FlavorAsset flavor = boxAdapterRate.getFlavor(position);
+        flavorId = flavor.getId();
         Log.w(TAG, flavorId);
         tv_rate.setText(boxAdapterRate.getFlavorBitrate(position));
         rates.setVisibility(View.INVISIBLE);
@@ -451,10 +457,10 @@ public class ViewPlayer implements Observer, OnClickListener, SeekBar.OnSeekBarC
         Log.w(TAG, "size(KB): " + this.mediaSizeKb);
 
         String url;
-        String host = (AdminUser.cdnHost != null ) ? AdminUser.cdnHost : AdminUser.host;
+        String host = (ApiHelper.getCdnHost() != null ) ? ApiHelper.getCdnHost() : ApiHelper.getHost();
         String appName64 = new String(Base64.encodeBase64(activity.getString(R.string.app_name).getBytes()));
         Log.w(TAG, "versionName: " + VERSION.SDK_INT);
-        if (flavor instanceof KalturaWidevineFlavorAsset) {
+        if (flavor instanceof WidevineFlavorAsset) {
         	WidevineHandler wvHandler = new WidevineHandler(activity, partnerId, entryId, flavorId);
         	url = wvHandler.url;
         }
@@ -464,7 +470,7 @@ public class ViewPlayer implements Observer, OnClickListener, SeekBar.OnSeekBarC
             } else {
                 url = createLinkForM3u8(partnerId , entryId, boxAdapterRate.getListFlavors());
             }
-            url = host + url + "?ks=" + AdminUser.ks + "&referrer=" + appName64;
+            url = host + url + "?ks=" + ApiHelper.getClient().getSessionId() + "&referrer=" + appName64;
         }
            
         player.setUrl(url);

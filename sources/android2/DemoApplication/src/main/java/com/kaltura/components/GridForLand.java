@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.MediaEntry;
 
 /**
  *
@@ -31,8 +31,8 @@ public class GridForLand {
     private ItemGrid itemCenter;
     private ItemGrid itemRight;
     private int offset;
-    private HashMap<KalturaMediaEntry, Bitmap> listBitmap;
-    private List<KalturaMediaEntry> listKeys;
+    private HashMap<MediaEntry, Bitmap> listBitmap;
+    private List<MediaEntry> listKeys;
 
     public GridForLand(String TAG, Activity activity, int offset) {
         this.TAG = TAG;
@@ -48,12 +48,12 @@ public class GridForLand {
         if (listBitmap != null) {
             this.listBitmap = listBitmap;
         } else {
-            this.listBitmap = new HashMap<KalturaMediaEntry, Bitmap>();
+            this.listBitmap = new HashMap<MediaEntry, Bitmap>();
         }
         if (listKeys != null) {
             this.listKeys = listKeys;
         } else {
-            this.listKeys = new ArrayList<KalturaMediaEntry>();
+            this.listKeys = new ArrayList<MediaEntry>();
         }
         this.offset = offset;
 
