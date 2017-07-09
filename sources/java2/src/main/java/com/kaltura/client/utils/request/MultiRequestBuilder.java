@@ -5,10 +5,9 @@ import com.kaltura.client.Logger;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.GsonParser;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.IntFunction;
 
 /**
  * Created by tehilarozin on 15/08/2016.
@@ -116,23 +115,11 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
     
     @Override
     protected Object parse(String response) throws APIException {
-    	Class[] types = calls.values().stream().map(new Function<RequestBuilder<?>, Class<?>>() {
-
-			@Override
-			public Class<?> apply(RequestBuilder<?> t) {
-				return t.getType();
-			}
-		})
-    	.toArray(new IntFunction<Class[]>() {
-
-			@Override
-			public Class[] apply(int value) {
-				// TODO Auto-generated method stub
-				return new Class[calls.size()];
-			}
-		});
-    	
-    	return GsonParser.parseArray(response, types);
+        List<Class> list = new ArrayList<Class>();
+        for(RequestBuilder<?> call : calls.values()) {
+            list.add(call.getType());
+        }
+    	return GsonParser.parseArray(response, list.toArray(new Class[calls.size()]));
     }
 
     /**

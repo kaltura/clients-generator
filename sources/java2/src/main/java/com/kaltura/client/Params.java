@@ -36,7 +36,6 @@ import com.kaltura.client.utils.request.RequestBuilder;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Function;
 
 /**
  * Helper class that provides a collection of Kaltura parameters (key-value
@@ -170,24 +169,18 @@ public class Params extends LinkedHashMap<String, Object> implements Serializabl
 			put(key, emptyParams);
 
 		} else if(array.get(0) instanceof ObjectBase) {
-			Object[] arr = array.stream().map(new Function<ObjectBase, Params>() {
-				@Override
-				public Params apply(ObjectBase t) {
-					return t.toParams();
-				}
-			})
-			.toArray();
-			put(key, Arrays.asList(arr));
+			List<Params> list = new ArrayList<Params>();
+			for(ObjectBase item : array) {
+				list.add(item.toParams());
+			}
+			put(key, list);
 		}
 		else {
-			Object[] arr = array.stream().map(new Function<Object, String>() {
-				@Override
-				public String apply(Object t) {
-					return t.toString();
-				}
-			})
-			.toArray();
-			put(key, Arrays.asList(arr));
+			List<String> list = new ArrayList<String>();
+			for(ObjectBase item : array) {
+				list.add(item.toString());
+			}
+			put(key, list);
 		}
 	}
 

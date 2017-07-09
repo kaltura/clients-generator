@@ -1,3 +1,0 @@
-include ':app'
-include 'KalturaClient'
-project(':KalturaClient').projectDir = new File('../android/KalturaClient')

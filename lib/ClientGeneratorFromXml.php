@@ -462,6 +462,7 @@ abstract class ClientGeneratorFromXml
 		
 		if(!$dir)
 		{
+			KalturaLog::err("Fail to open directory: $directory");
 			return;
 		}
 		

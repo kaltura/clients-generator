@@ -9,7 +9,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.MediaEntry;
 
 /**
  * Seeking a string entered in the search for the entry
@@ -17,8 +17,8 @@ import com.kaltura.client.types.KalturaMediaEntry;
 public class SearchTextEntry extends Observable implements TextWatcher {
 
     private int textlength;
-    private List<KalturaMediaEntry> copyList;
-    private List<KalturaMediaEntry> listCategory;
+    private List<MediaEntry> copyList;
+    private List<MediaEntry> listCategory;
     private List<String> copyListInLowerCase;
     private EditText editText;
     private String TAG;
@@ -26,16 +26,16 @@ public class SearchTextEntry extends Observable implements TextWatcher {
     public SearchTextEntry() {
     }
 
-    public void init(String TAG, EditText editText, List<KalturaMediaEntry> listCategory) {
+    public void init(String TAG, EditText editText, List<MediaEntry> listCategory) {
         this.TAG = TAG;
         this.editText = editText;
         this.listCategory = listCategory;
         textlength = 0;
-        copyList = new ArrayList<KalturaMediaEntry>();
+        copyList = new ArrayList<MediaEntry>();
         copyListInLowerCase = new ArrayList<String>();
         copyList.addAll(listCategory);
-        for (KalturaMediaEntry kalturaMediaEntry : listCategory) {
-            copyListInLowerCase.add(kalturaMediaEntry.name.toLowerCase());
+        for (MediaEntry mediaEntry : listCategory) {
+            copyListInLowerCase.add(mediaEntry.getName().toLowerCase());
         }
     }
 
@@ -50,7 +50,7 @@ public class SearchTextEntry extends Observable implements TextWatcher {
         listCategory.clear();
 
         for (int i = 0; i < copyList.size(); i++) {
-            Log.w(TAG, "search - str: " + copyList.get(i).name);
+            Log.w(TAG, "search - str: " + copyList.get(i).getName());
             //    Matcher m1 = p1.matcher(copyList.get(i).name);
 
             if (copyListInLowerCase.get(i).indexOf(editText.getText().toString().toLowerCase()) != -1) {

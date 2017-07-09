@@ -2,6 +2,7 @@ package com.kaltura.activity;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.CountDownLatch;
 
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -13,11 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaltura.bar.ActionBar;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.UploadToken;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.Media;
-import com.kaltura.services.UploadToken;
+import com.kaltura.services.FileUploader;
 import com.kaltura.utils.Utils;
 
 public class Uploading extends TemplateActivity {
@@ -93,17 +97,18 @@ public class Uploading extends TemplateActivity {
 
         private String message;
         private boolean isUploaded = false;
-        private UploadToken uploadToken;
+        private FileUploader fileUploader;
         private int progress = 0;
 
         public UploadDataTask() {
-            uploadToken = new UploadToken(TAG, 5);
-            uploadToken.setStartUpload(true);
-            uploadToken.addObserver(this);
+            fileUploader = new FileUploader(TAG, 5);
+            fileUploader.setStartUpload(true);
+            fileUploader.addObserver(this);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             // Test for connection
             try {
                 if (Utils.checkInternetConnection(getApplicationContext())) {
@@ -114,9 +119,29 @@ public class Uploading extends TemplateActivity {
 
                     if (pathfromURI != null && category != null && title != null && description != null && tags != null) {
                         message = "Create new entry";
-                        KalturaMediaEntry newEntry = Media.addEmptyEntry(TAG, category, title, description, tags);
+                        Media.addEmptyEntry(TAG, category, title, description, tags, new OnCompletion<MediaEntry>() {
+                            @Override
+                            public void onComplete(MediaEntry newEntry, APIException e) {
+                                if(e != null) {
+                                    e.printStackTrace();
+                                    message = e.getMessage();
+                                    Log.w(TAG, message);
+                                    publishProgress(States.NO_CONNECTION);
+                                }
+                                else {
+                                    fileUploader.upload(newEntry, pathfromURI, new FileUploader.OnUploadCompletion() {
+                                        @Override
+                                        public void onComplete(UploadToken uploadToken, Exception error) {
+                                            if(error == null && uploadToken != null) {
+                                                isUploaded = true;
+                                            }
+                                            doneSignal.countDown();
+                                        }
+                                    });
+                                }
+                            }
+                        });
                         message = "Uploading data";
-                        isUploaded = uploadToken.uploadMediaFileAndAttachToEmptyEntry(TAG, newEntry, pathfromURI);
                     } else {
                         message = "data null";
                         publishProgress(States.ERR);
@@ -127,6 +152,12 @@ public class Uploading extends TemplateActivity {
                 message = e.getMessage();
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
+            }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }

@@ -14,19 +14,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaFlavorAsset;
+import com.kaltura.client.types.FlavorAsset;
 import com.kaltura.utils.Utils;
 
 public class BoxAdapterRate extends BaseAdapter {
 
-    private List<KalturaFlavorAsset> list;
+    private List<FlavorAsset> list;
     private LayoutInflater lInflater;
     private Typeface typeFont;
     private boolean setHighlight = false;
     private int highlightIndex = 0;
     private int backgroundColor;
 
-    public BoxAdapterRate(Context context, List<KalturaFlavorAsset> list, int backgroundColor) {
+    public BoxAdapterRate(Context context, List<FlavorAsset> list, int backgroundColor) {
         this.backgroundColor = backgroundColor;
         /**
          * Set type font
@@ -35,7 +35,7 @@ public class BoxAdapterRate extends BaseAdapter {
         if (list != null) {
             this.list = list;
         } else {
-            this.list = new ArrayList<KalturaFlavorAsset>();
+            this.list = new ArrayList<FlavorAsset>();
         }
 
         lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -100,33 +100,33 @@ public class BoxAdapterRate extends BaseAdapter {
     }
 
     public String getFlavorId(int position) {
-        return list.get(position).id;
+        return list.get(position).getId();
     }
 
     public int getFlavorSizeKb(int position) {
-        return list.get(position).size;
+        return list.get(position).getSize();
     }
 
     public int getFlavorBitrateInt(int position) {
-        return list.get(position).bitrate;
+        return list.get(position).getBitrate();
     }
 
     public StringBuffer getFlavorBitrate(int position) {
-    	KalturaFlavorAsset flavor = getFlavor(position);
-    	if (flavor.tags!=null && flavor.tags.contains("widevine_mbr"))
+    	FlavorAsset flavor = getFlavor(position);
+    	if (flavor.getTags()!=null && flavor.getTags().contains("widevine_mbr"))
     		return new StringBuffer("auto");
     	else 
-    		return Utils.roundBitrate(flavor.bitrate);
+    		return Utils.roundBitrate(flavor.getBitrate());
     }
     
-    public KalturaFlavorAsset getFlavor(int position) {
+    public FlavorAsset getFlavor(int position) {
     	return list.get(position);
     }
 
     public String getListFlavors() {
         String str = "";
         for (int i = 0; i < list.size(); i++) {
-            str = str + list.get(i).id;
+            str = str + list.get(i).getId();
             if(i != list.size() - 1){
                 str = str + ",";
             }

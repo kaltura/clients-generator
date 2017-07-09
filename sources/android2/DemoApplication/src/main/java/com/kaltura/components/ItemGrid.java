@@ -19,7 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.MediaEntry;
 
 /**
  *
@@ -35,7 +35,7 @@ public class ItemGrid implements Observer {
     private TextView tv_name;
     private TextView tv_episode;
     private ProgressBar pb_loading;
-    private KalturaMediaEntry key;
+    private MediaEntry key;
     private boolean isSetBitmap = false;
     private Bitmap bitmap;
     private RelativeLayout rl_item_entry;
@@ -74,19 +74,19 @@ public class ItemGrid implements Observer {
         return pb_loading;
     }
 
-    public void setKey(KalturaMediaEntry key) {
+    public void setKey(MediaEntry key) {
         if (key != null) {
             this.key = key;
         } else {
-            this.key = new KalturaMediaEntry();
+            this.key = new MediaEntry();
         }
     }
 
     @Override
     public void update(Observable arg0, Object param) {
-        if (((HashMap<String, Bitmap>) param).get(key.name) != null) {
+        if (((HashMap<String, Bitmap>) param).get(key.getName()) != null) {
             if (!isSetBitmap) {
-                getThumb().setImageBitmap(((HashMap<String, Bitmap>) param).get(key.name));
+                getThumb().setImageBitmap(((HashMap<String, Bitmap>) param).get(key.getName()));
                 getProgressBar().setVisibility(View.GONE);
                 isSetBitmap = true;
                 Log.w(TAG, "update data!");

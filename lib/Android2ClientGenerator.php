@@ -21,9 +21,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
 	
 	public function generate() 
 	{
-		$this->addFiles("sources/newjava/src", "KalturaClient/src/");
-		$this->addFiles("sources/newjava/src/test", "KalturaClientTester/src/main/");
-		$this->addFiles("sources/newjava/src/OttTest", "KalturaOttClientTester/src/main/");
+		$this->addFiles("sources/java2/src", "KalturaClient/src/");
 
 		parent::generate();
 	}
@@ -31,12 +29,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
 	protected function addFile($fileName, $fileContents, $addLicense = true)
 	{
 		$excludePaths = array(
-		    "DemoApplication",
-			"KalturaClientTester",
-			"KalturaClient/src/test",
-			"KalturaClient/src/main/java/Kaltura.java",
-			"KalturaClient/src/main/java/com/kaltura/client/deprecated",
-			"KalturaClient/src/main/java/com/kaltura/client/KalturaLoggerLog4j.java",
+			"KalturaClient/src/main/java/com/kaltura/client/LoggerLog4j.java",
 		);
 
 		foreach($excludePaths as $excludePath)
@@ -44,11 +37,6 @@ class Android2ClientGenerator extends Java2ClientGenerator
 			if($this->beginsWith($fileName, $excludePath))
 				return;
 		}
-
-		$fileContents = str_replace(
-				'String clientTag = "java:@DATE@"', 
-				'String clientTag = "android:@DATE@"', 
-				$fileContents);
 
 		parent::addFile($fileName, $fileContents, $addLicense);
 	}

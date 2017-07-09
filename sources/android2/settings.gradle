@@ -1,3 +1,2 @@
-//include ':DemoApplication'
+include ':DemoApplication'
 include ':KalturaClient'
-//include ':KalturaClientTester'

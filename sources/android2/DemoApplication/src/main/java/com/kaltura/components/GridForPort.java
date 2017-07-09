@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.MediaEntry;
 
 /**
  *
@@ -30,8 +30,8 @@ public class GridForPort {
     private ItemGrid itemLeft;
     private ItemGrid itemRight;
     private int offset;
-    private HashMap<KalturaMediaEntry, Bitmap> listBitmap;
-    private List<KalturaMediaEntry> listKeys;
+    private HashMap<MediaEntry, Bitmap> listBitmap;
+    private List<MediaEntry> listKeys;
 
     public GridForPort(String TAG, Activity activity, int offset) {
         this.TAG = TAG;
@@ -46,12 +46,12 @@ public class GridForPort {
         if (listBitmap != null) {
             this.listBitmap = listBitmap;
         } else {
-            this.listBitmap = new HashMap<KalturaMediaEntry, Bitmap>();
+            this.listBitmap = new HashMap<MediaEntry, Bitmap>();
         }
         if (listKeys != null) {
             this.listKeys = listKeys;
         } else {
-            this.listKeys = new ArrayList<KalturaMediaEntry>();
+            this.listKeys = new ArrayList<MediaEntry>();
         }
         this.offset = offset;
 

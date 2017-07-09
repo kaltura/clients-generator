@@ -2,6 +2,7 @@ package com.kaltura.activity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -17,8 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaltura.bar.ActionBar;
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.Media;
@@ -27,12 +29,13 @@ import com.kaltura.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class Info extends TemplateActivity {
 
     private String entryId;
-    private KalturaMediaEntry entry;
+    private MediaEntry entry;
     private LinearLayout ll_info;
     private DownloadEntryTask downloadTask;
     private ImageView iv_thumbnail;
@@ -186,8 +189,8 @@ public class Info extends TemplateActivity {
         switch (v.getId()) {
             case R.id.iv_button_play:
                 Log.w(TAG, "test play button");
-                String url = entry.thumbnailUrl + "/width/" + new Integer(display.getWidth()).toString() + "/height/" + new Integer(display.getHeight() / 2).toString();
-                getActivityMediator().showPlayer(entry.id, entry.downloadUrl, entry.duration, url, entry.partnerId);
+                String url = entry.getThumbnailUrl() + "/width/" + new Integer(display.getWidth()).toString() + "/height/" + new Integer(display.getHeight() / 2).toString();
+                getActivityMediator().showPlayer(entry.getId(), entry.getDownloadUrl(), entry.getDuration(), url, entry.getPartnerId());
                 break;
             case R.id.iv_button_facebook:
                 Log.w(TAG, "test facebook button");
@@ -213,7 +216,7 @@ public class Info extends TemplateActivity {
     }
 
     private void updateData() {
-        String url = entry.thumbnailUrl + "/width/" + new Integer(display.getWidth()).toString() + "/height/" + new Integer(display.getHeight() / 2).toString();
+        String url = entry.getThumbnailUrl() + "/width/" + new Integer(display.getWidth()).toString() + "/height/" + new Integer(display.getHeight() / 2).toString();
         ImageLoader(url);
     }
 
@@ -224,6 +227,7 @@ public class Info extends TemplateActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             // Test for connection
             Log.w(TAG, "Thread is start");
             try {
@@ -232,13 +236,20 @@ public class Info extends TemplateActivity {
                      * Getting information about the entry
                      */
                     publishProgress(States.LOADING_DATA);
-                    try {
-                        entry = Media.getEntrybyId(TAG, entryId);
-                    } catch (KalturaApiException e) {
-                        e.printStackTrace();
-                        Log.w(TAG, "error get entry by id: " + e.getMessage());
-                        entry = new KalturaMediaEntry();
-                    }
+                    Media.getEntrybyId(TAG, entryId, new OnCompletion<MediaEntry>() {
+                        @Override
+                        public void onComplete(MediaEntry response, APIException e) {
+                            if(e != null) {
+                                e.printStackTrace();
+                                Log.w(TAG, "error get entry by id: " + e.getMessage());
+                                entry = new MediaEntry();
+                            }
+                            else {
+                                entry = response;
+                            }
+                            doneSignal.countDown();
+                        }
+                    });
                 }
                 Log.w(TAG, "Thread is end");
             } catch (Exception e) {
@@ -246,6 +257,12 @@ public class Info extends TemplateActivity {
                 message = e.getMessage();
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
+            }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -284,42 +301,46 @@ public class Info extends TemplateActivity {
         // method.
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(activity).threadPoolSize(3).threadPriority(Thread.NORM_PRIORITY - 2).memoryCacheSize(150000000) // 150 Mb
                 .discCacheSize(50000000) // 50 Mb
-                .httpReadTimeout(10000) // 10 s
                 .denyCacheImageMultipleSizesInMemory().build();
         // Initialize ImageLoader with configuration.
         ImageLoader.getInstance().init(config);
-        ImageLoader.getInstance().enableLogging(); // Not necessary in common
         imageLoader.init(config);
 
 
         iv_thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        ((TextView) findViewById(R.id.tv_name)).setText(entry.name);
+        ((TextView) findViewById(R.id.tv_name)).setText(entry.getName());
         ((TextView) findViewById(R.id.tv_episode)).setText("");
         SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
-        ((TextView) findViewById(R.id.tv_duration)).setText(sdf.format(new Date(entry.duration * 1000)));
-        ((TextView) findViewById(R.id.tv_description)).setText(entry.description);
+        ((TextView) findViewById(R.id.tv_duration)).setText(sdf.format(new Date(entry.getDuration() * 1000)));
+        ((TextView) findViewById(R.id.tv_description)).setText(entry.getDescription());
         ll_info.setVisibility(View.VISIBLE);
 
 
         imageLoader.displayImage(url, iv_thumbnail, options, new ImageLoadingListener() {
 
             @Override
-            public void onLoadingStarted() {
+            public void onLoadingStarted(String imageUri, View view) {
                 // do nothing
                 Log.w(TAG, "onLoadingStarted");
             }
 
             @Override
-            public void onLoadingFailed() {
+            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                 Log.w(TAG, "onLoadingFailed");
                 imageLoader.clearMemoryCache();
                 imageLoader.clearDiscCache();
             }
 
             @Override
-            public void onLoadingComplete() {
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 // do nothing
                 Log.w(TAG, "onLoadingComplete: ");
+            }
+
+            @Override
+            public void onLoadingCancelled(String imageUri, View view) {
+                // do nothing
+                Log.w(TAG, "onLoadingCancelled: " + imageUri);
             }
         });
 

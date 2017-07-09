@@ -2,9 +2,9 @@ package com.kaltura.utils;
 
 import java.util.Comparator;
 
-import com.kaltura.client.types.KalturaCategory;
-import com.kaltura.client.types.KalturaFlavorAsset;
-import com.kaltura.client.types.KalturaMediaEntry;
+import com.kaltura.client.types.Category;
+import com.kaltura.client.types.FlavorAsset;
+import com.kaltura.client.types.MediaEntry;
 
 /**
  * The class performs a sort
@@ -43,24 +43,24 @@ public class Sort<T> implements Comparator<T> {
     public int compare(T paramT1, T paramT2) {
 
         int res = 0;
-        if (paramT1 instanceof KalturaMediaEntry && paramT2 instanceof KalturaMediaEntry) {
+        if (paramT1 instanceof MediaEntry && paramT2 instanceof MediaEntry) {
             if (this.filter.equals("name")) {
-                res = ((KalturaMediaEntry) paramT1).name.compareTo(((KalturaMediaEntry) paramT2).name);
+                res = ((MediaEntry) paramT1).getName().compareTo(((MediaEntry) paramT2).getName());
             }
             if (this.filter.equals("plays") && this.direction.equals("compareTo")) {
-                res = new Integer(((KalturaMediaEntry) paramT1).plays).compareTo(new Integer(((KalturaMediaEntry) paramT2).plays));
+                res = new Integer(((MediaEntry) paramT1).getPlays()).compareTo(new Integer(((MediaEntry) paramT2).getPlays()));
             } else {
-                res = ((KalturaMediaEntry) paramT2).plays - ((KalturaMediaEntry) paramT1).plays;
+                res = ((MediaEntry) paramT2).getPlays() - ((MediaEntry) paramT1).getPlays();
             }
             if (this.filter.equals("createdAt")) {
-                res = new Integer(((KalturaMediaEntry) paramT1).createdAt).compareTo(new Integer(((KalturaMediaEntry) paramT2).createdAt));
+                res = new Integer(((MediaEntry) paramT1).getCreatedAt()).compareTo(new Integer(((MediaEntry) paramT2).getCreatedAt()));
             }
         }
-        if (paramT1 instanceof KalturaCategory && paramT2 instanceof KalturaCategory) {
-            res = ((KalturaCategory) paramT1).name.compareTo(((KalturaCategory) paramT2).name);
+        if (paramT1 instanceof Category && paramT2 instanceof Category) {
+            res = ((Category) paramT1).getName().compareTo(((Category) paramT2).getName());
         }
-        if (paramT1 instanceof KalturaFlavorAsset && paramT2 instanceof KalturaFlavorAsset) {
-            res = ((KalturaFlavorAsset) paramT2).bitrate - ((KalturaFlavorAsset) paramT1).bitrate;
+        if (paramT1 instanceof FlavorAsset && paramT2 instanceof FlavorAsset) {
+            res = ((FlavorAsset) paramT2).getBitrate() - ((FlavorAsset) paramT1).getBitrate();
         }
         return res;
     }

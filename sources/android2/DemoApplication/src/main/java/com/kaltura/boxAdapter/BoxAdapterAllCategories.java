@@ -13,14 +13,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kaltura.activity.R;
-import com.kaltura.client.types.KalturaCategory;
+import com.kaltura.client.types.Category;
 
 /**
  *
  */
 public class BoxAdapterAllCategories extends BaseAdapter {
 
-    private List<KalturaCategory> list;
+    private List<Category> list;
     private LayoutInflater lInflater;
     private Typeface typeFont;
     private int textColor;
@@ -29,7 +29,7 @@ public class BoxAdapterAllCategories extends BaseAdapter {
     private int highlightIndex = 0;
     private int backgroundColor;
 
-    public BoxAdapterAllCategories(Context context, List<KalturaCategory> list, int textColor, int arrow, int backgroundColor) {
+    public BoxAdapterAllCategories(Context context, List<Category> list, int textColor, int arrow, int backgroundColor) {
         this.textColor = textColor;
         this.arrow = arrow;
         this.backgroundColor = backgroundColor;
@@ -40,7 +40,7 @@ public class BoxAdapterAllCategories extends BaseAdapter {
         if (list != null) {
             this.list = list;
         } else {
-            this.list = new ArrayList<KalturaCategory>();
+            this.list = new ArrayList<Category>();
         }
 
         lInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -81,7 +81,7 @@ public class BoxAdapterAllCategories extends BaseAdapter {
             convertView.setBackgroundColor(backgroundColor);//Color.argb(0, 1, 18, 35));  // transparent
         }
 
-        holder.text.setText(list.get(position).name);
+        holder.text.setText(list.get(position).getName());
         holder.text.setTextColor(this.textColor);
         return convertView;
     }
@@ -102,10 +102,10 @@ public class BoxAdapterAllCategories extends BaseAdapter {
     }
 
     public int getCategoryId(int position) {
-        return list.get(position).id;
+        return list.get(position).getId();
     }
 
     public String getCategoryName(int position) {
-        return list.get(position).name;
+        return list.get(position).getName();
     }
 }

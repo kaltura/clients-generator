@@ -2,6 +2,7 @@ package com.kaltura.activity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -15,11 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaltura.bar.ActionBar;
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.types.KalturaCategory;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.Category;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
-import com.kaltura.services.Category;
+import com.kaltura.services.Categories;
 import com.kaltura.utils.SpinnerCategory;
 import com.kaltura.utils.Utils;
 
@@ -123,10 +126,11 @@ public class VideoInfo extends TemplateActivity {
     private class DownloadListCatigoriesTask extends AsyncTask<Void, States, Void> {
 
         private String message;
-        private List<KalturaCategory> listCategory;
+        private List<Category> listCategory;
 
         @Override
         protected Void doInBackground(Void... params) {
+            final CountDownLatch doneSignal = new CountDownLatch(1);
             // Test for connection
             try {
                 if (Utils.checkInternetConnection(getApplicationContext())) {
@@ -134,18 +138,33 @@ public class VideoInfo extends TemplateActivity {
                      * Getting list of all categories
                      */
                     publishProgress(States.LOADING_DATA);
-                    listCategory = Category.listAllCategories(TAG, 1, 500);
+                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<ListResponse<Category>>() {
+                        @Override
+                        public void onComplete(ListResponse<Category> response, APIException e) {
+                            if(e != null){
+                                e.printStackTrace();
+                                message = e.getMessage();
+                                Log.w(TAG, message);
+                                publishProgress(States.ERR);
+                            }
+                            else if(response != null) {
+                                listCategory = response.getObjects();
+                            }
+                            doneSignal.countDown();
+                        }
+                    });
                 }
-            } catch (KalturaApiException e) {
-                e.printStackTrace();
-                message = e.getMessage();
-                Log.w(TAG, message);
-                publishProgress(States.ERR);
             } catch (Exception e) {
                 e.printStackTrace();
                 message = e.getMessage();
                 Log.w(TAG, message);
                 publishProgress(States.NO_CONNECTION);
+            }
+
+            try {
+                doneSignal.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -155,8 +174,8 @@ public class VideoInfo extends TemplateActivity {
             progressDialog.hide();
 
             List<String> ls = new ArrayList<String>();
-            for (KalturaCategory list : listCategory) {
-                ls.add(list.name);
+            for (Category list : listCategory) {
+                ls.add(list.getName());
             }
             spCategoty.addData(ls);
         }

@@ -5,16 +5,20 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.kaltura.client.KalturaApiException;
-import com.kaltura.client.KalturaClient;
-import com.kaltura.client.enums.KalturaEntryType;
-import com.kaltura.client.enums.KalturaMediaType;
-import com.kaltura.client.services.KalturaMediaService;
-import com.kaltura.client.types.KalturaBaseEntry;
-import com.kaltura.client.types.KalturaFilterPager;
-import com.kaltura.client.types.KalturaMediaEntry;
-import com.kaltura.client.types.KalturaMediaEntryFilter;
-import com.kaltura.client.types.KalturaMediaListResponse;
+import com.kaltura.client.Client;
+import com.kaltura.client.enums.EntryType;
+import com.kaltura.client.enums.MediaType;
+import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.MediaService;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.BaseEntry;
+import com.kaltura.client.types.FilterPager;
+import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.MediaEntryFilter;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.utils.ApiHelper;
 
 /**
  * Media service lets you upload and manage media files (images / videos &
@@ -30,31 +34,32 @@ public class Media {
      * @param pageSize The number of objects to retrieve. (Default is 30,
      * maximum page size is 500)
      *
-     * @throws KalturaApiException
+     * @throws APIException
      */
-    public static List<KalturaMediaEntry> listAllEntriesByIdCategories(String TAG, KalturaMediaEntryFilter filter, int pageIndex, int pageSize) throws KalturaApiException {
-        // create a new ADMIN-session client
-        KalturaClient client = AdminUser.getClient();//RequestsKaltura.getKalturaClient();
-
-        // create a new mediaService object for our client
-        KalturaMediaService mediaService = client.getMediaService();
-
+    public static void listAllEntriesByIdCategories(final String TAG, MediaEntryFilter filter, int pageIndex, int pageSize, final OnCompletion<List<MediaEntry>> onCompletion) {
         // create a new pager to choose how many and which entries should be recieved
         // out of the filtered entries - not mandatory
-        KalturaFilterPager pager = new KalturaFilterPager();
-        pager.pageIndex = pageIndex;
-        pager.pageSize = pageSize;
+        FilterPager pager = new FilterPager();
+        pager.setPageIndex(pageIndex);
+        pager.setPageSize(pageSize);
 
         // execute the list action of the mediaService object to recieve the list of entries
-        KalturaMediaListResponse listResponse = mediaService.list(filter, pager);
-
-        // loop through all entries in the reponse list and print their id.
-        Log.w(TAG, "Entries list :");
-        int i = 0;
-        for (KalturaMediaEntry entry : listResponse.objects) {
-            Log.w(TAG, ++i + " id:" + entry.id + " name:" + entry.name + " type:" + entry.type + " dataURL: " + entry.dataUrl);
-        }
-        return listResponse.objects;
+        RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list(filter, pager)
+        .setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+            @Override
+            public void onComplete(ListResponse<MediaEntry> listResponse, APIException error) {
+                if(error == null && listResponse != null) {
+                    // loop through all entries in the reponse list and print their id.
+                    Log.w(TAG, "Entries list :");
+                    int i = 0;
+                    for (MediaEntry entry : listResponse.getObjects()) {
+                        Log.w(TAG, ++i + " id:" + entry.getId() + " name:" + entry.getName() + " type:" + entry.getType() + " dataURL: " + entry.getDataUrl());
+                    }
+                }
+                onCompletion.onComplete(listResponse.getObjects(), error);
+            }
+        });
+        ApiHelper.execute(requestBuilder);
     }
 
     /**
@@ -65,18 +70,19 @@ public class Media {
      *
      * @return Information about the entry
      *
-     * @throws KalturaApiException
+     * @throws APIException
      */
-    public static KalturaMediaEntry getEntrybyId(String TAG, String entryId) throws KalturaApiException {
-        // create a new ADMIN-session client
-        KalturaClient client = AdminUser.getClient();//RequestsKaltura.getKalturaClient();
-
-        // create a new mediaService object for our client
-        KalturaMediaService mediaService = client.getMediaService();
-        KalturaMediaEntry entry = mediaService.get(entryId);
-        Log.w(TAG, "Entry:");
-        Log.w(TAG, " id:" + entry.id + " name:" + entry.name + " type:" + entry.type + " categories: " + entry.categories);
-        return entry;
+    public static void getEntrybyId(final String TAG, String entryId, final OnCompletion<MediaEntry> onCompletion) {
+        RequestBuilder<MediaEntry> requestBuilder = MediaService.get(entryId)
+        .setCompletion(new OnCompletion<MediaEntry>() {
+            @Override
+            public void onComplete(MediaEntry entry, APIException error) {
+                Log.w(TAG, "Entry:");
+                Log.w(TAG, " id:" + entry.getId() + " name:" + entry.getName() + " type:" + entry.getType() + " categories: " + entry.getCategories());
+                onCompletion.onComplete(entry, error);
+            }
+        });
+        ApiHelper.execute(requestBuilder);
     }
 
     /**
@@ -92,57 +98,31 @@ public class Media {
      *
      *
      */
-    public static KalturaMediaEntry addEmptyEntry(String TAG, String category, String name, String description, String tag) {
+    public static void addEmptyEntry(final String TAG, String category, String name, String description, String tag, final OnCompletion<MediaEntry> onCompletion) {
 
-        try {
-            KalturaClient client = AdminUser.getClient();
+        Log.w(TAG, "\nCreating an empty  Entry (without actual media binary attached)...");
 
-            Log.w(TAG, "\nCreating an empty Kaltura Entry (without actual media binary attached)...");
+        MediaEntry entry = new MediaEntry();
+        entry.setMediaType(MediaType.VIDEO);
+        entry.setCategories(category);
+        entry.setName(name);
+        entry.setDescription(description);
+        entry.setTags(tag);
 
-            KalturaMediaEntry entry = new KalturaMediaEntry();
-            entry.mediaType = KalturaMediaType.VIDEO;
-            entry.categories = category;
-            entry.name = name;
-            entry.description = description;
-            entry.tags = tag;
-
-            KalturaMediaEntry newEntry = client.getMediaService().add(entry);
-            Log.w(TAG, "\nThe id of our new Video Entry is: " + newEntry.id);
-            return newEntry;
-        } catch (KalturaApiException e) {
-            e.printStackTrace();
-            Log.w(TAG, "err: " + e.getMessage());
-            return null;
-        }
-    }
-
-    /**
-     * Create an entry
-     *
-     * @param TAG constant in your class
-     * @param String fileName File to upload.
-     * @param String entryName Name for the new entry.
-     *
-     * @throws KalturaApiException
-     */
-    public static void addEntry(String TAG, String fileName, String entryName) throws KalturaApiException {
-        // create a new USER-session client
-        KalturaClient client = AdminUser.getClient();
-
-        // upload the new file and recieve the token that identifies it on the kaltura server
-        File up = new File(fileName);
-        String token = client.getBaseEntryService().upload(up);
-
-        // create a new entry object with the required meta-data
-        KalturaBaseEntry entry = new KalturaBaseEntry();
-        entry.name = entryName;
-        entry.categories = "Comedy";
-        entry.type = KalturaEntryType.MEDIA_CLIP;
-
-        // add the entry you created to the kaltura server, by attaching it with the uploaded file
-        KalturaBaseEntry newEntry = client.getBaseEntryService().addFromUploadedFile(entry, token);
-
-        // newEntry now contains the information of the new entry that was just created on the server
-        Log.w(TAG, "New entry created successfuly with ID " + newEntry.id);
+        RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
+        .setCompletion(new OnCompletion<MediaEntry>() {
+            @Override
+            public void onComplete(MediaEntry newEntry, APIException e) {
+            if(e != null) {
+                e.printStackTrace();
+                Log.w(TAG, "err: " + e.getMessage());
+            }
+            else if(newEntry != null) {
+                Log.w(TAG, "\nThe id of our new Video Entry is: " + newEntry.getId());
+            }
+            onCompletion.onComplete(newEntry, e);
+            }
+        });
+        ApiHelper.execute(requestBuilder);
     }
 }
