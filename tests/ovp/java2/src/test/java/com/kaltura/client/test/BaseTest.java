@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import com.kaltura.client.APIOkRequestsExecutor;
@@ -123,6 +124,11 @@ abstract class BaseTest extends TestCase {
 		}
 	}
 	
+	static public void assertNull(APIException object) {
+		if(object != null) {
+			throw new AssertionError(object);
+		}
+	}
 	
 	public void startUserSession() throws Exception{
 		startSession(SessionType.USER);

@@ -65,6 +65,7 @@ public class UiConfServiceTest extends BaseTest {
 			
 			@Override
 			public void onComplete(UiConf addedConf, APIException error) {
+				assertNull(error);
 				assertNotNull(addedConf);
 				testUiConfIds.add(addedConf.getId());
 				
