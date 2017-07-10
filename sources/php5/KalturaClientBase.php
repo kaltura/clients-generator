@@ -711,7 +711,10 @@ class KalturaClientBase
 			}
 			if(is_null($configuration->$param))
 			{
-			    	unset($this->clientConfiguration[$param]);
+			    if(isset($this->clientConfiguration[$param]))
+			    {
+				   unset($this->clientConfiguration[$param]);
+			    }
 			}
 			else
 			{
