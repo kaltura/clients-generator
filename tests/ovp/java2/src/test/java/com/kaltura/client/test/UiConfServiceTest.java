@@ -65,7 +65,8 @@ public class UiConfServiceTest extends BaseTest {
 			
 			@Override
 			public void onComplete(UiConf addedConf, APIException error) {
-
+				assertNull(error);
+				assertNotNull(addedConf);
 				testUiConfIds.add(addedConf.getId());
 				
 				onCompletion.onComplete(addedConf, error);
@@ -75,12 +76,9 @@ public class UiConfServiceTest extends BaseTest {
 	}
 	
 	public void testAddUiConf() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting ui conf add test");
-
 		startAdminSession();
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		String name = "Test UI Conf (" + new Date() + ")";
+		String name = getName() + " (" + new Date() + ")";
 		addUiConf(name, new OnCompletion<UiConf>() {
 
 			@Override
@@ -94,12 +92,9 @@ public class UiConfServiceTest extends BaseTest {
 	}
 	
 	public void testGetUiConf() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting ui get test");
-
 		startAdminSession();
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		String name = "Test UI Conf (" + new Date() + ")";
+		String name = getName() + " (" + new Date() + ")";
 		addUiConf(name, new OnCompletion<UiConf>() {
 
 			@Override
@@ -126,12 +121,9 @@ public class UiConfServiceTest extends BaseTest {
 	}
 	
 	public void testDeleteUiConf() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting ui conf delete test");
-
 		startAdminSession();
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		String name = "Test UI Conf (" + new Date() + ")";
+		String name = getName() + " (" + new Date() + ")";
 		addUiConf(name, new OnCompletion<UiConf>() {
 
 			@Override

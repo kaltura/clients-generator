@@ -43,11 +43,11 @@ public class PluginTest extends BaseTest {
 		startAdminSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		final String testString = "TEST PROFILE";
+		final String testString = "Test profile: " + getName();
 
 		MetadataProfile profileAdd = new MetadataProfile();
 		profileAdd.setMetadataObjectType(MetadataObjectType.ENTRY);
-		profileAdd.setName("asdasd");
+		profileAdd.setName(getName());
 
 		RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
 		.setCompletion(new OnCompletion<MetadataProfile>() {

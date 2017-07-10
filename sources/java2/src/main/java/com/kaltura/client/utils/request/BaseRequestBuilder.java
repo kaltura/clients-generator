@@ -155,8 +155,9 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
 
     private void prepareUrl(String endPoint) {
         if (url == null) {
-            StringBuilder urlBuilder = new StringBuilder(endPoint)
-                    .append(APIConstants.UrlApiVersion);
+            StringBuilder urlBuilder = new StringBuilder(endPoint.replaceAll("/$", ""))
+            .append("/")
+            .append(APIConstants.UrlApiVersion);
 
             urlBuilder.append(getUrlTail());
             url = urlBuilder.toString();
