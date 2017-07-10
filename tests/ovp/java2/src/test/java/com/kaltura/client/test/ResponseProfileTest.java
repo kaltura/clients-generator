@@ -115,7 +115,7 @@ public class ResponseProfileTest extends BaseTest{
 		xsd += "	</xsd:simpleType>\n";
 		xsd += "</xsd:schema>";
 		
-		final String xml = "<metadata><Choice>on</Choice><FreeText>example text </FreeText></metadata>";
+		final String xml = "<metadata><Choice>on</Choice><FreeText>example text: " + getName() + "</FreeText></metadata>";
 
 		
 		RequestBuilder<MediaEntry> entryRequest = createEntry();

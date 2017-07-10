@@ -86,6 +86,9 @@ abstract class BaseTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+
+		if (logger.isEnabled())
+			logger.info("Starting test: " + getClass().getName() + "." + getName());
 		
 		testConfig = new TestConfig();
 		
