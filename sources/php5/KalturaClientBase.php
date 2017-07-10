@@ -706,12 +706,12 @@ class KalturaClientBase
 		$params = get_class_vars('KalturaClientConfiguration');
 		foreach($params as $param)
 		{
-			if(empty($configuration->$param) || is_null($configuration->$param))
+			if (empty($configuration->$param)){
+			    continue;
+			}
+			if(is_null($configuration->$param))
 			{
-				if(isset($this->clientConfiguration[$param]))
-				{
-					unset($this->clientConfiguration[$param]);
-				}
+			    	unset($this->clientConfiguration[$param]);
 			}
 			else
 			{
