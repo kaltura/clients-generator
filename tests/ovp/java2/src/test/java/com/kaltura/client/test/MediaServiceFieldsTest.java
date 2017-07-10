@@ -30,6 +30,7 @@ package com.kaltura.client.test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.ContainerFormat;
@@ -59,67 +60,61 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		startAdminSession();
 
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		final String testString = "Kaltura test string";
+		final int testInt = 42;
+		final Boolean testEnumAsInt = false;
+		final ContainerFormat testEnumAsString = ContainerFormat.ISMV;
+
+		ThumbParams paramsAdd = new ThumbParams();
+		paramsAdd.setName(testString);
+		paramsAdd.setDescription(testString);
+		paramsAdd.setDensity(testInt);
+		paramsAdd.setIsSystemDefault(testEnumAsInt);
+		paramsAdd.setFormat(testEnumAsString);
+
+		RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+		.setCompletion(new OnCompletion<ThumbParams>() {
+			
 			@Override
-			public void run() {
-				final String testString = "Kaltura test string";
-				final int testInt = 42;
-				final Boolean testEnumAsInt = false;
-				final ContainerFormat testEnumAsString = ContainerFormat.ISMV;
+			public void onComplete(final ThumbParams paramsAdded, APIException error) {
+				assertNull(error);
 
-				ThumbParams paramsAdd = new ThumbParams();
-				paramsAdd.setName(testString);
-				paramsAdd.setDescription(testString);
-				paramsAdd.setDensity(testInt);
-				paramsAdd.setIsSystemDefault(testEnumAsInt);
-				paramsAdd.setFormat(testEnumAsString);
+				assertEquals(testString, paramsAdded.getDescription());
+				assertEquals(testInt, (int) paramsAdded.getDensity());
+				assertEquals(testEnumAsInt, paramsAdded.getIsSystemDefault());
+				assertEquals(testEnumAsString, paramsAdded.getFormat());
 
-				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+				// Null value not passed
+				ThumbParams paramsUpdate = new ThumbParams();
+				paramsUpdate.setDescription(null);
+				paramsUpdate.setDensity(Integer.MIN_VALUE);
+				paramsUpdate.setIsSystemDefault(null);
+				paramsUpdate.setFormat(null);
+
+				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
 				.setCompletion(new OnCompletion<ThumbParams>() {
 					
 					@Override
-					public void onComplete(final ThumbParams paramsAdded, APIException error) {
-						completion.assertNull(error);
+					public void onComplete(ThumbParams paramsUpdated, APIException error) {
+						assertNull(error);
 
-						completion.assertEquals(testString, paramsAdded.getDescription());
-						completion.assertEquals(testInt, (int) paramsAdded.getDensity());
-						completion.assertEquals(testEnumAsInt, paramsAdded.getIsSystemDefault());
-						completion.assertEquals(testEnumAsString, paramsAdded.getFormat());
-
-						// Null value not passed
-						ThumbParams paramsUpdate = new ThumbParams();
-						paramsUpdate.setDescription(null);
-						paramsUpdate.setDensity(Integer.MIN_VALUE);
-						paramsUpdate.setIsSystemDefault(null);
-						paramsUpdate.setFormat(null);
-
-						RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
+						RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.get(paramsAdded.getId())
 						.setCompletion(new OnCompletion<ThumbParams>() {
 							
 							@Override
-							public void onComplete(ThumbParams paramsUpdated, APIException error) {
-								completion.assertNull(error);
+							public void onComplete(ThumbParams paramsGot, APIException error) {
+								assertNull(error);
+						
+								assertEquals(testString, paramsGot.getDescription());
+								assertEquals(testInt, (int) paramsGot.getDensity());
+								assertEquals(testEnumAsInt, paramsGot.getIsSystemDefault());
+								assertEquals(testEnumAsString, paramsGot.getFormat());
 
-								RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.get(paramsAdded.getId())
-								.setCompletion(new OnCompletion<ThumbParams>() {
-									
-									@Override
-									public void onComplete(ThumbParams paramsGot, APIException error) {
-										completion.assertNull(error);
-								
-										assertEquals(testString, paramsGot.getDescription());
-										assertEquals(testInt, (int) paramsGot.getDensity());
-										assertEquals(testEnumAsInt, paramsGot.getIsSystemDefault());
-										assertEquals(testEnumAsString, paramsGot.getFormat());
-		
-										RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
-										APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
-
-										completion.complete();
-									}
-								});
+								RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
 								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+
+								doneSignal.countDown();
 							}
 						});
 						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
@@ -128,7 +123,8 @@ public class MediaServiceFieldsTest extends BaseTest {
 				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 			}
 		});
-
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 
 	
@@ -143,49 +139,45 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		final String testString = "Kaltura test string";
 
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		ThumbParams paramsAdd = new ThumbParams();
+		paramsAdd.setName(testString);
+		paramsAdd.setDescription(testString);
+
+		// Regular update works
+		RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+		.setCompletion(new OnCompletion<ThumbParams>() {
+			
 			@Override
-			public void run() {
-				ThumbParams paramsAdd = new ThumbParams();
-				paramsAdd.setName(testString);
-				paramsAdd.setDescription(testString);
-		
-				// Regular update works
-				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+			public void onComplete(final ThumbParams paramsAdded, APIException error) {
+				assertNull(error);
+
+				assertEquals(testString, paramsAdded.getDescription());
+
+				// Set to null
+				ThumbParams paramsUpdate = new ThumbParams();
+				paramsUpdate.setDescription("__null_string__");
+
+				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
 				.setCompletion(new OnCompletion<ThumbParams>() {
 					
 					@Override
-					public void onComplete(final ThumbParams paramsAdded, APIException error) {
-						completion.assertNull(error);
+					public void onComplete(ThumbParams paramsUpdated, APIException error) {
+						assertNull(error);
+				
+						assertNull(paramsUpdated.getDescription());
 
-						completion.assertEquals(testString, paramsAdded.getDescription());
-
-						// Set to null
-						ThumbParams paramsUpdate = new ThumbParams();
-						paramsUpdate.setDescription("__null_string__");
-
-						RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
-						.setCompletion(new OnCompletion<ThumbParams>() {
-							
-							@Override
-							public void onComplete(ThumbParams paramsUpdated, APIException error) {
-								completion.assertNull(error);
-						
-								completion.assertNull(paramsUpdated.getDescription());
-
-								RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
-								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
-
-								completion.complete();
-							}
-						});
+						RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
 						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+
+						doneSignal.countDown();
 					}
 				});
 				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 			}
 		});
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 	
 	/**
@@ -197,52 +189,48 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		startAdminSession();
 
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
-			@Override
-			public void run() {
-				final int testInt = 42;
-		
-				ConversionProfile profileAdd = new ConversionProfile();
-				profileAdd.setName("Kaltura test string");
-				profileAdd.setFlavorParamsIds("0");
-				profileAdd.setStorageProfileId(testInt);
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		final int testInt = 42;
 
-				// Regular update works
-				RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.add(profileAdd)
+		ConversionProfile profileAdd = new ConversionProfile();
+		profileAdd.setName("Kaltura test string");
+		profileAdd.setFlavorParamsIds("0");
+		profileAdd.setStorageProfileId(testInt);
+
+		// Regular update works
+		RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.add(profileAdd)
+		.setCompletion(new OnCompletion<ConversionProfile>() {
+			
+			@Override
+			public void onComplete(ConversionProfile profileAdded, APIException error) {
+				assertNull(error);
+				
+				assertEquals(testInt, (int) profileAdded.getStorageProfileId());
+				
+				// Set to null
+				ConversionProfile profileUpdate = new ConversionProfile();
+				profileUpdate.setStorageProfileId(Integer.MAX_VALUE);
+		
+				RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.update(profileAdded.getId(), profileUpdate)
 				.setCompletion(new OnCompletion<ConversionProfile>() {
 					
 					@Override
-					public void onComplete(ConversionProfile profileAdded, APIException error) {
-						completion.assertNull(error);
+					public void onComplete(ConversionProfile profileUpdated, APIException error) {
+						assertNull(error);
 						
-						completion.assertEquals(testInt, (int) profileAdded.getStorageProfileId());
-						
-						// Set to null
-						ConversionProfile profileUpdate = new ConversionProfile();
-						profileUpdate.setStorageProfileId(Integer.MAX_VALUE);
+						assertTrue(profileUpdated.getStorageProfileId() == null);
 				
-						RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.update(profileAdded.getId(), profileUpdate)
-						.setCompletion(new OnCompletion<ConversionProfile>() {
-							
-							@Override
-							public void onComplete(ConversionProfile profileUpdated, APIException error) {
-								completion.assertNull(error);
-								
-								completion.assertTrue(profileUpdated.getStorageProfileId() == null);
-						
-								RequestBuilder<Void> requestBuilder = ConversionProfileService.delete(profileUpdated.getId());
-								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
-
-								completion.complete();
-							}
-						});
+						RequestBuilder<Void> requestBuilder = ConversionProfileService.delete(profileUpdated.getId());
 						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+
+						doneSignal.countDown();
 					}
 				});
 				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 			}
 		});
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 	
 	/**
@@ -253,70 +241,64 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		startAdminSession();
 
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		SiteRestriction resA = new SiteRestriction();
+		resA.setSiteRestrictionType(SiteRestrictionType.RESTRICT_SITE_LIST);
+		resA.setSiteList("ResA");
+		CountryRestriction resB = new CountryRestriction();
+		resB.setCountryList("IllegalCountry");
+		
+		List<BaseRestriction> restrictions = new ArrayList<BaseRestriction>();
+		restrictions.add(resA);
+		restrictions.add(resB);
+		
+		AccessControl accessControlAdd = new AccessControl();
+		accessControlAdd.setName("test access control");
+		accessControlAdd.setRestrictions(restrictions);
+		
+		RequestBuilder<AccessControl> requestBuilder = AccessControlService.add(accessControlAdd)
+		.setCompletion(new OnCompletion<AccessControl>() {
+			
 			@Override
-			public void run() {
-				SiteRestriction resA = new SiteRestriction();
-				resA.setSiteRestrictionType(SiteRestrictionType.RESTRICT_SITE_LIST);
-				resA.setSiteList("ResA");
-				CountryRestriction resB = new CountryRestriction();
-				resB.setCountryList("IllegalCountry");
+			public void onComplete(AccessControl accessControlAdded, APIException error) {
+				assertNull(error);
 				
-				List<BaseRestriction> restrictions = new ArrayList<BaseRestriction>();
-				restrictions.add(resA);
-				restrictions.add(resB);
+				assertNotNull(accessControlAdded.getRestrictions());
+				assertEquals(2, accessControlAdded.getRestrictions().size());
 				
-				AccessControl accessControlAdd = new AccessControl();
-				accessControlAdd.setName("test access control");
-				accessControlAdd.setRestrictions(restrictions);
-				
-				RequestBuilder<AccessControl> requestBuilder = AccessControlService.add(accessControlAdd)
+				// Test null update - shouldn't update
+				AccessControl accessControlUpdate = new AccessControl();
+				accessControlUpdate.setName("updated access control");
+				accessControlUpdate.setRestrictions(null); 
+
+				RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlAdded.getId(), accessControlUpdate)
 				.setCompletion(new OnCompletion<AccessControl>() {
 					
 					@Override
-					public void onComplete(AccessControl accessControlAdded, APIException error) {
-						completion.assertNull(error);
+					public void onComplete(AccessControl accessControlUpdated, APIException error) {
+						assertNull(error);
+		
+						assertEquals(2, accessControlUpdated.getRestrictions().size());
 						
-						completion.assertNotNull(accessControlAdded.getRestrictions());
-						completion.assertEquals(2, accessControlAdded.getRestrictions().size());
-						
-						// Test null update - shouldn't update
-						AccessControl accessControlUpdate = new AccessControl();
-						accessControlUpdate.setName("updated access control");
-						accessControlUpdate.setRestrictions(null); 
+						// Test update Empty array - should update
+						AccessControl accessControlUpdateAgain = new AccessControl();
+						accessControlUpdateAgain.setName("reset access control");
+						accessControlUpdateAgain.setRestrictions(new ArrayList<BaseRestriction>()); 
 
-						RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlAdded.getId(), accessControlUpdate)
+						RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlUpdated.getId(), accessControlUpdateAgain)
 						.setCompletion(new OnCompletion<AccessControl>() {
 							
 							@Override
-							public void onComplete(AccessControl accessControlUpdated, APIException error) {
-								completion.assertNull(error);
-				
-								completion.assertEquals(2, accessControlUpdated.getRestrictions().size());
-								
-								// Test update Empty array - should update
-								AccessControl accessControlUpdateAgain = new AccessControl();
-								accessControlUpdateAgain.setName("reset access control");
-								accessControlUpdateAgain.setRestrictions(new ArrayList<BaseRestriction>()); 
-
-								RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlUpdated.getId(), accessControlUpdateAgain)
-								.setCompletion(new OnCompletion<AccessControl>() {
-									
-									@Override
-									public void onComplete(AccessControl accessControlUpdatedAgain, APIException error) {
-										completion.assertNull(error);
-								
-										completion.assertEquals(0, accessControlUpdatedAgain.getRestrictions().size());
-								
-										// Delete entry
-										RequestBuilder<Void> requestBuilder = AccessControlService.delete(accessControlUpdatedAgain.getId());
-										APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
-										
-										completion.complete();
-									}
-								});
+							public void onComplete(AccessControl accessControlUpdatedAgain, APIException error) {
+								assertNull(error);
+						
+								assertEquals(0, accessControlUpdatedAgain.getRestrictions().size());
+						
+								// Delete entry
+								RequestBuilder<Void> requestBuilder = AccessControlService.delete(accessControlUpdatedAgain.getId());
 								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+								
+								doneSignal.countDown();
 							}
 						});
 						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
@@ -325,6 +307,8 @@ public class MediaServiceFieldsTest extends BaseTest {
 				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
 			}
 		});
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 
 }
