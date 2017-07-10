@@ -39,6 +39,8 @@ public class ServeRequestBuilder extends RequestBuilder<String> {
         .append(action)
         .append("?")
         .append(kParams.toQueryString());
+        
+        url = urlBuilder.toString();
 		
 		return this;
     }
