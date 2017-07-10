@@ -3,6 +3,7 @@ package com.kaltura.client.utils.request;
 import com.kaltura.client.Client;
 import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
+import com.kaltura.client.utils.APIConstants;
 
 public class ServeRequestBuilder extends RequestBuilder<String> {
 
@@ -28,10 +29,16 @@ public class ServeRequestBuilder extends RequestBuilder<String> {
     public RequestElement build(final Client client, boolean addSignature) {
 		Params kParams = prepareParams(client, true);
 		prepareHeaders(client.getConnectionConfiguration());
-
-		url = client.getConnectionConfiguration().getEndpoint() + "api_v3";
-		url += "/service/" + service + "/action/" + action;
-		url += "?" + kParams.toQueryString();
+		String endPoint = client.getConnectionConfiguration().getEndpoint().replaceAll("/$", "");
+        StringBuilder urlBuilder = new StringBuilder(endPoint)
+        .append("/")
+        .append(APIConstants.UrlApiVersion)
+        .append("/service/")
+        .append(service)
+        .append("/action/")
+        .append(action)
+        .append("?")
+        .append(kParams.toQueryString());
 		
 		return this;
     }
