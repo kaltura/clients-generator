@@ -31,13 +31,11 @@ package com.kaltura.client.test;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import junit.framework.TestCase;
 
@@ -59,7 +57,7 @@ import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.response.OnCompletion;
 
-public class BaseTest extends TestCase {
+abstract class BaseTest extends TestCase {
 	protected TestConfig testConfig;
 	
 	protected Configuration kalturaConfig = new Configuration();
@@ -69,7 +67,6 @@ public class BaseTest extends TestCase {
 	protected List<String> testIds = Collections.synchronizedList(new ArrayList<String>());
 
 	protected boolean doCleanup = true;
-	private ExecutorService executor;
 
 	private static ILogger logger = Logger.getLogger(BaseTest.class);
 
@@ -86,88 +83,6 @@ public class BaseTest extends TestCase {
 		}
 	}
 	
-	protected class Completion{
-		
-		@SuppressWarnings("rawtypes")
-		private CompletableFuture future;
-		
-		@SuppressWarnings("rawtypes")
-		public Completion() {
-			future = new CompletableFuture();
-		}
-		
-		public void run(Runnable runnable) throws InterruptedException, ExecutionException {
-			executor.submit(runnable);
-			Exception error = (Exception) future.get();
-
-			if(error != null) {
-				throw new AssertionError(error);
-			}
-		}
-		
-		@SuppressWarnings("unchecked")
-		public void complete() {
-			future.complete(null);
-		}
-		
-		@SuppressWarnings("unchecked")
-		public void fail(Exception e) {
-			future.complete(new CompletionException(e.getMessage()));
-			throw new RuntimeException(e);
-		}
-		
-		@SuppressWarnings("unchecked")
-		public void fail(String message) {
-			future.complete(new CompletionException(message));
-			throw new RuntimeException(message);
-		}
-		
-		public void assertTrue(boolean condition) {
-			this.assertTrue(condition, null);
-		}
-		
-		public void assertTrue(boolean condition, String message) {
-			if(!condition) {
-				this.fail(message);
-			}
-		}
-		
-		public void assertNull(Exception exception) {
-			if(exception == null) {
-				return;
-			}
-			this.assertTrue(false, exception.getMessage());
-		}
-		
-		public void assertNull(Object object) {
-			this.assertNull(object, null);
-		}
-		
-		public void assertNull(Object object, String message) {
-			this.assertTrue(object == null, message);
-		}
-		
-		public void assertNotNull(Object object, String message) {
-			this.assertTrue(object != null, message);
-		}
-		
-		public void assertNotNull(Object object) {
-			this.assertNotNull(object, null);
-		}
-
-		public void assertEquals(int expected, int actual) {
-			this.assertTrue(expected == actual, actual + " is different than " + expected);
-		}
-
-		public void assertEquals(long expected, long actual) {
-			this.assertTrue(expected == actual, actual + " is different than " + expected);
-		}
-
-		public void assertEquals(Object expected, Object actual) {
-			this.assertTrue(expected.equals(actual), actual + " is different than " + expected);
-		}
-	}
-	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -177,8 +92,6 @@ public class BaseTest extends TestCase {
 		// Create client
 		this.kalturaConfig.setEndpoint(testConfig.getServiceUrl());
 		this.client = new Client(this.kalturaConfig);
-		
-		executor = Executors.newScheduledThreadPool(1);
 	}
 	
 	@Override
@@ -226,9 +139,25 @@ public class BaseTest extends TestCase {
 		client.setSessionId(sessionId);
 	}
 	
+	protected static String join(Collection<?> col) {
+		return join(col, ",");
+	}
+	
+	protected static String join(Collection<?> col, String delim) {
+	    StringBuilder sb = new StringBuilder();
+	    Iterator<?> iter = col.iterator();
+	    if (iter.hasNext())
+	        sb.append(iter.next().toString());
+	    while (iter.hasNext()) {
+	        sb.append(delim);
+	        sb.append(iter.next().toString());
+	    }
+	    return sb.toString();
+	}
+	
 	// Entry utils
 	
-	public void addTestImage(final Completion completion, String name, final OnCompletion<MediaEntry> onCompletion)
+	public void addTestImage(String name, final OnCompletion<MediaEntry> onCompletion)
 	{
 		MediaEntry entry = new MediaEntry();
 		entry.setName(name);
@@ -250,7 +179,7 @@ public class BaseTest extends TestCase {
 
 			@Override
 			public void onComplete(final MediaEntry entry, APIException error) {
-				completion.assertNull(error);
+				assertNull(error);
 				
 				// Upload token
 				UploadToken uploadToken = new UploadToken();
@@ -261,8 +190,8 @@ public class BaseTest extends TestCase {
 
 					@Override
 					public void onComplete(final UploadToken token, APIException error) {
-						completion.assertNull(error);
-						completion.assertNotNull(token);
+						assertNull(error);
+						assertNotNull(token);
 						
 						// Define content
 						UploadedFileTokenResource resource = new UploadedFileTokenResource();
@@ -272,8 +201,8 @@ public class BaseTest extends TestCase {
 
 							@Override
 							public void onComplete(final MediaEntry entry, APIException error) {
-								completion.assertNull(error);
-								completion.assertNotNull(entry);
+								assertNull(error);
+								assertNotNull(entry);
 								
 								// upload
 								RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
@@ -281,8 +210,8 @@ public class BaseTest extends TestCase {
 
 									@Override
 									public void onComplete(UploadToken token, APIException error) {
-										completion.assertNull(error);
-										completion.assertNotNull(token);
+										assertNull(error);
+										assertNotNull(token);
 												
 										testIds.add(entry.getId());
 										MediaService.get(entry.getId());
@@ -306,12 +235,12 @@ public class BaseTest extends TestCase {
 		return UUID.randomUUID().toString();
 	}
 
-	public void getProcessedEntry(Completion completion, String id, OnCompletion<MediaEntry> onCompletion) {
-		getProcessedEntry(completion, id, false, onCompletion);
+	public void getProcessedEntry(String id, OnCompletion<MediaEntry> onCompletion) {
+		getProcessedEntry(id, false, onCompletion);
 	}
 	
 	private int counter = 0;
-	public void getProcessedEntry(final Completion completion, final String id, final Boolean checkReady, final OnCompletion<MediaEntry> onCompletion) {
+	public void getProcessedEntry(final String id, final Boolean checkReady, final OnCompletion<MediaEntry> onCompletion) {
 		final int maxTries = 50;
 		final int sleepInterval = 30 * 1000;
 		counter = 0;
@@ -323,7 +252,7 @@ public class BaseTest extends TestCase {
 			
 			@Override
 			public void onComplete(MediaEntry retrievedEntry, APIException error) {
-				completion.assertNull(error);
+				assertNull(error);
 				
 				if(checkReady && retrievedEntry.getStatus() != EntryStatus.READY) {
 

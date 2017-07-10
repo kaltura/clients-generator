@@ -27,6 +27,7 @@
 // ===================================================================================================
 package com.kaltura.client.test;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 
 import com.kaltura.client.APIOkRequestsExecutor;
@@ -51,24 +52,21 @@ public class ErrorTest extends BaseTest {
 		
 		final Client invalidClient = new Client(this.kalturaConfig);
 
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+
+		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		.setCompletion(new OnCompletion<Boolean>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
-				.setCompletion(new OnCompletion<Boolean>() {
-					
-					@Override
-					public void onComplete(Boolean response, APIException error) {
-						completion.assertNotNull(error, "Ping to invalid end-point should fail");
-						completion.assertNull(response, "Ping to invalid end-point should fail");
-						
-						completion.complete();
-					}
-				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(invalidClient));
+			public void onComplete(Boolean response, APIException error) {
+				assertNotNull("Ping to invalid end-point should fail", error);
+				assertNull("Ping to invalid end-point should fail", response);
+				
+				doneSignal.countDown();
 			}
 		});
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(invalidClient));
+		doneSignal.await();
 	}
 	
 	public void testInvalidServerDnsName() throws InterruptedException, ExecutionException {
@@ -77,24 +75,21 @@ public class ErrorTest extends BaseTest {
 
 		final Client invalidClient = new Client(this.kalturaConfig);
 
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+        
+		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		.setCompletion(new OnCompletion<Boolean>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
-				.setCompletion(new OnCompletion<Boolean>() {
-					
-					@Override
-					public void onComplete(Boolean response, APIException error) {
-						completion.assertNotNull(error, "Ping to invalid end-point should fail");
-						completion.assertNull(response, "Ping to invalid end-point should fail");
-						
-						completion.complete();
-					}
-				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(invalidClient));
+			public void onComplete(Boolean response, APIException error) {
+				assertNotNull("Ping to invalid end-point should fail", error);
+				assertNull("Ping to invalid end-point should fail", response);
+				
+				doneSignal.countDown();
 			}
 		});
+		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(invalidClient));
+		doneSignal.await();
 	}
 	
 	private class ExecutorMock {
@@ -118,24 +113,21 @@ public class ErrorTest extends BaseTest {
 	 */
 	public void testJsonParsingError() throws InterruptedException, ExecutionException {
 		final ExecutorMock mockClient = new ExecutorMock("Invalid JSON");
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+        
+		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		.setCompletion(new OnCompletion<Boolean>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
-				.setCompletion(new OnCompletion<Boolean>() {
-					
-					@Override
-					public void onComplete(Boolean response, APIException error) {
-						completion.assertNotNull(error, "Invalid JSON should fail");
-						completion.assertNull(response, "Invalid JSON should fail");
-						
-						completion.complete();
-					}
-				});
-				mockClient.queue(requestBuilder.build(client));
+			public void onComplete(Boolean response, APIException error) {
+				assertNotNull("Invalid JSON should fail", error);
+				assertNull("Invalid JSON should fail", response);
+				
+				doneSignal.countDown();
 			}
 		});
+		mockClient.queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 	
 	/**
@@ -145,24 +137,20 @@ public class ErrorTest extends BaseTest {
 	 */
 	public void testTagInSimpleType() throws InterruptedException, ExecutionException {
 		final ExecutorMock mockClient = new ExecutorMock("{sometag: 1}");
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		.setCompletion(new OnCompletion<Boolean>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<Boolean> requestBuilder = SystemService.ping()
-				.setCompletion(new OnCompletion<Boolean>() {
-					
-					@Override
-					public void onComplete(Boolean response, APIException error) {
-						completion.assertNotNull(error, "Invalid JSON should fail");
-						completion.assertNull(response, "Invalid JSON should fail");
-						
-						completion.complete();
-					}
-				});
-				mockClient.queue(requestBuilder.build(client));
+			public void onComplete(Boolean response, APIException error) {
+				assertNotNull("Invalid JSON should fail", error);
+				assertNull("Invalid JSON should fail", response);
+				
+				doneSignal.countDown();
 			}
 		});
+		mockClient.queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 	
 	/**
@@ -172,47 +160,39 @@ public class ErrorTest extends BaseTest {
 	 */
 	public void testEmptyObjectOrException() throws InterruptedException, ExecutionException {
 		final ExecutorMock mockClient = new ExecutorMock("\"bla bla\"");
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+		.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
-				.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
-					
-					@Override
-					public void onComplete(ListResponse<MediaEntry> response, APIException error) {
-						completion.assertNotNull(error, "Invalid JSON type should fail");
-						completion.assertNull(response, "Invalid JSON type should fail");
-						
-						completion.complete();
-					}
-				});
-				mockClient.queue(requestBuilder.build(client));
+			public void onComplete(ListResponse<MediaEntry> response, APIException error) {
+				assertNotNull("Invalid JSON type should fail", error);
+				assertNull("Invalid JSON type should fail", response);
+				
+				doneSignal.countDown();
 			}
 		});
+		mockClient.queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 	
 	public void testUnknownObjectType() throws InterruptedException, ExecutionException  {
 
 		final ExecutorMock mockClient = new ExecutorMock("{objectType: \"UnknownObjectType\"}");
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		RequestBuilder<MediaEntry> requestBuilder = MediaService.get("invalid-id")
+		.setCompletion(new OnCompletion<MediaEntry>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.get("invalid-id")
-				.setCompletion(new OnCompletion<MediaEntry>() {
-					
-					@Override
-					public void onComplete(MediaEntry response, APIException error) {
-						completion.assertNull(error);
-						completion.assertTrue(response instanceof MediaEntry);
-						
-						completion.complete();
-					}
-				});
-				mockClient.queue(requestBuilder.build(client));
+			public void onComplete(MediaEntry response, APIException error) {
+				assertNull(error);
+				assertTrue(response instanceof MediaEntry);
+				
+				doneSignal.countDown();
 			}
 		});
+		mockClient.queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 	
 	public void testArrayOfUknownEntry() throws InterruptedException, ExecutionException {
@@ -223,40 +203,36 @@ public class ErrorTest extends BaseTest {
 				"], totalCount: 3}";
 
 		final ExecutorMock mockClient = new ExecutorMock(testJson);
-		final Completion completion = new Completion();
-		completion.run(new Runnable() {
+        final CountDownLatch doneSignal = new CountDownLatch(1);
+		RequestBuilder<ListResponse<BaseEntry>> requestBuilder = BaseEntryService.list()
+		.setCompletion(new OnCompletion<ListResponse<BaseEntry>>() {
+			
 			@Override
-			public void run() {
-				RequestBuilder<ListResponse<BaseEntry>> requestBuilder = BaseEntryService.list()
-				.setCompletion(new OnCompletion<ListResponse<BaseEntry>>() {
-					
-					@Override
-					public void onComplete(ListResponse<BaseEntry> res, APIException error) {
+			public void onComplete(ListResponse<BaseEntry> res, APIException error) {
 
-						completion.assertEquals(3, res.getTotalCount());
-						completion.assertEquals(3, res.getObjects().size());
-						
-						BaseEntry entry1 = res.getObjects().get(0);
-						BaseEntry entry2 = res.getObjects().get(1);
-						BaseEntry entry3 = res.getObjects().get(2);
+				assertEquals(3, res.getTotalCount());
+				assertEquals(3, res.getObjects().size());
+				
+				BaseEntry entry1 = res.getObjects().get(0);
+				BaseEntry entry2 = res.getObjects().get(1);
+				BaseEntry entry3 = res.getObjects().get(2);
 
-						assertTrue(entry1 instanceof BaseEntry);
-						assertEquals("test1", entry1.getId());
-						assertEquals("test1", entry1.getName());
+				assertTrue(entry1 instanceof BaseEntry);
+				assertEquals("test1", entry1.getId());
+				assertEquals("test1", entry1.getName());
 
-						assertTrue(entry2 instanceof BaseEntry);
-						assertEquals("test2", entry2.getId());
-						assertEquals("test2", entry2.getName());
+				assertTrue(entry2 instanceof BaseEntry);
+				assertEquals("test2", entry2.getId());
+				assertEquals("test2", entry2.getName());
 
-						assertTrue(entry3 instanceof MediaEntry);
-						assertEquals("test3", entry3.getId());
-						assertEquals("test3", entry3.getName());
+				assertTrue(entry3 instanceof MediaEntry);
+				assertEquals("test3", entry3.getId());
+				assertEquals("test3", entry3.getName());
 
-						completion.complete();
-					}
-				});
-				mockClient.queue(requestBuilder.build(client));
+				doneSignal.countDown();
 			}
 		});
+		mockClient.queue(requestBuilder.build(client));
+		doneSignal.await();
 	}
 }
