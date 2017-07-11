@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <!-- -->
 <!-- Maven POM file for packaging and testing the -->
-<!-- KalturaApiClient Java library. -->
+<!-- KalturaOttApiClient Java library. -->
+<!-- -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -9,7 +10,7 @@
     <!-- Define the GAV coordinate for the project -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kaltura</groupId>
-    <artifactId>KalturaApiClient</artifactId>
+    <artifactId>KalturaOttApiClient</artifactId>
     <version>1.0.0</version>
 
     <packaging>jar</packaging>
@@ -18,14 +19,13 @@
     </properties>
 
     <!-- Project description -->
-    <name>Kaltura API Java Client Library</name>
+    <name>Kaltura OTT API Java Client Library</name>
     <description>
-        KalturaApiClient is a library of Java classes that can be used to interact
-        with the Kaltura REST API. More information about the REST API can be
-        found at http://corp.kaltura.com/Products/Kaltura-API Many of the Java classes
+        KalturaOttApiClient is a library of Java classes that can be used to interact
+        with the Kaltura OTT REST API. More information about the REST API can be
+        found at https://ott.developer.kaltura.com/ Many of the Java classes
         in this library are auto-generated from a schema that defines the objects that
-        are used to interect with the API. The current schema can be found at
-        http://www.kaltura.com/api_v3/api_schema.php
+        are used to interect with the API.
     </description>
     <url>http://github.com/kaltura/KalturaGeneratedAPIClientsJava</url>
 

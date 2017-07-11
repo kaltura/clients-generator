@@ -23,11 +23,11 @@ public class DataFactory {
 
     static void fillWithUsers(){
         users = new ArrayList<>();
-        users.add(new UserLogin("albert@gmail.com", "123456"));
-        users.add(new UserLogin("betsy@gmail.com", "123456"));
-        users.add(new UserLogin("Alfred@gmail.com", "123456"));
-        users.add(new UserLogin("ziv.ilan@kaltura.com", "123456"));
-        users.add(new UserLogin("itan@b.com", "123456"));
+        users.add(new UserLogin("aaa@test.com", "123456"));
+        users.add(new UserLogin("bbb@test.com", "123456"));
+        users.add(new UserLogin("ccc@test.com", "123456"));
+        users.add(new UserLogin("ddd@test.com", "123456"));
+        users.add(new UserLogin("eee@test.com", "123456"));
     }
 
     public static class UserLogin{

@@ -48,6 +48,15 @@ public class GsonParser {
         	throw new APIException(FailureStep.OnResponse, "Invalid JSON response: " + result);
         }
         
+        if(jsonElement.isJsonObject()) {
+        	JsonObject jsonObject = jsonElement.getAsJsonObject();
+        	if(jsonObject.get("result") != null && jsonObject.get("objectType") == null) {
+        		jsonElement = jsonObject.get("result");
+        	}
+        	if(jsonObject.get("error") != null && jsonObject.get("objectType") == null) {
+        		jsonElement = jsonObject.getAsJsonObject("error");
+        	}
+        }
     	return parseObject(jsonElement, clz);
     }
 
@@ -120,6 +129,16 @@ public class GsonParser {
         	throw new APIException(FailureStep.OnResponse, "Invalid JSON response: " + result);
         }
 
+        if(jsonElement.isJsonObject()) {
+        	JsonObject jsonObject = jsonElement.getAsJsonObject();
+        	if(jsonObject.get("result") != null && jsonObject.get("objectType") == null) {
+        		jsonElement = jsonObject.get("result");
+        	}
+        	if(jsonObject.get("error") != null && jsonObject.get("objectType") == null) {
+        		jsonElement = jsonObject.getAsJsonObject("error");
+        	}
+        }
+        
         if(jsonElement.isJsonObject()) {
         	JsonObject jsonObject = jsonElement.getAsJsonObject();
 	        String objectType = jsonObject.getAsJsonPrimitive("objectType").getAsString();
@@ -201,6 +220,13 @@ public class GsonParser {
         catch(JsonSyntaxException | IllegalStateException e) {
         	throw new APIException(FailureStep.OnResponse, "Invalid JSON response: " + result);
         }
+
+    	if(jsonObject.get("result") != null && jsonObject.get("objectType") == null) {
+    		jsonObject = jsonObject.getAsJsonObject("result");
+    	}
+    	if(jsonObject.get("error") != null && jsonObject.get("objectType") == null) {
+    		jsonObject = jsonObject.getAsJsonObject("error");
+    	}
         
         String objectType = jsonObject.getAsJsonPrimitive("objectType").getAsString();
         if(objectType.equals("KalturaAPIException")) {
