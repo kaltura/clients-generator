@@ -704,17 +704,14 @@ class KalturaClientBase
 	public function setClientConfiguration(KalturaClientConfiguration $configuration)
 	{
 		$params = get_class_vars('KalturaClientConfiguration');
-		foreach($params as $param)
+		foreach($params as $param => $value)
 		{
-			if (empty($configuration->$param)){
-			    continue;
-			}
 			if(is_null($configuration->$param))
 			{
-			    if(isset($this->clientConfiguration[$param]))
-			    {
-				   unset($this->clientConfiguration[$param]);
-			    }
+				if(isset($this->clientConfiguration[$param]))
+				{
+					unset($this->clientConfiguration[$param]);
+				}
 			}
 			else
 			{
@@ -726,7 +723,7 @@ class KalturaClientBase
 	public function setRequestConfiguration(KalturaRequestConfiguration $configuration)
 	{
 		$params = get_class_vars('KalturaRequestConfiguration');
-		foreach($params as $param)
+		foreach($params as $param => $value)
 		{
 			if(is_null($configuration->$param))
 			{
