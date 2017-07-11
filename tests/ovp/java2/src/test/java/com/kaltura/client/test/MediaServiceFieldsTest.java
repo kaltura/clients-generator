@@ -61,7 +61,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		startAdminSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		final String testString = "Kaltura test string";
+		final String testString = "Kaltura test: " + getName();
 		final int testInt = 42;
 		final Boolean testEnumAsInt = false;
 		final ContainerFormat testEnumAsString = ContainerFormat.ISMV;
@@ -137,7 +137,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 		startAdminSession();
 
-		final String testString = "Kaltura test string";
+		final String testString = "Kaltura test: " + getName();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		ThumbParams paramsAdd = new ThumbParams();
@@ -193,7 +193,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		final int testInt = 42;
 
 		ConversionProfile profileAdd = new ConversionProfile();
-		profileAdd.setName("Kaltura test string");
+		profileAdd.setName("Kaltura test: " + getName());
 		profileAdd.setFlavorParamsIds("0");
 		profileAdd.setStorageProfileId(testInt);
 
@@ -253,7 +253,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		restrictions.add(resB);
 		
 		AccessControl accessControlAdd = new AccessControl();
-		accessControlAdd.setName("test access control");
+		accessControlAdd.setName("Test access control: " + getName());
 		accessControlAdd.setRestrictions(restrictions);
 		
 		RequestBuilder<AccessControl> requestBuilder = AccessControlService.add(accessControlAdd)
@@ -268,7 +268,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 				
 				// Test null update - shouldn't update
 				AccessControl accessControlUpdate = new AccessControl();
-				accessControlUpdate.setName("updated access control");
+				accessControlUpdate.setName("Updated access control: " + getName());
 				accessControlUpdate.setRestrictions(null); 
 
 				RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlAdded.getId(), accessControlUpdate)
@@ -282,7 +282,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 						
 						// Test update Empty array - should update
 						AccessControl accessControlUpdateAgain = new AccessControl();
-						accessControlUpdateAgain.setName("reset access control");
+						accessControlUpdateAgain.setName("Reset access control: " + getName());
 						accessControlUpdateAgain.setRestrictions(new ArrayList<BaseRestriction>()); 
 
 						RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlUpdated.getId(), accessControlUpdateAgain)

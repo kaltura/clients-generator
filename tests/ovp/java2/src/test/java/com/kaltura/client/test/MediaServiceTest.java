@@ -71,14 +71,11 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws Exception 
 	 */
 	public void testAddFromUrl() throws Exception {
-		if (logger.isEnabled()) 
-			logger.info("Test Add From URL");
-        
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
         
-		final String name = "test (" + new Date() + ")";
+		final String name = getName() + " (" + new Date() + ")";
 		
 		addClipFromUrl(name, new OnCompletion<MediaEntry>() {
 
@@ -136,9 +133,6 @@ public class MediaServiceTest extends BaseTest {
 	 */
 	public void testUploadTokenAddGivenFile() throws Exception {
 		
-		if (logger.isEnabled())
-			logger.info("Test upload token add");
-		
 		final File fileData = TestUtils.getTestVideoFile();
 		final long fileSize = fileData.length();
 		final String uniqueTag = "test_" + getUniqueString();
@@ -161,7 +155,7 @@ public class MediaServiceTest extends BaseTest {
 
 				// Create entry
 				MediaEntry entry = new MediaEntry();
-				entry.setName("test (" + new Date() + ")");
+				entry.setName(getName() + " (" + new Date() + ")");
 				entry.setType(EntryType.MEDIA_CLIP);
 				entry.setMediaType(MediaType.VIDEO);
 				entry.setTags(uniqueTag);
@@ -273,13 +267,10 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws Exception 
 	 */
 	public void testUpdate() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Test Update Entry");
-		
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		String name = "test (" + new Date() + ")";
+		String name = getName() + " (" + new Date() + ")";
 		
 		addTestImage(name, new OnCompletion<MediaEntry>() {
 
@@ -288,7 +279,7 @@ public class MediaServiceTest extends BaseTest {
 				assertNotNull(addedEntry);
 				assertNotNull(addedEntry.getId());
 				
-				final String name2 = "test (" + new Date() + ")";
+				final String name2 = getName() + " (" + new Date() + ")";
 				
 				MediaEntry updatedEntry = new MediaEntry();
 				updatedEntry.setName(name2);			
@@ -323,9 +314,6 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws Exception 
 	 */
 	public void testBadGet() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting badGet test");
-		
 		// look for one we know doesn't exist
 		startUserSession();
 
@@ -351,13 +339,10 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws Exception 
 	 */
 	public void testGet() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting get test");
-		
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		String name = "test (" + new Date() + ")";
+		String name = getName() + " (" + new Date() + ")";
 		
 		addTestImage(name, new OnCompletion<MediaEntry>() {
 
@@ -400,10 +385,6 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws Exception 
 	 */
 	public void testList() throws Exception {
-
-		if (logger.isEnabled())
-			logger.info("Test List");
-
 		final int count = 2;
 		
 		startUserSession();
@@ -463,7 +444,7 @@ public class MediaServiceTest extends BaseTest {
 		
 		for(int i = 0; i < count; i++) {
 			// add test clips
-			String name = "test one (" + new Date() + ")";
+			String name = getName() + " (" + new Date() + ")";
 			addTestImage(name, onCompletion);
 			
 			try {
@@ -484,11 +465,8 @@ public class MediaServiceTest extends BaseTest {
 	 */
 	public void testModeration() throws Exception {
 		
-		if (logger.isEnabled())
-			logger.info("Starting moderation test");
-		
-		final String FLAG_COMMENTS = "This is a test flag";
-		final String name = "test (" + new Date() + ")";
+		final String FLAG_COMMENTS = "This is a test flag: " + getName();
+		final String name = getName() + " (" + new Date() + ")";
 		
 		startAdminSession();
 
@@ -497,9 +475,6 @@ public class MediaServiceTest extends BaseTest {
 
 			@Override
 			public void onComplete(MediaEntry addedEntry, APIException error) {
-
-				if (logger.isEnabled())
-					logger.info("Entry added: " + addedEntry.getId());
 				
 				//wait for the newly-added clip to process
 				getProcessedEntry(addedEntry.getId(), new OnCompletion<MediaEntry>() {
@@ -556,13 +531,10 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws IOException 
 	 */
 	public void testDelete() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting delete test");
-		
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		String name = "test (" + new Date() + ")";
+		String name = getName() + " (" + new Date() + ")";
 		
 		// First delete - should succeed
 		addTestImage(name, new OnCompletion<MediaEntry>() {
@@ -619,9 +591,6 @@ public class MediaServiceTest extends BaseTest {
 	 * @throws Exception 
 	 */
 	public void testUpload() throws Exception {
-		if (logger.isEnabled())
-			logger.info("Starting delete test");
-
 		startUserSession();
 
 		final File fileData = TestUtils.getTestVideoFile();
@@ -633,11 +602,8 @@ public class MediaServiceTest extends BaseTest {
 			@Override
 			public void onComplete(String result, APIException error) {
 				assertNull(error);
-
-				if (logger.isEnabled())
-					logger.debug("After upload, result:" + result);		
 				
-				String name = "test (" + new Date() + ")";
+				String name = getName() + " (" + new Date() + ")";
 				MediaEntry entry = new MediaEntry();
 				entry.setName(name);
 				entry.setType(EntryType.MEDIA_CLIP);
@@ -665,14 +631,11 @@ public class MediaServiceTest extends BaseTest {
 	}
 	
 	public void testPlaylist() throws Exception {
-		if (logger.isEnabled())	
-			logger.info("Starting test playlist execute from filters");
-	
 		startAdminSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		// Create entry
-		addTestImage("test (" + new Date() + ")", new OnCompletion<MediaEntry>() {
+		addTestImage(getName() + " (" + new Date() + ")", new OnCompletion<MediaEntry>() {
 
 			@Override
 			public void onComplete(MediaEntry entry, APIException error) {
@@ -708,7 +671,7 @@ public class MediaServiceTest extends BaseTest {
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		// Add Entry
 		DataEntry dataEntry = new DataEntry();
-		dataEntry.setName("test (" + new Date() + ")");
+		dataEntry.setName(getName() + " (" + new Date() + ")");
 		dataEntry.setDataContent(test);
 		RequestBuilder<DataEntry> requestBuilder = DataService.add(dataEntry)
 		.setCompletion(new OnCompletion<DataEntry>() {

@@ -63,7 +63,7 @@ public class MultiRequestTest extends BaseTest{
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		MediaEntry entry = new MediaEntry();
-		entry.setName("test (" + new Date() + ")");
+		entry.setName(getName() + " (" + new Date() + ")");
 		entry.setMediaType(MediaType.IMAGE);
 		entry.setReferenceId(getUniqueString());
 
@@ -201,7 +201,7 @@ public class MultiRequestTest extends BaseTest{
 		final AtomicInteger counter = new AtomicInteger(0);
 		
 		MediaEntry entry = new MediaEntry();
-		entry.setName("test (" + new Date() + ")");
+		entry.setName(getName() + " (" + new Date() + ")");
 		entry.setMediaType(MediaType.IMAGE);
 		entry.setReferenceId(getUniqueString());
 
