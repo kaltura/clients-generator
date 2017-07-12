@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kaltura</groupId>
     <artifactId>KalturaOttApiClient</artifactId>
-    <version>4.4-RC1</version>
+    <version>4.5-RC1</version>
 
     <packaging>jar</packaging>
     <properties>
@@ -27,7 +27,7 @@
         in this library are auto-generated from a schema that defines the objects that
         are used to interect with the API.
     </description>
-    <url>http://github.com/kaltura/KalturaGeneratedAPIClientsJava</url>
+    <url>http://github.com/kaltura/KalturaOttGeneratedAPIClientsJava</url>
 
     <!-- Define the license under which this software can be used. -->
     <licenses>
@@ -62,9 +62,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsJava.git</connection>
-        <developerConnection>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsJava.git</developerConnection>
-        <url>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsJava.git</url>
+        <connection>scm:git:git@github.com:kaltura/KalturaOttGeneratedAPIClientsJava.git</connection>
+        <developerConnection>scm:git:git@github.com:kaltura/KalturaOttGeneratedAPIClientsJava.git</developerConnection>
+        <url>scm:git:git@github.com:kaltura/KalturaOttGeneratedAPIClientsJava.git</url>
     </scm>
 
     <!-- Libraries on which the KalturaClient depends -->
