@@ -28,7 +28,7 @@ class TypescriptGeneratorBase
                 case KalturaServerTypes::Simple:
                     if ($typeClassName == "string") {
                         $result = $defaultValue ? "\"{$defaultValue}\"" : "";
-                } else if ($defaultValue) {
+                    } else if ($defaultValue) {
                         $result = $defaultValue;
                     } else {
                         // TODO workaround, handling scenarios like param of type int without default value
@@ -37,6 +37,9 @@ class TypescriptGeneratorBase
                     break;
                 case KalturaServerTypes::ArrayOfObjects:
                     $result = "[]";
+                    break;
+                case KalturaServerTypes::ArrayOfObjects:
+                    $result = "{}";
                     break;
                 default:
                     $result = $defaultValue ? $defaultValue : "";
@@ -73,6 +76,9 @@ class TypescriptGeneratorBase
                 break;
             case KalturaServerTypes::ArrayOfObjects:
                 $result = "{$typeClassName}[]";
+                break;
+            case KalturaServerTypes::MapOfObjects:
+                $result = "{ [key : string] : $typeClassName}";
                 break;
             case KalturaServerTypes::EnumOfInt:
             case KalturaServerTypes::EnumOfString:

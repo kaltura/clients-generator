@@ -59,6 +59,12 @@ class ClassesGenerator extends TypescriptGeneratorBase
         );
         $createClassArgs->requireDataInCtor = true;
 
+
+        $customMetadataProperties = array();
+        $customMetadataProperties[] = $this->createMetadataProperty('apiVersion',false,KalturaServerTypes::Simple,'constant', $apiVersion);
+        $createClassArgs->customMetadataProperties = $customMetadataProperties;
+
+
         $classBody = $this->createClassExp($createClassArgs);
 
         $fileContent = "{$this->getBanner()}
@@ -356,6 +362,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
             break;
             case KalturaServerTypes::Object:
             case KalturaServerTypes::ArrayOfObjects:
+            case KalturaServerTypes::MapOfObjects:
                 if (!in_array($typeClassName,$importedItems)) {
                     $importedItems[] = $typeClassName;
 
@@ -410,6 +417,10 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 break;
             case KalturaServerTypes::ArrayOfObjects:
                 $result->type = "a";
+                $result->subType = $typeClassName;
+                break;
+            case KalturaServerTypes::MapOfObjects:
+                $result->type = "m";
                 $result->subType = $typeClassName;
                 break;
             case KalturaServerTypes::EnumOfInt:

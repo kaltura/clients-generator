@@ -4,7 +4,6 @@ CONST NewLine = "\n";
 require_once (__DIR__ . '/typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/typescript/KalturaServerMetadata.php');
 require_once (__DIR__ . '/typescript/ClassesGenerator.php');
-require_once (__DIR__ . '/typescript/IndexFilesGenerator.php');
 require_once (__DIR__ . '/typescript/EnumsGenerator.php');
 
 
@@ -32,11 +31,9 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		$this->serverMetadata = $this->extractData($xpath);
 
 		$classesGenerator = new ClassesGenerator($this->serverMetadata);
-		$indexFilesGenerator = new IndexFilesGenerator($this->serverMetadata);
 		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
 			$classesGenerator->generate(),
-			$indexFilesGenerator->generate(),
 			$enumsGenerator->generate()
 		);
 
@@ -346,17 +343,24 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 				$result->type = KalturaServerTypes::Void;
 				$result->className =  null;
 			}
-		}else if ($this->isArrayType($typeValue))
-		{
-			$arrayTypeValue = $this->fixKalturaTypeName($xmlnode->getAttribute("arrayType"));
-			if (isset($arrayTypeValue) && $arrayTypeValue != "") {
-				$result->type = KalturaServerTypes::ArrayOfObjects;
-				$result->className = $arrayTypeValue;
-			}
 		}else
 		{
 			switch($typeValue)
 			{
+			    case "array":
+			        $arrayTypeValue = $this->fixKalturaTypeName($xmlnode->getAttribute("arrayType"));
+                    if (isset($arrayTypeValue) && $arrayTypeValue != "") {
+                        $result->type = KalturaServerTypes::ArrayOfObjects;
+                        $result->className = $arrayTypeValue;
+                    }
+			        break;
+                case "map":
+                    $arrayTypeValue = $this->fixKalturaTypeName($xmlnode->getAttribute("arrayType"));
+                    if (isset($arrayTypeValue) && $arrayTypeValue != "") {
+                        $result->type = KalturaServerTypes::MapOfObjects;
+                        $result->className = $arrayTypeValue;
+                    }
+			        break;
 				case "file":
 					$result->type = KalturaServerTypes::File;
 					$result->className = null;

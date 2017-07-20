@@ -26,6 +26,7 @@ function validateType($type, $typeClassName, $availableTypes, $target)
                 break;
             case KalturaServerTypes::Object:
             case KalturaServerTypes::ArrayOfObjects:
+            case KalturaServerTypes::MapOfObjects:
             case KalturaServerTypes::EnumOfString:
             case KalturaServerTypes::EnumOfInt:
                 if (!in_array($typeClassName, $availableTypes) && $typeClassName != "KalturaObjectBase")
@@ -51,6 +52,7 @@ class KalturaServerTypes
     const EnumOfString = "EnumOfString";
     const Date = "Date";
     const File = "File";
+    const MapOfObjects = "Map";
 }
 
 class Service
