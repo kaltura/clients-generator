@@ -5,6 +5,8 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	private $_csprojIncludes = array();
 	protected $_baseClientPath = "KalturaClient";
 	protected static $reservedWords = array('protocol', 'repeat', 'extension');
+	protected $xpath;
+	protected $pluginName = null;
 	
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "swift")
 	{
@@ -20,28 +22,42 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	{
 		parent::generate();
 		
-		$xpath = new DOMXPath($this->_doc);
-		$enumNodes = $xpath->query("/xml/enums/enum");
-		foreach($enumNodes as $enumNode) 
+		$this->xpath = new DOMXPath($this->_doc);
+		
+		$this->generatePlugin();
+		
+		$configurationNodes = $this->xpath->query("/xml/configurations/*");
+		$this->writeMainClient($configurationNodes);
+		$this->writeRequestBuilderData($configurationNodes);
+		
+		$pluginNodes = $this->xpath->query("/xml/plugins/*");
+		foreach($pluginNodes as $pluginNode) {
+			$this->pluginName = $pluginNode->getAttribute("name");
+			$pluginName = ucfirst($this->pluginName);
+			$this->_baseClientPath = "plugins/KalturaClient{$pluginName}Plugin";
+			$this->generatePlugin();
+		}
+	}
+	
+	private function generatePlugin() {
+		
+		$enumNodes = $this->xpath->query("/xml/enums/enum");
+		foreach($enumNodes as $enumNode)
 		{
 			$this->writeEnum($enumNode);
 		}
 		
-		$classNodes = $xpath->query("/xml/classes/class");
-		foreach($classNodes as $classNode) 
+		$classNodes = $this->xpath->query("/xml/classes/class");
+		foreach($classNodes as $classNode)
 		{
 			$this->writeClass($classNode);
 		}
 		
-		$serviceNodes = $xpath->query("/xml/services/service");		
-		foreach($serviceNodes as $serviceNode) 
+		$serviceNodes = $this->xpath->query("/xml/services/service");
+		foreach($serviceNodes as $serviceNode)
 		{
 			$this->writeService($serviceNode);
 		}
-		
-		$configurationNodes = $xpath->query("/xml/configurations/*");
-		$this->writeMainClient($serviceNodes, $configurationNodes);
-		$this->writeRequestBuilderData($configurationNodes);
 	}
 	
 	//Private functions
@@ -63,6 +79,10 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	{
 		$enumName = $enumNode->getAttribute("name");
 		if(!$this->shouldIncludeType($enumName) || $enumName === 'KalturaNullableBoolean') {
+			return;
+		}
+		
+		if($enumNode->getAttribute("plugin") != $this->pluginName) {
 			return;
 		}
 		
@@ -133,9 +153,14 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	function writeClass(DOMElement $classNode) 
 	{
 		$type = $classNode->getAttribute("name");
-		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject' || preg_match('/ListResponse$/', $type))
+		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject' || preg_match('/ListResponse$/', $type)) {
 			return;
-		
+		}	
+			
+		if($classNode->getAttribute("plugin") != $this->pluginName) {
+			return;
+		}
+
 		$type = $this->getSwiftTypeName($type);
 		
 		// File name
@@ -170,7 +195,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 // 		$this->appendLine("");
 		
 		// Generate Full constructor
-		$this->generateJsonConstructor($classNode);
+		$this->generatePopulate($classNode);
 		$this->appendLine("");
 
 		// Generate to params method
@@ -306,7 +331,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	}");
 	}
 
-	public function generateJsonConstructor($classNode)
+	public function generatePopulate($classNode)
 	{
 		$type = $this->getSwiftTypeName($classNode->getAttribute("name"));
 		$this->appendLine("	internal override func populate(_ dict: [String: Any]) throws {");
@@ -328,7 +353,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 				$propName = $this->replaceReservedWords($apiPropName);
 				$propType = $propertyNode->getAttribute("type");
 
-				$propBlock .= "		$propName = ".$this->getPropertyValue($apiPropName, $propType, $propertyNode)."\n";
+				$propBlock .= $this->getPropertyValue($propName, $apiPropName, $propType, $propertyNode)."\n";
 
 			}
 
@@ -337,10 +362,12 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	}");
 	}
 	
-	public function getPropertyValue($propName, $propType, $propertyNode) {
+	public function getPropertyValue($propName, $apiPropName, $propType, $propertyNode) {
 		$propEnumType = null;
 		$primitiveType = "";
-
+		
+		$ret = "		if dict[\"$apiPropName\"] != nil {\n";
+		
 		switch($propType) {
 			case "bigint":
 			case "time":
@@ -365,12 +392,16 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 
 			case "map":
 				$propArrayType = $this->getSwiftTypeName($propertyNode->getAttribute("arrayType"));
-				return "try JSONParser.parse(map: dict[\"".$propName."\"] as! [String: Any])";
+				$ret .="			$propName = try JSONParser.parse(map: dict[\"".$apiPropName."\"] as! [String: Any])\n";
+				$ret .= "		}";
+				return $ret;
 				break;
 
 			case "array":
 				$propArrayType = $this->getSwiftTypeName($propertyNode->getAttribute("arrayType"));
-				return "try JSONParser.parse(array: dict[\"".$propName."\"] as! [Any])";
+				$ret .="			$propName = try JSONParser.parse(array: dict[\"".$apiPropName."\"] as! [Any])\n";
+				$ret .= "		}";
+				return $ret;
 				break;
 		}
 
@@ -380,16 +411,25 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 				$propEnumType = null;
 			}
 			$primitiveType = ucfirst($primitiveType);
-			$parsedProperty = "dict[\"".$propName."\"] as? $primitiveType";
+			$parsedProperty = "dict[\"".$apiPropName."\"] as? $primitiveType";
 			if($propEnumType != null && $propEnumType != 'Bool') {
-				$parsedProperty = $propEnumType . "(rawValue: (".$parsedProperty.")!)";
+				$ret = "		if dict[\"$apiPropName\"] != nil {\n";
+				if($primitiveType == 'String') {
+					$ret .= "			$propName = $propEnumType(rawValue: \"\\(dict[\"$apiPropName\"]!)\")\n";
+				}
+				else {
+					$ret .= "			$propName = $propEnumType(rawValue: ($parsedProperty)!)\n";
+				}
 			}
-			return $parsedProperty;
-
+			else {
+				$ret .="			$propName = $parsedProperty\n";
+			}
 		} else {
 			$propType = $this->getSwiftTypeName($propType);
-			return "try JSONParser.parse(object: dict[\"".$propName."\"] as! [String: Any])";
+			$ret .="		$propName = try JSONParser.parse(object: dict[\"".$apiPropName."\"] as! [String: Any])";
 		}
+		$ret .= "		}";
+		return $ret;
 	}
 
 
@@ -452,9 +492,14 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	function writeService(DOMElement $serviceNode) 
 	{
 		$serviceId = $serviceNode->getAttribute("id");
-		if(!$this->shouldIncludeService($serviceId))
+		if(!$this->shouldIncludeService($serviceId)) {
 			return;
-
+		}
+		
+		if($serviceNode->getAttribute("plugin") != $this->pluginName) {
+			return;
+		}
+		
 		$serviceName = $serviceNode->getAttribute("name");
 		
 		$swiftServiceName = $this->upperCaseFirstLetter($serviceName) . "Service";
@@ -492,8 +537,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	
 	function getListResponseInternalType($listResponseType) 
 	{
-		$xpath = new DOMXPath($this->_doc);
-		$objectsNodes = $xpath->query("/xml/classes/class[@name = 'Kaltura{$listResponseType}']/property[@name = 'objects']");
+		$objectsNodes = $this->xpath->query("/xml/classes/class[@name = 'Kaltura{$listResponseType}']/property[@name = 'objects']");
 		if(!$objectsNodes->length)
 		{
 			throw new Exception('List response type [$listResponseType] has no objects array property');
@@ -777,7 +821,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$this->addFile($this->_baseClientPath . "/utils/request/RequestBuilderData.swift", $imports . $this->getTextBlock());
 	}
 	
-	function writeMainClient(DOMNodeList $serviceNodes, DOMNodeList $configurationNodes) 
+	function writeMainClient(DOMNodeList $configurationNodes) 
 	{
 		$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion'); //located at input file top
 		$date = date('y-m-d');
