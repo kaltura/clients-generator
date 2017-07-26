@@ -1,7 +1,7 @@
 
 import SwiftyJSON
 
-public class JSONParser{
+internal class JSONParser{
     
     enum error: Error {
         case typeNotFound
@@ -26,13 +26,17 @@ public class JSONParser{
     }
     
     public static func parse<T>(object: [String: Any]) throws -> T where T: ObjectBase {
-        print("Init object \(T.self)")
-        let obj: T = T.self.init()
-        try obj.populate(object)
-        return obj
+        return try parse(object: object, type: T.self)
     }
     
-    internal static func parse(data: Data) throws -> JSON {
+    public static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
+        print("Init object \(T.self)")
+        let obj: ObjectBase = type.init()
+        try obj.populate(object)
+        return obj as! T
+    }
+    
+    public static func parse(data: Data) throws -> JSON {
         do{
             let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
             return JSON(json)
@@ -42,7 +46,7 @@ public class JSONParser{
         }
     }
     
-    internal static func parse<T>(json: JSON) throws -> T? {
+    public static func parse<T>(json: JSON) throws -> T? {
         
         if let dict = json.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
@@ -52,12 +56,9 @@ public class JSONParser{
             return json.string as? T
         }
         
-        if let _ = T.self as? ObjectBase.Type {
+        if let type: ObjectBase.Type = T.self as? ObjectBase.Type {
             if let dict = json.dictionaryObject {
-                print("Init object aaa \(T.self)")
-
-                //let ret: MediaEntry? = try parse(object: dict)
-                return try parse(object: dict) as? T
+                return try parse(object: dict, type: type) as? T
             }
             else {
                 throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
