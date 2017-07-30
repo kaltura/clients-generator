@@ -31,8 +31,17 @@ internal class JSONParser{
     
     public static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
         print("Init object \(T.self)")
+        
+        if let result = object["result"] as? [String: Any] {
+            return try self.parse(object: result, type: type)
+        }
+        else if let error = object["error"] as? [String: Any] {
+            throw try parse(object: error) as ApiException
+        }
+        
         let obj: ObjectBase = type.init()
         try obj.populate(object)
+        
         return obj as! T
     }
     

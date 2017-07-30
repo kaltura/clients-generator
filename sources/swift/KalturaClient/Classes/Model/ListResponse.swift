@@ -9,6 +9,6 @@
 import Foundation
 
 open class ListResponse<T: ObjectBase> {
-    var objects: Array<T>?
-    var totalCount: Int?
+    public var objects: Array<T>?
+    public var totalCount: Int?
 }
