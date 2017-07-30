@@ -1,6 +1,9 @@
 package com.kaltura.client;
 
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -119,29 +122,43 @@ public class APIOkRequestsExecutor implements RequestQueue {
     };
 
     private IdFactory idFactory = new IdFactory() {
-		@Override
-		public String factorId(String factor) {
-			return UUID.randomUUID().toString() + "::" + (factor!=null ? factor : System.currentTimeMillis());
-		}
+        @Override
+        public String factorId(String factor) {
+            return UUID.randomUUID().toString() + "::" + (factor != null ? factor : System.currentTimeMillis());
+        }
     };
     
-    private static class InputStreamRequestBody extends RequestBody {
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
     private static ILogger logger = Logger.getLogger(TAG);
 
     private static APIOkRequestsExecutor self;
+    private static APIOkRequestsExecutor mainExecutor;
+    private Handler handler = null;
 
-    public static APIOkRequestsExecutor getSingleton() {
+
+    public static APIOkRequestsExecutor getBackground() {
         if (self == null) {
             self = new APIOkRequestsExecutor();
         }
         return self;
     }
 
+    public static APIOkRequestsExecutor getSingleton() {
+        if (mainExecutor == null) {
+            mainExecutor = new APIOkRequestsExecutor(new Handler(Looper.getMainLooper()));
+        }
+        return mainExecutor;
+    }
+
     public APIOkRequestsExecutor() {
         mOkClient = configClient(createOkClientBuilder(), defaultConfiguration).build();
+    }
+
+    public APIOkRequestsExecutor(Handler handler){
+        this();
+        this.handler = handler;
     }
 
     public APIOkRequestsExecutor(ConnectionConfiguration defaultConfiguration) {
@@ -215,7 +232,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         return;
                     }
                     // handle failures: create response from exception
-                    action.onComplete(new ExecutedRequest().error(e).success(false));
+                    action.onComplete(new ExecutedRequest().error(e).success(false).handler(handler));
                 }
 
                 @Override
@@ -234,7 +251,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ExecutedRequest responseElement = new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            ExecutedRequest responseElement = new ExecutedRequest().response(getErrorResponse(e)).success(false).handler(handler);
             action.onComplete(responseElement);
 
         }
@@ -253,7 +270,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
         } catch (IOException e) {
             // failure on request execution - create error response
-            return new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            return new ExecutedRequest().response(getErrorResponse(e)).success(false).handler(handler);
         }
     }
 
@@ -310,7 +327,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         String requestId = getRequestId(response);
 
         if (!response.isSuccessful()) { // in case response has failure status
-            return new ExecutedRequest().requestId(requestId).error(ErrorElement.fromCode(response.code(), response.message())).success(false);
+            return new ExecutedRequest().requestId(requestId).error(ErrorElement.fromCode(response.code(), response.message())).success(false).handler(handler);
 
         } else {
 
@@ -324,7 +341,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
             logger.debug("response body:\n" + responseString);
 
-            return new ExecutedRequest().requestId(requestId).response(responseString).code(response.code()).success(responseString != null);
+            return new ExecutedRequest().requestId(requestId).response(responseString).code(response.code()).success(responseString != null).handler(handler);
         }
     }
 

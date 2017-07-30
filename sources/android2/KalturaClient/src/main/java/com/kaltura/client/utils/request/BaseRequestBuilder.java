@@ -1,5 +1,7 @@
 package com.kaltura.client.utils.request;
 
+import android.os.Handler;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,7 +110,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         this.headers = headers;
     }
 
-    public void setHeaders(String ... nameValueHeaders){
+    public void setHeaders(String... nameValueHeaders){
         for (int i = 0 ; i < nameValueHeaders.length-1 ; i+=2){
             this.headers.put(nameValueHeaders[i], nameValueHeaders[i+1]);
         }
@@ -186,7 +188,20 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
 			}
         }
 
-        complete(new Response<T>(result, error));
+        postComplete(new Response<T>(result, error), response.getHandler());
+    }
+
+    private void postComplete(final Response<T> response, Handler handler){
+        if(handler != null){
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    complete(response);
+                }
+            });
+        } else {
+            complete(response);
+        }
     }
     
     @SuppressWarnings("unchecked")
