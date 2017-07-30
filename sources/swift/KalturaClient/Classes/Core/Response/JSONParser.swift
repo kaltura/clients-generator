@@ -3,11 +3,6 @@ import SwiftyJSON
 
 internal class JSONParser{
     
-    enum error: Error {
-        case typeNotFound
-        case invalidJsonObject
-    }
-    
     public static func parse<T>(array: [Any]) throws -> [T] where T: ObjectBase {
         var ret: [T] = []
         for item in array {
@@ -30,7 +25,6 @@ internal class JSONParser{
     }
     
     public static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
-        print("Init object \(T.self)")
         
         if let result = object["result"] as? [String: Any] {
             return try self.parse(object: result, type: type)

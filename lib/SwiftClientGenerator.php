@@ -554,8 +554,21 @@ end
 			return;
 		}
 		
+		$actionNodes = $serviceNode->childNodes;
+		$asExtension = false;
 		if($serviceNode->getAttribute("plugin") != $this->pluginName) {
-			return;
+			
+			if($this->pluginName) {
+				foreach($actionNodes as $actionNode)
+				{
+					if($actionNode->nodeType == XML_ELEMENT_NODE && $actionNode->getAttribute("plugin") == $this->pluginName) {
+						$asExtension = true;
+					}
+				}
+			}
+			
+			if(!$asExtension)
+				return;
 		}
 		
 		$serviceName = $serviceNode->getAttribute("name");
@@ -566,12 +579,16 @@ end
 		$this->appendLine();
 		$this->appendLine($this->getBanner());
 		$desc = $this->addDescription($serviceNode, "");
-		if($desc)
+		if($desc) {
 			$this->appendLine($desc);
+		}
 		
-		$this->appendLine("public final class $swiftServiceName{");
-		
-		$actionNodes = $serviceNode->childNodes;
+		if($asExtension) {
+			$this->appendLine("extension $swiftServiceName{");
+		}
+		else {
+			$this->appendLine("public final class $swiftServiceName{");
+		}
 		
 		foreach($actionNodes as $actionNode) 
 		{
@@ -613,8 +630,13 @@ end
 	function writeAction($serviceId, DOMElement $actionNode) 
 	{
 		$action = $actionNode->getAttribute("name");
-		if(!$this->shouldIncludeAction($serviceId, $action))
+		if(!$this->shouldIncludeAction($serviceId, $action)) {
 			return;
+		}
+		
+		if($actionNode->getAttribute("plugin") != $this->pluginName) {
+			return;
+		}
 			
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$paramNodesArr = array();
