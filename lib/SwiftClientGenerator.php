@@ -34,9 +34,11 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		foreach($pluginNodes as $pluginNode) {
 			$this->pluginName = $pluginNode->getAttribute("name");
 			$pluginName = ucfirst($this->pluginName);
-			$this->_baseClientPath = "plugins/KalturaClient{$pluginName}Plugin";
+			$this->_baseClientPath = "KalturaClient/plugins/{$pluginName}";
 			$this->generatePlugin();
 		}
+
+        $this->writePodSpec();
 	}
 	
 	private function generatePlugin() {
@@ -207,6 +209,62 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		
 		$this->addFile($file, $this->getTextBlock());
 	}
+
+    /**
+     * TODO: add version number as parameter
+     */
+    public function writePodSpec() {
+
+        //1.add podspec header
+		$defaultSubSpecName = "Core";
+        $this->_licenseBuffer = '';
+        $this->startNewTextBlock();
+        $podSpecHeader = file_get_contents(__DIR__ . '/../sources/swift/podSpecHeader.txt');
+        $this->appendLine($podSpecHeader);
+
+        //2. adding core subspec ( default )
+        $this->writeDefaultSubSpec($defaultSubSpecName);
+
+        //3. adding subspecs
+        $pluginNodes = $this->xpath->query("/xml/plugins/plugin");
+        foreach($pluginNodes as $pluginNode) {
+            $this->writeSubSpec($pluginNode,$defaultSubSpecName);
+        }
+		$this->appendLine("s.default_subspec = '$defaultSubSpecName'");
+        $this->appendLine("end");
+        $file = "KalturaClient.podspec";
+        $this->addFile($file, $this->getTextBlock());
+
+    }
+
+    /**
+     *
+     */
+    public function writeDefaultSubSpec($name){
+        $this->append(" 
+s.subspec '$name' do |sp|
+    sp.source_files = 'Classes/**/*'
+    sp.dependency 'SwiftyJSON', '3.1.4'
+    sp.dependency 'Log', '1.0'
+end
+");
+    }
+    public function writeSubSpec(DOMElement $pluginNode , $defaultSubSpecName){
+
+        $pluginName = $pluginNode->getAttribute("name");
+        $this->appendLine("s.subspec '$pluginName' do |ssp|");
+        $this->appendLine(" ssp.source_files = 'KalturaClient/Plugins/" .$pluginName ."/**/*'");
+		$this->appendLine(" ssp.dependency 'KalturaClient/$defaultSubSpecName'");
+
+        $dependenciesNodes = $pluginNode->getElementsByTagName("dependency");
+        foreach ($dependenciesNodes as $dependencyNode){
+            $dependencyName = $dependencyNode->getAttribute("pluginName");
+            $this->appendLine(" ssp.dependency 'KalturaClient/" .$dependencyName ."'");
+
+        }
+        $this->appendLine("end");
+		$this->appendLine("");
+    }
 	
 	public function replaceReservedWords($name, $additionalValues = array()) {
 		if(in_array($name, self::$reservedWords) || in_array($name, $additionalValues)) {
