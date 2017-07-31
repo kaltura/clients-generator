@@ -7,6 +7,7 @@ target 'KalturaClient_Example' do
     inherit! :search_paths
 
     pod 'KalturaClient', :path => '../'
+    pod 'KalturaClient/metadata', :path => '../'
     pod 'Quick', '~> 1.0.0'
     pod 'Nimble', '~> 5.1.1'
   end

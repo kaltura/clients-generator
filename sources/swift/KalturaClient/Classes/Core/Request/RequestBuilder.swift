@@ -9,6 +9,7 @@
 import UIKit
 		
 public class RequestBuilder<T: Any>: RequestBuilderData {
+    public var files: [String: RequestFile] = [:]
     
     public lazy var requestId: String = {
         return UUID().uuidString
@@ -92,6 +93,17 @@ public class RequestBuilder<T: Any>: RequestBuilderData {
     }
     
     @discardableResult
+    public func setFile(key: String, value:RequestFile?) -> Self {
+        
+        guard value != nil else {
+            return self
+        }
+        
+        self.files[key] = value
+        return self
+    }
+    
+    @discardableResult
     public func setParam(key: String, value:String) -> Self {
         
         if self.urlParams != nil {
@@ -128,7 +140,7 @@ public class RequestBuilder<T: Any>: RequestBuilderData {
         }
         url = urlComponents.url!
         
-        return RequestElement(requestId: self.requestId, method:self.method , url: url, dataBody: bodyData, headers: self.headers, timeout: self.timeout, completion: self.onComplete, configuration: client.configuration)
+        return RequestElement(requestId: self.requestId, method:self.method , url: url, dataBody: bodyData, files: files, headers: self.headers, timeout: self.timeout, completion: self.onComplete, configuration: client.configuration)
     }
     
     internal func getUrlTail() -> String {

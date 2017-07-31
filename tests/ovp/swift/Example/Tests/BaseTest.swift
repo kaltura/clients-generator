@@ -7,88 +7,16 @@ class BaseTest: QuickSpec {
     var client: Client?
     var secret: String = "ed0b955841a5ec218611c4869256aaa4"
     var partnerId: Int = 1676801
+    static var uniqueTag: String = uniqueString()
     
-    private var executor: RequestExecutor = USRExecutor.shared
+    public var executor: RequestExecutor = USRExecutor.shared
     
-    override func spec() {
-        let config: ConnectionConfiguration = ConnectionConfiguration()
-        client = Client(config)
-        
-        describe("upload token") {
-            
-            beforeEach {
-                waitUntil(timeout: 500) { done in
-                    self.login() { error in
-                        expect(error).to(beNil())
-                        done()
-                    }
-                }
-            }
-            
-            context("entry") {
-                var createdEntry: MediaEntry?
-                
-                it("create") {
-                    waitUntil(timeout: 500) { done in
-                        self.createMediaEntry() { entry, error in
-                            expect(error).to(beNil())
-                            
-                            createdEntry = entry
-                            expect(createdEntry).notTo(beNil())
-                            expect(createdEntry?.id).notTo(beNil())
-                            
-                            if createdEntry != nil {
-                                print(createdEntry!)
-                            }
-                            done()
-                        }
-                    }
-                }
-
-            }
-                                    /*
-            it("can do maths") {
-                expect(1) == 2
-            }
-
-            it("can read") {
-                expect("number") == "string"
-            }
-
-            it("will eventually fail") {
-                expect("time").toEventually( equal("done") )
-            }
-            
-            context("these will pass") {
-
-                it("can do maths") {
-                    expect(23) == 23
-                }
-
-                it("can read") {
-                    expect("🐮") == "🐮"
-                }
-
-                it("will eventually pass") {
-                    var time = "passing"
-
-                    DispatchQueue.main.async {
-                        time = "done"
-                    }
-
-                    waitUntil { done in
-                        Thread.sleep(forTimeInterval: 0.5)
-                        expect(time) == "done"
-
-                        done()
-                    }
-                }
-            }
-             */
-        }
+    static func uniqueString() -> String {
+        let uuid = UUID().uuidString
+        return uuid.substring(to: uuid.index(uuid.startIndex, offsetBy: 8))
     }
     
-    private func login(done: @escaping (_ error: ApiException?) -> Void) {
+    func login(done: @escaping (_ error: ApiException?) -> Void) {
         
         let requestBuilder:RequestBuilder<String> = SessionService.start(secret: self.secret, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
         
@@ -101,9 +29,21 @@ class BaseTest: QuickSpec {
         executor.send(request: requestBuilder.build(client!))
     }
     
-    private func createMediaEntry(created: @escaping (_ createdEntry: MediaEntry?, _ error: ApiException?) -> Void) {
+    func deleteEntry(entryId: String, done: @escaping (_ error: ApiException?) -> Void) {
+        
+        let requestBuilder:RequestBuilder<Void> = MediaService.delete(entryId: entryId)
+        
+        requestBuilder.set(completion: {(void: Void?, error: ApiException?) in
+            done(error)
+        })
+        
+        executor.send(request: requestBuilder.build(client!))
+    }
+    
+    func createMediaEntry(created: @escaping (_ createdEntry: MediaEntry?, _ error: ApiException?) -> Void) {
         let entry: MediaEntry = MediaEntry()
         entry.mediaType = MediaType.VIDEO
+        entry.tags = BaseTest.uniqueTag
         
         let requestBuilder:RequestBuilder<MediaEntry> = MediaService.add(entry: entry)
         requestBuilder.set(completion: {(createdEntry: MediaEntry?, error: ApiException?) in
@@ -112,5 +52,17 @@ class BaseTest: QuickSpec {
         })
         
         executor.send(request: requestBuilder.build(client!))
+    }
+    
+    func createMediaEntries(count: Int, created: @escaping (_ createdEntries: [MediaEntry]) -> Void) {
+        var entries: [MediaEntry] = []
+        for _ in 1...count {
+            self.createMediaEntry() { entry, error in
+                entries.append(entry!)
+                if entries.count == count {
+                    created(entries)
+                }
+            }
+        }
     }
 }

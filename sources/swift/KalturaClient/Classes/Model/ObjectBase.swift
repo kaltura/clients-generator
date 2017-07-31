@@ -45,7 +45,7 @@ open class ObjectBase {
     }
     
     public func toDictionary() -> [String: Any] {
-        let dict: [String: Any] = ["objectType": "\(type(of: self))"]
+        let dict: [String: Any] = ["objectType": "Kaltura\(type(of: self))"]
         return dict
     }
 }

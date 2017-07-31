@@ -634,21 +634,11 @@ end
 			return;
 		}
 		
-		if($actionNode->getAttribute("plugin") != $this->pluginName) {
+		$actionPlugin = $actionNode->getAttribute("plugin");
+		if($actionPlugin != null && $actionPlugin != $this->pluginName) {
 			return;
 		}
 			
-		$paramNodes = $actionNode->getElementsByTagName("param");
-		$paramNodesArr = array();
-		foreach($paramNodes as $paramNode)
-		{
-			$paramType = $paramNode->getAttribute("type");
-			if($paramType == 'file') {
-				return;
-			}
-			$paramNodesArr[] = $paramNode;
-		}
-		
 		$action = $this->replaceReservedWords($action);
 		
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
@@ -695,9 +685,15 @@ end
 		
 		$swiftOutputType = $this->getResultType($resultType, $arrayType);
 		
+		$paramNodes = $actionNode->getElementsByTagName("param");
+		$paramNodesArr = array();
+		foreach($paramNodes as $paramNode) {
+			$paramNodesArr[] = $paramNode;
+		}
+		
 		$this->writeActionOverloads($signaturePrefix, $action, $paramNodesArr, $swiftOutputType, $returnType);
 		
-		$signature = $this->getSignature($action, $paramNodesArr, array('' => 'FileHolder'));
+		$signature = $this->getSignature($action, $paramNodesArr, array('' => 'RequestFile'));
 		
 		$this->appendLine();
 		
@@ -743,22 +739,19 @@ end
 			if($hasFiles)
 			{
 				$fileOverloads = array(  
-					array('' => 'FileHolder'),
-					array('' => 'File'),
-					array('' => 'InputStream', 'MimeType' => 'String', 'Name' => 'String', 'Size' => 'long'),
-					array('' => 'FileInputStream', 'MimeType' => 'String', 'Name' => 'String'),
+					array('' => 'RequestFile'),
 				);
 			}
 			else
 			{
 				$fileOverloads = array(
-					array('' => 'FileHolder'),
+					array('' => 'RequestFile'),
 				);
 			}
 
 			foreach($fileOverloads as $fileOverload)
 			{
-				if(reset($fileOverload) == 'FileHolder' && $overloadNumber == count($optionalParams)){
+				if(reset($fileOverload) == 'RequestFile' && $overloadNumber == count($optionalParams)){
 					continue;			// this is the main overload
 				}
 				
@@ -779,7 +772,7 @@ end
 						continue;
 					} 
 						
-					if($paramType != "file" || reset($fileOverload) == 'FileHolder')
+					if($paramType != "file" || reset($fileOverload) == 'RequestFile')
 					{
 						$params[] = "$paramName: $paramName";
 						continue;
@@ -790,7 +783,7 @@ end
 					{
 						$fileParams[] = "$paramName: {$paramName}{$namePostfix}";
 					}
-					$params[] = "$paramName: new FileHolder(" . implode(', ', $fileParams) . ")";
+					$params[] = "$paramName: RequestFile(" . implode(', ', $fileParams) . ")";
 				}				
 				$paramsStr = implode(', ', $params);
 				
@@ -1023,6 +1016,9 @@ end
 			{
 				foreach($fileOverload as $namePostfix => $paramType)
 				{
+					if($optional == "1") {
+						$paramType.= '?';
+					}
 					$signature[] = "{$paramName}{$namePostfix}: {$paramType}";
 				}
 				continue;
@@ -1198,7 +1194,7 @@ end
 			return "String";
 
 		case "file":
-			return "FileHolder";
+			return "RequestFile";
 			
 		default:
 			return $this->getSwiftTypeName($type);

@@ -34,16 +34,21 @@ import SwiftyJSON
             request.httpMethod = method.value
         }
         
-        // handle body
-        if let data = r.dataBody {
-            request.httpBody = data
-        }
-        
         // handle headers
         if let headers = r.headers{
             for (headerKey,headerValue) in headers{
                 request.setValue(headerValue, forHTTPHeaderField: headerKey)
             }
+        }
+        
+        // handle body
+        if !r.files.isEmpty {
+            let boundary = "Boundary-\(UUID().uuidString)"
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            request.httpBody = buildMultipartData(boundary: boundary, files: r.files, jsonString: jsonString)
+        }
+        else if let data = r.dataBody {
+            request.httpBody = data
         }
         
         let session: URLSession!
@@ -104,6 +109,27 @@ import SwiftyJSON
         }
     }
     
+    private func buildMultipartData(boundary: String, files: [String: RequestFile], jsonString: String) -> Data {
+        let body = NSMutableData()
+        
+        let boundaryPrefix = "--\(boundary)\r\n"
+        
+        body.appendString(boundaryPrefix)
+        body.appendString("Content-Disposition: form-data; name=\"json\"\r\n\r\n")
+        body.appendString("\(jsonString)\r\n")
+        
+        for (key, file) in files {
+            body.appendString(boundaryPrefix)
+            body.appendString("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(file.name)\"\r\n")
+            body.appendString("Content-Type: \(file.mimeType)\r\n\r\n")
+            body.append(file.data)
+            body.appendString("\r\n")
+        }
+        body.appendString("--".appending(boundary.appending("--")))
+        
+        return body as Data
+    }
+    
     public func cancel(request:Request){
         
         let index = self.taskIndexForRequest(request: request)
@@ -153,5 +179,11 @@ import SwiftyJSON
     public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession){
         
     }
-    
+}
+
+extension NSMutableData {
+    func appendString(_ string: String) {
+        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        append(data!)
+    }
 }

@@ -54,9 +54,29 @@ internal class JSONParser{
         if let dict = json.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
         }
-
+        
         if let _ = T.self as? String.Type {
             return json.string as? T
+        }
+        
+        if let _ = T.self as? Int.Type {
+            return json.int as? T
+        }
+        
+        if let _ = T.self as? Int64.Type {
+            return json.int64 as? T
+        }
+        
+        if let _ = T.self as? Bool.Type {
+            return json.bool as? T
+        }
+        
+        if let _ = T.self as? Double.Type {
+            return json.double as? T
+        }
+        
+        if let _ = T.self as? Void.Type {
+            return nil
         }
         
         if let type: ObjectBase.Type = T.self as? ObjectBase.Type {
