@@ -1,8 +1,5 @@
 package com.kaltura.client.utils.request;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
 import com.kaltura.client.FileHolder;
@@ -15,6 +12,9 @@ import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.utils.response.base.ResponseElement;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by tehilarozin on 14/08/2016.
@@ -33,6 +33,9 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
      */
     protected OnCompletion<Response<T>> onCompletion;
 
+    protected BaseRequestBuilder(){
+        super(new Params());
+    }
 
     protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
     	super(params);
@@ -172,27 +175,28 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
 
     @SuppressWarnings("unchecked")
 	@Override
-    final public void onComplete(ResponseElement response) {
+    final public Response<T> parseResponse(ResponseElement response) {
         T result = null;
         APIException error = null;
-        
-        if(!response.isSuccess()) {
-        	error = generateErrorResponse(response);
+
+        if (!response.isSuccess()) {
+            error = generateErrorResponse(response);
         } else {
-        	try {
-				result = (T) parse(response.getResponse());
-			} catch (APIException e) {
-	        	error = e;
-			}
+            try {
+                result = (T) parse(response.getResponse());
+            } catch (APIException e) {
+                error = e;
+            }
         }
 
-        complete(new Response<T>(result, error));
+        return new Response<T>(result, error);
     }
-    
+
     @SuppressWarnings("unchecked")
-	protected void complete(Response<T> response) {
+    @Override
+    public void onComplete(Response<?> response) {
         if(onCompletion != null) {
-            onCompletion.onComplete((Response<T>)response);
+            onCompletion.onComplete((Response<T>) response);
         }
     }
 

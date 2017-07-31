@@ -1,17 +1,17 @@
 package com.kaltura.client;
 
 
+import com.kaltura.client.utils.ErrorElement;
+import com.kaltura.client.utils.request.ConnectionConfiguration;
+import com.kaltura.client.utils.request.ExecutedRequest;
+import com.kaltura.client.utils.request.RequestElement;
+import com.kaltura.client.utils.response.base.ResponseElement;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import com.kaltura.client.utils.ErrorElement;
-import com.kaltura.client.utils.request.ExecutedRequest;
-import com.kaltura.client.utils.request.ConnectionConfiguration;
-import com.kaltura.client.utils.request.RequestElement;
-import com.kaltura.client.utils.response.base.ResponseElement;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -119,21 +119,21 @@ public class APIOkRequestsExecutor implements RequestQueue {
     };
 
     private IdFactory idFactory = new IdFactory() {
-		@Override
-		public String factorId(String factor) {
-			return UUID.randomUUID().toString() + "::" + (factor!=null ? factor : System.currentTimeMillis());
-		}
+        @Override
+        public String factorId(String factor) {
+            return UUID.randomUUID().toString() + "::" + (factor != null ? factor : System.currentTimeMillis());
+        }
     };
     
-    private static class InputStreamRequestBody extends RequestBody {
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
     private static ILogger logger = Logger.getLogger(TAG);
 
-    private static APIOkRequestsExecutor self;
+    protected static APIOkRequestsExecutor self;
 
-    public static APIOkRequestsExecutor getSingleton() {
+
+    public static APIOkRequestsExecutor getExecutor() {
         if (self == null) {
             self = new APIOkRequestsExecutor();
         }
@@ -215,7 +215,9 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         return;
                     }
                     // handle failures: create response from exception
-                    action.onComplete(new ExecutedRequest().error(e).success(false));
+                    //action.onComplete(new ExecutedRequest().error(e).success(false).handler(handler));
+                    ExecutedRequest responseElement = new ExecutedRequest().error(e).success(false);
+                    postCompletion(action, responseElement);
                 }
 
                 @Override
@@ -226,8 +228,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     }
 
                     // pass parsed response to action completion block
-                    ResponseElement responseElement = onGotResponse(response, action);
-                    action.onComplete(responseElement);
+                    postCompletion(action, onGotResponse(response, action));
                 }
             });
             return (String) call.request().tag();
@@ -235,25 +236,33 @@ public class APIOkRequestsExecutor implements RequestQueue {
         } catch (Exception e) {
             e.printStackTrace();
             ExecutedRequest responseElement = new ExecutedRequest().response(getErrorResponse(e)).success(false);
-            action.onComplete(responseElement);
+            postCompletion(action, responseElement);
 
         }
         return null; // no call id to return.
     }
+
+    protected void postCompletion(final RequestElement action, ResponseElement responseElement) {
+
+        final com.kaltura.client.utils.response.base.Response<?> apiResponse = action.parseResponse(responseElement);
+        action.onComplete(apiResponse);
+    }
+
 
     private String getErrorResponse(Exception e) {
         return e.getClass().getName() + ": " + e.getMessage();
     }
 
     @Override
-    public ResponseElement execute(RequestElement request) {
+    public com.kaltura.client.utils.response.base.Response<?> execute(RequestElement request) {
         try {
             Response response = getOkClient(request.config()).newCall(buildRestRequest(request)).execute();
-            return onGotResponse(response, request);
+            return request.parseResponse(onGotResponse(response, request));
 
         } catch (IOException e) {
             // failure on request execution - create error response
-            return new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            ResponseElement responseElement = new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            return request.parseResponse(responseElement);
         }
     }
 

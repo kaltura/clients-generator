@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by tehilarozin on 15/08/2016.
  */
-public class MultiRequestBuilder extends BaseRequestBuilder<Object> {
+public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     private static final String TAG = "MultiRequestBuilder";
 
     /**
@@ -32,7 +32,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<Object> {
 
 
     public MultiRequestBuilder() {
-        super(Object.class);
+        super();
     }
 
     /**
@@ -44,7 +44,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<Object> {
         add(requests);
     }
 
-    public MultiRequestBuilder setCompletion(OnCompletion<Response<Object>> onCompletion) {
+    public MultiRequestBuilder setCompletion(OnCompletion<Response<List<Object>>> onCompletion) {
         this.onCompletion = onCompletion;
         return this;
     }
@@ -102,26 +102,25 @@ public class MultiRequestBuilder extends BaseRequestBuilder<Object> {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
-    protected void complete(Response response) {
-    	
-    	List<Object> results = null;
-    	if(response != null) {
-        	results = (List<Object>) response.results;
-	    	int index = 0;
-	    	for(RequestBuilder request : requests.values()) {
-	    		Object item = results.get(index++);
-	    		if(item instanceof APIException) {
-	    			request.complete(new Response(null, (APIException) item));
-	    		} else {
-	    			request.complete(new Response(item, null));
-	    		}
-	    	}
-    	}
-    	
-        super.complete(response);
+    @Override
+    public void onComplete(Response<?> response) {
+        List<Object> results = null;
+        if(response != null) {
+            results = (List<Object>) response.results;
+            int index = 0;
+            for(RequestBuilder request : requests.values()) {
+                Object item = results.get(index++);
+                if(item instanceof APIException) {
+                    request.onComplete(new Response(null, (APIException) item));
+                } else {
+                    request.onComplete(new Response(item, null));
+                }
+            }
+        }
+
+        super.onComplete(response);
     }
-    
+
     @Override
     protected Object parse(String response) throws APIException {
         List<Class> list = new ArrayList<Class>();
@@ -182,8 +181,5 @@ public class MultiRequestBuilder extends BaseRequestBuilder<Object> {
         return MULTIREQUEST_ACTION;
     }
 
-    protected Object parse(String response) throws APIException {
-        return GsonParser.parseArray(response, type);
-    }
-}
+ }
 
