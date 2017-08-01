@@ -7,8 +7,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-import com.kaltura.client.ILogger;
-import com.kaltura.client.Logger;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.APIException.FailureStep;
 import com.kaltura.client.types.ListResponse;

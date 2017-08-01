@@ -32,11 +32,11 @@ import java.util.concurrent.CountDownLatch;
 
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.services.MediaService;
-import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 
 public class SessionServiceTest extends BaseTest {
 
@@ -51,32 +51,32 @@ public class SessionServiceTest extends BaseTest {
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
-		.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+		.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 			
 			@Override
-			public void onComplete(ListResponse<MediaEntry> response, APIException error) {
-				assertNull(error);
-				assertNotNull(response);
+			public void onComplete(Response<ListResponse<MediaEntry>> result) {
+				assertNull(result.error);
+				assertNotNull(result.results);
 
 				// Close session
 				client.setSessionId(null);;
 
 				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
-				.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+				.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 					
 					@Override
-					public void onComplete(ListResponse<MediaEntry> response, APIException error) {
-						assertNotNull(error);
-						assertNull(response);
+					public void onComplete(Response<ListResponse<MediaEntry>> result) {
+						assertNotNull(result.error);
+						assertNull(result.results);
 
 						
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 }

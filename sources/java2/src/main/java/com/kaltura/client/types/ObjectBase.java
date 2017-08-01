@@ -43,13 +43,16 @@ import com.kaltura.client.utils.response.ResponseType;
  */
 @SuppressWarnings("serial")
 public class ObjectBase implements Serializable, ResponseType {
-    protected Map<String, ListResponse> relatedObjects;
+    @SuppressWarnings("rawtypes")
+	protected Map<String, ListResponse> relatedObjects;
 
-    public Map<String, ListResponse> getRelatedObjects() {
+    @SuppressWarnings("rawtypes")
+	public Map<String, ListResponse> getRelatedObjects() {
         return relatedObjects;
     }
 
-    public void setRelatedObjects(Map<String, ListResponse> relatedObjects) {
+    @SuppressWarnings("rawtypes")
+	public void setRelatedObjects(Map<String, ListResponse> relatedObjects) {
         this.relatedObjects = relatedObjects;
     }
 
