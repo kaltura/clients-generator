@@ -1,7 +1,10 @@
 package com.kaltura.client.utils.request;
 
 
+import android.support.annotation.NonNull;
+
 import com.kaltura.client.Files;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.util.HashMap;
@@ -29,5 +32,7 @@ public interface RequestElement {
 
     ConnectionConfiguration config();
 
-    void onComplete(ResponseElement responseElement);
+    @NonNull Response<?> parseResponse(ResponseElement responseElement);
+
+    void onComplete(Response<?> response);
 }

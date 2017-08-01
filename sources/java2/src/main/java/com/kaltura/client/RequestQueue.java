@@ -2,7 +2,7 @@ package com.kaltura.client;
 
 import com.kaltura.client.utils.request.ConnectionConfiguration;
 import com.kaltura.client.utils.request.RequestElement;
-import com.kaltura.client.utils.response.base.ResponseElement;
+import com.kaltura.client.utils.response.base.Response;
 
 public interface RequestQueue {
 
@@ -10,7 +10,7 @@ public interface RequestQueue {
 
     String queue(RequestElement request);
 
-    ResponseElement execute(RequestElement request);
+    Response<?> execute(RequestElement request);
 
     void cancelRequest(String reqId);
 

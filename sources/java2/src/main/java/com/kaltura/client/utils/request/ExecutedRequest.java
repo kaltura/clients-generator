@@ -3,6 +3,11 @@ package com.kaltura.client.utils.request;
 import com.kaltura.client.utils.ErrorElement;
 import com.kaltura.client.utils.response.base.ResponseElement;
 
+/**
+ * Created by tehilarozin on 06/09/2016.
+ *
+ * the response object passed from the requests executor to the completion callback for further parsing.
+ */
 public class ExecutedRequest implements ResponseElement {
 
     String requestId;
