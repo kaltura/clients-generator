@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement {
+public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement<T> {
 
 	private Class<T> type;
     protected String id;
@@ -169,7 +169,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         }
     }
 
-    public RequestElement build(final Client client) {
+    public RequestElement<T> build(final Client client) {
         return build(client, false);
     }
 
@@ -192,9 +192,8 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         return new Response<T>(result, error);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void onComplete(Response<?> response) {
+    public void onComplete(Response<T> response) {
         if(onCompletion != null) {
             onCompletion.onComplete((Response<T>) response);
         }
@@ -213,7 +212,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     	return exception;
     }
     
-    public RequestElement build(final Client client, boolean addSignature) {
+    public RequestElement<T> build(final Client client, boolean addSignature) {
         connectionConfig = client != null ? client.getConnectionConfiguration() : Configuration.getDefaults();
 
         prepareParams(client, addSignature);
