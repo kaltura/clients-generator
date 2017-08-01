@@ -194,13 +194,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
         this.enableLogs = enable;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public String queue(final RequestElement requestElement) {
         final Request request = buildRestRequest(requestElement);
         return queue(request, requestElement);
     }
 
-    private String queue(final Request request, final RequestElement action) {
+    @SuppressWarnings("rawtypes")
+	private String queue(final Request request, final RequestElement action) {
 
         logger.debug("request [" + action.getUrl() + "]:\n" + action.getBody());
         
@@ -242,7 +244,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return null; // no call id to return.
     }
 
-    protected void postCompletion(final RequestElement action, ResponseElement responseElement) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void postCompletion(final RequestElement action, ResponseElement responseElement) {
 
         final com.kaltura.client.utils.response.base.Response<?> apiResponse = action.parseResponse(responseElement);
         action.onComplete(apiResponse);
@@ -253,7 +256,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return e.getClass().getName() + ": " + e.getMessage();
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public com.kaltura.client.utils.response.base.Response<?> execute(RequestElement request) {
         try {
             Response response = getOkClient(request.config()).newCall(buildRestRequest(request)).execute();
@@ -315,7 +319,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return mOkClient == null || mOkClient.dispatcher().queuedCallsCount() == 0;
     }
 
-    private ResponseElement onGotResponse(Response response, RequestElement action) {
+    @SuppressWarnings("rawtypes")
+	private ResponseElement onGotResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
 
         if (!response.isSuccessful()) { // in case response has failure status
@@ -346,17 +351,20 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     private interface BodyBuilder {
-        RequestBody build(RequestElement requestElement);
+        @SuppressWarnings("rawtypes")
+		RequestBody build(RequestElement requestElement);
 
         BodyBuilder Default = new BodyBuilder() {
-            @Override
+            @SuppressWarnings("rawtypes")
+			@Override
             public RequestBody build(RequestElement requestElement) {
                 return requestElement.getBody() != null ? RequestBody.create(JSON_MediaType, requestElement.getBody().getBytes()) : null;
             }
         };
     }
 
-    private Request buildRestRequest(RequestElement request) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private Request buildRestRequest(RequestElement request) {
 
     	RequestBody body;
     	Files files = request.getFiles();

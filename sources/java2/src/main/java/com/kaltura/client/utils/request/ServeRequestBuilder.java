@@ -26,7 +26,7 @@ public class ServeRequestBuilder extends RequestBuilder<String> {
     }
 
 	@Override
-    public RequestElement build(final Client client, boolean addSignature) {
+    public RequestElement<String> build(final Client client, boolean addSignature) {
 		Params kParams = prepareParams(client, true);
 		prepareHeaders(client.getConnectionConfiguration());
 		String endPoint = client.getConnectionConfiguration().getEndpoint().replaceAll("/$", "");
