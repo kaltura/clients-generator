@@ -71,17 +71,17 @@ public class RequestBuilder<T> extends BaseRequestBuilder<T> {
     }
 
 
-    protected RequestBuilder link(String destKey, String requestId, String sourceKey) {
+    protected RequestBuilder<T> link(String destKey, String requestId, String sourceKey) {
         params.link(destKey, requestId, sourceKey);
         return this;
     }
 
-    public RequestBuilder setId(String id) {
+    public RequestBuilder<T> setId(String id) {
         this.id = id;
         return this;
     }
 
-    public RequestBuilder setCompletion(OnCompletion<Response<T>> onCompletion) {
+    public RequestBuilder<T> setCompletion(OnCompletion<Response<T>> onCompletion) {
         this.onCompletion = onCompletion;
         return this;
     }

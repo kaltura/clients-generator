@@ -103,7 +103,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onComplete(Response<?> response) {
+    public void onComplete(Response<List<Object>> response) {
         List<Object> results = null;
         if(response != null) {
             results = (List<Object>) response.results;
