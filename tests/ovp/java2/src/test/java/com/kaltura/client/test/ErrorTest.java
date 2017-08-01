@@ -38,10 +38,12 @@ import com.kaltura.client.services.SystemService;
 import com.kaltura.client.types.BaseEntry;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.utils.request.ExecutedRequest;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
+import com.kaltura.client.utils.response.base.ResponseElement;
 
 public class ErrorTest extends BaseTest {
 
@@ -91,7 +93,7 @@ public class ErrorTest extends BaseTest {
 		doneSignal.await();
 	}
 	
-	private class ExecutorMock {
+	private class ExecutorMock<T> {
 		
 		String resultToReturn;
 
@@ -99,11 +101,11 @@ public class ErrorTest extends BaseTest {
 			resultToReturn = res;
 		}
 
-	    @SuppressWarnings({ "rawtypes", "unchecked" })
-		public void queue(RequestElement action) {
-	    	Response<String> responseElement = new Response<String>(resultToReturn, null);
+		public void queue(RequestElement<T> action) {
+	    	ResponseElement responseElement = new ExecutedRequest().response(resultToReturn).success(true);
+	    	Response<T> response = action.parseResponse(responseElement);
             
-            action.onComplete(responseElement);
+            action.onComplete(response);
 	    }
 	}
 
@@ -113,7 +115,7 @@ public class ErrorTest extends BaseTest {
 	 * @throws InterruptedException 
 	 */
 	public void testJsonParsingError() throws InterruptedException, ExecutionException {
-		final ExecutorMock mockClient = new ExecutorMock("Invalid JSON");
+		final ExecutorMock<Boolean> mockClient = new ExecutorMock<Boolean>("Invalid JSON");
         final CountDownLatch doneSignal = new CountDownLatch(1);
         
 		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
@@ -137,7 +139,7 @@ public class ErrorTest extends BaseTest {
 	 * @throws InterruptedException 
 	 */
 	public void testTagInSimpleType() throws InterruptedException, ExecutionException {
-		final ExecutorMock mockClient = new ExecutorMock("{sometag: 1}");
+		final ExecutorMock<Boolean> mockClient = new ExecutorMock<Boolean>("{sometag: 1}");
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
@@ -160,7 +162,7 @@ public class ErrorTest extends BaseTest {
 	 * @throws InterruptedException 
 	 */
 	public void testEmptyObjectOrException() throws InterruptedException, ExecutionException {
-		final ExecutorMock mockClient = new ExecutorMock("\"bla bla\"");
+		final ExecutorMock<ListResponse<MediaEntry>> mockClient = new ExecutorMock<ListResponse<MediaEntry>>("\"bla bla\"");
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
@@ -179,7 +181,7 @@ public class ErrorTest extends BaseTest {
 	
 	public void testUnknownObjectType() throws InterruptedException, ExecutionException  {
 
-		final ExecutorMock mockClient = new ExecutorMock("{objectType: \"UnknownObjectType\"}");
+		final ExecutorMock<MediaEntry> mockClient = new ExecutorMock<MediaEntry>("{objectType: \"UnknownObjectType\"}");
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		RequestBuilder<MediaEntry> requestBuilder = MediaService.get("invalid-id")
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
@@ -203,7 +205,7 @@ public class ErrorTest extends BaseTest {
 				"{objectType: \"KalturaMediaEntry\", id: \"test3\", name: \"test3\"}" +
 				"], totalCount: 3}";
 
-		final ExecutorMock mockClient = new ExecutorMock(testJson);
+		final ExecutorMock<ListResponse<BaseEntry>> mockClient = new ExecutorMock<ListResponse<BaseEntry>>(testJson);
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		RequestBuilder<ListResponse<BaseEntry>> requestBuilder = BaseEntryService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<BaseEntry>>>() {
