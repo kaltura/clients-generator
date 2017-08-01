@@ -30,7 +30,7 @@ package com.kaltura.client.test;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class KalturaTestSuite extends TestSuite
+public class OTTRequestsTestSuite extends TestSuite
 {		
 	public static Test suite()
 	{
