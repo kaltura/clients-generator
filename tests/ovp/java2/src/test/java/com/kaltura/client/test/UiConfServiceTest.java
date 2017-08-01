@@ -37,10 +37,10 @@ import com.kaltura.client.ILogger;
 import com.kaltura.client.Logger;
 import com.kaltura.client.enums.UiConfCreationMode;
 import com.kaltura.client.services.UiConfService;
-import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.UiConf;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 
 public class UiConfServiceTest extends BaseTest {
 	private ILogger logger = Logger.getLogger(UiConfServiceTest.class);
@@ -48,7 +48,7 @@ public class UiConfServiceTest extends BaseTest {
 	// keeps track of test vids we upload so they can be cleaned up at the end
 	protected List<Integer> testUiConfIds = new ArrayList<Integer>();
 	
-	protected void addUiConf(String name, final OnCompletion<UiConf> onCompletion) {
+	protected void addUiConf(String name, final OnCompletion<Response<UiConf>> onCompletion) {
 
 		UiConf uiConf = new UiConf();
 		uiConf.setName(name);
@@ -61,30 +61,32 @@ public class UiConfServiceTest extends BaseTest {
 		// this uiConf won't be editable in the KMC until it gets a config added to it, I think
 		
 		RequestBuilder<UiConf> requestBuilder = UiConfService.add(uiConf)
-		.setCompletion(new OnCompletion<UiConf>() {
+		.setCompletion(new OnCompletion<Response<UiConf>>() {
 			
 			@Override
-			public void onComplete(UiConf addedConf, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<UiConf> result) {
+				assertNull(result.error);
+				UiConf addedConf = result.results;
+				
 				assertNotNull(addedConf);
 				testUiConfIds.add(addedConf.getId());
 				
-				onCompletion.onComplete(addedConf, error);
+				onCompletion.onComplete(new Response<UiConf>(addedConf, result.error));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 	
 	public void testAddUiConf() throws Exception {
 		startAdminSession();
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		String name = getName() + " (" + new Date() + ")";
-		addUiConf(name, new OnCompletion<UiConf>() {
+		addUiConf(name, new OnCompletion<Response<UiConf>>() {
 
 			@Override
-			public void onComplete(UiConf addedConf, APIException error) {
-				assertNull(error);
-				assertNotNull(addedConf);
+			public void onComplete(Response<UiConf> result) {
+				assertNull(result.error);
+				assertNotNull(result.results);
 				doneSignal.countDown();
 			}
 		});
@@ -95,26 +97,27 @@ public class UiConfServiceTest extends BaseTest {
 		startAdminSession();
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		String name = getName() + " (" + new Date() + ")";
-		addUiConf(name, new OnCompletion<UiConf>() {
+		addUiConf(name, new OnCompletion<Response<UiConf>>() {
 
 			@Override
-			public void onComplete(final UiConf addedConf, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<UiConf> result) {
+				assertNull(result.error);
+				final UiConf addedConf = result.results;
 				assertNotNull(addedConf);
 				
 				RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
-				.setCompletion(new OnCompletion<UiConf>() {
+				.setCompletion(new OnCompletion<Response<UiConf>>() {
 					
 					@Override
-					public void onComplete(UiConf retrievedConf, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<UiConf> result) {
+						assertNull(result.error);
 
-						assertEquals(retrievedConf.getId(), addedConf.getId());
+						assertEquals(result.results.getId(), addedConf.getId());
 						
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
 		doneSignal.await();
@@ -124,37 +127,39 @@ public class UiConfServiceTest extends BaseTest {
 		startAdminSession();
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		String name = getName() + " (" + new Date() + ")";
-		addUiConf(name, new OnCompletion<UiConf>() {
+		addUiConf(name, new OnCompletion<Response<UiConf>>() {
 
 			@Override
-			public void onComplete(final UiConf addedConf, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<UiConf> result) {
+				assertNull(result.error);
+				final UiConf addedConf = result.results;
+				
 				assertNotNull(addedConf);
 				
 				RequestBuilder<Void> requestBuilder = UiConfService.delete(addedConf.getId())
-				.setCompletion(new OnCompletion<Void>() {
+				.setCompletion(new OnCompletion<Response<Void>>() {
 					
 					@Override
-					public void onComplete(Void response, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<Void> result) {
+						assertNull(result.error);
 
 						testUiConfIds.remove(addedConf.getId());
 
 						RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
-						.setCompletion(new OnCompletion<UiConf>() {
+						.setCompletion(new OnCompletion<Response<UiConf>>() {
 							
 							@Override
-							public void onComplete(UiConf retrievedConf, APIException error) {
-								assertNull("Getting deleted ui-conf should fail", retrievedConf);
-								assertNotNull("Getting deleted ui-conf should fail", error);
+							public void onComplete(Response<UiConf> result) {
+								assertNull("Getting deleted ui-conf should fail", result.results);
+								assertNotNull("Getting deleted ui-conf should fail", result.error);
 
 								doneSignal.countDown();
 							}
 						});
-						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
 		doneSignal.await();
@@ -175,7 +180,7 @@ public class UiConfServiceTest extends BaseTest {
 				logger.debug("Deleting UI conf " + id);
 
 			RequestBuilder<Void> requestBuilder = UiConfService.delete(id);
-			APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+			APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		} //next id
 	}
 }
