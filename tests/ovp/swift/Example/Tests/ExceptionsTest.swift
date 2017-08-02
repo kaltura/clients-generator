@@ -12,8 +12,8 @@ class ExceptionsTest: BaseTest {
         describe("list response") {
             it("asset get") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<ListResponse<FlavorAsset>> = FlavorAssetService.list()
-                    requestBuilder.set(completion: {(list: ListResponse<FlavorAsset>?, error: ApiException?) in
+                    let requestBuilder:RequestBuilder<FlavorAssetListResponse> = FlavorAssetService.list()
+                    requestBuilder.set(completion: {(list: FlavorAssetListResponse?, error: ApiException?) in
                         
                         expect(list).to(beNil())
                         

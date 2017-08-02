@@ -174,8 +174,8 @@ class MediaServiceTest: BaseTest {
                 waitUntil(timeout: 500) { done in
                     self.createMediaEntries(count: count) { createdEntries in
                     
-                        let mediaListRequestBuilder:RequestBuilder<ListResponse<MediaEntry>> = MediaService.list(filter: filter)
-                        mediaListRequestBuilder.set(completion: {(list: ListResponse<MediaEntry>?, error: ApiException?) in
+                        let mediaListRequestBuilder:RequestBuilder<MediaListResponse> = MediaService.list(filter: filter)
+                        mediaListRequestBuilder.set(completion: {(list: MediaListResponse?, error: ApiException?) in
                             
                             expect(error).to(beNil())
                             

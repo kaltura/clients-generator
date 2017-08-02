@@ -155,7 +155,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	function writeClass(DOMElement $classNode) 
 	{
 		$type = $classNode->getAttribute("name");
-		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject' || preg_match('/ListResponse$/', $type)) {
+		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject') {
 			return;
 		}	
 			
@@ -610,23 +610,6 @@ end
 		$this->addFile($file, $this->getTextBlock());
 	}
 	
-	function getListResponseInternalType($listResponseType) 
-	{
-		$objectsNodes = $this->xpath->query("/xml/classes/class[@name = 'Kaltura{$listResponseType}']/property[@name = 'objects']");
-		if(!$objectsNodes->length)
-		{
-			throw new Exception('List response type [$listResponseType] has no objects array property');
-		}
-		
-		$objectsNode = $objectsNodes->item(0);
-		if(!$objectsNode->hasAttribute('arrayType'))
-		{
-			throw new Exception('List response type [$listResponseType] objects has no array type');
-		}
-		
-		return $this->getSwiftTypeName($objectsNode->getAttribute('arrayType'));
-	}
-	
 	function writeAction($serviceId, DOMElement $actionNode) 
 	{
 		$action = $actionNode->getAttribute("name");
@@ -669,16 +652,6 @@ end
 			$arrayType = $this->getSwiftTypeName($resultNode->getAttribute("arrayType"));
 			$fallbackClass = $arrayType;
 			$returnType = "Dictionary<$arrayType>";
-		}
-		elseif($resultType && ($resultType != 'file') && !$this->isSimpleType($resultType))
-		{
-			if(preg_match('/ListResponse$/', $resultType))
-			{
-				$arrayType = $this->getListResponseInternalType($resultType);
-				$resultType = 'ListResponse';
-				$fallbackClass = $arrayType;
-				$returnType = "ListResponse<$arrayType>";
-			}
 		}
 		
 		$signaturePrefix = "public static func $action";
@@ -982,7 +955,7 @@ end
 		$this->appendLine("			return params[\"$paramName\"] as? $type");
 		$this->appendLine("		}");
 		$this->appendLine("		set(value){");
-		$this->appendLine("			params[\"$paramName\"] = value");
+		$this->appendLine("			setBody(key: \"$paramName\", value: value)");
 		$this->appendLine("		}");
 		$this->appendLine("	}");
 		$this->appendLine("	");
@@ -1125,9 +1098,6 @@ end
 		{
 		case null:
 			return "NullRequestBuilder";
-			
-		case "ListResponse":
-			return("ListResponseRequestBuilder<" . $arrayType . ">");
 			
 		case "array":
 			return("ArrayRequestBuilder<" . $arrayType . ">");

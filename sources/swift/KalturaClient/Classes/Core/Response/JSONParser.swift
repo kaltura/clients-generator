@@ -3,6 +3,31 @@ import SwiftyJSON
 
 internal class JSONParser{
     
+    private static var kalturaRegex:NSRegularExpression?
+    
+    private static func getKalturaRegex() -> NSRegularExpression? {
+        if kalturaRegex == nil {
+            do{
+                kalturaRegex = try NSRegularExpression(pattern: "^Kaltura")
+            }
+            catch {
+            }
+        }
+        return kalturaRegex
+    }
+    
+    private static func getObjectType(_ objectType: String) -> ObjectBase.Type? {
+        if let regex = getKalturaRegex() {
+            let className = regex.stringByReplacingMatches(in: objectType, options: NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, 10), withTemplate: "")
+            
+            let fullClassName = "KalturaClient.\(className)"
+            let classType = NSClassFromString(fullClassName) as? ObjectBase.Type
+            return classType
+        }
+        
+        return nil
+    }
+    
     public static func parse<T>(array: [Any]) throws -> [T] where T: ObjectBase {
         var ret: [T] = []
         for item in array {
@@ -26,14 +51,21 @@ internal class JSONParser{
     
     public static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
         
-        if let result = object["result"] as? [String: Any] {
-            return try self.parse(object: result, type: type)
+        var classType: ObjectBase.Type = type
+        if let objectType = object["objectType"] as? String {
+            classType = getObjectType(objectType) ?? type
         }
-        else if let error = object["error"] as? [String: Any] {
-            throw try parse(object: error) as ApiException
+        else {
+            if let result = object["result"] as? [String: Any] {
+                return try self.parse(object: result, type: type)
+            }
+            else if let error = object["error"] as? [String: Any] {
+                throw try parse(object: error) as ApiException
+            }
         }
+
         
-        let obj: ObjectBase = type.init()
+        let obj: ObjectBase = classType.init()
         try obj.populate(object)
         
         return obj as! T

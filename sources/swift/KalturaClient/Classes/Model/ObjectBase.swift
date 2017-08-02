@@ -36,12 +36,15 @@
 
 open class ObjectBase {
     
-    var relatedObjects: Dictionary<String, ListResponse<ObjectBase>>?
+    public var relatedObjects: Dictionary<String, ListResponse>?
     
     public required init() {
     }
     
     internal func populate(_ dict: [String: Any]) throws {
+        if dict["relatedObjects"] != nil {
+            relatedObjects = try JSONParser.parse(map: dict["relatedObjects"] as! [String: Any])
+        }
     }
     
     public func toDictionary() -> [String: Any] {
