@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Created by tehilarozin on 15/08/2016.
- */
+
 public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     private static final String TAG = "MultiRequestBuilder";
 
@@ -104,16 +102,28 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void onComplete(Response<List<Object>> response) {
-        List<Object> results = null;
+
         if(response != null) {
-            results = (List<Object>) response.results;
+            APIException topError = response.error;
+
             int index = 0;
+
             for(RequestBuilder<?> request : requests.values()) {
-                Object item = results.get(index++);
-                if(item instanceof APIException) {
-                    request.onComplete(new Response(null, (APIException) item));
-                } else {
-                    request.onComplete(new Response(item, null));
+                if(request.onCompletion != null) {
+                    if (topError != null) {
+                        request.onComplete(new Response(null, topError));
+
+                    } else {
+                        Object item = response.results.get(index++);
+                        APIException error = null;
+
+                        if (item instanceof APIException) {
+                            error = (APIException) item;
+                            item = null;
+                        }
+
+                        request.onComplete(new Response(item, error));
+                    }
                 }
             }
         }
@@ -144,15 +154,16 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     /**
      * Binds request param value to another request's response value.
      *
-     * @param sourceRequest - the request from which response value should be taken from
-     * @param destRequestIdx - the index of the destination request in the multirequet list
+     * @param sourceRequestIdx - the index of the request from which response value should be taken from
+     * @param destRequestIdx - the index of the destination request in the multirequest list
      * @param sourceKey - the properties path in the response to the needed value (exp. user.loginSession.ks)
      * @param destKey - the property that will get the result from the source request
      * @return
      */
-    public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, int destRequestIdx, String sourceKey, String destKey) {
+    public MultiRequestBuilder link(int sourceRequestIdx, int destRequestIdx, String sourceKey, String destKey) {
         try {
-            return link(sourceRequest, requests.get(requests.keySet().toArray()[destRequestIdx]), sourceKey, destKey);
+            return link(getRequestAt(sourceRequestIdx), getRequestAt(destRequestIdx), sourceKey, destKey);
+
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             Logger.getLogger(TAG).error("failed to link requests. ", e);
         }
@@ -172,6 +183,9 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * @return
      */
     public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, RequestBuilder<?> destRequest, String sourceKey, String destKey) {
+        if(sourceRequest == null || destRequest == null){
+            throw new NullPointerException("link requests can't be null");
+        }
         destRequest.link(destKey, sourceRequest.getId(), sourceKey);
         return this;
     }
@@ -179,6 +193,11 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     @Override
     public String getTag() {
         return MULTIREQUEST_ACTION;
+    }
+
+    private RequestBuilder getRequestAt(int index) throws IndexOutOfBoundsException{
+        Object[] requestsKeys = requests.keySet().toArray();
+        return requests.get(requestsKeys[index]);
     }
 
  }

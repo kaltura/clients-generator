@@ -1,14 +1,19 @@
 package com.kaltura.client.test;
 
 import com.kaltura.client.APIOkRequestsExecutor;
+import com.kaltura.client.enums.AssetOrderBy;
 import com.kaltura.client.enums.AssetReferenceType;
 import com.kaltura.client.services.AssetService;
 import com.kaltura.client.services.OttUserService;
 import com.kaltura.client.types.Asset;
+import com.kaltura.client.types.FilterPager;
+import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.types.OTTUser;
+import com.kaltura.client.types.SearchAssetFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -26,14 +31,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MultiRequestTest extends TestCommon {
 
-    @Test
+	private AtomicBoolean done;
+
+	public void setUp() throws Exception {
+		super.setUp();
+		done = new AtomicBoolean(false);
+	}
+
+	@Test
     public void testMultiRequest() throws InterruptedException, ExecutionException {
         logger.info("testMultiRequest\n");
 
         //final CountDownLatch doneSignal = new CountDownLatch(1);
-        final AtomicBoolean done = new AtomicBoolean(false);
 
-        final AtomicInteger counter = new AtomicInteger(0);
+		final AtomicInteger counter = new AtomicInteger(0);
         //DataFactory.UserLogin userLogin = DataFactory.getUser();
 
         RequestBuilder<LoginResponse> ottUserLoginRequestBuilder = OttUserService.login(testConfig.getPartnerId(),
@@ -94,5 +105,40 @@ public class MultiRequestTest extends TestCommon {
 
         assertTrue(done.get());
     }
+
+    @Test
+	public void testListResponse(){
+		SearchAssetFilter searchAssetFilter = new SearchAssetFilter();
+		searchAssetFilter.setOrderBy(AssetOrderBy.RELEVANCY_DESC.name());
+		searchAssetFilter.setTypeIn("420, 423, 421, 0, 422");
+
+		FilterPager filterPager = new FilterPager();
+		filterPager.setPageSize(10);
+		filterPager.setPageIndex(1);
+		final ListResponse<Asset> assets = new ListResponse<>();
+
+		MultiRequestBuilder multiRequestBuilder = OttUserService.login(testConfig.getPartnerId(),
+				testConfig.getUserName(), testConfig.getUserPassword())
+				.add(AssetService.list(searchAssetFilter, filterPager))
+				.link(0, 1, "loginSession.ks", "ks")
+				.setCompletion(new OnCompletion<Response<List<Object>>>() {
+					@Override
+					public void onComplete(Response<List<Object>> result) {
+						try {
+							assets.setObjects(((ListResponse)result.results.get(1)).getObjects());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						done.set(true);
+					}
+				});
+
+		APIOkRequestsExecutor.getExecutor().queue(multiRequestBuilder.build(client));
+
+		Awaitility.await().atMost(30, TimeUnit.SECONDS).untilTrue(done);
+
+		assertTrue(done.get());
+		assertFalse(assets.getObjects().isEmpty());
+	}
 
 }

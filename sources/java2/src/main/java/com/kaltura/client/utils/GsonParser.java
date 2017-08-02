@@ -113,8 +113,11 @@ public class GsonParser {
         try {
         	Constructor<T> constructor = clz.getConstructor(JsonObject.class);
 	        return constructor.newInstance(jsonObject);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new APIException(FailureStep.OnResponse, e.getMessage());
+
+        } catch (NoSuchMethodException | SecurityException | InstantiationException |
+				IllegalAccessException | IllegalArgumentException | InvocationTargetException |
+				ClassCastException | IllegalStateException e) {
+			throw new APIException(FailureStep.OnResponse, e);
 		}
     }
 
