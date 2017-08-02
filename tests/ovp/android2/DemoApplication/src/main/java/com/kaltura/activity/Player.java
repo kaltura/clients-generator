@@ -21,6 +21,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.EntryContextDataResult;
 import com.kaltura.client.types.FlavorAsset;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.FlavorAssets;
@@ -195,17 +196,10 @@ public class Player extends TemplateActivity implements SurfaceHolder.Callback {
 					// Getting list of all entries category
 					publishProgress(States.LOADING_DATA);
 
-					FlavorAssets.listAllFlavorsFromContext(TAG, entryId, "widevine_mbr,widevine,iphonenew", new OnCompletion<EntryContextDataResult>() {
+					FlavorAssets.listAllFlavorsFromContext(TAG, entryId, "widevine_mbr,widevine,iphonenew", new OnCompletion<Response<EntryContextDataResult>>() {
 						@Override
-						public void onComplete(EntryContextDataResult response, APIException e) {
-							if(e != null){
-								e.printStackTrace();
-								Log.w(TAG, "err: " + e.getMessage(), e);
-								doneSignal.countDown();
-								return;
-							}
-
-							listFlavorAssets = response.getFlavorAssets();
+						public void onComplete(Response<EntryContextDataResult> response) {
+							listFlavorAssets = response.results.getFlavorAssets();
 
 							copyListFlavorAssets =  new ArrayList<FlavorAsset>();
 							Collections.sort(listFlavorAssets,

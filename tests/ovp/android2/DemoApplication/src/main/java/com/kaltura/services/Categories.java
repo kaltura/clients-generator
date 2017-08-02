@@ -13,6 +13,7 @@ import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.FilterPager;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.utils.ApiHelper;
 
 /**
@@ -33,7 +34,7 @@ public class Categories {
      *
      * @throws APIException
      */
-    public static void listAllCategories(final String TAG, int pageIndex, int pageSize, final OnCompletion<ListResponse<Category>> onCompletion) throws APIException {
+    public static void listAllCategories(final String TAG, int pageIndex, int pageSize, final OnCompletion<Response<ListResponse<Category>>> onCompletion) throws APIException {
         // create a new filter to filter entries - not mandatory
         CategoryFilter filter = new CategoryFilter();
         //filter.mediaTypeEqual = mediaType;
@@ -46,18 +47,18 @@ public class Categories {
 
         // execute the list action of the mediaService object to recieve the list of entries
         RequestBuilder<ListResponse<Category>> requestBuilder = CategoryService.list(filter)
-        .setCompletion(new OnCompletion<ListResponse<Category>>() {
+        .setCompletion(new OnCompletion<Response<ListResponse<Category>>>() {
             @Override
-            public void onComplete(ListResponse<Category> listResponse, APIException error) {
+            public void onComplete(Response<ListResponse<Category>> response) {
 
                 // loop through all entries in the reponse list and print their id.
                 Log.w(TAG, "Entries list :");
                 int i = 0;
-                for (Category entry : listResponse.getObjects()) {
+                for (Category entry : response.results.getObjects()) {
                     Log.w(TAG, ++i + " id:" + entry.getId() + " name:" + entry.getName() + " depth: " + entry.getDepth() + " fullName: " + entry.getFullName());
                 }
 
-                onCompletion.onComplete(listResponse, error);
+                onCompletion.onComplete(response);
             }
         });
         ApiHelper.execute(requestBuilder);

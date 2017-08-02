@@ -38,6 +38,7 @@ import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.AdminUser;
@@ -476,10 +477,10 @@ public class Main extends TemplateActivity {
 
                     if (pathfromURI != null && category != null && title != null && description != null && tags != null) {
                         message = "Create new entry";
-                        Media.addEmptyEntry(TAG, category, title, description, tags, new OnCompletion<MediaEntry>() {
+                        Media.addEmptyEntry(TAG, category, title, description, tags, new OnCompletion<Response<MediaEntry>>() {
                             @Override
-                            public void onComplete(MediaEntry newEntry, APIException error) {
-                                fileUploader.upload(newEntry, pathfromURI, new FileUploader.OnUploadCompletion() {
+                            public void onComplete(Response<MediaEntry> response) {
+                                fileUploader.upload(response.results, pathfromURI, new FileUploader.OnUploadCompletion() {
                                     @Override
                                     public void onComplete(UploadToken uploadToken, Exception error) {
                                         if(error == null && uploadToken != null) {
@@ -570,17 +571,17 @@ public class Main extends TemplateActivity {
                      * Getting list of all categories
                      */
                     publishProgress(States.LOADING_DATA);
-                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<ListResponse<Category>>() {
+                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<Response<ListResponse<Category>>>() {
                         @Override
-                        public void onComplete(ListResponse<Category> response, APIException e) {
-                            if(e != null) {
-                                e.printStackTrace();
-                                message = e.getMessage();
+                        public void onComplete(Response<ListResponse<Category>> response) {
+                            if(response.isSuccess()) {
+                                listCategory = response.results.getObjects();
+                            }
+                            else {
+                                response.error.printStackTrace();
+                                message = response.error.getMessage();
                                 Log.w(TAG, message);
                                 publishProgress(States.ERR);
-                            }
-                            else if(response != null) {
-                                listCategory = response.getObjects();
                             }
                             doneSignal.countDown();
                         }

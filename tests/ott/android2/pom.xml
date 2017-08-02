@@ -11,20 +11,19 @@
 	<!-- Define the GAV coordinate for the project -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.kaltura</groupId>
-	<artifactId>KalturaAndroidClient</artifactId>
-	<version>3.3.1</version>
+	<artifactId>KalturaOttAndroidClient</artifactId>
+	<version>4.5.1-SNAPSHOT</version>
 
 	<!-- Project description -->
-	<name>Kaltura Android Client Library</name>
+	<name>Kaltura OTT Android Client Library</name>
 	<description>
 		KalturaAndroidClient is a library of Java classes that can be used to interact
-		with the Kaltura REST API. More information about the REST API can be
-		found at http://corp.kaltura.com/Products/Kaltura-API  Many of the Java classes
+		with the Kaltura OTT REST API. More information about the REST API can be
+		found at 4.5.1-SNAPSHOT  Many of the Java classes
 		in this library are auto-generated from a schema that defines the objects that
-		are used to interect with the API. The current schema can be found at
-		http://www.kaltura.com/api_v3/api_schema.php
+		are used to interact with the API.
   	</description>
-	<url>http://github.com/kaltura/KalturaGeneratedAPIClientsAndroid</url>
+	<url>http://github.com/kaltura/KalturaOttGeneratedAPIClientsAndroid</url>
 
 	<!-- Define the license under which this software can be used. -->
 	<licenses>
@@ -59,9 +58,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsAndroid.git</connection>
-		<developerConnection>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsAndroid.git</developerConnection>
-		<url>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsAndroid.git</url>
+		<connection>scm:git:git@github.com:kaltura/KalturaOttGeneratedAPIClientsAndroid.git</connection>
+		<developerConnection>scm:git:git@github.com:kaltura/KalturaOttGeneratedAPIClientsAndroid.git</developerConnection>
+		<url>scm:git:git@github.com:kaltura/KalturaOttGeneratedAPIClientsAndroid.git</url>
 	</scm>
 
 	<!-- Libraries on which the KalturaClient depends -->

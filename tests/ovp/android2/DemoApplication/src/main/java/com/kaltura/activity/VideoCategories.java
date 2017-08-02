@@ -45,6 +45,7 @@ import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.MediaEntryFilter;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.components.GridForLandLargeScreen;
 import com.kaltura.components.GridForPortLargeScreen;
 import com.kaltura.enums.States;
@@ -1261,10 +1262,10 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                      * Getting list of all categories
                      */
                     publishProgress(States.LOADING_DATA);
-                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<ListResponse<Category>>() {
+                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<Response<ListResponse<Category>>>() {
                         @Override
-                        public void onComplete(ListResponse<Category> response, APIException error) {
-                            listCategory = response.getObjects();
+                        public void onComplete(Response<ListResponse<Category>> response) {
+                            listCategory = response.results.getObjects();
                             doneSignal.countDown();
                         }
                     });
@@ -1418,17 +1419,17 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
                     if (!isMostPopular) {
                         filter.setCategoriesIdsMatchAnd(Integer.valueOf(categoryId).toString());
                     }
-                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<List<MediaEntry>>() {
+                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<Response<List<MediaEntry>>>() {
                         @Override
-                        public void onComplete(List<MediaEntry> response, APIException e) {
-                            if(e != null) {
-                                e.printStackTrace();
-                                message = e.getMessage();
-                                Log.w(TAG, message);
-                                publishProgress(States.NO_CONNECTION);
+                        public void onComplete(Response<List<MediaEntry>> response) {
+                            if(response.isSuccess()) {
+                                listEntries = response.results;
                             }
                             else {
-                                listEntries = response;
+                                response.error.printStackTrace();
+                                message = response.error.getMessage();
+                                Log.w(TAG, message);
+                                publishProgress(States.NO_CONNECTION);
                             }
                             doneSignal.countDown();
                         }

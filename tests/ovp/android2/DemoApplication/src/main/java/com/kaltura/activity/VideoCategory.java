@@ -37,6 +37,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.MediaEntryFilter;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.components.GridForLand;
 import com.kaltura.components.GridForPort;
 import com.kaltura.enums.States;
@@ -316,18 +317,18 @@ public class VideoCategory extends TemplateActivity implements Observer {
                     MediaEntryFilter filter = new MediaEntryFilter();
                     filter.setMediaTypeEqual(MediaType.VIDEO);
                     filter.setCategoriesIdsMatchAnd(new Integer(categoryId).toString());
-                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<List<MediaEntry>>() {
+                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<Response<List<MediaEntry>>>() {
                         @Override
-                        public void onComplete(List<MediaEntry> response, APIException e) {
-                            if(e != null) {
-                                e.printStackTrace();
-                                message = e.getMessage();
-                                Log.w(TAG, message);
-                                publishProgress(States.NO_CONNECTION);
+                        public void onComplete(Response<List<MediaEntry>> response) {
+                            if(response.isSuccess()) {
+                                listEntries = response.results;
+                                listCategoriesIsLoaded = true;
                             }
                             else {
-                                listEntries = response;
-                                listCategoriesIsLoaded = true;
+                                response.error.printStackTrace();
+                                message = response.error.getMessage();
+                                Log.w(TAG, message);
+                                publishProgress(States.NO_CONNECTION);
                             }
                             doneSignal.countDown();
                         }
