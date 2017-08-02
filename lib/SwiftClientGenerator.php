@@ -28,7 +28,6 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		
 		$configurationNodes = $this->xpath->query("/xml/configurations/*");
 		$this->writeMainClient($configurationNodes);
-		$this->writeRequestBuilderData($configurationNodes);
 		
 		$pluginNodes = $this->xpath->query("/xml/plugins/*");
 		foreach($pluginNodes as $pluginNode) {
@@ -796,77 +795,7 @@ end
 
 		$this->appendLine("\n		return request");
 	}
-	
-	function writeRequestBuilderData(DOMNodeList $configurationNodes)
-	{
-		$imports = "";
-		$imports .= "package com.kaltura.client.utils.request;\n";
-		$imports .= "\n";
-		$imports .= "import com.kaltura.client.Params;\n";
 		
-		$this->startNewTextBlock();
-		$this->appendLine($this->getBanner());
-		$this->appendLine("public class RequestBuilderData {");
-		$this->appendLine("	");
-		$this->appendLine("	protected Params params;");
-		$this->appendLine("	");
-		$this->appendLine("	protected RequestBuilderData(Params params) {");
-		$this->appendLine("		this.params = params;");
-		$this->appendLine("	}");
-		$this->appendLine("	");
-		
-	
-		//$volatileProperties = array();
-		foreach($configurationNodes as $configurationNode)
-		{
-			/* @var $configurationNode DOMElement */
-			$configurationName = $configurationNode->nodeName;
-			$attributeName = lcfirst($configurationName) . "Configuration";
-
-			$constantsPropertiesKeys = "";
-
-			foreach($configurationNode->childNodes as $configurationPropertyNode)
-			{
-				/* @var $configurationPropertyNode DOMElement */
-				
-				if($configurationPropertyNode->nodeType != XML_ELEMENT_NODE)
-					continue;
-			
-				$configurationProperty = $configurationPropertyNode->localName;
-
-				$constantsPropertiesKeys .= "public static final String ". ucwords($configurationName)." = \"$configurationName\";\n";
-
-				$type = $configurationPropertyNode->getAttribute("type");
-				if(!$this->isSimpleType($type) && !$this->isArrayType($type))
-				{
-					$type = $this->getSwiftTypeName($type);
-					$imports .= "import com.kaltura.client.types.$type;\n";
-				}
-				
-				$type = $this->getSwiftType($configurationPropertyNode, true);
-				$description = null;
-				
-				if($configurationPropertyNode->hasAttribute('description'))
-				{
-					$description = $configurationPropertyNode->getAttribute('description');
-				}
-				
-				$this->writeConfigurationParam($configurationProperty, $configurationProperty, $type, $description);
-				
-				if($configurationPropertyNode->hasAttribute('alias'))
-				{
-					$this->writeConfigurationParam($configurationPropertyNode->getAttribute('alias'), $configurationProperty, $type, $description);					
-				}
-			}
-		}
-		
-		$this->appendLine("}");
-		
-		$imports .= "\n";
-		
-		$this->addFile($this->_baseClientPath . "/utils/request/RequestBuilderData.swift", $imports . $this->getTextBlock());
-	}
-	
 	function writeMainClient(DOMNodeList $configurationNodes) 
 	{
 		$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion'); //located at input file top
