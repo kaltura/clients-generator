@@ -7,8 +7,49 @@
 //
 
 import UIKit
-		
-public class RequestBuilder<T: Any>: RequestBuilderData {
+
+
+public protocol RequestBuilderProtocol {
+        
+    var params: [String: Any] { get set }
+    var requestId: String { get set }
+    var method: RequestMethod? { get set }
+    var headers: [String:String]? { get set }
+    var timeout: Double { get set }
+    var urlParams: [String: String]? { get set }
+    var service: String? { get set }
+    var action: String? { get set }
+    
+    
+    @discardableResult
+    func set(method: RequestMethod?) -> Self
+    
+    @discardableResult
+    func set(params:[String: Any]) -> Self
+    
+    @discardableResult
+    func set(headers: [String: String]?) -> Self
+    
+    @discardableResult
+    func add(headerKey:String, headerValue:String) -> Self
+    
+    @discardableResult
+    func setBody(key: String, value:Any?) -> Self
+    
+    @discardableResult
+    func setParam(key: String, value:String) -> Self
+    
+    func build(_ client: Client) -> Request
+    
+    func getUrlTail() -> String
+    
+    func onComplete(_ response: Response) -> Void
+    
+    func parse(_ response: Response) -> (data:Any?,exception: ApiException?)
+    
+}
+
+public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol {
     
     public lazy var requestId: String = {
         return UUID().uuidString
@@ -106,12 +147,7 @@ public class RequestBuilder<T: Any>: RequestBuilderData {
         
         params["format"] = 1 // JSON
         client.applyParams(self)
-        var bodyData: Data? = nil
-        do{
-            bodyData = try JSONSerialization.data(withJSONObject: params)
-        } catch {
-        }
-        
+        let bodyData = self.buildParamsAsData(params: self.params)
         var url: URL = client.configuration.endPoint
         let urlComponents = NSURLComponents()
         urlComponents.host = url.host
@@ -131,14 +167,21 @@ public class RequestBuilder<T: Any>: RequestBuilderData {
         return RequestElement(requestId: self.requestId, method:self.method , url: url, dataBody: bodyData, headers: self.headers, timeout: self.timeout, completion: self.onComplete, configuration: client.configuration)
     }
     
-    internal func getUrlTail() -> String {
+    public func getUrlTail() -> String {
         return "/service/" + service! + "/action/" + action!
     }
     
-    internal func onComplete(_ response: Response) -> Void {
-        guard completion != nil else {
-            return
+    public func onComplete(_ response: Response) -> Void {
+        
+        let parsedResult = self.parse(response)
+        
+        if let block = completion {
+            block(parsedResult.data as? T, parsedResult.exception)
         }
+    }
+    
+    
+    public func parse(_ response: Response) -> (data:Any?,exception: ApiException?)  {
         
         var result: T? = nil
         var exception: ApiException? = nil
@@ -155,6 +198,22 @@ public class RequestBuilder<T: Any>: RequestBuilderData {
             exception = response.error
         }
         
-        completion!(result, exception)
+        
+        return (result, exception)
     }
+    
+    public func buildParamsAsData(params: [String:Any]) -> Data? {
+    
+        var bodyData: Data? = nil
+        do{
+            bodyData = try JSONSerialization.data(withJSONObject: params)
+        } catch {
+            
+        }
+        
+        return bodyData
+    }
+    
+    
+    
 }

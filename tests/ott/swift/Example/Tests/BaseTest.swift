@@ -16,9 +16,8 @@ class BaseTest: QuickSpec {
         let config: ConnectionConfiguration = ConnectionConfiguration()
         config.endPoint = URL(string:domainURL)!
         
-        
-        
-        describe("upload token") {
+        describe("Load asset") {
+            
             beforeEach {
                 waitUntil(timeout: 500) { done in
                     self.client = Client(config)
@@ -29,10 +28,10 @@ class BaseTest: QuickSpec {
                 }
             }
             
-            context("get asset") {
+            context("when user in anonymouse mode") {
                 var createdEntry: Asset?
                 
-                it("create") {
+                it("needs to get an asset") {
                     waitUntil(timeout: 500) { done in
                         self.createAsset() { entry, error in
                             expect(error).to(beNil())

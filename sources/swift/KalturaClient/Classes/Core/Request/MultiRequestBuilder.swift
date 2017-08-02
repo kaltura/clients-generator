@@ -9,17 +9,20 @@
 import UIKit
 import SwiftyJSON
 
+
+
 public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
     
-    var requests: [RequestBuilder<Any>] = [RequestBuilder<Any>]()
+    
+    var requests = [RequestBuilderProtocol]()
     
     @discardableResult
-    public func add<T>(request:RequestBuilder<T>) -> Self {
-        self.requests.append(request as Any as! RequestBuilder<Any>)
+    public func add(request: RequestBuilderProtocol) -> Self  {
+        self.requests.append(request)
         return self
     }
     
-    internal override func getUrlTail() -> String {
+    public override func getUrlTail() -> String {
         return "/service/multirequest"
     }
 
@@ -35,36 +38,78 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
         return super.build(client)
     }
     
-//    func kalturaMultiRequestData() -> Data? {
-//        
-//        
-//        let prefix = "{"
-//        let suffix = "}"
-//        var data = prefix.data(using: String.Encoding.utf8)
-//        
-//        for  index in 1...self.requests.count {
-//            let requestBody = self.jsonBody?[String(index)].rawString(String.Encoding.utf8, options: JSONSerialization.WritingOptions())?.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-//            let requestBodyData = requestBody?.data(using: String.Encoding.utf8)
-//            data?.append("\"\(index)\":".data(using: String.Encoding.utf8)!)
-//            data?.append(requestBodyData!)
-//            data?.append(",".data(using: String.Encoding.utf8)!)
-//            _ = self.jsonBody?.dictionaryObject?.removeValue(forKey: String(index))
-//        }
-//        
-//        if let jsonBody = self.jsonBody{
-//            let remainingJsonAsString: String? = jsonBody.rawString(String.Encoding.utf8, options: JSONSerialization.WritingOptions())
-//            if let jsonString = remainingJsonAsString{
-//                var jsonWithoutLastChar = String(jsonString.characters.dropLast())
-//                
-//                jsonWithoutLastChar = String(jsonWithoutLastChar.characters.dropFirst())
-//                data?.append((jsonWithoutLastChar.data(using: String.Encoding.utf8))!)
-//            }
-//        }
-//        
-//        data?.append(suffix.data(using: String.Encoding.utf8)!)
-//        
-//        return data
-//    }
+    public override func onComplete(_ response: Response) -> Void {
+
+        // calling on complete of each request
+        let allResponse = response.data?["result"].array
+        var allParsedResponse = [Any]()
+        for (index, request) in self.requests.enumerated() {
+            let singelResponse = allResponse?[index]
+            let response = Response(data: singelResponse, error: response.error)
+            request.onComplete(response)
+            let parsed = request.parse(response)
+            allParsedResponse.append(parsed.data ?? parsed.exception ?? ApiException())
+        }
+        
+        if let block = completion {
+            block(allParsedResponse,response.error)
+        }
+        
+        return
+    }
+    
+    public override func buildParamsAsData(params: [String: Any]) -> Data?
+    {
+        return self.params.sortedJsonData()
+    }
 }
+
+
+
+extension Dictionary where Key == String {
+    
+    func sortedJsonData() -> Data? {
+        
+        var result = ""
+        let prefix = "{"
+        let suffix = "}"
+        
+        
+        result.append(prefix)
+        let sortedKeys = self.keys.sorted()
+        for key in sortedKeys {
+            
+            let jsonObject = self[key]!
+            var jsonObjectString: String? = nil
+            if ( JSONSerialization.isValidJSONObject(jsonObject)){
+                do {
+                    let jsonData = try JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions.prettyPrinted)
+                    jsonObjectString = String(data: jsonData, encoding: String.Encoding.utf8)
+                }catch{
+                    
+                }
+            }else if let object = jsonObject as? String {
+                jsonObjectString = "\"\(object)\""
+            }else if let object = jsonObject as? Int {
+                jsonObjectString = String(object)
+            }
+            
+            
+            if let value = jsonObjectString  {
+                result.append("\"\(key)\":")
+                result.append(value)
+                result.append(",")
+            }
+        }
+        
+        result = String(result.characters.dropLast())
+        result.append(suffix)
+        
+        let data = result.data(using: String.Encoding.utf8)
+        return data
+    }
+}
+
+
 
 
