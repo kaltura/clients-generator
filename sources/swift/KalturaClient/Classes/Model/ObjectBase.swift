@@ -26,7 +26,6 @@
 // @ignore
 // ===================================================================================================
 
-
 /**
  * This class was generated using exec.php
  * against an XML schema provided by Kaltura.
@@ -36,16 +35,19 @@
 
 open class ObjectBase {
     
-    var relatedObjects: Dictionary<String, ListResponse<ObjectBase>>?
+    public var relatedObjects: Dictionary<String, ListResponse>?
     
     public required init() {
     }
     
     internal func populate(_ dict: [String: Any]) throws {
+        if dict["relatedObjects"] != nil {
+            relatedObjects = try JSONParser.parse(map: dict["relatedObjects"] as! [String: Any])
+        }
     }
     
     public func toDictionary() -> [String: Any] {
-        let dict: [String: Any] = ["objectType": "\(type(of: self))"]
+        let dict: [String: Any] = ["objectType": "Kaltura\(type(of: self))"]
         return dict
     }
 }

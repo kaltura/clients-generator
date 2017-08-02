@@ -33,55 +33,46 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-import SwiftyJSON
+import Quick
+import Nimble
+import KalturaClient
 
-public class ApiException : ObjectBase, Error{
-    public var message: String?
-    public var code: String?
-    public var args: [ApiExceptionArg]?
+class PluginsTest: BaseTest {
     
-    public required init() {
-        super.init()
-    }
-    
-    public convenience init(message: String, code: String, args: [ApiExceptionArg]) {
-        self.init()
+    override func spec() {
+        let config: ConnectionConfiguration = ConnectionConfiguration()
+        client = Client(config)
         
-        self.message = message
-        self.code = code
-        self.args = args
-    }
-    
-    public convenience init(message: String, code: String) {
-        self.init(message: message, code: code, args: [])
-    }
-    
-    internal override func populate(_ dict: [String: Any]) throws {
-        try super.populate(dict);
-        // set members values:
-        message = dict["message"] as? String
-        code = dict["code"] as? String
-        if let argsDict = dict["args"] as? [String: String] {
-            args = []
-            for (key, value) in argsDict {
-                let arg = ApiExceptionArg()
-                arg.name = key
-                arg.value = value
+        describe("metadata") {
+            
+            beforeEach {
+                waitUntil(timeout: 500) { done in
+                    self.login() { error in
+                        expect(error).to(beNil())
+                        done()
+                    }
+                }
+            }
+            
+            it("add profile") {
+                let metadataProfile = MetadataProfile()
+                metadataProfile.metadataObjectType = MetadataObjectType.ENTRY
+                metadataProfile.name = "Test - \(BaseTest.uniqueTag)"
+                
+                waitUntil(timeout: 500) { done in
+                    let requestBuilder:RequestBuilder<MetadataProfile> = MetadataProfileService.add(metadataProfile: metadataProfile, xsdData: "<xml></xml>")
+                    requestBuilder.set(completion: {(createdMetadataProfile: MetadataProfile?, error: ApiException?) in
+                        
+                        expect(error).to(beNil())
+                        
+                        expect(createdMetadataProfile).notTo(beNil())
+                        expect(createdMetadataProfile?.id).notTo(beNil())
+                        
+                        done()
+                    })
+                    self.executor.send(request: requestBuilder.build(self.client!))
+                }
             }
         }
-    }
-}
-
-public class ApiClientException : ApiException {
-    
-    public enum ErrorCode: String {
-        case typeNotFound = "TYPE_NOT_FOUND"
-        case invalidJson = "INVALID_JSON"
-        case invalidJsonObject = "INVALID_JSON_OBJECT"
-        case httpError = "HTTP_ERROR"
-    }
-    
-    public convenience init(message: String, code: ErrorCode) {
-        self.init(message: message, code: code.rawValue)
     }
 }

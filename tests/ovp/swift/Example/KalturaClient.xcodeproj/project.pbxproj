@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00114E6B1F28C02500671FAF /* MediaServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E6A1F28C02500671FAF /* MediaServiceTest.swift */; };
+		00114E7A1F2F4B1400671FAF /* DemoVideo.flv in Resources */ = {isa = PBXBuildFile; fileRef = 00114E781F2F36E500671FAF /* DemoVideo.flv */; };
+		00114E7B1F2F4B1500671FAF /* DemoVideo.flv in Resources */ = {isa = PBXBuildFile; fileRef = 00114E781F2F36E500671FAF /* DemoVideo.flv */; };
+		00114E7D1F2F7FB000671FAF /* PrimitiveResponsesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E7C1F2F7FB000671FAF /* PrimitiveResponsesTest.swift */; };
+		00114E7F1F2F823E00671FAF /* ExceptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E7E1F2F823E00671FAF /* ExceptionsTest.swift */; };
+		00114E811F2F866600671FAF /* PluginsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E801F2F866600671FAF /* PluginsTest.swift */; };
+		00114E831F308D0000671FAF /* ResponseProfileTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E821F308D0000671FAF /* ResponseProfileTest.swift */; };
 		11ED30FC12B8F925214FA63E /* Pods_KalturaClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A828660A1AF9647D2ABD0F59 /* Pods_KalturaClient_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -28,6 +35,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00114E6A1F28C02500671FAF /* MediaServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaServiceTest.swift; sourceTree = "<group>"; };
+		00114E781F2F36E500671FAF /* DemoVideo.flv */ = {isa = PBXFileReference; lastKnownFileType = file; path = DemoVideo.flv; sourceTree = "<group>"; };
+		00114E7C1F2F7FB000671FAF /* PrimitiveResponsesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrimitiveResponsesTest.swift; sourceTree = "<group>"; };
+		00114E7E1F2F823E00671FAF /* ExceptionsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionsTest.swift; sourceTree = "<group>"; };
+		00114E801F2F866600671FAF /* PluginsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginsTest.swift; sourceTree = "<group>"; };
+		00114E821F308D0000671FAF /* ResponseProfileTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseProfileTest.swift; sourceTree = "<group>"; };
 		001416C11F1F892700CD4112 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		25D0496082CD170A6C7D9E66 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		5B71B816BD0CFFB43D1C5C16 /* Pods-KalturaClient_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KalturaClient_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KalturaClient_Tests/Pods-KalturaClient_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -127,6 +140,11 @@
 			isa = PBXGroup;
 			children = (
 				607FACEB1AFB9204008FA782 /* BaseTest.swift */,
+				00114E6A1F28C02500671FAF /* MediaServiceTest.swift */,
+				00114E7C1F2F7FB000671FAF /* PrimitiveResponsesTest.swift */,
+				00114E7E1F2F823E00671FAF /* ExceptionsTest.swift */,
+				00114E801F2F866600671FAF /* PluginsTest.swift */,
+				00114E821F308D0000671FAF /* ResponseProfileTest.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -135,6 +153,7 @@
 		607FACE91AFB9204008FA782 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				00114E781F2F36E500671FAF /* DemoVideo.flv */,
 				607FACEA1AFB9204008FA782 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -253,6 +272,7 @@
 				607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
+				00114E7A1F2F4B1400671FAF /* DemoVideo.flv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +280,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00114E7B1F2F4B1500671FAF /* DemoVideo.flv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +393,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00114E831F308D0000671FAF /* ResponseProfileTest.swift in Sources */,
+				00114E6B1F28C02500671FAF /* MediaServiceTest.swift in Sources */,
+				00114E7F1F2F823E00671FAF /* ExceptionsTest.swift in Sources */,
+				00114E7D1F2F7FB000671FAF /* PrimitiveResponsesTest.swift in Sources */,
+				00114E811F2F866600671FAF /* PluginsTest.swift in Sources */,
 				607FACEC1AFB9204008FA782 /* BaseTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

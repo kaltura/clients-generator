@@ -28,7 +28,6 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		
 		$configurationNodes = $this->xpath->query("/xml/configurations/*");
 		$this->writeMainClient($configurationNodes);
-		$this->writeRequestBuilderData($configurationNodes);
 		
 		$pluginNodes = $this->xpath->query("/xml/plugins/*");
 		foreach($pluginNodes as $pluginNode) {
@@ -155,7 +154,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 	function writeClass(DOMElement $classNode) 
 	{
 		$type = $classNode->getAttribute("name");
-		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject' || preg_match('/ListResponse$/', $type)) {
+		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject') {
 			return;
 		}	
 			
@@ -610,23 +609,6 @@ end
 		$this->addFile($file, $this->getTextBlock());
 	}
 	
-	function getListResponseInternalType($listResponseType) 
-	{
-		$objectsNodes = $this->xpath->query("/xml/classes/class[@name = 'Kaltura{$listResponseType}']/property[@name = 'objects']");
-		if(!$objectsNodes->length)
-		{
-			throw new Exception('List response type [$listResponseType] has no objects array property');
-		}
-		
-		$objectsNode = $objectsNodes->item(0);
-		if(!$objectsNode->hasAttribute('arrayType'))
-		{
-			throw new Exception('List response type [$listResponseType] objects has no array type');
-		}
-		
-		return $this->getSwiftTypeName($objectsNode->getAttribute('arrayType'));
-	}
-	
 	function writeAction($serviceId, DOMElement $actionNode) 
 	{
 		$action = $actionNode->getAttribute("name");
@@ -634,21 +616,11 @@ end
 			return;
 		}
 		
-		if($actionNode->getAttribute("plugin") != $this->pluginName) {
+		$actionPlugin = $actionNode->getAttribute("plugin");
+		if($actionPlugin != null && $actionPlugin != $this->pluginName) {
 			return;
 		}
 			
-		$paramNodes = $actionNode->getElementsByTagName("param");
-		$paramNodesArr = array();
-		foreach($paramNodes as $paramNode)
-		{
-			$paramType = $paramNode->getAttribute("type");
-			if($paramType == 'file') {
-				return;
-			}
-			$paramNodesArr[] = $paramNode;
-		}
-		
 		$action = $this->replaceReservedWords($action);
 		
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
@@ -680,24 +652,20 @@ end
 			$fallbackClass = $arrayType;
 			$returnType = "Dictionary<$arrayType>";
 		}
-		elseif($resultType && ($resultType != 'file') && !$this->isSimpleType($resultType))
-		{
-			if(preg_match('/ListResponse$/', $resultType))
-			{
-				$arrayType = $this->getListResponseInternalType($resultType);
-				$resultType = 'ListResponse';
-				$fallbackClass = $arrayType;
-				$returnType = "ListResponse<$arrayType>";
-			}
-		}
 		
 		$signaturePrefix = "public static func $action";
 		
 		$swiftOutputType = $this->getResultType($resultType, $arrayType);
 		
+		$paramNodes = $actionNode->getElementsByTagName("param");
+		$paramNodesArr = array();
+		foreach($paramNodes as $paramNode) {
+			$paramNodesArr[] = $paramNode;
+		}
+		
 		$this->writeActionOverloads($signaturePrefix, $action, $paramNodesArr, $swiftOutputType, $returnType);
 		
-		$signature = $this->getSignature($action, $paramNodesArr, array('' => 'FileHolder'));
+		$signature = $this->getSignature($action, $paramNodesArr, array('' => 'RequestFile'));
 		
 		$this->appendLine();
 		
@@ -743,22 +711,19 @@ end
 			if($hasFiles)
 			{
 				$fileOverloads = array(  
-					array('' => 'FileHolder'),
-					array('' => 'File'),
-					array('' => 'InputStream', 'MimeType' => 'String', 'Name' => 'String', 'Size' => 'long'),
-					array('' => 'FileInputStream', 'MimeType' => 'String', 'Name' => 'String'),
+					array('' => 'RequestFile'),
 				);
 			}
 			else
 			{
 				$fileOverloads = array(
-					array('' => 'FileHolder'),
+					array('' => 'RequestFile'),
 				);
 			}
 
 			foreach($fileOverloads as $fileOverload)
 			{
-				if(reset($fileOverload) == 'FileHolder' && $overloadNumber == count($optionalParams)){
+				if(reset($fileOverload) == 'RequestFile' && $overloadNumber == count($optionalParams)){
 					continue;			// this is the main overload
 				}
 				
@@ -779,7 +744,7 @@ end
 						continue;
 					} 
 						
-					if($paramType != "file" || reset($fileOverload) == 'FileHolder')
+					if($paramType != "file" || reset($fileOverload) == 'RequestFile')
 					{
 						$params[] = "$paramName: $paramName";
 						continue;
@@ -790,7 +755,7 @@ end
 					{
 						$fileParams[] = "$paramName: {$paramName}{$namePostfix}";
 					}
-					$params[] = "$paramName: new FileHolder(" . implode(', ', $fileParams) . ")";
+					$params[] = "$paramName: RequestFile(" . implode(', ', $fileParams) . ")";
 				}				
 				$paramsStr = implode(', ', $params);
 				
@@ -830,77 +795,7 @@ end
 
 		$this->appendLine("\n		return request");
 	}
-	
-	function writeRequestBuilderData(DOMNodeList $configurationNodes)
-	{
-		$imports = "";
-		$imports .= "package com.kaltura.client.utils.request;\n";
-		$imports .= "\n";
-		$imports .= "import com.kaltura.client.Params;\n";
 		
-		$this->startNewTextBlock();
-		$this->appendLine($this->getBanner());
-		$this->appendLine("public class RequestBuilderData {");
-		$this->appendLine("	");
-		$this->appendLine("	protected Params params;");
-		$this->appendLine("	");
-		$this->appendLine("	protected RequestBuilderData(Params params) {");
-		$this->appendLine("		this.params = params;");
-		$this->appendLine("	}");
-		$this->appendLine("	");
-		
-	
-		//$volatileProperties = array();
-		foreach($configurationNodes as $configurationNode)
-		{
-			/* @var $configurationNode DOMElement */
-			$configurationName = $configurationNode->nodeName;
-			$attributeName = lcfirst($configurationName) . "Configuration";
-
-			$constantsPropertiesKeys = "";
-
-			foreach($configurationNode->childNodes as $configurationPropertyNode)
-			{
-				/* @var $configurationPropertyNode DOMElement */
-				
-				if($configurationPropertyNode->nodeType != XML_ELEMENT_NODE)
-					continue;
-			
-				$configurationProperty = $configurationPropertyNode->localName;
-
-				$constantsPropertiesKeys .= "public static final String ". ucwords($configurationName)." = \"$configurationName\";\n";
-
-				$type = $configurationPropertyNode->getAttribute("type");
-				if(!$this->isSimpleType($type) && !$this->isArrayType($type))
-				{
-					$type = $this->getSwiftTypeName($type);
-					$imports .= "import com.kaltura.client.types.$type;\n";
-				}
-				
-				$type = $this->getSwiftType($configurationPropertyNode, true);
-				$description = null;
-				
-				if($configurationPropertyNode->hasAttribute('description'))
-				{
-					$description = $configurationPropertyNode->getAttribute('description');
-				}
-				
-				$this->writeConfigurationParam($configurationProperty, $configurationProperty, $type, $description);
-				
-				if($configurationPropertyNode->hasAttribute('alias'))
-				{
-					$this->writeConfigurationParam($configurationPropertyNode->getAttribute('alias'), $configurationProperty, $type, $description);					
-				}
-			}
-		}
-		
-		$this->appendLine("}");
-		
-		$imports .= "\n";
-		
-		$this->addFile($this->_baseClientPath . "/utils/request/RequestBuilderData.swift", $imports . $this->getTextBlock());
-	}
-	
 	function writeMainClient(DOMNodeList $configurationNodes) 
 	{
 		$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion'); //located at input file top
@@ -989,7 +884,7 @@ end
 		$this->appendLine("			return params[\"$paramName\"] as? $type");
 		$this->appendLine("		}");
 		$this->appendLine("		set(value){");
-		$this->appendLine("			params[\"$paramName\"] = value");
+		$this->appendLine("			setBody(key: \"$paramName\", value: value)");
 		$this->appendLine("		}");
 		$this->appendLine("	}");
 		$this->appendLine("	");
@@ -1023,6 +918,9 @@ end
 			{
 				foreach($fileOverload as $namePostfix => $paramType)
 				{
+					if($optional == "1") {
+						$paramType.= '?';
+					}
 					$signature[] = "{$paramName}{$namePostfix}: {$paramType}";
 				}
 				continue;
@@ -1130,9 +1028,6 @@ end
 		case null:
 			return "NullRequestBuilder";
 			
-		case "ListResponse":
-			return("ListResponseRequestBuilder<" . $arrayType . ">");
-			
 		case "array":
 			return("ArrayRequestBuilder<" . $arrayType . ">");
 			
@@ -1198,7 +1093,7 @@ end
 			return "String";
 
 		case "file":
-			return "FileHolder";
+			return "RequestFile";
 			
 		default:
 			return $this->getSwiftTypeName($type);

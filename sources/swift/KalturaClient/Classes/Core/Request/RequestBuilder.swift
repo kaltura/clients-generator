@@ -1,10 +1,30 @@
+// ===================================================================================================
+//                           _  __     _ _
+//                          | |/ /__ _| | |_ _  _ _ _ __ _
+//                          | ' </ _` | |  _| || | '_/ _` |
+//                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
-//  RestRequestBuilder.swift
-//  Pods
+// This file is part of the Kaltura Collaborative Media Suite which allows users
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// text.
 //
-//  Created by Admin on 13/11/2016.
+// Copyright (C) 2006-2017  Kaltura Inc.
 //
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 //
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// @ignore
+// ===================================================================================================
 
 import UIKit
 
@@ -115,20 +135,13 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
     }
     
     @discardableResult
-    public func setBody(key: String, value:Any?) -> Self {
+    public func setFile(key: String, value:RequestFile?) -> Self {
         
         guard value != nil else {
             return self
         }
         
-        var val: Any;
-        if value is ObjectBase {
-            val = (value as! ObjectBase).toDictionary()
-        }
-        else {
-            val = value!
-        }
-        self.params[key] = val
+        self.files[key] = value
         return self
     }
     
@@ -164,7 +177,7 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
         }
         url = urlComponents.url!
         
-        return RequestElement(requestId: self.requestId, method:self.method , url: url, dataBody: bodyData, headers: self.headers, timeout: self.timeout, completion: self.onComplete, configuration: client.configuration)
+        return RequestElement(requestId: self.requestId, method:self.method , url: url, dataBody: bodyData, files: files, headers: self.headers, timeout: self.timeout, completion: self.onComplete, configuration: client.configuration)
     }
     
     public func getUrlTail() -> String {

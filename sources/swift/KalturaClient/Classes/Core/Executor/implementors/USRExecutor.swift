@@ -1,12 +1,38 @@
+// ===================================================================================================
+//                           _  __     _ _
+//                          | |/ /__ _| | |_ _  _ _ _ __ _
+//                          | ' </ _` | |  _| || | '_/ _` |
+//                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
-//  URLSessionRequestExecutor.swift
-//  Pods
+// This file is part of the Kaltura Collaborative Media Suite which allows users
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// text.
 //
-//  Created by Admin on 10/11/2016.
+// Copyright (C) 2006-2017  Kaltura Inc.
 //
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as
+// published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
 //
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+// @ignore
+// ===================================================================================================
 
-import UIKit
+/**
+ * This class was generated using exec.php
+ * against an XML schema provided by Kaltura.
+ *
+ * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
+ */
+
 import SwiftyJSON
 
 
@@ -34,16 +60,21 @@ import SwiftyJSON
             request.httpMethod = method.value
         }
         
-        // handle body
-        if let data = r.dataBody {
-            request.httpBody = data
-        }
-        
         // handle headers
         if let headers = r.headers{
             for (headerKey,headerValue) in headers{
                 request.setValue(headerValue, forHTTPHeaderField: headerKey)
             }
+        }
+        
+        // handle body
+        if !r.files.isEmpty {
+            let boundary = "Boundary-\(UUID().uuidString)"
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            request.httpBody = buildMultipartData(boundary: boundary, files: r.files, jsonString: jsonString)
+        }
+        else if let data = r.dataBody {
+            request.httpBody = data
         }
         
         let session: URLSession!
@@ -104,6 +135,27 @@ import SwiftyJSON
         }
     }
     
+    private func buildMultipartData(boundary: String, files: [String: RequestFile], jsonString: String) -> Data {
+        let body = NSMutableData()
+        
+        let boundaryPrefix = "--\(boundary)\r\n"
+        
+        body.appendString(boundaryPrefix)
+        body.appendString("Content-Disposition: form-data; name=\"json\"\r\n\r\n")
+        body.appendString("\(jsonString)\r\n")
+        
+        for (key, file) in files {
+            body.appendString(boundaryPrefix)
+            body.appendString("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(file.name)\"\r\n")
+            body.appendString("Content-Type: \(file.mimeType)\r\n\r\n")
+            body.append(file.data)
+            body.appendString("\r\n")
+        }
+        body.appendString("--".appending(boundary.appending("--")))
+        
+        return body as Data
+    }
+    
     public func cancel(request:Request){
         
         let index = self.taskIndexForRequest(request: request)
@@ -153,5 +205,11 @@ import SwiftyJSON
     public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession){
         
     }
-    
+}
+
+extension NSMutableData {
+    func appendString(_ string: String) {
+        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        append(data!)
+    }
 }
