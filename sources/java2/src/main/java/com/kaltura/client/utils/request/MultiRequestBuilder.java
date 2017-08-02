@@ -102,16 +102,28 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void onComplete(Response<List<Object>> response) {
-        List<Object> results = null;
+
         if(response != null) {
-            results = (List<Object>) response.results;
+            APIException topError = response.error;
+
             int index = 0;
+
             for(RequestBuilder<?> request : requests.values()) {
-                Object item = results.get(index++);
-                if(item instanceof APIException) {
-                    request.onComplete(new Response(null, (APIException) item));
-                } else {
-                    request.onComplete(new Response(item, null));
+                if(request.onCompletion != null) {
+                    if (topError != null) {
+                        request.onComplete(new Response(null, topError));
+
+                    } else {
+                        Object item = response.results.get(index++);
+                        APIException error = null;
+
+                        if (item instanceof APIException) {
+                            error = (APIException) item;
+                            item = null;
+                        }
+
+                        request.onComplete(new Response(item, error));
+                    }
                 }
             }
         }
