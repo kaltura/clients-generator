@@ -18,6 +18,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.Media;
@@ -119,17 +120,11 @@ public class Uploading extends TemplateActivity {
 
                     if (pathfromURI != null && category != null && title != null && description != null && tags != null) {
                         message = "Create new entry";
-                        Media.addEmptyEntry(TAG, category, title, description, tags, new OnCompletion<MediaEntry>() {
+                        Media.addEmptyEntry(TAG, category, title, description, tags, new OnCompletion<Response<MediaEntry>>() {
                             @Override
-                            public void onComplete(MediaEntry newEntry, APIException e) {
-                                if(e != null) {
-                                    e.printStackTrace();
-                                    message = e.getMessage();
-                                    Log.w(TAG, message);
-                                    publishProgress(States.NO_CONNECTION);
-                                }
-                                else {
-                                    fileUploader.upload(newEntry, pathfromURI, new FileUploader.OnUploadCompletion() {
+                            public void onComplete(Response<MediaEntry> response) {
+                                if(response.isSuccess()) {
+                                    fileUploader.upload(response.results, pathfromURI, new FileUploader.OnUploadCompletion() {
                                         @Override
                                         public void onComplete(UploadToken uploadToken, Exception error) {
                                             if(error == null && uploadToken != null) {
@@ -138,6 +133,12 @@ public class Uploading extends TemplateActivity {
                                             doneSignal.countDown();
                                         }
                                     });
+                                }
+                                else {
+                                    response.error.printStackTrace();
+                                    message = response.error.getMessage();
+                                    Log.w(TAG, message);
+                                    publishProgress(States.NO_CONNECTION);
                                 }
                             }
                         });

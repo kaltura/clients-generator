@@ -34,6 +34,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.MediaEntryFilter;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.components.GridForLand;
 import com.kaltura.components.GridForPort;
 import com.kaltura.enums.States;
@@ -281,10 +282,10 @@ public class MostPopular extends TemplateActivity implements Observer {
                      */
                     MediaEntryFilter filter = new MediaEntryFilter();
                     filter.setMediaTypeEqual(MediaType.VIDEO);
-                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<List<MediaEntry>>() {
+                    Media.listAllEntriesByIdCategories(TAG, filter, 1, 500, new OnCompletion<Response<List<MediaEntry>>>() {
                         @Override
-                        public void onComplete(List<MediaEntry> response, APIException error) {
-                            listEntries = response;
+                        public void onComplete(Response<List<MediaEntry>> response) {
+                            listEntries = response.results;
                             listCategoriesIsLoaded = true;
                             doneSignal.countDown();
                         }

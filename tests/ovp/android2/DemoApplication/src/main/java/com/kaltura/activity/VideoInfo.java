@@ -20,6 +20,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.Category;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.Categories;
@@ -138,17 +139,17 @@ public class VideoInfo extends TemplateActivity {
                      * Getting list of all categories
                      */
                     publishProgress(States.LOADING_DATA);
-                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<ListResponse<Category>>() {
+                    Categories.listAllCategories(TAG, 1, 500, new OnCompletion<Response<ListResponse<Category>>>() {
                         @Override
-                        public void onComplete(ListResponse<Category> response, APIException e) {
-                            if(e != null){
-                                e.printStackTrace();
-                                message = e.getMessage();
+                        public void onComplete(Response<ListResponse<Category>> response) {
+                            if(response.isSuccess()) {
+                                listCategory = response.results.getObjects();
+                            }
+                            else {
+                                response.error.printStackTrace();
+                                message = response.error.getMessage();
                                 Log.w(TAG, message);
                                 publishProgress(States.ERR);
-                            }
-                            else if(response != null) {
-                                listCategory = response.getObjects();
                             }
                             doneSignal.countDown();
                         }

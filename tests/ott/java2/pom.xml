@@ -25,7 +25,7 @@
         with the Kaltura OTT REST API. More information about the REST API can be
         found at https://ott.developer.kaltura.com/ Many of the Java classes
         in this library are auto-generated from a schema that defines the objects that
-        are used to interect with the API.
+        are used to interact with the API.
     </description>
     <url>http://github.com/kaltura/KalturaOttGeneratedAPIClientsJava</url>
 

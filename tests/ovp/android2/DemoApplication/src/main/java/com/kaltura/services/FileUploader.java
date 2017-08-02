@@ -25,6 +25,7 @@ import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.types.UploadedFileTokenResource;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.utils.ApiHelper;
 
 /**
@@ -88,16 +89,17 @@ public class FileUploader extends Observable {
 
     private void uploadChunk(final File outFile, final int numRead, final boolean finalChunk, boolean resume, int resumeAt) {
         RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(uploadToken.getId(), outFile, resume, finalChunk, resumeAt)
-                .setCompletion(new OnCompletion<UploadToken>() {
+                .setCompletion(new OnCompletion<Response<UploadToken>>() {
                     @Override
-                    public void onComplete(UploadToken response, APIException error) {
-                        if(error != null) {
-                            retry(error);
-                        }
-                        else {
-                            uploadToken = response;
+                    public void onComplete(Response<UploadToken> response) {
+                        if(response.isSuccess()) {
+                            uploadToken = response.results;
                             readSum += numRead;
                         }
+                        else {
+                            retry(response.error);
+                        }
+
                         outFile.delete();
                         setChanged();
                         notifyObservers(getUploadedFileSize());
@@ -156,18 +158,18 @@ public class FileUploader extends Observable {
         fileTokenResource.setToken(uploadToken.getId());
 
         RequestBuilder<MediaEntry> requestBuilder =  MediaService.addContent(entry.getId(), fileTokenResource)
-        .setCompletion(new OnCompletion<MediaEntry>() {
+        .setCompletion(new OnCompletion<Response<MediaEntry>>() {
             @Override
-            public void onComplete(MediaEntry response, APIException e) {
-                if(e != null) {
-                    e.printStackTrace();
-                    Log.w(TAG, "err: " + e.getMessage());
+            public void onComplete(Response<MediaEntry> response) {
+                if(response.isSuccess()) {
+                    Log.w(TAG, "\nUploaded a new Video file to entry: " + response.results.getId());
                 }
                 else {
-                    Log.w(TAG, "\nUploaded a new Video file to entry: " + response.getId());
+                    response.error.printStackTrace();
+                    Log.w(TAG, "err: " + response.error.getMessage());
                 }
 
-                onCompletion.onComplete(uploadToken, e);
+                onCompletion.onComplete(uploadToken, response.error);
             }
         });
         ApiHelper.execute(requestBuilder);
@@ -193,22 +195,23 @@ public class FileUploader extends Observable {
         Log.w(TAG, "\nUploading a video file...");
         readSum = 0;
 
-        RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add().setCompletion(new OnCompletion<com.kaltura.client.types.UploadToken>() {
+        RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add().setCompletion(new OnCompletion<Response<UploadToken>>() {
             @Override
-            public void onComplete(UploadToken response, APIException error) {
-                if(error != null) {
-                    Logger.getLogger(UploadToken.class.getName()).log(Level.SEVERE, null, error);
+            public void onComplete(Response<UploadToken> response) {
+                if(response.isSuccess()) {
+                    uploadToken = response.results;
+                    try {
+                        fis = new FileInputStream(fileData);
+                    } catch (FileNotFoundException ex) {
+                        Log.w(TAG, "err: ", ex);
+                    }
+
+                    uploadNextChunk();
+                }
+                else {
+                    Logger.getLogger(UploadToken.class.getName()).log(Level.SEVERE, null, response.error);
                     return;
                 }
-
-                uploadToken = response;
-                try {
-                    fis = new FileInputStream(fileData);
-                } catch (FileNotFoundException ex) {
-                    Log.w(TAG, "err: ", ex);
-                }
-
-                uploadNextChunk();
             }
         });
         ApiHelper.execute(requestBuilder);

@@ -48,7 +48,7 @@ public class ApiHelper {
     }
 
     public static RequestQueue getRequestQueue() {
-        return APIOkRequestsExecutor.getSingleton();
+        return APIOkRequestsExecutor.getExecutor();
     }
 
     public static void execute(RequestBuilder<?> requestBuilder) {

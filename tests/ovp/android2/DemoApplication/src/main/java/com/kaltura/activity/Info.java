@@ -21,6 +21,7 @@ import com.kaltura.bar.ActionBar;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.enums.States;
 import com.kaltura.mediatorActivity.TemplateActivity;
 import com.kaltura.services.Media;
@@ -236,16 +237,16 @@ public class Info extends TemplateActivity {
                      * Getting information about the entry
                      */
                     publishProgress(States.LOADING_DATA);
-                    Media.getEntrybyId(TAG, entryId, new OnCompletion<MediaEntry>() {
+                    Media.getEntrybyId(TAG, entryId, new OnCompletion<Response<MediaEntry>>() {
                         @Override
-                        public void onComplete(MediaEntry response, APIException e) {
-                            if(e != null) {
-                                e.printStackTrace();
-                                Log.w(TAG, "error get entry by id: " + e.getMessage());
-                                entry = new MediaEntry();
+                        public void onComplete(Response<MediaEntry> response) {
+                            if(response.isSuccess()) {
+                                entry = response.results;
                             }
                             else {
-                                entry = response;
+                                response.error.printStackTrace();
+                                Log.w(TAG, "error get entry by id: " + response.error.getMessage());
+                                entry = new MediaEntry();
                             }
                             doneSignal.countDown();
                         }
