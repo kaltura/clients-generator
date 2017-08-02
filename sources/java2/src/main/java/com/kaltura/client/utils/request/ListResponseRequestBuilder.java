@@ -8,7 +8,7 @@ import com.kaltura.client.utils.GsonParser;
 
 public class ListResponseRequestBuilder<T> extends RequestBuilder<ListResponse<T>> {
 
-	private Class<T> type;
+    private Class<T> type;
 
     public ListResponseRequestBuilder(Class<T> type, String service, String action, Params params) {
         super(service, action, params);
@@ -21,8 +21,12 @@ public class ListResponseRequestBuilder<T> extends RequestBuilder<ListResponse<T
     }
 
 	public Class<?> getType() {
-		return type;
+        return ListResponse.class;
 	}
+
+	public Class<T> getRawType(){
+        return type;
+    }
 
     protected Object parse(String response) throws APIException {
     	return GsonParser.parseListResponse(response, type);

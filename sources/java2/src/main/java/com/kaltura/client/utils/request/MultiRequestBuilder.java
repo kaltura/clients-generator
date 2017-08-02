@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Created by tehilarozin on 15/08/2016.
- */
+
 public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     private static final String TAG = "MultiRequestBuilder";
 
@@ -144,15 +142,16 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     /**
      * Binds request param value to another request's response value.
      *
-     * @param sourceRequest - the request from which response value should be taken from
-     * @param destRequestIdx - the index of the destination request in the multirequet list
+     * @param sourceRequestIdx - the index of the request from which response value should be taken from
+     * @param destRequestIdx - the index of the destination request in the multirequest list
      * @param sourceKey - the properties path in the response to the needed value (exp. user.loginSession.ks)
      * @param destKey - the property that will get the result from the source request
      * @return
      */
-    public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, int destRequestIdx, String sourceKey, String destKey) {
+    public MultiRequestBuilder link(int sourceRequestIdx, int destRequestIdx, String sourceKey, String destKey) {
         try {
-            return link(sourceRequest, requests.get(requests.keySet().toArray()[destRequestIdx]), sourceKey, destKey);
+            return link(getRequestAt(sourceRequestIdx), getRequestAt(destRequestIdx), sourceKey, destKey);
+
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             Logger.getLogger(TAG).error("failed to link requests. ", e);
         }
@@ -172,6 +171,9 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * @return
      */
     public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, RequestBuilder<?> destRequest, String sourceKey, String destKey) {
+        if(sourceRequest == null || destRequest == null){
+            throw new NullPointerException("link requests can't be null");
+        }
         destRequest.link(destKey, sourceRequest.getId(), sourceKey);
         return this;
     }
@@ -179,6 +181,11 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     @Override
     public String getTag() {
         return MULTIREQUEST_ACTION;
+    }
+
+    private RequestBuilder getRequestAt(int index) throws IndexOutOfBoundsException{
+        Object[] requestsKeys = requests.keySet().toArray();
+        return requests.get(requestsKeys[index]);
     }
 
  }

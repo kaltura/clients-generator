@@ -7,9 +7,7 @@ import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.util.HashMap;
 
-/**
- * Created by tehilarozin on 09/08/2016.
- */
+
 public interface RequestElement<T> {
 
     String getContentType();
