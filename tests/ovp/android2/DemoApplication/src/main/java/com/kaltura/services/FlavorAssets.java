@@ -20,6 +20,7 @@ import com.kaltura.client.types.FlavorAssetFilter;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.utils.ApiHelper;
 
 /**
@@ -36,7 +37,7 @@ public class FlavorAssets {
      * @return
      * @throws APIException
      */
-    public static void listAllFlavorsFromContext(String TAG, String entryId, String flavorTags, OnCompletion<EntryContextDataResult> onCompletion) throws APIException {
+    public static void listAllFlavorsFromContext(String TAG, String entryId, String flavorTags, OnCompletion<Response<EntryContextDataResult>> onCompletion) throws APIException {
         EntryContextDataParams params = new EntryContextDataParams();
         params.setFlavorTags(flavorTags);
         RequestBuilder<EntryContextDataResult> requestBuilder = BaseEntryService.getContextData(entryId, params)

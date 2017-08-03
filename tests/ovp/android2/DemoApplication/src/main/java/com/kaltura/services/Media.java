@@ -18,6 +18,7 @@ import com.kaltura.client.types.MediaEntryFilter;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.utils.ApiHelper;
 
 /**
@@ -36,7 +37,7 @@ public class Media {
      *
      * @throws APIException
      */
-    public static void listAllEntriesByIdCategories(final String TAG, MediaEntryFilter filter, int pageIndex, int pageSize, final OnCompletion<List<MediaEntry>> onCompletion) {
+    public static void listAllEntriesByIdCategories(final String TAG, MediaEntryFilter filter, int pageIndex, int pageSize, final OnCompletion<Response<List<MediaEntry>>> onCompletion) {
         // create a new pager to choose how many and which entries should be recieved
         // out of the filtered entries - not mandatory
         FilterPager pager = new FilterPager();
@@ -45,18 +46,18 @@ public class Media {
 
         // execute the list action of the mediaService object to recieve the list of entries
         RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list(filter, pager)
-        .setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+        .setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
             @Override
-            public void onComplete(ListResponse<MediaEntry> listResponse, APIException error) {
-                if(error == null && listResponse != null) {
+            public void onComplete(Response<ListResponse<MediaEntry>> response) {
+                if(response.isSuccess()) {
                     // loop through all entries in the reponse list and print their id.
                     Log.w(TAG, "Entries list :");
                     int i = 0;
-                    for (MediaEntry entry : listResponse.getObjects()) {
+                    for (MediaEntry entry : response.results.getObjects()) {
                         Log.w(TAG, ++i + " id:" + entry.getId() + " name:" + entry.getName() + " type:" + entry.getType() + " dataURL: " + entry.getDataUrl());
                     }
                 }
-                onCompletion.onComplete(listResponse.getObjects(), error);
+                onCompletion.onComplete(new Response<List<MediaEntry>>(response.results.getObjects(), response.error));
             }
         });
         ApiHelper.execute(requestBuilder);
@@ -72,14 +73,15 @@ public class Media {
      *
      * @throws APIException
      */
-    public static void getEntrybyId(final String TAG, String entryId, final OnCompletion<MediaEntry> onCompletion) {
+    public static void getEntrybyId(final String TAG, String entryId, final OnCompletion<Response<MediaEntry>> onCompletion) {
         RequestBuilder<MediaEntry> requestBuilder = MediaService.get(entryId)
-        .setCompletion(new OnCompletion<MediaEntry>() {
+        .setCompletion(new OnCompletion<Response<MediaEntry>>() {
             @Override
-            public void onComplete(MediaEntry entry, APIException error) {
+            public void onComplete(Response<MediaEntry> response) {
+                MediaEntry entry = response.results;
                 Log.w(TAG, "Entry:");
                 Log.w(TAG, " id:" + entry.getId() + " name:" + entry.getName() + " type:" + entry.getType() + " categories: " + entry.getCategories());
-                onCompletion.onComplete(entry, error);
+                onCompletion.onComplete(response);
             }
         });
         ApiHelper.execute(requestBuilder);
@@ -98,7 +100,7 @@ public class Media {
      *
      *
      */
-    public static void addEmptyEntry(final String TAG, String category, String name, String description, String tag, final OnCompletion<MediaEntry> onCompletion) {
+    public static void addEmptyEntry(final String TAG, String category, String name, String description, String tag, final OnCompletion<Response<MediaEntry>> onCompletion) {
 
         Log.w(TAG, "\nCreating an empty  Entry (without actual media binary attached)...");
 
@@ -110,17 +112,17 @@ public class Media {
         entry.setTags(tag);
 
         RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
-        .setCompletion(new OnCompletion<MediaEntry>() {
+        .setCompletion(new OnCompletion<Response<MediaEntry>>() {
             @Override
-            public void onComplete(MediaEntry newEntry, APIException e) {
-            if(e != null) {
-                e.printStackTrace();
-                Log.w(TAG, "err: " + e.getMessage());
+            public void onComplete(Response<MediaEntry> response) {
+            if(!response.isSuccess()) {
+                response.error.printStackTrace();
+                Log.w(TAG, "err: " + response.error.getMessage());
             }
-            else if(newEntry != null) {
-                Log.w(TAG, "\nThe id of our new Video Entry is: " + newEntry.getId());
+            else {
+                Log.w(TAG, "\nThe id of our new Video Entry is: " + response.results.getId());
             }
-            onCompletion.onComplete(newEntry, e);
+            onCompletion.onComplete(response);
             }
         });
         ApiHelper.execute(requestBuilder);

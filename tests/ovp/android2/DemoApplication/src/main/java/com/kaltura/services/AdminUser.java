@@ -10,6 +10,7 @@ import com.kaltura.client.Configuration;
 import com.kaltura.client.services.UserService;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.utils.ApiHelper;
 //</editor-fold>
 
@@ -46,13 +47,13 @@ public class AdminUser {
                 final Client client = ApiHelper.getClient();
 
                 RequestBuilder<String> requestBuilder = UserService.loginByLoginId(email, password)
-                .setCompletion(new OnCompletion<String>() {
+                .setCompletion(new OnCompletion<Response<String>>() {
                     @Override
-                    public void onComplete(String ks, final APIException e) {
-                        if(ks != null) {
-                            Log.w(TAG, ks);
+                    public void onComplete(final Response<String> response) {
+                        if(response.isSuccess()) {
+                            Log.w(TAG, response.results);
                             // set the kaltura client to use the recieved ks as default for all future operations
-                            client.setSessionId(ks);
+                            client.setSessionId(response.results);
                             userIsLogin = true;
                             handler.post(new Runnable() {
 
@@ -62,15 +63,15 @@ public class AdminUser {
                                 }
                             });
                         }
-                        else if(e != null) {
-                            e.printStackTrace();
-                            Log.w(TAG, "Login error: " + e.getMessage() + " error code: " + e.getCode());
+                        else {
+                            response.error.printStackTrace();
+                            Log.w(TAG, "Login error: " + response.error.getMessage() + " error code: " + response.error.getCode());
                             userIsLogin = false;
                             handler.post(new Runnable() {
 
                                 @Override
                                 public void run() {
-                                    loginTaskListener.onLoginError(e.getMessage());
+                                    loginTaskListener.onLoginError(response.error.getMessage());
                                 }
                             });
                         }
