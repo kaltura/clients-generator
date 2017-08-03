@@ -14,8 +14,8 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* BaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* BaseTest.swift */; };
-		C28D3A971F33252B001D2A03 /* MultiRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A951F33252B001D2A03 /* MultiRequestTest.swift */; };
-		C28D3A981F33252B001D2A03 /* PrimitivesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A961F33252B001D2A03 /* PrimitivesTest.swift */; };
+		C28D3A991F332878001D2A03 /* MultiRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A951F33252B001D2A03 /* MultiRequestTest.swift */; };
+		C28D3A9A1F332880001D2A03 /* PrimitivesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A961F33252B001D2A03 /* PrimitivesTest.swift */; };
 		C8AE6144724D6F607DA92C18 /* Pods_KalturaClient_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7C1EFC72FAE951883B0985 /* Pods_KalturaClient_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -371,8 +371,6 @@
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
-				C28D3A971F33252B001D2A03 /* MultiRequestTest.swift in Sources */,
-				C28D3A981F33252B001D2A03 /* PrimitivesTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,6 +379,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* BaseTest.swift in Sources */,
+				C28D3A9A1F332880001D2A03 /* PrimitivesTest.swift in Sources */,
+				C28D3A991F332878001D2A03 /* MultiRequestTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
