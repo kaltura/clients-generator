@@ -39,6 +39,7 @@ internal class JSONParser{
     
     private static var kalturaRegex:NSRegularExpression?
     
+    // handling reflection:
     private static func getKalturaRegex() -> NSRegularExpression? {
         if kalturaRegex == nil {
             do{
@@ -62,6 +63,9 @@ internal class JSONParser{
         return nil
     }
     
+    //MARK -- parse methods:
+    
+    // parse array of objects
     public static func parse<T>(array: [Any]) throws -> [T] where T: ObjectBase {
         var ret: [T] = []
         for item in array {
@@ -69,7 +73,17 @@ internal class JSONParser{
         }
         return ret
     }
+
+    // I think this is useless
+    public static func parse<T>(array: [Any], type: Array<ObjectBase>.Type) throws -> T? {
+        var ret = type.init()
+        for item in array {
+            ret.append(try parse(object: item as! [String: Any]))
+        }
+        return ret as? T
+    }
     
+    // parse map of objects
     public static func parse<T>(map: [String: Any]) throws -> [String: T] where T: ObjectBase {
         var ret: [String: T] = [:]
         
@@ -79,10 +93,12 @@ internal class JSONParser{
         return ret
     }
     
+    // parse dictinoary of object
     public static func parse<T>(object: [String: Any]) throws -> T where T: ObjectBase {
         return try parse(object: object, type: T.self)
     }
     
+    // parse response 
     public static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
         
         var classType: ObjectBase.Type = type
@@ -115,6 +131,8 @@ internal class JSONParser{
         }
     }
     
+
+    
     public static func parse(primitive: Any) throws -> Any? {
         if let str = primitive as? String {
             return str
@@ -140,12 +158,37 @@ internal class JSONParser{
         throw ApiClientException(message: "Type not found", code: ApiClientException.ErrorCode.typeNotFound)
     }
     
+    
+    
+    public static func parse<T>(array: JSON) throws -> [T]? {
+        if let dict = array.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
+            throw try parse(object: dict) as ApiException
+        }
+        
+        if array.dictionaryObject != nil {
+            if let result = array["result"].isEmpty == false {
+                return try parse(array: array["result"])
+            }
+            else if array["error"].isEmpty == false {
+                return try parse(array: array["error"])
+            }else{
+                throw ApiClientException(message: "JSON is not valid object", code: ApiClientException.ErrorCode.invalidJsonObject)
+            }
+        }
+        else if let array = array.arrayObject {
+            return try parse(array: array) as? [T]
+        }
+        else{
+            throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
+        }
+        
+        
+    }
     public static func parse<T>(json: JSON) throws -> T? {
         
         if let dict = json.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
         }
-        
         if let type: ObjectBase.Type = T.self as? ObjectBase.Type {
             if let dict = json.dictionaryObject {
                 return try parse(object: dict, type: type) as? T
@@ -154,7 +197,7 @@ internal class JSONParser{
                 throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
             }
         }
-        else {
+        else{
            return try self.parse(primitive: json.object) as? T
         }
     }

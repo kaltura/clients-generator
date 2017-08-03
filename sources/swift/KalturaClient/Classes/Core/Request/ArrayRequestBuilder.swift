@@ -34,5 +34,27 @@
  */
 
 public class ArrayRequestBuilder<T>: RequestBuilder<Array<T>> {
+ 
+    
+    public override func parse(_ response: Response) -> (data:Any?,exception: ApiException?)  {
+        
+        var result: [T]? = nil
+        var exception: ApiException? = nil
+        
+        if response.error == nil {
+            do{
+                result = try JSONParser.parse(array: response.data!)
+            }
+            catch let error {
+                exception = error as? ApiException
+            }
+        }
+        else {
+            exception = response.error
+        }
+        
+        
+        return (result, exception)
+    }
     
 }
