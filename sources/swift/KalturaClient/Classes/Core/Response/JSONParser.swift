@@ -166,7 +166,7 @@ internal class JSONParser{
         }
         
         if array.dictionaryObject != nil {
-            if let result = array["result"].isEmpty == false {
+            if array["result"].isEmpty == false {
                 return try parse(array: array["result"])
             }
             else if array["error"].isEmpty == false {
