@@ -43,7 +43,7 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
     var requests = [RequestBuilderProtocol]()
     
     @discardableResult
-    public func add(request: RequestBuilderProtocol) -> Self  {
+    public override func add(request: RequestBuilderProtocol) -> Self  {
         self.requests.append(request)
         return self
     }

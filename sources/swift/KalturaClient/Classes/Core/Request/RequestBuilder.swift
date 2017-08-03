@@ -26,7 +26,12 @@
 // @ignore
 // ===================================================================================================
 
-import UIKit
+/**
+ * This class was generated using exec.php
+ * against an XML schema provided by Kaltura.
+ *
+ * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
+ */
 
 
 public protocol RequestBuilderProtocol {
@@ -70,6 +75,7 @@ public protocol RequestBuilderProtocol {
 }
 
 public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol {
+    public var files: [String: RequestFile] = [:]
     
     public lazy var requestId: String = {
         return UUID().uuidString
@@ -132,6 +138,15 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
         
         self.headers![headerKey]  = headerValue
         return self
+    }
+    
+    public func add(request: RequestBuilderProtocol) -> MultiRequestBuilder {
+        
+        let multiRequestBuilder = MultiRequestBuilder()
+        multiRequestBuilder.add(request: self)
+        multiRequestBuilder.add(request: request)
+        
+        return multiRequestBuilder
     }
     
     @discardableResult
