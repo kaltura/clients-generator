@@ -40,6 +40,7 @@ class BaseTest: QuickSpec {
                             expect(createdEntry).notTo(beNil())
                             expect(createdEntry?.id).notTo(beNil())
                             
+                            expect(createdEntry?.images?.last?.id).notTo(beNil())
                             if createdEntry != nil {
                                 print(createdEntry!)
                             }

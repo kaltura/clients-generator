@@ -115,34 +115,35 @@ internal class JSONParser{
         }
     }
     
+    public static func parse(primitive: Any) throws -> Any? {
+        if let str = primitive as? String {
+            return str
+        }else if let int = primitive as? Int {
+            return int
+        }else if let bool = primitive as? Bool {
+            return bool
+        }else if let double = primitive as? Double {
+            return double
+        }
+        else if primitive is Void {
+            return nil
+        }
+        else if let dict = primitive as? [String: Any]{
+            if let result = dict["result"] {
+                return try self.parse(primitive: result)
+            }
+            else if let error = dict["error"] as? [String: Any] {
+                throw try parse(object: error) as ApiException
+            }
+        }
+        
+        throw ApiClientException(message: "Type not found", code: ApiClientException.ErrorCode.typeNotFound)
+    }
+    
     public static func parse<T>(json: JSON) throws -> T? {
         
         if let dict = json.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
-        }
-        
-        if let _ = T.self as? String.Type {
-            return json.string as? T
-        }
-        
-        if let _ = T.self as? Int.Type {
-            return json.int as? T
-        }
-        
-        if let _ = T.self as? Int64.Type {
-            return json.int64 as? T
-        }
-        
-        if let _ = T.self as? Bool.Type {
-            return json.bool as? T
-        }
-        
-        if let _ = T.self as? Double.Type {
-            return json.double as? T
-        }
-        
-        if let _ = T.self as? Void.Type {
-            return nil
         }
         
         if let type: ObjectBase.Type = T.self as? ObjectBase.Type {
@@ -154,7 +155,7 @@ internal class JSONParser{
             }
         }
         else {
-            throw ApiClientException(message: "Type \(T.self) is not ObjectBase", code: ApiClientException.ErrorCode.typeNotFound)
+           return try self.parse(primitive: json.object) as? T
         }
     }
 }
