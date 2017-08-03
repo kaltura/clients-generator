@@ -154,8 +154,11 @@ internal class JSONParser{
                 throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
             }
         }
+        else if let _ = T.self as? Void.Type {
+            return nil
+        }
         else {
-           return try self.parse(primitive: json.object) as? T
+            return try self.parse(primitive: json.object) as? T
         }
     }
 }
