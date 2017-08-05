@@ -37,6 +37,7 @@
 public protocol RequestBuilderProtocol {
         
     var params: [String: Any] { get set }
+    var files: [String: RequestFile] { get set }
     var requestId: String { get set }
     var method: RequestMethod? { get set }
     var headers: [String:String]? { get set }
@@ -71,6 +72,8 @@ public protocol RequestBuilderProtocol {
     func onComplete(_ response: Response) -> Void
     
     func parse(_ response: Response) -> (data:Any?,exception: ApiException?)
+    
+    func complete(data:Any?, exception: ApiException?)
     
 }
 
@@ -203,13 +206,16 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
         
         let parsedResult = self.parse(response)
         
+        complete(data: parsedResult.data, exception: parsedResult.exception)
+    }
+    
+    public func complete(data:Any?, exception: ApiException?)  {
         if let block = completion {
-            block(parsedResult.data as? T, parsedResult.exception)
+            block(data as? T, exception)
         }
     }
     
-    
-    public func parse(_ response: Response) -> (data:Any?,exception: ApiException?)  {
+    public func parse(_ response: Response) -> (data:Any?, exception: ApiException?)  {
         
         var result: T? = nil
         var exception: ApiException? = nil

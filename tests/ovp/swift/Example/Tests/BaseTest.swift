@@ -39,8 +39,8 @@ import KalturaClient
 
 class BaseTest: QuickSpec {
     var client: Client?
-    var secret: String = "ed0b955841a5ec218611c4869256aaa4"
-    var partnerId: Int = 1676801
+    var secret: String = "@ADMIN_SECRET@"
+    var partnerId: Int = @PARTNER_ID@
     static var uniqueTag: String = uniqueString()
     
     public var executor: RequestExecutor = USRExecutor.shared
