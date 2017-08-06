@@ -81,12 +81,7 @@ class MultirequestTest: BaseTest {
             it("login") {
                 waitUntil(timeout: 500) { done in
                     
-                    let entry = MediaEntry()
-                    entry.name = "Multirequest login Test - \(BaseTest.uniqueTag)"
-                    entry.mediaType = MediaType.IMAGE
-                    entry.referenceId = BaseTest.uniqueTag
-                    
-                    let entryRequestBuilder = MediaService.add(entry: entry);
+                    let entryRequestBuilder = MediaService.list();
                     entryRequestBuilder.ks = "{2:result}"
                     
                     let requestBuilder = SystemService.ping()
@@ -104,11 +99,8 @@ class MultirequestTest: BaseTest {
                             expect(ping) == true
                             
                             // 2
-                            let createdEntry = response?[2] as? MediaEntry
-                            expect(createdEntry?.id).notTo(beNil())
-                            expect(createdEntry?.status) == EntryStatus.NO_CONTENT
-                            
-                            self.entryIds.append((createdEntry?.id)!)
+                            let entryList = response?[2] as? MediaListResponse
+                            expect(entryList?.totalCount).notTo(beNil())
                             
                             done()
                         })
