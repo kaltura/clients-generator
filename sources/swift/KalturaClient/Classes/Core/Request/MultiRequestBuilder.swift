@@ -56,9 +56,13 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
     override public func build(_ client: Client) -> Request {
         
         for (index, request)  in self.requests.enumerated() {
+            let indexKey = String(index+1)
             request.setBody(key: "action", value: request.action)
             request.setBody(key: "service", value: request.service)
-            setBody(key: String(index+1), value: request.params)
+            setBody(key: indexKey, value: request.params)
+            for (key, requestFile) in request.files {
+                setFile(key: "\(indexKey):\(key)", value: requestFile)
+            }
         }
         
         return super.build(client)
@@ -67,13 +71,19 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
     public override func onComplete(_ response: Response) -> Void {
 
         // calling on complete of each request
-        let allResponse = response.data?["result"].array
+        var allResponse: [JSON] = []
+        if let result = response.data?["result"], let responses = result.array {
+            allResponse = responses
+        }
+        else if let responses = response.data?.array{
+            allResponse = responses
+        }
         var allParsedResponse = [Any]()
         for (index, request) in self.requests.enumerated() {
-            let singelResponse = allResponse?[index]
+            let singelResponse = allResponse[index]
             let response = Response(data: singelResponse, error: response.error)
-            request.onComplete(response)
             let parsed = request.parse(response)
+            request.complete(data: parsed.data, exception: parsed.exception)
             allParsedResponse.append(parsed.data ?? parsed.exception ?? ApiException())
         }
         
@@ -109,7 +119,7 @@ extension Dictionary where Key == String {
             var jsonObjectString: String? = nil
             if ( JSONSerialization.isValidJSONObject(jsonObject)){
                 do {
-                    let jsonData = try JSONSerialization.data(withJSONObject: jsonObject, options: JSONSerialization.WritingOptions.prettyPrinted)
+                    let jsonData = try JSONSerialization.data(withJSONObject: jsonObject)
                     jsonObjectString = String(data: jsonData, encoding: String.Encoding.utf8)
                 }catch{
                     

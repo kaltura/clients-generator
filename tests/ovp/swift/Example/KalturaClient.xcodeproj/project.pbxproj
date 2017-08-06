@@ -14,6 +14,7 @@
 		00114E7F1F2F823E00671FAF /* ExceptionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E7E1F2F823E00671FAF /* ExceptionsTest.swift */; };
 		00114E811F2F866600671FAF /* PluginsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E801F2F866600671FAF /* PluginsTest.swift */; };
 		00114E831F308D0000671FAF /* ResponseProfileTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E821F308D0000671FAF /* ResponseProfileTest.swift */; };
+		00114E881F331E8400671FAF /* MultirequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00114E871F331E8400671FAF /* MultirequestTest.swift */; };
 		11ED30FC12B8F925214FA63E /* Pods_KalturaClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A828660A1AF9647D2ABD0F59 /* Pods_KalturaClient_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -41,6 +42,7 @@
 		00114E7E1F2F823E00671FAF /* ExceptionsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExceptionsTest.swift; sourceTree = "<group>"; };
 		00114E801F2F866600671FAF /* PluginsTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PluginsTest.swift; sourceTree = "<group>"; };
 		00114E821F308D0000671FAF /* ResponseProfileTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResponseProfileTest.swift; sourceTree = "<group>"; };
+		00114E871F331E8400671FAF /* MultirequestTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultirequestTest.swift; sourceTree = "<group>"; };
 		001416C11F1F892700CD4112 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		25D0496082CD170A6C7D9E66 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		5B71B816BD0CFFB43D1C5C16 /* Pods-KalturaClient_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KalturaClient_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KalturaClient_Tests/Pods-KalturaClient_Tests.release.xcconfig"; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 				00114E7E1F2F823E00671FAF /* ExceptionsTest.swift */,
 				00114E801F2F866600671FAF /* PluginsTest.swift */,
 				00114E821F308D0000671FAF /* ResponseProfileTest.swift */,
+				00114E871F331E8400671FAF /* MultirequestTest.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
 			path = Tests;
@@ -394,6 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00114E831F308D0000671FAF /* ResponseProfileTest.swift in Sources */,
+				00114E881F331E8400671FAF /* MultirequestTest.swift in Sources */,
 				00114E6B1F28C02500671FAF /* MediaServiceTest.swift in Sources */,
 				00114E7F1F2F823E00671FAF /* ExceptionsTest.swift in Sources */,
 				00114E7D1F2F7FB000671FAF /* PrimitiveResponsesTest.swift in Sources */,
