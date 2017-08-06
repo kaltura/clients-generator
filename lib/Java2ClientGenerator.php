@@ -257,12 +257,10 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		// Generate to params method
 		$this->generateToParamsMethod($classNode);
 		$this->appendLine("");
-		
-		// close class
-		$this->appendLine("}");
-		$this->appendLine();
-		
-		$package = "package com.kaltura.client.types;\n\n";
+
+        $this->finalizeClass($imports, $classNode);
+
+        $package = "package com.kaltura.client.types;\n\n";
 		sort($imports);
 		$imports = implode("\n", array_unique($imports));
 		$this->addFile($file, $package . $imports . "\n" . $this->getTextBlock());
@@ -333,10 +331,14 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		foreach($arrImportsEnums as $import) 
 			$imports[] = "import com.kaltura.client.enums.$import;";
 		
-		if($needsArrayList)
-			$imports[] = "import java.util.List;";
-		if($needsHashMap)
-			$imports[] = "import java.util.Map;";
+		if($needsArrayList) {
+            $imports[] = "import java.util.List;";
+            $imports[] = "import java.util.ArrayList;";
+        }
+		if($needsHashMap) {
+            $imports[] = "import java.util.Map;";
+            $imports[] = "import java.util.HashMap;";
+        }
 	}
 	
 	public function generateToParamsMethod($classNode) 
@@ -1288,4 +1290,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			return $this->getObjectType($propType, $enforceObject);
 		}
 	}
+
+    public function finalizeClass(array &$imports, $classNode)
+    {
+        // close class
+        $this->appendLine("}");
+        $this->appendLine();
+    }
 }
