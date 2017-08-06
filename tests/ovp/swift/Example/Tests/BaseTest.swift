@@ -39,8 +39,9 @@ import KalturaClient
 
 class BaseTest: QuickSpec {
     var client: Client?
-    var secret: String = "@ADMIN_SECRET@"
-    var partnerId: Int = @PARTNER_ID@
+    var secret: String? = BaseTest.getConfig(key: "secret") as? String
+    var partnerId: Int? = BaseTest.getConfig(key: "partnerId") as? Int
+    static var config: NSDictionary? = nil
     static var uniqueTag: String = uniqueString()
     
     public var executor: RequestExecutor = USRExecutor.shared
@@ -50,9 +51,25 @@ class BaseTest: QuickSpec {
         return uuid.substring(to: uuid.index(uuid.startIndex, offsetBy: 8))
     }
     
+    private static func getConfig(key: String) -> Any? {
+        
+        if config == nil {
+            let testBundle = Bundle(for: BaseTest.self)
+            if let filePath = testBundle.path(forResource: "Info", ofType: "plist") {
+                config = NSDictionary(contentsOfFile: filePath)
+            }
+        }
+
+        if let dict = config, let value = dict[key] {
+            return value
+        }
+        
+        return nil
+    }
+    
     func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder:RequestBuilder<String> = SessionService.start(secret: self.secret, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
+        let requestBuilder:RequestBuilder<String> = SessionService.start(secret: self.secret!, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
         
         requestBuilder.set(completion: {(ks: String?, error: ApiException?) in
             

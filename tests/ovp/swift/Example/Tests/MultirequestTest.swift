@@ -90,7 +90,7 @@ class MultirequestTest: BaseTest {
                     entryRequestBuilder.ks = "{2:result}"
                     
                     let requestBuilder = SystemService.ping()
-                        .add(request: SessionService.start(secret: self.secret, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId))
+                        .add(request: SessionService.start(secret: self.secret!, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId))
                         .add(request: entryRequestBuilder)
                         .set(completion: {(response: Array<Any?>?, error: ApiException?) in
                             
