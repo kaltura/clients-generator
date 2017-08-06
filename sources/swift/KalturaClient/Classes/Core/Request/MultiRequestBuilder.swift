@@ -37,7 +37,7 @@ import SwiftyJSON
 
 
 
-public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
+public class MultiRequestBuilder: ArrayRequestBuilder<Any?> {
     
     
     var requests = [RequestBuilderProtocol]()
@@ -78,13 +78,13 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any> {
         else if let responses = response.data?.array{
             allResponse = responses
         }
-        var allParsedResponse = [Any]()
+        var allParsedResponse = [Any?]()
         for (index, request) in self.requests.enumerated() {
             let singelResponse = allResponse[index]
             let response = Response(data: singelResponse, error: response.error)
             let parsed = request.parse(response)
             request.complete(data: parsed.data, exception: parsed.exception)
-            allParsedResponse.append(parsed.data ?? parsed.exception ?? ApiException())
+            allParsedResponse.append(parsed.exception ?? parsed.data ?? nil)
         }
         
         if let block = completion {

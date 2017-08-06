@@ -74,8 +74,9 @@ class BaseTest: QuickSpec {
         executor.send(request: requestBuilder.build(client!))
     }
     
-    func createMediaEntry(created: @escaping (_ createdEntry: MediaEntry?, _ error: ApiException?) -> Void) {
+    func createMediaEntry(prefix: String, created: @escaping (_ createdEntry: MediaEntry?, _ error: ApiException?) -> Void) {
         let entry: MediaEntry = MediaEntry()
+        entry.name = "\(prefix) - \(BaseTest.uniqueTag)"
         entry.mediaType = MediaType.VIDEO
         entry.tags = BaseTest.uniqueTag
         
@@ -88,10 +89,10 @@ class BaseTest: QuickSpec {
         executor.send(request: requestBuilder.build(client!))
     }
     
-    func createMediaEntries(count: Int, created: @escaping (_ createdEntries: [MediaEntry]) -> Void) {
+    func createMediaEntries(prefix: String, count: Int, created: @escaping (_ createdEntries: [MediaEntry]) -> Void) {
         var entries: [MediaEntry] = []
         for _ in 1...count {
-            self.createMediaEntry() { entry, error in
+            self.createMediaEntry(prefix: prefix) { entry, error in
                 entries.append(entry!)
                 if entries.count == count {
                     created(entries)

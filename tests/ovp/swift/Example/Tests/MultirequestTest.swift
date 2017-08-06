@@ -77,27 +77,38 @@ class MultirequestTest: BaseTest {
                 fail("\(error)")
                 return
             }
-
+            
             it("login") {
                 waitUntil(timeout: 500) { done in
                     
                     let entry = MediaEntry()
-                    entry.name = "Test - \(BaseTest.uniqueTag)"
+                    entry.name = "Multirequest login Test - \(BaseTest.uniqueTag)"
                     entry.mediaType = MediaType.IMAGE
                     entry.referenceId = BaseTest.uniqueTag
                     
                     let entryRequestBuilder = MediaService.add(entry: entry);
                     entryRequestBuilder.ks = "{2:result}"
-
+                    
                     let requestBuilder = SystemService.ping()
                         .add(request: SessionService.start(secret: self.secret, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId))
                         .add(request: entryRequestBuilder)
-                        .set(completion: {(response: Array<Any>?, error: ApiException?) in
+                        .set(completion: {(response: Array<Any?>?, error: ApiException?) in
                             
                             expect(error).to(beNil())
                             
                             expect(response).notTo(beNil())
                             expect(response?.count) == 3
+                            
+                            // 0
+                            let ping = response?[0] as? Bool
+                            expect(ping) == true
+                            
+                            // 2
+                            let createdEntry = response?[2] as? MediaEntry
+                            expect(createdEntry?.id).notTo(beNil())
+                            expect(createdEntry?.status) == EntryStatus.NO_CONTENT
+                            
+                            self.entryIds.append((createdEntry?.id)!)
                             
                             done()
                         })
@@ -111,7 +122,7 @@ class MultirequestTest: BaseTest {
                         expect(error).to(beNil())
                         
                         let entry = MediaEntry()
-                        entry.name = "Test - \(BaseTest.uniqueTag)"
+                        entry.name = "Multirequest upload Test - \(BaseTest.uniqueTag)"
                         entry.mediaType = MediaType.IMAGE
                         entry.referenceId = BaseTest.uniqueTag
                         
@@ -129,7 +140,7 @@ class MultirequestTest: BaseTest {
                             .add(request:UploadTokenService.add(uploadToken: uploadToken))
                             .add(request:MediaService.addContent(entryId: "{2:result:id}", resource: resource))
                             .add(request:UploadTokenService.upload(uploadTokenId: "{3:result:id}", fileData: fileElement!, resume: false))
-                            .set(completion: {(response: Array<Any>?, error: ApiException?) in
+                            .set(completion: {(response: Array<Any?>?, error: ApiException?) in
                                 
                                 expect(error).to(beNil())
                                 
@@ -139,7 +150,7 @@ class MultirequestTest: BaseTest {
                                 // 0
                                 let ping = response?[0] as? Bool
                                 expect(ping) == true
-
+                                
                                 // 1
                                 let createdEntry = response?[1] as? MediaEntry
                                 expect(createdEntry?.id).notTo(beNil())
@@ -159,13 +170,99 @@ class MultirequestTest: BaseTest {
                                 // 4
                                 let closedToken = response?[4] as? UploadToken
                                 expect(closedToken?.status) == UploadTokenStatus.CLOSED
-                                                                
+                                
                                 done()
                             })
                         self.executor.send(request: requestBuilder.build(self.client!))
                     }
                 }
-             }
+            }
+            
+            
+            it("multi completions") {
+                waitUntil(timeout: 500) { done in
+                    self.login() { error in
+                        expect(error).to(beNil())
+                        
+                        let entry = MediaEntry()
+                        entry.name = "Multirequest completions Test - \(BaseTest.uniqueTag)"
+                        entry.mediaType = MediaType.IMAGE
+                        entry.referenceId = BaseTest.uniqueTag
+                        
+                        let uploadToken = UploadToken()
+                        uploadToken.fileName = fileElement?.name
+                        uploadToken.fileSize = fileSize
+                        
+                        // 4. Add Content (Object : String, Object)
+                        let resource = UploadedFileTokenResource()
+                        resource.token = "{3:result:id}"
+                        
+                        var completions = 0
+                        
+                        let pingRequestBuilder = SystemService.ping()
+                            .set(completion: { (ping: Bool?, error: ApiException?) in
+                                expect(error).to(beNil())
+                                expect(ping) == true
+                                completions += 1
+                            })
+                        
+                        let mediaAddRequestBuilder = MediaService.add(entry: entry)
+                            .set(completion: { (createdEntry: MediaEntry?, error: ApiException?) in
+                                expect(error).to(beNil())
+                                expect(createdEntry?.id).notTo(beNil())
+                                expect(createdEntry?.status) == EntryStatus.NO_CONTENT
+                                
+                                self.entryIds.append((createdEntry?.id)!)
+                                
+                                completions += 1
+                            })
+                        
+                        let uploadTokenAddRequestBuilder = UploadTokenService.add(uploadToken: uploadToken)
+                            .set(completion: { (token: UploadToken?, error: ApiException?) in
+                                expect(error).to(beNil())
+                                
+                                expect(token?.id).notTo(beNil())
+                                expect(token?.status) == UploadTokenStatus.PENDING
+                                
+                                completions += 1
+                            })
+                        
+                        let mediaAddContentRequestBuilder = MediaService.addContent(entryId: "{2:result:id}", resource: resource)
+                            .set(completion: { (contentEntry: MediaEntry?, error: ApiException?) in
+                                expect(error).to(beNil())
+                                
+                                expect(contentEntry?.status) == EntryStatus.IMPORT
+                                
+                                completions += 1
+                            })
+                        
+                        let uploadTokenUploadRequestBuilder = UploadTokenService.upload(uploadTokenId: "{3:result:id}", fileData: fileElement!, resume: false)
+                            .set(completion: { (closedToken: UploadToken?, error: ApiException?) in
+                                expect(error).to(beNil())
+                                
+                                expect(closedToken?.status) == UploadTokenStatus.CLOSED
+                                
+                                completions += 1
+                            })
+                        
+                        let requestBuilder = pingRequestBuilder
+                            .add(request:mediaAddRequestBuilder)
+                            .add(request:uploadTokenAddRequestBuilder)
+                            .add(request:mediaAddContentRequestBuilder)
+                            .add(request:uploadTokenUploadRequestBuilder)
+                            .set(completion: {(response: Array<Any?>?, error: ApiException?) in
+                                
+                                expect(error).to(beNil())
+                                
+                                expect(response).notTo(beNil())
+                                expect(response?.count) == completions
+                                
+                                done()
+                            })
+                        self.executor.send(request: requestBuilder.build(self.client!))
+                    }
+                }
+            }
         }
     }
 }

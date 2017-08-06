@@ -124,7 +124,7 @@ class MediaServiceTest: BaseTest {
                 let name: String = UUID().uuidString
                 
                 waitUntil(timeout: 500) { done in
-                    self.createMediaEntry() { entry, error in
+                    self.createMediaEntry(prefix: "Media Update Test") { entry, error in
                         expect(error).to(beNil())
                         
                         expect(entry).notTo(beNil())
@@ -155,7 +155,7 @@ class MediaServiceTest: BaseTest {
             it("get") {
                 
                 waitUntil(timeout: 500) { done in
-                    self.createMediaEntry() { entry, error in
+                    self.createMediaEntry(prefix: "Media Get Test") { entry, error in
                         expect(error).to(beNil())
                         
                         expect(entry).notTo(beNil())
@@ -206,7 +206,7 @@ class MediaServiceTest: BaseTest {
                 filter.statusIn = EntryStatus.NO_CONTENT.rawValue
                 
                 waitUntil(timeout: 500) { done in
-                    self.createMediaEntries(count: count) { createdEntries in
+                    self.createMediaEntries(prefix: "Media List Test", count: count) { createdEntries in
                     
                         let mediaListRequestBuilder:RequestBuilder<MediaListResponse> = MediaService.list(filter: filter)
                         mediaListRequestBuilder.set(completion: {(list: MediaListResponse?, error: ApiException?) in
@@ -218,6 +218,8 @@ class MediaServiceTest: BaseTest {
                             expect(list?.totalCount) == count
                             
                             for entry in createdEntries {
+                                self.entryIds.append(entry.id!)
+                                
                                 if let _ = (list?.objects)!.index(where: { $0.id == entry.id }) {
                                     // OK
                                 }
@@ -240,7 +242,7 @@ class MediaServiceTest: BaseTest {
         var createdEntry: MediaEntry?
         var createdUploadToken: UploadToken?
         
-        self.createMediaEntry() { entry, error in
+        self.createMediaEntry(prefix: "Media Upload Test") { entry, error in
             expect(error).to(beNil())
             
             createdEntry = entry

@@ -57,7 +57,7 @@ class PluginsTest: BaseTest {
             it("add profile") {
                 let metadataProfile = MetadataProfile()
                 metadataProfile.metadataObjectType = MetadataObjectType.ENTRY
-                metadataProfile.name = "Test - \(BaseTest.uniqueTag)"
+                metadataProfile.name = "Plugins Test - \(BaseTest.uniqueTag)"
                 
                 waitUntil(timeout: 500) { done in
                     let requestBuilder:RequestBuilder<MetadataProfile> = MetadataProfileService.add(metadataProfile: metadataProfile, xsdData: "<xml></xml>")

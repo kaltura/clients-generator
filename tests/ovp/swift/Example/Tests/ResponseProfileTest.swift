@@ -110,16 +110,16 @@ class ResponseProfileTest: BaseTest {
 
                 let entry = MediaEntry()
                 entry.mediaType = MediaType.VIDEO
-                entry.name = "Test - \(BaseTest.uniqueTag)"
+                entry.name = "Response-Profile Test - \(BaseTest.uniqueTag)"
                 let entryRequest = MediaService.add(entry: entry)
                 
                 let category = Category()
-                category.name = "Test - \(BaseTest.uniqueTag)"
+                category.name = "Response-Profile Test - \(BaseTest.uniqueTag)"
                 let categoryRequest = CategoryService.add(category: category)
                 
                 let categoryMetadataProfile = MetadataProfile()
                 categoryMetadataProfile.metadataObjectType = MetadataObjectType.CATEGORY
-                categoryMetadataProfile.name = "Test - \(BaseTest.uniqueTag)"
+                categoryMetadataProfile.name = "Response-Profile Test - \(BaseTest.uniqueTag)"
                 let categoryMetadataProfileRequest = MetadataProfileService.add(metadataProfile: categoryMetadataProfile, xsdData: xsd)
                 
                 let metadataMapping = ResponseProfileMapping();
@@ -233,7 +233,23 @@ class ResponseProfileTest: BaseTest {
                                                 expect(getMetadata?.id) == createdMetadata!.id
                                                 expect(getMetadata?.xml) == xml
 
-                                                done()
+                                                let requestBuilder = MediaService.delete(entryId: (createdEntry?.id)!)
+                                                    .add(request: CategoryService.delete(id: (createdCategory?.id)!))
+                                                    .add(request: MetadataProfileService.delete(id: (createdMetadataProfile?.id)!))
+                                                    .add(request: ResponseProfileService.delete(id: (createdResponseProfile?.id)!))
+                                                    .set(completion: { (response: Array<Any?>?, error:  ApiException?) in
+                                                        expect(error).to(beNil())
+                                                        
+                                                        expect(response).notTo(beNil())
+                                                        expect(response?.count) == 4
+                                                        
+                                                        for item in response! {
+                                                            expect(item).to(beNil())
+                                                        }
+                                                        
+                                                        done()
+                                                    })
+                                                self.executor.send(request: requestBuilder.build(self.client!))
                                             })
                                             self.executor.send(request: getEntryRequest.build(self.client!))
                                         })
