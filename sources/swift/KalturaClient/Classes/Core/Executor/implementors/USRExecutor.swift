@@ -53,7 +53,7 @@ import SwiftyJSON
         var request: URLRequest = URLRequest(url: r.url)
         
         let jsonString: String = String(bytes: r.dataBody!, encoding: String.Encoding.utf8)!
-        print("Request [\(r.requestId)] url: \(r.url) JSON: \(jsonString)")
+        logger.debug("Request [\(r.requestId)] url: \(r.url) JSON: \(jsonString)")
         
         //handle http method
         if let method = r.method {
@@ -110,7 +110,13 @@ import SwiftyJSON
                 
                 if let d = data {
                     let jsonString: String = String(bytes: d, encoding: String.Encoding.utf8)!
-                    print("Response [\(r.requestId)] JSON: \(jsonString)")
+                    
+                    
+                    var logMessage = "Response [\(r.requestId)] \nJSON: \n\(jsonString) \n"
+                    if let httpUrlResponse = response as? HTTPURLResponse {
+                        logMessage.append("Headers: \n\(httpUrlResponse.allHeaderFields) \n")
+                    }
+                    logger.debug(logMessage)
 
                     do {
                         let json:JSON = try JSONParser.parse(data: d)
