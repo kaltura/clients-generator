@@ -459,6 +459,13 @@ abstract class ClientGeneratorFromXml
 		if (is_dir($directory)){
 		    $dir = dir($directory);
 		}
+		
+		if(!$dir)
+		{
+			KalturaLog::err("Fail to open directory: $directory");
+			return;
+		}
+		
 		//                                                         
 		$sourceFilesPaths = array();
 		while (get_class($dir)==='Directory' && (false !== $entry = $dir->read())) 

@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<!-- -->
+<!-- Maven POM file for packaging and testing the -->
+<!-- KalturaApiClient Java library. -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- Define the GAV coordinate for the project -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.kaltura</groupId>
+    <artifactId>KalturaApiClient</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>jar</packaging>
+    <properties>
+        <java.version>1.7</java.version>
+    </properties>
+
+    <!-- Project description -->
+    <name>Kaltura API Java Client Library</name>
+    <description>
+        KalturaApiClient is a library of Java classes that can be used to interact
+        with the Kaltura REST API. More information about the REST API can be
+        found at http://corp.kaltura.com/Products/Kaltura-API Many of the Java classes
+        in this library are auto-generated from a schema that defines the objects that
+        are used to interact with the API. The current schema can be found at
+        http://www.kaltura.com/api_v3/api_schema.php
+        This library replaces the deprecated KalturaClient library.
+    </description>
+    <url>http://github.com/kaltura/KalturaGeneratedAPIClientsJava</url>
+
+    <!-- Define the license under which this software can be used. -->
+    <licenses>
+        <license>
+            <name>GNU Affero General Public License, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/agpl-3.0.html</url>
+            <distribution>repo</distribution>
+            <comments/>
+        </license>
+    </licenses>
+
+    <!-- Developers who contribute to this software. -->
+    <developers>
+        <developer>
+            <name>Jess Portnoy</name>
+            <email>jess.portnoy@kaltura.com</email>
+            <organization>Kaltura</organization>
+            <organizationUrl>http://www.kaltura.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Tehila Rozin</name>
+            <email>Tehila.Rozin@kaltura.com</email>
+            <organization>Kaltura</organization>
+            <organizationUrl>http://www.kaltura.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Johnathan Amit-Kanarek</name>
+            <email>Jonathan.Kanarek@kaltura.com</email>
+            <organization>Kaltura</organization>
+            <organizationUrl>http://www.kaltura.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsJava.git</connection>
+        <developerConnection>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsJava.git</developerConnection>
+        <url>scm:git:git@github.com:kaltura/KalturaGeneratedAPIClientsJava.git</url>
+    </scm>
+
+    <!-- Libraries on which the KalturaClient depends -->
+    <dependencies>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20090211</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.7</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.15</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- JUnit for testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>4.7</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+         
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>

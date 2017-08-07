@@ -223,12 +223,32 @@ KalturaRequestBuilder.prototype.doHttpRequest = function(client){
 	client.log('URL: ' + url);
 	client.log('Request JSON: ' + JSON.stringify(json));
 	
+	var data;
+	var processData;
+	var contentType;
+	
+	if(this.files) {
+		processData = false;
+		contentType = false;
+		data = new FormData();
+		data.append("json", JSON.stringify(json));
+		for(var paramName in this.files) {
+			data.append(paramName, this.files[paramName].files[0]);
+		}
+	}
+	else {
+		processData = true;
+		contentType = 'application/json';
+		data = JSON.stringify(json);
+	}
+	
 	$.ajax({
 	    type: 'POST',
 	    url: url,
 	    crossDomain: true,
-	    data: JSON.stringify(json),
-	    contentType: 'application/json',
+	    data: data,
+	    processData: processData,
+	    contentType: contentType,
 	    dataType: 'json',
 	    success: function(json, textStatus, jqXHR) {
 	    	client.log('Response JSON: ' + JSON.stringify(json));

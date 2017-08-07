@@ -4,7 +4,7 @@ The code in this repo is used to auto generate the Kaltura client libraries for 
 [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 
 ## Deployment Instructions
-The list of supported clients is [here] (https://github.com/kaltura/clients-generator/blob/Kajam-11.18.0/config/generator.all.ini)
+The list of supported clients is [here](https://github.com/kaltura/clients-generator/blob/Lynx-12.19.0/config/generator.all.ini)
 
 Download the API scheme XML from http://www.kaltura.com/api_v3/api_schema.php.
 

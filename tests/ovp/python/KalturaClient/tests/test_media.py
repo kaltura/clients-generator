@@ -1,8 +1,11 @@
+from __future__ import absolute_import
+
 import unittest
 
-from utils import GetConfig
-from utils import KalturaBaseTest
-from utils import getTestFile
+import six
+
+from .utils import KalturaBaseTest
+from .utils import getTestFile
 
 from KalturaClient.Plugins.Core import KalturaMediaListResponse
 from KalturaClient.Plugins.Core import KalturaMediaEntry, KalturaMediaType
@@ -30,7 +33,7 @@ class MediaTests(KalturaBaseTest):
                      
         mediaEntry = self.client.media.addFromUploadedFile(mediaEntry, uploadTokenId)
         
-        self.assertIsInstance(mediaEntry.getId(), unicode)
+        self.assertIsInstance(mediaEntry.getId(), six.text_type)
         
         #cleanup
         self.client.media.delete(mediaEntry.id)
@@ -38,7 +41,7 @@ class MediaTests(KalturaBaseTest):
 class Utf8_tests(KalturaBaseTest):
     
     def test_utf8_name(self):
-        test_unicode = u'\u03dd\xf5\xf6'  #an odd representation of the word 'FOO'
+        test_unicode = six.u('\u03dd\xf5\xf6')  #an odd representation of the word 'FOO'
         mediaEntry = KalturaMediaEntry()
         mediaEntry.setName(u'pytest.MediaTests.test_UTF8_name'+test_unicode)
         mediaEntry.setMediaType(KalturaMediaType(KalturaMediaType.VIDEO))

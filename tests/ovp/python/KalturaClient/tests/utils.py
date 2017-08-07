@@ -1,6 +1,7 @@
 import os, sys, inspect
 import unittest
-import ConfigParser
+
+from six.moves import configparser
 
 from KalturaClient import KalturaClient, KalturaConfiguration
 from KalturaClient.Base import KalturaObjectFactory, KalturaEnumsFactory
@@ -11,7 +12,7 @@ from KalturaClient.Plugins.Core import KalturaSessionType
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, 'config.ini')
 
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 config.read(filename)
 PARTNER_ID = config.getint("Test", "partnerId")
 SERVICE_URL = config.get("Test", "serviceUrl")
@@ -35,7 +36,7 @@ def GetConfig():
 
 def getTestFile(filename, mode='rb'):
     testFileDir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    return file(testFileDir+'/'+filename, mode)
+    return open(testFileDir+'/'+filename, mode)
     
     
 
