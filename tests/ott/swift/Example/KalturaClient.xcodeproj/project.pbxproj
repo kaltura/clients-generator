@@ -17,6 +17,8 @@
 		C28D3A991F332878001D2A03 /* MultiRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A951F33252B001D2A03 /* MultiRequestTest.swift */; };
 		C28D3A9A1F332880001D2A03 /* PrimitivesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A961F33252B001D2A03 /* PrimitivesTest.swift */; };
 		C28D3A9C1F33293D001D2A03 /* ArrayTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3A9B1F33293D001D2A03 /* ArrayTest.swift */; };
+		C28D3AD81F38ACB0001D2A03 /* MultiRequestWithArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3AD71F38ACB0001D2A03 /* MultiRequestWithArray.swift */; };
+		C28D3ADA1F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift in Sources */ = {isa = PBXBuildFile; fileRef = C28D3AD91F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift */; };
 		C8AE6144724D6F607DA92C18 /* Pods_KalturaClient_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7C1EFC72FAE951883B0985 /* Pods_KalturaClient_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +55,8 @@
 		C28D3A951F33252B001D2A03 /* MultiRequestTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiRequestTest.swift; sourceTree = "<group>"; };
 		C28D3A961F33252B001D2A03 /* PrimitivesTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrimitivesTest.swift; sourceTree = "<group>"; };
 		C28D3A9B1F33293D001D2A03 /* ArrayTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayTest.swift; sourceTree = "<group>"; };
+		C28D3AD71F38ACB0001D2A03 /* MultiRequestWithArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiRequestWithArray.swift; sourceTree = "<group>"; };
+		C28D3AD91F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiRequestWithPrimitives.swift; sourceTree = "<group>"; };
 		C4D209549F925E3CB611747F /* Pods-KalturaClient_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KalturaClient_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KalturaClient_Example/Pods-KalturaClient_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -132,6 +136,8 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C28D3AD91F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift */,
+				C28D3AD71F38ACB0001D2A03 /* MultiRequestWithArray.swift */,
 				C28D3A9B1F33293D001D2A03 /* ArrayTest.swift */,
 				C28D3A951F33252B001D2A03 /* MultiRequestTest.swift */,
 				C28D3A961F33252B001D2A03 /* PrimitivesTest.swift */,
@@ -382,8 +388,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* BaseTest.swift in Sources */,
+				C28D3AD81F38ACB0001D2A03 /* MultiRequestWithArray.swift in Sources */,
 				C28D3A9C1F33293D001D2A03 /* ArrayTest.swift in Sources */,
 				C28D3A9A1F332880001D2A03 /* PrimitivesTest.swift in Sources */,
+				C28D3ADA1F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift in Sources */,
 				C28D3A991F332878001D2A03 /* MultiRequestTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
