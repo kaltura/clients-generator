@@ -283,34 +283,33 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				continue;
 			}
 
-			$propName = $propertyNode->getAttribute("name");
+			$propName = $this->replaceParamReservedWords($propertyNode->getAttribute("name"));
 			$propType = $propertyNode->getAttribute("type");
-			$functionName = ucfirst($propName);
 			
 			$this->appendLine("		");
 			
 			if($this->isSimpleType($propType)) {
-				$this->appendLine("		public String get{$functionName}(){");
+				$this->appendLine("		public String $propName(){");
 				$this->appendLine("			return tokenize(\"$propName\");");
 			}
 			elseif ($propType == 'array') {
 				$arrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-				$this->appendLine("		public ObjectBase.ListMultiRequestTokens<$arrayType.MultiRequestTokens> get{$functionName}(){");
+				$this->appendLine("		public ObjectBase.ListMultiRequestTokens<$arrayType.MultiRequestTokens> $propName(){");
 				$this->appendLine("			return new ObjectBase.ListMultiRequestTokens<$arrayType.MultiRequestTokens>(prefix + \":$propName\", $arrayType.class);");
 			}
 			elseif ($propType == 'map') {
 				$arrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-				$this->appendLine("		public ObjectBase.MapMultiRequestTokens<$arrayType.MultiRequestTokens> get{$functionName}(){");
+				$this->appendLine("		public ObjectBase.MapMultiRequestTokens<$arrayType.MultiRequestTokens> $propName(){");
 				$this->appendLine("			return new ObjectBase.MapMultiRequestTokens<$arrayType.MultiRequestTokens>(prefix + \":$propName\", $arrayType.class);");
 			}
 			elseif (preg_match('/ListResponse$/', $propType)) {
 				$arrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-				$this->appendLine("		public ListResponse.MultiRequestTokens<$arrayType.MultiRequestTokens> get{$functionName}(){");
+				$this->appendLine("		public ListResponse.MultiRequestTokens<$arrayType.MultiRequestTokens> $propName(){");
 				$this->appendLine("			return new ListResponse.MultiRequestTokens<$arrayType.MultiRequestTokens>(prefix + \":$propName\", $arrayType.class);");
 			}
 			else {
 				$propType = $this->getJavaTypeName($propType);
-				$this->appendLine("		public $propType.MultiRequestTokens get{$functionName}(){");
+				$this->appendLine("		public $propType.MultiRequestTokens $propName(){");
 				$this->appendLine("			return new $propType.MultiRequestTokens(prefix + \":$propName\");");
 			}
 			$this->appendLine("		}");
@@ -366,6 +365,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			$arrFunctions[] = "	public void set{$functionName}($javaType $propName){";
 			$arrFunctions[] = "		this.$propName = $propName;";
 			$arrFunctions[] = "	}\n";
+			if($this->isSimpleType($propType)) {
+				$arrFunctions[] = "	public void $propName(String multirequestToken){";
+				$arrFunctions[] = "		setToken(\"$propName\", multirequestToken);";
+				$arrFunctions[] = "	}\n";
+			}
 			
 			$propertyLine = "private $javaType $propName";
 			
@@ -766,6 +770,21 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			else {
 				$this->appendLine("			return new $tokenizer(index + \":result\");");
 			}
+			$this->appendLine("		}");
+		}
+
+		foreach($paramNodes as $paramNode)
+		{
+			$paramType = $paramNode->getAttribute("type");
+			$paramName = $paramNode->getAttribute("name");
+			
+			if(!$this->isSimpleType($paramType)) {
+				continue;
+			}
+
+			$this->appendLine("		");
+			$this->appendLine("		public void $paramName(String multirequestToken) {");
+			$this->appendLine("			params.add(\"$paramName\", multirequestToken);");
 			$this->appendLine("		}");
 		}
 		$this->appendLine("	}");
@@ -1196,6 +1215,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		switch($name)
 		{
 		case "params":
+		case "notify":
 			return "{$name}_";
 		default:
 			return $name;

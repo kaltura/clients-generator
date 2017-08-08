@@ -110,7 +110,8 @@ public class ObjectBase implements Serializable, ResponseType {
 			return super.get("" + index, parentType, returnType);
 		}
 	}
-	
+
+	private Params params = null;
 
     @SuppressWarnings("rawtypes")
 	protected Map<String, ListResponse> relatedObjects;
@@ -135,8 +136,18 @@ public class ObjectBase implements Serializable, ResponseType {
         relatedObjects = GsonParser.parseMap(jsonObject.getAsJsonObject("relatedObjects"), ListResponse.class);
     }
     
+	public void setToken(String key, String token) {
+		if(params == null) {
+			params = new Params();
+		}
+		params.add(key, token);
+    }
+    
 	public Params toParams() {
-		return new Params();
+		if(params == null) {
+			params = new Params();
+		}
+		return params;
 	}
     
 	protected static MultiRequestTokens getMultiRequestTokens(String prefix) {
