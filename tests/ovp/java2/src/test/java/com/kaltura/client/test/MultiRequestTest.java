@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.BaseEntry;
+import com.kaltura.client.types.DrmPlaybackPluginData;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
@@ -44,6 +45,9 @@ import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.MediaType;
 import com.kaltura.client.enums.UploadTokenStatus;
+import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.FlavorAssetService;
+import com.kaltura.client.services.LiveStreamService;
 import com.kaltura.client.services.MediaService;
 import com.kaltura.client.services.PlaylistService;
 import com.kaltura.client.services.SystemService;
@@ -373,5 +377,29 @@ public class MultiRequestTest extends BaseTest{
 		});
 		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
+	}
+	
+	public void testTokens() throws Exception {
+
+		SystemService.PingAction systemPingRequestBuilder = SystemService.ping();
+		MediaService.GetAction mediaGetRequestBuilder = MediaService.get("whatever");
+		FlavorAssetService.GetByEntryIdAction flavorAssetGetByEntryIdRequestBuilder = FlavorAssetService.getByEntryId("whatever");
+		FlavorAssetService.GetFlavorAssetsWithParamsAction flavorAssetGetFlavorAssetsWithParamsRequestBuilder = FlavorAssetService.getFlavorAssetsWithParams("whatever");
+		LiveStreamService.GetAction liveStreamGetRequestBuilder = LiveStreamService.get("whatever");
+		BaseEntryService.GetContextDataAction baseEntryGetContextDataRequestBuilder = BaseEntryService.getContextData("whatever", null);
+		
+		systemPingRequestBuilder
+		.add(mediaGetRequestBuilder)
+		.add(flavorAssetGetByEntryIdRequestBuilder)
+		.add(flavorAssetGetFlavorAssetsWithParamsRequestBuilder)
+		.add(liveStreamGetRequestBuilder)
+		.add(baseEntryGetContextDataRequestBuilder);
+
+		assertEquals("{1:result}", systemPingRequestBuilder.getTokenizer());
+		assertEquals("{2:result:id}", mediaGetRequestBuilder.getTokenizer().getId());
+		assertEquals("{3:result:1:id}", flavorAssetGetByEntryIdRequestBuilder.getTokenizer().get(1).getId());
+		assertEquals("{4:result:0:flavorAsset:id}", flavorAssetGetFlavorAssetsWithParamsRequestBuilder.getTokenizer().get(0).getFlavorAsset().getId());
+		assertEquals("{5:result:streams:0:language}", liveStreamGetRequestBuilder.getTokenizer().getStreams().get(0).getLanguage());
+		assertEquals("{6:result:pluginData:myKey:scheme}", baseEntryGetContextDataRequestBuilder.getTokenizer().getPluginData().get("myKey", DrmPlaybackPluginData.class, DrmPlaybackPluginData.MultiRequestTokens.class).getScheme());
 	}
 }
