@@ -38,31 +38,26 @@ const querystring = require("querystring");
 const kaltura = require('./KalturaRequestData');
 
 
-if (typeof Object.prototype.clone !== 'function') {
-	Object.prototype.clone = function() {
-		return JSON.parse(JSON.stringify(this));
-    };
+function cloneObject(src) {
+	return JSON.parse(JSON.stringify(src));
 }
 
-if (typeof Object.prototype.copyFrom !== 'function') {
-	Object.prototype.copyFrom = function(src) {
+function copyObject(src, dest) {
 		for(let key in src) {
 			switch(typeof(src[key])) {
 				case 'function':
 					break;
 
 				case 'object':
-					this[key] = src[key].clone();
+				dest[key] = cloneObject(src[key]);
 					break;
 
 				default:
-					this[key] = src[key];
+				dest[key] = src[key];
 					break;
 			}
 		}
-    };
 }
-
 
 /**
  * Sorts an array by key, maintaining key to data correlations. This is useful
@@ -362,7 +357,7 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 
 	getData(sign) {
 		this.data.format = ClientBase.FORMAT_JSON;
-		this.data.copyFrom(this.requestData);
+		copyObject(this.requestData, this.data);
 
 		if (sign) {
 			this.sign();
@@ -372,7 +367,7 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 	}
 
 	execute(client, callback) {
-		this.requestData.copyFrom(client.requestData);
+		copyObject(client.requestData, this.requestData);
 
 		if (callback) {
 			this.completion(callback);
@@ -473,7 +468,7 @@ class MultiRequestBuilder extends RequestBuilder {
 			this.data[i].action = this.requests[i].action;
 		}
 
-		this.data.copyFrom(this.requestData);
+		copyObject(this.requestData, this.data);
 
 		this.sign();
 		return this.data;
@@ -525,7 +520,7 @@ class BaseObject {
 
 	constructor(object) {
 		if(object) {
-			this.copyFrom(object);
+			copyObject(this, object);
 		}
 	}
 }
