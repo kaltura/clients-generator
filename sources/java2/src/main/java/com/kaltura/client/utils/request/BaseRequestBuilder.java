@@ -33,33 +33,12 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
      */
     protected OnCompletion<Response<T>> onCompletion;
 
-    protected BaseRequestBuilder(){
-        super(new Params());
-    }
-
-    protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
-    	super(params);
-    	this.type = type;
-        this.files = files;
-    }
-
-    protected BaseRequestBuilder(Class<T> type, Params params) {
-    	this(type, params, null);
-    }
-    
     protected BaseRequestBuilder(Class<T> type) {
-    	this(type, new Params());
+    	super();
+    	this.type = type;
     }
 
-    protected BaseRequestBuilder(Params params, Files files) {
-    	this(null, params, files);
-    }
-
-    protected BaseRequestBuilder(Params params) {
-    	this(null, params);
-    }
-
-    public abstract String getUrlTail();
+    protected abstract String getUrlTail();
 
     public abstract String getTag();
 
@@ -82,7 +61,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         return id;
     }
 
-	public Params getParams() {
+	protected Params getParams() {
         return params;
     }
 	

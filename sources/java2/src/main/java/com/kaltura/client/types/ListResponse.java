@@ -45,6 +45,24 @@ import com.kaltura.client.utils.GsonParser;
 @SuppressWarnings("serial")
 public class ListResponse<T> extends ObjectBase {
 
+	
+	public static class MultiRequestTokens<T extends ObjectBase.MultiRequestTokens> extends ObjectBase.MultiRequestTokens {
+		private Class<? extends ObjectBase> type;
+		
+		public MultiRequestTokens(String prefix, Class<? extends ObjectBase> type) {
+			super(prefix);
+			this.type = type;
+		}
+		
+		public String getTotalCount() {
+			return prefix + ":totalCount";
+		}
+		
+		public ObjectBase.ListMultiRequestTokens<T> getObjects() {
+			return new ObjectBase.ListMultiRequestTokens<T>(prefix + ":objects", type);
+		}
+	}
+	
     private int totalCount = Integer.MIN_VALUE;
     private List<T> objects;
 

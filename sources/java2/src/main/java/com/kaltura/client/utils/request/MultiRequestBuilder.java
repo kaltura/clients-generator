@@ -30,7 +30,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
 
     public MultiRequestBuilder() {
-        super();
+        super(null);
     }
 
     /**
@@ -195,7 +195,8 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
         return MULTIREQUEST_ACTION;
     }
 
-    private RequestBuilder getRequestAt(int index) throws IndexOutOfBoundsException{
+    @SuppressWarnings("rawtypes")
+	private RequestBuilder getRequestAt(int index) throws IndexOutOfBoundsException{
         Object[] requestsKeys = requests.keySet().toArray();
         return requests.get(requestsKeys[index]);
     }
