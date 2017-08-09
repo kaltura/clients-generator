@@ -758,17 +758,17 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			$this->appendLine("		");
 			$this->appendLine("		@Override");
 			$this->appendLine("		public $tokenizer getTokenizer() throws APIException {");
-			$this->appendLine("			if(index == null) {");
+			$this->appendLine("			if(id == null) {");
 			$this->appendLine("				throw new APIException(APIException.FailureStep.OnRequest, \"Request is not part of multi-request\");");
 			$this->appendLine("			}");
 			if($tokenizer == 'String') {
-				$this->appendLine("			return String.format(\"{%d:result}\", index);");
+				$this->appendLine("			return String.format(\"{%d:result}\", id);");
 			}
 			else if($isGeneric) {
-				$this->appendLine("			return new $tokenizer(index + \":result\", $fallbackClass.class);");
+				$this->appendLine("			return new $tokenizer(id + \":result\", $fallbackClass.class);");
 			}
 			else {
-				$this->appendLine("			return new $tokenizer(index + \":result\");");
+				$this->appendLine("			return new $tokenizer(id + \":result\");");
 			}
 			$this->appendLine("		}");
 		}

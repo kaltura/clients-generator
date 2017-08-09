@@ -12,8 +12,6 @@ import com.kaltura.client.utils.response.base.Response;
 
 public abstract class RequestBuilder<T> extends BaseRequestBuilder<T> {
 
-	protected Integer index = null;
-	
     String service;
     String action;
 
@@ -62,11 +60,6 @@ public abstract class RequestBuilder<T> extends BaseRequestBuilder<T> {
 
     protected RequestBuilder<T> setId(String id) {
         this.id = id;
-        return this;
-    }
-
-    protected RequestBuilder<T> setIndex(int index) {
-        this.index = index;
         return this;
     }
 

@@ -396,10 +396,10 @@ public class MultiRequestTest extends BaseTest{
 		.add(baseEntryGetContextDataRequestBuilder);
 
 		assertEquals("{1:result}", systemPingRequestBuilder.getTokenizer());
-		assertEquals("{2:result:id}", mediaGetRequestBuilder.getTokenizer().getId());
-		assertEquals("{3:result:1:id}", flavorAssetGetByEntryIdRequestBuilder.getTokenizer().get(1).getId());
-		assertEquals("{4:result:0:flavorAsset:id}", flavorAssetGetFlavorAssetsWithParamsRequestBuilder.getTokenizer().get(0).getFlavorAsset().getId());
-		assertEquals("{5:result:streams:0:language}", liveStreamGetRequestBuilder.getTokenizer().getStreams().get(0).getLanguage());
-		assertEquals("{6:result:pluginData:myKey:scheme}", baseEntryGetContextDataRequestBuilder.getTokenizer().getPluginData().get("myKey", DrmPlaybackPluginData.class, DrmPlaybackPluginData.MultiRequestTokens.class).getScheme());
+		assertEquals("{2:result:id}", mediaGetRequestBuilder.getTokenizer().id());
+		assertEquals("{3:result:1:id}", flavorAssetGetByEntryIdRequestBuilder.getTokenizer().get(1).id());
+		assertEquals("{4:result:0:flavorAsset:id}", flavorAssetGetFlavorAssetsWithParamsRequestBuilder.getTokenizer().get(0).flavorAsset().id());
+		assertEquals("{5:result:streams:0:language}", liveStreamGetRequestBuilder.getTokenizer().streams().get(0).language());
+		assertEquals("{6:result:pluginData:myKey:scheme}", baseEntryGetContextDataRequestBuilder.getTokenizer().pluginData().get("myKey", DrmPlaybackPluginData.class, DrmPlaybackPluginData.MultiRequestTokens.class).scheme());
 	}
 }
