@@ -520,7 +520,7 @@ class BaseObject {
 
 	constructor(object) {
 		if(object) {
-			copyObject(this, object);
+			copyObject(object, this);
 		}
 	}
 }
