@@ -78,7 +78,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
         	files.add(reqId, request.files);
         }
         requests.put(reqId, request);
-        request.setId(reqId).setIndex(requests.size());
+        request.setId(reqId);
 
         return this;
     }
