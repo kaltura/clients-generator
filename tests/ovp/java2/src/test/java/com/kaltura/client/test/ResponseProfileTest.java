@@ -53,7 +53,9 @@ import com.kaltura.client.types.MetadataProfile;
 import com.kaltura.client.types.ResponseProfile;
 import com.kaltura.client.types.ResponseProfileHolder;
 import com.kaltura.client.types.ResponseProfileMapping;
+import com.kaltura.client.utils.request.LinkedRequest;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
+import com.kaltura.client.utils.request.Request;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
@@ -118,9 +120,9 @@ public class ResponseProfileTest extends BaseTest{
 		final String xml = "<metadata><Choice>on</Choice><FreeText>example text: " + getName() + "</FreeText></metadata>";
 
 		
-		RequestBuilder<MediaEntry> entryRequest = createEntry();
-		RequestBuilder<Category> categoryRequest = createCategory();
-		RequestBuilder<MetadataProfile> categoryMetadataProfileRequest = createMetadataProfile(MetadataObjectType.CATEGORY, xsd);
+		Request<MediaEntry, MediaEntry.Tokenizer> entryRequest = createEntry();
+		Request<Category, com.kaltura.client.types.Category.Tokenizer> categoryRequest = createCategory();
+		Request<MetadataProfile, com.kaltura.client.types.MetadataProfile.Tokenizer> categoryMetadataProfileRequest = createMetadataProfile(MetadataObjectType.CATEGORY, xsd);
 
 		MetadataFilter metadataFilter = new MetadataFilter();
 		metadataFilter.setMetadataObjectTypeEqual(MetadataObjectType.CATEGORY);
@@ -164,17 +166,17 @@ public class ResponseProfileTest extends BaseTest{
 		responseProfile.setSystemName(responseProfile.getName());
 		responseProfile.setRelatedProfiles(entryRelatedProfiles);
 		
-		RequestBuilder<ResponseProfile> responseProfileRequest = ResponseProfileService.add(responseProfile);
+		Request<ResponseProfile, com.kaltura.client.types.ResponseProfile.Tokenizer> responseProfileRequest = ResponseProfileService.add(responseProfile);
 
 		CategoryEntry categoryEntry = new CategoryEntry();
 		categoryEntry.setEntryId("{1:result:id}");
 //				categoryEntry.setCategoryId("{2:result:id}");
 		
-		RequestBuilder<CategoryEntry> categoryEntryRequest = CategoryEntryService.add(categoryEntry);
+		Request<CategoryEntry, com.kaltura.client.types.CategoryEntry.Tokenizer> categoryEntryRequest = CategoryEntryService.add(categoryEntry);
 
-		RequestBuilder<Metadata> metadataRequest = MetadataService.add(Integer.MIN_VALUE, MetadataObjectType.CATEGORY, "{2:result:id}", xml);
+		Request<Metadata, Metadata.Tokenizer> metadataRequest = MetadataService.add(Integer.MIN_VALUE, MetadataObjectType.CATEGORY, "{2:result:id}", xml);
 
-		RequestBuilder<MediaEntry> getEntryRequest = MediaService.get("{1:result:id}");
+		Request<MediaEntry, MediaEntry.Tokenizer> getEntryRequest = MediaService.get("{1:result:id}");
 
 		ResponseProfileHolder responseProfileHolder = new ResponseProfileHolder();
 //				responseProfileHolder.setId("{4:result:id}");
@@ -313,9 +315,9 @@ public class ResponseProfileTest extends BaseTest{
 		final String xml = "<metadata><Choice>on</Choice><FreeText>example text: " + getName() + "</FreeText></metadata>";
 
 		
-		MediaService.AddAction entryRequest = createEntry();
-		CategoryService.AddAction categoryRequest = createCategory();
-		MetadataProfileService.AddAction categoryMetadataProfileRequest = createMetadataProfile(MetadataObjectType.CATEGORY, xsd);
+		Request<MediaEntry, MediaEntry.Tokenizer> entryRequest = createEntry();
+		Request<Category, Category.Tokenizer> categoryRequest = createCategory();
+		Request<MetadataProfile, MetadataProfile.Tokenizer> categoryMetadataProfileRequest = createMetadataProfile(MetadataObjectType.CATEGORY, xsd);
 
 		MultiRequestBuilder multiRequestBuilder = new MultiRequestBuilder(entryRequest, categoryRequest, categoryMetadataProfileRequest);
 		
@@ -361,29 +363,27 @@ public class ResponseProfileTest extends BaseTest{
 		responseProfile.setSystemName(responseProfile.getName());
 		responseProfile.setRelatedProfiles(entryRelatedProfiles);
 		
-		ResponseProfileService.AddAction responseProfileRequest = ResponseProfileService.add(responseProfile);
+		Request<ResponseProfile, ResponseProfile.Tokenizer> responseProfileRequest = ResponseProfileService.add(responseProfile);
 		multiRequestBuilder.add(responseProfileRequest);
 
 		CategoryEntry categoryEntry = new CategoryEntry();
 		categoryEntry.setEntryId(entryRequest.getTokenizer().id());
 		categoryEntry.categoryId(categoryRequest.getTokenizer().id());
 		
-		RequestBuilder<CategoryEntry> categoryEntryRequest = CategoryEntryService.add(categoryEntry);
+		Request<CategoryEntry, CategoryEntry.Tokenizer> categoryEntryRequest = CategoryEntryService.add(categoryEntry);
 		multiRequestBuilder.add(categoryEntryRequest);
 
-		MetadataService.AddAction metadataRequest = MetadataService.add(Integer.MIN_VALUE, MetadataObjectType.CATEGORY, "{2:result:id}", xml);
-		metadataRequest.metadataProfileId(categoryMetadataProfileRequest.getTokenizer().id());
+		LinkedRequest<Metadata, MetadataService.AddActionArguments, Metadata.Tokenizer> metadataRequest = MetadataService.add(Integer.MIN_VALUE, MetadataObjectType.CATEGORY, "{2:result:id}", xml);
+		metadataRequest.link(MetadataService.AddActionArguments.metadataProfileId, categoryMetadataProfileRequest.getTokenizer().id());
 		multiRequestBuilder.add(metadataRequest);
 
-		RequestBuilder<MediaEntry> getEntryRequest = MediaService.get(entryRequest.getTokenizer().id());
+		Request<MediaEntry, MediaEntry.Tokenizer> getEntryRequest = MediaService.get(entryRequest.getTokenizer().id());
 		multiRequestBuilder.add(getEntryRequest);
 
 		ResponseProfileHolder responseProfileHolder = new ResponseProfileHolder();
 		responseProfileHolder.id(responseProfileRequest.getTokenizer().id());
 
 		getEntryRequest.setResponseProfile(responseProfileHolder);
-		
-		multiRequestBuilder.link(responseProfileRequest, getEntryRequest, "id", "responseProfile.id");
 		
 		multiRequestBuilder.setCompletion(new OnCompletion<Response<List<Object>>>() {
 			
@@ -453,7 +453,7 @@ public class ResponseProfileTest extends BaseTest{
 		doneSignal.await();
 	}
 	
-	protected MetadataProfileService.AddAction createMetadataProfile(MetadataObjectType objectType, String xsdData) {
+	protected Request<MetadataProfile, MetadataProfile.Tokenizer> createMetadataProfile(MetadataObjectType objectType, String xsdData) {
 		MetadataProfile metadataProfile = new MetadataProfile();
 		metadataProfile.setMetadataObjectType(objectType);
 		metadataProfile.setName("mp" + System.currentTimeMillis());
@@ -461,7 +461,7 @@ public class ResponseProfileTest extends BaseTest{
 		return MetadataProfileService.add(metadataProfile, xsdData);
 	}
 
-	protected RequestBuilder<CategoryEntry> addEntryToCategory(String entryId, int categoryId) throws Exception {
+	protected Request<CategoryEntry, CategoryEntry.Tokenizer> addEntryToCategory(String entryId, int categoryId) throws Exception {
 		CategoryEntry categoryEntry = new CategoryEntry();
 		categoryEntry.setEntryId(entryId);
 		categoryEntry.setCategoryId(categoryId);
@@ -469,14 +469,14 @@ public class ResponseProfileTest extends BaseTest{
 		return CategoryEntryService.add(categoryEntry);
 	}
 
-	protected MediaService.AddAction createEntry() {
+	protected Request<MediaEntry, MediaEntry.Tokenizer> createEntry() {
 		MediaEntry entry = new MediaEntry();
 		entry.setMediaType(MediaType.VIDEO);
 		
 		return MediaService.add(entry);
 	}
 
-	protected CategoryService.AddAction createCategory() {
+	protected Request<Category, Category.Tokenizer> createCategory() {
 		Category category = new Category();
 		category.setName("c" + System.currentTimeMillis());
 		

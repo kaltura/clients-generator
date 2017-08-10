@@ -2,11 +2,17 @@ package com.kaltura.client.utils.request;
 
 import com.kaltura.client.Files;
 import com.kaltura.client.Logger;
+import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
+import static java.lang.annotation.ElementType.TYPE;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,19 +31,24 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * will be used in case a completion was not provided on the multirequest itself
      * and the completion for each inner request should be activated
      */
-    private LinkedHashMap<String, RequestBuilder<?>> requests = new LinkedHashMap<>();
+    private LinkedHashMap<String, Request<?, ?>> requests = new LinkedHashMap<>();
     private int lastId = 0;
 
+    @Target(value={TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface Tokenizer {
+        Class<?> value();
+    }
 
     public MultiRequestBuilder() {
-        super(null);
+        super(null, new Params(), null);
     }
 
     /**
      * constructs instance and fill it with requests
      * @param requests
      */
-    public MultiRequestBuilder(RequestBuilder<?>... requests) {
+    public MultiRequestBuilder(Request<?, ?>... requests) {
         this();
         add(requests);
     }
@@ -47,25 +58,20 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
         return this;
     }
 
-    public MultiRequestBuilder setId(String id) {
-        this.id = id;
-        return this;
-    }
-
     /**
      * adds 1 or more single request to be activated as part of the multrequest
      * @param requests
      * @return
      */
-    public MultiRequestBuilder add(RequestBuilder<?>... requests) {
-        for (RequestBuilder<?> request : requests) {
+    public MultiRequestBuilder add(Request<?, ?>... requests) {
+        for (Request<?, ?> request : requests) {
         	add(request);
         }
 
         return this;
     }
 
-    public MultiRequestBuilder add(RequestBuilder<?> request) {
+    public MultiRequestBuilder add(Request<?, ?> request) {
         lastId++;
         String reqId = lastId + "";
         request.params.add("service", request.service);
@@ -90,7 +96,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      */
     public MultiRequestBuilder add(MultiRequestBuilder multiRequestBuilder) {
         for (String reqId : multiRequestBuilder.requests.keySet()) {
-            RequestBuilder<?> request = multiRequestBuilder.requests.get(reqId);
+        	Request<?, ?> request = multiRequestBuilder.requests.get(reqId);
             int last = requests.size() + 1;
             requests.put(last + "", request);
             params.add(last + "", request.params);
@@ -108,7 +114,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
             int index = 0;
 
-            for(RequestBuilder<?> request : requests.values()) {
+            for(Request<?, ?> request : requests.values()) {
                 if(request.onCompletion != null) {
                     if (topError != null) {
                         request.onComplete(new Response(null, topError));
@@ -134,7 +140,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     @Override
     protected Object parse(String response) throws APIException {
         List<Class<?>> list = new ArrayList<Class<?>>();
-        for(RequestBuilder<?> call : requests.values()) {
+        for(Request<?, ?> call : requests.values()) {
             list.add(call.getType());
         }
     	return GsonParser.parseArray(response, list.toArray(new Class[requests.size()]));
@@ -182,7 +188,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * @param destKey - the param property to set its value as linked.
      * @return
      */
-    public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, RequestBuilder<?> destRequest, String sourceKey, String destKey) {
+    public MultiRequestBuilder link(Request<?, ?> sourceRequest, Request<?, ?> destRequest, String sourceKey, String destKey) {
         if(sourceRequest == null || destRequest == null){
             throw new NullPointerException("link requests can't be null");
         }
@@ -195,8 +201,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
         return MULTIREQUEST_ACTION;
     }
 
-    @SuppressWarnings("rawtypes")
-	private RequestBuilder getRequestAt(int index) throws IndexOutOfBoundsException{
+	private Request<?, ?> getRequestAt(int index) throws IndexOutOfBoundsException{
         Object[] requestsKeys = requests.keySet().toArray();
         return requests.get(requestsKeys[index]);
     }

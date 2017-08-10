@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import com.kaltura.client.APIOkRequestsExecutor;

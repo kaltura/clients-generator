@@ -21,8 +21,7 @@ import java.util.Map;
  */
 public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement<T> {
 
-	private Class<T> type;
-    protected String id;
+	protected Class<T> type;
     protected String url;
     protected Files files = null;
     protected HashMap<String, String> headers;
@@ -33,11 +32,11 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
      */
     protected OnCompletion<Response<T>> onCompletion;
 
-    protected BaseRequestBuilder(Class<T> type) {
-    	super();
+    protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
+    	super(params);
     	this.type = type;
     }
-
+    
     protected abstract String getUrlTail();
 
     public abstract String getTag();
@@ -54,11 +53,6 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     @Override
     public String getBody() {
         return params.toString();
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
 	protected Params getParams() {

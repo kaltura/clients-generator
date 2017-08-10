@@ -1,7 +1,7 @@
 package com.kaltura.client.utils.request;
 
+import com.kaltura.client.Files;
 import com.kaltura.client.Params;
-import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -10,38 +10,15 @@ import com.kaltura.client.utils.response.base.Response;
  * Created by tehilarozin on 14/08/2016.
  */
 
-public abstract class RequestBuilder<T> extends BaseRequestBuilder<T> {
+public class RequestBuilder<T> extends BaseRequestBuilder<T> {
 
     String service;
     String action;
 
-    public RequestBuilder(Class<T> type, String service, String action) {
-        super(type);
+    public RequestBuilder(Class<T> type, String service, String action, Params params, Files files) {
+        super(type, params, files);
         this.service = service;
         this.action = action;
-    }
-    
-    public abstract Object getTokenizer() throws APIException; 
-    
-    protected String getAction() {
-        return action;
-    }
-
-    protected Params getParams() {
-        return params;
-    }
-
-    protected String getService() {
-        return service;
-    }
-
-    public MultiRequestBuilder add(RequestBuilder<?> another) {
-        try {
-            return new MultiRequestBuilder(this, another);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new MultiRequestBuilder();
     }
 
     protected String getUrlTail() {
@@ -51,16 +28,6 @@ public abstract class RequestBuilder<T> extends BaseRequestBuilder<T> {
         }
 
         return urlBuilder.toString();
-    }
-
-    protected RequestBuilder<T> link(String destKey, String requestId, String sourceKey) {
-        params.link(destKey, requestId, sourceKey);
-        return this;
-    }
-
-    protected RequestBuilder<T> setId(String id) {
-        this.id = id;
-        return this;
     }
 
     public RequestBuilder<T> setCompletion(OnCompletion<Response<T>> onCompletion) {

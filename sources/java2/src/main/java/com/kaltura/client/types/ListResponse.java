@@ -33,6 +33,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.kaltura.client.Params;
 import com.kaltura.client.utils.GsonParser;
+import com.kaltura.client.utils.request.Request;
 
 
 /**
@@ -45,22 +46,9 @@ import com.kaltura.client.utils.GsonParser;
 @SuppressWarnings("serial")
 public class ListResponse<T> extends ObjectBase {
 
-	
-	public static class MultiRequestTokens<T extends ObjectBase.MultiRequestTokens> extends ObjectBase.MultiRequestTokens {
-		private Class<? extends ObjectBase> type;
-		
-		public MultiRequestTokens(String prefix, Class<? extends ObjectBase> type) {
-			super(prefix);
-			this.type = type;
-		}
-		
-		public String getTotalCount() {
-			return prefix + ":totalCount";
-		}
-		
-		public ObjectBase.ListMultiRequestTokens<T> getObjects() {
-			return new ObjectBase.ListMultiRequestTokens<T>(prefix + ":objects", type);
-		}
+	public static interface Tokenizer<T> {
+		String totalCount();
+		Request.ListTokenizer<T> objects();
 	}
 	
     private int totalCount = Integer.MIN_VALUE;

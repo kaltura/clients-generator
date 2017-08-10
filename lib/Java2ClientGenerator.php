@@ -210,7 +210,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		// Basic imports
 		$imports = array();
 		$imports[] = "import com.kaltura.client.Params;";
-		$imports[] = "import com.kaltura.client.utils.GsonParser;";
+		$imports[] = "import com.kaltura.client.utils.request.MultiRequestBuilder;";
 
 		// Add Banner
 		$this->startNewTextBlock();
@@ -228,6 +228,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		$needsSuperConstructor = false;
 		$this->appendLine('@SuppressWarnings("serial")');
+		$this->appendLine("@MultiRequestBuilder.Tokenizer($type.Tokenizer.class)");
 		$baseClass = 'ObjectBase';
 		if($classNode->hasAttribute("base")) 
 		{
@@ -240,7 +241,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		}
 		$this->appendLine("public{$abstract} class $type extends $baseClass {");
 
-		$this->generateMultiRequestTokens($imports, $classNode, $baseClass);
+		$hasProperties = $this->generateMultiRequestTokens($imports, $classNode, $baseClass);
+		
+		if($hasProperties) {
+			$imports[] = "import com.kaltura.client.utils.GsonParser;";
+		}
 		
 		// Generate parameters declaration
 		$this->generateParametersDeclaration($imports, $classNode);
@@ -271,56 +276,46 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	
 	public function generateMultiRequestTokens(array &$imports, $classNode, $baseClass) {
 		$this->appendLine("	");
-		$this->appendLine("	public static class MultiRequestTokens extends $baseClass.MultiRequestTokens {");
-		$this->appendLine("		");
-		$this->appendLine("		public MultiRequestTokens(String prefix) {");
-		$this->appendLine("			super(prefix);");
-		$this->appendLine("		}");
+		$this->appendLine("	public static interface Tokenizer extends $baseClass.Tokenizer {");
 
+		$hasProperties = false;
 		foreach($classNode->childNodes as $propertyNode)
 		{
 			if($propertyNode->nodeType != XML_ELEMENT_NODE) {
 				continue;
 			}
 
-			$propName = $this->replaceParamReservedWords($propertyNode->getAttribute("name"));
+			$hasProperties = true;
+			$propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
 			$propType = $propertyNode->getAttribute("type");
 			
-			$this->appendLine("		");
-			
 			if($this->isSimpleType($propType)) {
-				$this->appendLine("		public String $propName(){");
-				$this->appendLine("			return tokenize(\"$propName\");");
+				$this->appendLine("		String $propName();");
 			}
 			elseif ($propType == 'array') {
 				$arrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-				$this->appendLine("		public ObjectBase.ListMultiRequestTokens<$arrayType.MultiRequestTokens> $propName(){");
-				$this->appendLine("			return new ObjectBase.ListMultiRequestTokens<$arrayType.MultiRequestTokens>(prefix + \":$propName\", $arrayType.class);");
+				$this->appendLine("		Request.ListTokenizer<$arrayType.Tokenizer> $propName();");
+				$imports[] = 'import com.kaltura.client.utils.request.Request;';
 			}
 			elseif ($propType == 'map') {
 				$arrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-				$this->appendLine("		public ObjectBase.MapMultiRequestTokens<$arrayType.MultiRequestTokens> $propName(){");
-				$this->appendLine("			return new ObjectBase.MapMultiRequestTokens<$arrayType.MultiRequestTokens>(prefix + \":$propName\", $arrayType.class);");
+				$this->appendLine("		Request.MapTokenizer<$arrayType.Tokenizer> $propName();");
+				$imports[] = 'import com.kaltura.client.utils.request.Request;';
 			}
 			elseif (preg_match('/ListResponse$/', $propType)) {
 				$arrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-				$this->appendLine("		public ListResponse.MultiRequestTokens<$arrayType.MultiRequestTokens> $propName(){");
-				$this->appendLine("			return new ListResponse.MultiRequestTokens<$arrayType.MultiRequestTokens>(prefix + \":$propName\", $arrayType.class);");
+				$this->appendLine("		ListResponse.Tokenizer<$arrayType.Tokenizer> $propName();");
+				$imports[] = 'import com.kaltura.client.types.ListResponse;';
 			}
 			else {
 				$propType = $this->getJavaTypeName($propType);
-				$this->appendLine("		public $propType.MultiRequestTokens $propName(){");
-				$this->appendLine("			return new $propType.MultiRequestTokens(prefix + \":$propName\");");
+				$this->appendLine("		$propType.Tokenizer $propName();");
 			}
-			$this->appendLine("		}");
 		}
 		
 		$this->appendLine("	}");
 		
-		$this->appendLine("	");
-		$this->appendLine("	protected static MultiRequestTokens getMultiRequestTokens(String prefix) {");
-		$this->appendLine("		return new MultiRequestTokens(prefix);");
-		$this->appendLine("	}");
+		return $hasProperties;
 	}
 	
 	public function generateParametersDeclaration(array &$imports, $classNode) {
@@ -395,11 +390,9 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		if($needsArrayList) {
 			$imports[] = "import java.util.List;";
-			$imports[] = "import java.util.ArrayList;";
 		}
 		if($needsHashMap) {
 			$imports[] = "import java.util.Map;";
-			$imports[] = "import java.util.HashMap;";
 		}
 	}
 	
@@ -607,8 +600,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 					
 				try
 				{
-					$this->writeRequestBuilder($serviceId, $actionNode, $serviceImports);
-					$this->writeAction($serviceId, $actionNode, $serviceImports);
+					$hasPrimitiveArgs = $this->writeActionEnum($serviceId, $actionNode, $serviceImports);
+					$this->writeAction($serviceId, $actionNode, $serviceImports, $hasPrimitiveArgs);
 				}
 				catch(Exception $e)
 				{
@@ -646,160 +639,122 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		return $this->getJavaTypeName($objectsNode->getAttribute('arrayType'));
 	}
 	
-	function writeRequestBuilder($serviceId, DOMElement $actionNode, &$serviceImports)
+	function writeActionEnum($serviceId, DOMElement $actionNode, &$serviceImports) 
 	{
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action)) {
 			return;
 		}
-		
-		$builderName = ucfirst($action) . 'Action';
 
+		$paramNodes = $actionNode->getElementsByTagName("param");
+		$params = array();
+		foreach($paramNodes as $paramNode)
+		{
+			$paramType = $paramNode->getAttribute("type");
+			if($this->isSimpleType($paramType)) {
+				$params[] = $paramNode->getAttribute("name");
+			}
+		}
+		
+		if(!count($params)) {
+			return false;
+		}
+		
+		$enumName = ucfirst($action) . 'ActionArguments';
+		
+		$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
+		
+		$this->appendLine("	");
+		$this->appendLine("	public static enum $enumName {");
+		
+		foreach($params as $index => $param) {
+			if($index) {
+				$this->appendLine(",");
+			}
+			$this->append("		$param(\"$param\")");
+		}
+		$this->appendLine(";");
+		
+		$this->appendLine("		");
+		$this->appendLine("		private String name;");
+		$this->appendLine("		");
+		$this->appendLine("		private $enumName(String name) {");
+		$this->appendLine("			this.name = name;");
+		$this->appendLine("		}");
+		$this->appendLine("		");
+		$this->appendLine("		@Override");
+		$this->appendLine("		public String toString(){");
+		$this->appendLine("			return name;");
+		$this->appendLine("		}");
+		$this->appendLine("	}");
+		
+		return true;
+	}
+	
+	function writeAction($serviceId, DOMElement $actionNode, &$serviceImports, $hasPrimitiveArgs) 
+	{
+		$action = $actionNode->getAttribute("name");
+		if(!$this->shouldIncludeAction($serviceId, $action)) {
+			return;
+		}
+
+		$primitivesEnum = ucfirst($action) . 'ActionArguments';
+		if(!$hasPrimitiveArgs) {
+			$primitivesEnum = 'LinkedRequest.NoPrimitiveArguments';
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
+		}
+			
+		$action = $this->replaceReservedWords($action);
+		
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
 		$resultType = $this->getJavaTypeName($resultNode->getAttribute("type"));
 		
+		$returnType = 'Void';
+		$tokenizerType = 'Void';
 		$arrayType = '';
 		$fallbackClass = null;
-		$tokenizer = false;
-		$isGeneric = false;
-		
 		if($resultType) {
-			$fallbackClass = $this->getObjectType($resultType);
-
-			if($this->isSimpleType($resultType)) {
-				$tokenizer = "String";
-			}
-			else {
-				$tokenizer = "$fallbackClass.MultiRequestTokens";
-			}
+    		$fallbackClass = $this->getObjectType($resultType);
+    		$returnType = $fallbackClass;
+    		$tokenizerType = 'String';
+    		
+    		if($this->isComplexType($resultType)) {
+    			$tokenizerType = "$returnType.Tokenizer";
+    		}
 		}
-		 
+    	
 		if($resultType == "file") {
-			$fallbackClass = null;
-			$tokenizer = false;
+    		$returnType = 'String';
+    		$tokenizerType = "Void";
+    		$fallbackClass = null;
 		}
 		
 		if($resultType == "array") {
 			$arrayType = $this->getJavaTypeName($resultNode->getAttribute("arrayType"));
 			$fallbackClass = $arrayType;
-			$tokenizer = "ObjectBase.ListMultiRequestTokens<$arrayType.MultiRequestTokens>";
-			$serviceImports[] = "com.kaltura.client.types.ObjectBase";
-			$isGeneric = true;
+			$returnType = "List<$arrayType>";
+			$tokenizerType = "Request.ListTokenizer<$arrayType.Tokenizer>";
 		}
 		elseif($resultType == "map") {
 			$arrayType = $this->getJavaTypeName($resultNode->getAttribute("arrayType"));
 			$fallbackClass = $arrayType;
-			$tokenizer = "ObjectBase.MapMultiRequestTokens<$arrayType.MultiRequestTokens>";
-			$serviceImports[] = "com.kaltura.client.types.ObjectBase";
-			$isGeneric = true;
+			$returnType = "Map<$arrayType>";
+			$tokenizerType = "Request.MapTokenizer<$arrayType.Tokenizer>";
 		}
-		elseif($resultType && ($resultType != 'file') && !$this->isSimpleType($resultType))
-		{
-			if(preg_match('/ListResponse$/', $resultType))
-			{
-				$arrayType = $this->getListResponseInternalType($resultType);
-				$resultType = 'ListResponse';
+    	elseif($resultType && ($resultType != 'file') && !$this->isSimpleType($resultType))
+    	{
+    		if(preg_match('/ListResponse$/', $resultType))
+	    	{
+	    		$arrayType = $this->getListResponseInternalType($resultType);
+	    		$resultType = 'ListResponse';
 				$fallbackClass = $arrayType;
-				$tokenizer = "ListResponse.MultiRequestTokens<$arrayType.MultiRequestTokens>";
-				$serviceImports[] = "com.kaltura.client.types.ListResponse";
-				$isGeneric = true;
-			}
-		}
+				$returnType = "ListResponse<$arrayType>";
+				$tokenizerType = "ListResponse.Tokenizer<$arrayType.Tokenizer>";
+	    	}
+    	}
 		
-		$javaOutputType = $this->getResultType($resultType, $arrayType, $serviceImports);
-
-		$paramNodes = $actionNode->getElementsByTagName("param");
-		$paramNodesArr = array();
-		foreach($paramNodes as $paramNode)
-		{
-			$paramNodesArr[] = $paramNode;
-		}
-		
-		$signature = $this->getSignature($paramNodesArr, array('' => 'FileHolder'), $serviceImports, true);
-
-		$this->appendLine("	");
-		$this->appendLine("	public static class $builderName extends $javaOutputType {");
-		$this->appendLine("		");
-		$this->appendLine("		public $builderName($signature {");
-		if($fallbackClass) {
-			$this->appendLine("			super($fallbackClass.class, \"$serviceId\", \"$action\");");
-		}
-		else {
-			$this->appendLine("			super(\"$serviceId\", \"$action\");");
-		}
-		
-		$haveFiles = false;
-		foreach($paramNodes as $paramNode)
-		{
-			$paramType = $paramNode->getAttribute("type");
-			$paramName = $paramNode->getAttribute("name");
-			$argName = $this->replaceParamReservedWords($paramName);
-		
-			if($haveFiles === false && $paramType === "file")
-			{
-				$serviceImports[] = "com.kaltura.client.Files";
-				$serviceImports[] = "com.kaltura.client.FileHolder";
-				$haveFiles = true;
-				$this->appendLine("			files = new Files();");
-			}
-				
-			if($paramType == "file")
-			{
-				$this->appendLine("			files.add(\"$paramName\", $argName);");
-			}
-			else
-				$this->appendLine("			params.add(\"$paramName\", $argName);");
-		}
-		$this->appendLine("		}");
-		
-		if($tokenizer) {
-			$serviceImports[] = "com.kaltura.client.types.APIException";
-		
-			$this->appendLine("		");
-			$this->appendLine("		@Override");
-			$this->appendLine("		public $tokenizer getTokenizer() throws APIException {");
-			$this->appendLine("			if(id == null) {");
-			$this->appendLine("				throw new APIException(APIException.FailureStep.OnRequest, \"Request is not part of multi-request\");");
-			$this->appendLine("			}");
-			if($tokenizer == 'String') {
-				$this->appendLine("			return String.format(\"{%s:result}\", id);");
-			}
-			else if($isGeneric) {
-				$this->appendLine("			return new $tokenizer(id + \":result\", $fallbackClass.class);");
-			}
-			else {
-				$this->appendLine("			return new $tokenizer(id + \":result\");");
-			}
-			$this->appendLine("		}");
-		}
-
-		foreach($paramNodes as $paramNode)
-		{
-			$paramType = $paramNode->getAttribute("type");
-			$paramName = $paramNode->getAttribute("name");
-			
-			if(!$this->isSimpleType($paramType)) {
-				continue;
-			}
-
-			$this->appendLine("		");
-			$this->appendLine("		public void $paramName(String multirequestToken) {");
-			$this->appendLine("			params.add(\"$paramName\", multirequestToken);");
-			$this->appendLine("		}");
-		}
-		$this->appendLine("	}");
-	}
-	
-	function writeAction($serviceId, DOMElement $actionNode, &$serviceImports) 
-	{
-		$action = $actionNode->getAttribute("name");
-		if(!$this->shouldIncludeAction($serviceId, $action))
-			return;
-
-		$builderName = ucfirst($action) . 'Action';
-		$action = $this->replaceActionReservedWords($action);
-		
-		$signaturePrefix = "public static $builderName $action(";
+	  	$javaOutputType = $this->getResultType($resultType, $arrayType, $serviceImports, $primitivesEnum);
+        $signaturePrefix = "public static LinkedRequest<$returnType, $primitivesEnum, $tokenizerType> $action(";
 
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$paramNodesArr = array();
@@ -817,21 +772,14 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$desc = $this->addDescription($actionNode, "\t");
 		if($desc)
 			$this->appendLine($desc);
-		$this->appendLine("	$signaturePrefix$signature  {");//throws APIException
+		$this->appendLine("    $signaturePrefix$signature  {");//throws APIException
 		
-
-		$params = array();
-		foreach($paramNodesArr as $paramNode)
-		{
-			$paramName = $paramNode->getAttribute("name");
-			$params[] = $paramName;
-		}
-		$paramsStr = implode(', ', $params);
+		$this->generateActionBodyServiceCall($serviceId, $action, $paramNodesArr, $serviceImports, $javaOutputType, $fallbackClass);
+		$this->appendLine("    }");
 		
-		$this->appendLine("		return new $builderName($paramsStr);");
-		$this->appendLine("	}");
+		$serviceImports[] = "com.kaltura.client.Params";
 	}
-
+	
 	public function writeActionOverloads($signaturePrefix, $action, $paramNodes, &$serviceImports)
 	{
 		// split the parameters into mandatory and optional
@@ -923,6 +871,41 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		}
 	}
 	
+	public function generateActionBodyServiceCall($serviceId, $action, $paramNodes, &$serviceImports, $javaOutputType, $fallbackClass)
+	{
+		$this->appendLine("        Params kparams = new Params();");
+		$haveFiles = false;
+		foreach($paramNodes as $paramNode)
+		{
+			$paramType = $paramNode->getAttribute("type");
+			$paramName = $paramNode->getAttribute("name");
+			$isEnum = $paramNode->hasAttribute("enumType");
+				
+			if($haveFiles === false && $paramType === "file")
+			{
+				$serviceImports[] = "com.kaltura.client.Files";
+				$serviceImports[] = "com.kaltura.client.FileHolder";
+				$haveFiles = true;
+				$this->appendLine("        Files kfiles = new Files();");
+			}
+			
+			if($paramType == "file")
+			{
+				$this->appendLine("        kfiles.add(\"$paramName\", $paramName);");
+			}
+			else 
+				$this->appendLine("        kparams.add(\"$paramName\", $paramName);");
+		}
+
+        if($haveFiles){
+            $this->appendLine("\n        return new $javaOutputType($fallbackClass.class, \"$serviceId\", \"$action\", kparams, kfiles);");
+        } elseif($fallbackClass) {
+            $this->appendLine("\n        return new $javaOutputType($fallbackClass.class, \"$serviceId\", \"$action\", kparams);");
+        } else {
+            $this->appendLine("\n        return new $javaOutputType(\"$serviceId\", \"$action\", kparams);");
+        }
+    }
+	
 	function writeRequestBuilderData(DOMNodeList $configurationNodes)
 	{
 		$imports = "";
@@ -932,11 +915,12 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		$this->startNewTextBlock();
 		$this->appendLine($this->getBanner());
-		$this->appendLine("public abstract class RequestBuilderData {");
+		$this->appendLine("public class RequestBuilderData {");
 		$this->appendLine("	");
-		$this->appendLine("	protected Params params = new Params();");
+		$this->appendLine("	protected Params params;");
 		$this->appendLine("	");
-		$this->appendLine("	protected RequestBuilderData() {");
+		$this->appendLine("	protected RequestBuilderData(Params params) {");
+		$this->appendLine("		this.params = params;");
 		$this->appendLine("	}");
 		$this->appendLine("	");
 		
@@ -1122,7 +1106,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	");
 	}
 	
-	function getSignature($paramNodes, $fileOverload, &$serviceImports, $replaceReservedWords = false) 
+	function getSignature($paramNodes, $fileOverload, &$serviceImports) 
 	{
 		$signature = array();
 		foreach($paramNodes as $paramNode) 
@@ -1131,9 +1115,6 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			$paramName = $paramNode->getAttribute("name");
 			$arrayType = $paramNode->getAttribute("arrayType");
 			$enumType = $paramNode->getAttribute("enumType");
-			if($replaceReservedWords) {
-				$paramName = $this->replaceParamReservedWords($paramName);
-			}
 
 			if($paramType == "array")
 			{
@@ -1199,23 +1180,12 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		return $banner;
 	}
 
-	protected function replaceActionReservedWords($name)
+	protected function replaceReservedWords($name)
 	{
 		switch($name)
 		{
-		case "goto":
-			return "{$name}_";
-		default:
-			return $name;
-		}
-	}
-
-	protected function replaceParamReservedWords($name)
-	{
-		switch($name)
-		{
-		case "params":
 		case "notify":
+		case "goto":
 			return "{$name}_";
 		default:
 			return $name;
@@ -1314,62 +1284,64 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		}
 	}
 	
-	public function getResultType($resultType, $arrayType, &$serviceImports) 
+	public function getResultType($resultType, $arrayType, &$serviceImports, $primitivesEnum) 
 	{
 		switch($resultType)
 		{
 		case null:
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
 			$serviceImports[] = "com.kaltura.client.utils.request.NullRequestBuilder";
-			return "NullRequestBuilder";
+			return "NullRequestBuilder<$primitivesEnum>";
 			
 		case "ListResponse":
 			$serviceImports[] = "com.kaltura.client.types.ListResponse";
 			$serviceImports[] = "com.kaltura.client.types.$arrayType";
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
 			$serviceImports[] = "com.kaltura.client.utils.request.ListResponseRequestBuilder";
-			return("ListResponseRequestBuilder<" . $arrayType . ">");
+			return("ListResponseRequestBuilder<$arrayType, $primitivesEnum, $arrayType.Tokenizer>");
 			
 		case "array":
 			$serviceImports[] = "java.util.List";
 			$serviceImports[] = "com.kaltura.client.types.$arrayType";
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
+			$serviceImports[] = "com.kaltura.client.utils.request.Request";
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
 			$serviceImports[] = "com.kaltura.client.utils.request.ArrayRequestBuilder";
-			return("ArrayRequestBuilder<" . $arrayType . ">");
+			return("ArrayRequestBuilder<$arrayType, $primitivesEnum, $arrayType.Tokenizer>");
 			
 		case "map":
 			$serviceImports[] = "java.util.Map";
 			$serviceImports[] = "com.kaltura.client.types.$arrayType";
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
+			$serviceImports[] = "com.kaltura.client.utils.request.Request";
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
 			$serviceImports[] = "com.kaltura.client.utils.request.MapRequestBuilder";
-			return("MapRequestBuilder<" . $arrayType . ">");
+			return("MapRequestBuilder<$arrayType, $primitivesEnum, $arrayType.Tokenizer>");
 
 		case "int":
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<Integer>");
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
+			return("LinkedRequest<Integer, $primitivesEnum, String>");
 
 		case "bigint":
 		case "time":
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<Long>");
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
+			return("LinkedRequest<Long, $primitivesEnum, String>");
 		
 		case "bool":
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<Boolean>");
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
+			return("LinkedRequest<Boolean, $primitivesEnum, String>");
 			
 		case "string":
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<String>");
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
+			return("LinkedRequest<String, $primitivesEnum, String>");
 			
 		case "file":
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
 			$serviceImports[] = "com.kaltura.client.utils.request.ServeRequestBuilder";
-			return("ServeRequestBuilder");
+			return("ServeRequestBuilder<$primitivesEnum>");
 			
 		default:
-			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
+			$serviceImports[] = "com.kaltura.client.utils.request.LinkedRequest";
 			$serviceImports[] = "com.kaltura.client.types.$resultType";
-			return("RequestBuilder<$resultType>");
+			return("LinkedRequest<$resultType, $primitivesEnum, $resultType.Tokenizer>");
 		}
 	}
 	

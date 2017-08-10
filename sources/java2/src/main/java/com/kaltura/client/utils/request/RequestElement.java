@@ -24,8 +24,6 @@ public interface RequestElement<T> {
 
     HashMap<String, String> getHeaders();
 
-    String getId();
-
     ConnectionConfiguration config();
 
     Response<T> parseResponse(ResponseElement responseElement);

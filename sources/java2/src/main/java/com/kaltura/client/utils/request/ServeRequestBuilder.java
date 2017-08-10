@@ -5,12 +5,17 @@ import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.APIConstants;
 
-public abstract class ServeRequestBuilder extends RequestBuilder<String> {
+public class ServeRequestBuilder<U> extends LinkedRequest<String, U, Void> {
 
-    public ServeRequestBuilder(String service, String action) {
-        super(String.class, service, action);
+    public ServeRequestBuilder(String service, String action, Params params) {
+        super(String.class, service, action, params);
     }
 
+    @Override
+    public Void getTokenizer() throws APIException {
+		throw new APIException(APIException.FailureStep.OnRequest, "Served content response can not be used as multi-request token");
+    }
+    
 	@Override
     public String getMethod() {
     	return "GET";
@@ -45,11 +50,6 @@ public abstract class ServeRequestBuilder extends RequestBuilder<String> {
     protected Object parse(String response) throws APIException {
     	return response;
     }
-
-	@Override
-	public String getTokenizer() throws APIException {
-		throw new APIException(APIException.FailureStep.OnRequest, "Served content response can not be used as multi-request token");
-	}
 }
 
 
