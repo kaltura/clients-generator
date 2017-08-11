@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import com.kaltura.client.APIOkRequestsExecutor;
-import com.kaltura.client.ILogger;
-import com.kaltura.client.Logger;
 import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.EntryType;
 import com.kaltura.client.enums.MediaType;
@@ -62,8 +60,6 @@ import com.kaltura.client.utils.response.base.Response;
 
 public class MediaServiceTest extends BaseTest {
 
-	private ILogger logger = Logger.getLogger(MediaServiceTest.class);
-	
 	/**
 	 * Tests the following : 
 	 * Media Service -
