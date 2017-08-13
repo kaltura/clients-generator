@@ -664,7 +664,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				{
 					case "array" :
 						$arrayType = $resultNode->getAttribute ( "arrayType" );
-						$this->appendLine ( "        return KalturaObjectFactory.createArray(resultNode, $arrayType)" );
+						$this->appendLine ( "        return KalturaObjectFactory.createArray(resultNode, $arrayType, self.client.returnHeaders)" );
 						break;
 					case "bigint":
 					case "int" :
@@ -680,7 +680,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 						$this->appendLine ( "        return getXmlNodeText(resultNode)" );
 						break;
 					default :
-						$this->appendLine ( "        return KalturaObjectFactory.create(resultNode, $resultType)" );
+						$this->appendLine ( "        return KalturaObjectFactory.create(resultNode, $resultType, self.client.returnHeaders)" );
 						break;
 				}
 			}

@@ -216,7 +216,7 @@ class KalturaObjectFactory(object):
     objectFactories = {}
 
     @staticmethod
-    def create(objectNode, expectedType):
+    def create(objectNode, expectedType, returnHeaders = False):
         objTypeNode = getChildNodeByXPath(objectNode, 'objectType')
         if objTypeNode == None:
             return None
@@ -227,13 +227,17 @@ class KalturaObjectFactory(object):
         if not isinstance(result, expectedType):
             raise KalturaClientException("Unexpected object type '%s'" % objType, KalturaClientException.ERROR_INVALID_OBJECT_TYPE)
         result.fromXml(objectNode)
+        if returnHeaders:
+            result.responseHeaders = objectNode.responseHeaders
         return result
 
     @staticmethod
-    def createArray(arrayNode, expectedElemType):
+    def createArray(arrayNode, expectedElemType, returnHeaders = False):
         results = []
         for arrayElemNode in arrayNode.childNodes:
             results.append(KalturaObjectFactory.create(arrayElemNode, expectedElemType))
+        if returnHeaders:
+            results.responseHeaders = objectNode.responseHeaders
         return results
 
     @staticmethod
@@ -332,12 +336,13 @@ class KalturaClientException(Exception):
 # Client configuration class
 class KalturaConfiguration(object):
     # Constructs new Kaltura configuration object
-    def __init__(self, serviceUrl = "http://www.kaltura.com", logger = None):
+    def __init__(self, serviceUrl = "http://www.kaltura.com", logger = None, returnHeaders = False):
         self.logger                     = logger
         self.serviceUrl                 = serviceUrl
         self.format                     = KALTURA_SERVICE_FORMAT_XML
         self.requestTimeout             = 120
-        
+        self.returnHeaders              = returnHeaders
+
     # Set logger to get kaltura client debug logs
     def setLogger(self, log):
         self.logger = log
