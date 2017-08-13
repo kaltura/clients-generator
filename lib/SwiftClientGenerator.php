@@ -150,8 +150,11 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$str .= "\n";
 		return count($enumValues);
 	}
-	
-	function writeClass(DOMElement $classNode) 
+
+    /**
+     * @param DOMElement $classNode
+     */
+    function writeClass(DOMElement $classNode)
 	{
 		$type = $classNode->getAttribute("name");
 		if(!$this->shouldIncludeType($type) || $type === 'KalturaObject') {
@@ -177,7 +180,17 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 			$this->appendLine($desc);
 		
 		$baseClass = $classNode->hasAttribute("base") ? $this->getSwiftTypeName($classNode->getAttribute("base")) : 'ObjectBase';
+
+
+        // Tokenizer:
+        $this->appendLine("");
+
+        $this->appendLine(" public class $type"."Tokenizer: $baseClass"."Tokenizer {");
+        $this->generateTokenizerParametersDeclaration($classNode);
+        $this->appendLine(" }");
+
 		$this->appendLine("open class $type: $baseClass {");
+
 
 		// Generate parameters declaration
 		$this->generateParametersDeclaration($classNode);
@@ -272,7 +285,28 @@ end
 		
 		return $name;
 	}
-	
+
+
+    /**
+     * @param $classNode
+     */
+    public function generateTokenizerParametersDeclaration($classNode) {
+
+        $this->appendLine("");
+        foreach($classNode->childNodes as $propertyNode)
+        {
+            if($propertyNode->nodeType != XML_ELEMENT_NODE)
+                continue;
+
+            $propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
+            $propType = $propertyNode->getAttribute("type");
+            $arrayType = $propertyNode->getAttribute("arrayType");
+            $propertyLine = $this->getTokenizerPropertySwiftDecleration($propName,$propType,$arrayType);
+            $this->appendLine("\t\t$propertyLine");
+        }
+
+    }
+
 	public function generateParametersDeclaration($classNode) {
 
 		$needsArrayList = false;
@@ -608,9 +642,35 @@ end
 		$file = $this->_baseClientPath . "/Classes/Services/$swiftServiceName.swift";
 		$this->addFile($file, $this->getTextBlock());
 	}
-	
+
+
+
+    function getTokenizerType($resultType, $arrayType){
+
+        switch ($resultType) {
+            case "array":
+                return "ArrayTokenizedObject<$arrayType"."Tokenizer>";
+            case "map":
+                $tokenizerType = "DictionaryTokenizedObject<$arrayType"."Tokenizer>";
+            case null:
+            case "int":
+            case "bigint":
+            case "time":
+            case "bool":
+            case "string":
+            case "file":
+                return "BaseTokenizedObject";
+            default:
+                return "$resultType"."Tokenizer";
+        }
+
+
+
+    }
+
 	function writeAction($serviceId, DOMElement $actionNode) 
 	{
+
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action)) {
 			return;
@@ -655,14 +715,15 @@ end
 		
 		$signaturePrefix = "public static func $action";
 		
-		$swiftOutputType = $this->getResultType($resultType, $arrayType);
+		$swiftOutputType = $this->getResultType($resultType, $arrayType,$serviceId,$action);
 		
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$paramNodesArr = array();
 		foreach($paramNodes as $paramNode) {
 			$paramNodesArr[] = $paramNode;
 		}
-		
+
+        $this->writeActionTokenizerClass($action,$paramNodesArr);
 		$this->writeActionOverloads($signaturePrefix, $action, $paramNodesArr, $swiftOutputType, $returnType);
 		
 		$signature = $this->getSignature($action, $paramNodesArr, array('' => 'RequestFile'));
@@ -673,13 +734,41 @@ end
 		if($desc) {
 			$this->appendLine($desc);
 		}
-		
-		$this->appendLine("	$signaturePrefix($signature) -> RequestBuilder<$returnType> {");//throws APIException
+
+		$this->appendLine("	$signaturePrefix($signature) -> $swiftOutputType {");//throws APIException
 		$this->generateActionBodyServiceCall($serviceId, $action, $paramNodesArr, $swiftOutputType, $fallbackClass);
 		$this->appendLine("	}");
 	}
 
-	public function writeActionOverloads($signaturePrefix, $action, $paramNodes, $swiftOutputType, $returnType)
+    /**
+     * @param $action
+     * @param $paramNodes
+     */
+    public function writeActionTokenizerClass($action, $paramNodes) {
+        $this->appendLine("");
+
+        $classname = ucfirst($action);
+        $this->appendLine("\t public class $classname"."Tokenizer: ClientTokenizer  {");
+
+        $signature = array();
+        foreach($paramNodes as $paramNode)
+        {
+            $paramType = $paramNode->getAttribute("type");
+            $paramName = $this->replaceReservedWords($paramNode->getAttribute("name"), array($action));
+            $arrayType = $paramNode->getAttribute("arrayType");
+
+
+            $tokenizerType =  $this->getTokenizerPropertySwiftDecleration($paramName,$paramType,$arrayType);
+            $this->appendLine("\t" . $tokenizerType);
+        }
+
+        $this->appendLine("}");
+
+    }
+
+
+
+	public function writeActionOverloads($signaturePrefix, $action, $paramNodes, $swiftOutputType)
 	{
 		// split the parameters into mandatory and optional
 		$mandatoryParams = array();
@@ -758,10 +847,10 @@ end
 					$params[] = "$paramName: RequestFile(" . implode(', ', $fileParams) . ")";
 				}				
 				$paramsStr = implode(', ', $params);
-				
-				// write the result
+
+                // write the result
 				$this->appendLine();
-				$this->appendLine("	$signaturePrefix($signature) -> RequestBuilder<$returnType> {"); // throws APIException
+				$this->appendLine("	$signaturePrefix($signature) -> $swiftOutputType {"); // throws APIException
 				$this->appendLine("		return $action($paramsStr)");
 				$this->appendLine("	}");
 			}
@@ -1020,38 +1109,43 @@ end
 			return $defaultValue;
 		}
 	}
-	
-	public function getResultType($resultType, $arrayType) 
+
+
+
+	public function getResultType($resultType, $arrayType, $serviceId, $action)
 	{
+        $responseTokenizerType = $this->getTokenizerType($resultType, $arrayType);
+        $requestTokenizerType =   ucfirst($action) . "Tokenizer";
+
 		switch($resultType)
 		{
 		case null:
 			return "NullRequestBuilder";
-			
+
 		case "array":
-			return("ArrayRequestBuilder<" . $arrayType . ">");
-			
+			return("ArrayRequestBuilder<" . $arrayType . ",$responseTokenizerType, $requestTokenizerType>");
+
 		case "map":
-			return("MapRequestBuilder<" . $arrayType . ">");
+			return("MapRequestBuilder<" . $arrayType . ",$responseTokenizerType, $requestTokenizerType>");
 
 		case "int":
-			return("RequestBuilder<Int>");
+			return("RequestBuilder<Int,$responseTokenizerType, $requestTokenizerType>");
 
 		case "bigint":
 		case "time":
-			return("RequestBuilder<Int64>");
-		
+			return("RequestBuilder<Int64,$responseTokenizerType, $requestTokenizerType>");
+
 		case "bool":
-			return("RequestBuilder<Bool>");
-			
+			return("RequestBuilder<Bool,$responseTokenizerType, $requestTokenizerType>");
+
 		case "string":
-			return("RequestBuilder<String>");
-			
+			return("RequestBuilder<String,$responseTokenizerType, $requestTokenizerType>");
+
 		case "file":
 			return("ServeRequestBuilder");
-			
+
 		default:
-			return("RequestBuilder<$resultType>");
+			return("RequestBuilder<$resultType,$responseTokenizerType, $requestTokenizerType>");
 		}
 	}
 	
@@ -1099,7 +1193,38 @@ end
 			return $this->getSwiftTypeName($type);
 		}
 	}
-	
+
+
+    /**
+     * @param $propName
+     * @param $propertyNode
+     * @param bool $enforceObject
+     * @return mixed|string
+     */
+
+    public function getTokenizerPropertySwiftDecleration($propName,$propType,$arrayType)
+    {
+        $swiftClassName = $this->getSwiftTypeName($propType);
+        $swiftArrayClassName = $this->getSwiftTypeName($arrayType);
+
+        switch($propType)
+        {
+            case "int":
+            case "string":
+            case "float":
+            case "bool":
+            case "bigint":
+            case "time":
+                return "\tpublic var $propName: BaseTokenizedObject {\n\t get {\n\t\t return self.append(\"$propName\") \n\t\t}\n\t}";
+            case "array":
+                return "\tpublic var $propName: ArrayTokenizedObject<$swiftArrayClassName"."Tokenizer> {\n\tget {\n\t\treturn ArrayTokenizedObject<$swiftArrayClassName"."Tokenizer>(self.append(\"$propName\"))\n\t\t} \n\t}";
+            case "map":
+                return "\tpublic var $propName: DictionaryTokenizedObject<$swiftArrayClassName"."Tokenizer> {\n\tget {\n\t\treturn DictionaryTokenizedObject<$swiftArrayClassName"."Tokenizer>(self.append(\"$propName\"))\n\t\t}\n\t}";
+            default:
+                return "\tpublic var $propName: $swiftClassName"."Tokenizer {\n\tget {\n\t\t return $swiftClassName"."Tokenizer(self.append(\"$propName\")) \n\t\t}\n\t}";
+        }
+    }
+
 	public function getSwiftType($propertyNode, $enforceObject = false)
 	{
 		$propType = $propertyNode->getAttribute("type");

@@ -50,9 +50,10 @@ class MultiRequestTest: QuickSpec {
     
     private func loginAndCreateAsset(created: @escaping (_ asset: Asset?, _ error: ApiException?) -> Void) {
         
-        let requestBuilderLogin: RequestBuilder<LoginSession> = OttUserService.anonymousLogin(partnerId: self.partnerId)
-        let requestBuilderGetAsset: RequestBuilder<Asset> = AssetService.get(id: assetId, assetReferenceType: AssetReferenceType.MEDIA)
-        requestBuilderGetAsset.setBody(key: "ks", value: "{1:result:ks}")
+        let requestBuilderLogin = OttUserService.anonymousLogin(partnerId: self.partnerId)
+        let requestBuilderGetAsset = AssetService.get(id: assetId, assetReferenceType: AssetReferenceType.MEDIA)
+        
+        
         
         requestBuilderGetAsset.set { (asset, exception) in
             created(asset, exception)
