@@ -105,6 +105,7 @@ class KalturaClient(object):
         logger = self.config.getLogger()
         if (logger):
             self.shouldLog = True
+        self.returnHeaders = self.config.returnHeaders
 
         self.loadPlugins()
         self.loadConfigurations()
@@ -347,9 +348,13 @@ class KalturaClient(object):
         if serverName != None or serverSession != None:
             self.log("server: [%s], session [%s]" % (serverName, serverSession))
 
-        # parse the result
-        resultNode = self.parsePostResult(postResult)
-
+        try:
+            # parse the result
+            resultNode = self.parsePostResult(postResult)
+        except KalturaException as e:
+            e.header = self.responseHeaders # attach the header
+            raise e
+        resultNode.responseHeaders = self.responseHeaders
         return resultNode
         
     def getConfig(self):
@@ -399,6 +404,7 @@ class KalturaClient(object):
                 result.append(getXmlNodeText(childNode))
             i+=1
         self.multiRequestReturnType = None
+        result.responseHeaders = resultXml.responseHeaders
         return result
 
     def isMultiRequest(self):
