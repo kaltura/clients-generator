@@ -473,7 +473,7 @@ abstract class ClientGeneratorFromXml
 			// skip source control files
 			if ($this->beginsWith($entry, ".svn") || 
 				$this->beginsWith($entry, ".cvs") || 
-				$this->beginsWith($entry, ".git") || 
+				$entry == '.git' ||
 				$entry == '.'  || 
 				$entry == '..' 
 			)
