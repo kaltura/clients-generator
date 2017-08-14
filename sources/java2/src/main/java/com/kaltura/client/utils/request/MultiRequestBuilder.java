@@ -4,16 +4,16 @@ import com.kaltura.client.Files;
 import com.kaltura.client.Logger;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.GsonParser;
+import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * Created by tehilarozin on 15/08/2016.
- */
-public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
-    private static final String TAG = "KalturaMultiRequestBuilder";
+
+public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
+    private static final String TAG = "MultiRequestBuilder";
 
     /**
      * the service name in the request url: "...service/multirequest"
@@ -25,12 +25,12 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
      * will be used in case a completion was not provided on the multirequest itself
      * and the completion for each inner request should be activated
      */
-    private LinkedHashMap<String, RequestBuilder<?>> calls = new LinkedHashMap<>();
+    private LinkedHashMap<String, RequestBuilder<?>> requests = new LinkedHashMap<>();
     private int lastId = 0;
 
 
     public MultiRequestBuilder() {
-        super(Object.class);
+        super();
     }
 
     /**
@@ -40,6 +40,16 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
     public MultiRequestBuilder(RequestBuilder<?>... requests) {
         this();
         add(requests);
+    }
+
+    public MultiRequestBuilder setCompletion(OnCompletion<Response<List<Object>>> onCompletion) {
+        this.onCompletion = onCompletion;
+        return this;
+    }
+
+    public MultiRequestBuilder setId(String id) {
+        this.id = id;
+        return this;
     }
 
     /**
@@ -67,7 +77,7 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
         	}
         	files.add(reqId, request.files);
         }
-        calls.put(reqId, request);
+        requests.put(reqId, request);
         request.setId(reqId);
 
         return this;
@@ -75,51 +85,59 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
 
     /**
      * Adds the requests from kalturaMultiRequestBuilder parameter to the end of the current requests list
-     * @param kalturaMultiRequestBuilder - another multirequests to copy requests from
+     * @param multiRequestBuilder - another multirequests to copy requests from
      * @return
      */
-    public MultiRequestBuilder add(MultiRequestBuilder kalturaMultiRequestBuilder) {
-        for (String reqId : kalturaMultiRequestBuilder.calls.keySet()) {
-            RequestBuilder<?> request = kalturaMultiRequestBuilder.calls.get(reqId);
-            int last = calls.size() + 1;
-            calls.put(last + "", request);
+    public MultiRequestBuilder add(MultiRequestBuilder multiRequestBuilder) {
+        for (String reqId : multiRequestBuilder.requests.keySet()) {
+            RequestBuilder<?> request = multiRequestBuilder.requests.get(reqId);
+            int last = requests.size() + 1;
+            requests.put(last + "", request);
             params.add(last + "", request.params);
         }
 
         return this;
     }
 
-    @SuppressWarnings("unchecked")
-	@Override
-    protected void complete(Object result, APIException error) {
-    	
-    	List<Object> results = null;
-    	if(result != null) {
-        	results = (List<Object>) result;
-	    	int index = 0;
-	    	for(RequestBuilder<?> call : calls.values()) {
-	    		Object item = results.get(index++);
-	    		if(item instanceof APIException) {
-	    			call.complete(null, (APIException) item);
-	    		}
-	    		else {
-	    			call.complete(item, null);
-	    		}
-	    	}
-    	}
-    	
-        if(onCompletion != null) {
-        	onCompletion.onComplete(results, error);
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public void onComplete(Response<List<Object>> response) {
+
+        if(response != null) {
+            APIException topError = response.error;
+
+            int index = 0;
+
+            for(RequestBuilder<?> request : requests.values()) {
+                if(request.onCompletion != null) {
+                    if (topError != null) {
+                        request.onComplete(new Response(null, topError));
+
+                    } else {
+                        Object item = response.results.get(index++);
+                        APIException error = null;
+
+                        if (item instanceof APIException) {
+                            error = (APIException) item;
+                            item = null;
+                        }
+
+                        request.onComplete(new Response(item, error));
+                    }
+                }
+            }
         }
+
+        super.onComplete(response);
     }
-    
+
     @Override
     protected Object parse(String response) throws APIException {
-        List<Class> list = new ArrayList<Class>();
-        for(RequestBuilder<?> call : calls.values()) {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        for(RequestBuilder<?> call : requests.values()) {
             list.add(call.getType());
         }
-    	return GsonParser.parseArray(response, list.toArray(new Class[calls.size()]));
+    	return GsonParser.parseArray(response, list.toArray(new Class[requests.size()]));
     }
 
     /**
@@ -136,15 +154,16 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
     /**
      * Binds request param value to another request's response value.
      *
-     * @param sourceRequest - the request from which response value should be taken from
-     * @param destRequestIdx - the index of the destination request in the multirequet list
+     * @param sourceRequestIdx - the index of the request from which response value should be taken from
+     * @param destRequestIdx - the index of the destination request in the multirequest list
      * @param sourceKey - the properties path in the response to the needed value (exp. user.loginSession.ks)
      * @param destKey - the property that will get the result from the source request
      * @return
      */
-    public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, int destRequestIdx, String sourceKey, String destKey) {
+    public MultiRequestBuilder link(int sourceRequestIdx, int destRequestIdx, String sourceKey, String destKey) {
         try {
-            return link(sourceRequest, calls.get(calls.keySet().toArray()[destRequestIdx]), sourceKey, destKey);
+            return link(getRequestAt(sourceRequestIdx), getRequestAt(destRequestIdx), sourceKey, destKey);
+
         } catch (NullPointerException | IndexOutOfBoundsException e) {
             Logger.getLogger(TAG).error("failed to link requests. ", e);
         }
@@ -164,6 +183,9 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
      * @return
      */
     public MultiRequestBuilder link(RequestBuilder<?> sourceRequest, RequestBuilder<?> destRequest, String sourceKey, String destKey) {
+        if(sourceRequest == null || destRequest == null){
+            throw new NullPointerException("link requests can't be null");
+        }
         destRequest.link(destKey, sourceRequest.getId(), sourceKey);
         return this;
     }
@@ -172,5 +194,11 @@ public class MultiRequestBuilder extends ArrayRequestBuilder<Object> {
     public String getTag() {
         return MULTIREQUEST_ACTION;
     }
-}
+
+    private RequestBuilder getRequestAt(int index) throws IndexOutOfBoundsException{
+        Object[] requestsKeys = requests.keySet().toArray();
+        return requests.get(requestsKeys[index]);
+    }
+
+ }
 

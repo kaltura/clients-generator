@@ -1,17 +1,17 @@
 package com.kaltura.client;
 
 
+import com.kaltura.client.utils.ErrorElement;
+import com.kaltura.client.utils.request.ConnectionConfiguration;
+import com.kaltura.client.utils.request.ExecutedRequest;
+import com.kaltura.client.utils.request.RequestElement;
+import com.kaltura.client.utils.response.base.ResponseElement;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import com.kaltura.client.utils.ErrorElement;
-import com.kaltura.client.utils.request.ExecutedRequest;
-import com.kaltura.client.utils.request.ConnectionConfiguration;
-import com.kaltura.client.utils.request.RequestElement;
-import com.kaltura.client.utils.response.base.ResponseElement;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -36,12 +36,49 @@ import okio.Source;
  */
 public class APIOkRequestsExecutor implements RequestQueue {
 
+    public static final String TAG = "APIOkRequestsExecutor";
 
     public interface IdFactory {
         String factorId(String factor);
     }
 
-    public static final String TAG = "APIOkRequestsExecutor";
+    private static class InputStreamRequestBody extends RequestBody {
+
+        private InputStream inputStream;
+        private MediaType mediaType;
+
+        public InputStreamRequestBody(MediaType mediaType, InputStream inputStream) {
+            this.mediaType = mediaType;
+            this.inputStream = inputStream;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return mediaType;
+        }
+
+        @Override
+        public long contentLength() {
+            try {
+                return inputStream.available();
+            } catch (IOException e) {
+                return 0;
+            }
+        }
+
+        @Override
+        public void writeTo(BufferedSink sink) throws IOException {
+            Source source = null;
+            try {
+                source = Okio.source(inputStream);
+                sink.writeAll(source);
+            } finally {
+                Util.closeQuietly(source);
+            }
+        }
+    }
+
+
     static final MediaType JSON_MediaType = MediaType.parse("application/json");
 
     private ConnectionConfiguration defaultConfiguration = new ConnectionConfiguration() {
@@ -82,55 +119,21 @@ public class APIOkRequestsExecutor implements RequestQueue {
     };
 
     private IdFactory idFactory = new IdFactory() {
-		@Override
-		public String factorId(String factor) {
-			return UUID.randomUUID().toString() + "::" + (factor!=null ? factor : System.currentTimeMillis());
-		}
+        @Override
+        public String factorId(String factor) {
+            return UUID.randomUUID().toString() + "::" + (factor != null ? factor : System.currentTimeMillis());
+        }
     };
     
-    private static class InputStreamRequestBody extends RequestBody {
-
-    	private InputStream inputStream;
-		private MediaType mediaType;
-
-		public InputStreamRequestBody(MediaType mediaType, InputStream inputStream) {
-    		this.mediaType = mediaType;
-    		this.inputStream = inputStream;
-    	}
-    	
-		@Override
-		public MediaType contentType() {
-			return mediaType;
-		}
-
-        @Override
-        public long contentLength() {
-            try {
-                return inputStream.available();
-            } catch (IOException e) {
-                return 0;
-            }
-        }
-
-        @Override
-        public void writeTo(BufferedSink sink) throws IOException {
-            Source source = null;
-            try {
-                source = Okio.source(inputStream);
-                sink.writeAll(source);
-            } finally {
-                Util.closeQuietly(source);
-            }
-        }
-    }
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
     private static ILogger logger = Logger.getLogger(TAG);
 
-    private static APIOkRequestsExecutor self;
+    protected static APIOkRequestsExecutor self;
 
-    public static APIOkRequestsExecutor getSingleton() {
+
+    public static APIOkRequestsExecutor getExecutor() {
         if (self == null) {
             self = new APIOkRequestsExecutor();
         }
@@ -191,13 +194,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
         this.enableLogs = enable;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public String queue(final RequestElement requestElement) {
         final Request request = buildRestRequest(requestElement);
         return queue(request, requestElement);
     }
 
-    private String queue(final Request request, final RequestElement action) {
+    @SuppressWarnings("rawtypes")
+	private String queue(final Request request, final RequestElement action) {
 
         logger.debug("request [" + action.getUrl() + "]:\n" + action.getBody());
         
@@ -212,7 +217,9 @@ public class APIOkRequestsExecutor implements RequestQueue {
                         return;
                     }
                     // handle failures: create response from exception
-                    action.onComplete(new ExecutedRequest().error(e).success(false));
+                    //action.onComplete(new ExecutedRequest().error(e).success(false).handler(handler));
+                    ExecutedRequest responseElement = new ExecutedRequest().error(e).success(false);
+                    postCompletion(action, responseElement);
                 }
 
                 @Override
@@ -223,8 +230,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                     }
 
                     // pass parsed response to action completion block
-                    ResponseElement responseElement = onGotResponse(response, action);
-                    action.onComplete(responseElement);
+                    postCompletion(action, onGotResponse(response, action));
                 }
             });
             return (String) call.request().tag();
@@ -232,25 +238,35 @@ public class APIOkRequestsExecutor implements RequestQueue {
         } catch (Exception e) {
             e.printStackTrace();
             ExecutedRequest responseElement = new ExecutedRequest().response(getErrorResponse(e)).success(false);
-            action.onComplete(responseElement);
+            postCompletion(action, responseElement);
 
         }
         return null; // no call id to return.
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	protected void postCompletion(final RequestElement action, ResponseElement responseElement) {
+
+        final com.kaltura.client.utils.response.base.Response<?> apiResponse = action.parseResponse(responseElement);
+        action.onComplete(apiResponse);
+    }
+
+
     private String getErrorResponse(Exception e) {
         return e.getClass().getName() + ": " + e.getMessage();
     }
 
-    @Override
-    public ResponseElement execute(RequestElement request) {
+    @SuppressWarnings("rawtypes")
+	@Override
+    public com.kaltura.client.utils.response.base.Response<?> execute(RequestElement request) {
         try {
             Response response = getOkClient(request.config()).newCall(buildRestRequest(request)).execute();
-            return onGotResponse(response, request);
+            return request.parseResponse(onGotResponse(response, request));
 
         } catch (IOException e) {
             // failure on request execution - create error response
-            return new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            ResponseElement responseElement = new ExecutedRequest().response(getErrorResponse(e)).success(false);
+            return request.parseResponse(responseElement);
         }
     }
 
@@ -303,7 +319,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
         return mOkClient == null || mOkClient.dispatcher().queuedCallsCount() == 0;
     }
 
-    private ResponseElement onGotResponse(Response response, RequestElement action) {
+    @SuppressWarnings("rawtypes")
+	private ResponseElement onGotResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
 
         if (!response.isSuccessful()) { // in case response has failure status
@@ -334,17 +351,20 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     private interface BodyBuilder {
-        RequestBody build(RequestElement requestElement);
+        @SuppressWarnings("rawtypes")
+		RequestBody build(RequestElement requestElement);
 
         BodyBuilder Default = new BodyBuilder() {
-            @Override
+            @SuppressWarnings("rawtypes")
+			@Override
             public RequestBody build(RequestElement requestElement) {
                 return requestElement.getBody() != null ? RequestBody.create(JSON_MediaType, requestElement.getBody().getBytes()) : null;
             }
         };
     }
 
-    private Request buildRestRequest(RequestElement request) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	private Request buildRestRequest(RequestElement request) {
 
     	RequestBody body;
     	Files files = request.getFiles();

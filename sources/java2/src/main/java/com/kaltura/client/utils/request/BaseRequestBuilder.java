@@ -1,8 +1,5 @@
 package com.kaltura.client.utils.request;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
 import com.kaltura.client.FileHolder;
@@ -13,12 +10,16 @@ import com.kaltura.client.utils.APIConstants;
 import com.kaltura.client.utils.EncryptionUtils;
 import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.utils.response.base.ResponseElement;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement {
+public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement<T> {
 
 	private Class<T> type;
     protected String id;
@@ -30,7 +31,11 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     /**
      * callback for the parsed response.
      */
-    protected OnCompletion<T> onCompletion;
+    protected OnCompletion<Response<T>> onCompletion;
+
+    protected BaseRequestBuilder(){
+        super(new Params());
+    }
 
     protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
     	super(params);
@@ -164,36 +169,36 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         }
     }
 
-    public RequestElement build(final Client client) {
+    public RequestElement<T> build(final Client client) {
         return build(client, false);
     }
 
     @SuppressWarnings("unchecked")
 	@Override
-    final public void onComplete(ResponseElement response) {
+    final public Response<T> parseResponse(ResponseElement response) {
         T result = null;
         APIException error = null;
-        
-        if(!response.isSuccess()) {
-        	error = generateErrorResponse(response);
+
+        if (!response.isSuccess()) {
+            error = generateErrorResponse(response);
         } else {
-        	try {
-				result = (T) parse(response.getResponse());
-			} catch (APIException e) {
-	        	error = e;
-			}
+            try {
+                result = (T) parse(response.getResponse());
+            } catch (APIException e) {
+                error = e;
+            }
         }
 
-        complete(result, error);
+        return new Response<T>(result, error);
     }
-    
-    @SuppressWarnings("unchecked")
-	protected void complete(Object result, APIException error) {
+
+    @Override
+    public void onComplete(Response<T> response) {
         if(onCompletion != null) {
-        	onCompletion.onComplete((T) result, error);
+            onCompletion.onComplete((Response<T>) response);
         }
     }
-    
+
     protected Object parse(String response) throws APIException {
     	if(response.length() == 0 || response.toLowerCase().equals("null")) {
     		return null;
@@ -207,7 +212,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     	return exception;
     }
     
-    public RequestElement build(final Client client, boolean addSignature) {
+    public RequestElement<T> build(final Client client, boolean addSignature) {
         connectionConfig = client != null ? client.getConnectionConfiguration() : Configuration.getDefaults();
 
         prepareParams(client, addSignature);

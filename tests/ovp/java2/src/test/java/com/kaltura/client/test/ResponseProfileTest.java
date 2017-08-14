@@ -41,7 +41,6 @@ import com.kaltura.client.services.MediaService;
 import com.kaltura.client.services.MetadataProfileService;
 import com.kaltura.client.services.MetadataService;
 import com.kaltura.client.services.ResponseProfileService;
-import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.Category;
 import com.kaltura.client.types.CategoryEntry;
 import com.kaltura.client.types.CategoryEntryFilter;
@@ -57,6 +56,7 @@ import com.kaltura.client.types.ResponseProfileMapping;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
 import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 
 public class ResponseProfileTest extends BaseTest{
 
@@ -187,10 +187,11 @@ public class ResponseProfileTest extends BaseTest{
 		multiRequestBuilder.link(categoryMetadataProfileRequest, metadataRequest, "id", "metadataProfileId");
 		multiRequestBuilder.link(responseProfileRequest, getEntryRequest, "id", "responseProfile.id");
 		
-		multiRequestBuilder.setCompletion(new OnCompletion<List<Object>>() {
+		multiRequestBuilder.setCompletion(new OnCompletion<Response<List<Object>>>() {
 			
 			@Override
-			public void onComplete(List<Object> response, APIException error) {
+			public void onComplete(Response<List<Object>> result) {
+				List<Object> response = result.results;
 				
 				MediaEntry entry = (MediaEntry) response.get(0);
 
@@ -250,7 +251,7 @@ public class ResponseProfileTest extends BaseTest{
 				doneSignal.countDown();
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(multiRequestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(multiRequestBuilder.build(client));
 		doneSignal.await();
 	}
 
@@ -287,25 +288,25 @@ public class ResponseProfileTest extends BaseTest{
 	protected void deleteCategory(int id) throws Exception {
 		startAdminSession();
 		RequestBuilder<Void> requestBuilder = CategoryService.delete(id);
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 
 	protected void deleteEntry(String id) throws Exception {
 		startAdminSession();
 		RequestBuilder<Void> requestBuilder = BaseEntryService.delete(id);
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 
 	protected void deleteResponseProfile(int id) throws Exception {
 		startAdminSession();
 		RequestBuilder<Void> requestBuilder = ResponseProfileService.delete(id);
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 
 	protected void deleteMetadataProfile(int id) throws Exception {
 		startAdminSession();
 		RequestBuilder<Void> requestBuilder = MetadataProfileService.delete(id);
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 	
 }

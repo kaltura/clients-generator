@@ -1,12 +1,5 @@
 package com.kaltura.client.utils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,11 +7,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-import com.kaltura.client.ILogger;
-import com.kaltura.client.Logger;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.APIException.FailureStep;
 import com.kaltura.client.types.ListResponse;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by tehilarozin on 24/07/2016.
@@ -52,6 +50,7 @@ public class GsonParser {
         	JsonObject jsonObject = jsonElement.getAsJsonObject();
         	if(jsonObject.get("result") != null && jsonObject.get("objectType") == null) {
         		jsonElement = jsonObject.get("result");
+				jsonObject = jsonElement.getAsJsonObject();
         	}
         	if(jsonObject.get("error") != null && jsonObject.get("objectType") == null) {
         		jsonElement = jsonObject.getAsJsonObject("error");
@@ -114,8 +113,11 @@ public class GsonParser {
         try {
         	Constructor<T> constructor = clz.getConstructor(JsonObject.class);
 	        return constructor.newInstance(jsonObject);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new APIException(FailureStep.OnResponse, e.getMessage());
+
+        } catch (NoSuchMethodException | SecurityException | InstantiationException |
+				IllegalAccessException | IllegalArgumentException | InvocationTargetException |
+				ClassCastException | IllegalStateException e) {
+			throw new APIException(FailureStep.OnResponse, e);
 		}
     }
 

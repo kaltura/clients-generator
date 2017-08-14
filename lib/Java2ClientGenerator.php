@@ -72,8 +72,6 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$str = "";
 		$str = "package com.kaltura.client.enums;\n";
 		$str .= "\n";
-		$str .= "import com.google.gson.annotations.SerializedName;\n";
-		$str .= "\n";
 		$str .= $this->getBanner();
 		
 		$desc = $this->addDescription($enumNode, "");
@@ -210,10 +208,9 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$file = $this->_baseClientPath . "/types/$type.java";
 		
 		// Basic imports
-		$imports = "";
-		$imports .= "package com.kaltura.client.types;\n\n";
-		$imports .= "import com.kaltura.client.Params;\n";
-		$imports .= "import com.kaltura.client.utils.GsonParser;\n";
+		$imports = array();
+		$imports[] = "import com.kaltura.client.Params;";
+		$imports[] = "import com.kaltura.client.utils.GsonParser;";
 
         // Add Banner
 		$this->startNewTextBlock();
@@ -238,7 +235,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		} 
 		else 
 		{
-			$imports .= "import com.kaltura.client.types.ObjectBase;\n";
+			$imports[] = "import com.kaltura.client.types.ObjectBase;";
 			$this->appendLine("public{$abstract} class $type extends ObjectBase {");
 		}
 
@@ -260,15 +257,16 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		// Generate to params method
 		$this->generateToParamsMethod($classNode);
 		$this->appendLine("");
-		
-		// close class
-		$this->appendLine("}");
-		$this->appendLine();
-		
-		$this->addFile($file, $imports . "\n" . $this->getTextBlock());
+
+        $this->finalizeClass($imports, $classNode);
+
+        $package = "package com.kaltura.client.types;\n\n";
+		sort($imports);
+		$imports = implode("\n", array_unique($imports));
+		$this->addFile($file, $package . $imports . "\n" . $this->getTextBlock());
 	}
 	
-	public function generateParametersDeclaration(&$imports, $classNode) {
+	public function generateParametersDeclaration(array &$imports, $classNode) {
 
 		$needsArrayList = false;
 		$needsHashMap = false;
@@ -299,7 +297,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			if(strpos($propType, 'Kaltura') === 0)
 			{
 				$propType = $this->getJavaTypeName($propType);
-				$imports.=  "import com.kaltura.client.types.$propType;\n";
+				$imports[] =  "import com.kaltura.client.types.$propType;";
 			}
 						
 			$functionName = ucfirst($propName);
@@ -331,12 +329,16 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		$arrImportsEnums = array_unique($arrImportsEnums);
 		foreach($arrImportsEnums as $import) 
-			$imports.= "import com.kaltura.client.enums.$import;\n";
+			$imports[] = "import com.kaltura.client.enums.$import;";
 		
-		if($needsArrayList)
-			$imports .= "import java.util.List;\n";
-		if($needsHashMap)
-			$imports .= "import java.util.Map;\n";
+		if($needsArrayList) {
+            $imports[] = "import java.util.List;";
+            $imports[] = "import java.util.ArrayList;";
+        }
+		if($needsHashMap) {
+            $imports[] = "import java.util.Map;";
+            $imports[] = "import java.util.HashMap;";
+        }
 	}
 	
 	public function generateToParamsMethod($classNode) 
@@ -363,9 +365,9 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("    }");
 	}
 
-	public function generateJsonConstructor(&$imports, $classNode, $needsSuperConstructor)
+	public function generateJsonConstructor(array &$imports, $classNode, $needsSuperConstructor)
 	{
-        $imports .= "import com.google.gson.JsonObject;\n";
+        $imports[] = "import com.google.gson.JsonObject;";
 
         $type = $this->getJavaTypeName($classNode->getAttribute("name"));
 		$this->appendLine("    public $type(JsonObject jsonObject) throws APIException {");
@@ -1288,4 +1290,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			return $this->getObjectType($propType, $enforceObject);
 		}
 	}
+
+    public function finalizeClass(array &$imports, $classNode)
+    {
+        // close class
+        $this->appendLine("}");
+        $this->appendLine();
+    }
 }
