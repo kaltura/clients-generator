@@ -47,6 +47,7 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $acceptedTypes = new stdClass();
         $acceptedTypes->name = "acceptedTypes";
         $acceptedTypes->localProperty = true;
+        $acceptedTypes->customDeclaration = "{new(...args) : KalturaObjectBase}[]";
         $acceptedTypes->optional = true;
         $acceptedTypes->type = KalturaServerTypes::ArrayOfObjects;
         $acceptedTypes->typeClassName = "KalturaObjectBase";
@@ -292,11 +293,16 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         if (count($properties) != 0)
         {
             foreach($properties as $property) {
-                if ($property->type === KalturaServerTypes::File) {
+
+                if (isset($property->customDeclaration))
+                {
+                    $ng2ParamType = $property->customDeclaration;
+                } else if ($property->type === KalturaServerTypes::File) {
                     $ng2ParamType = "File";
                 }else {
                     $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
                 }
+
                 $default = $this->toNG2DefaultByType($property->type, $property->typeClassName, isset($property->default) ? $property->default : null);
                 $readOnly = isset($property->readOnly) && $property->readOnly;
                 $localProperty = isset($property->localProperty) && $property->localProperty;
