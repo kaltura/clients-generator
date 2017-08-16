@@ -32,12 +32,11 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
      */
     protected OnCompletion<Response<T>> onCompletion;
 
-    protected BaseRequestBuilder(Class<T> type, Params params, Files files) {
-    	super(params);
+    protected BaseRequestBuilder(Class<T> type) {
+    	super();
     	this.type = type;
-    	this.files = files;
     }
-    
+
     protected abstract String getUrlTail();
 
     public abstract String getTag();

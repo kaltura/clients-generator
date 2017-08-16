@@ -112,7 +112,7 @@ abstract class BaseTest extends TestCase {
 				logger.info("Deleting " + id);
 			}
 
-			RequestBuilder<Void> requestBuilder = MediaService.delete(id)
+			RequestBuilder<Void, Void> requestBuilder = MediaService.delete(id)
 			.setCompletion(new OnCompletion<Response<Void>>() {
 
 				@Override
@@ -183,7 +183,7 @@ abstract class BaseTest extends TestCase {
 			return;
 		}
 		
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.add(entry)
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 			@Override
@@ -195,7 +195,7 @@ abstract class BaseTest extends TestCase {
 				UploadToken uploadToken = new UploadToken();
 				uploadToken.setFileName(testConfig.getUploadImage());
 				uploadToken.setFileSize((double) fileSize);
-				RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add(uploadToken)
+				RequestBuilder<UploadToken, UploadToken.Tokenizer> requestBuilder = UploadTokenService.add(uploadToken)
 				.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 					@Override
@@ -207,7 +207,7 @@ abstract class BaseTest extends TestCase {
 						// Define content
 						UploadedFileTokenResource resource = new UploadedFileTokenResource();
 						resource.setToken(token.getId());
-						RequestBuilder<MediaEntry> requestBuilder = MediaService.addContent(entry.getId(), resource)
+						RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.addContent(entry.getId(), resource)
 						.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 							@Override
@@ -216,7 +216,7 @@ abstract class BaseTest extends TestCase {
 								assertNotNull(entry);
 								
 								// upload
-								RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
+								RequestBuilder<UploadToken, UploadToken.Tokenizer> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
 								.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 									@Override
@@ -256,7 +256,7 @@ abstract class BaseTest extends TestCase {
 		final int sleepInterval = 30 * 1000;
 		counter = 0;
 
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.get(id);
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.get(id);
 		final RequestElement<MediaEntry> requestElement = requestBuilder.build(client);
 
 		requestBuilder.setCompletion(new OnCompletion<Response<MediaEntry>>() {

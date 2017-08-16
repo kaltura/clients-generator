@@ -1,13 +1,12 @@
 package com.kaltura.client.utils.request;
 
-import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.response.base.Response;
 
-public class NullRequestBuilder<U> extends LinkedRequest<Void, U, Void> {
+public abstract class NullRequestBuilder extends RequestBuilder<Void, Void> {
 
-    public NullRequestBuilder(String service, String action, Params params) {
-        super(Void.class, service, action, params);
+    public NullRequestBuilder(String service, String action) {
+        super(Void.class, service, action);
     }
 
     @Override

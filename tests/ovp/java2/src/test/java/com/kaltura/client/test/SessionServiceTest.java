@@ -50,7 +50,7 @@ public class SessionServiceTest extends BaseTest {
 		assertNotNull(client.getSessionId());
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+		RequestBuilder<ListResponse<MediaEntry>, ListResponse.Tokenizer<MediaEntry.Tokenizer>> requestBuilder = MediaService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 			
 			@Override
@@ -61,7 +61,7 @@ public class SessionServiceTest extends BaseTest {
 				// Close session
 				client.setSessionId(null);;
 
-				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+				RequestBuilder<ListResponse<MediaEntry>, ListResponse.Tokenizer<MediaEntry.Tokenizer>> requestBuilder = MediaService.list()
 				.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 					
 					@Override

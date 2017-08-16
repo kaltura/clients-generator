@@ -37,13 +37,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.BaseEntry;
 import com.kaltura.client.types.DrmPlaybackPluginData;
-import com.kaltura.client.types.EntryContextDataResult;
-import com.kaltura.client.types.FlavorAsset;
-import com.kaltura.client.types.FlavorAssetWithParams;
-import com.kaltura.client.types.ListResponse;
-import com.kaltura.client.types.LiveStreamEntry;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
-import com.kaltura.client.utils.request.Request;
+import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.APIOkRequestsExecutor;
@@ -218,7 +213,7 @@ public class MultiRequestTest extends BaseTest{
 		MediaEntry updateEntry = new MediaEntry();
 		updateEntry.setTags(updatedTag);
 
-		Request<Boolean, String> systemServicePingRequestBuilder = SystemService.ping()
+		RequestBuilder<Boolean, String> systemServicePingRequestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -229,7 +224,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		Request<MediaEntry, MediaEntry.Tokenizer> mediaServiceAddRequestBuilder = MediaService.add(entry)
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> mediaServiceAddRequestBuilder = MediaService.add(entry)
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -241,7 +236,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		Request<MediaEntry, MediaEntry.Tokenizer> mediaServiceUpdateRequestBuilder = MediaService.update("{2:result:id}", updateEntry)
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> mediaServiceUpdateRequestBuilder = MediaService.update("{2:result:id}", updateEntry)
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -253,7 +248,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		Request<Void, Void> mediaServiceDeleteRequestBuilder = MediaService.delete("{2:result:id}")
+		RequestBuilder<Void, Void> mediaServiceDeleteRequestBuilder = MediaService.delete("{2:result:id}")
 		.setCompletion(new OnCompletion<Response<Void>>() {
 			
 			@Override
@@ -334,7 +329,7 @@ public class MultiRequestTest extends BaseTest{
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		final AtomicInteger counter = new AtomicInteger(0);
 		
-		Request<Boolean, String> requestBuilder1 = SystemService.ping()
+		RequestBuilder<Boolean, String> requestBuilder1 = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -345,7 +340,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		Request<MediaEntry, MediaEntry.Tokenizer> requestBuilder2 = MediaService.get("Illegal String")
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder2 = MediaService.get("Illegal String")
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -356,7 +351,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		Request<Boolean, String> requestBuilder3 = SystemService.ping()
+		RequestBuilder<Boolean, String> requestBuilder3 = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -386,13 +381,13 @@ public class MultiRequestTest extends BaseTest{
 	
 	public void testTokens() throws Exception {
 
-		Request<Boolean, String> systemPingRequestBuilder = SystemService.ping();
-		Request<MediaEntry, MediaEntry.Tokenizer> mediaGetRequestBuilder = MediaService.get("whatever");
-		Request<List<FlavorAsset>, Request.ListTokenizer<FlavorAsset.Tokenizer>> flavorAssetGetByEntryIdRequestBuilder = FlavorAssetService.getByEntryId("whatever");
-		Request<List<FlavorAssetWithParams>, Request.ListTokenizer<FlavorAssetWithParams.Tokenizer>> flavorAssetGetFlavorAssetsWithParamsRequestBuilder = FlavorAssetService.getFlavorAssetsWithParams("whatever");
-		Request<LiveStreamEntry, LiveStreamEntry.Tokenizer> liveStreamGetRequestBuilder = LiveStreamService.get("whatever");
-		Request<EntryContextDataResult, EntryContextDataResult.Tokenizer> baseEntryGetContextDataRequestBuilder = BaseEntryService.getContextData("whatever", null);
-		Request<ListResponse<BaseEntry>, ListResponse.Tokenizer<BaseEntry.Tokenizer>> baseEntryListRequestBuilder = BaseEntryService.list();
+		SystemService.PingAction systemPingRequestBuilder = SystemService.ping();
+		MediaService.GetAction mediaGetRequestBuilder = MediaService.get("whatever");
+		FlavorAssetService.GetByEntryIdAction flavorAssetGetByEntryIdRequestBuilder = FlavorAssetService.getByEntryId("whatever");
+		FlavorAssetService.GetFlavorAssetsWithParamsAction flavorAssetGetFlavorAssetsWithParamsRequestBuilder = FlavorAssetService.getFlavorAssetsWithParams("whatever");
+		LiveStreamService.GetAction liveStreamGetRequestBuilder = LiveStreamService.get("whatever");
+		BaseEntryService.GetContextDataAction baseEntryGetContextDataRequestBuilder = BaseEntryService.getContextData("whatever", null);
+		BaseEntryService.ListAction baseEntryListRequestBuilder = BaseEntryService.list();
 		
 		systemPingRequestBuilder
 		.add(mediaGetRequestBuilder)

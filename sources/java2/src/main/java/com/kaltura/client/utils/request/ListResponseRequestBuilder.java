@@ -1,22 +1,16 @@
 package com.kaltura.client.utils.request;
 
-import com.kaltura.client.Files;
-import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.utils.GsonParser;
 
-public class ListResponseRequestBuilder<T, U, V> extends LinkedRequest<ListResponse<T>, U, ListResponse.Tokenizer<V>> {
+public abstract class ListResponseRequestBuilder<T, V> extends RequestBuilder<ListResponse<T>, ListResponse.Tokenizer<V>> {
 
     private Class<T> type;
 
-    public ListResponseRequestBuilder(Class<T> type, String service, String action, Params params, Files files) {
-        super(null, service, action, params, files);
+    public ListResponseRequestBuilder(Class<T> type, String service, String action) {
+        super(null, service, action);
     	this.type = type;
-    }
-
-    public ListResponseRequestBuilder(Class<T> type, String service, String action, Params params) {
-        this(type, service, action, params, null);
     }
 
 	public Class<?> getType() {
@@ -38,7 +32,7 @@ public class ListResponseRequestBuilder<T, U, V> extends LinkedRequest<ListRespo
 		}
 
     	MultiRequestBuilder.Tokenizer annotation = type.getAnnotation(MultiRequestBuilder.Tokenizer.class);
-		return new Request.ListResponseTokenizer<V>((Class<V>)annotation.value(), id + ":result");
+		return new RequestBuilder.ListResponseTokenizer<V>((Class<V>)annotation.value(), id + ":result");
     }
 }
 
