@@ -29,7 +29,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * will be used in case a completion was not provided on the multirequest itself
      * and the completion for each inner request should be activated
      */
-    private LinkedHashMap<String, RequestBuilder<?, ?>> requests = new LinkedHashMap<>();
+    private LinkedHashMap<String, RequestBuilder<?, ?, ?>> requests = new LinkedHashMap<>();
     private int lastId = 0;
 
     @Target(value={ElementType.TYPE})
@@ -47,7 +47,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * constructs instance and fill it with requests
      * @param requests
      */
-    public MultiRequestBuilder(RequestBuilder<?, ?>... requests) {
+    public MultiRequestBuilder(RequestBuilder<?, ?, ?>... requests) {
         this();
         add(requests);
     }
@@ -62,15 +62,15 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * @param requests
      * @return
      */
-    public MultiRequestBuilder add(RequestBuilder<?, ?>... requests) {
-        for (RequestBuilder<?, ?> request : requests) {
+    public MultiRequestBuilder add(RequestBuilder<?, ?, ?>... requests) {
+        for (RequestBuilder<?, ?, ?> request : requests) {
         	add(request);
         }
 
         return this;
     }
 
-    public MultiRequestBuilder add(RequestBuilder<?, ?> request) {
+    public MultiRequestBuilder add(RequestBuilder<?, ?, ?> request) {
         lastId++;
         String reqId = lastId + "";
         request.params.add("service", request.getService());
@@ -95,7 +95,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      */
     public MultiRequestBuilder add(MultiRequestBuilder multiRequestBuilder) {
         for (String reqId : multiRequestBuilder.requests.keySet()) {
-        	RequestBuilder<?, ?> request = multiRequestBuilder.requests.get(reqId);
+        	RequestBuilder<?, ?, ?> request = multiRequestBuilder.requests.get(reqId);
             int last = requests.size() + 1;
             requests.put(last + "", request);
             params.add(last + "", request.params);
@@ -113,7 +113,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
             int index = 0;
 
-            for(RequestBuilder<?, ?> request : requests.values()) {
+            for(RequestBuilder<?, ?, ?> request : requests.values()) {
                 if(request.onCompletion != null) {
                     if (topError != null) {
                         request.onComplete(new Response(null, topError));
@@ -139,7 +139,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     @Override
     protected Object parse(String response) throws APIException {
         List<Class<?>> list = new ArrayList<Class<?>>();
-        for(RequestBuilder<?, ?> call : requests.values()) {
+        for(RequestBuilder<?, ?, ?> call : requests.values()) {
             list.add(call.getType());
         }
     	return GsonParser.parseArray(response, list.toArray(new Class[requests.size()]));
@@ -187,7 +187,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * @param destKey - the param property to set its value as linked.
      * @return
      */
-    public MultiRequestBuilder link(RequestBuilder<?, ?> sourceRequest, RequestBuilder<?, ?> destRequest, String sourceKey, String destKey) {
+    public MultiRequestBuilder link(RequestBuilder<?, ?, ?> sourceRequest, RequestBuilder<?, ?, ?> destRequest, String sourceKey, String destKey) {
         if(sourceRequest == null || destRequest == null){
             throw new NullPointerException("link requests can't be null");
         }

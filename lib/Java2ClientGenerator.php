@@ -680,7 +680,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	    	}
     	}
 		
-		$javaOutputType = $this->getResultType($resultType, $arrayType, $serviceImports);
+		$javaOutputType = $this->getResultType($resultType, $arrayType, $builderName, $serviceImports);
 
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$paramNodesArr = array();
@@ -1257,7 +1257,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		}
 	}
 	
-	public function getResultType($resultType, $arrayType, &$serviceImports) 
+	public function getResultType($resultType, $arrayType, $builderName, &$serviceImports)
 	{
 		switch($resultType)
 		{
@@ -1268,34 +1268,34 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		case "ListResponse":
 			$serviceImports[] = "com.kaltura.client.types.$arrayType";
 			$serviceImports[] = "com.kaltura.client.utils.request.ListResponseRequestBuilder";
-			return("ListResponseRequestBuilder<" . $arrayType . ", $arrayType.Tokenizer>");
+			return("ListResponseRequestBuilder<" . $arrayType . ", $arrayType.Tokenizer, $builderName>");
 			
 		case "array":
 			$serviceImports[] = "com.kaltura.client.types.$arrayType";
 			$serviceImports[] = "com.kaltura.client.utils.request.ArrayRequestBuilder";
-			return("ArrayRequestBuilder<" . $arrayType . ", $arrayType.Tokenizer>");
+			return("ArrayRequestBuilder<" . $arrayType . ", $arrayType.Tokenizer, $builderName>");
 			
 		case "map":
 			$serviceImports[] = "com.kaltura.client.types.$arrayType";
 			$serviceImports[] = "com.kaltura.client.utils.request.MapRequestBuilder";
-			return("MapRequestBuilder<" . $arrayType . ", $arrayType.Tokenizer>");
+			return("MapRequestBuilder<" . $arrayType . ", $arrayType.Tokenizer, $builderName>");
 
 		case "int":
 			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<Integer, String>");
+			return("RequestBuilder<Integer, String, $builderName>");
 
 		case "bigint":
 		case "time":
 			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<Long, String>");
+			return("RequestBuilder<Long, String, $builderName>");
 		
 		case "bool":
 			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<Boolean, String>");
+			return("RequestBuilder<Boolean, String, $builderName>");
 			
 		case "string":
 			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
-			return("RequestBuilder<String, String>");
+			return("RequestBuilder<String, String, $builderName>");
 			
 		case "file":
 			$serviceImports[] = "com.kaltura.client.utils.request.ServeRequestBuilder";
@@ -1304,7 +1304,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		default:
 			$serviceImports[] = "com.kaltura.client.utils.request.RequestBuilder";
 			$serviceImports[] = "com.kaltura.client.types.$resultType";
-			return("RequestBuilder<$resultType, $resultType.Tokenizer>");
+			return("RequestBuilder<$resultType, $resultType.Tokenizer, $builderName>");
 		}
 	}
 	
