@@ -60,7 +60,7 @@ public class UiConfServiceTest extends BaseTest {
 		
 		// this uiConf won't be editable in the KMC until it gets a config added to it, I think
 		
-		RequestBuilder<UiConf> requestBuilder = UiConfService.add(uiConf)
+		RequestBuilder<UiConf, UiConf.Tokenizer> requestBuilder = UiConfService.add(uiConf)
 		.setCompletion(new OnCompletion<Response<UiConf>>() {
 			
 			@Override
@@ -105,7 +105,7 @@ public class UiConfServiceTest extends BaseTest {
 				final UiConf addedConf = result.results;
 				assertNotNull(addedConf);
 				
-				RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
+				RequestBuilder<UiConf, UiConf.Tokenizer> requestBuilder = UiConfService.get(addedConf.getId())
 				.setCompletion(new OnCompletion<Response<UiConf>>() {
 					
 					@Override
@@ -136,7 +136,7 @@ public class UiConfServiceTest extends BaseTest {
 				
 				assertNotNull(addedConf);
 				
-				RequestBuilder<Void> requestBuilder = UiConfService.delete(addedConf.getId())
+				RequestBuilder<Void, Void> requestBuilder = UiConfService.delete(addedConf.getId())
 				.setCompletion(new OnCompletion<Response<Void>>() {
 					
 					@Override
@@ -145,7 +145,7 @@ public class UiConfServiceTest extends BaseTest {
 
 						testUiConfIds.remove(addedConf.getId());
 
-						RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
+						RequestBuilder<UiConf, UiConf.Tokenizer> requestBuilder = UiConfService.get(addedConf.getId())
 						.setCompletion(new OnCompletion<Response<UiConf>>() {
 							
 							@Override
@@ -179,7 +179,7 @@ public class UiConfServiceTest extends BaseTest {
 			if (logger.isEnabled())
 				logger.debug("Deleting UI conf " + id);
 
-			RequestBuilder<Void> requestBuilder = UiConfService.delete(id);
+			RequestBuilder<Void, Void> requestBuilder = UiConfService.delete(id);
 			APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		} //next id
 	}

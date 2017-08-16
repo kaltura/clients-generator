@@ -73,7 +73,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		paramsAdd.setIsSystemDefault(testEnumAsInt);
 		paramsAdd.setFormat(testEnumAsString);
 
-		RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+		RequestBuilder<ThumbParams, ThumbParams.Tokenizer> requestBuilder = ThumbParamsService.add(paramsAdd)
 		.setCompletion(new OnCompletion<Response<ThumbParams>>() {
 			
 			@Override
@@ -93,14 +93,14 @@ public class MediaServiceFieldsTest extends BaseTest {
 				paramsUpdate.setIsSystemDefault(null);
 				paramsUpdate.setFormat(null);
 
-				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
+				RequestBuilder<ThumbParams, ThumbParams.Tokenizer> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
 				.setCompletion(new OnCompletion<Response<ThumbParams>>() {
 					
 					@Override
 					public void onComplete(Response<ThumbParams> result) {
 						assertNull(result.error);
 
-						RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.get(paramsAdded.getId())
+						RequestBuilder<ThumbParams, ThumbParams.Tokenizer> requestBuilder = ThumbParamsService.get(paramsAdded.getId())
 						.setCompletion(new OnCompletion<Response<ThumbParams>>() {
 							
 							@Override
@@ -113,7 +113,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 								assertEquals(testEnumAsInt, paramsGot.getIsSystemDefault());
 								assertEquals(testEnumAsString, paramsGot.getFormat());
 
-								RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
+								RequestBuilder<Void, Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
 								APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 
 								doneSignal.countDown();
@@ -147,7 +147,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		paramsAdd.setDescription(testString);
 
 		// Regular update works
-		RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.add(paramsAdd)
+		RequestBuilder<ThumbParams, ThumbParams.Tokenizer> requestBuilder = ThumbParamsService.add(paramsAdd)
 		.setCompletion(new OnCompletion<Response<ThumbParams>>() {
 			
 			@Override
@@ -161,7 +161,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 				ThumbParams paramsUpdate = new ThumbParams();
 				paramsUpdate.setDescription("__null_string__");
 
-				RequestBuilder<ThumbParams> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
+				RequestBuilder<ThumbParams, ThumbParams.Tokenizer> requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
 				.setCompletion(new OnCompletion<Response<ThumbParams>>() {
 					
 					@Override
@@ -171,7 +171,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 				
 						assertNull(paramsUpdated.getDescription());
 
-						RequestBuilder<Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
+						RequestBuilder<Void, Void> requestBuilder = ThumbParamsService.delete(paramsAdded.getId());
 						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 
 						doneSignal.countDown();
@@ -202,7 +202,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		profileAdd.setStorageProfileId(testInt);
 
 		// Regular update works
-		RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.add(profileAdd)
+		RequestBuilder<ConversionProfile, ConversionProfile.Tokenizer> requestBuilder = ConversionProfileService.add(profileAdd)
 		.setCompletion(new OnCompletion<Response<ConversionProfile>>() {
 			
 			@Override
@@ -216,7 +216,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 				ConversionProfile profileUpdate = new ConversionProfile();
 				profileUpdate.setStorageProfileId(Integer.MAX_VALUE);
 		
-				RequestBuilder<ConversionProfile> requestBuilder = ConversionProfileService.update(profileAdded.getId(), profileUpdate)
+				RequestBuilder<ConversionProfile, ConversionProfile.Tokenizer> requestBuilder = ConversionProfileService.update(profileAdded.getId(), profileUpdate)
 				.setCompletion(new OnCompletion<Response<ConversionProfile>>() {
 					
 					@Override
@@ -226,7 +226,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 						
 						assertTrue(profileUpdated.getStorageProfileId() == null);
 				
-						RequestBuilder<Void> requestBuilder = ConversionProfileService.delete(profileUpdated.getId());
+						RequestBuilder<Void, Void> requestBuilder = ConversionProfileService.delete(profileUpdated.getId());
 						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 
 						doneSignal.countDown();
@@ -262,7 +262,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 		accessControlAdd.setName("Test access control: " + getName());
 		accessControlAdd.setRestrictions(restrictions);
 		
-		RequestBuilder<AccessControl> requestBuilder = AccessControlService.add(accessControlAdd)
+		RequestBuilder<AccessControl, AccessControl.Tokenizer> requestBuilder = AccessControlService.add(accessControlAdd)
 		.setCompletion(new OnCompletion<Response<AccessControl>>() {
 			
 			@Override
@@ -278,7 +278,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 				accessControlUpdate.setName("Updated access control: " + getName());
 				accessControlUpdate.setRestrictions(null); 
 
-				RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlAdded.getId(), accessControlUpdate)
+				RequestBuilder<AccessControl, AccessControl.Tokenizer> requestBuilder = AccessControlService.update(accessControlAdded.getId(), accessControlUpdate)
 				.setCompletion(new OnCompletion<Response<AccessControl>>() {
 					
 					@Override
@@ -293,7 +293,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 						accessControlUpdateAgain.setName("Reset access control: " + getName());
 						accessControlUpdateAgain.setRestrictions(new ArrayList<BaseRestriction>()); 
 
-						RequestBuilder<AccessControl> requestBuilder = AccessControlService.update(accessControlUpdated.getId(), accessControlUpdateAgain)
+						RequestBuilder<AccessControl, AccessControl.Tokenizer> requestBuilder = AccessControlService.update(accessControlUpdated.getId(), accessControlUpdateAgain)
 						.setCompletion(new OnCompletion<Response<AccessControl>>() {
 							
 							@Override
@@ -304,7 +304,7 @@ public class MediaServiceFieldsTest extends BaseTest {
 								assertEquals(0, accessControlUpdatedAgain.getRestrictions().size());
 						
 								// Delete entry
-								RequestBuilder<Void> requestBuilder = AccessControlService.delete(accessControlUpdatedAgain.getId());
+								RequestBuilder<Void, Void> requestBuilder = AccessControlService.delete(accessControlUpdatedAgain.getId());
 								APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 								
 								doneSignal.countDown();

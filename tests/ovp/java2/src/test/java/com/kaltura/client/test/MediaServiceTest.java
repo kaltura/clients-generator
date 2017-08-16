@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import com.kaltura.client.APIOkRequestsExecutor;
-import com.kaltura.client.ILogger;
-import com.kaltura.client.Logger;
 import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.EntryType;
 import com.kaltura.client.enums.MediaType;
@@ -62,8 +60,6 @@ import com.kaltura.client.utils.response.base.Response;
 
 public class MediaServiceTest extends BaseTest {
 
-	private ILogger logger = Logger.getLogger(MediaServiceTest.class);
-	
 	/**
 	 * Tests the following : 
 	 * Media Service -
@@ -100,7 +96,7 @@ public class MediaServiceTest extends BaseTest {
 		entry.setType(EntryType.MEDIA_CLIP);
 		entry.setMediaType(MediaType.VIDEO);
 
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.addFromUrl(entry, testConfig.getTestUrl())
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.addFromUrl(entry, testConfig.getTestUrl())
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 			@Override
@@ -141,7 +137,7 @@ public class MediaServiceTest extends BaseTest {
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<Integer> requestBuilder = MediaService.count(filter)
+		RequestBuilder<Integer, String> requestBuilder = MediaService.count(filter)
 		.setCompletion(new OnCompletion<Response<Integer>>() {
 
 			@Override
@@ -158,7 +154,7 @@ public class MediaServiceTest extends BaseTest {
 				entry.setMediaType(MediaType.VIDEO);
 				entry.setTags(uniqueTag);
 				
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
+				RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.add(entry)
 				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
@@ -174,7 +170,7 @@ public class MediaServiceTest extends BaseTest {
 						uploadToken.setFileName(testConfig.getUploadVideo());
 						uploadToken.setFileSize((double) fileSize);
 
-						RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add(uploadToken)
+						RequestBuilder<UploadToken, UploadToken.Tokenizer> requestBuilder = UploadTokenService.add(uploadToken)
 						.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 							@Override
@@ -188,7 +184,7 @@ public class MediaServiceTest extends BaseTest {
 								UploadedFileTokenResource resource = new UploadedFileTokenResource();
 								resource.setToken(token.getId());
 
-								RequestBuilder<MediaEntry> requestBuilder = MediaService.addContent(entry.getId(), resource)
+								RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.addContent(entry.getId(), resource)
 								.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 									@Override
@@ -198,7 +194,7 @@ public class MediaServiceTest extends BaseTest {
 										assertNotNull(entry);
 
 										// upload
-										RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
+										RequestBuilder<UploadToken, UploadToken.Tokenizer> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
 										.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 											@Override
@@ -215,7 +211,7 @@ public class MediaServiceTest extends BaseTest {
 														assertNotNull(entry);
 														
 														// Test get flavor asset by entry id.
-														RequestBuilder<List<FlavorAsset>> requestBuilder = FlavorAssetService.getByEntryId(entry.getId())
+														RequestBuilder<List<FlavorAsset>, RequestBuilder.ListTokenizer<FlavorAsset.Tokenizer>> requestBuilder = FlavorAssetService.getByEntryId(entry.getId())
 														.setCompletion(new OnCompletion<Response<List<FlavorAsset>>>() {
 
 															@Override
@@ -227,7 +223,7 @@ public class MediaServiceTest extends BaseTest {
 																assertTrue(listFlavors.size() >= 1); // Should contain at least the source
 																
 
-																RequestBuilder<Integer> requestBuilder = MediaService.count(filter)
+																RequestBuilder<Integer, String> requestBuilder = MediaService.count(filter)
 																.setCompletion(new OnCompletion<Response<Integer>>() {
 
 																	@Override
@@ -288,7 +284,7 @@ public class MediaServiceTest extends BaseTest {
 				MediaEntry updatedEntry = new MediaEntry();
 				updatedEntry.setName(name2);			
 				
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.update(addedEntry.getId(), updatedEntry)
+				RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.update(addedEntry.getId(), updatedEntry)
 				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
@@ -322,7 +318,7 @@ public class MediaServiceTest extends BaseTest {
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.get("bad-id")
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.get("bad-id")
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 			@Override
@@ -352,7 +348,7 @@ public class MediaServiceTest extends BaseTest {
 
 			@Override
 			public void onComplete(final MediaEntry addedEntry) {
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.get(addedEntry.getId())
+				RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.get(addedEntry.getId())
 				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
@@ -420,7 +416,7 @@ public class MediaServiceTest extends BaseTest {
 				filter.setNameMultiLikeOr(join(list));
 				filter.setStatusIn(EntryStatus.IMPORT.getValue() + "," + EntryStatus.NO_CONTENT.getValue() + "," + EntryStatus.PENDING.getValue() + "," + EntryStatus.PRECONVERT.getValue() + "," + EntryStatus.READY.getValue());
 
-				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list(filter)
+				RequestBuilder<ListResponse<MediaEntry>, ListResponse.Tokenizer<MediaEntry.Tokenizer>> requestBuilder = MediaService.list(filter)
 				.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 
 					@Override
@@ -486,7 +482,7 @@ public class MediaServiceTest extends BaseTest {
 						flag.setFlaggedEntryId(addedEntry.getId());
 						flag.setFlagType(ModerationFlagType.SPAM_COMMERCIALS);
 						flag.setComments(FLAG_COMMENTS);
-						RequestBuilder<Void> requestBuilder = MediaService.flag(flag)
+						RequestBuilder<Void, Void> requestBuilder = MediaService.flag(flag)
 						.setCompletion(new OnCompletion<Response<Void>>() {
 
 							@Override
@@ -494,7 +490,7 @@ public class MediaServiceTest extends BaseTest {
 								assertNull(result.error);
 
 								// get the list of flags for this entry
-								RequestBuilder<ListResponse<ModerationFlag>> requestBuilder = MediaService.listFlags(addedEntry.getId())
+								RequestBuilder<ListResponse<ModerationFlag>, ListResponse.Tokenizer<ModerationFlag.Tokenizer>> requestBuilder = MediaService.listFlags(addedEntry.getId())
 								.setCompletion(new OnCompletion<Response<ListResponse<ModerationFlag>>>() {
 
 									@Override
@@ -550,7 +546,7 @@ public class MediaServiceTest extends BaseTest {
 
 					@Override
 					public void onComplete(MediaEntry result) {
-						RequestBuilder<Void> requestBuilder = MediaService.delete(idToDelete)
+						RequestBuilder<Void, Void> requestBuilder = MediaService.delete(idToDelete)
 						.setCompletion(new OnCompletion<Response<Void>>() {
 
 							@Override
@@ -558,7 +554,7 @@ public class MediaServiceTest extends BaseTest {
 								assertNull(result.error);
 
 								// Get deleted - should fail
-								RequestBuilder<MediaEntry> requestBuilder = MediaService.get(idToDelete)
+								RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.get(idToDelete)
 								.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 									@Override
@@ -594,7 +590,7 @@ public class MediaServiceTest extends BaseTest {
 		final File fileData = TestUtils.getTestVideoFile();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<String> requestBuilder = MediaService.upload(fileData)
+		RequestBuilder<String, String> requestBuilder = MediaService.upload(fileData)
 		.setCompletion(new OnCompletion<Response<String>>() {
 
 			@Override
@@ -607,7 +603,7 @@ public class MediaServiceTest extends BaseTest {
 				entry.setType(EntryType.MEDIA_CLIP);
 				entry.setMediaType(MediaType.VIDEO);
 				
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.addFromUploadedFile(entry, result.results)
+				RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.addFromUploadedFile(entry, result.results)
 				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
@@ -644,7 +640,7 @@ public class MediaServiceTest extends BaseTest {
 				filter.setReferenceIdEqual(entry.getReferenceId());
 				List<MediaEntryFilterForPlaylist> filters = new ArrayList<MediaEntryFilterForPlaylist>();
 				filters.add(filter);
-				RequestBuilder<List<BaseEntry>> requestBuilder = PlaylistService.executeFromFilters(filters, 5)
+				RequestBuilder<List<BaseEntry>, RequestBuilder.ListTokenizer<BaseEntry.Tokenizer>> requestBuilder = PlaylistService.executeFromFilters(filters, 5)
 				.setCompletion(new OnCompletion<Response<List<BaseEntry>>>() {
 
 					@Override
@@ -671,7 +667,7 @@ public class MediaServiceTest extends BaseTest {
 		DataEntry dataEntry = new DataEntry();
 		dataEntry.setName(getName() + " (" + new Date() + ")");
 		dataEntry.setDataContent(test);
-		RequestBuilder<DataEntry> requestBuilder = DataService.add(dataEntry)
+		RequestBuilder<DataEntry, DataEntry.Tokenizer> requestBuilder = DataService.add(dataEntry)
 		.setCompletion(new OnCompletion<Response<DataEntry>>() {
 
 			@Override
@@ -679,7 +675,7 @@ public class MediaServiceTest extends BaseTest {
 				assertNull(result.error);
 
 				// serve
-				RequestBuilder<String> requestBuilder = DataService.serve(result.results.getId())
+				RequestBuilder<String, String> requestBuilder = DataService.serve(result.results.getId())
 				.setCompletion(new OnCompletion<Response<String>>() {
 
 					@Override

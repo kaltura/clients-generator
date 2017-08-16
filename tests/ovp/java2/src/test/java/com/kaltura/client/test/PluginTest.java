@@ -49,7 +49,7 @@ public class PluginTest extends BaseTest {
 		profileAdd.setMetadataObjectType(MetadataObjectType.ENTRY);
 		profileAdd.setName(getName());
 
-		RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
+		RequestBuilder<MetadataProfile, MetadataProfile.Tokenizer> requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
 		.setCompletion(new OnCompletion<Response<MetadataProfile>>() {
 			
 			@Override
@@ -62,7 +62,7 @@ public class PluginTest extends BaseTest {
 				MetadataProfile profileUpdate = new MetadataProfile();
 				profileUpdate.setName(testString);
 
-				RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.update(profileAdded.getId(), profileUpdate)
+				RequestBuilder<MetadataProfile, MetadataProfile.Tokenizer> requestBuilder = MetadataProfileService.update(profileAdded.getId(), profileUpdate)
 				.setCompletion(new OnCompletion<Response<MetadataProfile>>() {
 					
 					@Override
@@ -72,7 +72,7 @@ public class PluginTest extends BaseTest {
 						
 						assertEquals(testString, profileUpdated.getName());
 						
-						RequestBuilder<Void> requestBuilder = MetadataProfileService.delete(profileUpdated.getId());
+						RequestBuilder<Void, Void> requestBuilder = MetadataProfileService.delete(profileUpdated.getId());
 						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 						
 						doneSignal.countDown();

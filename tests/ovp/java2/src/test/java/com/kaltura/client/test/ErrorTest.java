@@ -55,7 +55,7 @@ public class ErrorTest extends BaseTest {
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
 
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		RequestBuilder<Boolean, String> requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -78,7 +78,7 @@ public class ErrorTest extends BaseTest {
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
         
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		RequestBuilder<Boolean, String> requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -118,7 +118,7 @@ public class ErrorTest extends BaseTest {
 		final ExecutorMock<Boolean> mockClient = new ExecutorMock<Boolean>("Invalid JSON");
         final CountDownLatch doneSignal = new CountDownLatch(1);
         
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		RequestBuilder<Boolean, String> requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -141,7 +141,7 @@ public class ErrorTest extends BaseTest {
 	public void testTagInSimpleType() throws InterruptedException, ExecutionException {
 		final ExecutorMock<Boolean> mockClient = new ExecutorMock<Boolean>("{sometag: 1}");
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		RequestBuilder<Boolean, String> requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -164,7 +164,7 @@ public class ErrorTest extends BaseTest {
 	public void testEmptyObjectOrException() throws InterruptedException, ExecutionException {
 		final ExecutorMock<ListResponse<MediaEntry>> mockClient = new ExecutorMock<ListResponse<MediaEntry>>("\"bla bla\"");
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+		RequestBuilder<ListResponse<MediaEntry>, ListResponse.Tokenizer<com.kaltura.client.types.MediaEntry.Tokenizer>> requestBuilder = MediaService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 			
 			@Override
@@ -183,7 +183,7 @@ public class ErrorTest extends BaseTest {
 
 		final ExecutorMock<MediaEntry> mockClient = new ExecutorMock<MediaEntry>("{objectType: \"UnknownObjectType\"}");
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.get("invalid-id")
+		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder = MediaService.get("invalid-id")
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -207,7 +207,7 @@ public class ErrorTest extends BaseTest {
 
 		final ExecutorMock<ListResponse<BaseEntry>> mockClient = new ExecutorMock<ListResponse<BaseEntry>>(testJson);
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<ListResponse<BaseEntry>> requestBuilder = BaseEntryService.list()
+		RequestBuilder<ListResponse<BaseEntry>, ListResponse.Tokenizer<com.kaltura.client.types.BaseEntry.Tokenizer>> requestBuilder = BaseEntryService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<BaseEntry>>>() {
 			
 			@Override
