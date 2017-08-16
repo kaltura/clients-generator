@@ -383,12 +383,12 @@ public class ResponseProfileTest extends BaseTest{
 
 		getEntryRequest.setResponseProfile(responseProfileHolder);
 		
-		multiRequestBuilder.link(responseProfileRequest, getEntryRequest, "id", "responseProfile.id");
-		
 		multiRequestBuilder.setCompletion(new OnCompletion<Response<List<Object>>>() {
 			
 			@Override
 			public void onComplete(Response<List<Object>> result) {
+				assertNull(result.error);
+				
 				List<Object> response = result.results;
 				
 				MediaEntry entry = (MediaEntry) response.get(0);
