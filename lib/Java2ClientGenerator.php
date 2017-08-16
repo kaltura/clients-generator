@@ -276,7 +276,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	
 	public function generateMultiRequestTokens(array &$imports, $classNode, $baseClass) {
 		$this->appendLine("	");
-		$this->appendLine("	public static interface Tokenizer extends $baseClass.Tokenizer {");
+		$this->appendLine("	public interface Tokenizer extends $baseClass.Tokenizer {");
 
 		$hasProperties = false;
 		foreach($classNode->childNodes as $propertyNode)

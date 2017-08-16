@@ -33,6 +33,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.kaltura.client.Params;
 import com.kaltura.client.utils.GsonParser;
+import com.kaltura.client.utils.request.RequestBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,11 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class ListResponse<T> extends ObjectBase {
 
+	public interface Tokenizer<T> {
+		String totalCount();
+		RequestBuilder.ListTokenizer<T> objects();
+	}
+	
     private int totalCount = Integer.MIN_VALUE;
     private List<T> objects;
 

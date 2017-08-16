@@ -38,7 +38,7 @@ import com.kaltura.client.utils.response.ResponseType;
 @SuppressWarnings("serial")
 public class ObjectBase implements Serializable, ResponseType {
 
-	public static interface Tokenizer {
+	public interface Tokenizer {
 	}
 
 	private Params params = null;

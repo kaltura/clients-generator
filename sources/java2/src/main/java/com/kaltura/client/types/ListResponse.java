@@ -35,18 +35,10 @@ import com.kaltura.client.Params;
 import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.request.RequestBuilder;
 
-
-/**
- * This class was generated using exec.php
- * against an XML schema provided by Kaltura.
- * 
- * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
- */
-
 @SuppressWarnings("serial")
 public class ListResponse<T> extends ObjectBase {
 
-	public static interface Tokenizer<T> {
+	public interface Tokenizer<T> {
 		String totalCount();
 		RequestBuilder.ListTokenizer<T> objects();
 	}
