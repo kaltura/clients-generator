@@ -38,7 +38,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.BaseEntry;
 import com.kaltura.client.types.DrmPlaybackPluginData;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
-import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.NullRequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.APIOkRequestsExecutor;
@@ -46,11 +46,20 @@ import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.MediaType;
 import com.kaltura.client.enums.UploadTokenStatus;
 import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.BaseEntryService.GetContextDataBaseEntryBuilder;
+import com.kaltura.client.services.BaseEntryService.ListBaseEntryBuilder;
 import com.kaltura.client.services.FlavorAssetService;
+import com.kaltura.client.services.FlavorAssetService.GetByEntryIdFlavorAssetBuilder;
+import com.kaltura.client.services.FlavorAssetService.GetFlavorAssetsWithParamsFlavorAssetBuilder;
 import com.kaltura.client.services.LiveStreamService;
+import com.kaltura.client.services.LiveStreamService.GetLiveStreamBuilder;
 import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MediaService.AddMediaBuilder;
+import com.kaltura.client.services.MediaService.GetMediaBuilder;
+import com.kaltura.client.services.MediaService.UpdateMediaBuilder;
 import com.kaltura.client.services.PlaylistService;
 import com.kaltura.client.services.SystemService;
+import com.kaltura.client.services.SystemService.PingSystemBuilder;
 import com.kaltura.client.services.UploadTokenService;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.MediaEntryFilterForPlaylist;
@@ -213,7 +222,7 @@ public class MultiRequestTest extends BaseTest{
 		MediaEntry updateEntry = new MediaEntry();
 		updateEntry.setTags(updatedTag);
 
-		RequestBuilder<Boolean, String> systemServicePingRequestBuilder = SystemService.ping()
+		PingSystemBuilder systemServicePingRequestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -224,7 +233,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> mediaServiceAddRequestBuilder = MediaService.add(entry)
+		AddMediaBuilder mediaServiceAddRequestBuilder = MediaService.add(entry)
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -236,7 +245,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> mediaServiceUpdateRequestBuilder = MediaService.update("{2:result:id}", updateEntry)
+		UpdateMediaBuilder mediaServiceUpdateRequestBuilder = MediaService.update("{2:result:id}", updateEntry)
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -248,7 +257,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		RequestBuilder<Void, Void> mediaServiceDeleteRequestBuilder = MediaService.delete("{2:result:id}")
+		NullRequestBuilder mediaServiceDeleteRequestBuilder = MediaService.delete("{2:result:id}")
 		.setCompletion(new OnCompletion<Response<Void>>() {
 			
 			@Override
@@ -329,7 +338,7 @@ public class MultiRequestTest extends BaseTest{
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		final AtomicInteger counter = new AtomicInteger(0);
 		
-		RequestBuilder<Boolean, String> requestBuilder1 = SystemService.ping()
+		PingSystemBuilder requestBuilder1 = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -340,7 +349,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		RequestBuilder<MediaEntry, MediaEntry.Tokenizer> requestBuilder2 = MediaService.get("Illegal String")
+		GetMediaBuilder requestBuilder2 = MediaService.get("Illegal String")
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -351,7 +360,7 @@ public class MultiRequestTest extends BaseTest{
 			}
 		});
 		
-		RequestBuilder<Boolean, String> requestBuilder3 = SystemService.ping()
+		PingSystemBuilder requestBuilder3 = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -381,13 +390,13 @@ public class MultiRequestTest extends BaseTest{
 	
 	public void testTokens() throws Exception {
 
-		SystemService.PingAction systemPingRequestBuilder = SystemService.ping();
-		MediaService.GetAction mediaGetRequestBuilder = MediaService.get("whatever");
-		FlavorAssetService.GetByEntryIdAction flavorAssetGetByEntryIdRequestBuilder = FlavorAssetService.getByEntryId("whatever");
-		FlavorAssetService.GetFlavorAssetsWithParamsAction flavorAssetGetFlavorAssetsWithParamsRequestBuilder = FlavorAssetService.getFlavorAssetsWithParams("whatever");
-		LiveStreamService.GetAction liveStreamGetRequestBuilder = LiveStreamService.get("whatever");
-		BaseEntryService.GetContextDataAction baseEntryGetContextDataRequestBuilder = BaseEntryService.getContextData("whatever", null);
-		BaseEntryService.ListAction baseEntryListRequestBuilder = BaseEntryService.list();
+		PingSystemBuilder systemPingRequestBuilder = SystemService.ping();
+		GetMediaBuilder mediaGetRequestBuilder = MediaService.get("whatever");
+		GetByEntryIdFlavorAssetBuilder flavorAssetGetByEntryIdRequestBuilder = FlavorAssetService.getByEntryId("whatever");
+		GetFlavorAssetsWithParamsFlavorAssetBuilder flavorAssetGetFlavorAssetsWithParamsRequestBuilder = FlavorAssetService.getFlavorAssetsWithParams("whatever");
+		GetLiveStreamBuilder liveStreamGetRequestBuilder = LiveStreamService.get("whatever");
+		GetContextDataBaseEntryBuilder baseEntryGetContextDataRequestBuilder = BaseEntryService.getContextData("whatever", null);
+		ListBaseEntryBuilder baseEntryListRequestBuilder = BaseEntryService.list();
 		
 		systemPingRequestBuilder
 		.add(mediaGetRequestBuilder)

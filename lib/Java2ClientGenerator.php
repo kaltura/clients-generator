@@ -600,8 +600,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 					
 				try
 				{
-					$this->writeRequestBuilder($serviceId, $actionNode, $serviceImports);
-					$this->writeAction($serviceId, $actionNode, $serviceImports);
+					$this->writeRequestBuilder($serviceId, $serviceName, $actionNode, $serviceImports);
+					$this->writeAction($serviceId, $serviceName, $actionNode, $serviceImports);
 				}
 				catch(Exception $e)
 				{
@@ -639,14 +639,14 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		return $this->getJavaTypeName($objectsNode->getAttribute('arrayType'));
 	}
 	
-	function writeRequestBuilder($serviceId, DOMElement $actionNode, &$serviceImports)
+	function writeRequestBuilder($serviceId, $serviceName, DOMElement $actionNode, &$serviceImports)
 	{
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action)) {
 			return;
 		}
-		
-		$builderName = ucfirst($action) . 'Action';
+
+		$builderName = ucfirst($action) . ucfirst($serviceName) . 'Builder';
 
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
 		$resultType = $this->getJavaTypeName($resultNode->getAttribute("type"));
@@ -743,13 +743,13 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	}");
 	}
 	
-	function writeAction($serviceId, DOMElement $actionNode, &$serviceImports) 
+	function writeAction($serviceId, $serviceName, DOMElement $actionNode, &$serviceImports) 
 	{
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action))
 			return;
 
-		$builderName = ucfirst($action) . 'Action';
+		$builderName = ucfirst($action) . ucfirst($serviceName) . 'Builder';
 		$action = $this->replaceReservedWords($action);
 		
 		$signaturePrefix = "public static $builderName $action(";

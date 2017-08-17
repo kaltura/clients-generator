@@ -179,12 +179,14 @@ public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
         return urlBuilder.toString();
     }
 
-    protected S link(String destKey, String requestId, String sourceKey) {
+    @SuppressWarnings("unchecked")
+	protected S link(String destKey, String requestId, String sourceKey) {
         params.link(destKey, requestId, sourceKey);
         return (S)this;
     }
 
-    protected S setId(String id) {
+    @SuppressWarnings("unchecked")
+	protected S setId(String id) {
         this.id = id;
         return (S)this;
     }
@@ -193,7 +195,8 @@ public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
         return id;
     }
 
-    public S setCompletion(OnCompletion<Response<RS>> onCompletion) {
+    @SuppressWarnings("unchecked")
+	public S setCompletion(OnCompletion<Response<RS>> onCompletion) {
         this.onCompletion = onCompletion;
         return (S)this;
     }
