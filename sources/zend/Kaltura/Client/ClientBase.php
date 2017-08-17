@@ -212,7 +212,7 @@ class Kaltura_Client_ClientBase
 			$this->addParam($params, $param, $value);
 		}
 
-		$url = $this->config->serviceUrl."/api_v3/index.php/service";
+		$url = trim($this->config->serviceUrl, '/') . "/api_v3/service";
 		if (!is_null($this->multiRequestReturnType))
 		{
 			$url .= "/multirequest";
@@ -344,6 +344,10 @@ class Kaltura_Client_ClientBase
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
 			$requestHeaders[] = 'Accept: application/json';
+		}
+		else 
+		{
+			$requestHeaders[] = 'Accept: text/xml';
 		}
 
 		$cookies = array();
