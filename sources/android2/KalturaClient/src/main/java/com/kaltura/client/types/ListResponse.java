@@ -33,20 +33,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.kaltura.client.Params;
 import com.kaltura.client.utils.GsonParser;
-
+import com.kaltura.client.utils.request.RequestBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * This class was generated using exec.php
- * against an XML schema provided by Kaltura.
- * 
- * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
- */
-
 @SuppressWarnings("serial")
 public class ListResponse<T> extends ObjectBase {
+
+    public static interface Tokenizer<T> {
+        String totalCount();
+        RequestBuilder.ListTokenizer<T> objects();
+    }
 
     private int totalCount = Integer.MIN_VALUE;
     private List<T> objects;
@@ -69,21 +67,21 @@ public class ListResponse<T> extends ObjectBase {
 
 
     public ListResponse() {
-       super();
+        super();
     }
-    
+
     @SuppressWarnings("unchecked")
-	public ListResponse(JsonObject jsonObject) throws APIException {
-        if(jsonObject == null) 
-        	return;
+    public ListResponse(JsonObject jsonObject) throws APIException {
+        if(jsonObject == null)
+            return;
 
         Class<ObjectBase> cls = ObjectBase.class;
         JsonPrimitive objectTypeElement = jsonObject.getAsJsonPrimitive("objectType");
         if(objectTypeElement != null) {
-	        String objectType = objectTypeElement.getAsString().replaceAll("ListResponse$", "");
-	        cls = GsonParser.getObjectClass(objectType, cls);
+            String objectType = objectTypeElement.getAsString().replaceAll("ListResponse$", "");
+            cls = GsonParser.getObjectClass(objectType, cls);
         }
-        
+
         // set members values:
         totalCount = GsonParser.parseInt(jsonObject.get("totalCount"));
         objects = (List<T>) GsonParser.parseArray(jsonObject.getAsJsonArray("objects"), cls);

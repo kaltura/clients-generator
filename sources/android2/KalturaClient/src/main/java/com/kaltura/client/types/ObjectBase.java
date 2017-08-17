@@ -37,24 +37,25 @@ import com.kaltura.client.utils.response.ResponseType;
 
 import java.util.Map;
 
-/**
- * Ancestor class for all of the generated classes in the com.kaltura.client.types package.
- * 
- * @author jpotts
- *
- */
+
 @SuppressWarnings("serial")
 public class ObjectBase implements Parcelable, ResponseType {
-    @SuppressWarnings("rawtypes")
-	protected Map<String, ListResponse> relatedObjects;
+
+    public interface Tokenizer<I> {
+    }
+
+    private Params params = null;
 
     @SuppressWarnings("rawtypes")
-	public Map<String, ListResponse> getRelatedObjects() {
+    protected Map<String, ListResponse> relatedObjects;
+
+    @SuppressWarnings("rawtypes")
+    public Map<String, ListResponse> getRelatedObjects() {
         return relatedObjects;
     }
 
     @SuppressWarnings("rawtypes")
-	public void setRelatedObjects(Map<String, ListResponse> relatedObjects) {
+    public void setRelatedObjects(Map<String, ListResponse> relatedObjects) {
         this.relatedObjects = relatedObjects;
     }
 
@@ -67,10 +68,20 @@ public class ObjectBase implements Parcelable, ResponseType {
         // set members values:
         relatedObjects = GsonParser.parseMap(jsonObject.getAsJsonObject("relatedObjects"), ListResponse.class);
     }
-    
-	public Params toParams() {
-		return new Params();
-	}
+
+    public void setToken(String key, String token) {
+        if(params == null) {
+            params = new Params();
+        }
+        params.add(key, token);
+    }
+
+    public Params toParams() {
+        if(params == null) {
+            params = new Params();
+        }
+        return params;
+    }
 
     public static final Creator<ObjectBase> CREATOR = new Creator<ObjectBase>() {
         @Override

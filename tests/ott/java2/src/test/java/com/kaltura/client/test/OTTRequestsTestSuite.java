@@ -25,7 +25,6 @@
 //
 // @ignore
 // ===================================================================================================
-package com.kaltura.client.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

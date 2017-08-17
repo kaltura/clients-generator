@@ -37,8 +37,11 @@ import com.kaltura.client.ILogger;
 import com.kaltura.client.Logger;
 import com.kaltura.client.enums.UiConfCreationMode;
 import com.kaltura.client.services.UiConfService;
+import com.kaltura.client.services.UiConfService.AddUiConfBuilder;
+import com.kaltura.client.services.UiConfService.DeleteUiConfBuilder;
+import com.kaltura.client.services.UiConfService.GetUiConfBuilder;
 import com.kaltura.client.types.UiConf;
-import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.NullRequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -60,7 +63,7 @@ public class UiConfServiceTest extends BaseTest {
 		
 		// this uiConf won't be editable in the KMC until it gets a config added to it, I think
 		
-		RequestBuilder<UiConf> requestBuilder = UiConfService.add(uiConf)
+		AddUiConfBuilder requestBuilder = UiConfService.add(uiConf)
 		.setCompletion(new OnCompletion<Response<UiConf>>() {
 			
 			@Override
@@ -105,7 +108,7 @@ public class UiConfServiceTest extends BaseTest {
 				final UiConf addedConf = result.results;
 				assertNotNull(addedConf);
 				
-				RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
+				GetUiConfBuilder requestBuilder = UiConfService.get(addedConf.getId())
 				.setCompletion(new OnCompletion<Response<UiConf>>() {
 					
 					@Override
@@ -136,7 +139,7 @@ public class UiConfServiceTest extends BaseTest {
 				
 				assertNotNull(addedConf);
 				
-				RequestBuilder<Void> requestBuilder = UiConfService.delete(addedConf.getId())
+				NullRequestBuilder requestBuilder = UiConfService.delete(addedConf.getId())
 				.setCompletion(new OnCompletion<Response<Void>>() {
 					
 					@Override
@@ -145,7 +148,7 @@ public class UiConfServiceTest extends BaseTest {
 
 						testUiConfIds.remove(addedConf.getId());
 
-						RequestBuilder<UiConf> requestBuilder = UiConfService.get(addedConf.getId())
+						GetUiConfBuilder uiConfRequestBuilder = UiConfService.get(addedConf.getId())
 						.setCompletion(new OnCompletion<Response<UiConf>>() {
 							
 							@Override
@@ -156,7 +159,7 @@ public class UiConfServiceTest extends BaseTest {
 								doneSignal.countDown();
 							}
 						});
-						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
+						APIOkRequestsExecutor.getExecutor().queue(uiConfRequestBuilder.build(client));
 					}
 				});
 				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
@@ -179,7 +182,7 @@ public class UiConfServiceTest extends BaseTest {
 			if (logger.isEnabled())
 				logger.debug("Deleting UI conf " + id);
 
-			RequestBuilder<Void> requestBuilder = UiConfService.delete(id);
+			DeleteUiConfBuilder requestBuilder = UiConfService.delete(id);
 			APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		} //next id
 	}
