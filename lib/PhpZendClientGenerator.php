@@ -487,7 +487,9 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		{
 			$enableInMultiRequest = intval($actionNode->getAttribute("enableInMultiRequest"));
 		}
-		
+	    
+		$returnType = $this->getTypeClass($resultType);
+    
 		$this->appendLine();
 		
 		if($this->generateDocs)
@@ -515,8 +517,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		
 		// method signature
 		$signature = "function $method($argumentsSignature";
-		
-		
+	
 		$this->appendLine("	$signature");
 		$this->appendLine("	{");
 		
