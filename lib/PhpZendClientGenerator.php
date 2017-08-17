@@ -378,86 +378,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("		return '$kalturaType';");
 		$this->appendLine("	}");
 		$this->appendLine("	");
-	
-		$this->appendLine('	public function __construct(SimpleXMLElement $xml = null)');
-		$this->appendLine('	{');
-		$this->appendLine('		parent::__construct($xml);');
-		$this->appendLine('		');
-		$this->appendLine('		if(is_null($xml))');
-		$this->appendLine('			return;');
-		$this->appendLine('		');
-		
-		foreach($classNode->childNodes as $propertyNode)
-		{
-			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
-				continue;
-			
-			$propName = $propertyNode->getAttribute("name");
-			$isEnum = $propertyNode->hasAttribute("enumType");
-			$propType = $this->getTypeClass($propertyNode->getAttribute("type"));
-		
-			switch ($propType) 
-			{
-				case "int" :
-				case "float" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("			\$this->$propName = ($propType)\$xml->$propName;");
-					break;
-					
-				case "bigint" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("			\$this->$propName = (string)\$xml->$propName;");
-					break;
-					
-				case "bool" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("		{");
-					$this->appendLine("			if(!empty(\$xml->{$propName}))");
-					$this->appendLine("				\$this->$propName = true;");
-					$this->appendLine("			else");
-					$this->appendLine("				\$this->$propName = false;");
-					$this->appendLine("		}");
-					break;
-					
-				case "string" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("			\$this->$propName = ($propType)\$xml->$propName;");
-					break;
-					
-				case "array" :
-					$arrayType = $propertyNode->getAttribute ( "arrayType" );
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("		{");
-					$this->appendLine("			if(empty(\$xml->{$propName}))");
-					$this->appendLine("				\$this->$propName = array();");
-					$this->appendLine("			else");
-					$this->appendLine("				\$this->$propName = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, \"$arrayType\");");
-					$this->appendLine("		}");
-					break;
-					
-				case "map" :
-					$arrayType = $propertyNode->getAttribute ( "arrayType" );
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("		{");
-					$this->appendLine("			if(empty(\$xml->{$propName}))");
-					$this->appendLine("				\$this->$propName = array();");
-					$this->appendLine("			else");
-					$this->appendLine("				\$this->$propName = Kaltura_Client_ParseUtils::unmarshalMap(\$xml->$propName, \"$arrayType\");");
-					$this->appendLine("		}");
-					break;
-					
-				default : // sub object
-					$fallback = $propertyNode->getAttribute("type");
-					$this->appendLine("		if(count(\$xml->{$propName}) && !empty(\$xml->{$propName}))");
-					$this->appendLine("			\$this->$propName = Kaltura_Client_ParseUtils::unmarshalObject(\$xml->$propName, \"$fallback\");");
-					break;
-			}
-			
-			
-		}
-		
-		$this->appendLine('	}');
-		
+
 		// class properties
 		foreach($classNode->childNodes as $propertyNode)
 		{
@@ -468,12 +389,12 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			$isReadyOnly = $propertyNode->getAttribute("readOnly") == 1;
 			$isInsertOnly = $propertyNode->getAttribute("insertOnly") == 1;
 			$isEnum = $propertyNode->hasAttribute("enumType");
-			$propType = null;
 			if ($isEnum)
 				$propType = $propertyNode->getAttribute("enumType");
 			else
 				$propType = $propertyNode->getAttribute("type");
-			$propType = $this->getTypeClass($propType);
+
+			$propType = $this->getPHPType($propType);
 			$propDescription = $propertyNode->getAttribute("description");
 			
 			$this->appendLine("	/**");
@@ -541,20 +462,25 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		    if ($actionNode->nodeType != XML_ELEMENT_NODE)
 				continue;
 				
-		    $this->writeAction($serviceId, $serviceName, $actionNode);
+		    $this->writeAction($serviceId, $actionNode);
 		}
 		$this->appendLine("}");
 	}
-	
-	function writeAction($serviceId, $serviceName, DOMElement $actionNode, $plugin = null)
+
+	function writeAction($serviceId, DOMElement $actionNode, $actionPrefix = "")
 	{
-		$action = $actionNode->getAttribute("name");
+	    $action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action))
 			return;
-		
+			
+		$method = $action;
+		if (in_array($action, array("list", "clone", "goto"))) // because list & clone are preserved in PHP
+			$method .= 'Action';
+			
 	    $resultNode = $actionNode->getElementsByTagName("result")->item(0);
 	    $resultType = $resultNode->getAttribute("type");
-	    $arrayObjectType = ($resultType == 'array') ? $resultNode->getAttribute ( "arrayType" ) : null;
+			
+		$paramNodes = $actionNode->getElementsByTagName("param");
 		
 		$enableInMultiRequest = true;
 		if($actionNode->hasAttribute("enableInMultiRequest"))
@@ -563,28 +489,42 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		}
 	    
 		$returnType = $this->getTypeClass($resultType);
+    
+		$this->appendLine();
+		
+		if($this->generateDocs)
+		{
+			$this->appendLine('	/**');
+			$this->appendLine("	 * " . ucfirst(trim($actionNode->getAttribute("description"), " \t\r\n")));
+			$this->appendLine("	 * ");
+		
+			foreach($paramNodes as $paramNode)
+			{
+				$paramName = $paramNode->getAttribute("name");
+				$paramType = $paramNode->getAttribute("type");
+				$paramDescription = ucfirst(trim($paramNode->getAttribute("description"), " \t\r\n"));
+				
+				$this->appendLine("	 * @param $paramType \${$paramName} $paramDescription");
+			}
+			
+			if($resultType && $resultType != 'null')
+			{
+				$this->appendLine("	 * @return $resultType");
+			}
+			$this->appendLine('	 */');
+		}
+		$argumentsSignature = $this->getSignature($paramNodes, $resultType == 'file');
 		
 		// method signature
-		$signature = "";
-		if (in_array($action, array("list", "clone", "goto"))) // because list & clone are preserved in PHP
-			$signature .= "function ".$action."Action(";
-		else
-			$signature .= "function ".$action."(";
-			
-		$paramNodes = $actionNode->getElementsByTagName("param");
-		$signature .= $this->getSignature($paramNodes);
-
-		$this->appendLine();
-		$this->appendLine("	/**");
-		$this->appendLine("	 * @return $returnType");
-		$this->appendLine("	 */");
+		$signature = "function $method($argumentsSignature";
+	
 		$this->appendLine("	$signature");
 		$this->appendLine("	{");
 		
 		if(!$enableInMultiRequest)
 		{
 			$this->appendLine("		if (\$this->client->isMultiRequest())");
-			$this->appendLine("			throw \$this->client->getKalturaClientException(\"Action is not supported as part of multi-request.\", Kaltura_Client_ClientException::ERROR_ACTION_IN_MULTIREQUEST);");
+			$this->appendLine("			throw new Kaltura_Client_ClientException(\"Action is not supported as part of multi-request.\", Kaltura_Client_ClientException::ERROR_ACTION_IN_MULTIREQUEST);");
 			$this->appendLine("		");
 		}
 		
@@ -643,75 +583,56 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			}
 		}
 		
-	    if($resultType == 'file')
-	    {
-			$this->appendLine("		\$this->client->queueServiceActionCall('" . strtolower($serviceId) . "', '$action', null, \$kparams);");
-			$this->appendLine('		$resultObject = $this->client->getServeUrl();');
-	    }
-	    else
-	    {
-	    	$fallbackClass = 'null';
-	    	if($resultType == 'array')
-	    	{
-	    		$fallbackClass = "\"$arrayObjectType\"";
-	    	}
-	    	else if($resultType && !$this->isSimpleType($resultType))
-	    	{
-	    		$fallbackClass = "\"$resultType\"";
-	    	}
-	    	
-			if ($haveFiles)
-			{
-				$this->appendLine("		\$this->client->queueServiceActionCall(\"".strtolower($serviceId)."\", \"$action\",  $fallbackClass, \$kparams, \$kfiles);");
-			}
-			else
-			{
-				$this->appendLine("		\$this->client->queueServiceActionCall(\"".strtolower($serviceId)."\", \"$action\", $fallbackClass, \$kparams);");
-			}
+		if ($haveFiles)
+			$this->appendLine("		\$this->client->queueServiceActionCall(\"".strtolower($serviceId)."\", \"$actionPrefix$action\", \$kparams, \$kfiles);");
+		else
+			$this->appendLine("		\$this->client->queueServiceActionCall(\"".strtolower($serviceId)."\", \"$actionPrefix$action\", \$kparams);");
 			
+		if($resultType == 'file')
+		{
+			$this->appendLine('		if(!$this->client->getDestinationPath() && !$this->client->getReturnServedResult())');
+			$this->appendLine('			return $this->client->getServeUrl();');
+			$this->appendLine('		return $this->client->doQueue();');
+		}
+		else
+		{
 			if($enableInMultiRequest)
 			{
 				$this->appendLine("		if (\$this->client->isMultiRequest())");
 				$this->appendLine("			return \$this->client->getMultiRequestResult();");
 			}
+			$this->appendLine("		\$resultObject = \$this->client->doQueue();");
+			$this->appendLine("		\$this->client->throwExceptionIfError(\$resultObject);");
 			
-			$this->appendLine("		\$resultXml = \$this->client->doQueue();");
-			$this->appendLine("		\$resultXmlObject = new \\SimpleXMLElement(\$resultXml);");
-			$this->appendLine("		\$this->client->checkIfError(\$resultXmlObject->result);");
-			
-			switch($resultType)
+			if (!$resultType)
 			{
-				case 'int':
-					$this->appendLine("		\$resultObject = (int)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
-					break;
-				
-				case 'bool':
-					$this->appendLine("		\$resultObject = (bool)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
-					break;
-				case 'bigint':
-				case 'string':
-					$this->appendLine("		\$resultObject = (string)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
-					break;
-				case 'array':
-					$this->appendLine("		\$resultObject = Kaltura_Client_ParseUtils::unmarshalArray(\$resultXmlObject->result, \"$arrayObjectType\");");
-					$arrayObjectType = $this->getTypeClass($arrayObjectType);
-					$this->appendLine("		foreach(\$resultObject as \$resultObjectItem){");
-					$this->appendLine("			\$this->client->validateObjectType(\$resultObjectItem, \"$arrayObjectType\");");
-					$this->appendLine("		}");
-					break;
-				
-				default:
-					if ($resultType)
-					{
-						$this->appendLine("		\$resultObject = Kaltura_Client_ParseUtils::unmarshalObject(\$resultXmlObject->result, \"$resultType\");");
-						$this->appendLine("		\$this->client->validateObjectType(\$resultObject, \"$returnType\");");
-					}
+				$resultType = "null";
 			}
-	    }
 			
-		if($resultType && $resultType != 'null')
-		{
-			$this->appendLine("		return \$resultObject;");
+			if ($resultType == 'int')
+			{
+				$resultType = "integer";
+			}
+
+			if ($resultType == 'bigint')
+			{
+				$resultType = "double";
+			}
+
+			if ($resultType == 'bool')
+			{
+				$this->appendLine("		\$resultObject = (bool) \$resultObject;");
+			}
+			else
+			{
+				$resultType = $this->getTypeClass($resultType);
+				$this->appendLine("		\$this->client->validateObjectType(\$resultObject, \"$resultType\");");
+			}
+				
+			if($resultType && $resultType != 'null')
+			{
+				$this->appendLine("		return \$resultObject;");
+			}
 		}
 		
 		$this->appendLine("	}");
@@ -949,5 +870,17 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		);
 		$fileContents = preg_replace($patterns, $replacements, $fileContents);
 		parent::addFile($fileName, $fileContents, $addLicense);
+	}
+
+	public function getPHPType($propType)
+	{		
+		switch ($propType) 
+		{	
+			case "bigint" :
+				return "int";
+				
+			default :
+				return $propType;
+		}
 	}
 }
