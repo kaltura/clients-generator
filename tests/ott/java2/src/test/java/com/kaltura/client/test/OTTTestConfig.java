@@ -25,7 +25,6 @@
 //
 // @ignore
 // ===================================================================================================
-package com.kaltura.client.test;
 
 import java.io.IOException;
 import java.io.InputStream;

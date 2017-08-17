@@ -17,13 +17,13 @@ import com.kaltura.client.utils.response.base.Response;
  * Created by tehilarozin on 14/08/2016.
  */
 
-public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
+public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
 
 	protected String id;
 	protected String service;
 	protected String action;
 
-    public RequestBuilder(Class<T> type, String service, String action) {
+    public RequestBuilder(Class<RS> type, String service, String action) {
         super(type);
         this.service = service;
         this.action = action;
@@ -31,7 +31,7 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
 
     public static class Tokenizer implements InvocationHandler {
     	private String prefix;
-    	
+
     	public Tokenizer(String prefix) {
     		this.prefix = prefix;
     	}
@@ -58,11 +58,11 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
 			}
 		}
     }
-    
+
     public static class ListResponseTokenizer<I> implements ListResponse.Tokenizer<I> {
     	private Class<I> intrface;
     	private String prefix;
-    	
+
     	public ListResponseTokenizer(Class<I> intrface, String prefix) {
     		this.intrface = intrface;
     		this.prefix = prefix;
@@ -71,30 +71,30 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
 		public String totalCount() {
 			return "{" + prefix + ":totalCount}";
 		}
-		
+
 		public ListTokenizer<I> objects() {
 			return ListTokenizer.newInstance(intrface, prefix + ":objects");
 		}
     }
-    
+
     public static class ListTokenizer<I> {
     	private Class<I> intrface;
     	private String prefix;
-    	
+
     	public static <J> ListTokenizer<J> newInstance(Class<J> intrface, String prefix) {
     		return new ListTokenizer<J>(intrface, prefix);
     	}
-    	
+
     	public ListTokenizer(Class<I> intrface, String prefix) {
     		this.intrface = intrface;
     		this.prefix = prefix;
     	}
-    	
+
 		public I get(int index) {
 			return getTokenizer(intrface, prefix + ":" + index);
 		}
     }
-    
+
     public static class MapTokenizer<I> {
     	private Class<I> intrface;
     	private String prefix;
@@ -102,21 +102,21 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
     	public static <J> MapTokenizer<J> newInstance(Class<J> intrface, String prefix) {
     		return new MapTokenizer<J>(intrface, prefix);
     	}
-    	
+
     	public MapTokenizer(Class<I> intrface, String prefix) {
     		this.intrface = intrface;
     		this.prefix = prefix;
     	}
-    	
+
 		public I get(String key) {
 			return getTokenizer(intrface, prefix + ":" + key);
 		}
-    	
+
 		public <J extends I> J get(String key, Class<J> tokenizerInterface) {
 			return getTokenizer(tokenizerInterface, prefix + ":" + key);
 		}
     }
-    
+
     @SuppressWarnings("unchecked")
     static protected <I> I getTokenizer(Class<I> intrface, String prefix) {
     	Class<?>[] parentInterfaces = intrface.getInterfaces();
@@ -127,13 +127,13 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
     	interfaces[parentInterfaces.length] = intrface;
         return (I) Proxy.newProxyInstance(intrface.getClassLoader(), interfaces, new Tokenizer(prefix));
     }
-    
+
     @SuppressWarnings("unchecked")
-	public V getTokenizer() throws APIException {
+	public TK getTokenizer() throws APIException {
 		if(id == null) {
 			throw new APIException(APIException.FailureStep.OnRequest, "Request is not part of multi-request");
 		}
-		
+
     	if(ObjectBase.class.isAssignableFrom(type)) {
         	MultiRequestBuilder.Tokenizer annotation = type.getAnnotation(MultiRequestBuilder.Tokenizer.class);
         	Class<?>[] parentInterfaces = annotation.value().getInterfaces();
@@ -142,14 +142,14 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
         		interfaces[i] = parentInterfaces[i];
         	}
         	interfaces[parentInterfaces.length] = annotation.value();
-            return (V) Proxy.newProxyInstance(type.getClassLoader(), interfaces, new Tokenizer(id + ":result"));
+            return (TK) Proxy.newProxyInstance(type.getClassLoader(), interfaces, new Tokenizer(id + ":result"));
     	}
     	else {
-    		return (V) ("{" + id + ":result}");
+    		return (TK) ("{" + id + ":result}");
     	}
     }
-    
-    public MultiRequestBuilder add(RequestBuilder<?, ?> another) {
+
+    public MultiRequestBuilder add(RequestBuilder<?, ?, ?> another) {
         try {
             return new MultiRequestBuilder(this, another);
         } catch (Exception e) {
@@ -157,7 +157,7 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
         }
         return new MultiRequestBuilder();
     }
-    
+
     protected String getAction() {
         return action;
     }
@@ -179,23 +179,23 @@ public abstract class RequestBuilder<T, V> extends BaseRequestBuilder<T> {
         return urlBuilder.toString();
     }
 
-    protected RequestBuilder<T, V> link(String destKey, String requestId, String sourceKey) {
+    protected S link(String destKey, String requestId, String sourceKey) {
         params.link(destKey, requestId, sourceKey);
-        return this;
+        return (S)this;
     }
 
-    protected RequestBuilder<T, V> setId(String id) {
+    protected S setId(String id) {
         this.id = id;
-        return this;
+        return (S)this;
     }
 
     protected String getId() {
         return id;
     }
 
-    public RequestBuilder<T, V> setCompletion(OnCompletion<Response<T>> onCompletion) {
+    public S setCompletion(OnCompletion<Response<RS>> onCompletion) {
         this.onCompletion = onCompletion;
-        return this;
+        return (S)this;
     }
 
     @Override

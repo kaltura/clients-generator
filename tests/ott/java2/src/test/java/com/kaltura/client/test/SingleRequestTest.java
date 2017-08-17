@@ -1,5 +1,3 @@
-package com.kaltura.client.test;
-
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.services.FavoriteService;
 import com.kaltura.client.services.OttUserService;
@@ -7,7 +5,6 @@ import com.kaltura.client.types.Favorite;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.types.OTTUser;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -35,7 +32,7 @@ public class SingleRequestTest extends TestCommon{
         final AtomicBoolean done = new AtomicBoolean(false);
 		//DataFactory.UserLogin userLogin = DataFactory.getUser();
         
-        RequestBuilder<LoginResponse> requestBuilder = OttUserService.login(testConfig.getPartnerId(), testConfig.getUserName(), testConfig.getUserPassword())
+        OttUserService.LoginAction requestBuilder = OttUserService.login(testConfig.getPartnerId(), testConfig.getUserName(), testConfig.getUserPassword())
         .setCompletion(new ApiCompletion<LoginResponse>() {
 
 			@Override
@@ -50,7 +47,7 @@ public class SingleRequestTest extends TestCommon{
                 logger.debug("Hello " + ottUser.getFirstName() + " " + ottUser.getLastName() + ", username: " + ottUser.getUsername() + ", ");
 
                 logger.debug("fetching user info: ");
-                RequestBuilder<OTTUser> requestBuilder = OttUserService.get()
+                OttUserService.GetAction requestBuilder = OttUserService.get()
                 .setCompletion(new ApiCompletion<OTTUser>() {
 
 					@Override
@@ -81,7 +78,7 @@ public class SingleRequestTest extends TestCommon{
 
 		//DataFactory.UserLogin userLogin = DataFactory.getUser();
         
-        RequestBuilder<LoginResponse> requestBuilder = OttUserService.login(testConfig.getPartnerId(),
+        OttUserService.LoginAction requestBuilder = OttUserService.login(testConfig.getPartnerId(),
 				testConfig.getUserName(), testConfig.getUserPassword())
         .setCompletion(new ApiCompletion<LoginResponse>() {
 
@@ -93,7 +90,7 @@ public class SingleRequestTest extends TestCommon{
 
                 client.setKs(result.results.getLoginSession().getKs());
 
-		        RequestBuilder<ListResponse<Favorite>> requestBuilder = FavoriteService.list()
+		        FavoriteService.ListAction requestBuilder = FavoriteService.list()
                 .setCompletion(new ApiCompletion<ListResponse<Favorite>>() {
 
 					@Override

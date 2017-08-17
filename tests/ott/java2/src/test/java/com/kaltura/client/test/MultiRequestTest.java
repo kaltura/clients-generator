@@ -1,5 +1,3 @@
-package com.kaltura.client.test;
-
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.AssetOrderBy;
 import com.kaltura.client.enums.AssetReferenceType;
@@ -12,7 +10,6 @@ import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.types.SearchAssetFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.client.utils.response.base.Response;
@@ -47,7 +44,7 @@ public class MultiRequestTest extends TestCommon {
 		final AtomicInteger counter = new AtomicInteger(0);
         //DataFactory.UserLogin userLogin = DataFactory.getUser();
 
-        RequestBuilder<LoginResponse> ottUserLoginRequestBuilder = OttUserService.login(testConfig.getPartnerId(),
+        OttUserService.LoginAction ottUserLoginRequestBuilder = OttUserService.login(testConfig.getPartnerId(),
             testConfig.getUserName(), testConfig.getUserPassword())
             .setCompletion(new ApiCompletion<LoginResponse>() {
 
@@ -60,7 +57,7 @@ public class MultiRequestTest extends TestCommon {
                 }
             });
 
-        RequestBuilder<Asset> assetGetRequestBuilder = AssetService.get(testConfig.getMediaId(), AssetReferenceType.MEDIA)
+		AssetService.GetAction assetGetRequestBuilder = AssetService.get(testConfig.getMediaId(), AssetReferenceType.MEDIA)
         .setCompletion(new ApiCompletion<Asset>() {
 
 			@Override
@@ -71,7 +68,7 @@ public class MultiRequestTest extends TestCommon {
 			}
 		});
 
-        RequestBuilder<OTTUser> ottUserGetRequestBuilder = OttUserService.get()
+        OttUserService.GetAction ottUserGetRequestBuilder = OttUserService.get()
         .setCompletion(new ApiCompletion<OTTUser>() {
 
 			@Override

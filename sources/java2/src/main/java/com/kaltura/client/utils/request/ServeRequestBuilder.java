@@ -5,7 +5,7 @@ import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.APIConstants;
 
-public abstract class ServeRequestBuilder extends RequestBuilder<String, String> {
+public abstract class ServeRequestBuilder extends RequestBuilder<String, String, ServeRequestBuilder> {
 
     public ServeRequestBuilder(String service, String action) {
         super(String.class, service, action);
