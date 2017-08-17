@@ -165,13 +165,12 @@ class Kaltura_Client_ClientBase
 		return $url;
 	}
 
-	public function queueServiceActionCall($service, $action, $returnType, $params = array(), $files = array())
+	public function queueServiceActionCall($service, $action, $params = array(), $files = array())
 	{
 		foreach($this->requestConfiguration as $param => $value)
 		{
 			$this->addParam($params, $param, $value);
 		}
-
 		$call = new Kaltura_Client_ServiceActionCall($service, $action, $params, $files);
 		if(!is_null($this->multiRequestReturnType))
 			$this->multiRequestReturnType[] = $returnType;
@@ -212,7 +211,7 @@ class Kaltura_Client_ClientBase
 			$this->addParam($params, $param, $value);
 		}
 
-		$url = $this->config->serviceUrl."/api_v3/index.php/service";
+		$url = $this->config->serviceUrl."/api_v3/service";
 		if (!is_null($this->multiRequestReturnType))
 		{
 			$url .= "/multirequest";
@@ -265,8 +264,19 @@ class Kaltura_Client_ClientBase
 				$this->log("server: [{$serverName}], session: [{$serverSession}]");
 
 			$this->log("result (serialized): " . $postResult);
-
-			if ($this->config->format != self::KALTURA_SERVICE_FORMAT_XML)
+			if ($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
+			{
+				$postResult = json_decode($postResult)->result;
+				if(is_null($postResult) && strtolower($postResult) !== 'null')
+				{
+					$this->resetRequest();
+					throw new KalturaClientException("failed to unserialize server result\n$postResult", KalturaClientException::ERROR_UNSERIALIZE_FAILED);
+				}
+				$postResult = $this->jsObjectToClientObject($postResult);
+				$dump = print_r($result, true);
+				$this->log("result (object dump): " . $dump);
+			}
+			elseif ($this->config->format != self::KALTURA_SERVICE_FORMAT_XML)
 			{
 				$this->resetRequest();
 				throw $this->getKalturaClientException("unsupported format: $postResult", Kaltura_Client_ClientException::ERROR_FORMAT_NOT_SUPPORTED);
@@ -554,13 +564,13 @@ class Kaltura_Client_ClientBase
 			return;
 		}
 
-		if(is_object($paramValue) && $paramValue instanceof Kaltura_Client_ObjectBase)
+		if(is_object($paramValue) && $paramValue instanceof KalturaObjectBase)
 		{
 			$params[$paramName] = array(
-				'objectType' => $paramValue->getKalturaObjectType()
+				'objectType' => get_class($paramValue)
 			);
-
-			foreach($paramValue as $prop => $val)
+			
+		    foreach($paramValue as $prop => $val)
 				$this->addParam($params[$paramName], $prop, $val);
 
 			return;
@@ -603,7 +613,7 @@ class Kaltura_Client_ClientBase
 				$item = $this->jsObjectToClientObject($item);
 			}
 		}
-
+		
 		if(is_object($value))
 		{
 			if(isset($value->message) && isset($value->code))
@@ -616,15 +626,16 @@ class Kaltura_Client_ClientBase
 					}
 					return (array) $value;
 				}
-				throw $this->getKalturaAPIException($value->message, $value->code, $value->args);
+				throw new Kaltura_Client_Exception($value->message, $value->code, $value->args);
 			}
-
+			
 			if(!isset($value->objectType))
 			{
-				throw $this->getKalturaClientException("Response format not supported - objectType is required for all objects", Kaltura_Client_ClientException::ERROR_FORMAT_NOT_SUPPORTED);
+				throw new Kaltura_Client_ClientException("Response format not supported - objectType is required for all objects", Kaltura_Client_ClientException::ERROR_FORMAT_NOT_SUPPORTED);
 			}
-
+			
 			$objectType = $value->objectType;
+			$objectType = str_replace('Kaltura', 'Kaltura_Client_Type_', $objectType);
 			$object = new $objectType();
 			$attributes = get_object_vars($value);
 			foreach($attributes as $attribute => $attributeValue)
@@ -633,13 +644,13 @@ class Kaltura_Client_ClientBase
 				{
 					continue;
 				}
-
+				
 				$object->$attribute = $this->jsObjectToClientObject($attributeValue);
 			}
-
+			
 			$value = $object;
 		}
-
+		
 		return $value;
 	}
 
