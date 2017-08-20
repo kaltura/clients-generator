@@ -47,11 +47,11 @@ open class ObjectBase {
     }
     
     public func toDictionary() -> [String: Any] {
-        let dict: [String: Any] = ["objectType": "Kaltura\(serverType)"]
+        let dict: [String: Any] = ["objectType": "Kaltura\(serverObjectType)"]
         return dict
     }
     
-    open var serverType: String {
+    open var serverObjectType: String {
         return "\(type(of: self))"
     }
 }
