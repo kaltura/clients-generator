@@ -53,7 +53,9 @@ public class GsonParser {
         	JsonObject jsonObject = jsonElement.getAsJsonObject();
         	if(jsonObject.get(ResultKey) != null && jsonObject.get(ObjectTypeKey) == null) {
         		jsonElement = jsonObject.get(ResultKey);
-				jsonObject = jsonElement.getAsJsonObject();
+				if (!jsonElement.isJsonPrimitive()) {
+                    jsonObject = jsonElement.getAsJsonObject();
+                }
         	}
         	if(jsonObject.get("error") != null && jsonObject.get(ObjectTypeKey) == null) {
         		jsonElement = jsonObject.getAsJsonObject("error");
