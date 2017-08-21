@@ -478,6 +478,9 @@ end
 					$ret .= "			$propName = $propEnumType(rawValue: ($parsedProperty)!)\n";
 				}
 			}
+			elseif($primitiveType == 'Int64') {
+				$ret .="			$propName = Int64((dict[\"$propName\"] as? String)!)\n";
+			}
 			else {
 				$ret .="			$propName = $parsedProperty\n";
 			}
