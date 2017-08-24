@@ -201,12 +201,29 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		if($classNode->hasAttribute("abstract")) {
 			$public= 'internal';
 		}
-			
-// 		// Generate empty constructor
-// 		$this->appendLine("	$public override init() {");
-// 		$this->appendLine("		super.init()");
-// 		$this->appendLine("	}");
-// 		$this->appendLine("");
+		
+		if($classNode->childNodes->length)
+		{
+			foreach($classNode->childNodes as $propertyNode)
+			{
+				if($propertyNode->nodeType != XML_ELEMENT_NODE) {
+					continue;
+				}
+				
+				$propType = $propertyNode->getAttribute("type");
+				if(!$this->isSimpleType($propType)) {
+					continue;
+				}
+				
+				$apiPropName = $propertyNode->getAttribute("name");
+				$propName = $this->replaceReservedWords($apiPropName);
+				
+				$this->appendLine("	public func setMultiRequestToken($propName: String) {");
+				$this->appendLine("		self.dict[\"$apiPropName\"] = $propName");
+				$this->appendLine("	}");
+				$this->appendLine("	");
+			}
+		}
 		
 		// Generate Full constructor
 		$this->generatePopulate($classNode);

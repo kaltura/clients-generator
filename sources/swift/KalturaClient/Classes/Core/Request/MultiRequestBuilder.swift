@@ -37,7 +37,7 @@ import SwiftyJSON
 
 
 
-public class MultiRequestBuilder: ArrayRequestBuilder<Any,BaseTokenizedObject,BaseTokenizedObject> {
+public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject, BaseTokenizedObject> {
     
     var requests = [RequestBuilderProtocol]()
     
@@ -89,7 +89,7 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any,BaseTokenizedObject,Ba
         }
         
         if let block = completion {
-            block(allParsedResponse,response.error)
+            block(allParsedResponse, response.error)
         }
         
         return

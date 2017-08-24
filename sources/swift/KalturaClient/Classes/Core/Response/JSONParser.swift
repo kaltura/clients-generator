@@ -131,16 +131,14 @@ internal class JSONParser{
         }
     }
     
-    public static func parse(primitive: Any) throws -> Any? {
+    public static func parse(primitive: Any, type: Any) throws -> Any? {
         if let str = primitive as? String {
             return str
-        }else if let int = primitive as? Int64 {
-            return int
-        }
-        else if let int = primitive as? Int {
-            return int
-        }
-        else if let bool = primitive as? Bool {
+        }else if type is Int64.Type {
+            return primitive as? Int64
+        }else if type is Int.Type {
+            return primitive as? Int
+        }else if let bool = primitive as? Bool {
             return bool
         }else if let double = primitive as? Double {
             return double
@@ -150,7 +148,7 @@ internal class JSONParser{
         }
         else if let dict = primitive as? [String: Any]{
             if let result = dict["result"] {
-                return try self.parse(primitive: result)
+                return try self.parse(primitive: result, type: type)
             }
             else if let error = dict["error"] as? [String: Any] {
                 throw try parse(object: error) as ApiException
@@ -203,7 +201,7 @@ internal class JSONParser{
             return nil
         }
         else {
-            return try self.parse(primitive: json.object) as? T
+            return try self.parse(primitive: json.object, type: T.self) as? T
         }
     }
 }

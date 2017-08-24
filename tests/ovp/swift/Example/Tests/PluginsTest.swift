@@ -60,7 +60,7 @@ class PluginsTest: BaseTest {
                 metadataProfile.name = "Plugins Test - \(BaseTest.uniqueTag)"
                 
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<MetadataProfile> = MetadataProfileService.add(metadataProfile: metadataProfile, xsdData: "<xml></xml>")
+                    let requestBuilder = MetadataProfileService.add(metadataProfile: metadataProfile, xsdData: "<xml></xml>")
                     requestBuilder.set(completion: {(createdMetadataProfile: MetadataProfile?, error: ApiException?) in
                         
                         expect(error).to(beNil())

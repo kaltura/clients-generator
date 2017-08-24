@@ -69,7 +69,7 @@ class BaseTest: QuickSpec {
     
     func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder:RequestBuilder<String> = SessionService.start(secret: self.secret!, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
+        let requestBuilder = SessionService.start(secret: self.secret!, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
         
         requestBuilder.set(completion: {(ks: String?, error: ApiException?) in
             
@@ -82,7 +82,7 @@ class BaseTest: QuickSpec {
     
     func deleteEntry(entryId: String, done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder:RequestBuilder<Void> = MediaService.delete(entryId: entryId)
+        let requestBuilder = MediaService.delete(entryId: entryId)
         
         requestBuilder.set(completion: {(void: Void?, error: ApiException?) in
             done(error)
@@ -97,7 +97,7 @@ class BaseTest: QuickSpec {
         entry.mediaType = MediaType.VIDEO
         entry.tags = BaseTest.uniqueTag
         
-        let requestBuilder:RequestBuilder<MediaEntry> = MediaService.add(entry: entry)
+        let requestBuilder = MediaService.add(entry: entry)
         requestBuilder.set(completion: {(createdEntry: MediaEntry?, error: ApiException?) in
             
             created(createdEntry, error)
