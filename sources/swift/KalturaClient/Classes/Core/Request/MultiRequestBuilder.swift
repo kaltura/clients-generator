@@ -103,19 +103,19 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any,BaseTokenizedObject,Ba
     
     
     //[user,childrebs,1,name]
-    public func link(key: BaseTokenizedObject, value: BaseTokenizedObject) -> Self{
+    public func link(tokenFromRespose: BaseTokenizedObject, tokenToRequest: BaseTokenizedObject) -> Self{
         
         
         
         var resultCollection: Any? = nil
-        let request = self.requests[key.requestId]
-        let requestTokens = key.tokens
+        let request = self.requests[tokenFromRespose.requestId]
+        let requestTokens = tokenFromRespose.tokens
         var next: Any? = request.params
         var collectionArray = [Any?].init(repeating: nil, count: requestTokens.count)
         
         for (index,token) in requestTokens.enumerated() {
             if ( index == requestTokens.count - 1) {
-                collectionArray[index] = value.result
+                collectionArray[index] = tokenToRequest.result
                 
             }else{
                 if let number = Int(token) {

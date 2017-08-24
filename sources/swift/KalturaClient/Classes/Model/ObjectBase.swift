@@ -33,17 +33,15 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-public class ObjectBaseTokenizer: BaseTokenizedObject {
+open class ObjectBase {
     
-    public var relatedObjects: DictionaryTokenizedObject<ListResponseTokenizer> {
-        get {
-            return DictionaryTokenizedObject<ListResponseTokenizer>(self.append("relatedObjects"))
+    public class ObjectBaseTokenizer: BaseTokenizedObject {
+        public var relatedObjects: DictionaryTokenizedObject<ListResponse.ListResponseTokenizer> {
+            get {
+                return DictionaryTokenizedObject<ListResponse.ListResponseTokenizer>(self.append("relatedObjects"))
+            }
         }
     }
-    
-}
-
-open class ObjectBase {
     
     public var relatedObjects: Dictionary<String, ListResponse>?
     
