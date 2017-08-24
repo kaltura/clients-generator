@@ -35,6 +35,14 @@
 
 open class ObjectBase {
     
+    public class ObjectBaseTokenizer: BaseTokenizedObject {
+        public var relatedObjects: DictionaryTokenizedObject<ListResponse.ListResponseTokenizer> {
+            get {
+                return DictionaryTokenizedObject<ListResponse.ListResponseTokenizer>(self.append("relatedObjects"))
+            }
+        }
+    }
+    
     public var relatedObjects: Dictionary<String, ListResponse>?
     
     public required init() {

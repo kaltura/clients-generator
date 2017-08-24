@@ -33,7 +33,7 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-public class ArrayRequestBuilder<T>: RequestBuilder<Array<T>> {
+public class ArrayRequestBuilder<T, U: BaseTokenizedObject, G:BaseTokenizedObject>: RequestBuilder<Array<T>,U,G> {
  
     
     public override func parse(_ response: Response) -> (data:Any?,exception: ApiException?)  {

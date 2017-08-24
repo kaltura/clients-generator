@@ -37,13 +37,14 @@ import SwiftyJSON
 
 
 
-public class MultiRequestBuilder: ArrayRequestBuilder<Any?> {
-    
+public class MultiRequestBuilder: ArrayRequestBuilder<Any,BaseTokenizedObject,BaseTokenizedObject> {
     
     var requests = [RequestBuilderProtocol]()
     
     @discardableResult
     public override func add(request: RequestBuilderProtocol) -> Self  {
+        var subRequest = request
+        subRequest.index = requests.count
         self.requests.append(request)
         return self
     }
@@ -98,6 +99,73 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?> {
     {
         return self.params.sortedJsonData()
     }
+    
+    
+    //[user,childrebs,1,name]
+    public func link(tokenFromRespose: BaseTokenizedObject, tokenToRequest: BaseTokenizedObject) -> Self{
+        
+        
+        
+        var resultCollection: Any? = nil
+        let request = self.requests[tokenFromRespose.requestId]
+        let requestTokens = tokenFromRespose.tokens
+        var next: Any? = request.params
+        var collectionArray = [Any?].init(repeating: nil, count: requestTokens.count)
+        
+        for (index,token) in requestTokens.enumerated() {
+            if ( index == requestTokens.count - 1) {
+                collectionArray[index] = tokenToRequest.result
+                
+            }else{
+                if let number = Int(token) {
+                    if var array = next as? [Any] {
+                        collectionArray[index] = array
+                        next = array[number]
+                    }else{
+                        collectionArray[index] = self.getDummyInstance(token: token)
+                        next = nil
+                    }
+                }else {
+                    if var dicionary = next as? [String: Any] {
+                        collectionArray[index] = dicionary
+                        next = dicionary[token]
+                    }else{
+                        collectionArray[index] = [token:""]
+                        next = nil
+                    }
+                }
+                
+            }
+        }
+        
+        for (index,collection) in collectionArray.reversed().enumerated() {
+            let reversedToken = requestTokens[requestTokens.count - index - 1]
+            
+            if var dict =  collection as? [String: Any]{
+                dict[reversedToken] = resultCollection
+                resultCollection = dict
+            }
+            else if var array =  collection as? [Any], let number = Int(reversedToken) {
+                array[number] = resultCollection ?? ""
+                resultCollection = array
+            }
+            else{
+                resultCollection = collection
+            }
+        }
+        
+        request.setBody(key: requestTokens.first!, value: resultCollection)
+        return self
+    }
+    
+    func getDummyInstance(token: String) -> Any {
+        if let number = Int(token) {
+            return [Any].init(repeating: "", count: number)
+        }else{
+            return [String:Any]()
+        }
+    }
+    
 }
 
 
