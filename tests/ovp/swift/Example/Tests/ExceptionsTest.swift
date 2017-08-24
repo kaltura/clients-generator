@@ -46,7 +46,7 @@ class ExceptionsTest: BaseTest {
         describe("list response") {
             it("asset get") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<FlavorAssetListResponse> = FlavorAssetService.list()
+                    let requestBuilder = FlavorAssetService.list()
                     requestBuilder.set(completion: {(list: FlavorAssetListResponse?, error: ApiException?) in
                         
                         expect(list).to(beNil())
@@ -65,7 +65,7 @@ class ExceptionsTest: BaseTest {
         describe("object response") {
             it("media get") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<MediaEntry> = MediaService.get(entryId: "bad-id")
+                    let requestBuilder = MediaService.get(entryId: "bad-id")
                     requestBuilder.set(completion: {(getEntry: MediaEntry?, error: ApiException?) in
                         
                         expect(getEntry).to(beNil())
@@ -84,7 +84,7 @@ class ExceptionsTest: BaseTest {
         describe("empty response") {
             it("media delete") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<Void> = MediaService.delete(entryId: "bad-id")
+                    let requestBuilder = MediaService.delete(entryId: "bad-id")
                     requestBuilder.set(completion: {(void: Void?, error: ApiException?) in
                         
                         expect(void).to(beNil())
@@ -104,7 +104,7 @@ class ExceptionsTest: BaseTest {
         describe("array response") {
             it("flavorAsset getByEntryId") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<[FlavorAsset]> = FlavorAssetService.getByEntryId(entryId: "bad-id")
+                    let requestBuilder = FlavorAssetService.getByEntryId(entryId: "bad-id")
                     requestBuilder.set(completion: {(assets: [FlavorAsset]?, error: ApiException?) in
                         
                         expect(assets).to(beNil())
@@ -124,7 +124,7 @@ class ExceptionsTest: BaseTest {
             
             it("login") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<String> = SessionService.start(secret: "bad-secret", userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
+                    let requestBuilder = SessionService.start(secret: "bad-secret", userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
                     
                     requestBuilder.set(completion: {(ks: String?, error: ApiException?) in
                         

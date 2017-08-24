@@ -55,7 +55,7 @@ class BaseTest: QuickSpec {
     
     private func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder:RequestBuilder<LoginSession> = OttUserService.anonymousLogin(partnerId: self.partnerId).set { (loginSession:LoginSession?, exception:ApiException?) in
+        let requestBuilder = OttUserService.anonymousLogin(partnerId: self.partnerId).set { (loginSession:LoginSession?, exception:ApiException?) in
             self.client!.ks = loginSession?.ks
             done(exception)
         }
@@ -66,7 +66,7 @@ class BaseTest: QuickSpec {
     private func createAsset(created: @escaping (_ createdEntry: Asset?, _ error: ApiException?) -> Void) {
         
  
-        let requestBuilder:RequestBuilder<Asset> = AssetService.get(id: assetId, assetReferenceType: AssetReferenceType.MEDIA).set { (asset, exception) in
+        let requestBuilder = AssetService.get(id: assetId, assetReferenceType: AssetReferenceType.MEDIA).set { (asset, exception) in
             created(asset, exception)
         }
         

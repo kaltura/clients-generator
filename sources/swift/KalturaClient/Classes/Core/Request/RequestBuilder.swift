@@ -45,6 +45,7 @@ public protocol RequestBuilderProtocol {
     var urlParams: [String: String]? { get set }
     var service: String? { get set }
     var action: String? { get set }
+    var index: Int { get set }
     
     
     @discardableResult
@@ -77,7 +78,7 @@ public protocol RequestBuilderProtocol {
     
 }
 
-public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol {
+public class RequestBuilder<T: Any, U: BaseTokenizedObject, G:BaseTokenizedObject>: RequestBuilderData, RequestBuilderProtocol {
     public var files: [String: RequestFile] = [:]
     
     public lazy var requestId: String = {
@@ -92,6 +93,18 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
 
     public var service: String?
     public var action: String?
+    public var index: Int = 0
+    public var responseTokenizer: U {
+        get {
+            return U.self.init(requestId:self.index)
+        }
+    }
+    
+    public var requestTokenizer: G {
+        get {
+            return G.self.init(requestId:self.index)
+        }
+    }
     
     public required override init() {
         super.init()
