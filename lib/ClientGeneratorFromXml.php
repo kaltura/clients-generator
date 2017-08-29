@@ -32,7 +32,13 @@ abstract class ClientGeneratorFromXml
 	 * @var array
 	 */
 	protected $_ignoreTypes = null;
-	
+
+	/**
+	 * @var array
+	 */
+	protected $_ignoreExtends = array();
+
+
 	/**
 	 * @var array
 	 */
@@ -100,7 +106,12 @@ abstract class ClientGeneratorFromXml
 		$type = strval($type);
 		return !count($this->_includeTypes) || isset($this->_includeTypes[$type]);
 	}
-	
+
+	protected function shouldExtendType($type)
+	{
+		return (!in_array($type, $this->_ignoreExtends, true));
+	}
+
 	protected function shouldIncludeAction($serviceId, $actionId)
 	{
 		$serviceId = strtolower(strval($serviceId));
@@ -130,7 +141,10 @@ abstract class ClientGeneratorFromXml
 
 		if($this->_config->ignore)
 			$this->_ignoreTypes = explode(',', str_replace(' ', '', $this->_config->ignore));
-		
+
+		if($this->_config->ignoreExtends)
+			$this->_ignoreExtends = explode(',', str_replace(' ', '', $this->_config->ignoreExtends));
+
 		if($this->_config->include)
 		{
 			$includes = explode(',', str_replace(' ', '', $this->_config->include));
@@ -272,7 +286,7 @@ abstract class ClientGeneratorFromXml
 		}
 
 		$this->_includeTypes[$type] = $type;
-		if($classNode->hasAttribute("base"))
+		if($classNode->hasAttribute("base") && $this->shouldExtendType($type))
 			$this->loadTypesRecursive($classNode->getAttribute("base"));
 		
 		foreach($classNode->childNodes as $propertyNode)
