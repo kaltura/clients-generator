@@ -16,10 +16,8 @@ class EnumsGenerator extends TypescriptGeneratorBase
         $result = array();
 
         foreach ($this->serverMetadata->enumTypes as $enum) {
-            if (count($enum->values) != "0") {
-                // ignore enums without values
-                $result[] = $this->createEnumTypeExp($enum);
-            }
+            // handle all enums even if they don't contain any values
+            $result[] = $this->createEnumTypeExp($enum);
         }
 
         return $result;
