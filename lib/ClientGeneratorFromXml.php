@@ -286,7 +286,7 @@ abstract class ClientGeneratorFromXml
 		}
 
 		$this->_includeTypes[$type] = $type;
-		if($classNode->hasAttribute("base") && $this->shouldExtendType($type))
+		if($classNode->hasAttribute("base"))
 			$this->loadTypesRecursive($classNode->getAttribute("base"));
 		
 		foreach($classNode->childNodes as $propertyNode)
@@ -306,7 +306,9 @@ abstract class ClientGeneratorFromXml
 		$classNodes = $xpath->query("/xml/classes/class[@base = '$type']");
 		foreach($classNodes as $classNode)
 		{
-			$this->loadTypesRecursive($classNode->getAttribute("name"));
+			if ($this->shouldExtendType($type)) {
+				$this->loadTypesRecursive($classNode->getAttribute("name"));
+			}
 		}
 		
 		if($this->endsWith($type, 'Filter'))
