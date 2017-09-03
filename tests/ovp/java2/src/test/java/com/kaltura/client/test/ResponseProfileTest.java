@@ -505,7 +505,7 @@ public class ResponseProfileTest extends BaseTest{
 		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 
-	protected void deleteResponseProfile(int id) throws Exception {
+	protected void deleteResponseProfile(long id) throws Exception {
 		startAdminSession();
 		DeleteResponseProfileBuilder requestBuilder = ResponseProfileService.delete(id);
 		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
