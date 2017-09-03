@@ -100,61 +100,30 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
         return self.params.sortedJsonData()
     }
     
+    private func link(params: [String: Any], keys: [String], token: String) -> [String: Any] {
+        var result = params
+        var keysArray = keys
+        let key = keysArray.removeFirst()
+        if keysArray.count > 0 {
+            if params[key] is [String : Any] {
+                result[key] = link(params: params[key] as! [String : Any], keys: keysArray, token: token)
+            }
+            else {
+                result[key] = link(params: [String : Any](), keys: keysArray, token: token)
+            }
+        }
+        else {
+            result[key] = token
+        }
+        return result
+    }
     
     //[user,childrebs,1,name]
     public func link(tokenFromRespose: BaseTokenizedObject, tokenToRequest: BaseTokenizedObject) -> Self{
         
+        var request = self.requests[tokenToRequest.requestId]
+        request.params = link(params: request.params, keys: tokenToRequest.tokens, token: tokenFromRespose.result)
         
-        
-        var resultCollection: Any? = nil
-        let request = self.requests[tokenFromRespose.requestId]
-        let requestTokens = tokenFromRespose.tokens
-        var next: Any? = request.params
-        var collectionArray = [Any?].init(repeating: nil, count: requestTokens.count)
-        
-        for (index,token) in requestTokens.enumerated() {
-            if ( index == requestTokens.count - 1) {
-                collectionArray[index] = tokenToRequest.result
-                
-            }else{
-                if let number = Int(token) {
-                    if var array = next as? [Any] {
-                        collectionArray[index] = array
-                        next = array[number]
-                    }else{
-                        collectionArray[index] = self.getDummyInstance(token: token)
-                        next = nil
-                    }
-                }else {
-                    if var dicionary = next as? [String: Any] {
-                        collectionArray[index] = dicionary
-                        next = dicionary[token]
-                    }else{
-                        collectionArray[index] = [token:""]
-                        next = nil
-                    }
-                }
-                
-            }
-        }
-        
-        for (index,collection) in collectionArray.reversed().enumerated() {
-            let reversedToken = requestTokens[requestTokens.count - index - 1]
-            
-            if var dict =  collection as? [String: Any]{
-                dict[reversedToken] = resultCollection
-                resultCollection = dict
-            }
-            else if var array =  collection as? [Any], let number = Int(reversedToken) {
-                array[number] = resultCollection ?? ""
-                resultCollection = array
-            }
-            else{
-                resultCollection = collection
-            }
-        }
-        
-        request.setBody(key: requestTokens.first!, value: resultCollection)
         return self
     }
     
