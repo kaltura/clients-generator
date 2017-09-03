@@ -303,10 +303,11 @@ abstract class ClientGeneratorFromXml
 			$this->loadTypesRecursive($propertyType);
 		}
 
-		$classNodes = $xpath->query("/xml/classes/class[@base = '$type']");
-		foreach($classNodes as $classNode)
+		if ($this->shouldExtendType($type))
 		{
-			if ($this->shouldExtendType($type)) {
+			$classNodes = $xpath->query("/xml/classes/class[@base = '$type']");
+			foreach ($classNodes as $classNode)
+			{
 				$this->loadTypesRecursive($classNode->getAttribute("name"));
 			}
 		}
