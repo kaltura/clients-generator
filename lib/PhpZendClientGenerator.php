@@ -149,6 +149,9 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$pluginNodes = $xpath->query("/xml/plugins/plugin");
 		foreach($pluginNodes as $pluginNode)
 		{
+			if (!$this->shouldAddPlugin($pluginNode))
+				continue;
+
 		    $this->writePlugin($pluginNode);
 		}
 	}

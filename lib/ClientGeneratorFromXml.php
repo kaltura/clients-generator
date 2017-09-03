@@ -608,4 +608,25 @@ abstract class ClientGeneratorFromXml
 	public function done($outputPath)
 	{
 	}
+
+	protected function shouldAddPlugin(DOMElement $pluginNode)
+	{
+		if (!$this->_config->ignoreEmptyPlugins)
+			return true;
+
+		$xpath = new DOMXPath($this->_doc);
+		$pluginName = $pluginNode->getAttribute("name");
+		$serviceNodes = $xpath->query("/xml/services/service[@plugin = '$pluginName']");
+		if ($serviceNodes->length === 0)
+			return false;
+
+		$shouldAdd = false;
+		/** @var \DOMElement $serviceNode */
+		foreach($serviceNodes as $serviceNode)
+		{
+			if ($this->shouldIncludeService($serviceNode->getAttribute("id")))
+				$shouldAdd = true;
+		}
+		return $shouldAdd;
+	}
 }
