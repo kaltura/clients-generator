@@ -1293,6 +1293,7 @@ end
         if($overrideConfigurationParams && in_array($propName, $this->configurationParams)) {
         	$declare = 'public override var';
         }
+        
         switch($propType)
         {
             case "int":
@@ -1307,7 +1308,7 @@ end
             case "map":
                 return "\t\t$declare $propName: DictionaryTokenizedObject<$swiftArrayClassName.{$swiftArrayClassName}Tokenizer> {\n\t\t\tget {\n\t\t\t\treturn DictionaryTokenizedObject<$swiftArrayClassName.{$swiftArrayClassName}Tokenizer>(self.append(\"$propName\"))\n\t\t\t}\n\t\t}";
             default:
-                return "\t\t$declare $propName: $swiftClassName.{$swiftClassName}Tokenizer {\n\t\t\tget {\n\t\t\t\treturn $swiftClassName.{$swiftClassName}Tokenizer(self.append(\"$propName\")) \n\t\t\t}\n\t\t}";
+                return "\t\tpublic func $propName<T: $swiftClassName.{$swiftClassName}Tokenizer>() -> T {\n\t\t\treturn T(self.append(\"$propName\"))\n\t\t}";
         }
     }
 

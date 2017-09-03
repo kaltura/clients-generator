@@ -108,6 +108,38 @@ class MultirequestTest: BaseTest {
                 }
             }
             
+            it("login with tokenizer") {
+                waitUntil(timeout: 500) { done in
+                    
+                    let loginRequestBuilder = SessionService.start(secret: self.secret!, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
+                    
+                    let entryRequestBuilder = MediaService.list();
+                    
+                    let requestBuilder = SystemService.ping()
+                        .add(request: loginRequestBuilder)
+                        .add(request: entryRequestBuilder)                    
+                        .link(tokenFromRespose: loginRequestBuilder.responseTokenizer, tokenToRequest: entryRequestBuilder.requestTokenizer.ks)
+                        .set(completion: {(response: Array<Any?>?, error: ApiException?) in
+                            
+                            expect(error).to(beNil())
+                            
+                            expect(response).notTo(beNil())
+                            expect(response?.count) == 3
+                            
+                            // 0
+                            let ping = response?[0] as? Bool
+                            expect(ping) == true
+                            
+                            // 2
+                            let entryList = response?[2] as? MediaListResponse
+                            expect(entryList?.totalCount).notTo(beNil())
+                            
+                            done()
+                        })
+                    self.executor.send(request: requestBuilder.build(self.client!))
+                }
+            }
+            
             it("file upload") {
                 waitUntil(timeout: 500) { done in
                     self.login() { error in
@@ -170,6 +202,74 @@ class MultirequestTest: BaseTest {
                 }
             }
             
+            it("file upload with tokenizer") {
+                waitUntil(timeout: 500) { done in
+                    self.login() { error in
+                        expect(error).to(beNil())
+                        
+                        let entry = MediaEntry()
+                        entry.name = "Multirequest upload Test - \(BaseTest.uniqueTag)"
+                        entry.mediaType = MediaType.IMAGE
+                        entry.referenceId = BaseTest.uniqueTag
+                        
+                        let uploadToken = UploadToken()
+                        uploadToken.fileName = fileElement?.name
+                        uploadToken.fileSize = fileSize
+                        
+                        // 4. Add Content (Object : String, Object)
+                        let resource = UploadedFileTokenResource()
+                        
+                        let mediaAddRequestBuilder = MediaService.add(entry: entry)
+                        let uploadTokenAddRequestBuilder = UploadTokenService.add(uploadToken: uploadToken)
+                        let mediaAddContentRequestBuilder = MediaService.addContent(entryId: "", resource: resource)
+                        let uploadTokenUploadRequestBuilder = UploadTokenService.upload(uploadTokenId: "", fileData: fileElement!, resume: false)
+                        
+                        let requestBuilder = SystemService.ping()
+                            .add(request: mediaAddRequestBuilder)
+                            .add(request: uploadTokenAddRequestBuilder)
+                            .add(request: mediaAddContentRequestBuilder)
+                            .add(request: uploadTokenUploadRequestBuilder)
+                            .link(tokenFromRespose: mediaAddRequestBuilder.responseTokenizer.id, tokenToRequest: mediaAddContentRequestBuilder.requestTokenizer.entryId)
+                            .link(tokenFromRespose: uploadTokenAddRequestBuilder.responseTokenizer.id, tokenToRequest: (mediaAddContentRequestBuilder.requestTokenizer.resource() as UploadedFileTokenResource.UploadedFileTokenResourceTokenizer).token)
+                            .link(tokenFromRespose: uploadTokenAddRequestBuilder.responseTokenizer.id, tokenToRequest: uploadTokenUploadRequestBuilder.requestTokenizer.uploadTokenId)
+                            .set(completion: {(response: Array<Any?>?, error: ApiException?) in
+                                
+                                expect(error).to(beNil())
+                                
+                                expect(response).notTo(beNil())
+                                expect(response?.count) == 5
+                                
+                                // 0
+                                let ping = response?[0] as? Bool
+                                expect(ping) == true
+                                
+                                // 1
+                                let createdEntry = response?[1] as? MediaEntry
+                                expect(createdEntry?.id).notTo(beNil())
+                                expect(createdEntry?.status) == EntryStatus.NO_CONTENT
+                                
+                                self.entryIds.append((createdEntry?.id)!)
+                                
+                                // 2
+                                let token = response?[2] as? UploadToken
+                                expect(token?.id).notTo(beNil())
+                                expect(token?.status) == UploadTokenStatus.PENDING
+                                
+                                // 3
+                                let contentEntry = response?[3] as? MediaEntry
+                                expect(contentEntry?.status) == EntryStatus.IMPORT
+                                
+                                // 4
+                                let closedToken = response?[4] as? UploadToken
+                                expect(closedToken?.status) == UploadTokenStatus.CLOSED
+                                
+                                done()
+                            })
+                        
+                        self.executor.send(request: requestBuilder.build(self.client!))
+                    }
+                }
+            }
             
             it("multi completions") {
                 waitUntil(timeout: 500) { done in
