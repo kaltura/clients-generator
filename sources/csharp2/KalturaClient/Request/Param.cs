@@ -100,7 +100,7 @@ namespace Kaltura.Request
                     return String.Format(CultureInfo.InvariantCulture,"{0:F20}", _FloatValue);
                 case PARAM_TYPE_STRING:
                 default:
-                    return "\"" + _Value.Replace("\"", "\\\"").Replace("\r", "").Replace("\t", "\\t").Replace("\n", "\\n") + "\"";
+                    return "\"" + _Value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\t", "\\t").Replace("\n", "\\n") + "\"";
             }
         }
 
