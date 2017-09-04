@@ -1,3 +1,4 @@
+package com.kaltura.client.test;
 // ===================================================================================================
 //                           _  __     _ _
 //                          | |/ /__ _| | |_ _  _ _ _ __ _
@@ -26,44 +27,18 @@
 // @ignore
 // ===================================================================================================
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-public class OttTestConfig {
-	private static Properties properties;
-	
-	private static final String PARTNER_ID = "partnerId";
-	private static final String ENDPOINT = "serviceUrl";
-	private static final String USER_NAME = "userName";
-	private static final String USER_PASSWORD = "userPassword";
-	private static final String MEDIA_ID = "mediaId";
+public class RequestsTestSuite extends TestSuite
+{		
+	public static Test suite()
+	{
+		TestSuite suite = new TestSuite();
+		suite.addTestSuite(CancelTest.class);
+		suite.addTestSuite(SingleRequestTest.class);
+		suite.addTestSuite(MultiRequestTest.class);
 
-	OttTestConfig() throws IOException{
-		if(properties == null){
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream("ott.test.properties");
-			properties = new Properties();
-			properties.load(inputStream);
-		}
-	}
-	
-	int getPartnerId(){
-		return Integer.parseInt(properties.getProperty(PARTNER_ID));
-	}
-	
-	String getServiceUrl(){
-		return properties.getProperty(ENDPOINT);
-	}
-	
-	String getUserName(){
-		return properties.getProperty(USER_NAME);
-	}
-
-	String getUserPassword(){
-		return properties.getProperty(USER_PASSWORD);
-	}
-
-	String getMediaId() {
-		return properties.getProperty(MEDIA_ID);
+		return suite;
 	}
 }

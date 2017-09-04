@@ -1,3 +1,6 @@
+
+package com.kaltura.client.test;
+
 import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
 import com.kaltura.client.ILogger;
@@ -10,7 +13,7 @@ public abstract class TestCommon extends TestCase {
     protected static ILogger logger = Logger.getLogger("java-test");
 
     Client client;
-    OttTestConfig testConfig;
+    TestConfig testConfig;
 
 
 	@SuppressWarnings("serial")
@@ -33,7 +36,7 @@ public abstract class TestCommon extends TestCase {
        /* if (logger.isEnabled())
             logger.info("Starting test: " + getClass().getName() + "." + getName());*/
 
-        testConfig = new OttTestConfig();
+        testConfig = new TestConfig();
 
         Configuration config = new Configuration();
         config.setEndpoint(testConfig.getServiceUrl());
