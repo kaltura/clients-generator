@@ -1198,7 +1198,7 @@ end
 		switch($resultType)
 		{
 		case null:
-			return "NullRequestBuilder";
+			return "NullRequestBuilder<$requestTokenizerType>";
 
 		case "array":
 			return("ArrayRequestBuilder<" . $arrayType . ", $responseTokenizerType, $requestTokenizerType>");
