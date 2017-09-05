@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>serverURL</key>
+	<string>{URL}</string>
+	<key>partnerId</key>
+	<integer>0</integer>
+	<key>username</key>
+	<string>{Email}</string>
+	<key>password</key>
+	<string>{Password}</string>
+	<key>operatorUsername</key>
+	<string>gordon2015001450620646744@mailinator.com</string>
+	<key>operatorPassword</key>
+	<string>password</string>
+	<key>assetId</key>
+	<string>259152</string>
+</dict>
+</plist>
