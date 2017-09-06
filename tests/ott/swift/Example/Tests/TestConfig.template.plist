@@ -3,18 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>serverURL</key>
-	<string>{URL}</string>
+	<string>@URL@</string>
 	<key>partnerId</key>
-	<integer>0</integer>
+	<integer>@YOUR_PARTNER_ID@</integer>
 	<key>username</key>
-	<string>{Email}</string>
+	<string>@USERNAME@</string>
 	<key>password</key>
-	<string>{Password}</string>
+	<string>@PASSWORD@</string>
 	<key>operatorUsername</key>
-	<string>gordon2015001450620646744@mailinator.com</string>
+	<string>@OPERATOR_USERNAME@</string>
 	<key>operatorPassword</key>
-	<string>password</string>
+	<string>@OPERATOR_PASSWORD@</string>
 	<key>assetId</key>
-	<string>259152</string>
+	<string>@ASSET_ID@</string>
 </dict>
 </plist>
