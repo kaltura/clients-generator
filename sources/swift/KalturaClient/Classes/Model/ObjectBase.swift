@@ -56,7 +56,7 @@ open class ObjectBase {
         }
     }
     
-    public func toDictionary() -> [String: Any] {
+    internal func toDictionary() -> [String: Any] {
         dict["objectType"] = "Kaltura\(serverObjectType)"
         return dict
     }

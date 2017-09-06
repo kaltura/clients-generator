@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 s.name             = 'KalturaClient'
 s.version          = '0.1.0'
 s.summary          = 'KalturaClient.'
-s.homepage         = 'https://github.com/kaltura/clients-generator/tree/Mercury-13.2.0/sources/swift'
+s.homepage         = 'https://github.com/kaltura/clients-generator/tree/master/sources/swift'
 s.license          = { :type => 'AGPLv3', :text => 'AGPLv3' }
 s.author           = { 'Kaltura' => 'community@kaltura.com' }
 s.source           = { :git => 'https://github.com/kaltura/clients-generator.git', :tag => s.version.to_s }

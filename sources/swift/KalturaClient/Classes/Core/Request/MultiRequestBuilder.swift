@@ -95,7 +95,7 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
         return
     }
     
-    public override func buildParamsAsData(params: [String: Any]) -> Data?
+    internal override func buildParamsAsData(params: [String: Any]) -> Data?
     {
         return self.params.sortedJsonData()
     }
@@ -126,15 +126,6 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
         
         return self
     }
-    
-    func getDummyInstance(token: String) -> Any {
-        if let number = Int(token) {
-            return [Any].init(repeating: "", count: number)
-        }else{
-            return [String:Any]()
-        }
-    }
-    
 }
 
 
