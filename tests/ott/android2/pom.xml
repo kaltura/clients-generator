@@ -12,14 +12,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.kaltura</groupId>
 	<artifactId>KalturaOttAndroidClient</artifactId>
-	<version>4.5.1-SNAPSHOT</version>
+	<version>4.5.15-SNAPSHOT</version>
 
 	<!-- Project description -->
 	<name>Kaltura OTT Android Client Library</name>
 	<description>
 		KalturaAndroidClient is a library of Java classes that can be used to interact
 		with the Kaltura OTT REST API. More information about the REST API can be
-		found at 4.5.1-SNAPSHOT  Many of the Java classes
+		found at 4.5.15-SNAPSHOT  Many of the Java classes
 		in this library are auto-generated from a schema that defines the objects that
 		are used to interact with the API.
   	</description>
