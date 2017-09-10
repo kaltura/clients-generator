@@ -400,7 +400,7 @@ end
 		}
 		
 		$type = $classNode->getAttribute("name");
-		$this->appendLine("	public override func toDictionary() -> [String: Any] {");//throws APIException
+		$this->appendLine("	internal override func toDictionary() -> [String: Any] {");//throws APIException
 		$this->appendLine("		var dict: [String: Any] = super.toDictionary()");
 		
 		foreach($classNode->childNodes as $propertyNode) 

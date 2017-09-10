@@ -66,7 +66,7 @@ internal class JSONParser{
     //MARK -- parse methods:
     
     // parse array of objects
-    public static func parse<T>(array: [Any]) throws -> [T] where T: ObjectBase {
+    internal static func parse<T>(array: [Any]) throws -> [T] where T: ObjectBase {
         var ret: [T] = []
         for item in array {
             ret.append(try parse(object: item as! [String: Any]))
@@ -75,7 +75,7 @@ internal class JSONParser{
     }
 
     // I think this is useless
-    public static func parse<T>(array: [Any], type: Array<ObjectBase>.Type) throws -> T? {
+    internal static func parse<T>(array: [Any], type: Array<ObjectBase>.Type) throws -> T? {
         var ret = type.init()
         for item in array {
             ret.append(try parse(object: item as! [String: Any]))
@@ -84,7 +84,7 @@ internal class JSONParser{
     }
     
     // parse map of objects
-    public static func parse<T>(map: [String: Any]) throws -> [String: T] where T: ObjectBase {
+    internal static func parse<T>(map: [String: Any]) throws -> [String: T] where T: ObjectBase {
         var ret: [String: T] = [:]
         
         for (key, item) in map {
@@ -94,12 +94,12 @@ internal class JSONParser{
     }
     
     // parse dictinoary of object
-    public static func parse<T>(object: [String: Any]) throws -> T where T: ObjectBase {
+    internal static func parse<T>(object: [String: Any]) throws -> T where T: ObjectBase {
         return try parse(object: object, type: T.self)
     }
     
     // parse response 
-    public static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
+    internal static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
         
         var classType: ObjectBase.Type = type
         if let objectType = object["objectType"] as? String {
@@ -121,7 +121,7 @@ internal class JSONParser{
         return obj as! T
     }
     
-    public static func parse(data: Data) throws -> JSON {
+    internal static func parse(data: Data) throws -> JSON {
         do{
             let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
             return JSON(json)
@@ -131,7 +131,7 @@ internal class JSONParser{
         }
     }
     
-    public static func parse(primitive: Any, type: Any) throws -> Any? {
+    internal static func parse(primitive: Any, type: Any) throws -> Any? {
         if let str = primitive as? String {
             return str
         }else if type is Int64.Type {
@@ -160,7 +160,7 @@ internal class JSONParser{
     
     
     
-    public static func parse<T>(array: JSON) throws -> [T]? {
+    internal static func parse<T>(array: JSON) throws -> [T]? {
         if let dict = array.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
         }
@@ -184,7 +184,7 @@ internal class JSONParser{
         
         
     }
-    public static func parse<T>(json: JSON) throws -> T? {
+    internal static func parse<T>(json: JSON) throws -> T? {
         
         if let dict = json.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
