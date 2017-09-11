@@ -37,13 +37,14 @@ import SwiftyJSON
 
 
 
-public class MultiRequestBuilder: ArrayRequestBuilder<Any?> {
-    
+public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject, BaseTokenizedObject> {
     
     var requests = [RequestBuilderProtocol]()
     
     @discardableResult
     public override func add(request: RequestBuilderProtocol) -> Self  {
+        var subRequest = request
+        subRequest.index = requests.count
         self.requests.append(request)
         return self
     }
@@ -88,15 +89,42 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?> {
         }
         
         if let block = completion {
-            block(allParsedResponse,response.error)
+            block(allParsedResponse, response.error)
         }
         
         return
     }
     
-    public override func buildParamsAsData(params: [String: Any]) -> Data?
+    internal override func buildParamsAsData(params: [String: Any]) -> Data?
     {
         return self.params.sortedJsonData()
+    }
+    
+    private func link(params: [String: Any], keys: [String], token: String) -> [String: Any] {
+        var result = params
+        var keysArray = keys
+        let key = keysArray.removeFirst()
+        if keysArray.count > 0 {
+            if params[key] is [String : Any] {
+                result[key] = link(params: params[key] as! [String : Any], keys: keysArray, token: token)
+            }
+            else {
+                result[key] = link(params: [String : Any](), keys: keysArray, token: token)
+            }
+        }
+        else {
+            result[key] = token
+        }
+        return result
+    }
+    
+    //[user,childrebs,1,name]
+    public func link(tokenFromRespose: BaseTokenizedObject, tokenToRequest: BaseTokenizedObject) -> Self{
+        
+        var request = self.requests[tokenToRequest.requestId]
+        request.params = link(params: request.params, keys: tokenToRequest.tokens, token: tokenFromRespose.result)
+        
+        return self
     }
 }
 

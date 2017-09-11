@@ -67,8 +67,8 @@ class Xml2As3ClientGenerator extends ClientGeneratorFromXml
 		{
 			switch($enumType)
 			{
-				case "int" : $str .= "		public static const " . $child->attributes()->name . " : int = " . $child->attributes()->value . ";\n"; break;
-				case "string" : $str .= "		public static const " . $child->attributes()->name . " : String = '" . $child->attributes()->value . "';\n"; break;
+				case "int" : $str .= '		public static const ' . $child->attributes()->name . ' : int = ' . $child->attributes()->value . ";\n"; break;
+				case "string" : $str .= '		public static const ' . $child->attributes()->name . ' : String = "' . $child->attributes()->value . '";' . "\n"; break;
 			}
 		}
 		$str .= "	}\n";

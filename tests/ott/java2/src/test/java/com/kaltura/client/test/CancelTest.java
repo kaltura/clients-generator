@@ -1,10 +1,11 @@
+
 package com.kaltura.client.test;
 
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.services.FavoriteService;
+import com.kaltura.client.services.FavoriteService.ListFavoriteBuilder;
 import com.kaltura.client.types.Favorite;
 import com.kaltura.client.types.ListResponse;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -25,7 +26,7 @@ public class CancelTest extends TestCommon {
     public void testCancel() throws InterruptedException, ExecutionException {
         logger.info("testCancelRequest");
 
-        RequestBuilder<ListResponse<Favorite>> requestBuilder = FavoriteService.list();
+        ListFavoriteBuilder requestBuilder = FavoriteService.list();
         APIOkRequestsExecutor actionsQueue = APIOkRequestsExecutor.getExecutor();
         String reqId = actionsQueue.queue(requestBuilder.setCompletion(new OnCompletion<Response<ListResponse<Favorite>>>() {
             @Override

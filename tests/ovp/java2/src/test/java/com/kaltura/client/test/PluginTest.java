@@ -32,8 +32,10 @@ import java.util.concurrent.CountDownLatch;
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.MetadataObjectType;
 import com.kaltura.client.services.MetadataProfileService;
+import com.kaltura.client.services.MetadataProfileService.AddMetadataProfileBuilder;
+import com.kaltura.client.services.MetadataProfileService.DeleteMetadataProfileBuilder;
+import com.kaltura.client.services.MetadataProfileService.UpdateMetadataProfileBuilder;
 import com.kaltura.client.types.MetadataProfile;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -49,7 +51,7 @@ public class PluginTest extends BaseTest {
 		profileAdd.setMetadataObjectType(MetadataObjectType.ENTRY);
 		profileAdd.setName(getName());
 
-		RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
+		AddMetadataProfileBuilder requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
 		.setCompletion(new OnCompletion<Response<MetadataProfile>>() {
 			
 			@Override
@@ -62,7 +64,7 @@ public class PluginTest extends BaseTest {
 				MetadataProfile profileUpdate = new MetadataProfile();
 				profileUpdate.setName(testString);
 
-				RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.update(profileAdded.getId(), profileUpdate)
+				UpdateMetadataProfileBuilder requestBuilder = MetadataProfileService.update(profileAdded.getId(), profileUpdate)
 				.setCompletion(new OnCompletion<Response<MetadataProfile>>() {
 					
 					@Override
@@ -72,7 +74,7 @@ public class PluginTest extends BaseTest {
 						
 						assertEquals(testString, profileUpdated.getName());
 						
-						RequestBuilder<Void> requestBuilder = MetadataProfileService.delete(profileUpdated.getId());
+						DeleteMetadataProfileBuilder requestBuilder = MetadataProfileService.delete(profileUpdated.getId());
 						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 						
 						doneSignal.countDown();

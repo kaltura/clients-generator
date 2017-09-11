@@ -32,9 +32,9 @@ import java.util.concurrent.CountDownLatch;
 
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MediaService.ListMediaBuilder;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.MediaEntry;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -50,7 +50,7 @@ public class SessionServiceTest extends BaseTest {
 		assertNotNull(client.getSessionId());
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+		ListMediaBuilder requestBuilder = MediaService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 			
 			@Override
@@ -61,7 +61,7 @@ public class SessionServiceTest extends BaseTest {
 				// Close session
 				client.setSessionId(null);;
 
-				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+				ListMediaBuilder requestBuilder = MediaService.list()
 				.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 					
 					@Override

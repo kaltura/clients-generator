@@ -1,8 +1,8 @@
 // ===================================================================================================
-//                           _  __     _ _
-//                          | |/ /__ _| | |_ _  _ _ _ __ _
-//                          | ' </ _` | |  _| || | '_/ _` |
-//                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
+//						   _  __	 _ _
+//						  | |/ /__ _| | |_ _  _ _ _ __ _
+//						  | ' </ _` | |  _| || | '_/ _` |
+//						  |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
@@ -25,20 +25,14 @@
 //
 // @ignore
 // ===================================================================================================
-package com.kaltura.client.test;
+package com.kaltura.client;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import com.kaltura.client.utils.request.ConnectionConfiguration;
 
-public class OTTRequestsTestSuite extends TestSuite
-{		
-	public static Test suite()
-	{
-		TestSuite suite = new TestSuite();
-		suite.addTestSuite(CancelTest.class);
-		suite.addTestSuite(SingleRequestTest.class);
-		suite.addTestSuite(MultiRequestTest.class);
-
-		return suite;
+@SuppressWarnings("serial")
+public class ClientBase extends ClientConfigBase {
+	
+	public ClientBase(ConnectionConfiguration configuration) {
+		super(configuration);
 	}
 }

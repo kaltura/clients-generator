@@ -4,7 +4,10 @@ import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.AssetOrderBy;
 import com.kaltura.client.enums.AssetReferenceType;
 import com.kaltura.client.services.AssetService;
+import com.kaltura.client.services.AssetService.GetAssetBuilder;
 import com.kaltura.client.services.OttUserService;
+import com.kaltura.client.services.OttUserService.GetOttUserBuilder;
+import com.kaltura.client.services.OttUserService.LoginOttUserBuilder;
 import com.kaltura.client.types.Asset;
 import com.kaltura.client.types.FilterPager;
 import com.kaltura.client.types.ListResponse;
@@ -12,7 +15,6 @@ import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.types.SearchAssetFilter;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.ApiCompletion;
 import com.kaltura.client.utils.response.base.Response;
@@ -47,7 +49,7 @@ public class MultiRequestTest extends TestCommon {
 		final AtomicInteger counter = new AtomicInteger(0);
         //DataFactory.UserLogin userLogin = DataFactory.getUser();
 
-        RequestBuilder<LoginResponse> ottUserLoginRequestBuilder = OttUserService.login(testConfig.getPartnerId(),
+        LoginOttUserBuilder ottUserLoginRequestBuilder = OttUserService.login(testConfig.getPartnerId(),
             testConfig.getUserName(), testConfig.getUserPassword())
             .setCompletion(new ApiCompletion<LoginResponse>() {
 
@@ -60,7 +62,7 @@ public class MultiRequestTest extends TestCommon {
                 }
             });
 
-        RequestBuilder<Asset> assetGetRequestBuilder = AssetService.get(testConfig.getMediaId(), AssetReferenceType.MEDIA)
+		GetAssetBuilder assetGetRequestBuilder = AssetService.get(testConfig.getMediaId(), AssetReferenceType.MEDIA)
         .setCompletion(new ApiCompletion<Asset>() {
 
 			@Override
@@ -71,7 +73,7 @@ public class MultiRequestTest extends TestCommon {
 			}
 		});
 
-        RequestBuilder<OTTUser> ottUserGetRequestBuilder = OttUserService.get()
+        GetOttUserBuilder ottUserGetRequestBuilder = OttUserService.get()
         .setCompletion(new ApiCompletion<OTTUser>() {
 
 			@Override
@@ -122,6 +124,7 @@ public class MultiRequestTest extends TestCommon {
 				.add(AssetService.list(searchAssetFilter, filterPager))
 				.link(0, 1, "loginSession.ks", "ks")
 				.setCompletion(new OnCompletion<Response<List<Object>>>() {
+					@SuppressWarnings({ "unchecked", "rawtypes" })
 					@Override
 					public void onComplete(Response<List<Object>> result) {
 						try {

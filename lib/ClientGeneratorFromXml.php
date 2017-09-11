@@ -32,7 +32,13 @@ abstract class ClientGeneratorFromXml
 	 * @var array
 	 */
 	protected $_ignoreTypes = null;
-	
+
+	/**
+	 * @var array
+	 */
+	protected $_ignoreExtends = array();
+
+
 	/**
 	 * @var array
 	 */
@@ -100,7 +106,12 @@ abstract class ClientGeneratorFromXml
 		$type = strval($type);
 		return !count($this->_includeTypes) || isset($this->_includeTypes[$type]);
 	}
-	
+
+	protected function shouldExtendType($type)
+	{
+		return (!in_array($type, $this->_ignoreExtends, true));
+	}
+
 	protected function shouldIncludeAction($serviceId, $actionId)
 	{
 		$serviceId = strtolower(strval($serviceId));
@@ -130,7 +141,10 @@ abstract class ClientGeneratorFromXml
 
 		if($this->_config->ignore)
 			$this->_ignoreTypes = explode(',', str_replace(' ', '', $this->_config->ignore));
-		
+
+		if($this->_config->ignoreExtends)
+			$this->_ignoreExtends = explode(',', str_replace(' ', '', $this->_config->ignoreExtends));
+
 		if($this->_config->include)
 		{
 			$includes = explode(',', str_replace(' ', '', $this->_config->include));
@@ -289,10 +303,13 @@ abstract class ClientGeneratorFromXml
 			$this->loadTypesRecursive($propertyType);
 		}
 
-		$classNodes = $xpath->query("/xml/classes/class[@base = '$type']");
-		foreach($classNodes as $classNode)
+		if ($this->shouldExtendType($type))
 		{
-			$this->loadTypesRecursive($classNode->getAttribute("name"));
+			$classNodes = $xpath->query("/xml/classes/class[@base = '$type']");
+			foreach ($classNodes as $classNode)
+			{
+				$this->loadTypesRecursive($classNode->getAttribute("name"));
+			}
 		}
 		
 		if($this->endsWith($type, 'Filter'))
@@ -607,5 +624,26 @@ abstract class ClientGeneratorFromXml
 	
 	public function done($outputPath)
 	{
+	}
+
+	protected function shouldAddPlugin(DOMElement $pluginNode)
+	{
+		if (!$this->_config->ignoreEmptyPlugins)
+			return true;
+
+		$xpath = new DOMXPath($this->_doc);
+		$pluginName = $pluginNode->getAttribute("name");
+		$serviceNodes = $xpath->query("/xml/services/service[@plugin = '$pluginName']");
+		if ($serviceNodes->length === 0)
+			return false;
+
+		$shouldAdd = false;
+		/** @var \DOMElement $serviceNode */
+		foreach($serviceNodes as $serviceNode)
+		{
+			if ($this->shouldIncludeService($serviceNode->getAttribute("id")))
+				$shouldAdd = true;
+		}
+		return $shouldAdd;
 	}
 }

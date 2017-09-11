@@ -135,7 +135,7 @@ class MediaServiceTest: BaseTest {
                         let updateEntry: MediaEntry = MediaEntry()
                         updateEntry.name = name
                         
-                        let mediaUpdateRequestBuilder:RequestBuilder<MediaEntry> = MediaService.update(entryId: (entry?.id)!, mediaEntry: updateEntry)
+                        let mediaUpdateRequestBuilder = MediaService.update(entryId: (entry?.id)!, mediaEntry: updateEntry)
                         mediaUpdateRequestBuilder.set(completion: {(updatedEntry: MediaEntry?, error: ApiException?) in
                             
                             expect(error).to(beNil())
@@ -163,7 +163,7 @@ class MediaServiceTest: BaseTest {
                         
                         self.entryIds.append((entry?.id)!)
                         
-                        let mediaGetRequestBuilder:RequestBuilder<MediaEntry> = MediaService.get(entryId: (entry?.id)!)
+                        let mediaGetRequestBuilder = MediaService.get(entryId: (entry?.id)!)
                         mediaGetRequestBuilder.set(completion: {(getEntry: MediaEntry?, error: ApiException?) in
                             
                             expect(error).to(beNil())
@@ -182,7 +182,8 @@ class MediaServiceTest: BaseTest {
             
             it("bad get") {
                 
-                waitUntil(timeout: 500) { done in                        let mediaGetRequestBuilder:RequestBuilder<MediaEntry> = MediaService.get(entryId: "bad-id")
+                waitUntil(timeout: 500) { done in
+                    let mediaGetRequestBuilder = MediaService.get(entryId: "bad-id")
                     mediaGetRequestBuilder.set(completion: {(getEntry: MediaEntry?, error: ApiException?) in
                         
                         expect(getEntry).to(beNil())
@@ -208,7 +209,7 @@ class MediaServiceTest: BaseTest {
                 waitUntil(timeout: 500) { done in
                     self.createMediaEntries(prefix: "Media List Test", count: count) { createdEntries in
                     
-                        let mediaListRequestBuilder:RequestBuilder<MediaListResponse> = MediaService.list(filter: filter)
+                        let mediaListRequestBuilder = MediaService.list(filter: filter)
                         mediaListRequestBuilder.set(completion: {(list: MediaListResponse?, error: ApiException?) in
                             
                             expect(error).to(beNil())
@@ -255,7 +256,7 @@ class MediaServiceTest: BaseTest {
             uploadToken.fileName = fileElement.name
             uploadToken.fileSize = fileSize
             
-            let uploadTokenAddRequestBuilder:RequestBuilder<UploadToken> = UploadTokenService.add(uploadToken: uploadToken)
+            let uploadTokenAddRequestBuilder = UploadTokenService.add(uploadToken: uploadToken)
             uploadTokenAddRequestBuilder.set(completion: {(uploadToken: UploadToken?, error: ApiException?) in
                 
                 expect(error).to(beNil())
@@ -268,12 +269,12 @@ class MediaServiceTest: BaseTest {
                 let resource: UploadedFileTokenResource = UploadedFileTokenResource()
                 resource.token = createdUploadToken?.id
                 
-                let mediaAddContentRequestBuilder:RequestBuilder<MediaEntry> = MediaService.addContent(entryId: (createdEntry?.id)!, resource: resource)
+                let mediaAddContentRequestBuilder = MediaService.addContent(entryId: (createdEntry?.id)!, resource: resource)
                 mediaAddContentRequestBuilder.set(completion: {(entry: MediaEntry?, error: ApiException?) in
                     
                     expect(error).to(beNil())
                     
-                    let uploadTokenUploadRequestBuilder:RequestBuilder<UploadToken> = UploadTokenService.upload(uploadTokenId: (createdUploadToken?.id)!, fileData: fileElement)
+                    let uploadTokenUploadRequestBuilder = UploadTokenService.upload(uploadTokenId: (createdUploadToken?.id)!, fileData: fileElement)
                     uploadTokenUploadRequestBuilder.set(completion: {(uploadToken: UploadToken?, error: ApiException?) in
                         
                         expect(error).to(beNil())

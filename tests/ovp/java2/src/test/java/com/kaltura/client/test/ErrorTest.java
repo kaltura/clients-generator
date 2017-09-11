@@ -33,13 +33,16 @@ import java.util.concurrent.ExecutionException;
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.Client;
 import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.BaseEntryService.ListBaseEntryBuilder;
 import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MediaService.GetMediaBuilder;
+import com.kaltura.client.services.MediaService.ListMediaBuilder;
 import com.kaltura.client.services.SystemService;
+import com.kaltura.client.services.SystemService.PingSystemBuilder;
 import com.kaltura.client.types.BaseEntry;
 import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.utils.request.ExecutedRequest;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
@@ -55,7 +58,7 @@ public class ErrorTest extends BaseTest {
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
 
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		PingSystemBuilder requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -78,7 +81,7 @@ public class ErrorTest extends BaseTest {
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
         
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		PingSystemBuilder requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -118,7 +121,7 @@ public class ErrorTest extends BaseTest {
 		final ExecutorMock<Boolean> mockClient = new ExecutorMock<Boolean>("Invalid JSON");
         final CountDownLatch doneSignal = new CountDownLatch(1);
         
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		PingSystemBuilder requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -141,7 +144,7 @@ public class ErrorTest extends BaseTest {
 	public void testTagInSimpleType() throws InterruptedException, ExecutionException {
 		final ExecutorMock<Boolean> mockClient = new ExecutorMock<Boolean>("{sometag: 1}");
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<Boolean> requestBuilder = SystemService.ping()
+		PingSystemBuilder requestBuilder = SystemService.ping()
 		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
@@ -164,7 +167,7 @@ public class ErrorTest extends BaseTest {
 	public void testEmptyObjectOrException() throws InterruptedException, ExecutionException {
 		final ExecutorMock<ListResponse<MediaEntry>> mockClient = new ExecutorMock<ListResponse<MediaEntry>>("\"bla bla\"");
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list()
+		ListMediaBuilder requestBuilder = MediaService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 			
 			@Override
@@ -183,7 +186,7 @@ public class ErrorTest extends BaseTest {
 
 		final ExecutorMock<MediaEntry> mockClient = new ExecutorMock<MediaEntry>("{objectType: \"UnknownObjectType\"}");
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.get("invalid-id")
+		GetMediaBuilder requestBuilder = MediaService.get("invalid-id")
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
@@ -207,7 +210,7 @@ public class ErrorTest extends BaseTest {
 
 		final ExecutorMock<ListResponse<BaseEntry>> mockClient = new ExecutorMock<ListResponse<BaseEntry>>(testJson);
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<ListResponse<BaseEntry>> requestBuilder = BaseEntryService.list()
+		ListBaseEntryBuilder requestBuilder = BaseEntryService.list()
 		.setCompletion(new OnCompletion<Response<ListResponse<BaseEntry>>>() {
 			
 			@Override

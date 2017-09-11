@@ -20,6 +20,20 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/java']
+            }
+        }
+
+        test {
+            java {
+                srcDirs = ['src/test/java']
+            }
+        }
+    }
 }
 
 dependencies {
@@ -30,5 +44,6 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.7.0'
     compile 'com.squareup.okio:okio:1.12.0'
     compile 'com.android.support:appcompat-v7:25.4.0'
-    compile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.awaitility:awaitility:3.0.0'
 }

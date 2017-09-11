@@ -45,6 +45,7 @@ public protocol RequestBuilderProtocol {
     var urlParams: [String: String]? { get set }
     var service: String? { get set }
     var action: String? { get set }
+    var index: Int { get set }
     
     
     @discardableResult
@@ -67,17 +68,13 @@ public protocol RequestBuilderProtocol {
     
     func build(_ client: Client) -> Request
     
-    func getUrlTail() -> String
-    
-    func onComplete(_ response: Response) -> Void
-    
     func parse(_ response: Response) -> (data:Any?,exception: ApiException?)
     
     func complete(data:Any?, exception: ApiException?)
     
 }
 
-public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol {
+public class RequestBuilder<T: Any, U: BaseTokenizedObject, G:BaseTokenizedObject>: RequestBuilderData, RequestBuilderProtocol {
     public var files: [String: RequestFile] = [:]
     
     public lazy var requestId: String = {
@@ -92,6 +89,19 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
 
     public var service: String?
     public var action: String?
+    public var index: Int = 0
+    
+    public var responseTokenizer: U {
+        get {
+            return U.self.init(requestId:self.index)
+        }
+    }
+    
+    public var requestTokenizer: G {
+        get {
+            return G.self.init(requestId:self.index)
+        }
+    }
     
     public required override init() {
         super.init()
@@ -198,11 +208,11 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
         return RequestElement(requestId: self.requestId, method:self.method , url: url, dataBody: bodyData, files: files, headers: self.headers, timeout: self.timeout, completion: self.onComplete, configuration: client.configuration)
     }
     
-    public func getUrlTail() -> String {
+    internal func getUrlTail() -> String {
         return "/service/" + service! + "/action/" + action!
     }
     
-    public func onComplete(_ response: Response) -> Void {
+    internal func onComplete(_ response: Response) -> Void {
         
         let parsedResult = self.parse(response)
         
@@ -236,7 +246,7 @@ public class RequestBuilder<T: Any>: RequestBuilderData, RequestBuilderProtocol 
         return (result, exception)
     }
     
-    public func buildParamsAsData(params: [String:Any]) -> Data? {
+    internal func buildParamsAsData(params: [String:Any]) -> Data? {
     
         var bodyData: Data? = nil
         do{

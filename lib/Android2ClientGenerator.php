@@ -51,13 +51,13 @@ class Android2ClientGenerator extends Java2ClientGenerator
         $imports[] = "import android.os.Parcel;";
         //$imports[] = "import android.os.Parcelable;";
 
-        $this->generateParcelableImplementation($classNode);
+        $this->generateParcelableImplementation($imports, $classNode);
 
         parent::finalizeClass($imports, $classNode);
     }
 
 
-    private function generateParcelableImplementation(DOMElement $classNode)
+    private function generateParcelableImplementation(array &$imports, DOMElement $classNode)
     {
         $type = $classNode->getAttribute("name");
 
@@ -75,7 +75,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
         }
 
         $this->appendLine("");
-        $this->generateParcelConstructor($classNode);
+        $this->generateParcelConstructor($imports, $classNode);
     }
 
     /**
@@ -193,7 +193,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
      * generates the Parcel parametrized constructor for Parcelable implementing classes
      * @param DOMElement $classNode
      */
-    private function generateParcelConstructor(DOMElement $classNode){
+    private function generateParcelConstructor(array &$imports, DOMElement $classNode){
         $className = $this->getJavaTypeName($classNode->getAttribute("name"));
 
         $this->appendLine("    public $className(Parcel in) {");
@@ -234,10 +234,12 @@ class Android2ClientGenerator extends Java2ClientGenerator
 
                 case "List":
                     $this->readListParcel($propName, $arrayType);
+                    $imports[] = "import java.util.ArrayList;";
                     break;
 
                 case "Map":
                     $this->readMapParcel($propName, $arrayType);
+					$imports[] = "import java.util.HashMap;";
                     break;
 
                 case "enum":

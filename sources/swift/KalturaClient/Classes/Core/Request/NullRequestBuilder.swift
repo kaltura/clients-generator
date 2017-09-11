@@ -33,6 +33,6 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-internal class NullRequestBuilder: RequestBuilder<Void> {
+public class NullRequestBuilder<G:BaseTokenizedObject>: RequestBuilder<Void, BaseTokenizedObject, G> {
     
 }

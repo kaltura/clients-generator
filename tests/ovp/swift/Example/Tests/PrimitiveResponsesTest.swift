@@ -56,7 +56,7 @@ class PrimitiveResponsesTest: BaseTest {
             
             it("int") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<Int> = SystemService.getTime()
+                    let requestBuilder = SystemService.getTime()
                     requestBuilder.set(completion: {(time: Int?, error: ApiException?) in
                         
                         expect(error).to(beNil())
@@ -71,7 +71,7 @@ class PrimitiveResponsesTest: BaseTest {
             
             it("string") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<String> = SystemService.getVersion()
+                    let requestBuilder = SystemService.getVersion()
                     requestBuilder.set(completion: {(version: String?, error: ApiException?) in
                         
                         expect(error).to(beNil())
@@ -86,7 +86,7 @@ class PrimitiveResponsesTest: BaseTest {
             
             it("boolean") {
                 waitUntil(timeout: 500) { done in
-                    let requestBuilder:RequestBuilder<Bool> = SystemService.ping()
+                    let requestBuilder = SystemService.ping()
                     requestBuilder.set(completion: {(ok: Bool?, error: ApiException?) in
                         
                         expect(error).to(beNil())

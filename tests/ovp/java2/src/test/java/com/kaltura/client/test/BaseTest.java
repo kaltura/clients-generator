@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import com.kaltura.client.APIOkRequestsExecutor;
@@ -49,12 +48,17 @@ import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.MediaType;
 import com.kaltura.client.enums.SessionType;
 import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MediaService.AddContentMediaBuilder;
+import com.kaltura.client.services.MediaService.AddMediaBuilder;
+import com.kaltura.client.services.MediaService.GetMediaBuilder;
 import com.kaltura.client.services.UploadTokenService;
+import com.kaltura.client.services.UploadTokenService.AddUploadTokenBuilder;
+import com.kaltura.client.services.UploadTokenService.UploadUploadTokenBuilder;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.types.UploadedFileTokenResource;
-import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.NullRequestBuilder;
 import com.kaltura.client.utils.request.RequestElement;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
@@ -113,7 +117,7 @@ abstract class BaseTest extends TestCase {
 				logger.info("Deleting " + id);
 			}
 
-			RequestBuilder<Void> requestBuilder = MediaService.delete(id)
+			NullRequestBuilder requestBuilder = MediaService.delete(id)
 			.setCompletion(new OnCompletion<Response<Void>>() {
 
 				@Override
@@ -184,7 +188,7 @@ abstract class BaseTest extends TestCase {
 			return;
 		}
 		
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
+		AddMediaBuilder requestBuilder = MediaService.add(entry)
 		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 			@Override
@@ -196,7 +200,7 @@ abstract class BaseTest extends TestCase {
 				UploadToken uploadToken = new UploadToken();
 				uploadToken.setFileName(testConfig.getUploadImage());
 				uploadToken.setFileSize((double) fileSize);
-				RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add(uploadToken)
+				AddUploadTokenBuilder requestBuilder = UploadTokenService.add(uploadToken)
 				.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 					@Override
@@ -208,7 +212,7 @@ abstract class BaseTest extends TestCase {
 						// Define content
 						UploadedFileTokenResource resource = new UploadedFileTokenResource();
 						resource.setToken(token.getId());
-						RequestBuilder<MediaEntry> requestBuilder = MediaService.addContent(entry.getId(), resource)
+						AddContentMediaBuilder requestBuilder = MediaService.addContent(entry.getId(), resource)
 						.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 							@Override
@@ -217,7 +221,7 @@ abstract class BaseTest extends TestCase {
 								assertNotNull(entry);
 								
 								// upload
-								RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
+								UploadUploadTokenBuilder requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
 								.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 									@Override
@@ -257,7 +261,7 @@ abstract class BaseTest extends TestCase {
 		final int sleepInterval = 30 * 1000;
 		counter = 0;
 
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.get(id);
+		GetMediaBuilder requestBuilder = MediaService.get(id);
 		final RequestElement<MediaEntry> requestElement = requestBuilder.build(client);
 
 		requestBuilder.setCompletion(new OnCompletion<Response<MediaEntry>>() {

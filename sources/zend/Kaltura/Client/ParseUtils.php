@@ -49,20 +49,30 @@ class Kaltura_Client_ParseUtils
 	
 	public static function unmarshalArray(\SimpleXMLElement $xml, $fallbackType = null)
 	{
-		$xmls = $xml->children();
 		$ret = array();
-		foreach($xmls as $xml)
-			$ret[] = self::unmarshalObject($xml, $fallbackType);
+		if($xml && $xml->children()) 
+		{
+			$xmls = $xml->children();
+			foreach($xmls as $xml)
+			{
+				$ret[] = self::unmarshalObject($xml, $fallbackType);
+			}
+		}
 			
 		return $ret;
 	}
 	
 	public static function unmarshalMap(\SimpleXMLElement $xml, $fallbackType = null)
 	{
-		$xmls = $xml->children();
 		$ret = array();
-		foreach($xmls as $xml)
-			$ret[strval($xml->itemKey)] = self::unmarshalObject($xml, $fallbackType);
+		if($xml && $xml->children()) 
+		{
+			$xmls = $xml->children();
+			foreach($xmls as $xml)
+			{
+				$ret[strval($xml->itemKey)] = self::unmarshalObject($xml, $fallbackType);
+			}
+		}
 			
 		return $ret;
 	}
