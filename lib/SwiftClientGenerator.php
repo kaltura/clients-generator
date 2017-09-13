@@ -900,10 +900,10 @@ end
 				if($optional == "1") {
 					$paramName.= '?';
 				}
-				$this->appendLine("			.setBody(key: \"$apiParamName\", value: $paramName.rawValue)");
+				$this->appendLine("			.setParam(key: \"$apiParamName\", value: $paramName.rawValue)");
 			}
 			else {
-				$this->appendLine("			.setBody(key: \"$apiParamName\", value: $paramName)");
+				$this->appendLine("			.setParam(key: \"$apiParamName\", value: $paramName)");
 			}
 		}
 
@@ -1051,7 +1051,7 @@ end
 		$this->appendLine("			return params[\"$paramName\"] as? $type");
 		$this->appendLine("		}");
 		$this->appendLine("		set(value){");
-		$this->appendLine("			setBody(key: \"$paramName\", value: value)");
+		$this->appendLine("			setParam(key: \"$paramName\", value: value)");
 		$this->appendLine("		}");
 		$this->appendLine("	}");
 		$this->appendLine("	");

@@ -37,7 +37,7 @@
     public var params: [String: Any] = [:]
     
     @discardableResult
-    public func setBody(key: String, value:Any?) -> Self {
+    public func setParam(key: String, value:Any?) -> Self {
         
         guard value != nil else {
             return self
