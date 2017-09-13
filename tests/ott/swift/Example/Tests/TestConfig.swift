@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import KalturaClient
+import KalturaOttClient
 
 
 let TConfig = TestConfig.shared

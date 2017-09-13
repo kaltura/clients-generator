@@ -8,7 +8,7 @@
 
 import Quick
 import Nimble
-import KalturaClient
+import KalturaOttClient
 
 class PrimitivesTest: QuickSpec {
     var client: Client?

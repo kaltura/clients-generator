@@ -9,7 +9,7 @@
 
 import Quick
 import Nimble
-import KalturaClient
+import KalturaOttClient
 
 class MultiRequestWithPrimitives: QuickSpec {
     var client: Client?
@@ -73,7 +73,7 @@ class MultiRequestWithPrimitives: QuickSpec {
             done(error)
             
         }
-        requestBuilder.setBody(key: "udid", value: "72958A68-3823-4C67-8A19-ADA920599301")
+        requestBuilder.setParam(key: "udid", value: "72958A68-3823-4C67-8A19-ADA920599301")
         executor.send(request: requestBuilder.build(client!))
     }
     
@@ -81,7 +81,7 @@ class MultiRequestWithPrimitives: QuickSpec {
                                                                  pingCompleted: @escaping (_ result: Bool?, _ error: ApiException?) -> Void,
                                                                  getVersionCompleted: @escaping (_ result: String?, _ error: ApiException?) -> Void,
                                                                  updatePasswordCompleted: @escaping (_ result: Void?, _ error: ApiException?) -> Void,
-                                                                 whenAllCompleted: @escaping (_ result: [Any]?, _ error: ApiException?) -> Void ) {
+                                                                 whenAllCompleted: @escaping (_ result: [Any?]?, _ error: ApiException?) -> Void ) {
         
         let getTimeRequestBuilder = SystemService.getTime().set { (result:Int64?, error: ApiException?) in
             getTimeCompleted(result, error)
@@ -101,7 +101,7 @@ class MultiRequestWithPrimitives: QuickSpec {
         
         let mrb = getTimeRequestBuilder.add(request: pingRequestBuilder).add(request: getVersionRequestBuilder)
             //.add(request: updatePasswordRequestBuilder)
-        mrb.set { (result:Array<Any>?, error:ApiException?) in
+        mrb.set { (result:[Any?]?, error:ApiException?) in
             whenAllCompleted(result, error)
         }
         executor.send(request: mrb.build(client!))
