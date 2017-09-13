@@ -13,19 +13,26 @@ import KalturaClient
 
 class MultiRequestWithPrimitives: QuickSpec {
     var client: Client?
+    var secret: String = "ed0b955841a5ec218611c4869256aaa4"
+    var partnerId: Int = 198
+    var domainURL = "http://api-preprod.ott.kaltura.com/v4_5"
     var assetId = "485241"
+    var username = "gordon2015001450620646744@mailinator.com"
+    var password = "password"
     var userid = "1080046"
     var householdId = 0
     
     private var executor: RequestExecutor = USRExecutor.shared
     
     override func spec() {
-    
+        let config: ConnectionConfiguration = ConnectionConfiguration()
+        config.endPoint = URL(string:domainURL)!
+        
         describe("check Primitives response") {
             
             beforeEach {
                 waitUntil(timeout: 500) { done in
-                    self.client = TConfig.client
+                    self.client = Client(config)
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -49,7 +56,7 @@ class MultiRequestWithPrimitives: QuickSpec {
                         }, updatePasswordCompleted: { (result:Void?, error:ApiException?) in
                             expect(error).to(beNil())
                             expect(result).to(beNil())
-                        }, whenAllCompleted: { (result:[Any?]?, error:ApiException?) in
+                        }, whenAllCompleted: { (result:[Any]?, error:ApiException?) in
                             expect(error).to(beNil())
                             expect(result).notTo(beNil())
                             expect(result?.count).to(beGreaterThan(0))
@@ -65,11 +72,8 @@ class MultiRequestWithPrimitives: QuickSpec {
     
     private func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder = OttUserService.login(partnerId: TConfig.partnerId,
-                                                  username: TConfig.username,
-                                                  password: TConfig.password)
-            .set { (response:LoginResponse?, error: ApiException?) in
-                    self.client?.ks = response?.loginSession?.ks
+        let requestBuilder = OttUserService.login(partnerId: self.partnerId, username: self.username, password: self.password).set { (response:LoginResponse?, error: ApiException?) in
+            self.client?.ks = response?.loginSession?.ks
             done(error)
             
         }
