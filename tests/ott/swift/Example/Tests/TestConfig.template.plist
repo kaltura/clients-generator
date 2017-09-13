@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>serverURL</key>
-	<string>@URL@</string>
+	<string>@SERVICE_URL@</string>
 	<key>partnerId</key>
 	<integer>@YOUR_PARTNER_ID@</integer>
 	<key>username</key>
