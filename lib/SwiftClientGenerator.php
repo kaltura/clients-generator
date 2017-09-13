@@ -248,7 +248,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$defaultSubSpecName = "Core";
         $this->_licenseBuffer = '';
         $this->startNewTextBlock();
-        $podSpecHeader = file_get_contents(__DIR__ . '/../sources/swift/podSpecHeader.txt');
+        $podSpecHeader = file_get_contents("$this->testsPath/podSpecHeader.txt");
         $this->appendLine($podSpecHeader);
 
         //2. adding core subspec ( default )
@@ -279,9 +279,10 @@ end
 ");
     }
     public function writeSubSpec(DOMElement $pluginNode , $defaultSubSpecName){
-
-        $pluginName = $pluginNode->getAttribute("name");
-        $this->appendLine("s.subspec '$pluginName' do |ssp|");
+    	
+    	$pluginName = $pluginNode->getAttribute("name");
+    	$subSpecName = ucfirst($pluginName);
+    	$this->appendLine("s.subspec '$subSpecName' do |ssp|");
         $this->appendLine(" ssp.source_files = 'KalturaClient/Plugins/" .$pluginName ."/**/*'");
 		$this->appendLine(" ssp.dependency 'KalturaClient/$defaultSubSpecName'");
 
