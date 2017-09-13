@@ -11,7 +11,7 @@ import Foundation
 
 import Quick
 import Nimble
-import KalturaClient
+import KalturaOttClient
 
 class MultiRequestTest: QuickSpec {
     var client: Client?

@@ -38,6 +38,7 @@ import SwiftyJSON
 internal class JSONParser{
     
     private static var kalturaRegex:NSRegularExpression?
+    private static var moduleName:String?
     
     // handling reflection:
     private static func getKalturaRegex() -> NSRegularExpression? {
@@ -51,11 +52,20 @@ internal class JSONParser{
         return kalturaRegex
     }
     
+    private static func getModuleName() -> String {
+        if moduleName == nil {
+            let className = NSStringFromClass(self) as NSString
+            moduleName = className.components(separatedBy: ".").first!
+        }
+        
+        return moduleName!
+    }
+    
     private static func getObjectType(_ objectType: String) -> ObjectBase.Type? {
         if let regex = getKalturaRegex() {
             let className = regex.stringByReplacingMatches(in: objectType, options: NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, 10), withTemplate: "")
             
-            let fullClassName = "KalturaClient.\(className)"
+            let fullClassName = "\(getModuleName()).\(className)"
             let classType = NSClassFromString(fullClassName) as? ObjectBase.Type
             return classType
         }
