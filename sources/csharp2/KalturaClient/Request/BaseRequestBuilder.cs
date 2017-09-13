@@ -238,7 +238,7 @@ namespace Kaltura.Request
                 
                 // Append the recently read data to the RequestData stringbuilder
                 // object contained in RequestState.
-                requestData.Append(Encoding.ASCII.GetString(bufferRead, 0, read));
+                requestData.Append(Encoding.UTF8.GetString(bufferRead, 0, read));
 
                 // Continue reading data until 
                 // responseStream.EndRead returns –1.
