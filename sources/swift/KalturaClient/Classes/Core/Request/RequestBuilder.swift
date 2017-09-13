@@ -61,10 +61,10 @@ public protocol RequestBuilderProtocol {
     func add(headerKey:String, headerValue:String) -> Self
     
     @discardableResult
-    func setBody(key: String, value:Any?) -> Self
+    func setParam(key: String, value:Any?) -> Self
     
     @discardableResult
-    func setParam(key: String, value:String) -> Self
+    func setUrlParam(key: String, value:String) -> Self
     
     func build(_ client: Client) -> Request
     
@@ -174,7 +174,7 @@ public class RequestBuilder<T: Any, U: BaseTokenizedObject, G:BaseTokenizedObjec
     }
     
     @discardableResult
-    public func setParam(key: String, value:String) -> Self {
+    public func setUrlParam(key: String, value:String) -> Self {
         
         if self.urlParams != nil {
             self.urlParams![key] = value

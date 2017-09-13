@@ -58,9 +58,9 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
         
         for (index, request)  in self.requests.enumerated() {
             let indexKey = String(index+1)
-            request.setBody(key: "action", value: request.action)
-            request.setBody(key: "service", value: request.service)
-            setBody(key: indexKey, value: request.params)
+            request.setParam(key: "action", value: request.action)
+            request.setParam(key: "service", value: request.service)
+            setParam(key: indexKey, value: request.params)
             for (key, requestFile) in request.files {
                 setFile(key: "\(indexKey):\(key)", value: requestFile)
             }
