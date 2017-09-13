@@ -15,16 +15,12 @@ import KalturaClient
 
 class MultiRequestTest: QuickSpec {
     var client: Client?
-    var partnerId: Int = 198
-    var domainURL = "http://api-preprod.ott.kaltura.com/v4_5"
-    var assetId = "485241"
-    
+
     private var executor: RequestExecutor = USRExecutor.shared
     
     override func spec() {
-        let config: ConnectionConfiguration = ConnectionConfiguration()
-        config.endPoint = URL(string:domainURL)!
-        self.client = Client(config)
+        
+        self.client = TConfig.client
         
         describe("Load asset in multi request") {
             
@@ -50,17 +46,16 @@ class MultiRequestTest: QuickSpec {
     
     private func loginAndCreateAsset(created: @escaping (_ asset: Asset?, _ error: ApiException?) -> Void) {
         
-        let requestBuilderLogin = OttUserService.anonymousLogin(partnerId: self.partnerId)
-        let requestBuilderGetAsset = AssetService.get(id: assetId, assetReferenceType: AssetReferenceType.MEDIA)
-        
-        
+        let requestBuilderLogin = OttUserService.anonymousLogin(partnerId: TConfig.partnerId)
+        let requestBuilderGetAsset = AssetService.get(id: TConfig.assetId, assetReferenceType: AssetReferenceType.MEDIA)
         
         requestBuilderGetAsset.set { (asset, exception) in
             created(asset, exception)
         }
         
-        let multiRequest: MultiRequestBuilder = MultiRequestBuilder()
-        multiRequest.add(request: requestBuilderLogin).add(request: requestBuilderGetAsset)
+         let multiRequest: MultiRequestBuilder = requestBuilderLogin.add(request: requestBuilderGetAsset)
+            .link(tokenFromRespose: requestBuilderLogin.responseTokenizer.ks, tokenToRequest: requestBuilderGetAsset.requestTokenizer.ks)
+        
         executor.send(request: multiRequest.build(self.client!))
     }
 }
