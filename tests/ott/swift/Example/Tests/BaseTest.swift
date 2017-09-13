@@ -5,16 +5,22 @@ import KalturaClient
 
 class BaseTest: QuickSpec {
     var client: Client?
+    var secret: String = "ed0b955841a5ec218611c4869256aaa4"
+    var partnerId: Int = 198
+    var domainURL = "http://api-preprod.ott.kaltura.com/v4_5"
+    var assetId = "485241"
     
     private var executor: RequestExecutor = USRExecutor.shared
     
     override func spec() {
+        let config: ConnectionConfiguration = ConnectionConfiguration()
+        config.endPoint = URL(string:domainURL)!
         
         describe("Load asset") {
             
             beforeEach {
                 waitUntil(timeout: 500) { done in
-                    self.client = TConfig.client
+                    self.client = Client(config)
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -49,7 +55,7 @@ class BaseTest: QuickSpec {
     
     private func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder = OttUserService.anonymousLogin(partnerId: TConfig.partnerId).set { (loginSession:LoginSession?, exception:ApiException?) in
+        let requestBuilder = OttUserService.anonymousLogin(partnerId: self.partnerId).set { (loginSession:LoginSession?, exception:ApiException?) in
             self.client!.ks = loginSession?.ks
             done(exception)
         }
@@ -60,7 +66,7 @@ class BaseTest: QuickSpec {
     private func createAsset(created: @escaping (_ createdEntry: Asset?, _ error: ApiException?) -> Void) {
         
  
-        let requestBuilder = AssetService.get(id: TConfig.assetId, assetReferenceType: AssetReferenceType.MEDIA).set { (asset, exception) in
+        let requestBuilder = AssetService.get(id: assetId, assetReferenceType: AssetReferenceType.MEDIA).set { (asset, exception) in
             created(asset, exception)
         }
         
