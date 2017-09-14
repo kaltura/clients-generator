@@ -99,7 +99,7 @@ import SwiftyJSON
                         // cancel3ed
                         logger.debug("request has been canceled")
                     } else {
-                        let result = Response(data: nil, error: ApiClientException(message: error.localizedDescription, code: ApiClientException.ErrorCode.httpError))
+                        let result = Result<Any>(data: nil, error: ApiClientException(message: error.localizedDescription, code: ApiClientException.ErrorCode.httpError))
                         r.completion(result)
                         // some other error
                     }
@@ -117,16 +117,16 @@ import SwiftyJSON
                     logger.debug(logMessage)
 
                     do {
-                        let json:JSON = try JSONParser.parse(data: d)
-                        let result = Response(data: json, error:nil)
+                        let json = try JSONParser.parse(data: d)
+                        let result = Result<Any>(data: json, error:nil)
                         r.completion(result)
                     } catch let error {
-                        let result = Response(data: nil, error: error as? ApiException)
+                        let result = Result<Any>(data: nil, error: error as? ApiException)
                         r.completion(result)
                         
                     }
                 } else {
-                    let result = Response(data: nil, error:nil)
+                    let result = Result<Any>(data: nil, error:nil)
                     r.completion(result)
                 }
             }

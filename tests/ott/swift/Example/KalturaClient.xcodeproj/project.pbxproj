@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		00139DC01F698B22005D49EC /* TestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00139DBC1F698ACB005D49EC /* TestConfig.swift */; };
 		00139DC11F698B2B005D49EC /* TestConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 00139DBE1F698AE0005D49EC /* TestConfig.plist */; };
-		00139DC21F698B2F005D49EC /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 607FACEA1AFB9204008FA782 /* Info.plist */; };
 		11ED30FC12B8F925214FA63E /* Pods_KalturaClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A828660A1AF9647D2ABD0F59 /* Pods_KalturaClient_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -234,7 +233,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -282,7 +281,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00139DC21F698B2F005D49EC /* Info.plist in Resources */,
 				00139DC11F698B2B005D49EC /* TestConfig.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

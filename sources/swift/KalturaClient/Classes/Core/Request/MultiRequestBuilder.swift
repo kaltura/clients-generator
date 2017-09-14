@@ -33,10 +33,6 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-import SwiftyJSON
-
-
-
 public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject, BaseTokenizedObject> {
     
     var requests = [RequestBuilderProtocol]()
@@ -69,20 +65,20 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
         return super.build(client)
     }
     
-    public override func onComplete(_ response: Response) -> Void {
+    public override func onComplete(_ response: Result<Any>) -> Void {
 
         // calling on complete of each request
-        var allResponse: [JSON] = []
-        if let result = response.data?["result"], let responses = result.array {
+        var allResponse: [Any] = []
+        if let dict = response.data as? [String: Any], let responses = dict["result"] as? [Any] {
             allResponse = responses
         }
-        else if let responses = response.data?.array{
+        else if let responses = response.data as? [Any]{
             allResponse = responses
         }
         var allParsedResponse = [Any?]()
         for (index, request) in self.requests.enumerated() {
             let singelResponse = allResponse[index]
-            let response = Response(data: singelResponse, error: response.error)
+            let response = Result<Any>(data: singelResponse, error: response.error)
             let parsed = request.parse(response)
             request.complete(data: parsed.data, exception: parsed.exception)
             allParsedResponse.append(parsed.exception ?? parsed.data ?? nil)

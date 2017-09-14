@@ -273,7 +273,6 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         $this->append(" 
 s.subspec '$name' do |sp|
     sp.source_files = 'Classes/**/*'
-    sp.dependency 'SwiftyJSON', '3.1.4'
     sp.dependency 'Log', '1.0'
 end
 ");

@@ -16,5 +16,9 @@
 	<string>@OPERATOR_PASSWORD@</string>
 	<key>assetId</key>
 	<string>@ASSET_ID@</string>
+	<key>userId</key>
+	<integer>@USER_ID@</integer>
+	<key>udid</key>
+	<string>@UDID@</string>
 </dict>
 </plist>

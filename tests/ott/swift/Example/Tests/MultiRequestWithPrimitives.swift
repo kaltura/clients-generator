@@ -13,8 +13,6 @@ import KalturaOttClient
 
 class MultiRequestWithPrimitives: QuickSpec {
     var client: Client?
-    var assetId = "485241"
-    var userid = "1080046"
     var householdId = 0
     
     private var executor: RequestExecutor = USRExecutor.shared
@@ -73,7 +71,7 @@ class MultiRequestWithPrimitives: QuickSpec {
             done(error)
             
         }
-        requestBuilder.setParam(key: "udid", value: "72958A68-3823-4C67-8A19-ADA920599301")
+        requestBuilder.setParam(key: "udid", value: TConfig.udid)
         executor.send(request: requestBuilder.build(client!))
     }
     

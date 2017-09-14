@@ -68,7 +68,7 @@ public protocol RequestBuilderProtocol {
     
     func build(_ client: Client) -> Request
     
-    func parse(_ response: Response) -> (data:Any?,exception: ApiException?)
+    func parse(_ response: Result<Any>) -> (data:Any?,exception: ApiException?)
     
     func complete(data:Any?, exception: ApiException?)
     
@@ -212,7 +212,7 @@ public class RequestBuilder<T: Any, U: BaseTokenizedObject, G:BaseTokenizedObjec
         return "/service/" + service! + "/action/" + action!
     }
     
-    internal func onComplete(_ response: Response) -> Void {
+    internal func onComplete(_ response: Result<Any>) -> Void {
         
         let parsedResult = self.parse(response)
         
@@ -225,7 +225,7 @@ public class RequestBuilder<T: Any, U: BaseTokenizedObject, G:BaseTokenizedObjec
         }
     }
     
-    public func parse(_ response: Response) -> (data:Any?, exception: ApiException?)  {
+    public func parse(_ response: Result<Any>) -> (data:Any?, exception: ApiException?)  {
         
         var result: T? = nil
         var exception: ApiException? = nil
