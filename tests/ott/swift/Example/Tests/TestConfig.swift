@@ -24,6 +24,7 @@ class TestConfig {
     var operatorUsername: String = ""
     var operatorPassword: String = ""
     var assetId: String = ""
+    var udid: String = ""
     
     
     init() {
@@ -42,6 +43,7 @@ class TestConfig {
         self.operatorUsername =  dict["operatorUsername"] as! String
         self.operatorPassword =  dict["operatorPassword"] as! String
         self.assetId =  dict["assetId"] as! String
+        self.udid =  dict["udid"] as! String
         
     }
     

@@ -36,7 +36,7 @@
 public class ArrayRequestBuilder<T, U: BaseTokenizedObject, G:BaseTokenizedObject>: RequestBuilder<Array<T>,U,G> {
  
     
-    public override func parse(_ response: Response) -> (data:Any?,exception: ApiException?)  {
+    public override func parse(_ response: Result<Any>) -> (data:Any?,exception: ApiException?)  {
         
         var result: [T]? = nil
         var exception: ApiException? = nil

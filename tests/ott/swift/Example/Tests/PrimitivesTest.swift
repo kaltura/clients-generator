@@ -12,7 +12,6 @@ import KalturaOttClient
 
 class PrimitivesTest: QuickSpec {
     var client: Client?
-    var userid = "1080046"
     var householdId = 0
     
     private var executor: RequestExecutor = USRExecutor.shared

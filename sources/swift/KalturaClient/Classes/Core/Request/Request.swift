@@ -38,7 +38,7 @@
 
 import MobileCoreServices
 
-public typealias CompletionClosures =  (_ response: Response) -> Void
+public typealias CompletionClosures =  (_ response: Result<Any>) -> Void
 
 public enum RequestMethod {
     case get
