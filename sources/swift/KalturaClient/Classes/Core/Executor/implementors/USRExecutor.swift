@@ -33,9 +33,6 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-import SwiftyJSON
-
-
 @objc public class USRExecutor: NSObject, RequestExecutor, URLSessionDelegate {
     
     var tasks: [URLSessionDataTask] = [URLSessionDataTask]()
