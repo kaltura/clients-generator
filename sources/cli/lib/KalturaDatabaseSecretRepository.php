@@ -31,6 +31,8 @@ require_once(dirname(__file__) . '/KalturaSecretRepositoryBase.php');
 
 class KalturaDatabaseSecretRepository implements KalturaSecretRepositoryBase
 {
+	protected $cache = array();
+	
 	public function __construct($config)
 	{
 		$this->link = mysqli_connect($config['host'], $config['user'], $config['password'], $config['database'])
@@ -54,9 +56,18 @@ class KalturaDatabaseSecretRepository implements KalturaSecretRepositoryBase
 
 	public function getAdminSecret($partnerId)
 	{
-		$results = $this->executeQuery("SELECT admin_secret FROM partner WHERE partner.ID = '".str_replace("'", "''", $partnerId)."'");
-		if (!$results)
-			return null;
-		return $results[0];
+		if (!isset($this->cache[$partnerId]))
+		{
+			$results = $this->executeQuery("SELECT admin_secret FROM partner WHERE partner.ID = '".str_replace("'", "''", $partnerId)."'");
+			if (!$results)
+				return null;
+			if (count($this->cache) > 100)
+			{
+				array_shift($this->cache);
+			}
+			$this->cache[$partnerId] = $results[0];
+		}
+		
+		return $this->cache[$partnerId];
 	}
 }

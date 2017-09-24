@@ -28,6 +28,7 @@
 // @ignore
 // ===================================================================================================
 
+require_once(dirname(__file__) . '/lib/KalturaCommandLineParser.php');
 require_once(dirname(__file__) . '/lib/KalturaSession.php');
 
 function formatTimeInterval($secs)
@@ -59,36 +60,132 @@ function formatTimeInterval($secs)
 	return join(' ', $ret);
 }
 
+function formatKs($ksObj, $fieldNames)
+{
+	$printDelim = false;
+	if (isset($fieldNames['hash']))
+	{
+		echo str_pad('Sig', 20) . $ksObj->hash . "\n";
+		unset($fieldNames['hash']);
+		$printDelim = true;
+	}
+	if (isset($fieldNames['real_str']))
+	{
+		echo str_pad('Fields', 20) . $ksObj->real_str . "\n";
+		unset($fieldNames['real_str']);
+		$printDelim = true;
+	}
+	if ($printDelim)
+	{
+		echo "---\n";
+	}
+	
+	foreach ($fieldNames as $fieldName)
+	{
+		echo str_pad($fieldName, 20) . $ksObj->$fieldName;
+		if ($fieldName == 'valid_until')
+		{
+			$currentTime = time();
+			echo ' = ' . date('Y-m-d H:i:s', $ksObj->valid_until);
+			if ($currentTime >= $ksObj->valid_until)
+			{
+				echo ' (expired ' . formatTimeInterval($currentTime - $ksObj->valid_until) . ' ago';
+			}
+			else
+			{
+				echo ' (will expire in ' . formatTimeInterval($ksObj->valid_until - $currentTime);
+			}
+			echo ')';
+		}
+		echo "\n";
+	}
+}
+
+function formatKsTable($ksObj, $fieldNames)
+{
+	$result = array();
+	foreach ($fieldNames as $fieldName)
+	{
+		$result[] = $ksObj->$fieldName;
+	}
+	echo implode("\t", $result) . "\n";
+}
+
+$commandLineSwitches = array(
+	array(KalturaCommandLineParser::SWITCH_NO_VALUE, 'i', 'stdin', 'Read input from stdin'),
+	array(KalturaCommandLineParser::SWITCH_NO_VALUE, 'p', 'partner-id', 'Print the partner id'),
+	array(KalturaCommandLineParser::SWITCH_NO_VALUE, 't', 'type', 'Print the session type'),
+	array(KalturaCommandLineParser::SWITCH_NO_VALUE, 'u', 'user', 'Print the user name'),
+	array(KalturaCommandLineParser::SWITCH_NO_VALUE, 'e', 'expiry', 'Print the session expiry'),
+	array(KalturaCommandLineParser::SWITCH_NO_VALUE, 'v', 'privileges', 'Print the privileges'),
+);
+
+// parse command line
+$options = KalturaCommandLineParser::parseArguments($commandLineSwitches);
+$arguments = KalturaCommandLineParser::stripCommandLineSwitches($commandLineSwitches, $argv);
+
 KalturaSecretRepository::init();
 
-if ($argc < 2)
-	die("Usage: extractKs <ks>\n");
-
-$ks = $argv[1];
-$ksObj = KalturaSession::getKsObject($ks);
-if (!$ksObj)
-	die("Failed to parse ks {$ks}\n");
-
-echo str_pad('Sig', 20) . $ksObj->hash . "\n";
-echo str_pad('Fields', 20) . $ksObj->real_str . "\n";
-echo "---\n";
-$fieldNames = array('partner_id','partner_pattern','valid_until','type','rand','user','privileges','master_partner_id','additional_data');
-foreach ($fieldNames as $fieldName)
+if (!$arguments && !isset($options['stdin']))
 {
-	echo str_pad($fieldName, 20) . $ksObj->$fieldName;
-	if ($fieldName == 'valid_until')
-	{
-		$currentTime = time();
-		echo ' = ' . date('Y-m-d H:i:s', $ksObj->valid_until);
-		if ($currentTime >= $ksObj->valid_until)
-		{
-			echo ' (expired ' . formatTimeInterval($currentTime - $ksObj->valid_until) . ' ago';
-		}
-		else
-		{
-			echo ' (will expire in ' . formatTimeInterval($ksObj->valid_until - $currentTime);
-		}
-		echo ')';
-	}
-	echo "\n";
+	$usage = "Usage: extractKs [switches] [<ks>]\nOptions:\n";
+	$usage .= KalturaCommandLineParser::getArgumentsUsage($commandLineSwitches);
+	die($usage);
 }
+
+$fieldNames = array();
+if (isset($options['partner-id']))
+{
+	$fieldNames[] = 'partner_id';
+}
+if (isset($options['type']))
+{
+	$fieldNames[] = 'type';
+}
+if (isset($options['user']))
+{
+	$fieldNames[] = 'user';
+}
+if (isset($options['expiry']))
+{
+	$fieldNames[] = 'valid_until';
+}
+if (isset($options['privileges']))
+{
+	$fieldNames[] = 'privileges';
+}
+if (!$fieldNames)
+{
+	$fieldNames = array('hash','real_str','partner_id','partner_pattern','valid_until','type','rand','user','privileges','master_partner_id','additional_data');
+}
+
+if (!isset($options['stdin']))
+{
+	$ks = reset($arguments);
+	$ksObj = KalturaSession::getKsObject($ks);
+	if (!$ksObj)
+		die("Failed to parse ks {$ks}\n");
+	formatKs($ksObj, $fieldNames);
+	die;
+}
+
+$f = fopen('php://stdin', 'r');
+for (;;)
+{
+	$line = fgets($f);
+	if (!$line)
+	{
+		break;
+	}
+	$ks = trim($line);
+	$ksObj = KalturaSession::getKsObject($ks);
+	if ($ksObj)
+	{
+		formatKsTable($ksObj, $fieldNames);
+	}
+	else
+	{
+		echo "Failed to parse ks {$ks}\n";
+	}
+}
+fclose($f);
