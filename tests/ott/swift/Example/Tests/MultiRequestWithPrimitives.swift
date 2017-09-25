@@ -9,30 +9,21 @@
 
 import Quick
 import Nimble
-import KalturaClient
+import KalturaOttClient
 
 class MultiRequestWithPrimitives: QuickSpec {
     var client: Client?
-    var secret: String = "ed0b955841a5ec218611c4869256aaa4"
-    var partnerId: Int = 198
-    var domainURL = "http://api-preprod.ott.kaltura.com/v4_5"
-    var assetId = "485241"
-    var username = "gordon2015001450620646744@mailinator.com"
-    var password = "password"
-    var userid = "1080046"
     var householdId = 0
     
     private var executor: RequestExecutor = USRExecutor.shared
     
     override func spec() {
-        let config: ConnectionConfiguration = ConnectionConfiguration()
-        config.endPoint = URL(string:domainURL)!
-        
+    
         describe("check Primitives response") {
             
             beforeEach {
                 waitUntil(timeout: 500) { done in
-                    self.client = Client(config)
+                    self.client = TConfig.client
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -56,7 +47,7 @@ class MultiRequestWithPrimitives: QuickSpec {
                         }, updatePasswordCompleted: { (result:Void?, error:ApiException?) in
                             expect(error).to(beNil())
                             expect(result).to(beNil())
-                        }, whenAllCompleted: { (result:[Any]?, error:ApiException?) in
+                        }, whenAllCompleted: { (result:[Any?]?, error:ApiException?) in
                             expect(error).to(beNil())
                             expect(result).notTo(beNil())
                             expect(result?.count).to(beGreaterThan(0))
@@ -72,12 +63,15 @@ class MultiRequestWithPrimitives: QuickSpec {
     
     private func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder = OttUserService.login(partnerId: self.partnerId, username: self.username, password: self.password).set { (response:LoginResponse?, error: ApiException?) in
-            self.client?.ks = response?.loginSession?.ks
+        let requestBuilder = OttUserService.login(partnerId: TConfig.partnerId,
+                                                  username: TConfig.username,
+                                                  password: TConfig.password)
+            .set { (response:LoginResponse?, error: ApiException?) in
+                    self.client?.ks = response?.loginSession?.ks
             done(error)
             
         }
-        requestBuilder.setBody(key: "udid", value: "72958A68-3823-4C67-8A19-ADA920599301")
+        requestBuilder.setParam(key: "udid", value: TConfig.udid)
         executor.send(request: requestBuilder.build(client!))
     }
     
@@ -85,7 +79,7 @@ class MultiRequestWithPrimitives: QuickSpec {
                                                                  pingCompleted: @escaping (_ result: Bool?, _ error: ApiException?) -> Void,
                                                                  getVersionCompleted: @escaping (_ result: String?, _ error: ApiException?) -> Void,
                                                                  updatePasswordCompleted: @escaping (_ result: Void?, _ error: ApiException?) -> Void,
-                                                                 whenAllCompleted: @escaping (_ result: [Any]?, _ error: ApiException?) -> Void ) {
+                                                                 whenAllCompleted: @escaping (_ result: [Any?]?, _ error: ApiException?) -> Void ) {
         
         let getTimeRequestBuilder = SystemService.getTime().set { (result:Int64?, error: ApiException?) in
             getTimeCompleted(result, error)
@@ -105,7 +99,7 @@ class MultiRequestWithPrimitives: QuickSpec {
         
         let mrb = getTimeRequestBuilder.add(request: pingRequestBuilder).add(request: getVersionRequestBuilder)
             //.add(request: updatePasswordRequestBuilder)
-        mrb.set { (result:Array<Any>?, error:ApiException?) in
+        mrb.set { (result:[Any?]?, error:ApiException?) in
             whenAllCompleted(result, error)
         }
         executor.send(request: mrb.build(client!))

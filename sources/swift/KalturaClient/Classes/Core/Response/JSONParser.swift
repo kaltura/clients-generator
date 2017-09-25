@@ -33,11 +33,10 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-import SwiftyJSON
-
 internal class JSONParser{
     
     private static var kalturaRegex:NSRegularExpression?
+    private static var moduleName:String?
     
     // handling reflection:
     private static func getKalturaRegex() -> NSRegularExpression? {
@@ -51,11 +50,20 @@ internal class JSONParser{
         return kalturaRegex
     }
     
+    private static func getModuleName() -> String {
+        if moduleName == nil {
+            let className = NSStringFromClass(self) as NSString
+            moduleName = className.components(separatedBy: ".").first!
+        }
+        
+        return moduleName!
+    }
+    
     private static func getObjectType(_ objectType: String) -> ObjectBase.Type? {
         if let regex = getKalturaRegex() {
             let className = regex.stringByReplacingMatches(in: objectType, options: NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, 10), withTemplate: "")
             
-            let fullClassName = "KalturaClient.\(className)"
+            let fullClassName = "\(getModuleName()).\(className)"
             let classType = NSClassFromString(fullClassName) as? ObjectBase.Type
             return classType
         }
@@ -121,10 +129,10 @@ internal class JSONParser{
         return obj as! T
     }
     
-    internal static func parse(data: Data) throws -> JSON {
+    internal static func parse(data: Data) throws -> Any {
         do{
             let json = try JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.allowFragments)
-            return JSON(json)
+            return json
         }
         catch {
             throw ApiClientException(message: "Failed to deserialize JSON", code: ApiClientException.ErrorCode.invalidJson)
@@ -160,23 +168,23 @@ internal class JSONParser{
     
     
     
-    internal static func parse<T>(array: JSON) throws -> [T]? {
-        if let dict = array.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
-            throw try parse(object: dict) as ApiException
-        }
-        
-        if array.dictionaryObject != nil {
-            if array["result"].isEmpty == false {
-                return try parse(array: array["result"])
+    internal static func parse<T>(array: Any) throws -> [T]? {
+        if let dict = array as? [String: Any] {
+            if dict["objectType"] as? String == "KalturaAPIException" {
+                throw try parse(object: dict) as ApiException
             }
-            else if array["error"].isEmpty == false {
-                return try parse(array: array["error"])
+            
+            if let result = dict["result"] {
+                return try parse(array: result)
+            }
+            else if let error = dict["error"] {
+                return try parse(array: error)
             }else{
                 throw ApiClientException(message: "JSON is not valid object", code: ApiClientException.ErrorCode.invalidJsonObject)
             }
         }
-        else if let array = array.arrayObject {
-            return try parse(array: array) as? [T]
+        else if let arr = array as? [Any] {
+            return try parse(array: arr) as? [T]
         }
         else{
             throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
@@ -184,13 +192,13 @@ internal class JSONParser{
         
         
     }
-    internal static func parse<T>(json: JSON) throws -> T? {
+    internal static func parse<T>(json: Any) throws -> T? {
         
-        if let dict = json.dictionaryObject, dict["objectType"] as? String == "KalturaAPIException" {
+        if let dict = json as? [String: Any], dict["objectType"] as? String == "KalturaAPIException" {
             throw try parse(object: dict) as ApiException
         }
         if let type: ObjectBase.Type = T.self as? ObjectBase.Type {
-            if let dict = json.dictionaryObject {
+            if let dict = json as? [String: Any] {
                 return try parse(object: dict, type: type) as? T
             }
             else {
@@ -201,7 +209,7 @@ internal class JSONParser{
             return nil
         }
         else {
-            return try self.parse(primitive: json.object, type: T.self) as? T
+            return try self.parse(primitive: json, type: T.self) as? T
         }
     }
 }

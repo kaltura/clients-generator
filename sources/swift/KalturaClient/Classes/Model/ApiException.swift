@@ -33,8 +33,6 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-import SwiftyJSON
-
 public class ApiException : ObjectBase, Error{
     public var message: String?
     public var code: String?

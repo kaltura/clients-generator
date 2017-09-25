@@ -8,30 +8,22 @@
 
 import Quick
 import Nimble
-import KalturaClient
+import KalturaOttClient
 
 class PrimitivesTest: QuickSpec {
     var client: Client?
-    var secret: String = "ed0b955841a5ec218611c4869256aaa4"
-    var partnerId: Int = 198
-    var domainURL = "http://api-preprod.ott.kaltura.com/v4_5"
-    var assetId = "485241"
-    var username = "gordon2015001450620646744@mailinator.com"
-    var password = "password"
-    var userid = "1080046"
     var householdId = 0
     
     private var executor: RequestExecutor = USRExecutor.shared
     
     override func spec() {
-        let config: ConnectionConfiguration = ConnectionConfiguration()
-        config.endPoint = URL(string:domainURL)!
+        
         
         describe("check Primitives response") {
             
             beforeEach {
                 waitUntil(timeout: 500) { done in
-                    self.client = Client(config)
+                    self.client = TConfig.client
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -93,12 +85,12 @@ class PrimitivesTest: QuickSpec {
     
     private func login(done: @escaping (_ error: ApiException?) -> Void) {
         
-        let requestBuilder = OttUserService.login(partnerId: self.partnerId, username: self.username, password: self.password).set { (response:LoginResponse?, error: ApiException?) in
+        let requestBuilder = OttUserService.login(partnerId: TConfig.partnerId, username: TConfig.username, password: TConfig.password).set { (response:LoginResponse?, error: ApiException?) in
             self.client?.ks = response?.loginSession?.ks
             done(error)
             
         }
-        requestBuilder.setBody(key: "udid", value: "72958A68-3823-4C67-8A19-ADA920599301")
+        
         executor.send(request: requestBuilder.build(client!))
     }
     
@@ -131,19 +123,29 @@ class PrimitivesTest: QuickSpec {
     
     private func updatePassword(completed: @escaping (_ result: Void?, _ error: ApiException?) -> Void) {
         
-        let getAssetFiles = OttUserService.updatePassword(userId: Int(self.userid)!, password: "123456").set { (result:Void?, error:ApiException?) in
-            completed(result, error)
+        let getUserInfo = OttUserService.get().set { (user, error) in
+            
+            if let u = user {
+                let updatePassword = OttUserService.updatePassword(userId: Int((u.id!))!, password: TConfig.password).set { (result:Void?, error:ApiException?) in
+                    completed(result, error)
+                }
+                
+                self.executor.send(request: updatePassword.build(self.client!))
+            }
+
         }
         
-        executor.send(request: getAssetFiles.build(client!))
+        executor.send(request: getUserInfo.build(client!))
+        
+        
     }
     
     private func getAssetManifest(completed: @escaping (_ result: Void?, _ error: ApiException?) -> Void) {
         
-        let getAssetFiles = AssetService.get(id: self.assetId, assetReferenceType: .MEDIA)
+        let getAssetFiles = AssetService.get(id: TConfig.assetId, assetReferenceType: .MEDIA)
         
         getAssetFiles.set { (asset:Asset?, error:ApiException?) in
-            let playManifest = AssetFileService.playManifest(partnerId: self.partnerId, assetId: self.assetId, assetType: .MEDIA, assetFileId: Int64((asset?.mediaFiles?.last?.id)!), contextType: .PLAYBACK, ks: self.client?.ks).set(completion: { (result:Void?, error:ApiException?) in
+            let playManifest = AssetFileService.playManifest(partnerId: TConfig.partnerId, assetId: TConfig.assetId, assetType: .MEDIA, assetFileId: Int64((asset?.mediaFiles?.last?.id)!), contextType: .PLAYBACK, ks: self.client?.ks).set(completion: { (result:Void?, error:ApiException?) in
                 completed(result, error)
             })
         

@@ -33,20 +33,17 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-import SwiftyJSON
-
-
 public class Result<T>: NSObject {
     
-    public var data: JSON? = nil
+    public var data: Any? = nil
     public var error: ApiException? = nil
     
-    public init(data:JSON?, error:ApiException?) {
+    public init(data:Any?, error:ApiException?) {
         self.data = data
         self.error = error
     }
     
-    public convenience init(data: JSON) {
+    public convenience init(data: Any) {
         self.init(data: data, error: nil)
     }
 
