@@ -38,12 +38,14 @@ namespace Kaltura.Types
 		#region Constants
 		public const string MEDIA_TYPE_EQUAL = "mediaTypeEqual";
 		public const string MEDIA_ID_IN = "mediaIdIn";
+		public const string UDID_EQUAL_CURRENT = "udidEqualCurrent";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private int _MediaTypeEqual = Int32.MinValue;
 		private string _MediaIdIn = null;
+		private bool? _UdidEqualCurrent = null;
 		private FavoriteOrderBy _OrderBy = null;
 		#endregion
 
@@ -64,6 +66,15 @@ namespace Kaltura.Types
 			{ 
 				_MediaIdIn = value;
 				OnPropertyChanged("MediaIdIn");
+			}
+		}
+		public bool? UdidEqualCurrent
+		{
+			get { return _UdidEqualCurrent; }
+			set 
+			{ 
+				_UdidEqualCurrent = value;
+				OnPropertyChanged("UdidEqualCurrent");
 			}
 		}
 		public new FavoriteOrderBy OrderBy
@@ -94,6 +105,9 @@ namespace Kaltura.Types
 					case "mediaIdIn":
 						this._MediaIdIn = propertyNode.InnerText;
 						continue;
+					case "udidEqualCurrent":
+						this._UdidEqualCurrent = ParseBool(propertyNode.InnerText);
+						continue;
 					case "orderBy":
 						this._OrderBy = (FavoriteOrderBy)StringEnum.Parse(typeof(FavoriteOrderBy), propertyNode.InnerText);
 						continue;
@@ -110,6 +124,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaFavoriteFilter");
 			kparams.AddIfNotNull("mediaTypeEqual", this._MediaTypeEqual);
 			kparams.AddIfNotNull("mediaIdIn", this._MediaIdIn);
+			kparams.AddIfNotNull("udidEqualCurrent", this._UdidEqualCurrent);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -121,6 +136,8 @@ namespace Kaltura.Types
 					return "MediaTypeEqual";
 				case MEDIA_ID_IN:
 					return "MediaIdIn";
+				case UDID_EQUAL_CURRENT:
+					return "UdidEqualCurrent";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
