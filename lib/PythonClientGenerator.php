@@ -216,6 +216,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		}
 		
 		$description = str_replace("\n", "\n$indent# ", $description);
+		$description = iconv('utf-8', 'us-ascii//TRANSLIT', $description);
 		return "$indent# " . $description;
 	}
 	
@@ -238,7 +239,8 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		{
 			$description .= " ";
 		}
-		
+
+		$description = iconv('utf-8', 'us-ascii//TRANSLIT', $description);
 		return $indent . '"""' . $description . '"""';
 	}
 	
@@ -449,14 +451,22 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 					{
 						$arrayType = 'KalturaObjectBase';
 					}
-					$curLine .= "(KalturaObjectFactory.createArray, $arrayType)";
+					$curLine .= "(KalturaObjectFactory.createArray, '$arrayType')";
+					break;
+				case "map" :
+					$arrayType = $propertyNode->getAttribute ( "arrayType" );
+					if($arrayType == $type)
+					{
+						$arrayType = 'KalturaObjectBase';
+					}
+					$curLine .= "(KalturaObjectFactory.createMap, '$arrayType')";
 					break;
 				default : // sub object
 					if($propType == $type)
 					{
 						$propType = 'KalturaObjectBase';
 					}
-					$curLine .= "(KalturaObjectFactory.create, $propType)";
+					$curLine .= "(KalturaObjectFactory.create, '$propType')";
 					break;
 			}
 			$curLine .= ", ";
@@ -665,6 +675,10 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 					case "array" :
 						$arrayType = $resultNode->getAttribute ( "arrayType" );
 						$this->appendLine ( "        return KalturaObjectFactory.createArray(resultNode, $arrayType)" );
+						break;
+					case "map" :
+						$arrayType = $resultNode->getAttribute ( "arrayType" );
+						$this->appendLine ( "        return KalturaObjectFactory.createMap(resultNode, $arrayType)" );
 						break;
 					case "bigint":
 					case "int" :
