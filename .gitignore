@@ -1,4 +1,4 @@
-KalturaClient.xml
+KalturaClient*.xml
 tests/ovp/node2/config.json
 tests/ovp/php5/TestCode/config.ini
 tests/ovp/python/KalturaClient/tests/config.ini
@@ -6,7 +6,9 @@ tests/ovp/ajax/test/config.js
 tests/ovp/php53/tests/config.ini
 tests/ovp/zend/tests/config.ini
 tests/ovp/swift/Example/Tests/Info.plist
+tests/ovp/java2/src/test/resources/test.properties
 tests/ott/node2/config.json
 tests/ott/zend/tests/config.ini
 tests/ott/swift/Example/Tests/TestConfig.plist
+tests/ott/java2/src/test/java/resources/ott.test.properties
 tests/config.ini

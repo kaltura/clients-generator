@@ -429,9 +429,6 @@ end
 			elseif($propType == 'array') {
 				$this->appendLine("			dict[\"$apiPropName\"] = $propName!.map { value in value.toDictionary() }");
 			}
-			elseif($propType == 'map') {
-				$this->appendLine("			dict[\"$apiPropName\"] = $propName!.map { key, value in (key, value.toDictionary()) }");
-			}
 			else {
 				$this->appendLine("			dict[\"$apiPropName\"] = $propName!.toDictionary()");
 			}

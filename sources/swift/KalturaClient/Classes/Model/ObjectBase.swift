@@ -66,3 +66,15 @@ open class ObjectBase {
     }
 }
 
+extension Dictionary {
+    public func toDictionary() -> [String: [String: Any]] {
+        var results: [String: [String: Any]] = [:]
+        for key in self.keys {
+            if let stringKey = key as? String, let value = self[key] as? ObjectBase {
+                results.updateValue(value.toDictionary(), forKey: stringKey)
+            }
+        }
+        return results
+    }
+}
+
