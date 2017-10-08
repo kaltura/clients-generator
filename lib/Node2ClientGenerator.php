@@ -115,6 +115,11 @@ class Node2ClientGenerator extends ClientGeneratorFromXml
 		return preg_replace('/^Kaltura/', '', $name);
 	}
 	
+	private function escapeString($str) 
+	{
+		return str_replace("'", "\\'", $str);
+	}
+	
 	/**
 	 * Parses Enum (aka. types) classes.
 	 * @param $enumNode the xml node from the api schema representing an enum.
@@ -134,7 +139,7 @@ class Node2ClientGenerator extends ClientGeneratorFromXml
 			switch($enumNode->attributes()->enumType)
 			{
 				case 'string':
-					$this->echoLine($this->enumTypes, $child->attributes()->name . " : '" . $child->attributes()->value . "',");
+					$this->echoLine($this->enumTypes, $child->attributes()->name . " : '" . $this->escapeString($child->attributes()->value) . "',");
 					break;
 				default:
 					$this->echoLine($this->enumTypes, $child->attributes()->name . " : " . $child->attributes()->value . ",");

@@ -680,6 +680,9 @@ abstract public class KalturaClientBase implements Serializable {
 		allParts = parts.toArray(allParts);
 	 
 		method.setRequestEntity(new MultipartRequestEntity(allParts, method.getParams()));
+
+		// Ensures that request negotiation happens before the body is sent (preventing issues around uploads over HTTPS being rejected)
+		method.getParams().setBooleanParameter(HttpMethodParams.USE_EXPECT_CONTINUE, true);
  
 		return method;
 	}

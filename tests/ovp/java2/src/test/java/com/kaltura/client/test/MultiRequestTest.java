@@ -36,16 +36,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.BaseEntry;
+import com.kaltura.client.types.DrmPlaybackPluginData;
 import com.kaltura.client.utils.request.MultiRequestBuilder;
-import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.NullRequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.MediaType;
 import com.kaltura.client.enums.UploadTokenStatus;
+import com.kaltura.client.services.BaseEntryService;
+import com.kaltura.client.services.BaseEntryService.GetContextDataBaseEntryBuilder;
+import com.kaltura.client.services.BaseEntryService.ListBaseEntryBuilder;
+import com.kaltura.client.services.FlavorAssetService;
+import com.kaltura.client.services.FlavorAssetService.GetByEntryIdFlavorAssetBuilder;
+import com.kaltura.client.services.FlavorAssetService.GetFlavorAssetsWithParamsFlavorAssetBuilder;
+import com.kaltura.client.services.LiveStreamService;
+import com.kaltura.client.services.LiveStreamService.GetLiveStreamBuilder;
 import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MediaService.AddMediaBuilder;
+import com.kaltura.client.services.MediaService.GetMediaBuilder;
+import com.kaltura.client.services.MediaService.UpdateMediaBuilder;
 import com.kaltura.client.services.PlaylistService;
 import com.kaltura.client.services.SystemService;
+import com.kaltura.client.services.SystemService.PingSystemBuilder;
 import com.kaltura.client.services.UploadTokenService;
 import com.kaltura.client.types.MediaEntry;
 import com.kaltura.client.types.MediaEntryFilterForPlaylist;
@@ -75,25 +89,25 @@ public class MultiRequestTest extends BaseTest{
 		UploadedFileTokenResource resource = new UploadedFileTokenResource();
 		resource.setToken("{3:result:id}");
 		
-		RequestBuilder<List<Object>> requestBuilder = SystemService.ping()
+		MultiRequestBuilder requestBuilder = SystemService.ping()
 		.add(MediaService.add(entry))
 		.add(UploadTokenService.add(uploadToken))
 		.add(MediaService.addContent("{2:result:id}", resource))
 		.add(UploadTokenService.upload("{3:result:id}", fileData, false))
-		.setCompletion(new OnCompletion<List<Object>>() {
+		.setCompletion(new OnCompletion<Response<List<Object>>>() {
 			
 			@Override
-			public void onComplete(List<Object> multi, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<List<Object>> result) {
+				assertNull(result.error);
 
 				// 0
-				assertNotNull(multi.get(0));
-				assertTrue(multi.get(0) instanceof Boolean);
-				assertTrue((Boolean) multi.get(0));
+				assertNotNull(result.results.get(0));
+				assertTrue(result.results.get(0) instanceof Boolean);
+				assertTrue((Boolean) result.results.get(0));
 				
 				// 1
-				assertTrue(multi.get(1) instanceof MediaEntry);
-				MediaEntry mEntry = (MediaEntry) multi.get(1);
+				assertTrue(result.results.get(1) instanceof MediaEntry);
+				MediaEntry mEntry = (MediaEntry) result.results.get(1);
 				assertNotNull(mEntry);
 				assertNotNull(mEntry.getId());
 				assertEquals(EntryStatus.NO_CONTENT, mEntry.getStatus());
@@ -101,20 +115,20 @@ public class MultiRequestTest extends BaseTest{
 				testIds.add(mEntry.getId());
 				
 				// 2
-				assertTrue(multi.get(2) instanceof UploadToken);
-				UploadToken mToken =(UploadToken) multi.get(2);
+				assertTrue(result.results.get(2) instanceof UploadToken);
+				UploadToken mToken =(UploadToken) result.results.get(2);
 				assertNotNull(mToken);
 				assertNotNull(mToken.getId());
 				assertEquals(UploadTokenStatus.PENDING, mToken.getStatus());
 				
 				// 3
-				assertTrue(multi.get(3) instanceof MediaEntry);
-				mEntry = (MediaEntry) multi.get(3);
+				assertTrue(result.results.get(3) instanceof MediaEntry);
+				mEntry = (MediaEntry) result.results.get(3);
 				assertEquals(EntryStatus.IMPORT, mEntry.getStatus());
 				
 				// 4
-				assertTrue(multi.get(4) instanceof UploadToken);
-				mToken =(UploadToken) multi.get(4);
+				assertTrue(result.results.get(4) instanceof UploadToken);
+				mToken =(UploadToken) result.results.get(4);
 				assertEquals(UploadTokenStatus.CLOSED, mToken.getStatus());
 				
 				
@@ -126,22 +140,22 @@ public class MultiRequestTest extends BaseTest{
 				
 				MultiRequestBuilder multiRequestBuilder = new MultiRequestBuilder();
 				multiRequestBuilder.add(PlaylistService.executeFromFilters(filters, 5));
-				multiRequestBuilder.setCompletion(new OnCompletion<List<Object>>() {
+				multiRequestBuilder.setCompletion(new OnCompletion<Response<List<Object>>>() {
 
 					@Override
-					public void onComplete(List<Object> multi, APIException error) {
+					public void onComplete(Response<List<Object>> result) {
 						@SuppressWarnings("unchecked")
-						List<BaseEntry> mRes = (List<BaseEntry>)multi.get(0);
+						List<BaseEntry> mRes = (List<BaseEntry>)result.results.get(0);
 						assertNotNull(mRes);
 						assertEquals(1, mRes.size());
 						
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(multiRequestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(multiRequestBuilder.build(client));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 
@@ -160,34 +174,34 @@ public class MultiRequestTest extends BaseTest{
 		MediaEntry updateEntry = new MediaEntry();
 		updateEntry.setTags(updatedTag);
 
-		RequestBuilder<List<Object>> requestBuilder = SystemService.ping()
+		MultiRequestBuilder requestBuilder = SystemService.ping()
 		.add(MediaService.add(entry))
 		.add(MediaService.update("{2:result:id}", updateEntry))
 		.add(MediaService.delete("{2:result:id}"))
-		.setCompletion(new OnCompletion<List<Object>>() {
+		.setCompletion(new OnCompletion<Response<List<Object>>>() {
 			
 			@Override
-			public void onComplete(List<Object> multi, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<List<Object>> result) {
+				assertNull(result.error);
 
 				// 0
-				assertNotNull(multi.get(0));
-				assertTrue(multi.get(0) instanceof Boolean);
-				assertTrue((Boolean) multi.get(0));
+				assertNotNull(result.results.get(0));
+				assertTrue(result.results.get(0) instanceof Boolean);
+				assertTrue((Boolean) result.results.get(0));
 
 				// 1
-				MediaEntry mEntry = (MediaEntry) multi.get(1);
+				MediaEntry mEntry = (MediaEntry) result.results.get(1);
 				assertNotNull(mEntry);
 				assertNotNull(mEntry.getId());
 
 				// 2
-				mEntry = (MediaEntry) multi.get(2);
+				mEntry = (MediaEntry) result.results.get(2);
 				assertEquals(updatedTag, mEntry.getTags());
 				
 				doneSignal.countDown();
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 
@@ -208,69 +222,69 @@ public class MultiRequestTest extends BaseTest{
 		MediaEntry updateEntry = new MediaEntry();
 		updateEntry.setTags(updatedTag);
 
-		RequestBuilder<Boolean> systemServicePingRequestBuilder = SystemService.ping()
-		.setCompletion(new OnCompletion<Boolean>() {
+		PingSystemBuilder systemServicePingRequestBuilder = SystemService.ping()
+		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
-			public void onComplete(Boolean response, APIException error) {
-				assertNull(error);
-				assertTrue(response);
+			public void onComplete(Response<Boolean> result) {
+				assertNull(result.error);
+				assertTrue(result.results);
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<MediaEntry> mediaServiceAddRequestBuilder = MediaService.add(entry)
-		.setCompletion(new OnCompletion<MediaEntry>() {
+		AddMediaBuilder mediaServiceAddRequestBuilder = MediaService.add(entry)
+		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
-			public void onComplete(MediaEntry mEntry, APIException error) {
-				assertNull(error);
-				assertNotNull(mEntry);
-				assertNotNull(mEntry.getId());
+			public void onComplete(Response<MediaEntry> result) {
+				assertNull(result.error);
+				assertNotNull(result.results);
+				assertNotNull(result.results.getId());
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<MediaEntry> mediaServiceUpdateRequestBuilder = MediaService.update("{2:result:id}", updateEntry)
-		.setCompletion(new OnCompletion<MediaEntry>() {
+		UpdateMediaBuilder mediaServiceUpdateRequestBuilder = MediaService.update("{2:result:id}", updateEntry)
+		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
-			public void onComplete(MediaEntry mEntry, APIException error) {
-				assertNull(error);
-				assertNotNull(mEntry);
-				assertEquals(updatedTag, mEntry.getTags());
+			public void onComplete(Response<MediaEntry> result) {
+				assertNull(result.error);
+				assertNotNull(result.results);
+				assertEquals(updatedTag, result.results.getTags());
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<Void> mediaServiceDeleteRequestBuilder = MediaService.delete("{2:result:id}")
-		.setCompletion(new OnCompletion<Void>() {
+		NullRequestBuilder mediaServiceDeleteRequestBuilder = MediaService.delete("{2:result:id}")
+		.setCompletion(new OnCompletion<Response<Void>>() {
 			
 			@Override
-			public void onComplete(Void response, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<Void> result) {
+				assertNull(result.error);
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<List<Object>> requestBuilder = new MultiRequestBuilder(
+		MultiRequestBuilder requestBuilder = new MultiRequestBuilder(
 			systemServicePingRequestBuilder, 
 			mediaServiceAddRequestBuilder, 
 			mediaServiceUpdateRequestBuilder, 
 			mediaServiceDeleteRequestBuilder
 		)
-		.setCompletion(new OnCompletion<List<Object>>() {
+		.setCompletion(new OnCompletion<Response<List<Object>>>() {
 			
 			@Override
-			public void onComplete(List<Object> multi, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<List<Object>> result) {
+				assertNull(result.error);
 				assertEquals(4, counter.get());
-				assertEquals(4, multi.size());
+				assertEquals(4, result.results.size());
 
 				doneSignal.countDown();
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 	
@@ -286,27 +300,27 @@ public class MultiRequestTest extends BaseTest{
 		startAdminSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<List<Object>> requestBuilder = SystemService.ping()
+        MultiRequestBuilder requestBuilder = SystemService.ping()
 		.add(MediaService.get("Illegal String"))
 		.add(SystemService.ping())
-		.setCompletion(new OnCompletion<List<Object>>() {
+		.setCompletion(new OnCompletion<Response<List<Object>>>() {
 
 			@Override
-			public void onComplete(List<Object> multi, APIException error) {
-				assertNotNull(multi.get(0));
-				assertTrue(multi.get(0) instanceof Boolean);
-				assertTrue((Boolean) multi.get(0));
+			public void onComplete(Response<List<Object>> result) {
+				assertNotNull(result.results.get(0));
+				assertTrue(result.results.get(0) instanceof Boolean);
+				assertTrue((Boolean) result.results.get(0));
 				
-				assertTrue(multi.get(1) instanceof APIException);
+				assertTrue(result.results.get(1) instanceof APIException);
 
-				assertNotNull(multi.get(2));
-				assertTrue(multi.get(2) instanceof Boolean);
-				assertTrue((Boolean) multi.get(2));
+				assertNotNull(result.results.get(2));
+				assertTrue(result.results.get(2) instanceof Boolean);
+				assertTrue((Boolean) result.results.get(2));
 
 				doneSignal.countDown();
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 	
@@ -324,53 +338,80 @@ public class MultiRequestTest extends BaseTest{
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		final AtomicInteger counter = new AtomicInteger(0);
 		
-		RequestBuilder<Boolean> requestBuilder1 = SystemService.ping()
-		.setCompletion(new OnCompletion<Boolean>() {
+		PingSystemBuilder requestBuilder1 = SystemService.ping()
+		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
-			public void onComplete(Boolean response, APIException error) {
-				assertNull(error);
-				assertTrue(response);
+			public void onComplete(Response<Boolean> result) {
+				assertNull(result.error);
+				assertTrue(result.results);
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<MediaEntry> requestBuilder2 = MediaService.get("Illegal String")
-		.setCompletion(new OnCompletion<MediaEntry>() {
+		GetMediaBuilder requestBuilder2 = MediaService.get("Illegal String")
+		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 			
 			@Override
-			public void onComplete(MediaEntry response, APIException error) {
-				assertNotNull(error);
-				assertNull(response);
+			public void onComplete(Response<MediaEntry> result) {
+				assertNotNull(result.error);
+				assertNull(result.results);
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<Boolean> requestBuilder3 = SystemService.ping()
-		.setCompletion(new OnCompletion<Boolean>() {
+		PingSystemBuilder requestBuilder3 = SystemService.ping()
+		.setCompletion(new OnCompletion<Response<Boolean>>() {
 			
 			@Override
-			public void onComplete(Boolean response, APIException error) {
-				assertNull(error);
-				assertTrue(response);
+			public void onComplete(Response<Boolean> result) {
+				assertNull(result.error);
+				assertTrue(result.results);
 				counter.incrementAndGet();
 			}
 		});
 		
-		RequestBuilder<List<Object>> requestBuilder = new MultiRequestBuilder(requestBuilder1, requestBuilder2, requestBuilder3)
-		.setCompletion(new OnCompletion<List<Object>>() {
+		MultiRequestBuilder requestBuilder = new MultiRequestBuilder(requestBuilder1, requestBuilder2, requestBuilder3)
+		.setCompletion(new OnCompletion<Response<List<Object>>>() {
 
 			@Override
-			public void onComplete(List<Object> multi, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<List<Object>> result) {
+				assertNull(result.error);
 
 				assertEquals(3, counter.get());
-				assertEquals(3, multi.size());
+				assertEquals(3, result.results.size());
 				
 				doneSignal.countDown();
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
+	}
+	
+	public void testTokens() throws Exception {
+
+		PingSystemBuilder systemPingRequestBuilder = SystemService.ping();
+		GetMediaBuilder mediaGetRequestBuilder = MediaService.get("whatever");
+		GetByEntryIdFlavorAssetBuilder flavorAssetGetByEntryIdRequestBuilder = FlavorAssetService.getByEntryId("whatever");
+		GetFlavorAssetsWithParamsFlavorAssetBuilder flavorAssetGetFlavorAssetsWithParamsRequestBuilder = FlavorAssetService.getFlavorAssetsWithParams("whatever");
+		GetLiveStreamBuilder liveStreamGetRequestBuilder = LiveStreamService.get("whatever");
+		GetContextDataBaseEntryBuilder baseEntryGetContextDataRequestBuilder = BaseEntryService.getContextData("whatever", null);
+		ListBaseEntryBuilder baseEntryListRequestBuilder = BaseEntryService.list();
+		
+		systemPingRequestBuilder
+		.add(mediaGetRequestBuilder)
+		.add(flavorAssetGetByEntryIdRequestBuilder)
+		.add(flavorAssetGetFlavorAssetsWithParamsRequestBuilder)
+		.add(liveStreamGetRequestBuilder)
+		.add(baseEntryGetContextDataRequestBuilder)
+		.add(baseEntryListRequestBuilder);
+
+		assertEquals("{1:result}", systemPingRequestBuilder.getTokenizer());
+		assertEquals("{2:result:id}", mediaGetRequestBuilder.getTokenizer().id());
+		assertEquals("{3:result:1:id}", flavorAssetGetByEntryIdRequestBuilder.getTokenizer().get(1).id());
+		assertEquals("{4:result:0:flavorAsset:id}", flavorAssetGetFlavorAssetsWithParamsRequestBuilder.getTokenizer().get(0).flavorAsset().id());
+		assertEquals("{5:result:streams:0:language}", liveStreamGetRequestBuilder.getTokenizer().streams().get(0).language());
+		assertEquals("{6:result:pluginData:myKey:scheme}", baseEntryGetContextDataRequestBuilder.getTokenizer().pluginData().get("myKey", DrmPlaybackPluginData.Tokenizer.class).scheme());
+		assertEquals("{7:result:objects:1:id}", baseEntryListRequestBuilder.getTokenizer().objects().get(1).id());
 	}
 }

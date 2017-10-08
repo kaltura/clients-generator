@@ -2,14 +2,13 @@ package com.kaltura.client.utils.request;
 
 
 import com.kaltura.client.Files;
+import com.kaltura.client.utils.response.base.Response;
 import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.util.HashMap;
 
-/**
- * Created by tehilarozin on 09/08/2016.
- */
-public interface RequestElement {
+
+public interface RequestElement<T> {
 
     String getContentType();
 
@@ -25,9 +24,9 @@ public interface RequestElement {
 
     HashMap<String, String> getHeaders();
 
-    String getId();
-
     ConnectionConfiguration config();
 
-    void onComplete(ResponseElement responseElement);
+    Response<T> parseResponse(ResponseElement responseElement);
+
+    void onComplete(Response<T> response);
 }

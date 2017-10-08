@@ -149,6 +149,9 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$pluginNodes = $xpath->query("/xml/plugins/plugin");
 		foreach($pluginNodes as $pluginNode)
 		{
+			if (!$this->shouldAddPlugin($pluginNode))
+				continue;
+
 		    $this->writePlugin($pluginNode);
 		}
 	}
@@ -412,7 +415,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 				case "bool" :
 					$this->appendLine("		if(count(\$xml->{$propName}))");
 					$this->appendLine("		{");
-					$this->appendLine("			if(!empty(\$xml->{$propName}))");
+					$this->appendLine("			if(!empty(\$xml->{$propName}) && ((int) \$xml->{$propName} === 1 || strtolower((string)\$xml->{$propName}) === 'true'))");
 					$this->appendLine("				\$this->$propName = true;");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = false;");
@@ -562,6 +565,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			$enableInMultiRequest = intval($actionNode->getAttribute("enableInMultiRequest"));
 		}
 	    
+		$returnType = $this->getTypeClass($resultType);
 		
 		// method signature
 		$signature = "";
@@ -572,8 +576,11 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$signature .= $this->getSignature($paramNodes);
-		
-		$this->appendLine();	
+
+		$this->appendLine();
+		$this->appendLine("	/**");
+		$this->appendLine("	 * @return $returnType");
+		$this->appendLine("	 */");
 		$this->appendLine("	$signature");
 		$this->appendLine("	{");
 		
@@ -700,8 +707,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 					if ($resultType)
 					{
 						$this->appendLine("		\$resultObject = Kaltura_Client_ParseUtils::unmarshalObject(\$resultXmlObject->result, \"$resultType\");");
-						$resultType = $this->getTypeClass($resultType);
-						$this->appendLine("		\$this->client->validateObjectType(\$resultObject, \"$resultType\");");
+						$this->appendLine("		\$this->client->validateObjectType(\$resultObject, \"$returnType\");");
 					}
 			}
 	    }

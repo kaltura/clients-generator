@@ -35,21 +35,24 @@ import com.kaltura.client.Params;
 import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.response.ResponseType;
 
-/**
- * Ancestor class for all of the generated classes in the com.kaltura.client.types package.
- * 
- * @author jpotts
- *
- */
 @SuppressWarnings("serial")
 public class ObjectBase implements Serializable, ResponseType {
-    protected Map<String, ListResponse> relatedObjects;
 
-    public Map<String, ListResponse> getRelatedObjects() {
+	public interface Tokenizer {
+	}
+
+	private Params params = null;
+
+    @SuppressWarnings("rawtypes")
+	protected Map<String, ListResponse> relatedObjects;
+
+    @SuppressWarnings("rawtypes")
+	public Map<String, ListResponse> getRelatedObjects() {
         return relatedObjects;
     }
 
-    public void setRelatedObjects(Map<String, ListResponse> relatedObjects) {
+    @SuppressWarnings("rawtypes")
+	public void setRelatedObjects(Map<String, ListResponse> relatedObjects) {
         this.relatedObjects = relatedObjects;
     }
 
@@ -63,8 +66,17 @@ public class ObjectBase implements Serializable, ResponseType {
         relatedObjects = GsonParser.parseMap(jsonObject.getAsJsonObject("relatedObjects"), ListResponse.class);
     }
     
+	public void setToken(String key, String token) {
+		if(params == null) {
+			params = new Params();
+		}
+		params.add(key, token);
+    }
+    
 	public Params toParams() {
-		return new Params();
+		if(params == null) {
+			params = new Params();
+		}
+		return params;
 	}
-	
 }

@@ -1,36 +1,21 @@
 package com.kaltura.client.utils.request;
 
-import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
+import com.kaltura.client.utils.response.base.Response;
 
-public class NullRequestBuilder extends RequestBuilder<Void> {
+public abstract class NullRequestBuilder extends RequestBuilder<Void, Void, NullRequestBuilder> {
 
-    public NullRequestBuilder() {
-    	super(Void.class);
+    public NullRequestBuilder(String service, String action) {
+        super(Void.class, service, action);
     }
 
-    public NullRequestBuilder(String service, String action, Params params) {
-        super(Void.class, service, action, params);
-    }
-    
     @Override
-    protected void complete(Object result, APIException error) {
-        if(onCompletion != null) {
-        	onCompletion.onComplete(null, error);
-        }
+    public void onComplete(Response<Void> response) {
+        super.onComplete(response.results(null));
     }
+
+	@Override
+	public Void getTokenizer() throws APIException {
+		throw new APIException(APIException.FailureStep.OnRequest, "Null response can not be used as multi-request token");
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

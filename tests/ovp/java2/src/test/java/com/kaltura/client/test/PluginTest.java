@@ -32,10 +32,12 @@ import java.util.concurrent.CountDownLatch;
 import com.kaltura.client.APIOkRequestsExecutor;
 import com.kaltura.client.enums.MetadataObjectType;
 import com.kaltura.client.services.MetadataProfileService;
-import com.kaltura.client.types.APIException;
+import com.kaltura.client.services.MetadataProfileService.AddMetadataProfileBuilder;
+import com.kaltura.client.services.MetadataProfileService.DeleteMetadataProfileBuilder;
+import com.kaltura.client.services.MetadataProfileService.UpdateMetadataProfileBuilder;
 import com.kaltura.client.types.MetadataProfile;
-import com.kaltura.client.utils.request.RequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 
 public class PluginTest extends BaseTest {
 
@@ -49,37 +51,39 @@ public class PluginTest extends BaseTest {
 		profileAdd.setMetadataObjectType(MetadataObjectType.ENTRY);
 		profileAdd.setName(getName());
 
-		RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
-		.setCompletion(new OnCompletion<MetadataProfile>() {
+		AddMetadataProfileBuilder requestBuilder = MetadataProfileService.add(profileAdd, "<xml></xml>")
+		.setCompletion(new OnCompletion<Response<MetadataProfile>>() {
 			
 			@Override
-			public void onComplete(MetadataProfile profileAdded, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<MetadataProfile> result) {
+				assertNull(result.error);
+				MetadataProfile profileAdded = result.results;
 				
 				assertNotNull(profileAdded.getId());
 				
 				MetadataProfile profileUpdate = new MetadataProfile();
 				profileUpdate.setName(testString);
 
-				RequestBuilder<MetadataProfile> requestBuilder = MetadataProfileService.update(profileAdded.getId(), profileUpdate)
-				.setCompletion(new OnCompletion<MetadataProfile>() {
+				UpdateMetadataProfileBuilder requestBuilder = MetadataProfileService.update(profileAdded.getId(), profileUpdate)
+				.setCompletion(new OnCompletion<Response<MetadataProfile>>() {
 					
 					@Override
-					public void onComplete(MetadataProfile profileUpdated, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<MetadataProfile> result) {
+						assertNull(result.error);
+						MetadataProfile profileUpdated = result.results;
 						
 						assertEquals(testString, profileUpdated.getName());
 						
-						RequestBuilder<Void> requestBuilder = MetadataProfileService.delete(profileUpdated.getId());
-						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+						DeleteMetadataProfileBuilder requestBuilder = MetadataProfileService.delete(profileUpdated.getId());
+						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 						
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 

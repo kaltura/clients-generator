@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kaltura</groupId>
     <artifactId>KalturaOttApiClient</artifactId>
-    <version>4.5.1-SNAPSHOT</version>
+    <version>4.5.10-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <properties>
@@ -25,7 +25,7 @@
         with the Kaltura OTT REST API. More information about the REST API can be
         found at https://ott.developer.kaltura.com/ Many of the Java classes
         in this library are auto-generated from a schema that defines the objects that
-        are used to interect with the API.
+        are used to interact with the API.
     </description>
     <url>http://github.com/kaltura/KalturaOttGeneratedAPIClientsJava</url>
 
@@ -136,16 +136,24 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.7</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit-dep</artifactId>
-            <version>4.7</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
+	
+	<dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+	
     </dependencies>
          
     <build>

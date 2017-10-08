@@ -35,18 +35,30 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import com.kaltura.client.APIOkRequestsExecutor;
-import com.kaltura.client.ILogger;
-import com.kaltura.client.Logger;
 import com.kaltura.client.enums.EntryStatus;
 import com.kaltura.client.enums.EntryType;
 import com.kaltura.client.enums.MediaType;
 import com.kaltura.client.enums.ModerationFlagType;
 import com.kaltura.client.services.DataService;
+import com.kaltura.client.services.DataService.AddDataBuilder;
 import com.kaltura.client.services.FlavorAssetService;
+import com.kaltura.client.services.FlavorAssetService.GetByEntryIdFlavorAssetBuilder;
 import com.kaltura.client.services.MediaService;
+import com.kaltura.client.services.MediaService.AddContentMediaBuilder;
+import com.kaltura.client.services.MediaService.AddFromUploadedFileMediaBuilder;
+import com.kaltura.client.services.MediaService.AddFromUrlMediaBuilder;
+import com.kaltura.client.services.MediaService.AddMediaBuilder;
+import com.kaltura.client.services.MediaService.CountMediaBuilder;
+import com.kaltura.client.services.MediaService.GetMediaBuilder;
+import com.kaltura.client.services.MediaService.ListFlagsMediaBuilder;
+import com.kaltura.client.services.MediaService.ListMediaBuilder;
+import com.kaltura.client.services.MediaService.UpdateMediaBuilder;
+import com.kaltura.client.services.MediaService.UploadMediaBuilder;
 import com.kaltura.client.services.PlaylistService;
+import com.kaltura.client.services.PlaylistService.ExecuteFromFiltersPlaylistBuilder;
 import com.kaltura.client.services.UploadTokenService;
-import com.kaltura.client.types.APIException;
+import com.kaltura.client.services.UploadTokenService.AddUploadTokenBuilder;
+import com.kaltura.client.services.UploadTokenService.UploadUploadTokenBuilder;
 import com.kaltura.client.types.BaseEntry;
 import com.kaltura.client.types.DataEntry;
 import com.kaltura.client.types.FlavorAsset;
@@ -57,13 +69,13 @@ import com.kaltura.client.types.MediaEntryFilterForPlaylist;
 import com.kaltura.client.types.ModerationFlag;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.types.UploadedFileTokenResource;
-import com.kaltura.client.utils.request.RequestBuilder;
+import com.kaltura.client.utils.request.NullRequestBuilder;
+import com.kaltura.client.utils.request.ServeRequestBuilder;
 import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
 
 public class MediaServiceTest extends BaseTest {
 
-	private ILogger logger = Logger.getLogger(MediaServiceTest.class);
-	
 	/**
 	 * Tests the following : 
 	 * Media Service -
@@ -80,9 +92,7 @@ public class MediaServiceTest extends BaseTest {
 		addClipFromUrl(name, new OnCompletion<MediaEntry>() {
 
 			@Override
-			public void onComplete(MediaEntry addedEntry, APIException error) {
-				assertNull(error);
-				
+			public void onComplete(MediaEntry addedEntry) {
 				assertNotNull(addedEntry);
 				assertNotNull(addedEntry.getId());
 				assertEquals(name, addedEntry.getName());
@@ -102,20 +112,20 @@ public class MediaServiceTest extends BaseTest {
 		entry.setType(EntryType.MEDIA_CLIP);
 		entry.setMediaType(MediaType.VIDEO);
 
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.addFromUrl(entry, testConfig.getTestUrl())
-		.setCompletion(new OnCompletion<MediaEntry>() {
+		AddFromUrlMediaBuilder requestBuilder = MediaService.addFromUrl(entry, testConfig.getTestUrl())
+		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 			@Override
-			public void onComplete(MediaEntry response, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<MediaEntry> result) {
+				assertNull(result.error);
 
-				if(response != null)
-					testIds.add(response.getId());
+				if(result.results != null)
+					testIds.add(result.results.getId());
 				
-				onCompletion.onComplete(response, error);
+				onCompletion.onComplete(result.results);
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 	}
 	
 	/**
@@ -143,14 +153,14 @@ public class MediaServiceTest extends BaseTest {
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<Integer> requestBuilder = MediaService.count(filter)
-		.setCompletion(new OnCompletion<Integer>() {
+		CountMediaBuilder requestBuilder = MediaService.count(filter)
+		.setCompletion(new OnCompletion<Response<Integer>>() {
 
 			@Override
-			public void onComplete(Integer response, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<Integer> result) {
+				assertNull(result.error);
 				
-				final int size = response;
+				final int size = result.results;
 				
 
 				// Create entry
@@ -160,12 +170,13 @@ public class MediaServiceTest extends BaseTest {
 				entry.setMediaType(MediaType.VIDEO);
 				entry.setTags(uniqueTag);
 				
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
-				.setCompletion(new OnCompletion<MediaEntry>() {
+				AddMediaBuilder requestBuilder = MediaService.add(entry)
+				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
-					public void onComplete(final MediaEntry entry, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<MediaEntry> result) {
+						assertNull(result.error);
+						final MediaEntry entry = result.results;
 						assertNotNull(entry);
 						
 						testIds.add(entry.getId());
@@ -175,87 +186,92 @@ public class MediaServiceTest extends BaseTest {
 						uploadToken.setFileName(testConfig.getUploadVideo());
 						uploadToken.setFileSize((double) fileSize);
 
-						RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add(uploadToken)
-						.setCompletion(new OnCompletion<UploadToken>() {
+						AddUploadTokenBuilder requestBuilder = UploadTokenService.add(uploadToken)
+						.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 							@Override
-							public void onComplete(final UploadToken token, APIException error) {
-								assertNull(error);
+							public void onComplete(Response<UploadToken> result) {
+								assertNull(result.error);
+								final UploadToken token = result.results;
+								
 								assertNotNull(token);
 								
 								// Define content
 								UploadedFileTokenResource resource = new UploadedFileTokenResource();
 								resource.setToken(token.getId());
 
-								RequestBuilder<MediaEntry> requestBuilder = MediaService.addContent(entry.getId(), resource)
-								.setCompletion(new OnCompletion<MediaEntry>() {
+								AddContentMediaBuilder requestBuilder = MediaService.addContent(entry.getId(), resource)
+								.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 									@Override
-									public void onComplete(final MediaEntry entry, APIException error) {
-										assertNull(error);
+									public void onComplete(Response<MediaEntry> result) {
+										assertNull(result.error);
+										final MediaEntry entry = result.results;
 										assertNotNull(entry);
 
 										// upload
-										RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
-										.setCompletion(new OnCompletion<UploadToken>() {
+										UploadUploadTokenBuilder requestBuilder = UploadTokenService.upload(token.getId(), fileData, false)
+										.setCompletion(new OnCompletion<Response<UploadToken>>() {
 
 											@Override
-											public void onComplete(UploadToken uploadToken, APIException error) {
-												assertNull(error);
+											public void onComplete(Response<UploadToken> result) {
+												assertNull(result.error);
+												UploadToken uploadToken = result.results;
 												assertNotNull(uploadToken);
 												
 												// Test Creation
 												getProcessedEntry(entry.getId(), true, new OnCompletion<MediaEntry>() {
 
 													@Override
-													public void onComplete(MediaEntry entry, APIException error) {
-														assertNull(error);
+													public void onComplete(MediaEntry entry) {
 														assertNotNull(entry);
 														
 														// Test get flavor asset by entry id.
-														RequestBuilder<List<FlavorAsset>> requestBuilder = FlavorAssetService.getByEntryId(entry.getId())
-														.setCompletion(new OnCompletion<List<FlavorAsset>>() {
+														GetByEntryIdFlavorAssetBuilder requestBuilder = FlavorAssetService.getByEntryId(entry.getId())
+														.setCompletion(new OnCompletion<Response<List<FlavorAsset>>>() {
 
 															@Override
-															public void onComplete(List<FlavorAsset> listFlavors, APIException error) {
-																assertNull(error);
+															public void onComplete(Response<List<FlavorAsset>> result) {
+																assertNull(result.error);
+																List<FlavorAsset> listFlavors = result.results;
+																
 																assertNotNull(listFlavors);
 																assertTrue(listFlavors.size() >= 1); // Should contain at least the source
 																
 
-																RequestBuilder<Integer> requestBuilder = MediaService.count(filter)
-																.setCompletion(new OnCompletion<Integer>() {
+																CountMediaBuilder requestBuilder = MediaService.count(filter)
+																.setCompletion(new OnCompletion<Response<Integer>>() {
 
 																	@Override
-																	public void onComplete(Integer response, APIException error) {
-																		assertNull(error);
+																	public void onComplete(Response<Integer> result) {
+																		assertNull(result.error);
 																		
-																		int size2 = response;
+																		int size2 = result.results;
 																		assertTrue(size + 1 == size2);
 																		doneSignal.countDown();
 																	}
 																});
-																APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+																APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 															}
 														});
-														APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+														APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 													}
 												});
 											}
 										});
-										APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+										APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 									}
 								});
-								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+								APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 							}
 						});
-						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 	
@@ -275,7 +291,7 @@ public class MediaServiceTest extends BaseTest {
 		addTestImage(name, new OnCompletion<MediaEntry>() {
 
 			@Override
-			public void onComplete(final MediaEntry addedEntry, APIException error) {
+			public void onComplete(final MediaEntry addedEntry) {
 				assertNotNull(addedEntry);
 				assertNotNull(addedEntry.getId());
 				
@@ -284,24 +300,24 @@ public class MediaServiceTest extends BaseTest {
 				MediaEntry updatedEntry = new MediaEntry();
 				updatedEntry.setName(name2);			
 				
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.update(addedEntry.getId(), updatedEntry)
-				.setCompletion(new OnCompletion<MediaEntry>() {
+				UpdateMediaBuilder requestBuilder = MediaService.update(addedEntry.getId(), updatedEntry)
+				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
-					public void onComplete(MediaEntry response, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<MediaEntry> result) {
+						assertNull(result.error);
 
 						getProcessedEntry(addedEntry.getId(), new OnCompletion<MediaEntry>() {
 
 							@Override
-							public void onComplete(MediaEntry queriedEntry, APIException error) {
+							public void onComplete(MediaEntry queriedEntry) {
 								assertEquals(name2, queriedEntry.getName());
 								doneSignal.countDown();
 							}
 						});
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
 		doneSignal.await();
@@ -318,17 +334,17 @@ public class MediaServiceTest extends BaseTest {
 		startUserSession();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<MediaEntry> requestBuilder = MediaService.get("bad-id")
-		.setCompletion(new OnCompletion<MediaEntry>() {
+		GetMediaBuilder requestBuilder = MediaService.get("bad-id")
+		.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 			@Override
-			public void onComplete(MediaEntry response, APIException error) {
-				assertNull(response);
-				assertNotNull(error);
+			public void onComplete(Response<MediaEntry> result) {
+				assertNull(result.results);
+				assertNotNull(result.error);
 				doneSignal.countDown();
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 	
@@ -347,22 +363,20 @@ public class MediaServiceTest extends BaseTest {
 		addTestImage(name, new OnCompletion<MediaEntry>() {
 
 			@Override
-			public void onComplete(final MediaEntry addedEntry, APIException error) {
-				assertNull(error);
-
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.get(addedEntry.getId())
-				.setCompletion(new OnCompletion<MediaEntry>() {
+			public void onComplete(final MediaEntry addedEntry) {
+				GetMediaBuilder requestBuilder = MediaService.get(addedEntry.getId())
+				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
-					public void onComplete(MediaEntry retrievedEntry, APIException error) {
-						assertNull(error);
-
+					public void onComplete(Response<MediaEntry> result) {
+						assertNull(result.error);
+						MediaEntry retrievedEntry = result.results;
 						assertNotNull(retrievedEntry);
 						assertEquals(addedEntry.getId(), retrievedEntry.getId());
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
 		doneSignal.await();
@@ -394,15 +408,11 @@ public class MediaServiceTest extends BaseTest {
 			List<MediaEntry> entries = new ArrayList<MediaEntry>();
 
 			@Override
-			public void onComplete(MediaEntry addedEntry, APIException error) {
-				assertNull(error);
-
+			public void onComplete(MediaEntry addedEntry) {
 				getProcessedEntry(addedEntry.getId(), new OnCompletion<MediaEntry>() {
 
 					@Override
-					public void onComplete(MediaEntry readyEntry, APIException error) {
-						assertNull(error);
-						
+					public void onComplete(MediaEntry readyEntry) {
 						entries.add(readyEntry);
 						if(entries.size() == count) {
 							testFilters();
@@ -422,12 +432,13 @@ public class MediaServiceTest extends BaseTest {
 				filter.setNameMultiLikeOr(join(list));
 				filter.setStatusIn(EntryStatus.IMPORT.getValue() + "," + EntryStatus.NO_CONTENT.getValue() + "," + EntryStatus.PENDING.getValue() + "," + EntryStatus.PRECONVERT.getValue() + "," + EntryStatus.READY.getValue());
 
-				RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list(filter)
-				.setCompletion(new OnCompletion<ListResponse<MediaEntry>>() {
+				ListMediaBuilder requestBuilder = MediaService.list(filter)
+				.setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
 
 					@Override
-					public void onComplete(ListResponse<MediaEntry> listResponse, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<ListResponse<MediaEntry>> result) {
+						assertNull(result.error);
+						ListResponse<MediaEntry> listResponse = result.results;
 
 						assertEquals(listResponse.getTotalCount(), count);
 
@@ -438,7 +449,7 @@ public class MediaServiceTest extends BaseTest {
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		};
 		
@@ -474,33 +485,34 @@ public class MediaServiceTest extends BaseTest {
 		addTestImage(name, new OnCompletion<MediaEntry>() {
 
 			@Override
-			public void onComplete(MediaEntry addedEntry, APIException error) {
+			public void onComplete(MediaEntry addedEntry) {
 				
 				//wait for the newly-added clip to process
 				getProcessedEntry(addedEntry.getId(), new OnCompletion<MediaEntry>() {
 
 					@Override
-					public void onComplete(final MediaEntry addedEntry, APIException error) {
+					public void onComplete(final MediaEntry addedEntry) {
 						
 						// flag the clip
 						ModerationFlag flag = new ModerationFlag();
 						flag.setFlaggedEntryId(addedEntry.getId());
 						flag.setFlagType(ModerationFlagType.SPAM_COMMERCIALS);
 						flag.setComments(FLAG_COMMENTS);
-						RequestBuilder<Void> requestBuilder = MediaService.flag(flag)
-						.setCompletion(new OnCompletion<Void>() {
+						NullRequestBuilder requestBuilder = MediaService.flag(flag)
+						.setCompletion(new OnCompletion<Response<Void>>() {
 
 							@Override
-							public void onComplete(Void response, APIException error) {
-								assertNull(error);
+							public void onComplete(Response<Void> result) {
+								assertNull(result.error);
 
 								// get the list of flags for this entry
-								RequestBuilder<ListResponse<ModerationFlag>> requestBuilder = MediaService.listFlags(addedEntry.getId())
-								.setCompletion(new OnCompletion<ListResponse<ModerationFlag>>() {
+								ListFlagsMediaBuilder requestBuilder = MediaService.listFlags(addedEntry.getId())
+								.setCompletion(new OnCompletion<Response<ListResponse<ModerationFlag>>>() {
 
 									@Override
-									public void onComplete(ListResponse<ModerationFlag> flagList, APIException error) {
-										assertNull(error);
+									public void onComplete(Response<ListResponse<ModerationFlag>> result) {
+										assertNull(result.error);
+										ListResponse<ModerationFlag> flagList = result.results;
 
 										assertEquals(flagList.getTotalCount(), 1);
 
@@ -512,10 +524,10 @@ public class MediaServiceTest extends BaseTest {
 										doneSignal.countDown();
 									}
 								});
-								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+								APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 							}
 						});
-						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 					}
 				});
 			}
@@ -540,7 +552,7 @@ public class MediaServiceTest extends BaseTest {
 		addTestImage(name, new OnCompletion<MediaEntry>() {
 
 			@Override
-			public void onComplete(MediaEntry addedEntry, APIException error) {
+			public void onComplete(MediaEntry addedEntry) {
 				assertNotNull(addedEntry);
 				final String idToDelete = addedEntry.getId();
 				
@@ -549,33 +561,31 @@ public class MediaServiceTest extends BaseTest {
 				getProcessedEntry(idToDelete, new OnCompletion<MediaEntry>() {
 
 					@Override
-					public void onComplete(MediaEntry response, APIException error) {
-						assertNull(error);
-						
-						RequestBuilder<Void> requestBuilder = MediaService.delete(idToDelete)
-						.setCompletion(new OnCompletion<Void>() {
+					public void onComplete(MediaEntry result) {
+						NullRequestBuilder requestBuilder = MediaService.delete(idToDelete)
+						.setCompletion(new OnCompletion<Response<Void>>() {
 
 							@Override
-							public void onComplete(Void response, APIException error) {
-								assertNull(error);
+							public void onComplete(Response<Void> result) {
+								assertNull(result.error);
 
 								// Get deleted - should fail
-								RequestBuilder<MediaEntry> requestBuilder = MediaService.get(idToDelete)
-								.setCompletion(new OnCompletion<MediaEntry>() {
+								GetMediaBuilder requestBuilder = MediaService.get(idToDelete)
+								.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 									@Override
-									public void onComplete(MediaEntry response, APIException error) {
-										assertNotNull("Exception expected as the entry should be already delete", error);
+									public void onComplete(Response<MediaEntry> result) {
+										assertNotNull("Exception expected as the entry should be already delete", result.error);
 										doneSignal.countDown();
 									}
 								});
-								APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+								APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 								
 								// we whacked this one, so let's not keep track of it		
 								testIds.remove(idToDelete);
 							}
 						});
-						APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+						APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 					}
 				});
 			}
@@ -596,12 +606,12 @@ public class MediaServiceTest extends BaseTest {
 		final File fileData = TestUtils.getTestVideoFile();
 
         final CountDownLatch doneSignal = new CountDownLatch(1);
-		RequestBuilder<String> requestBuilder = MediaService.upload(fileData)
-		.setCompletion(new OnCompletion<String>() {
+		UploadMediaBuilder requestBuilder = MediaService.upload(fileData)
+		.setCompletion(new OnCompletion<Response<String>>() {
 
 			@Override
-			public void onComplete(String result, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<String> result) {
+				assertNull(result.error);
 				
 				String name = getName() + " (" + new Date() + ")";
 				MediaEntry entry = new MediaEntry();
@@ -609,12 +619,14 @@ public class MediaServiceTest extends BaseTest {
 				entry.setType(EntryType.MEDIA_CLIP);
 				entry.setMediaType(MediaType.VIDEO);
 				
-				RequestBuilder<MediaEntry> requestBuilder = MediaService.addFromUploadedFile(entry, result)
-				.setCompletion(new OnCompletion<MediaEntry>() {
+				AddFromUploadedFileMediaBuilder requestBuilder = MediaService.addFromUploadedFile(entry, result.results)
+				.setCompletion(new OnCompletion<Response<MediaEntry>>() {
 
 					@Override
-					public void onComplete(MediaEntry entry, APIException error) {
-						assertNull(error);
+					public void onComplete(Response<MediaEntry> result) {
+						assertNull(result.error);
+						MediaEntry entry = result.results;
+						
 						assertNotNull(entry);
 						assertNotNull(entry.getId());
 						
@@ -623,10 +635,10 @@ public class MediaServiceTest extends BaseTest {
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 	
@@ -638,26 +650,24 @@ public class MediaServiceTest extends BaseTest {
 		addTestImage(getName() + " (" + new Date() + ")", new OnCompletion<MediaEntry>() {
 
 			@Override
-			public void onComplete(MediaEntry entry, APIException error) {
-				assertNull(error);
-				
+			public void onComplete(MediaEntry entry) {
 				// generate filter
 				MediaEntryFilterForPlaylist filter = new MediaEntryFilterForPlaylist();
 				filter.setReferenceIdEqual(entry.getReferenceId());
 				List<MediaEntryFilterForPlaylist> filters = new ArrayList<MediaEntryFilterForPlaylist>();
 				filters.add(filter);
-				RequestBuilder<List<BaseEntry>> requestBuilder = PlaylistService.executeFromFilters(filters, 5)
-				.setCompletion(new OnCompletion<List<BaseEntry>>() {
+				ExecuteFromFiltersPlaylistBuilder requestBuilder = PlaylistService.executeFromFilters(filters, 5)
+				.setCompletion(new OnCompletion<Response<List<BaseEntry>>>() {
 
 					@Override
-					public void onComplete(List<BaseEntry> list, APIException error) {
-						assertNull(error);
-						assertNotNull(list);
-						assertEquals(1, list.size());
+					public void onComplete(Response<List<BaseEntry>> result) {
+						assertNull(result.error);
+						assertNotNull(result.results);
+						assertEquals(1, result.results.size());
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
 		doneSignal.await();
@@ -673,27 +683,27 @@ public class MediaServiceTest extends BaseTest {
 		DataEntry dataEntry = new DataEntry();
 		dataEntry.setName(getName() + " (" + new Date() + ")");
 		dataEntry.setDataContent(test);
-		RequestBuilder<DataEntry> requestBuilder = DataService.add(dataEntry)
-		.setCompletion(new OnCompletion<DataEntry>() {
+		AddDataBuilder requestBuilder = DataService.add(dataEntry)
+		.setCompletion(new OnCompletion<Response<DataEntry>>() {
 
 			@Override
-			public void onComplete(DataEntry addedDataEntry, APIException error) {
-				assertNull(error);
+			public void onComplete(Response<DataEntry> result) {
+				assertNull(result.error);
 
 				// serve
-				RequestBuilder<String> requestBuilder = DataService.serve(addedDataEntry.getId())
-				.setCompletion(new OnCompletion<String>() {
+				ServeRequestBuilder requestBuilder = DataService.serve(result.results.getId())
+				.setCompletion(new OnCompletion<Response<String>>() {
 
 					@Override
-					public void onComplete(String response, APIException error) {
-						assertEquals(test, response);
+					public void onComplete(Response<String> result) {
+						assertEquals(test, result.results);
 						doneSignal.countDown();
 					}
 				});
-				APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+				APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 			}
 		});
-		APIOkRequestsExecutor.getSingleton().queue(requestBuilder.build(client));
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
 		doneSignal.await();
 	}
 }

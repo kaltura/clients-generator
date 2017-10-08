@@ -1,8 +1,14 @@
-
-# IDE folders/files
-.idea
-clients-generator.iml
-
+tests/ovp/node2/config.json
+tests/ovp/php5/TestCode/config.ini
+tests/ovp/python/KalturaClient/tests/config.ini
+tests/ovp/ajax/test/config.js
+tests/ovp/php53/tests/config.ini
+tests/ovp/zend/tests/config.ini
+tests/ovp/swift/Example/Tests/Info.plist
+tests/ott/node2/config.json
+tests/ott/zend/tests/config.ini
+tests/ott/swift/Example/Tests/TestConfig.plist
+tests/config.ini
 
 # Development files/folders
 output/

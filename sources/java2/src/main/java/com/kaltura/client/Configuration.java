@@ -39,9 +39,10 @@ import java.util.Map;
  * @author jpotts
  *
  */
-@SuppressWarnings("serial")
 public class Configuration implements Serializable, ConnectionConfiguration {
 
+	private static final long serialVersionUID = 2096581946429839651L;
+	
 	public final static String EndPoint = "endpoint";
 	public final static String ConnectTimeout = "connectTimeout";
 	public final static String ReadTimeout = "readTimeout";
