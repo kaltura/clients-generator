@@ -43,6 +43,7 @@ namespace Kaltura.Types
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
 		public const string SCHEDULED_SUBSCRIPTION_ID = "scheduledSubscriptionId";
+		public const string IS_SUSPENDED = "isSuspended";
 		#endregion
 
 		#region Private Fields
@@ -53,6 +54,7 @@ namespace Kaltura.Types
 		private int _PaymentGatewayId = Int32.MinValue;
 		private int _PaymentMethodId = Int32.MinValue;
 		private long _ScheduledSubscriptionId = long.MinValue;
+		private bool? _IsSuspended = null;
 		#endregion
 
 		#region Properties
@@ -99,6 +101,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("ScheduledSubscriptionId");
 			}
 		}
+		public bool? IsSuspended
+		{
+			get { return _IsSuspended; }
+		}
 		#endregion
 
 		#region CTor
@@ -133,6 +139,9 @@ namespace Kaltura.Types
 					case "scheduledSubscriptionId":
 						this._ScheduledSubscriptionId = ParseLong(propertyNode.InnerText);
 						continue;
+					case "isSuspended":
+						this._IsSuspended = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -151,6 +160,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("paymentGatewayId", this._PaymentGatewayId);
 			kparams.AddIfNotNull("paymentMethodId", this._PaymentMethodId);
 			kparams.AddIfNotNull("scheduledSubscriptionId", this._ScheduledSubscriptionId);
+			kparams.AddIfNotNull("isSuspended", this._IsSuspended);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -171,6 +181,8 @@ namespace Kaltura.Types
 					return "PaymentMethodId";
 				case SCHEDULED_SUBSCRIPTION_ID:
 					return "ScheduledSubscriptionId";
+				case IS_SUSPENDED:
+					return "IsSuspended";
 				default:
 					return base.getPropertyName(apiName);
 			}

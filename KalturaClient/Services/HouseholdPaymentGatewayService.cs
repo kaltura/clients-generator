@@ -258,6 +258,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class HouseholdPaymentGatewayResumeRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
+		#endregion
+
+		public int PaymentGatewayId
+		{
+			set;
+			get;
+		}
+
+		public HouseholdPaymentGatewayResumeRequestBuilder()
+			: base("householdpaymentgateway", "resume")
+		{
+		}
+
+		public HouseholdPaymentGatewayResumeRequestBuilder(int paymentGatewayId)
+			: this()
+		{
+			this.PaymentGatewayId = paymentGatewayId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("paymentGatewayId"))
+				kparams.AddIfNotNull("paymentGatewayId", PaymentGatewayId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
 	public class HouseholdPaymentGatewaySetChargeIDRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -312,6 +355,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class HouseholdPaymentGatewaySuspendRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
+		#endregion
+
+		public int PaymentGatewayId
+		{
+			set;
+			get;
+		}
+
+		public HouseholdPaymentGatewaySuspendRequestBuilder()
+			: base("householdpaymentgateway", "suspend")
+		{
+		}
+
+		public HouseholdPaymentGatewaySuspendRequestBuilder(int paymentGatewayId)
+			: this()
+		{
+			this.PaymentGatewayId = paymentGatewayId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("paymentGatewayId"))
+				kparams.AddIfNotNull("paymentGatewayId", PaymentGatewayId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
 
 	public class HouseholdPaymentGatewayService
 	{
@@ -344,9 +430,19 @@ namespace Kaltura.Services
 			return new HouseholdPaymentGatewayListRequestBuilder();
 		}
 
+		public static HouseholdPaymentGatewayResumeRequestBuilder Resume(int paymentGatewayId)
+		{
+			return new HouseholdPaymentGatewayResumeRequestBuilder(paymentGatewayId);
+		}
+
 		public static HouseholdPaymentGatewaySetChargeIDRequestBuilder SetChargeID(string paymentGatewayExternalId, string chargeId)
 		{
 			return new HouseholdPaymentGatewaySetChargeIDRequestBuilder(paymentGatewayExternalId, chargeId);
+		}
+
+		public static HouseholdPaymentGatewaySuspendRequestBuilder Suspend(int paymentGatewayId)
+		{
+			return new HouseholdPaymentGatewaySuspendRequestBuilder(paymentGatewayId);
 		}
 	}
 }
