@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		00139DC01F698B22005D49EC /* TestConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00139DBC1F698ACB005D49EC /* TestConfig.swift */; };
 		00139DC11F698B2B005D49EC /* TestConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 00139DBE1F698AE0005D49EC /* TestConfig.plist */; };
+		002EBA931F7A27F900C7E4F9 /* MapTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002EBA921F7A27F900C7E4F9 /* MapTest.swift */; };
 		11ED30FC12B8F925214FA63E /* Pods_KalturaClient_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A828660A1AF9647D2ABD0F59 /* Pods_KalturaClient_Example.framework */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -38,6 +39,7 @@
 		00139DBC1F698ACB005D49EC /* TestConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConfig.swift; sourceTree = "<group>"; };
 		00139DBE1F698AE0005D49EC /* TestConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestConfig.plist; sourceTree = "<group>"; };
 		001416C11F1F892700CD4112 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		002EBA921F7A27F900C7E4F9 /* MapTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapTest.swift; sourceTree = "<group>"; };
 		25D0496082CD170A6C7D9E66 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		5B71B816BD0CFFB43D1C5C16 /* Pods-KalturaClient_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KalturaClient_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KalturaClient_Tests/Pods-KalturaClient_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		5FE8E0B6C95CC113DDE8608B /* Pods-KalturaClient_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KalturaClient_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-KalturaClient_Example/Pods-KalturaClient_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -144,6 +146,7 @@
 				C28D3AD91F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift */,
 				C28D3AD71F38ACB0001D2A03 /* MultiRequestWithArray.swift */,
 				C28D3A9B1F33293D001D2A03 /* ArrayTest.swift */,
+				002EBA921F7A27F900C7E4F9 /* MapTest.swift */,
 				C28D3A951F33252B001D2A03 /* MultiRequestTest.swift */,
 				C28D3A961F33252B001D2A03 /* PrimitivesTest.swift */,
 				607FACEB1AFB9204008FA782 /* BaseTest.swift */,
@@ -400,6 +403,7 @@
 				C28D3A9A1F332880001D2A03 /* PrimitivesTest.swift in Sources */,
 				C28D3ADA1F38ACC7001D2A03 /* MultiRequestWithPrimitives.swift in Sources */,
 				C28D3A991F332878001D2A03 /* MultiRequestTest.swift in Sources */,
+				002EBA931F7A27F900C7E4F9 /* MapTest.swift in Sources */,
 				00139DC01F698B22005D49EC /* TestConfig.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

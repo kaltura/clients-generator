@@ -216,7 +216,8 @@ class KalturaObjectFactory(object):
     objectFactories = {}
 
     @staticmethod
-    def create(objectNode, expectedType):
+    def create(objectNode, expectedTypeName):
+        expectedType = KalturaObjectFactory.objectFactories[expectedTypeName]
         objTypeNode = getChildNodeByXPath(objectNode, 'objectType')
         if objTypeNode == None:
             return None

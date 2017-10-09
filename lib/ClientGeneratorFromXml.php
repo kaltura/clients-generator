@@ -361,7 +361,7 @@ abstract class ClientGeneratorFromXml
 
 		if ($this->testsPath && is_dir($this->testsPath))
 		{
-			KalturaLog::info("Copy tests from [$this->_sourcePath]");
+			KalturaLog::info("Copy tests from [$this->testsPath]");
 			$this->addSourceFiles($this->testsPath, $this->testsPath . DIRECTORY_SEPARATOR, "");
 		}
 	}
