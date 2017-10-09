@@ -138,7 +138,6 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 
         $createClassArgs = new stdClass();
         $createClassArgs->name = $className;
-        $createClassArgs->description = $serviceAction->description;
         $createClassArgs->basePath = "../";
         $createClassArgs->enumPath = "./";
         $createClassArgs->typesPath = "./";
@@ -146,13 +145,19 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $createClassArgs->importedItems = &$importedItems;
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->id);
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action',false,KalturaServerTypes::Simple,'constant', $serviceAction->name);
+        $base = $this->hasFileProperty($serviceAction->params) ? "KalturaUploadRequest" : "KalturaRequest";
+        $createClassArgs->base = "{$base}<{$actionNG2ResultType}>";
 
-        if ($this->hasFileProperty($serviceAction->params))
-        {
-            $createClassArgs->base = "KalturaUploadRequest<{$actionNG2ResultType}>";
-        }else {
-            $createClassArgs->base = "KalturaRequest<{$actionNG2ResultType}>";
-        }
+
+        $createClassArgs->documentation = "/**
+ * Build request payload for service '{$service->name}' action '{$serviceAction->name}'.
+ * Used for {$serviceAction->description}.
+ *
+ * Server response type {$actionNG2ResultType}
+ *
+ * @class
+ * @extends {$base}
+ */";
 
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
 
@@ -185,14 +190,13 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
     function createClassExp($args)
     {
         $name = $args->name;
-        $description = $args->description;
+        $classDocumentation = isset($args->documentation) ? $args->documentation : '' ;
         $base = isset($args->base) ? $args->base : null;
         $baseStrippedClassName = isset($base) ? preg_replace('/<.+>/i','',$base) : null;
         $baseIsGenerated = isset($args->baseIsGenerated) ? $args->baseIsGenerated : false;
         $basePath = isset($args->basePath) ? $args->basePath : null;
         $customMetadataProperties = isset($args->customMetadataProperties) ? $args->customMetadataProperties : array();
         $classTypeName = Utils::upperCaseFirstLetter($name);
-        $desc = $description;
         $superArgs = isset($args->superArgs) ? $args->superArgs : '';
         $requireDataInCtor = $args->requireDataInCtor;
 
@@ -239,7 +243,7 @@ export interface {$classTypeName}Args {$this->utils->ifExp($baseStrippedClassNam
     {$this->utils->buildExpression($aggregatedData->constructorArgs, NewLine, 1)}
 }
 
-{$this->utils->createDocumentationExp('',$desc)}
+{$classDocumentation}
 export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
     {$this->utils->buildExpression($aggregatedData->classProperties, NewLine, 1)}
