@@ -13,6 +13,9 @@ tests/ott/swift/Example/Tests/TestConfig.plist
 tests/ott/java2/src/test/java/resources/ott.test.properties
 tests/config.ini
 
+# IDE
+.idea
+
 # Development files/folders
 output/
 npm-debug*.log
