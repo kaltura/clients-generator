@@ -153,7 +153,7 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
  * Build request payload for service '{$service->name}' action '{$serviceAction->name}'.
  * Used for {$serviceAction->description}.
  *
- * Server response type {$actionNG2ResultType}
+ * Server response type: {$actionNG2ResultType}
  *
  * @class
  * @extends {$base}
