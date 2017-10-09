@@ -2,14 +2,21 @@
 /**
  * Client Libraries Generator - generate all the clients specified in the given config.ini according to Kaltura API reflection.
  * 
- * Create your client generator by - 
- * 		1. Copying one of the existing client generators (*ClientGenerator.php) and name it accordingly.
- * 		2. Edit the classes/functions rules according to the target client language.
- * 		3. Add your static code to the sources folder under a folder by your language name.
- * 		4. Add your generator to config.ini, the ini category in brackets should be the folder name you used in the previous step.
- * 		5. Then below the ini category, write: generator = MyClientGenerator
- * 			MyClientGenerator being the name of your client generator class file without the .php extension.
- * To run the generator, use command line to run: php generate.php [arguments]
+ * Create your client generator by -
+ *      1 Choose a unique name to identify your generator (you can see which names are already in use in file 'config/generator.all.ini').
+ * 		2 Copy one of the existing client generators (*ClientGenerator.php) and prefix it with your generator identifier.
+ * 		2.1 In the second line, update the class name to match the generator identifier.
+ * 		2.2 Edit the classes/functions rules according to the target client language.
+ *      3. In this file, find where we 'require_once' all the generators and add the one you just created.
+ * 		3 Create a new folder under 'sources', use the generator name as the folder name.
+ *      4. Open file 'config/generator.all.ini' and add your generator name in a new line.
+ * 		4. Open file 'config/generator.ini and update the following:
+ *      4.1 Find line '########### Generators configuration ###########'
+ *      4.2 Add the following under that line (replace 'XXXXX' with your generator name):
+ * 			[XXXXX : public]
+ *			generator = XXXXXClientGenerator
+ *
+ * To run the generator, use command line to run: php exec.php [arguments]
  * 
  * Optional arguments:
  * 		1. Generate Single - The first argument dictates that a single generator should be run instead of all defined in the config.ini
@@ -59,6 +66,7 @@ require_once(__DIR__ . "/lib/CSharpClientGenerator.php");
 require_once(__DIR__ . "/lib/CSharp2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ErlangClientGenerator.php");
 require_once(__DIR__ . "/lib/JsClientGenerator.php");
+require_once(__DIR__ . "/lib/TypescriptClientGenerator.php");
 require_once(__DIR__ . "/lib/NodeClientGenerator.php");
 require_once(__DIR__ . "/lib/Node2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ObjCClientGenerator.php");
