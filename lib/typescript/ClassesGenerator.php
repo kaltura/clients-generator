@@ -148,13 +148,14 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $base = $this->hasFileProperty($serviceAction->params) ? "KalturaUploadRequest" : "KalturaRequest";
         $createClassArgs->base = "{$base}<{$actionNG2ResultType}>";
 
-
+        $classDescription = $this->utils->formatDescription($serviceAction->description, "Usage: ");
         $createClassArgs->documentation = "/**
  * Build request payload for service '{$service->name}' action '{$serviceAction->name}'.
- * Used for {$serviceAction->description}.
  *
- * Server response type: {$actionNG2ResultType}
+ * {$this->utils->buildExpression($classDescription,NewLine . ' * ')}
  *
+ * Server response type:         {$actionNG2ResultType}
+ * Server failure response type: KalturaAPIException
  * @class
  * @extends {$base}
  */";
