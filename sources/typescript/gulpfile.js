@@ -82,7 +82,7 @@ gulp.task('extras', function () {
       json.peerDependencies = json.dependencies;
       json.dependencies = {};
       json.devDependencies = {};
-      json.private = false;עןא
+      json.private = false;
       json.scripts = {};
       return json; // must return JSON object.
     }))

@@ -78,10 +78,14 @@ class Utils
         return implode('_', $ret);
     }
 
-    public static function createDocumentationExp($spacer, $documentation)
+    public static function formatDescription($description, $prefix = "")
     {
-        if ($documentation) {
-            return "/** " . NewLine . "* " . wordwrap(str_replace(array("\t", "\n", "\r"), " ", $documentation), 80, NewLine . "* ") . NewLine . "**/";
+        if ($description) {
+
+            $description = $prefix ? "{$prefix}{$description}" :  $description;
+            $description = array_map('trim', explode("\n", trim($description, ".\n\t\r ")));
+
+            return $description;
         }
         return "";
     }
