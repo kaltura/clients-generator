@@ -141,6 +141,7 @@ namespace Kaltura
 		public static string RecordingPlaybackNotAllowedForNonExistingEpgChannel = "3050";
 		public static string RecordingPlaybackNotAllowedForNotEntitledEpgChannel = "3051";
 		public static string SeasonNumberNotMatch = "3052";
+		public static string SubscriptionCancellationIsBlocked = "3074";
 		public static string MediaConcurrencyLimitation = "4000";
 		public static string ConcurrencyLimitation = "4001";
 		public static string BadSearchRequest = "4002";
