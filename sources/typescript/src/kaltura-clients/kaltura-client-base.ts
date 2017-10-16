@@ -21,8 +21,8 @@ export abstract class KalturaClientBase {
         this.clientTag = config.clientTag;
     }
 
-    protected abstract _transmitFileUploadRequest(request): CancelableAction;
-    protected abstract _transmitRequest(request): CancelableAction;
+    protected abstract _transmitFileUploadRequest(request : KalturaUploadRequest<any>): CancelableAction;
+    protected abstract _transmitRequest(request : KalturaRequestBase): CancelableAction;
 
     protected _multiRequest(arg: KalturaMultiRequest | KalturaRequest<any>[]): CancelableAction {
 
