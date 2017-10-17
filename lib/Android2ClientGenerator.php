@@ -152,7 +152,16 @@ class Android2ClientGenerator extends Java2ClientGenerator
                     break;
 
                 case "enum":
-                    $this->appendLine("        dest.writeInt(this.$propName == null ? -1 : this.$propName.ordinal());");
+                    print ("this.$propName == null ? -1 : this.$propName.ordinal() ,Enum name -  $enumName  \n");
+                    switch ($enumName) {
+                        case "Boolean":
+                            $this->appendLine("        dest.writeInt(this.$propName == null ? -1 : this.$propName.compareTo(false));");
+                            break;
+
+                        default:
+                            $this->appendLine("        dest.writeInt(this.$propName == null ? -1 : this.$propName.ordinal());");
+                            break;
+                    }
                     break;
 
                 default:
@@ -245,7 +254,16 @@ class Android2ClientGenerator extends Java2ClientGenerator
                 case "enum":
                     $tmpName = "tmp".ucfirst($propName);
                     $this->appendLine("        int $tmpName = in.readInt();");
-                    $this->appendLine("        this.$propName = $tmpName == -1 ? null : $enumName.values()[$tmpName];");
+
+                    switch ($enumName) {
+                        case "Boolean":
+                            $this->appendLine("        this.$propName = $tmpName == -1 ? null : $tmpName==1;");
+                            break;
+
+                        default:
+                            $this->appendLine("        this.$propName = $tmpName == -1 ? null : $enumName.values()[$tmpName];");
+                            break;
+                    }
                     break;
 
                 default:
