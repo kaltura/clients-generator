@@ -38,7 +38,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
 
   protected _transmitFileUploadRequest(request : KalturaUploadRequest<any>): CancelableAction {
     return new CancelableAction((resolve, reject) => {
-      const uploadedFileSize = request.uploadedFileSize;
+      const uploadedFileSize = !isNaN(request.uploadedFileSize) && isFinite(request.uploadedFileSize) && request.uploadedFileSize > 0 ? request.uploadedFileSize : 0;
       const data: ChunkData = { resume: !!uploadedFileSize, finalChunk: false, resumeAt: uploadedFileSize };
 
       const handleChunkUploadError = reason => {

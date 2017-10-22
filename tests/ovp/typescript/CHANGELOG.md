@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.1.1"></a>
+## [5.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.0...v5.1.1) (2017-10-22)
+
+
+### Bug Fixes
+
+* upload of new files whose size is smaller then the chunk size ([107635e](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/107635e))
+
+
+
+<a name="5.1.0"></a>
+# [5.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.0.0...v5.1.0) (2017-10-16)
+
+
+### Bug Fixes
+
+* generated package.json private attribute is set to false to allow publish to npm ([525a295](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/525a295))
+* remove gibrish that prevented compilation ([c61caac](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/c61caac))
+
+
+### Features
+
+* add documentation to service actions ([301586e](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/301586e))
+* support chunk file upload and resume upload action ([e04830a](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/e04830a))
+* syncing services with server changes on date 02/10/17 04:15:21 ([de7a5a1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/de7a5a1))
+
+
+
 <a name="5.0.0"></a>
 # [5.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v4.0.0...v5.0.0) (2017-08-14)
 
