@@ -1,12 +1,27 @@
 from setuptools import setup
 
 setup(
-    name='KalturaClient',
-    version='1.0.0',
-    url='http://www.kaltura.com/api_v3/testme/client-libs.php',
+    name='KalturaApiClient',
+    version='3.3.0',
+    url='https://github.com/kaltura/KalturaGeneratedAPIClientsPython',
     packages=['KalturaClient', 'KalturaClient.Plugins'],
     install_requires=['requests>=2.4.2', 'requests-toolbelt', 'six'],
     license='AGPL',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
+
+        'License :: OSI Approved :: AGPL License',
+
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+    ],
+    keywords='Kaltura API client',
     description='A Python module for accessing the Kaltura API.',
     long_description=open('README.txt').read(),
 )
