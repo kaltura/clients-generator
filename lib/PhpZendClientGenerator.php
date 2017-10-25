@@ -679,7 +679,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			}
 			
 			$this->appendLine("		\$resultXml = \$this->client->doQueue();");
-			$this->appendLine("		\$resultXmlObject = new \\SimpleXMLElement(\$resultXml);");
+			$this->appendLine("		\$resultXmlObject = new \\SimpleXMLElement(mb_convert_encoding(\$resultXml, 'UTF-8', 'UTF-8'));");
 			$this->appendLine("		\$this->client->checkIfError(\$resultXmlObject->result);");
 			
 			switch($resultType)
