@@ -8,6 +8,7 @@ export interface KalturaHttpClientBaseConfiguration extends KalturaClientBaseCon
 }
 
 interface ChunkData {
+  enabled: boolean;
   resume: boolean;
   resumeAt: number;
   finalChunk: boolean;
@@ -36,10 +37,35 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
     };
   }
 
+  protected _chunkUploadSupported(request: KalturaUploadRequest<any>): boolean
+  {
+      // SUPPORTED BY BROWSER?
+      // Check if these features are support by the browser:
+      // - File object type
+      // - Blob object type
+      // - FileList object type
+      // - slicing files
+      const supportedByBrowser = (
+          (typeof(File) !== 'undefined')
+          &&
+          (typeof(Blob) !== 'undefined')
+          &&
+          (typeof(FileList) !== 'undefined')
+          &&
+          (!!(<any>Blob.prototype).webkitSlice || !!(<any>Blob.prototype).mozSlice || !!(<any>Blob.prototype).slice || false)
+      );
+      const supportedByRequest = request.supportChunkUpload();
+
+      return supportedByBrowser && supportedByRequest;
+  }
+
   protected _transmitFileUploadRequest(request : KalturaUploadRequest<any>): CancelableAction {
     return new CancelableAction((resolve, reject) => {
       const uploadedFileSize = !isNaN(request.uploadedFileSize) && isFinite(request.uploadedFileSize) && request.uploadedFileSize > 0 ? request.uploadedFileSize : 0;
-      const data: ChunkData = { resume: !!uploadedFileSize, finalChunk: false, resumeAt: uploadedFileSize };
+      const data: ChunkData = { enabled:  this._chunkUploadSupported(request),
+          resume: !!uploadedFileSize,
+          finalChunk: false,
+          resumeAt: uploadedFileSize };
 
       const handleChunkUploadError = reason => {
         chunkUploadRequest = null;
@@ -47,7 +73,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
       };
 
       const handleChunkUploadSuccess = response => {
-        if (data.finalChunk) {
+        if (!data.enabled || data.finalChunk) {
           chunkUploadRequest = null;
           resolve(response);
         } else {
@@ -84,29 +110,36 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
       delete parameters.service;
       delete parameters.action;
 
-        let actualChunkSize = 5e6; // default
-        if (this.chunkFileSize) {
-            if (this.chunkFileSize < 1e6) {
-                console.warn(`user requested for invalid upload chunk size '${this.chunkFileSize}'. minimal value 1Mb. using minimal value 1Mb instead`);
-                actualChunkSize = 1e6;
-            } else {
-                actualChunkSize = this.chunkFileSize;
-                console.log(`using user requetsed chunk size '${this.chunkFileSize}'`);
-            }
-        } else {
-            console.log(`user requested for invalid (empty) upload chunk size. minimal value 1Mb. using default value 5Mb instead`);
-        }
+      let fileStart = 0;
+      let uploadSize: number = null;
 
-      uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= actualChunkSize;
+      if (uploadChunkData.enabled) {
+          uploadSize = 5e6; // default
+          if (this.chunkFileSize) {
+              if (this.chunkFileSize < 1e6) {
+                  console.warn(`user requested for invalid upload chunk size '${this.chunkFileSize}'. minimal value 1Mb. using minimal value 1Mb instead`);
+                  uploadSize = 1e6;
+              } else {
+                  uploadSize = this.chunkFileSize;
+                  console.log(`using user requetsed chunk size '${this.chunkFileSize}'`);
+              }
+          } else {
+              console.log(`using default chunk size 5Mb`);
+          }
 
-      const start = uploadChunkData.resumeAt;
-      const end = uploadChunkData.finalChunk ? file.size : start + actualChunkSize;
+          uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= uploadSize;
 
-      data.set(request.getFilePropertyName(), file.slice(start, end, file.type), file.name);
+          fileStart = uploadChunkData.resumeAt;
+          const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + uploadSize;
 
-      parameters.resume = uploadChunkData.resume;
-      parameters.resumeAt = uploadChunkData.resumeAt;
-      parameters.finalChunk = uploadChunkData.finalChunk;
+          data.set(request.getFilePropertyName(), file.slice(fileStart, fileEnd, file.type), file.name);
+
+          parameters.resume = uploadChunkData.resume;
+          parameters.resumeAt = uploadChunkData.resumeAt;
+          parameters.finalChunk = uploadChunkData.finalChunk;
+      }else {
+          console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
+      }
 
       // build endpoint
       const querystring = this._buildQuerystring(parameters);
@@ -131,9 +164,13 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
           if (resp instanceof Error) {
             reject(resp);
           } else {
-            if (!uploadChunkData.finalChunk) {
-              uploadChunkData.resumeAt = Number(resp.uploadedFileSize);
-              uploadChunkData.resume = true;
+            if (uploadChunkData.enabled) {
+                if (typeof resp.uploadedFileSize === "undefined" || resp.uploadedFileSize === null) {
+                    resp = new Error(`uploaded chunk of file failed, expected response with property 'uploadedFileSize'`);
+                } else if (!uploadChunkData.finalChunk) {
+                    uploadChunkData.resumeAt = Number(resp.uploadedFileSize);
+                    uploadChunkData.resume = true;
+                }
             }
 
             resolve(resp);
@@ -145,8 +182,11 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
       if (progressCallback) {
         xhr.upload.addEventListener("progress", e => {
           if (e.lengthComputable) {
-            const chunkSize = uploadChunkData.finalChunk ? file.size - start : actualChunkSize;
-            progressCallback.apply(request, [Math.floor(e.loaded / e.total * chunkSize) + start, file.size]);
+            let chunkSize = uploadSize;
+            if (uploadChunkData.enabled) {
+                chunkSize = uploadChunkData.finalChunk ? file.size - fileStart : uploadSize;
+            }
+            progressCallback.apply(request, [Math.floor(e.loaded / e.total * chunkSize) + fileStart, file.size]);
           } else {
             // Unable to compute progress information since the total size is unknown
           }
