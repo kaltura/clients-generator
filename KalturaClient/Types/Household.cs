@@ -50,6 +50,7 @@ namespace Kaltura.Types
 		public const string FREQUENCY_NEXT_DEVICE_ACTION = "frequencyNextDeviceAction";
 		public const string FREQUENCY_NEXT_USER_ACTION = "frequencyNextUserAction";
 		public const string RESTRICTION = "restriction";
+		public const string ROLE_ID = "roleId";
 		#endregion
 
 		#region Private Fields
@@ -67,6 +68,7 @@ namespace Kaltura.Types
 		private long _FrequencyNextDeviceAction = long.MinValue;
 		private long _FrequencyNextUserAction = long.MinValue;
 		private HouseholdRestriction _Restriction = null;
+		private int _RoleId = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -141,6 +143,10 @@ namespace Kaltura.Types
 		{
 			get { return _Restriction; }
 		}
+		public int RoleId
+		{
+			get { return _RoleId; }
+		}
 		#endregion
 
 		#region CTor
@@ -196,6 +202,9 @@ namespace Kaltura.Types
 					case "restriction":
 						this._Restriction = (HouseholdRestriction)StringEnum.Parse(typeof(HouseholdRestriction), propertyNode.InnerText);
 						continue;
+					case "roleId":
+						this._RoleId = ParseInt(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -221,6 +230,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("frequencyNextDeviceAction", this._FrequencyNextDeviceAction);
 			kparams.AddIfNotNull("frequencyNextUserAction", this._FrequencyNextUserAction);
 			kparams.AddIfNotNull("restriction", this._Restriction);
+			kparams.AddIfNotNull("roleId", this._RoleId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -255,6 +265,8 @@ namespace Kaltura.Types
 					return "FrequencyNextUserAction";
 				case RESTRICTION:
 					return "Restriction";
+				case ROLE_ID:
+					return "RoleId";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -243,17 +243,31 @@ namespace Kaltura.Services
 	public class HouseholdSuspendRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
+		public const string ROLE_ID = "roleId";
 		#endregion
 
+		public int RoleId
+		{
+			set;
+			get;
+		}
 
 		public HouseholdSuspendRequestBuilder()
 			: base("household", "suspend")
 		{
 		}
 
+		public HouseholdSuspendRequestBuilder(int roleId)
+			: this()
+		{
+			this.RoleId = roleId;
+		}
+
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("roleId"))
+				kparams.AddIfNotNull("roleId", RoleId);
 			return kparams;
 		}
 
@@ -346,9 +360,9 @@ namespace Kaltura.Services
 			return new HouseholdResumeRequestBuilder();
 		}
 
-		public static HouseholdSuspendRequestBuilder Suspend()
+		public static HouseholdSuspendRequestBuilder Suspend(int roleId = Int32.MinValue)
 		{
-			return new HouseholdSuspendRequestBuilder();
+			return new HouseholdSuspendRequestBuilder(roleId);
 		}
 
 		public static HouseholdUpdateRequestBuilder Update(Household household)

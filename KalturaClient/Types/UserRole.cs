@@ -38,13 +38,15 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID = "id";
 		public const string NAME = "name";
-		public const string PERMISSIONS = "permissions";
+		public const string PERMISSION_NAMES = "permissionNames";
+		public const string EXCLUDED_PERMISSION_NAMES = "excludedPermissionNames";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Name = null;
-		private IList<Permission> _Permissions;
+		private string _PermissionNames = null;
+		private string _ExcludedPermissionNames = null;
 		#endregion
 
 		#region Properties
@@ -61,13 +63,22 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		public IList<Permission> Permissions
+		public string PermissionNames
 		{
-			get { return _Permissions; }
+			get { return _PermissionNames; }
 			set 
 			{ 
-				_Permissions = value;
-				OnPropertyChanged("Permissions");
+				_PermissionNames = value;
+				OnPropertyChanged("PermissionNames");
+			}
+		}
+		public string ExcludedPermissionNames
+		{
+			get { return _ExcludedPermissionNames; }
+			set 
+			{ 
+				_ExcludedPermissionNames = value;
+				OnPropertyChanged("ExcludedPermissionNames");
 			}
 		}
 		#endregion
@@ -89,12 +100,11 @@ namespace Kaltura.Types
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
-					case "permissions":
-						this._Permissions = new List<Permission>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Permissions.Add(ObjectFactory.Create<Permission>(arrayNode));
-						}
+					case "permissionNames":
+						this._PermissionNames = propertyNode.InnerText;
+						continue;
+					case "excludedPermissionNames":
+						this._ExcludedPermissionNames = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -109,7 +119,8 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaUserRole");
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("permissions", this._Permissions);
+			kparams.AddIfNotNull("permissionNames", this._PermissionNames);
+			kparams.AddIfNotNull("excludedPermissionNames", this._ExcludedPermissionNames);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -120,8 +131,10 @@ namespace Kaltura.Types
 					return "Id";
 				case NAME:
 					return "Name";
-				case PERMISSIONS:
-					return "Permissions";
+				case PERMISSION_NAMES:
+					return "PermissionNames";
+				case EXCLUDED_PERMISSION_NAMES:
+					return "ExcludedPermissionNames";
 				default:
 					return base.getPropertyName(apiName);
 			}

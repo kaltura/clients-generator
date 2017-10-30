@@ -35,6 +35,94 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class UserRoleAddRequestBuilder : RequestBuilder<UserRole>
+	{
+		#region Constants
+		public const string ROLE = "role";
+		#endregion
+
+		public UserRole Role
+		{
+			set;
+			get;
+		}
+
+		public UserRoleAddRequestBuilder()
+			: base("userrole", "add")
+		{
+		}
+
+		public UserRoleAddRequestBuilder(UserRole role)
+			: this()
+		{
+			this.Role = role;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("role"))
+				kparams.AddIfNotNull("role", Role);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<UserRole>(result);
+		}
+	}
+
+	public class UserRoleDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public UserRoleDeleteRequestBuilder()
+			: base("userrole", "delete")
+		{
+		}
+
+		public UserRoleDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class UserRoleListRequestBuilder : RequestBuilder<ListResponse<UserRole>>
 	{
 		#region Constants
@@ -78,6 +166,58 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class UserRoleUpdateRequestBuilder : RequestBuilder<UserRole>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string ROLE = "role";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public UserRole Role
+		{
+			set;
+			get;
+		}
+
+		public UserRoleUpdateRequestBuilder()
+			: base("userrole", "update")
+		{
+		}
+
+		public UserRoleUpdateRequestBuilder(long id, UserRole role)
+			: this()
+		{
+			this.Id = id;
+			this.Role = role;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("role"))
+				kparams.AddIfNotNull("role", Role);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<UserRole>(result);
+		}
+	}
+
 
 	public class UserRoleService
 	{
@@ -85,9 +225,24 @@ namespace Kaltura.Services
 		{
 		}
 
+		public static UserRoleAddRequestBuilder Add(UserRole role)
+		{
+			return new UserRoleAddRequestBuilder(role);
+		}
+
+		public static UserRoleDeleteRequestBuilder Delete(long id)
+		{
+			return new UserRoleDeleteRequestBuilder(id);
+		}
+
 		public static UserRoleListRequestBuilder List(UserRoleFilter filter = null)
 		{
 			return new UserRoleListRequestBuilder(filter);
+		}
+
+		public static UserRoleUpdateRequestBuilder Update(long id, UserRole role)
+		{
+			return new UserRoleUpdateRequestBuilder(id, role);
 		}
 	}
 }

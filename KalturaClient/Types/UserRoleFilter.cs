@@ -37,11 +37,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID_IN = "idIn";
+		public const string CURRENT_USER_ROLE_IDS_CONTAINS = "currentUserRoleIdsContains";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _IdIn = null;
+		private bool? _CurrentUserRoleIdsContains = null;
 		private UserRoleOrderBy _OrderBy = null;
 		#endregion
 
@@ -53,6 +55,15 @@ namespace Kaltura.Types
 			{ 
 				_IdIn = value;
 				OnPropertyChanged("IdIn");
+			}
+		}
+		public bool? CurrentUserRoleIdsContains
+		{
+			get { return _CurrentUserRoleIdsContains; }
+			set 
+			{ 
+				_CurrentUserRoleIdsContains = value;
+				OnPropertyChanged("CurrentUserRoleIdsContains");
 			}
 		}
 		public new UserRoleOrderBy OrderBy
@@ -80,6 +91,9 @@ namespace Kaltura.Types
 					case "idIn":
 						this._IdIn = propertyNode.InnerText;
 						continue;
+					case "currentUserRoleIdsContains":
+						this._CurrentUserRoleIdsContains = ParseBool(propertyNode.InnerText);
+						continue;
 					case "orderBy":
 						this._OrderBy = (UserRoleOrderBy)StringEnum.Parse(typeof(UserRoleOrderBy), propertyNode.InnerText);
 						continue;
@@ -95,6 +109,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaUserRoleFilter");
 			kparams.AddIfNotNull("idIn", this._IdIn);
+			kparams.AddIfNotNull("currentUserRoleIdsContains", this._CurrentUserRoleIdsContains);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -104,6 +119,8 @@ namespace Kaltura.Types
 			{
 				case ID_IN:
 					return "IdIn";
+				case CURRENT_USER_ROLE_IDS_CONTAINS:
+					return "CurrentUserRoleIdsContains";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
