@@ -533,6 +533,9 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				case "array":
 					$this->appendLine("        kparams.addArrayIfDefined(\"$propName\", self.$memberName)");
 					break;
+				case "map":
+					$this->appendLine("        kparams.addMapIfDefined(\"$propName\", self.$memberName)");
+					break;
 				default :
 					$this->appendLine ( "        kparams.addObjectIfDefined(\"$propName\", self.$memberName)" );
 					break;
@@ -637,6 +640,9 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 					break;
 				case "array" :
 					$this->appendLine("        kparams.addArrayIfDefined(\"$paramName\", $argName)");
+					break;
+				case "map" :
+					$this->appendLine("        kparams.addMapIfDefined(\"$paramName\", $argName)");
 					break;
 				case "file" :
 					$this->appendLine ( "        kfiles.put(\"$paramName\", " . $argName . ");" );

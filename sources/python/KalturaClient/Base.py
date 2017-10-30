@@ -124,6 +124,20 @@ class KalturaParams(object):
                 arr.append(array[curIndex].toParams().get())
             self.params[key] = arr
 
+    def addMapIfDefined(self, key, map):
+        if map == NotImplemented:
+            return
+        if map == None:
+            self.put(key)
+            return
+        if len(map) == 0:
+            self.params[key] = {'-': ''}
+        else:
+            dic = {}
+            for currentKey in map:
+                dic[currentKey] = map[currentKey].toParams().get()
+            self.params[key] = dic
+			
     def addStringIfDefined(self, key, value):
         if value != NotImplemented:
             self.put(key, value)
