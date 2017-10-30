@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Kaltura.Types;
@@ -118,6 +119,30 @@ namespace Kaltura.Request
             CreateProxy(request);
 
             request.BeginGetRequestStream(new AsyncCallback(RequestCallback), this);
+        }
+
+        public T ExecuteAndWaitForResponse(Client client = null)
+        {
+            var taskWrapper = Task.Run(() =>
+            {
+                var taskResult = new TaskCompletionSource<T>();
+                this.SetCompletion((result, err) =>
+                    {
+                        if (err != null)
+                        {
+                            taskResult.TrySetException(err);
+                        }
+                        else
+                        {
+                            taskResult.TrySetResult(result);
+                        }
+                    })
+                    .Execute(client);
+                return taskResult.Task;
+            });
+
+            taskWrapper.Wait();
+            return taskWrapper.Result;
         }
 
         private void RequestCallback(IAsyncResult result)
