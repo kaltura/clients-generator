@@ -103,6 +103,8 @@ namespace Kaltura
 					return new ListResponse<Favorite>(xmlElement);
 				case "KalturaOTTUserListResponse":
 					return new ListResponse<OTTUser>(xmlElement);
+				case "KalturaCollectionListResponse":
+					return new ListResponse<Collection>(xmlElement);
 				case "KalturaSubscriptionSetListResponse":
 					return new ListResponse<SubscriptionSet>(xmlElement);
 				case "KalturaProductPriceListResponse":
