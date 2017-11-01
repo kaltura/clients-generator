@@ -14,7 +14,7 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
     protected callback: (response: KalturaResponse<T>) => void;
     private responseType : string;
     private responseSubType : string;
-    private _responseConstructor : { new() : KalturaObjectBase}; // NOTICE: this property is not used directly. It is here to force import of that type for bundling issues.
+    protected _responseConstructor : { new() : KalturaObjectBase}; // NOTICE: this property is not used directly. It is here to force import of that type for bundling issues.
 
     constructor(data : KalturaRequestBaseArgs, {responseType, responseSubType, responseConstructor} : {responseType : string, responseSubType? : string, responseConstructor : { new() : KalturaObjectBase}  } ) {
         super(data);

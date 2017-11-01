@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="5.1.2"></a>
+## [5.1.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.1...v5.1.2) (2017-10-29)
+
+
+### Bug Fixes
+
+* compile issue with typescript version ([c3cfd95](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/c3cfd95))
+* use chunk upload only for services that support it ([43dd5e2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/43dd5e2))
+
+
+
 <a name="5.1.1"></a>
 ## [5.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.0...v5.1.1) (2017-10-22)
 
