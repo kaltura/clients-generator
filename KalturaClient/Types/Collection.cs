@@ -46,9 +46,10 @@ namespace Kaltura.Types
 		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string DESCRIPTION = "description";
 		public const string MULTILINGUAL_DESCRIPTION = "multilingualDescription";
-		public const string PRICE_PLAN_IDS = "pricePlanIds";
+		public const string USAGE_MODULE = "usageModule";
 		public const string COUPONS_GROUPS = "couponsGroups";
 		public const string EXTERNAL_ID = "externalId";
+		public const string PRODUCT_CODES = "productCodes";
 		#endregion
 
 		#region Private Fields
@@ -62,9 +63,10 @@ namespace Kaltura.Types
 		private MultilingualString _MultilingualName;
 		private string _Description = null;
 		private MultilingualString _MultilingualDescription;
-		private string _PricePlanIds = null;
+		private UsageModule _UsageModule;
 		private IList<CouponsGroup> _CouponsGroups;
 		private string _ExternalId = null;
+		private IList<ProductCode> _ProductCodes;
 		#endregion
 
 		#region Properties
@@ -158,13 +160,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualDescription");
 			}
 		}
-		public string PricePlanIds
+		public UsageModule UsageModule
 		{
-			get { return _PricePlanIds; }
+			get { return _UsageModule; }
 			set 
 			{ 
-				_PricePlanIds = value;
-				OnPropertyChanged("PricePlanIds");
+				_UsageModule = value;
+				OnPropertyChanged("UsageModule");
 			}
 		}
 		public IList<CouponsGroup> CouponsGroups
@@ -183,6 +185,15 @@ namespace Kaltura.Types
 			{ 
 				_ExternalId = value;
 				OnPropertyChanged("ExternalId");
+			}
+		}
+		public IList<ProductCode> ProductCodes
+		{
+			get { return _ProductCodes; }
+			set 
+			{ 
+				_ProductCodes = value;
+				OnPropertyChanged("ProductCodes");
 			}
 		}
 		#endregion
@@ -232,8 +243,8 @@ namespace Kaltura.Types
 					case "multilingualDescription":
 						this._MultilingualDescription = ObjectFactory.Create<MultilingualString>(propertyNode);
 						continue;
-					case "pricePlanIds":
-						this._PricePlanIds = propertyNode.InnerText;
+					case "usageModule":
+						this._UsageModule = ObjectFactory.Create<UsageModule>(propertyNode);
 						continue;
 					case "couponsGroups":
 						this._CouponsGroups = new List<CouponsGroup>();
@@ -244,6 +255,13 @@ namespace Kaltura.Types
 						continue;
 					case "externalId":
 						this._ExternalId = propertyNode.InnerText;
+						continue;
+					case "productCodes":
+						this._ProductCodes = new List<ProductCode>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._ProductCodes.Add(ObjectFactory.Create<ProductCode>(arrayNode));
+						}
 						continue;
 				}
 			}
@@ -266,9 +284,10 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("description", this._Description);
 			kparams.AddIfNotNull("multilingualDescription", this._MultilingualDescription);
-			kparams.AddIfNotNull("pricePlanIds", this._PricePlanIds);
+			kparams.AddIfNotNull("usageModule", this._UsageModule);
 			kparams.AddIfNotNull("couponsGroups", this._CouponsGroups);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
+			kparams.AddIfNotNull("productCodes", this._ProductCodes);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -295,12 +314,14 @@ namespace Kaltura.Types
 					return "Description";
 				case MULTILINGUAL_DESCRIPTION:
 					return "MultilingualDescription";
-				case PRICE_PLAN_IDS:
-					return "PricePlanIds";
+				case USAGE_MODULE:
+					return "UsageModule";
 				case COUPONS_GROUPS:
 					return "CouponsGroups";
 				case EXTERNAL_ID:
 					return "ExternalId";
+				case PRODUCT_CODES:
+					return "ProductCodes";
 				default:
 					return base.getPropertyName(apiName);
 			}
