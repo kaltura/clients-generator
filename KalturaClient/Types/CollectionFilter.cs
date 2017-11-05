@@ -37,11 +37,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string COLLECTION_ID_IN = "collectionIdIn";
+		public const string MEDIA_FILE_ID_EQUAL = "mediaFileIdEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _CollectionIdIn = null;
+		private int _MediaFileIdEqual = Int32.MinValue;
 		private CollectionOrderBy _OrderBy = null;
 		#endregion
 
@@ -53,6 +55,15 @@ namespace Kaltura.Types
 			{ 
 				_CollectionIdIn = value;
 				OnPropertyChanged("CollectionIdIn");
+			}
+		}
+		public int MediaFileIdEqual
+		{
+			get { return _MediaFileIdEqual; }
+			set 
+			{ 
+				_MediaFileIdEqual = value;
+				OnPropertyChanged("MediaFileIdEqual");
 			}
 		}
 		public new CollectionOrderBy OrderBy
@@ -80,6 +91,9 @@ namespace Kaltura.Types
 					case "collectionIdIn":
 						this._CollectionIdIn = propertyNode.InnerText;
 						continue;
+					case "mediaFileIdEqual":
+						this._MediaFileIdEqual = ParseInt(propertyNode.InnerText);
+						continue;
 					case "orderBy":
 						this._OrderBy = (CollectionOrderBy)StringEnum.Parse(typeof(CollectionOrderBy), propertyNode.InnerText);
 						continue;
@@ -95,6 +109,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaCollectionFilter");
 			kparams.AddIfNotNull("collectionIdIn", this._CollectionIdIn);
+			kparams.AddIfNotNull("mediaFileIdEqual", this._MediaFileIdEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -104,6 +119,8 @@ namespace Kaltura.Types
 			{
 				case COLLECTION_ID_IN:
 					return "CollectionIdIn";
+				case MEDIA_FILE_ID_EQUAL:
+					return "MediaFileIdEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

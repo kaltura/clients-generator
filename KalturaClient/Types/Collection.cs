@@ -40,7 +40,6 @@ namespace Kaltura.Types
 		public const string CHANNELS = "channels";
 		public const string START_DATE = "startDate";
 		public const string END_DATE = "endDate";
-		public const string PRICE = "price";
 		public const string DISCOUNT_MODULE = "discountModule";
 		public const string NAME = "name";
 		public const string MULTILINGUAL_NAME = "multilingualName";
@@ -50,6 +49,7 @@ namespace Kaltura.Types
 		public const string COUPONS_GROUPS = "couponsGroups";
 		public const string EXTERNAL_ID = "externalId";
 		public const string PRODUCT_CODES = "productCodes";
+		public const string PRICE_DETAILS_ID = "priceDetailsId";
 		#endregion
 
 		#region Private Fields
@@ -57,7 +57,6 @@ namespace Kaltura.Types
 		private IList<BaseChannel> _Channels;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
-		private PriceDetails _Price;
 		private DiscountModule _DiscountModule;
 		private string _Name = null;
 		private MultilingualString _MultilingualName;
@@ -67,6 +66,7 @@ namespace Kaltura.Types
 		private IList<CouponsGroup> _CouponsGroups;
 		private string _ExternalId = null;
 		private IList<ProductCode> _ProductCodes;
+		private long _PriceDetailsId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -104,15 +104,6 @@ namespace Kaltura.Types
 			{ 
 				_EndDate = value;
 				OnPropertyChanged("EndDate");
-			}
-		}
-		public PriceDetails Price
-		{
-			get { return _Price; }
-			set 
-			{ 
-				_Price = value;
-				OnPropertyChanged("Price");
 			}
 		}
 		public DiscountModule DiscountModule
@@ -196,6 +187,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductCodes");
 			}
 		}
+		public long PriceDetailsId
+		{
+			get { return _PriceDetailsId; }
+			set 
+			{ 
+				_PriceDetailsId = value;
+				OnPropertyChanged("PriceDetailsId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -224,9 +224,6 @@ namespace Kaltura.Types
 						continue;
 					case "endDate":
 						this._EndDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "price":
-						this._Price = ObjectFactory.Create<PriceDetails>(propertyNode);
 						continue;
 					case "discountModule":
 						this._DiscountModule = ObjectFactory.Create<DiscountModule>(propertyNode);
@@ -263,6 +260,9 @@ namespace Kaltura.Types
 							this._ProductCodes.Add(ObjectFactory.Create<ProductCode>(arrayNode));
 						}
 						continue;
+					case "priceDetailsId":
+						this._PriceDetailsId = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -278,7 +278,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("channels", this._Channels);
 			kparams.AddIfNotNull("startDate", this._StartDate);
 			kparams.AddIfNotNull("endDate", this._EndDate);
-			kparams.AddIfNotNull("price", this._Price);
 			kparams.AddIfNotNull("discountModule", this._DiscountModule);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
@@ -288,6 +287,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("couponsGroups", this._CouponsGroups);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("productCodes", this._ProductCodes);
+			kparams.AddIfNotNull("priceDetailsId", this._PriceDetailsId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -302,8 +302,6 @@ namespace Kaltura.Types
 					return "StartDate";
 				case END_DATE:
 					return "EndDate";
-				case PRICE:
-					return "Price";
 				case DISCOUNT_MODULE:
 					return "DiscountModule";
 				case NAME:
@@ -322,6 +320,8 @@ namespace Kaltura.Types
 					return "ExternalId";
 				case PRODUCT_CODES:
 					return "ProductCodes";
+				case PRICE_DETAILS_ID:
+					return "PriceDetailsId";
 				default:
 					return base.getPropertyName(apiName);
 			}
