@@ -7,7 +7,10 @@
     "Kaltura"
   ],
   "license": "AGPL-3.0",
-  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "author": {
+    "name": "Kaltura Community",
+    "email": "community@kaltura.com"
+  },
   "contributors": [
     {
       "name": "Eran Sakal",
@@ -43,7 +46,6 @@
     "@types/jasmine": "^2.5.46",
     "@types/jquery": "^2.0.40",
     "@types/ramda": "0.0.3",
-    "awesome-typescript-loader": "~3.0.0-beta.18",
     "core-js": "2.4.1",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
@@ -54,26 +56,13 @@
     "gulp-tslint": "~7.1.0",
     "gulp-typescript": "^3.1.2",
     "gulp-util": "^3.0.7",
-    "jasmine-core": "^2.3.4",
-    "jasmine-spec-reporter": "^2.4.0",
-    "karma": "^1.2.0",
-    "karma-chrome-launcher": "^2.0.0",
-    "karma-coverage": "^1.1.1",
-    "karma-jasmine": "^1.0.2",
-    "karma-mocha-reporter": "^2.0.0",
-    "karma-phantomjs-launcher": "1.0.0",
-    "karma-remap-coverage": "^0.1.4",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "2.0.2",
     "merge2": "^1.0.2",
-    "phantomjs-prebuilt": "2.1.14",
     "rimraf": "^2.5.1",
     "run-sequence": "1.2.2",
     "standard-version": "^4.0.0",
     "tslint": "4.3.1",
     "tslint-loader": "3.2.1",
-    "typescript": "2.2.0",
-    "webpack": "2.2.0",
+    "typescript": "^2.4.0",
     "yargs": "^5.0.0"
   },
   "engines": {

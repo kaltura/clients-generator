@@ -124,6 +124,20 @@ class KalturaParams(object):
                 arr.append(array[curIndex].toParams().get())
             self.params[key] = arr
 
+    def addMapIfDefined(self, key, map):
+        if map == NotImplemented:
+            return
+        if map == None:
+            self.put(key)
+            return
+        if len(map) == 0:
+            self.params[key] = {'-': ''}
+        else:
+            dic = {}
+            for currentKey in map:
+                dic[currentKey] = map[currentKey].toParams().get()
+            self.params[key] = dic
+			
     def addStringIfDefined(self, key, value):
         if value != NotImplemented:
             self.put(key, value)
@@ -164,10 +178,7 @@ class KalturaParams(object):
         if value == None:
             self.put(key)
             return
-        if value:
-            self.put(key, '1')
-        else:
-            self.put(key, '0')
+        self.put(key, value)
 
     def sort(self, params):
         for key in params:
@@ -261,22 +272,26 @@ class KalturaObjectBase(object):
         
         from KalturaClient.Plugins.Core import KalturaListResponse
         KalturaObjectBase.PROPERTY_LOADERS = {
-            'relatedObjects': (KalturaObjectFactory.createMap, KalturaListResponse) 
+            'relatedObjects': (KalturaObjectFactory.createMap, 'KalturaListResponse') 
         }
     
     def fromXmlImpl(self, node, propList):
         for childNode in node.childNodes:
             nodeName = childNode.nodeName
-            if nodeName not in propList:
-                continue
-            propLoader = propList[nodeName]
+            propName = nodeName
+            if propName not in propList:
+                propName += "_"
+                if propName not in propList:
+                    continue
+					
+            propLoader = propList[propName]
             if type(propLoader) == tuple:
                 (func, param) = propLoader
                 loadedValue = func(childNode, param)
             else:
                 func = propLoader
                 loadedValue = func(childNode)
-            setattr(self, nodeName, loadedValue)
+            setattr(self, propName, loadedValue)
 
     def fromXml(self, node):
         self.fromXmlImpl(node, KalturaObjectBase.PROPERTY_LOADERS)

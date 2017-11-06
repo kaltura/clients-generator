@@ -2,7 +2,7 @@ This source contains:
  - The Kaltura client library (KalturaClient.py & KalturaClientBase.py)
  - Auto generated core APIs (KalturaCoreClient.py)
  - Auto generated plugin APIs (KalturaPlugins/*.py)
- - Python library test code and data files (TestCode/*)
+ - Python library test code and data files (KalturaClient/tests)
 
 == STANDARD DEPENDENCIES ==
 
@@ -24,10 +24,9 @@ The API library depends on the following python modules (included with python by
  
 == EXTERNAL DEPENDENCIES ==
 
-The API library depends on the following python modules that are not included by default with python:
+The API client depends on the following python modules that are not included by default with python:
  - setuptools - can be downloaded from https://pypi.python.org/pypi/setuptools
  - requests (2.4.2 or above) - can be downloaded from https://pypi.python.org/pypi/requests/
-	installed by running: python setup.py requests
  - requests-toolbelt - https://pypi.python.org/pypi/requests-toolbelt
  - six - https://pypi.python.org/pypi/six
 
@@ -38,7 +37,7 @@ than an open file handle.
 == INSTALLATION ==
 
 Make sure you have the modules listed under the 'external dependencies' installed.
-Install the Kaltura client by running 'python setup.py install' from the same folder as this README file.
+Install the Kaltura client by running 'python setup.py install' in the client's root directory.
 
 == TESTING THE CLIENT LIBRARY ==
   

@@ -406,7 +406,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				continue;
 							
 			$propType = $propertyNode->getAttribute ( "type" );
-			$propName = $propertyNode->getAttribute ( "name" );
+			$propName = $this->replaceReservedWords($propertyNode->getAttribute ( "name" ));
 			$isEnum = $propertyNode->hasAttribute ( "enumType" );
 			
 			$curLine = "        '$propName': ";
@@ -533,6 +533,9 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				case "array":
 					$this->appendLine("        kparams.addArrayIfDefined(\"$propName\", self.$memberName)");
 					break;
+				case "map":
+					$this->appendLine("        kparams.addMapIfDefined(\"$propName\", self.$memberName)");
+					break;
 				default :
 					$this->appendLine ( "        kparams.addObjectIfDefined(\"$propName\", self.$memberName)" );
 					break;
@@ -638,6 +641,9 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				case "array" :
 					$this->appendLine("        kparams.addArrayIfDefined(\"$paramName\", $argName)");
 					break;
+				case "map" :
+					$this->appendLine("        kparams.addMapIfDefined(\"$paramName\", $argName)");
+					break;
 				case "file" :
 					$this->appendLine ( "        kfiles.put(\"$paramName\", " . $argName . ");" );
 					break;
@@ -661,9 +667,9 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 	    		$fallbackClass = $resultType;
 	    	
 			if ($haveFiles)
-				$this->appendLine("        self.client.queueServiceActionCall(\"".strtolower($serviceId)."\", \"$action\", $fallbackClass, kparams, kfiles)");
+				$this->appendLine("        self.client.queueServiceActionCall(\"".strtolower($serviceId)."\", \"$action\", \"$fallbackClass\", kparams, kfiles)");
 			else
-				$this->appendLine("        self.client.queueServiceActionCall(\"".strtolower($serviceId)."\", \"$action\", $fallbackClass, kparams)");
+				$this->appendLine("        self.client.queueServiceActionCall(\"".strtolower($serviceId)."\", \"$action\", \"$fallbackClass\", kparams)");
 			$this->appendLine("        if self.client.isMultiRequest():");
 			$this->appendLine("            return self.client.getMultiRequestResult()");
 			$this->appendLine("        resultNode = self.client.doQueue()");

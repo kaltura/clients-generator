@@ -109,6 +109,8 @@ class KalturaClient(object):
         if (logger):
             self.shouldLog = True
 
+        KalturaObjectFactory.registerObjects({'KalturaObjectBase': KalturaObjectBase})
+		
         self.loadPlugins()
         self.loadConfigurations()
 

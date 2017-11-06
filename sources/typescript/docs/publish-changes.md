@@ -83,8 +83,6 @@ cp -R ./output/typescript/. $target/
   - `changelog.me` with the relevant content.
   - `features.md` with new features if added.
 
-> If you want
-
 5. [Open a PR](https://github.com/kaltura/clients-generator/pulls).
 
 6. Your PR was approved? Continue to the final step.
