@@ -34,8 +34,7 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         Object.assign(
             result.properties,
             {
-                service : { default : 'multirequest', type : 'c'  },
-                action : { default : 'null', type : 'c'  }
+                service : { default : 'multirequest', type : 'c'  }
             });
 
         return result;
