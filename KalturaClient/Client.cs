@@ -35,8 +35,8 @@ namespace Kaltura
 	{
 		public Client(Configuration config) : base(config)
 		{
-				ApiVersion = "4.6.39.43130";
-				ClientTag = "dotnet:17-11-12";
+				ApiVersion = "4.6.39.13065";
+				ClientTag = "dotnet:17-11-13";
 		}
 	
 		#region Properties
