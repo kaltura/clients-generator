@@ -167,7 +167,7 @@ export abstract class KalturaObjectBase{
                             Object.keys(sourceValue).forEach(itemKey =>
                             {
                                 const itemValue = sourceValue[itemKey];
-                               const newItem =  this._createKalturaObject(property.subType);
+                                const newItem =  this._createKalturaObject(property.subType);
 
                                 if (itemValue && newItem) {
                                     newItem.fromResponseObject(itemValue);
@@ -195,10 +195,7 @@ export abstract class KalturaObjectBase{
                                 }
                             });
 
-                            if (parsedArray.length)
-                            {
-                                result = parsedArray;
-                            }
+                            result = parsedArray;
                         } else {
                             throw new Error(`failed to parse property '${propertyName}. Expected type array, got type '${typeof sourceValue}`);
                         }
@@ -250,7 +247,7 @@ export abstract class KalturaObjectBase{
 
         if (usedFallbackType && result)
         {
-                logger.warn(`[kaltura-typescript-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
+            logger.warn(`[kaltura-typescript-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
         }else if (!result)
         {
             logger.warn(`[kaltura-typescript-client]: Could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
