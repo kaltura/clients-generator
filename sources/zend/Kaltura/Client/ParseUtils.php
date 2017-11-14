@@ -70,7 +70,7 @@ class Kaltura_Client_ParseUtils
 			$xmls = $xml->children();
 			foreach($xmls as $xml)
 			{
-				$ret[strval($xml->itemKey)] = self::unmarshalObject($xml, $fallbackType);
+				$ret[strval($xml->Key)] = self::unmarshalObject($xml, $fallbackType);
 			}
 		}
 			
