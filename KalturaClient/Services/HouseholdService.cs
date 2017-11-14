@@ -82,15 +82,9 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string ID = "id";
-		public const string PURGE = "purge";
 		#endregion
 
 		public int Id
-		{
-			set;
-			get;
-		}
-		public bool Purge
 		{
 			set;
 			get;
@@ -101,11 +95,10 @@ namespace Kaltura.Services
 		{
 		}
 
-		public HouseholdDeleteRequestBuilder(int id, bool purge)
+		public HouseholdDeleteRequestBuilder(int id)
 			: this()
 		{
 			this.Id = id;
-			this.Purge = purge;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -113,8 +106,6 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("id"))
 				kparams.AddIfNotNull("id", Id);
-			if (!isMapped("purge"))
-				kparams.AddIfNotNull("purge", Purge);
 			return kparams;
 		}
 
@@ -349,9 +340,9 @@ namespace Kaltura.Services
 			return new HouseholdAddRequestBuilder(household);
 		}
 
-		public static HouseholdDeleteRequestBuilder Delete(int id = Int32.MinValue, bool purge = False)
+		public static HouseholdDeleteRequestBuilder Delete(int id = Int32.MinValue)
 		{
-			return new HouseholdDeleteRequestBuilder(id, purge);
+			return new HouseholdDeleteRequestBuilder(id);
 		}
 
 		public static HouseholdGetRequestBuilder Get(int id = Int32.MinValue)
