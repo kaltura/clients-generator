@@ -30,7 +30,7 @@ class KalturaLogger(IKalturaLogger):
 
 def GetConfig():
     config = KalturaConfiguration()
-    config.requestTimeout = 300
+    config.requestTimeout = 500
     config.serviceUrl = SERVICE_URL
     config.setLogger(KalturaLogger())
     return config
