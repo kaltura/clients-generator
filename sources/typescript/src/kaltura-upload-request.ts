@@ -4,7 +4,7 @@ import { KalturaObjectBase } from "./kaltura-object-base";
 export type ProgressCallback = (loaded: number, total: number) => void;
 
 export interface KalturaUploadRequestArgs extends KalturaRequestArgs {
-  uploadedFileSize?: number;
+    uploadedFileSize?: number;
 }
 
 export class KalturaUploadRequest<T> extends KalturaRequest<T> {
@@ -35,36 +35,16 @@ export class KalturaUploadRequest<T> extends KalturaRequest<T> {
             && !!properties["finalChunk"];
     }
 
-    public getFilePropertyName(): string {
+    public getFileInfo(): { file: File, propertyName: string } {
         const metadataProperties = this._getMetadata().properties;
-        return Object.keys(metadataProperties).find(propertyName => metadataProperties[propertyName].type === "f");
-    }
+        const filePropertyName = Object.keys(metadataProperties).find(propertyName => metadataProperties[propertyName].type === "f");
 
-    public getFileData(): File {
-        const filePropertyName = this.getFilePropertyName();
-        return filePropertyName ? this[filePropertyName] : null;
-    }
-
-    public getFormData(): FormData {
-        let result = null;
-        const filePropertyName = this.getFilePropertyName();
-
-        if (filePropertyName) {
-            const file = this[filePropertyName];
-
-            if (file) {
-                result = new FormData();
-                result.append("fileName", file.name);
-                result.append(filePropertyName, file);
-            }
-        }
-
-        return result;
+        return filePropertyName ? { propertyName: filePropertyName, file: this[filePropertyName] } : null;
     }
 
     public toRequestObject(): {} {
         const result = super.toRequestObject();
-        const filePropertyName = this.getFilePropertyName();
+        const { propertyName: filePropertyName } = this.getFileInfo();
 
         if (filePropertyName) {
             delete result[filePropertyName];
