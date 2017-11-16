@@ -42,7 +42,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private string _Value = null;
-		private MultilingualString _MultilingualValue;
+		private IList<TranslationToken> _MultilingualValue;
 		#endregion
 
 		#region Properties
@@ -55,7 +55,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Value");
 			}
 		}
-		public MultilingualString MultilingualValue
+		public IList<TranslationToken> MultilingualValue
 		{
 			get { return _MultilingualValue; }
 			set 
@@ -81,7 +81,11 @@ namespace Kaltura.Types
 						this._Value = propertyNode.InnerText;
 						continue;
 					case "multilingualValue":
-						this._MultilingualValue = ObjectFactory.Create<MultilingualString>(propertyNode);
+						this._MultilingualValue = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
 						continue;
 				}
 			}

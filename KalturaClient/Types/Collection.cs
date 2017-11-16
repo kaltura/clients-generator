@@ -59,9 +59,9 @@ namespace Kaltura.Types
 		private long _EndDate = long.MinValue;
 		private DiscountModule _DiscountModule;
 		private string _Name = null;
-		private MultilingualString _MultilingualName;
+		private IList<TranslationToken> _MultilingualName;
 		private string _Description = null;
-		private MultilingualString _MultilingualDescription;
+		private IList<TranslationToken> _MultilingualDescription;
 		private UsageModule _UsageModule;
 		private IList<CouponsGroup> _CouponsGroups;
 		private string _ExternalId = null;
@@ -124,7 +124,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		public MultilingualString MultilingualName
+		public IList<TranslationToken> MultilingualName
 		{
 			get { return _MultilingualName; }
 			set 
@@ -142,7 +142,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
-		public MultilingualString MultilingualDescription
+		public IList<TranslationToken> MultilingualDescription
 		{
 			get { return _MultilingualDescription; }
 			set 
@@ -232,13 +232,21 @@ namespace Kaltura.Types
 						this._Name = propertyNode.InnerText;
 						continue;
 					case "multilingualName":
-						this._MultilingualName = ObjectFactory.Create<MultilingualString>(propertyNode);
+						this._MultilingualName = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
 						continue;
 					case "description":
 						this._Description = propertyNode.InnerText;
 						continue;
 					case "multilingualDescription":
-						this._MultilingualDescription = ObjectFactory.Create<MultilingualString>(propertyNode);
+						this._MultilingualDescription = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
 						continue;
 					case "usageModule":
 						this._UsageModule = ObjectFactory.Create<UsageModule>(propertyNode);
