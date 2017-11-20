@@ -36,7 +36,8 @@ class Php53ClientGenerator extends ClientGeneratorFromXml
 	private function cacheType(DOMElement $classNode)
 	{
 		$className = $classNode->getAttribute('name');
-		$classCacheName = preg_replace('/^Kaltura(.+)$/', '$1', $className); 
+		$classCacheName = preg_replace('/^Kaltura(.+)$/', '$1', $className);
+		$classCacheName = $this->replaceReservedWords($classCacheName);
 		
 		$classInfo = new PhpZend2ClientGeneratorClassInfo();
 		$classInfo->setClassName($classCacheName);
@@ -163,11 +164,23 @@ class Php53ClientGenerator extends ClientGeneratorFromXml
 		return "library/Kaltura/Client/Plugin/{$pluginName}/Enum/{$enumName}.php";
 	}
 	
+	protected function replaceReservedWords($className)
+	{
+		switch($className)
+		{
+			case 'String':
+				return 'Str';
+		}
+		
+		return $className;	
+	}
+	
 	protected function getTypePath(DOMElement $classNode)
 	{
 		$className = $classNode->getAttribute('name');
-		$className = preg_replace('/^Kaltura(.+)$/', '$1', $className); 
-			
+		$className = preg_replace('/^Kaltura(.+)$/', '$1', $className);
+		$className = $this->replaceReservedWords($className); 
+
 		if(!$classNode->hasAttribute('plugin'))
 			return "library/Kaltura/Client/Type/{$className}.php";
 

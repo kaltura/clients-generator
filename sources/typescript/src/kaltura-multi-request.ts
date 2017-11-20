@@ -34,12 +34,28 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         Object.assign(
             result.properties,
             {
-                service : { default : 'multirequest', type : 'c'  },
-                action : { default : 'null', type : 'c'  }
+                service : { default : 'multirequest', type : 'c'  }
             });
 
         return result;
 
+    }
+
+    private _unwrapResponse(response : any) : any
+    {
+        // if response is object without 'objectType' property and with 'result' property -> it is ott response
+        if (response && typeof response === 'object' && !response.objectType && response.result)
+        {
+            // if response.result is object without 'objectType' property and with 'error' property -> it is ott error response
+            if (typeof response.result === 'object' && !response.result.objectType && response.result.error) {
+                return response.result.error;
+            }else
+            {
+                return response.result;
+            }
+        }else {
+            return response;
+        }
     }
 
     setCompletion(callback: (response: KalturaMultiResponse) => void): KalturaMultiRequest {
@@ -50,7 +66,10 @@ export class KalturaMultiRequest extends KalturaRequestBase {
     handleResponse(responses: any[]): KalturaMultiResponse {
         const kalturaResponses: KalturaResponse<any>[] = [];
 
-        if (!responses || !(responses instanceof Array) || responses.length != this.requests.length) {
+        const unwrappedResponse = this._unwrapResponse(responses);
+        let responseObject = null;
+
+        if (!unwrappedResponse || !(unwrappedResponse instanceof Array) || unwrappedResponse.length !== this.requests.length) {
             const response = new KalturaAPIException('client::response_type_error', `server response is invalid, expected array of ${this.requests.length}`);
             for (let i = 0, len = this.requests.length; i < len; i++) {
                 kalturaResponses.push(this.requests[i].handleResponse(response));
@@ -59,7 +78,7 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         else {
 
             for (let i = 0, len = this.requests.length; i < len; i++) {
-                const serverResponse = responses[i];
+                const serverResponse = unwrappedResponse[i];
                 kalturaResponses.push(this.requests[i].handleResponse(serverResponse));
             }
 
