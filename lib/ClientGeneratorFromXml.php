@@ -424,7 +424,8 @@ abstract class ClientGeneratorFromXml
 			}
 		}
 
-		$fileContents = str_replace(array('@DATE@', '@VERSION@'), array(date('y-m-d'), $this->version), $fileContents);
+		$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
+		$fileContents = str_replace('@VERSION@', $this->version, $fileContents);
 		
 		$this->writeFile($fileName, $fileContents);
 	}
