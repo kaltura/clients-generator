@@ -22,7 +22,7 @@ The contents of this client are auto generated from https://github.com/kaltura/c
 
 Relevant files are:
 - sources/node2
-- tests/node2
+- tests/ovp/node2
 - lib/Node2ClientGenerator.php
 
 [![Build Status](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS.svg?branch=master)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsNodeJS)
