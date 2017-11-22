@@ -34,6 +34,7 @@ namespace Kaltura.Enums
 		public static readonly DrmSchemeName FAIRPLAY = new DrmSchemeName("FAIRPLAY");
 		public static readonly DrmSchemeName WIDEVINE = new DrmSchemeName("WIDEVINE");
 		public static readonly DrmSchemeName PLAYREADY = new DrmSchemeName("PLAYREADY");
+		public static readonly DrmSchemeName CUSTOM_DRM = new DrmSchemeName("CUSTOM_DRM");
 
 		private DrmSchemeName(string name) : base(name) { }
 	}
