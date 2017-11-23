@@ -43,6 +43,7 @@ namespace Kaltura.Types
 		public const string ACTIVATED_ON = "activatedOn";
 		public const string STATUS = "status";
 		public const string DEVICE_FAMILY_ID = "deviceFamilyId";
+		public const string DRM = "drm";
 		#endregion
 
 		#region Private Fields
@@ -53,6 +54,7 @@ namespace Kaltura.Types
 		private long _ActivatedOn = long.MinValue;
 		private DeviceStatus _Status = null;
 		private long _DeviceFamilyId = long.MinValue;
+		private CustomDrmPlaybackPluginData _Drm;
 		#endregion
 
 		#region Properties
@@ -109,6 +111,10 @@ namespace Kaltura.Types
 		{
 			get { return _DeviceFamilyId; }
 		}
+		public CustomDrmPlaybackPluginData Drm
+		{
+			get { return _Drm; }
+		}
 		#endregion
 
 		#region CTor
@@ -143,6 +149,9 @@ namespace Kaltura.Types
 					case "deviceFamilyId":
 						this._DeviceFamilyId = ParseLong(propertyNode.InnerText);
 						continue;
+					case "drm":
+						this._Drm = ObjectFactory.Create<CustomDrmPlaybackPluginData>(propertyNode);
+						continue;
 				}
 			}
 		}
@@ -161,6 +170,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("activatedOn", this._ActivatedOn);
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("deviceFamilyId", this._DeviceFamilyId);
+			kparams.AddIfNotNull("drm", this._Drm);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -181,6 +191,8 @@ namespace Kaltura.Types
 					return "Status";
 				case DEVICE_FAMILY_ID:
 					return "DeviceFamilyId";
+				case DRM:
+					return "Drm";
 				default:
 					return base.getPropertyName(apiName);
 			}
