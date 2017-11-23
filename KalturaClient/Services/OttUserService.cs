@@ -787,6 +787,58 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class OttUserUpdateDynamicDataRequestBuilder : RequestBuilder<OTTUserDynamicData>
+	{
+		#region Constants
+		public const string KEY = "key";
+		public const string VALUE = "value";
+		#endregion
+
+		public string Key
+		{
+			set;
+			get;
+		}
+		public StringValue Value
+		{
+			set;
+			get;
+		}
+
+		public OttUserUpdateDynamicDataRequestBuilder()
+			: base("ottuser", "updateDynamicData")
+		{
+		}
+
+		public OttUserUpdateDynamicDataRequestBuilder(string key, StringValue value)
+			: this()
+		{
+			this.Key = key;
+			this.Value = value;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("key"))
+				kparams.AddIfNotNull("key", Key);
+			if (!isMapped("value"))
+				kparams.AddIfNotNull("value", Value);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<OTTUserDynamicData>(result);
+		}
+	}
+
 	public class OttUserUpdateLoginDataRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -982,6 +1034,11 @@ namespace Kaltura.Services
 		public static OttUserUpdateRequestBuilder Update(OTTUser user, string id = null)
 		{
 			return new OttUserUpdateRequestBuilder(user, id);
+		}
+
+		public static OttUserUpdateDynamicDataRequestBuilder UpdateDynamicData(string key, StringValue value)
+		{
+			return new OttUserUpdateDynamicDataRequestBuilder(key, value);
 		}
 
 		public static OttUserUpdateLoginDataRequestBuilder UpdateLoginData(string username, string oldPassword, string newPassword)
