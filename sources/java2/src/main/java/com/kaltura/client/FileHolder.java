@@ -60,6 +60,7 @@ public class FileHolder implements Serializable {
     /**
      * Create a KF from a FileInputStream object
      * @param fileInputStream the file stream (must not be null)
+     * @param mimeType mime type
      * @param name the file name
      */
     public FileHolder(FileInputStream fileInputStream, String mimeType, String name) {
@@ -83,6 +84,7 @@ public class FileHolder implements Serializable {
     /**
      * Create a KF from a normal input stream and some params
      * @param inputStream the file content stream (must not be null)
+     * @param mimeType mime type
      * @param name the file name
      * @param size the file size
      */

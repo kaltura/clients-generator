@@ -53,6 +53,7 @@ public class ClientConfigBase implements Serializable {
 	}
 
 	/**
+	 * @param key property name
 	 * @return String
 	 */
 	public String getClientConfigProperty(String key){
@@ -72,6 +73,7 @@ public class ClientConfigBase implements Serializable {
 	}
 
 	/**
+	 * @param key property name
 	 * @return String
 	 */
 	public String getRequestConfigProperty(String key){
