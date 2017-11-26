@@ -6,14 +6,14 @@ setup(
     url='https://github.com/kaltura/KalturaGeneratedAPIClientsPython',
     packages=['KalturaClient', 'KalturaClient.Plugins'],
     install_requires=['requests>=2.4.2', 'requests-toolbelt', 'six'],
-    license='AGPL',
+    license='AGPLv3+',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
 
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
 
-        'License :: OSI Approved :: AGPL License',
+        'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+),'
 
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
