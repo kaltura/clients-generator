@@ -37,8 +37,8 @@ public class ErrorElement {
     /**
      * enable user to change default message with his own
      *
-     * @param message
-     * @return
+     * @param message error message
+     * @return ErrorElement
      */
     public ErrorElement message(String message) {
         this.message = message;

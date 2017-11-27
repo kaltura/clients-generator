@@ -45,7 +45,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
     /**
      * constructs instance and fill it with requests
-     * @param requests
+     * @param requests requests list
      */
     public MultiRequestBuilder(RequestBuilder<?, ?, ?>... requests) {
         this();
@@ -59,8 +59,8 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
     /**
      * adds 1 or more single request to be activated as part of the multrequest
-     * @param requests
-     * @return
+     * @param requests requests list
+     * @return MultiRequestBuilder
      */
     public MultiRequestBuilder add(RequestBuilder<?, ?, ?>... requests) {
         for (RequestBuilder<?, ?, ?> request : requests) {
@@ -90,8 +90,8 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
 
     /**
      * Adds the requests from kalturaMultiRequestBuilder parameter to the end of the current requests list
-     * @param multiRequestBuilder - another multirequests to copy requests from
-     * @return
+     * @param multiRequestBuilder another multirequests to copy requests from
+     * @return MultiRequestBuilder
      */
     public MultiRequestBuilder add(MultiRequestBuilder multiRequestBuilder) {
         for (String reqId : multiRequestBuilder.requests.keySet()) {
@@ -159,11 +159,11 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
     /**
      * Binds request param value to another request's response value.
      *
-     * @param sourceRequestIdx - the index of the request from which response value should be taken from
-     * @param destRequestIdx - the index of the destination request in the multirequest list
-     * @param sourceKey - the properties path in the response to the needed value (exp. user.loginSession.ks)
-     * @param destKey - the property that will get the result from the source request
-     * @return
+     * @param sourceRequestIdx the index of the request from which response value should be taken from
+     * @param destRequestIdx the index of the destination request in the multirequest list
+     * @param sourceKey the properties path in the response to the needed value (exp. user.loginSession.ks)
+     * @param destKey the property that will get the result from the source request
+     * @return MultiRequestBuilder
      */
     public MultiRequestBuilder link(int sourceRequestIdx, int destRequestIdx, String sourceKey, String destKey) {
         try {
@@ -181,11 +181,11 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
      * string indicating the source request index in the list and the path in the
      * response to bind as value
      *
-     * @param sourceRequest - the request from which response value will be taken
-     * @param destRequest - the request to bind to it's parameter.
-     * @param sourceKey - propeties path in the source request response.
-     * @param destKey - the param property to set its value as linked.
-     * @return
+     * @param sourceRequest the request from which response value will be taken
+     * @param destRequest the request to bind to it's parameter.
+     * @param sourceKey propeties path in the source request response.
+     * @param destKey the param property to set its value as linked.
+     * @return MultiRequestBuilder
      */
     public MultiRequestBuilder link(RequestBuilder<?, ?, ?> sourceRequest, RequestBuilder<?, ?, ?> destRequest, String sourceKey, String destKey) {
         if(sourceRequest == null || destRequest == null){
