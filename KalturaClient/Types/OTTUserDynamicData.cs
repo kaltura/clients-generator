@@ -37,12 +37,14 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string USER_ID = "userId";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string KEY = "key";
+		public const string VALUE = "value";
 		#endregion
 
 		#region Private Fields
 		private string _UserId = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private string _Key = null;
+		private StringValue _Value;
 		#endregion
 
 		#region Properties
@@ -50,13 +52,22 @@ namespace Kaltura.Types
 		{
 			get { return _UserId; }
 		}
-		public IDictionary<string, StringValue> DynamicData
+		public string Key
 		{
-			get { return _DynamicData; }
+			get { return _Key; }
 			set 
 			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_Key = value;
+				OnPropertyChanged("Key");
+			}
+		}
+		public StringValue Value
+		{
+			get { return _Value; }
+			set 
+			{ 
+				_Value = value;
+				OnPropertyChanged("Value");
 			}
 		}
 		#endregion
@@ -75,16 +86,11 @@ namespace Kaltura.Types
 					case "userId":
 						this._UserId = propertyNode.InnerText;
 						continue;
-					case "dynamicData":
-						{
-							string key;
-							this._DynamicData = new Dictionary<string, StringValue>();
-							foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-							{
-								key = arrayNode["itemKey"].InnerText;;
-								this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode);
-							}
-						}
+					case "key":
+						this._Key = propertyNode.InnerText;
+						continue;
+					case "value":
+						this._Value = ObjectFactory.Create<StringValue>(propertyNode);
 						continue;
 				}
 			}
@@ -98,7 +104,8 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaOTTUserDynamicData");
 			kparams.AddIfNotNull("userId", this._UserId);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+			kparams.AddIfNotNull("key", this._Key);
+			kparams.AddIfNotNull("value", this._Value);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -107,8 +114,10 @@ namespace Kaltura.Types
 			{
 				case USER_ID:
 					return "UserId";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case KEY:
+					return "Key";
+				case VALUE:
+					return "Value";
 				default:
 					return base.getPropertyName(apiName);
 			}
