@@ -195,10 +195,7 @@ export abstract class KalturaObjectBase{
                                 }
                             });
 
-                            if (parsedArray.length)
-                            {
-                                result = parsedArray;
-                            }
+                            result = parsedArray;
                         } else {
                             throw new Error(`failed to parse property '${propertyName}. Expected type array, got type '${typeof sourceValue}`);
                         }

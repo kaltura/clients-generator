@@ -3,10 +3,14 @@ import * as path from "path";
 import { TestsConfig } from "./tests-config";
 import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
 import { SessionStartAction } from "../types/SessionStartAction";
-import { KalturaSessionType } from '../types/KalturaSessionType';
+import { KalturaSessionType } from "../types/KalturaSessionType";
 
 export function getTestFile(): string | Buffer {
   return fs.readFileSync(path.join(__dirname, "DemoVideo.flv"));
+}
+
+export function escapeRegExp(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\$&");
 }
 
 export function getClient(): Promise<KalturaBrowserHttpClient> {
@@ -26,5 +30,9 @@ export function getClient(): Promise<KalturaBrowserHttpClient> {
     })).then(ks => {
         client.ks = ks;
         return client;
-    });
+    },
+        error => {
+            console.error(`failed to create session with the following error 'SessionStartAction'`);
+            throw error;
+        });
 }

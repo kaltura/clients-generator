@@ -16,7 +16,7 @@ describe(`service "Media" tests`, () => {
       .then(client => {
         kalturaClient = client;
       }).catch(error => {
-        fail(error);
+          // can do nothing since jasmine will ignore any exceptions thrown from before all
       });
   });
 
@@ -25,6 +25,13 @@ describe(`service "Media" tests`, () => {
   });
 
   test(`invoke "list" action`, (done) => {
+
+      if (!kalturaClient)
+      {
+          fail(`failure during 'SessionStart'. aborting test`);
+          return;
+      }
+
     kalturaClient.request(new MediaListAction()).then(
       (response) => {
         expect(response instanceof KalturaMediaListResponse).toBeTruthy();
