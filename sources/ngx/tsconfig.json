@@ -28,7 +28,8 @@
 		"src/**/*"
 	],
 	"exclude": [
-		"src/api/tests/**/*"
+		"src/api/tests/**/*",
+		"src/tests/**/*"
 	],
 	"angularCompilerOptions": {
 		"skipTemplateCodegen": true
