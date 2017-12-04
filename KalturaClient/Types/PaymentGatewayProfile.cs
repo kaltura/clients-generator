@@ -48,6 +48,7 @@ namespace Kaltura.Types
 		public const string SHARED_SECRET = "sharedSecret";
 		public const string RENEW_INTERVAL_MINUTES = "renewIntervalMinutes";
 		public const string RENEW_START_MINUTES = "renewStartMinutes";
+		public const string EXTERNAL_VERIFICATION = "externalVerification";
 		#endregion
 
 		#region Private Fields
@@ -63,6 +64,7 @@ namespace Kaltura.Types
 		private string _SharedSecret = null;
 		private int _RenewIntervalMinutes = Int32.MinValue;
 		private int _RenewStartMinutes = Int32.MinValue;
+		private bool? _ExternalVerification = null;
 		#endregion
 
 		#region Properties
@@ -174,6 +176,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("RenewStartMinutes");
 			}
 		}
+		public bool? ExternalVerification
+		{
+			get { return _ExternalVerification; }
+			set 
+			{ 
+				_ExternalVerification = value;
+				OnPropertyChanged("ExternalVerification");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -231,6 +242,9 @@ namespace Kaltura.Types
 					case "renewStartMinutes":
 						this._RenewStartMinutes = ParseInt(propertyNode.InnerText);
 						continue;
+					case "externalVerification":
+						this._ExternalVerification = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -254,6 +268,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("sharedSecret", this._SharedSecret);
 			kparams.AddIfNotNull("renewIntervalMinutes", this._RenewIntervalMinutes);
 			kparams.AddIfNotNull("renewStartMinutes", this._RenewStartMinutes);
+			kparams.AddIfNotNull("externalVerification", this._ExternalVerification);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -284,6 +299,8 @@ namespace Kaltura.Types
 					return "RenewIntervalMinutes";
 				case RENEW_START_MINUTES:
 					return "RenewStartMinutes";
+				case EXTERNAL_VERIFICATION:
+					return "ExternalVerification";
 				default:
 					return base.getPropertyName(apiName);
 			}
