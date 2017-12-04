@@ -2,6 +2,93 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="7.1.0"></a>
+## [7.0.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.2...v7.1.0) (2017-11-30)
+
+### Features
+
+* support requests that serve files by returning a valid download url for that files
+
+
+<a name="7.0.2"></a>
+## [7.0.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.1...v7.0.2) (2017-11-28)
+
+### Features
+
+* update api using schema from 26/11/17 01:43:07
+
+
+<a name="7.0.1"></a>
+## [7.0.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.0...v7.0.1) (2017-11-28)
+
+
+### Bug Fixes
+
+* use ngc during tranpiling to support angular-cli based applications ([8076c96](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/8076c96))
+
+
+
+<a name="7.0.0"></a>
+# 7.0.0 (2017-11-27)
+
+
+### Features
+
+* embed generated api into kaltura-client ([0446c00](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/0446c00))
+
+
+### BREAKING CHANGES
+
+* * you need to uninstall kaltura-typescript-client (npm uninstall kalutra-typescript-client).
+
+* rename all imports to use the embedded api
+before:
+```
+import { ... } from 'kaltura-typescript-client'
+import { ... } from 'kaltura-typescript-client/types'
+```
+
+after:
+```
+import { ... } from '@kaltura-ng/kaltura-client'
+import { ... } from '@kaltura-ng/kaltura-client/api/types'
+```
+
+
+
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.2...v6.0.0) (2017-11-26)
+
+
+### Bug Fixes
+
+* append action value to endpoint uri only if provided by request ([e53a9b5](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/e53a9b5))
+* generate endpoint to service with '/api_v3/' as a prefix. ([fdaf513](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/fdaf513))
+* support empty array as a valid resopnse ([6c677df](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/6c677df))
+* Fix upload file in IE11 and edge and Safari
+
+### Features
+
+* add unit-testing ([2683820](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/2683820))
+* update services according to new schema from 08/10/17 18:46:25 ([0350d10](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/0350d10))
+
+
+### BREAKING CHANGES
+
+* before:
+The service api provided by the application included `/api_v3/` when provided
+```
+"https://www.kaltura.com/api_v3/"
+```
+
+after:
+The service api provided by the application shouldn't include `/api_v3/` when provided
+```
+"https://www.kaltura.com"
+```
+
+
+
 <a name="5.1.2"></a>
 ## [5.1.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.1...v5.1.2) (2017-10-29)
 

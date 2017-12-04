@@ -108,9 +108,9 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     /**
      * Builds the final list of parameters including the default params and the configured params.
      *
-     * @param configurations
-     * @param addSignature
-     * @return
+     * @param configurations client configurations
+     * @param addSignature add signature
+     * @return Params
      */
     protected Params prepareParams(Client configurations, boolean addSignature) {
 

@@ -11,6 +11,7 @@ abstract class ClientGeneratorFromXml
 	protected $_licenseBuffer = '';
 	
 	protected $generateDocs = false;
+	protected $version = '1.0.0';
 	protected $package = 'External';
 	protected $subpackage = 'Kaltura';
 	protected $excludeSourcePaths = array();
@@ -84,6 +85,11 @@ abstract class ClientGeneratorFromXml
 
 		$this->_doc = new DOMDocument();
 		$this->_doc->load($this->_xmlFile);
+
+		$xpath = new DOMXPath($this->_doc);
+		$rootNodes = $xpath->query("/xml");
+		$rootNode = $rootNodes->item(0);
+		$this->version = $rootNode->getAttribute("apiVersion");
 		
 		$this->loadExcludeList();
 		
@@ -417,8 +423,10 @@ abstract class ClientGeneratorFromXml
 				$fileContents = $this->_licenseBuffer . $fileContents;
 			}
 		}
-		
+
 		$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
+		$fileContents = str_replace('@VERSION@', $this->version, $fileContents);
+		
 		$this->writeFile($fileName, $fileContents);
 	}
 	

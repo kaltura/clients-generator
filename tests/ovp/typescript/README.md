@@ -43,7 +43,7 @@ $ npm run build
 ```
 
 ## Running integration tests
-- In `src/tests` folder you should duplicate file `tests-config.tpl.ts` and name it `tests-config.ts`.
+- In `src/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.
 - Modify the file content to include valid information.
 - Run `npm run test` to test the library
 

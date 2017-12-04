@@ -167,6 +167,8 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	 * send the HTTP "Accept-Encoding" header with "gzip" as value.
 	 * <p>Default is "true". Turn this flag off if you do not want
 	 * GZIP response compression even if enabled on the HTTP server.
+	 * 
+	 * @param accept accept or not
 	 */
 	public void setAcceptGzipEncoding(boolean accept){
 		params.put(AcceptGzipEncoding, accept);

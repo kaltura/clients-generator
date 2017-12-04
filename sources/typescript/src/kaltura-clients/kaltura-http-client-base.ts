@@ -92,6 +92,13 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
         });
     }
 
+    private _getFormData(filePropertyName: string, fileName: string, fileChunk: File | Blob): FormData {
+        const result = new FormData();
+        result.append("fileName", fileName);
+        result.append(filePropertyName, fileChunk);
+        return result;
+    }
+
     private _chunkUpload(request: KalturaUploadRequest<any>, uploadChunkData: ChunkData): CancelableAction {
         return new CancelableAction((resolve, reject) => {
             let isComplete = false;
@@ -104,8 +111,8 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
 
             this._assignDefaultParameters(parameters);
 
-            const data = request.getFormData();
-            const file = request.getFileData();
+            const { propertyName, file } = request.getFileInfo();
+            let data = this._getFormData(propertyName, file.name, file);
 
             let fileStart = 0;
             let uploadSize: number = null;
@@ -129,7 +136,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
                 fileStart = uploadChunkData.resumeAt;
                 const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + uploadSize;
 
-                data.set(request.getFilePropertyName(), file.slice(fileStart, fileEnd, file.type), file.name);
+                data = this._getFormData(propertyName, file.name, file.slice(fileStart, fileEnd, file.type));
 
                 parameters.resume = uploadChunkData.resume;
                 parameters.resumeAt = uploadChunkData.resumeAt;
@@ -210,7 +217,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
     protected abstract _createCancelableAction(data: { endpoint: string, headers: any, body: {} }): CancelableAction;
 
     private _createEndpoint(parameters: any): string {
-        let endpoint = `${this.endpointUrl}/service/${parameters.service}`;
+        let endpoint = `${this.endpointUrl}/api_v3/service/${parameters.service}`;
         if (parameters.action) {
             endpoint = `${endpoint}/action/${parameters.action}`;
         }
