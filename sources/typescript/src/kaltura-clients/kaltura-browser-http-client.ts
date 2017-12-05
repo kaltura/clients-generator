@@ -85,7 +85,9 @@ export class KalturaBrowserHttpClient extends KalturaHttpClientBase {
         return {url: `${endpoint}?${this._buildQuerystring(parameters)}`};
     }
 
-    public request<T>(request: KalturaRequest<T>): Promise<T> {
+    public request<T>(request: KalturaRequest<T>): Promise<T>;
+    public request<T>(request: KalturaFileRequest): Promise<{ url: string }>;
+    public request<T>(request: KalturaRequest<T> | KalturaFileRequest): Promise<T | { url: string }> {
         return new Promise((resolve, reject) => {
 
             if (request instanceof KalturaFileRequest) {
