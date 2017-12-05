@@ -195,7 +195,13 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
                         if (uploadChunkData.enabled) {
                             chunkSize = uploadChunkData.finalChunk ? file.size - fileStart : uploadSize;
                         }
-                        progressCallback.apply(request, [Math.floor(e.loaded / e.total * chunkSize) + fileStart, file.size]);
+                        let progress = 0;
+                        if (chunkSize === null) {
+                            progress = (e.loaded / e.total) * 100;
+                        } else {
+                            progress = Math.floor(e.loaded / e.total * chunkSize) + fileStart;
+                        }
+                        progressCallback.apply(request, [progress, file.size]);
                     } else {
                         // Unable to compute progress information since the total size is unknown
                     }
