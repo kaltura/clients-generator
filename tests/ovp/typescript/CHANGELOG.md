@@ -2,57 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="7.1.0"></a>
-## [7.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.2...v7.1.0) (2017-11-30)
+<a name="6.1.0"></a>
+## [6.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v6.0.0...v6.1.0) (2017-12-05)
 
 ### Features
 
 * support requests that serve files by returning a valid download url for that files
-
-
-<a name="7.0.2"></a>
-## [7.0.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.1...v7.0.2) (2017-11-28)
-
-### Features
-
-* update api using schema from 26/11/17 01:43:07
-
-
-<a name="7.0.1"></a>
-## [7.0.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.0...v7.0.1) (2017-11-28)
-
-
-### Bug Fixes
-
-* use ngc during tranpiling to support angular-cli based applications ([8076c96](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/8076c96))
-
-
-
-<a name="7.0.0"></a>
-# 7.0.0 (2017-11-27)
-
-
-### Features
-
-* embed generated api into kaltura-client ([0446c00](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/0446c00))
-
-
-### BREAKING CHANGES
-
-* * you need to uninstall kaltura-typescript-client (npm uninstall kalutra-typescript-client).
-
-* rename all imports to use the embedded api
-before:
-```
-import { ... } from 'kaltura-typescript-client'
-import { ... } from 'kaltura-typescript-client/types'
-```
-
-after:
-```
-import { ... } from '@kaltura-ng/kaltura-client'
-import { ... } from '@kaltura-ng/kaltura-client/api/types'
-```
 
 
 
