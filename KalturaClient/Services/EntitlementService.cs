@@ -262,6 +262,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class EntitlementGetNextRenewalRequestBuilder : RequestBuilder<EntitlementRenewal>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public int Id
+		{
+			set;
+			get;
+		}
+
+		public EntitlementGetNextRenewalRequestBuilder()
+			: base("entitlement", "getNextRenewal")
+		{
+		}
+
+		public EntitlementGetNextRenewalRequestBuilder(int id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<EntitlementRenewal>(result);
+		}
+	}
+
 	public class EntitlementGrantRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -531,6 +574,11 @@ namespace Kaltura.Services
 		public static EntitlementForceCancelRequestBuilder ForceCancel(int assetId, TransactionType transactionType)
 		{
 			return new EntitlementForceCancelRequestBuilder(assetId, transactionType);
+		}
+
+		public static EntitlementGetNextRenewalRequestBuilder GetNextRenewal(int id)
+		{
+			return new EntitlementGetNextRenewalRequestBuilder(id);
 		}
 
 		public static EntitlementGrantRequestBuilder Grant(int productId, TransactionType productType, bool history, int contentId = 0)

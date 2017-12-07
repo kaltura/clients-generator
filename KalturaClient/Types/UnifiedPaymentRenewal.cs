@@ -33,83 +33,87 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class EntitlementFilter : Filter
+	public class UnifiedPaymentRenewal : ObjectBase
 	{
 		#region Constants
-		public const string PRODUCT_TYPE_EQUAL = "productTypeEqual";
-		public const string ENTITY_REFERENCE_EQUAL = "entityReferenceEqual";
-		public const string IS_EXPIRED_EQUAL = "isExpiredEqual";
-		public new const string ORDER_BY = "orderBy";
+		public const string PRICE = "price";
+		public const string DATE = "date";
+		public const string UNIFIED_PAYMENT_ID = "unifiedPaymentId";
+		public const string ENTITLEMENTS = "entitlements";
 		#endregion
 
 		#region Private Fields
-		private TransactionType _ProductTypeEqual = null;
-		private EntityReferenceBy _EntityReferenceEqual = null;
-		private bool? _IsExpiredEqual = null;
-		private EntitlementOrderBy _OrderBy = null;
+		private Price _Price;
+		private long _Date = long.MinValue;
+		private long _UnifiedPaymentId = long.MinValue;
+		private IList<EntitlementRenewalBase> _Entitlements;
 		#endregion
 
 		#region Properties
-		public TransactionType ProductTypeEqual
+		public Price Price
 		{
-			get { return _ProductTypeEqual; }
+			get { return _Price; }
 			set 
 			{ 
-				_ProductTypeEqual = value;
-				OnPropertyChanged("ProductTypeEqual");
+				_Price = value;
+				OnPropertyChanged("Price");
 			}
 		}
-		public EntityReferenceBy EntityReferenceEqual
+		public long Date
 		{
-			get { return _EntityReferenceEqual; }
+			get { return _Date; }
 			set 
 			{ 
-				_EntityReferenceEqual = value;
-				OnPropertyChanged("EntityReferenceEqual");
+				_Date = value;
+				OnPropertyChanged("Date");
 			}
 		}
-		public bool? IsExpiredEqual
+		public long UnifiedPaymentId
 		{
-			get { return _IsExpiredEqual; }
+			get { return _UnifiedPaymentId; }
 			set 
 			{ 
-				_IsExpiredEqual = value;
-				OnPropertyChanged("IsExpiredEqual");
+				_UnifiedPaymentId = value;
+				OnPropertyChanged("UnifiedPaymentId");
 			}
 		}
-		public new EntitlementOrderBy OrderBy
+		public IList<EntitlementRenewalBase> Entitlements
 		{
-			get { return _OrderBy; }
+			get { return _Entitlements; }
 			set 
 			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_Entitlements = value;
+				OnPropertyChanged("Entitlements");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public EntitlementFilter()
+		public UnifiedPaymentRenewal()
 		{
 		}
 
-		public EntitlementFilter(XmlElement node) : base(node)
+		public UnifiedPaymentRenewal(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "productTypeEqual":
-						this._ProductTypeEqual = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
+					case "price":
+						this._Price = ObjectFactory.Create<Price>(propertyNode);
 						continue;
-					case "entityReferenceEqual":
-						this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), propertyNode.InnerText);
+					case "date":
+						this._Date = ParseLong(propertyNode.InnerText);
 						continue;
-					case "isExpiredEqual":
-						this._IsExpiredEqual = ParseBool(propertyNode.InnerText);
+					case "unifiedPaymentId":
+						this._UnifiedPaymentId = ParseLong(propertyNode.InnerText);
 						continue;
-					case "orderBy":
-						this._OrderBy = (EntitlementOrderBy)StringEnum.Parse(typeof(EntitlementOrderBy), propertyNode.InnerText);
+					case "entitlements":
+						this._Entitlements = new List<EntitlementRenewalBase>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Entitlements.Add(ObjectFactory.Create<EntitlementRenewalBase>(arrayNode));
+						}
 						continue;
 				}
 			}
@@ -121,25 +125,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaEntitlementFilter");
-			kparams.AddIfNotNull("productTypeEqual", this._ProductTypeEqual);
-			kparams.AddIfNotNull("entityReferenceEqual", this._EntityReferenceEqual);
-			kparams.AddIfNotNull("isExpiredEqual", this._IsExpiredEqual);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaUnifiedPaymentRenewal");
+			kparams.AddIfNotNull("price", this._Price);
+			kparams.AddIfNotNull("date", this._Date);
+			kparams.AddIfNotNull("unifiedPaymentId", this._UnifiedPaymentId);
+			kparams.AddIfNotNull("entitlements", this._Entitlements);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case PRODUCT_TYPE_EQUAL:
-					return "ProductTypeEqual";
-				case ENTITY_REFERENCE_EQUAL:
-					return "EntityReferenceEqual";
-				case IS_EXPIRED_EQUAL:
-					return "IsExpiredEqual";
-				case ORDER_BY:
-					return "OrderBy";
+				case PRICE:
+					return "Price";
+				case DATE:
+					return "Date";
+				case UNIFIED_PAYMENT_ID:
+					return "UnifiedPaymentId";
+				case ENTITLEMENTS:
+					return "Entitlements";
 				default:
 					return base.getPropertyName(apiName);
 			}

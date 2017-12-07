@@ -37,7 +37,7 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID = "id";
-		public const string ENTITLEMENT_ID = "entitlementId";
+		public const string PRODUCT_ID = "productId";
 		public const string CURRENT_USES = "currentUses";
 		public const string END_DATE = "endDate";
 		public const string CURRENT_DATE = "currentDate";
@@ -54,7 +54,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private int _Id = Int32.MinValue;
-		private string _EntitlementId = null;
+		private string _ProductId = null;
 		private int _CurrentUses = Int32.MinValue;
 		private long _EndDate = long.MinValue;
 		private long _CurrentDate = long.MinValue;
@@ -74,9 +74,9 @@ namespace Kaltura.Types
 		{
 			get { return _Id; }
 		}
-		public string EntitlementId
+		public string ProductId
 		{
-			get { return _EntitlementId; }
+			get { return _ProductId; }
 		}
 		public int CurrentUses
 		{
@@ -142,8 +142,8 @@ namespace Kaltura.Types
 					case "id":
 						this._Id = ParseInt(propertyNode.InnerText);
 						continue;
-					case "entitlementId":
-						this._EntitlementId = propertyNode.InnerText;
+					case "productId":
+						this._ProductId = propertyNode.InnerText;
 						continue;
 					case "currentUses":
 						this._CurrentUses = ParseInt(propertyNode.InnerText);
@@ -193,7 +193,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaEntitlement");
 			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("entitlementId", this._EntitlementId);
+			kparams.AddIfNotNull("productId", this._ProductId);
 			kparams.AddIfNotNull("currentUses", this._CurrentUses);
 			kparams.AddIfNotNull("endDate", this._EndDate);
 			kparams.AddIfNotNull("currentDate", this._CurrentDate);
@@ -214,8 +214,8 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
-				case ENTITLEMENT_ID:
-					return "EntitlementId";
+				case PRODUCT_ID:
+					return "ProductId";
 				case CURRENT_USES:
 					return "CurrentUses";
 				case END_DATE:
