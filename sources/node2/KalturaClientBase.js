@@ -320,6 +320,14 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 						throw new Error(json.message);
 					}
 				}
+				else if (json && typeof (json) === 'object' && json.result && json.result.error && json.result.error.objectType == 'KalturaAPIException') {
+					if (callback) {
+						callback(false, json);
+					}
+					else {
+						throw new Error(json.message);
+					}
+				}
 				else if (callback) {
 					callback(true, json);
 				}
