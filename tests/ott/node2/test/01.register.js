@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+const cache = require('node-shared-cache');
 const expect = require("chai").expect;
 const shortid = require('shortid');
 const kaltura = require('../KalturaClient');
@@ -12,10 +13,16 @@ config.serviceUrl = serviceUrl;
 
 const client = new kaltura.Client(config);
 
+const username = shortid.generate();
+const password = shortid.generate();
+
+cache.release("test");
+
+var obj = new cache.Cache("test", 524288);
+obj.username = username;
+obj.password = password;
 
 describe("User", () => {
-	const username = shortid.generate();
-	const password = shortid.generate();
 	
     describe("register", () => {
     	const user = new kaltura.objects.OTTUser({
@@ -61,6 +68,7 @@ describe("User", () => {
     describe("household", () => {
     	const household = new kaltura.objects.Household({
     		name: shortid.generate(),
+    		description: shortid.generate(),
     		externalId: shortid.generate()
     	});
 
