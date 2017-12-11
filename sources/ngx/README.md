@@ -55,7 +55,7 @@ An example of a vaild command will be: `npm install file:libs/kaltura-ngx-client
 5. if you already have older version, delete that file. You should do this only after you installed the new version.
 
 ## Running integration tests
-- In `src/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.
+- In `src/api/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.
 - Modify the file content to include valid information.
 - Run `npm run test` to test the library
 
