@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string IS_IN_GRACE_PERIOD = "isInGracePeriod";
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
+		public const string SCHEDULED_SUBSCRIPTION_ID = "scheduledSubscriptionId";
 		public const string UNIFIED_PAYMENT_ID = "unifiedPaymentId";
 		public const string IS_SUSPENDED = "isSuspended";
 		#endregion
@@ -53,6 +54,7 @@ namespace Kaltura.Types
 		private bool? _IsInGracePeriod = null;
 		private int _PaymentGatewayId = Int32.MinValue;
 		private int _PaymentMethodId = Int32.MinValue;
+		private long _ScheduledSubscriptionId = long.MinValue;
 		private long _UnifiedPaymentId = long.MinValue;
 		private bool? _IsSuspended = null;
 		#endregion
@@ -90,6 +92,15 @@ namespace Kaltura.Types
 			{ 
 				_PaymentMethodId = value;
 				OnPropertyChanged("PaymentMethodId");
+			}
+		}
+		public long ScheduledSubscriptionId
+		{
+			get { return _ScheduledSubscriptionId; }
+			set 
+			{ 
+				_ScheduledSubscriptionId = value;
+				OnPropertyChanged("ScheduledSubscriptionId");
 			}
 		}
 		public long UnifiedPaymentId
@@ -136,6 +147,9 @@ namespace Kaltura.Types
 					case "paymentMethodId":
 						this._PaymentMethodId = ParseInt(propertyNode.InnerText);
 						continue;
+					case "scheduledSubscriptionId":
+						this._ScheduledSubscriptionId = ParseLong(propertyNode.InnerText);
+						continue;
 					case "unifiedPaymentId":
 						this._UnifiedPaymentId = ParseLong(propertyNode.InnerText);
 						continue;
@@ -159,6 +173,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("isInGracePeriod", this._IsInGracePeriod);
 			kparams.AddIfNotNull("paymentGatewayId", this._PaymentGatewayId);
 			kparams.AddIfNotNull("paymentMethodId", this._PaymentMethodId);
+			kparams.AddIfNotNull("scheduledSubscriptionId", this._ScheduledSubscriptionId);
 			kparams.AddIfNotNull("unifiedPaymentId", this._UnifiedPaymentId);
 			kparams.AddIfNotNull("isSuspended", this._IsSuspended);
 			return kparams;
@@ -179,6 +194,8 @@ namespace Kaltura.Types
 					return "PaymentGatewayId";
 				case PAYMENT_METHOD_ID:
 					return "PaymentMethodId";
+				case SCHEDULED_SUBSCRIPTION_ID:
+					return "ScheduledSubscriptionId";
 				case UNIFIED_PAYMENT_ID:
 					return "UnifiedPaymentId";
 				case IS_SUSPENDED:

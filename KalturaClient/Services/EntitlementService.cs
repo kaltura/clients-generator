@@ -39,7 +39,7 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string ASSET_ID = "assetId";
-		public const string TRANSACTION_TYPE = "transactionType";
+		public const string PRODUCT_TYPE = "productType";
 		#endregion
 
 		public int AssetId
@@ -47,7 +47,7 @@ namespace Kaltura.Services
 			set;
 			get;
 		}
-		public TransactionType TransactionType
+		public TransactionType ProductType
 		{
 			set;
 			get;
@@ -58,11 +58,11 @@ namespace Kaltura.Services
 		{
 		}
 
-		public EntitlementCancelRequestBuilder(int assetId, TransactionType transactionType)
+		public EntitlementCancelRequestBuilder(int assetId, TransactionType productType)
 			: this()
 		{
 			this.AssetId = assetId;
-			this.TransactionType = transactionType;
+			this.ProductType = productType;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -70,8 +70,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("assetId"))
 				kparams.AddIfNotNull("assetId", AssetId);
-			if (!isMapped("transactionType"))
-				kparams.AddIfNotNull("transactionType", TransactionType);
+			if (!isMapped("productType"))
+				kparams.AddIfNotNull("productType", ProductType);
 			return kparams;
 		}
 
@@ -212,7 +212,7 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string ASSET_ID = "assetId";
-		public const string TRANSACTION_TYPE = "transactionType";
+		public const string PRODUCT_TYPE = "productType";
 		#endregion
 
 		public int AssetId
@@ -220,7 +220,7 @@ namespace Kaltura.Services
 			set;
 			get;
 		}
-		public TransactionType TransactionType
+		public TransactionType ProductType
 		{
 			set;
 			get;
@@ -231,11 +231,11 @@ namespace Kaltura.Services
 		{
 		}
 
-		public EntitlementForceCancelRequestBuilder(int assetId, TransactionType transactionType)
+		public EntitlementForceCancelRequestBuilder(int assetId, TransactionType productType)
 			: this()
 		{
 			this.AssetId = assetId;
-			this.TransactionType = transactionType;
+			this.ProductType = productType;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -243,8 +243,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("assetId"))
 				kparams.AddIfNotNull("assetId", AssetId);
-			if (!isMapped("transactionType"))
-				kparams.AddIfNotNull("transactionType", TransactionType);
+			if (!isMapped("productType"))
+				kparams.AddIfNotNull("productType", ProductType);
 			return kparams;
 		}
 
@@ -551,9 +551,9 @@ namespace Kaltura.Services
 		{
 		}
 
-		public static EntitlementCancelRequestBuilder Cancel(int assetId, TransactionType transactionType)
+		public static EntitlementCancelRequestBuilder Cancel(int assetId, TransactionType productType)
 		{
-			return new EntitlementCancelRequestBuilder(assetId, transactionType);
+			return new EntitlementCancelRequestBuilder(assetId, productType);
 		}
 
 		public static EntitlementCancelRenewalRequestBuilder CancelRenewal(string subscriptionId)
@@ -571,9 +571,9 @@ namespace Kaltura.Services
 			return new EntitlementExternalReconcileRequestBuilder();
 		}
 
-		public static EntitlementForceCancelRequestBuilder ForceCancel(int assetId, TransactionType transactionType)
+		public static EntitlementForceCancelRequestBuilder ForceCancel(int assetId, TransactionType productType)
 		{
-			return new EntitlementForceCancelRequestBuilder(assetId, transactionType);
+			return new EntitlementForceCancelRequestBuilder(assetId, productType);
 		}
 
 		public static EntitlementGetNextRenewalRequestBuilder GetNextRenewal(int id)

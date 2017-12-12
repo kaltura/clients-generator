@@ -35,7 +35,7 @@ namespace Kaltura
 	{
 		public Client(Configuration config) : base(config)
 		{
-				ApiVersion = "4.7.8.16892";
+				ApiVersion = "4.7.16.43124";
 				ClientTag = "dotnet:17-12-12";
 		}
 	
@@ -215,28 +215,6 @@ namespace Kaltura
  		public string getSessionId()
  		{
  			return SessionId;
- 		}
-			
- 		public BaseResponseProfile ResponseProfile
- 		{
- 			get
- 			{
- 				return requestConfiguration.ResponseProfile;
- 			}
- 			set
- 			{
- 				requestConfiguration.ResponseProfile = value;
- 			}
- 		}
-			
- 		public void setResponseProfile(BaseResponseProfile value)
- 		{
- 			ResponseProfile = value;
- 		}
-			
- 		public BaseResponseProfile getResponseProfile()
- 		{
- 			return ResponseProfile;
  		}
 		#endregion
 	}
