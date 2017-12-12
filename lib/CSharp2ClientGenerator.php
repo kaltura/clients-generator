@@ -1094,26 +1094,26 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 
 		$this->appendLine("		#region Properties");
-		$volatileProperties = array();
 		foreach($configurationNodes as $configurationNode)
 		{
 			/* @var $configurationNode DOMElement */
 			$configurationName = $configurationNode->nodeName;
 			$attributeName = lcfirst($configurationName) . "Configuration";
-			$volatileProperties[$attributeName] = array();
 
 			foreach($configurationNode->childNodes as $configurationPropertyNode)
 			{
 				/* @var $configurationPropertyNode DOMElement */
 
 				if ($configurationPropertyNode->nodeType != XML_ELEMENT_NODE)
+				{
 					continue;
+				}
 
 				$configurationProperty = $configurationPropertyNode->localName;
 
 				if($configurationPropertyNode->hasAttribute('volatile') && $configurationPropertyNode->getAttribute('volatile'))
 				{
-					$volatileProperties[$attributeName][] = $configurationProperty;
+					continue;
 				}
 
 				$type = $configurationPropertyNode->getAttribute('type');
