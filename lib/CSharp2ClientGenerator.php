@@ -1162,11 +1162,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 			$configurationProperty = $configurationPropertyNode->localName;
 
-			if($configurationPropertyNode->hasAttribute('volatile') && $configurationPropertyNode->getAttribute('volatile'))
-			{
-				continue;
-			}
-
 			$type = $configurationPropertyNode->getAttribute('type');
 			$description = null;
 
