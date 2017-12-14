@@ -47,6 +47,9 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 		$configurationNodes = $xpath->query("/xml/configurations/*");
 		$this->writeMainClient($serviceNodes, $configurationNodes);
+
+		$requestConfigurationNodes = $xpath->query("/xml/configurations/request/*");
+		$this->writeRequestBuilderConfigurationClass($requestConfigurationNodes);
 		$this->writeObjectFactory($classNodes);
 
 		$errorNodes = $xpath->query("/xml/errors/error");
@@ -1137,6 +1140,78 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("}");
 
 		$this->addFile("KalturaClient/Client.cs", $this->getTextBlock());
+	}
+
+	function writeRequestBuilderConfigurationClass($requestConfigurationNodes)
+	{
+		$this->startNewTextBlock();
+
+		$this->appendLine("using System;");
+		$this->appendLine("using Kaltura.Types;");
+		$this->appendLine("using Kaltura.Enums;");
+		$this->appendLine();
+
+		$this->appendLine("namespace Kaltura.Request");
+		$this->appendLine("{");
+		$this->appendLine("	public static class RequestBuilderExtensions");
+		$this->appendLine("	{");
+		foreach($requestConfigurationNodes as $configurationPropertyNode)
+		{
+			if ($configurationPropertyNode->nodeType != XML_ELEMENT_NODE)
+				continue;
+
+			$configurationProperty = $configurationPropertyNode->localName;
+
+			$type = $configurationPropertyNode->getAttribute('type');
+			$description = null;
+
+			if($configurationPropertyNode->hasAttribute('description'))
+			{
+				$description = $configurationPropertyNode->getAttribute('description');
+			}
+
+			$this-> writeRequestBuilderConfigurationExtentionMethod($configurationProperty, $configurationProperty, $type, $description);
+		}
+		$this->appendLine("	}");
+		$this->appendLine("}");
+
+		$this->addFile("KalturaClient/Request/RequestBuilderExtensions.cs", $this->getTextBlock());
+	}
+
+	protected function writeRequestBuilderConfigurationExtentionMethod($name, $paramName, $type, $description)
+	{
+		$paramName = ucfirst($paramName);
+		$name = ucfirst($name);
+
+		$null = 'null';
+		switch($type)
+		{
+			case 'int':
+				$null = 'int.MinValue';
+				break;
+
+			case 'float':
+				$null = 'float.MinValue';
+				break;
+
+			case 'bigint':
+				$type = 'long';
+				$null = 'long.MinValue';
+				break;
+
+			default:
+				$type = $this->getCSharpName($type);
+				break;
+		}
+
+		$this->appendLine("		/// <summary>");
+	    $this->appendLine("		/// $description");
+	    $this->appendLine("		/// </summary>");
+		$this->appendLine("		public static BaseRequestBuilder<T> With$name<T>(this BaseRequestBuilder<T> requestBuilder, $type value)");
+		$this->appendLine("		{");
+		$this->appendLine("			requestBuilder.$name = value;");
+		$this->appendLine("			return requestBuilder;");
+		$this->appendLine("		}");
 	}
 
 	protected function writeConfigurationProperty($configurationName, $name, $paramName, $type, $description)
