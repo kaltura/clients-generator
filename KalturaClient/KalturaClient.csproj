@@ -64,6 +64,7 @@
     <Compile Include="ClientUtils.cs"/>
     <Compile Include="Request\BaseRequestBuilder.cs"/>
     <Compile Include="Client.cs"/>
+	<Compile Include="Request\RequestBuilderExtensions.cs"/>
     <Compile Include="Request\MultiRequestToken.cs"/>
     <Compile Include="Request\IBaseRequestBuilder.cs"/>
     <Compile Include="Request\ClientException.cs"/>
