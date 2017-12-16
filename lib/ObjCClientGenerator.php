@@ -127,6 +127,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		{
 			case "NO":
 			case "YES":
+			case "BSD":
 				return "{$propertyName}_";
 			default:
 				return $propertyName;
