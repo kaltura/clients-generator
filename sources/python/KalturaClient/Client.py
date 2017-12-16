@@ -29,6 +29,8 @@ from __future__ import absolute_import
 
 from .Plugins.Core import *
 from .Base import *
+from .exceptions import KalturaClientException
+
 from xml.parsers.expat import ExpatError
 from xml.dom import minidom
 import binascii

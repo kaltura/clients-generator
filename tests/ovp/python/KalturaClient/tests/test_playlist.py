@@ -6,6 +6,7 @@ import six
 
 from .utils import getTestFile, KalturaBaseTest
 
+from KalturaClient.exceptions import KalturaException
 from KalturaClient.Plugins.Core import (
     KalturaPlaylist, KalturaPlaylistType, KalturaPlaylistListResponse)
 
@@ -145,8 +146,6 @@ class PlaylistTests(KalturaBaseTest):
         
         
     def test_updateExceptionReferenceIdNotSet(self):
-        from KalturaClient.Base import KalturaException
-        
         kplaylist = KalturaPlaylist()
         kplaylist.setName('pytest.PlaylistTests.test_updateExceptionReferenceIdNotSet')
         kplaylist.setPlaylistType(KalturaPlaylistType(KalturaPlaylistType.STATIC_LIST))

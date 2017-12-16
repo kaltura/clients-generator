@@ -25,6 +25,10 @@
 #
 # @ignore
 # ===================================================================================================
+from __future__ import absolute_import
+
+from .exceptions import KalturaClientException
+
 import binascii
 import hashlib
 import json
@@ -316,34 +320,6 @@ class KalturaServiceBase(object):
     def setClient(self, client):
         self.client = client
 
-# Exception class for server errors
-class KalturaException(Exception):
-    def __init__(self, message, code):
-        self.code = code
-        self.message = message
-
-    def __str__(self):
-        return "%s (%s)" % (self.message, self.code)
-
-# Exception class for client errors
-class KalturaClientException(Exception):
-    ERROR_GENERIC = -1
-    ERROR_INVALID_XML = -2
-    ERROR_FORMAT_NOT_SUPPORTED = -3
-    ERROR_CONNECTION_FAILED = -4
-    ERROR_READ_FAILED = -5
-    ERROR_INVALID_PARTNER_ID = -6
-    ERROR_INVALID_OBJECT_TYPE = -7
-    ERROR_RESULT_NOT_FOUND = -8
-    ERROR_READ_TIMEOUT = -9
-    ERROR_READ_GZIP_FAILED = -10
-  
-    def __init__(self, message, code):
-        self.code = code
-        self.message = message
-
-    def __str__(self):
-        return "%s (%s)" % (self.message, self.code)
 
 # Client configuration class
 class KalturaConfiguration(object):

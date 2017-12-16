@@ -34,10 +34,10 @@ import requests
 from .utils import (GetConfig, getTestFile, KalturaBaseTest)
 
 from KalturaClient import KalturaClient
+from KalturaClient.exceptions import KalturaException
 from KalturaClient.Plugins.Core import (
     API_VERSION,
     KalturaDataEntry,
-    KalturaException,
     KalturaFilterPager,
     KalturaMediaEntry,
     KalturaMediaEntryFilter,
