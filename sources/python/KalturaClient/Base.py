@@ -1,12 +1,12 @@
-# ===================================================================================================
+# =============================================================================
 #                           _  __     _ _
 #                          | |/ /__ _| | |_ _  _ _ _ __ _
 #                          | ' </ _` | |  _| || | '_/ _` |
 #                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 #
 # This file is part of the Kaltura Collaborative Media Suite which allows users
-# to do with audio, video, and animation what Wiki platfroms allow them to do with
-# text.
+# to do with audio, video, and animation what Wiki platfroms allow them to do
+# with text.
 #
 # Copyright (C) 2006-2011  Kaltura Inc.
 #
@@ -24,7 +24,7 @@
 # along with this program.  If not, see <http:#www.gnu.org/licenses/>.
 #
 # @ignore
-# ===================================================================================================
+# =============================================================================
 from __future__ import absolute_import
 
 from .exceptions import KalturaClientException
@@ -37,14 +37,16 @@ import six
 
 # Service response formats
 KALTURA_SERVICE_FORMAT_JSON = 1
-KALTURA_SERVICE_FORMAT_XML  = 2
-KALTURA_SERVICE_FORMAT_PHP  = 3
+KALTURA_SERVICE_FORMAT_XML = 2
+KALTURA_SERVICE_FORMAT_PHP = 3
+
 
 # Xml utility functions
 def getXmlNodeText(xmlNode):
-    if xmlNode.firstChild == None:
+    if xmlNode.firstChild is None:
         return ''
     return xmlNode.firstChild.nodeValue
+
 
 def getXmlNodeBool(xmlNode):
     text = getXmlNodeText(xmlNode)
@@ -53,6 +55,7 @@ def getXmlNodeBool(xmlNode):
     elif text == '1':
         return True
     return None
+
 
 def getXmlNodeInt(xmlNode):
     text = getXmlNodeText(xmlNode)
@@ -63,6 +66,7 @@ def getXmlNodeInt(xmlNode):
     except ValueError:
         return None
 
+
 def getXmlNodeFloat(xmlNode):
     text = getXmlNodeText(xmlNode)
     if text == '':
@@ -72,6 +76,7 @@ def getXmlNodeFloat(xmlNode):
     except ValueError:
         return None
 
+
 def getChildNodeByXPath(node, nodePath):
     for curName in nodePath.split('/'):
         nextChild = None
@@ -79,10 +84,11 @@ def getChildNodeByXPath(node, nodePath):
             if childNode.nodeName == curName:
                 nextChild = childNode
                 break
-        if nextChild == None:
+        if nextChild is None:
             return None
         node = nextChild
     return node
+
 
 # Request parameters container
 class KalturaParams(object):
@@ -92,8 +98,8 @@ class KalturaParams(object):
     def get(self):
         return self.params
 
-    def put(self, key, value = None):
-        if value == None:
+    def put(self, key, value=None):
+        if value is None:
             self.params[key + '__null'] = ''
         elif isinstance(value, six.binary_type):
             self.params[key] = value.decode('utf8')
@@ -107,17 +113,17 @@ class KalturaParams(object):
         self.params[key] = objectProps
 
     def addObjectIfDefined(self, key, obj):
-        if obj == NotImplemented:
+        if obj is NotImplemented:
             return
-        if obj == None:
+        if obj is None:
             self.put(key)
             return
         self.add(key, obj.toParams().get())
 
     def addArrayIfDefined(self, key, array):
-        if array == NotImplemented:
+        if array is NotImplemented:
             return
-        if array == None:
+        if array is None:
             self.put(key)
             return
         if len(array) == 0:
@@ -128,32 +134,32 @@ class KalturaParams(object):
                 arr.append(array[curIndex].toParams().get())
             self.params[key] = arr
 
-    def addMapIfDefined(self, key, map):
-        if map == NotImplemented:
+    def addMapIfDefined(self, key, map_):
+        if map_ is NotImplemented:
             return
-        if map == None:
+        if map_ is None:
             self.put(key)
             return
-        if len(map) == 0:
+        if len(map_) == 0:
             self.params[key] = {'-': ''}
         else:
             dic = {}
-            for currentKey in map:
-                dic[currentKey] = map[currentKey].toParams().get()
+            for currentKey in map_:
+                dic[currentKey] = map_[currentKey].toParams().get()
             self.params[key] = dic
-			
+
     def addStringIfDefined(self, key, value):
-        if value != NotImplemented:
+        if value is not NotImplemented:
             self.put(key, value)
 
     def addIntIfDefined(self, key, value):
-        if value != NotImplemented:
+        if value is not NotImplemented:
             self.put(key, value)
 
     def addStringEnumIfDefined(self, key, value):
-        if value == NotImplemented:
+        if value is NotImplemented:
             return
-        if value == None:
+        if value is None:
             self.put(key)
             return
         if type(value) == str:
@@ -162,9 +168,9 @@ class KalturaParams(object):
             self.addStringIfDefined(key, value.getValue())
 
     def addIntEnumIfDefined(self, key, value):
-        if value == NotImplemented:
+        if value is NotImplemented:
             return
-        if value == None:
+        if value is None:
             self.put(key)
             return
         if type(value) == int:
@@ -173,13 +179,13 @@ class KalturaParams(object):
             self.addIntIfDefined(key, value.getValue())
 
     def addFloatIfDefined(self, key, value):
-        if value != NotImplemented:
+        if value is not NotImplemented:
             self.put(key, value)
 
     def addBoolIfDefined(self, key, value):
-        if value == NotImplemented:
+        if value is NotImplemented:
             return
-        if value == None:
+        if value is None:
             self.put(key)
             return
         self.put(key, value)
@@ -188,19 +194,17 @@ class KalturaParams(object):
         for key in params:
             if isinstance(params[key], dict):
                 params[key] = self.sort(params[key])
-                
         sortedKeys = sorted(params.keys(), key=lambda x: six.text_type(x))
         sortedDict = {}
         for key in sortedKeys:
             sortedDict[key] = params[key]
-            
         return sortedDict
-        
+
     def toJson(self):
         return json.dumps(self.params)
-        
-    def signature(self, params = None):
-        if params == None:
+
+    def signature(self, params=None):
+        if params is None:
             params = self.params
         params = self.sort(params)
         return self.md5(self.toJson())
@@ -211,6 +215,7 @@ class KalturaParams(object):
         m.update(
             str_ if isinstance(str_, six.binary_type) else str_.encode("utf8"))
         return binascii.hexlify(m.digest())
+
 
 # Request files container
 class KalturaFiles(object):
@@ -226,6 +231,7 @@ class KalturaFiles(object):
     def update(self, props):
         self.params.update(props)
 
+
 # Kaltura objects factory
 class KalturaObjectFactory(object):
     objectFactories = {}
@@ -234,14 +240,16 @@ class KalturaObjectFactory(object):
     def create(objectNode, expectedTypeName):
         expectedType = KalturaObjectFactory.objectFactories[expectedTypeName]
         objTypeNode = getChildNodeByXPath(objectNode, 'objectType')
-        if objTypeNode == None:
+        if objTypeNode is None:
             return None
         objType = getXmlNodeText(objTypeNode)
         if objType not in KalturaObjectFactory.objectFactories:
-            objType = expectedType.__name__        
+            objType = expectedType.__name__
         result = KalturaObjectFactory.objectFactories[objType]()
         if not isinstance(result, expectedType):
-            raise KalturaClientException("Unexpected object type '%s'" % objType, KalturaClientException.ERROR_INVALID_OBJECT_TYPE)
+            raise KalturaClientException(
+                "Unexpected object type '%s'" % objType,
+                KalturaClientException.ERROR_INVALID_OBJECT_TYPE)
         result.fromXml(objectNode)
         return result
 
@@ -249,7 +257,8 @@ class KalturaObjectFactory(object):
     def createArray(arrayNode, expectedElemType):
         results = []
         for arrayElemNode in arrayNode.childNodes:
-            results.append(KalturaObjectFactory.create(arrayElemNode, expectedElemType))
+            results.append(
+                KalturaObjectFactory.create(arrayElemNode, expectedElemType))
         return results
 
     @staticmethod
@@ -258,27 +267,28 @@ class KalturaObjectFactory(object):
         for mapElemNode in mapNode.childNodes:
             keyNode = getChildNodeByXPath(mapElemNode, 'itemKey')
             key = getXmlNodeText(keyNode)
-            results[key] = KalturaObjectFactory.create(mapElemNode, expectedElemType)
+            results[key] = KalturaObjectFactory.create(
+                mapElemNode, expectedElemType)
         return results
 
     @staticmethod
     def registerObjects(objs):
         KalturaObjectFactory.objectFactories.update(objs)
 
+
 # Abstract base class for all client objects
 class KalturaObjectBase(object):
-    def __init__(self, 
-            relatedObjects=NotImplemented):
+    def __init__(self, relatedObjects=NotImplemented):
 
         # @var map of KalturaListResponse
         # @readonly
         self.relatedObjects = relatedObjects
-        
-        from KalturaClient.Plugins.Core import KalturaListResponse
+
         KalturaObjectBase.PROPERTY_LOADERS = {
-            'relatedObjects': (KalturaObjectFactory.createMap, 'KalturaListResponse') 
+            'relatedObjects': (
+                KalturaObjectFactory.createMap, 'KalturaListResponse')
         }
-    
+
     def fromXmlImpl(self, node, propList):
         for childNode in node.childNodes:
             nodeName = childNode.nodeName
@@ -287,7 +297,6 @@ class KalturaObjectBase(object):
                 propName += "_"
                 if propName not in propList:
                     continue
-					
             propLoader = propList[propName]
             if type(propLoader) == tuple:
                 (func, param) = propLoader
@@ -299,8 +308,7 @@ class KalturaObjectBase(object):
 
     def fromXml(self, node):
         self.fromXmlImpl(node, KalturaObjectBase.PROPERTY_LOADERS)
-        pass
-    
+
     def toParams(self):
         result = KalturaParams()
         result.put('objectType', 'KalturaObjectBase')
@@ -312,11 +320,13 @@ class KalturaObjectBase(object):
     def setRelatedObjects(self, newRelatedObjects):
         self.relatedObjects = newRelatedObjects
 
+
 # Abstract base class for all client services
 class KalturaServiceBase(object):
-    def __init__(self, client = None):
+
+    def __init__(self, client=None):
         self.client = client
-        
+
     def setClient(self, client):
         self.client = client
 
@@ -324,38 +334,41 @@ class KalturaServiceBase(object):
 # Client configuration class
 class KalturaConfiguration(object):
     # Constructs new Kaltura configuration object
-    def __init__(self, serviceUrl = "http://www.kaltura.com", logger = None):
-        self.logger                     = logger
-        self.serviceUrl                 = serviceUrl
-        self.format                     = KALTURA_SERVICE_FORMAT_XML
-        self.requestTimeout             = 120
-        
+    def __init__(self, serviceUrl="http://www.kaltura.com", logger=None):
+        self.logger = logger
+        self.serviceUrl = serviceUrl
+        self.format = KALTURA_SERVICE_FORMAT_XML
+        self.requestTimeout = 120
+
     # Set logger to get kaltura client debug logs
     def setLogger(self, log):
         self.logger = log
-        
+
     # Gets the logger (internal client use)
     def getLogger(self):
         return self.logger
+
 
 # Client plugin interface class
 class IKalturaClientPlugin(object):
     # @return KalturaClientPlugin
     @staticmethod
     def get():
-        raise NotImplementedError
-        
+        raise NotImplementedError()
+
     # @return array<KalturaServiceBase>
     def getServices(self):
-        raise NotImplementedError
-        
+        raise NotImplementedError()
+
     # @return string
     def getName(self):
-        raise NotImplementedError
-        
+        raise NotImplementedError()
+
+
 # Client plugin base class
 class KalturaClientPlugin(IKalturaClientPlugin):
     pass
+
 
 # Kaltura enums factory
 class KalturaEnumsFactory(object):
@@ -364,13 +377,15 @@ class KalturaEnumsFactory(object):
     @staticmethod
     def create(enumValue, enumType):
         if enumType not in KalturaEnumsFactory.enumFactories:
-            raise KalturaClientException("Unrecognized enum '%s'" % enumType, KalturaClientException.ERROR_INVALID_OBJECT_TYPE)
+            raise KalturaClientException(
+                "Unrecognized enum '%s'" % enumType,
+                KalturaClientException.ERROR_INVALID_OBJECT_TYPE)
         return KalturaEnumsFactory.enumFactories[enumType](enumValue)
 
     @staticmethod
     def createInt(enumNode, enumType):
         enumValue = getXmlNodeInt(enumNode)
-        if enumValue == None:
+        if enumValue is None:
             return None
         return KalturaEnumsFactory.create(enumValue, enumType)
 
@@ -385,7 +400,8 @@ class KalturaEnumsFactory(object):
     def registerEnums(objs):
         KalturaEnumsFactory.enumFactories.update(objs)
 
+
 # Implement to get Kaltura Client logs
 class IKalturaLogger(object):
     def log(self, msg):
-        raise NotImplementedError
+        raise NotImplementedError()
