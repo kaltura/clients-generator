@@ -734,12 +734,10 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
 - (NSString*)queueServeService:(NSString*)aService withAction:(NSString*)aAction
 {
     self.error = nil;
-    [self->_params addIfDefinedKey:@"service" withString:aService];
-    [self->_params addIfDefinedKey:@"action" withString:aAction];
     [self addRequestDefaultParams];
     [self addGlobalParamsAndSign];
     
-    NSMutableString* result = [[NSMutableString alloc] initWithFormat:@"%@%@?", self.config.serviceUrl, KalturaServiceBaseUrl];
+    NSMutableString* result = [[NSMutableString alloc] initWithFormat:@"%@%@/service/%@/action/%@?", self.config.serviceUrl, KalturaServiceBaseUrl, aService, aAction];
     [self->_params appendQueryString:result];
     [result autorelease];
     return result;
@@ -748,7 +746,7 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
 - (void)setupRequestWithQuery:(NSString*)aFormat withArguments:(va_list)vaArgs
 {
     NSString* query = [[NSString alloc] initWithFormat:aFormat arguments:vaArgs];
-    NSString* urlStr = [[NSString alloc] initWithFormat:@"%@%@?%@", self.config.serviceUrl, KalturaServiceBaseUrl, query];
+    NSString* urlStr = [[NSString alloc] initWithFormat:@"%@%@/%@", self.config.serviceUrl, KalturaServiceBaseUrl, query];
     NSURL *url = [[NSURL alloc] initWithString:urlStr];
 
     [self logFormat:@"request url: %@", urlStr];
@@ -834,7 +832,7 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
     self->_reqParser = [excParser retain];
     [excParser release];
     
-    return [self issueRequestWithQuery:@"service=%@&action=%@", aService, aAction];
+    return [self issueRequestWithQuery:@"service/%@/action/%@", aService, aAction];
 }
 
 - (void)startMultiRequest
@@ -873,7 +871,7 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
         }
     }
         
-    return [self issueRequestWithQuery:@"service=multirequest"];
+    return [self issueRequestWithQuery:@"service/multirequest"];
 }
 
 - (void)queueVoidService:(NSString*)aService withAction:(NSString*)aAction
