@@ -27,9 +27,24 @@
 # =============================================================================
 from __future__ import absolute_import
 
-from .Plugins.Core import *
-from .Base import *
-from .exceptions import KalturaClientException
+
+from KalturaClient.Base import (
+    IKalturaClientPlugin,
+    IKalturaLogger,
+    KALTURA_SERVICE_FORMAT_XML,
+    KalturaEnumsFactory,
+    KalturaFiles,
+    KalturaObjectBase,
+    KalturaObjectFactory,
+    KalturaParams,
+    getChildNodeByXPath,
+    getXmlNodeFloat,
+    getXmlNodeText,
+)
+from KalturaClient.exceptions import (
+    KalturaException, KalturaClientException)
+from KalturaClient.Plugins.Core import (
+    API_VERSION, KalturaClientConfiguration, KalturaRequestConfiguration)
 
 from xml.parsers.expat import ExpatError
 from xml.dom import minidom
@@ -52,9 +67,6 @@ try:
     from Crypto.Cipher import AES
 except ImportError:
     pass            # PyCrypto is required only for creating KS V2
-
-from KalturaClient.Plugins.Core import KalturaClientConfiguration
-from KalturaClient.Plugins.Core import KalturaRequestConfiguration
 
 
 def _get_file_params(files):
