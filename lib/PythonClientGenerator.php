@@ -71,7 +71,19 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 					ucfirst($dependencyNode->getAttribute("pluginName")) . 
 					' import *');
 		}
-		$this->appendLine('from ..Base import *');
+		$this->appendLine('from ..Base import (');
+		$this->appendLine('    getXmlNodeBool,');
+		$this->appendLine('    getXmlNodeFloat,');
+		$this->appendLine('    getXmlNodeInt,');
+		$this->appendLine('    getXmlNodeText,');
+		$this->appendLine('    KalturaClientPlugin,');
+		$this->appendLine('    KalturaEnumsFactory,');
+		$this->appendLine('    KalturaFiles,');
+		$this->appendLine('    KalturaObjectBase,');
+		$this->appendLine('    KalturaObjectFactory,');
+		$this->appendLine('    KalturaParams,');
+		$this->appendLine('    KalturaServiceBase,');
+		$this->appendLine(')');
 		$this->appendLine('');
 
 		if ($pluginName == '')
