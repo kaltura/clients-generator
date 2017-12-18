@@ -4,6 +4,7 @@ import { KalturaMultiResponse } from '../kaltura-multi-response';
 import { CancelableAction } from '../utils/cancelable-action';
 import { KalturaHttpClientBase, KalturaHttpClientBaseConfiguration } from './kaltura-http-client-base';
 import { KalturaAPIException } from '../kaltura-api-exception';
+import { KalturaFileRequest } from '../kaltura-file-request';
 
 
 export interface KalturaBrowserHttpClientConfiguration extends KalturaHttpClientBaseConfiguration
@@ -65,16 +66,43 @@ export class KalturaBrowserHttpClient extends KalturaHttpClientBase {
         return result;
     }
 
-    public request<T>(request: KalturaRequest<T>): Promise<T> {
+    private _transmitFileRequest(request: KalturaFileRequest): { url: string } {
+        const parameters: any = Object.assign(
+            {
+                format: 1
+            },
+            request.toRequestObject()
+        );
+
+        this._assignDefaultParameters(parameters);
+
+        // build endpoint
+        let endpoint = this._createEndpoint(parameters);
+
+        delete parameters.action;
+        delete parameters.service;
+
+        return {url: `${endpoint}?${this._buildQuerystring(parameters)}`};
+    }
+
+    public request<T>(request: KalturaRequest<T>): Promise<T>;
+    public request<T>(request: KalturaFileRequest): Promise<{ url: string }>;
+    public request<T>(request: KalturaRequest<T> | KalturaFileRequest): Promise<T | { url: string }> {
         return new Promise((resolve, reject) => {
-            super._request(request).then(
-                value => {
-                    resolve(value);
-                },
-                reason => {
-                    reject(reason);
-                }
-            );
+
+            if (request instanceof KalturaFileRequest) {
+                const response = this._transmitFileRequest(request);
+                resolve(response);
+            } else {
+                super._request(request).then(
+                    value => {
+                        resolve(value);
+                    },
+                    reason => {
+                        reject(reason);
+                    }
+                );
+            }
 
         });
     }
@@ -83,14 +111,27 @@ export class KalturaBrowserHttpClient extends KalturaHttpClientBase {
     public multiRequest(request : KalturaMultiRequest) : Promise<KalturaMultiResponse>;
     public multiRequest(arg: KalturaMultiRequest | KalturaRequest<any>[]): Promise<KalturaMultiResponse> {
         return new Promise((resolve, reject) => {
-            super._multiRequest(arg).then(
-                value => {
-                    resolve(value);
-                },
-                reason => {
-                    reject(reason);
-                }
-            );
+
+            let request = arg instanceof KalturaMultiRequest ? arg : (arg instanceof Array ? new KalturaMultiRequest(...arg) : null);
+
+            if (!request) {
+                reject(new Error(`Expected argument of type Array or KalturaMultiRequest`));
+            }
+
+            const containsFileRequest = request.requests.some(item => item instanceof KalturaFileRequest);
+
+            if (containsFileRequest) {
+                reject(new Error(`multi-request not support requests of type 'KalturaFileRequest'`));
+            } else {
+                super._multiRequest(arg).then(
+                    value => {
+                        resolve(value);
+                    },
+                    reason => {
+                        reject(reason);
+                    }
+                );
+            }
 
         });
     }

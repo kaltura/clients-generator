@@ -3,15 +3,15 @@ import { KalturaClientBase, KalturaClientBaseConfiguration } from "./kaltura-cli
 import { KalturaUploadRequest } from '../kaltura-upload-request';
 
 export interface KalturaHttpClientBaseConfiguration extends KalturaClientBaseConfiguration {
-  endpointUrl: string;
-  chunkFileSize?: number;
+    endpointUrl: string;
+    chunkFileSize?: number;
 }
 
 interface ChunkData {
-  enabled: boolean;
-  resume: boolean;
-  resumeAt: number;
-  finalChunk: boolean;
+    enabled: boolean;
+    resume: boolean;
+    resumeAt: number;
+    finalChunk: boolean;
 }
 
 export abstract class KalturaHttpClientBase extends KalturaClientBase {
@@ -146,7 +146,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
             }
 
 
-           // build endpoint
+            // build endpoint
             const endpointData = { service: parameters.service, action: parameters.action };
             delete parameters.service;
             delete parameters.action;
@@ -191,11 +191,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
             if (progressCallback) {
                 xhr.upload.addEventListener("progress", e => {
                     if (e.lengthComputable) {
-                        let chunkSize = uploadSize;
-                        if (uploadChunkData.enabled) {
-                            chunkSize = uploadChunkData.finalChunk ? file.size - fileStart : uploadSize;
-                        }
-                        progressCallback.apply(request, [Math.floor(e.loaded / e.total * chunkSize) + fileStart, file.size]);
+                        progressCallback.apply(request, [e.loaded + fileStart, file.size]);
                     } else {
                         // Unable to compute progress information since the total size is unknown
                     }
@@ -216,7 +212,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
 
     protected abstract _createCancelableAction(data: { endpoint: string, headers: any, body: {} }): CancelableAction;
 
-    private _createEndpoint(parameters: any): string {
+    protected _createEndpoint(parameters: any): string {
         let endpoint = `${this.endpointUrl}/api_v3/service/${parameters.service}`;
         if (parameters.action) {
             endpoint = `${endpoint}/action/${parameters.action}`;
@@ -247,7 +243,7 @@ export abstract class KalturaHttpClientBase extends KalturaClientBase {
         return this._createCancelableAction({endpoint, headers, body: parameters});
     }
 
-    private _buildQuerystring(data: {}, prefix?: string) {
+    protected _buildQuerystring(data: {}, prefix?: string) {
         let str = [], p;
         for (p in data) {
             if (data.hasOwnProperty(p)) {
