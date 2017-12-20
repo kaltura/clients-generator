@@ -63,8 +63,8 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion');
 		$assemblyInfoFile = $this->_sourcePath."/KalturaClient/Properties/AssemblyInfo.cs";
 		$assemblyInfoFileContent = file_get_contents($assemblyInfoFile);  
-		$assemblyInfoFileContent = preg_replace('{AssemblyVersion\(".*"\)}','AssemblyVersion("'.$apiVersion.'")',$assemblyInfoFileContent);
-		$assemblyInfoFileContent = preg_replace('{AssemblyFileVersion\(".*"\)}','AssemblyFileVersion("'.$apiVersion.'")',$assemblyInfoFileContent);
+		$assemblyInfoFileContent = str_replace('AssemblyVersion("1.0.0.0")','AssemblyVersion("'.$apiVersion.'")',$assemblyInfoFileContent);
+		$assemblyInfoFileContent = str_replace('AssemblyFileVersion("1.0.0.0")','AssemblyFileVersion("'.$apiVersion.'")',$assemblyInfoFileContent);
 		file_put_contents($assemblyInfoFile,$assemblyInfoFileContent);
 	}
 
