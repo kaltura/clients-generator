@@ -54,18 +54,8 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 		$errorNodes = $xpath->query("/xml/errors/error");
 		$this->writeApiException($errorNodes);
-		$this->patchAssemblyVersion();
-		$this->writeCsproj();
-	}
 
-	function patchAssemblyVersion()
-	{
-		$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion');
-		$assemblyInfoFile = $this->_sourcePath."/KalturaClient/Properties/AssemblyInfo.cs";
-		$assemblyInfoFileContent = file_get_contents($assemblyInfoFile);  
-		$assemblyInfoFileContent = str_replace('AssemblyVersion("1.0.0.0")','AssemblyFileVersion("'.$apiVersion.'")',$assemblyInfoFileContent);
-		$assemblyInfoFileContent = str_replace('AssemblyFileVersion("1.0.0.0")','AssemblyFileVersion("'.$apiVersion.'")',$assemblyInfoFileContent);
-		file_put_contents($assemblyInfoFile,$assemblyInfoFileContent);
+		$this->writeCsproj();
 	}
 
 	function writeApiException(DOMNodeList $errorNodes)
