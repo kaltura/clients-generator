@@ -37,7 +37,6 @@ from KalturaClient.Base import (
     KalturaObjectBase,
     KalturaObjectFactory,
     KalturaParams,
-    getChildNodeByXPath,
     getXmlNodeFloat,
     getXmlNodeText,
 )
@@ -46,8 +45,6 @@ from KalturaClient.exceptions import (
 from KalturaClient.Plugins.Core import (
     API_VERSION, KalturaClientConfiguration, KalturaRequestConfiguration)
 
-from xml.parsers.expat import ExpatError
-from xml.dom import minidom
 import binascii
 import hashlib
 import mimetypes
@@ -57,6 +54,7 @@ import urllib
 import types
 import time
 import os
+import xml.etree.ElementTree as etree
 
 import requests
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -329,18 +327,18 @@ class KalturaClient(object):
             self.log("result (xml): %s" % postResult)
 
         try:
-            resultXml = minidom.parseString(postResult)
-        except ExpatError as e:
+            resultXml = etree.fromstring(postResult)
+        except etree.ParseError as e:
             raise KalturaClientException(
                 e, KalturaClientException.ERROR_INVALID_XML)
 
-        resultNode = getChildNodeByXPath(resultXml, 'xml/result')
+        resultNode = resultXml.find('result')
         if resultNode is None:
             raise KalturaClientException(
                 'Could not find result node in response xml',
                 KalturaClientException.ERROR_RESULT_NOT_FOUND)
 
-        execTime = getChildNodeByXPath(resultXml, 'xml/executionTime')
+        execTime = resultXml.find('executionTime')
         if execTime is not None:
             self.executionTime = getXmlNodeFloat(execTime)
 
@@ -401,11 +399,11 @@ class KalturaClient(object):
             self.shouldLog = True
 
     def getExceptionIfError(self, resultNode):
-        errorNode = getChildNodeByXPath(resultNode, 'error')
+        errorNode = resultNode.find('error')
         if errorNode is None:
             return None
-        messageNode = getChildNodeByXPath(errorNode, 'message')
-        codeNode = getChildNodeByXPath(errorNode, 'code')
+        messageNode = errorNode.find('message')
+        codeNode = errorNode.find('code')
         if messageNode is None or codeNode is None:
             return None
         return KalturaException(
@@ -426,22 +424,20 @@ class KalturaClient(object):
         if resultXml is None:
             return []
         result = []
-        i = 0
-        for childNode in resultXml.childNodes:
+        for i, childNode in enumerate(resultXml.getchildren()):
             exceptionObj = self.getExceptionIfError(childNode)
             if exceptionObj is not None:
                 result.append(exceptionObj)
-            elif getChildNodeByXPath(childNode, 'objectType') is not None:
+            elif childNode.find('objectType') is not None:
                 result.append(
                     KalturaObjectFactory.create(
                         childNode, self.multiRequestReturnType[i]))
-            elif getChildNodeByXPath(childNode, 'item/objectType') is not None:
+            elif childNode.find('item/objectType') is not None:
                 result.append(
                     KalturaObjectFactory.createArray(
                         childNode, self.multiRequestReturnType[i]))
             else:
                 result.append(getXmlNodeText(childNode))
-            i += 1
         self.multiRequestReturnType = None
         return result
 

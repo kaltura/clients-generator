@@ -43,9 +43,14 @@ KALTURA_SERVICE_FORMAT_PHP = 3
 
 # Xml utility functions
 def getXmlNodeText(xmlNode):
-    if xmlNode.firstChild is None:
-        return ''
-    return xmlNode.firstChild.nodeValue
+    if not xmlNode.text:
+        return six.u('')
+    # In Python 2, ElementTree only converts to a unicode object
+    # if the text contains non-ASCII characters. To maintain compatibility
+    # with xml.dom, always return a unicode (Python 2)/ str (Python 3) object.
+    return (
+        xmlNode.text.decode('utf8')
+        if isinstance(xmlNode.text, six.binary_type) else xmlNode.text)
 
 
 def getXmlNodeBool(xmlNode):
@@ -75,19 +80,6 @@ def getXmlNodeFloat(xmlNode):
         return float(text)
     except ValueError:
         return None
-
-
-def getChildNodeByXPath(node, nodePath):
-    for curName in nodePath.split('/'):
-        nextChild = None
-        for childNode in node.childNodes:
-            if childNode.nodeName == curName:
-                nextChild = childNode
-                break
-        if nextChild is None:
-            return None
-        node = nextChild
-    return node
 
 
 # Request parameters container
@@ -236,16 +228,16 @@ class KalturaFiles(object):
 class KalturaObjectFactory(object):
     objectFactories = {}
 
-    @staticmethod
-    def create(objectNode, expectedTypeName):
-        expectedType = KalturaObjectFactory.objectFactories[expectedTypeName]
-        objTypeNode = getChildNodeByXPath(objectNode, 'objectType')
+    @classmethod
+    def create(cls, objectNode, expectedTypeName):
+        expectedType = cls.objectFactories[expectedTypeName]
+        objTypeNode = objectNode.find('objectType')
         if objTypeNode is None:
             return None
         objType = getXmlNodeText(objTypeNode)
-        if objType not in KalturaObjectFactory.objectFactories:
+        if objType not in cls.objectFactories:
             objType = expectedType.__name__
-        result = KalturaObjectFactory.objectFactories[objType]()
+        result = cls.objectFactories[objType]()
         if not isinstance(result, expectedType):
             raise KalturaClientException(
                 "Unexpected object type '%s'" % objType,
@@ -253,27 +245,25 @@ class KalturaObjectFactory(object):
         result.fromXml(objectNode)
         return result
 
-    @staticmethod
-    def createArray(arrayNode, expectedElemType):
+    @classmethod
+    def createArray(cls, arrayNode, expectedElemType):
         results = []
-        for arrayElemNode in arrayNode.childNodes:
-            results.append(
-                KalturaObjectFactory.create(arrayElemNode, expectedElemType))
+        for arrayElemNode in list(arrayNode):
+            results.append(cls.create(arrayElemNode, expectedElemType))
         return results
 
-    @staticmethod
-    def createMap(mapNode, expectedElemType):
+    @classmethod
+    def createMap(cls, mapNode, expectedElemType):
         results = {}
-        for mapElemNode in mapNode.childNodes:
-            keyNode = getChildNodeByXPath(mapElemNode, 'itemKey')
+        for mapElemNode in list(mapNode):
+            keyNode = mapElemNode.find('itemKey')
             key = getXmlNodeText(keyNode)
-            results[key] = KalturaObjectFactory.create(
-                mapElemNode, expectedElemType)
+            results[key] = cls.create(mapElemNode, expectedElemType)
         return results
 
-    @staticmethod
-    def registerObjects(objs):
-        KalturaObjectFactory.objectFactories.update(objs)
+    @classmethod
+    def registerObjects(cls, objs):
+        cls.objectFactories.update(objs)
 
 
 # Abstract base class for all client objects
@@ -290,8 +280,8 @@ class KalturaObjectBase(object):
         }
 
     def fromXmlImpl(self, node, propList):
-        for childNode in node.childNodes:
-            nodeName = childNode.nodeName
+        for childNode in list(node):
+            nodeName = childNode.tag
             propName = nodeName
             if propName not in propList:
                 propName += "_"
