@@ -36,25 +36,14 @@ namespace Kaltura.Types
 	public class AssetReminderFilter : ReminderFilter
 	{
 		#region Constants
-		public const string KSQL = "kSql";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _KSql = null;
 		private AssetReminderOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
 		public new AssetReminderOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -77,9 +66,6 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "kSql":
-						this._KSql = propertyNode.InnerText;
-						continue;
 					case "orderBy":
 						this._OrderBy = (AssetReminderOrderBy)StringEnum.Parse(typeof(AssetReminderOrderBy), propertyNode.InnerText);
 						continue;
@@ -94,7 +80,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaAssetReminderFilter");
-			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -102,8 +87,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case KSQL:
-					return "KSql";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
