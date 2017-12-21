@@ -118,12 +118,17 @@ class Android2ClientGenerator extends Java2ClientGenerator
             $isEnum = $propertyNode->hasAttribute("enumType");
             $arrayType = $propertyNode->getAttribute("arrayType");
 
-            if($isEnum){
-                $enumName = $propType;
-                $propType = "enum";
+            if($isEnum)
+            {
+            	if($propType === 'Boolean')
+            	{
+            		$propType == 'boolean';
+            	}
+            	else 
+            	{
+	                $propType = "enum";
+            	}
             }
-
-            //printf("\n".$propType);
 
             switch ($propType) {
                 case "long":
@@ -208,11 +213,18 @@ class Android2ClientGenerator extends Java2ClientGenerator
             $isEnum = $propertyNode->hasAttribute("enumType");
             $arrayType = $propertyNode->getAttribute("arrayType");
 
-            if($isEnum){
-                $enumName = $propType;
-                $propType = "enum";
+            if($isEnum)
+            {
+            	if($propType === 'Boolean')
+            	{
+            		$propType == 'boolean';
+            	}
+            	else 
+            	{
+                	$enumName = $propType;
+	                $propType = "enum";
+            	}
             }
-          //  printf("\n".$propType);
 
             switch ($propType) {
                 case "long":
