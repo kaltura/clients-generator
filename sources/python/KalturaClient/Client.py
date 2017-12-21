@@ -33,7 +33,6 @@ from KalturaClient.Base import (
     IKalturaLogger,
     KALTURA_SERVICE_FORMAT_XML,
     KalturaEnumsFactory,
-    KalturaFiles,
     KalturaObjectBase,
     KalturaObjectFactory,
     KalturaParams,
@@ -223,7 +222,7 @@ class KalturaClient(object):
         return result
 
     def queueServiceActionCall(self, service, action, returnType,
-                               params=KalturaParams(), files=KalturaFiles()):
+                               params=KalturaParams(), files=None):
         for param in self.requestConfiguration:
             if isinstance(self.requestConfiguration[param], KalturaObjectBase):
                 params.addObjectIfDefined(
@@ -238,25 +237,25 @@ class KalturaClient(object):
 
     def getRequestParams(self):
         params = KalturaParams()
-        files = KalturaFiles()
+        files = {}
         for param in self.clientConfiguration:
             params.put(param, self.clientConfiguration[param])
         params.put("format", self.config.format)
         url = self.config.serviceUrl + "/api_v3"
         if (self.multiRequestReturnType is not None):
             url += "/service/multirequest"
-            i = 0
-            for call in self.callsQueue:
+            for i, call in enumerate(self.callsQueue):
                 callParams = call.getParamsForMultiRequest(i)
                 callFiles = call.getFilesForMultiRequest(i)
                 params.update(callParams)
-                files.update(callFiles)
-                i += 1
+                if callFiles:
+                    files.update(callFiles)
         else:
             call = self.callsQueue[0]
             url += "/service/" + call.service + "/action/" + call.action
             params.update(call.params.get())
-            files.update(call.files.get())
+            if call.files:
+                files.update(call.files)
 
         signature = params.signature()
         params.put("kalsig", signature)
@@ -275,16 +274,16 @@ class KalturaClient(object):
         requestHeaders['Accept'] = 'text/xml'
         requestHeaders['Accept-encoding'] = 'gzip'
         try:
-            if not (params.get() or files.get()):
+            if not (params.get() or files):
                 requestHeaders['Content-Type'] = 'application/json'
                 return requests.post(
                     url, headers=requestHeaders, timeout=requestTimeout)
-            if files.get():
+            if files:
                 if 'Content-Type' in requestHeaders:
                     del requestHeaders['Content-Type']
                 fields = {}
                 fields["json"] = params.toJson()
-                fields.update(_get_file_params(files.get()))
+                fields.update(_get_file_params(files))
                 encoder = MultipartEncoder(fields=fields)
                 requestHeaders['Content-Type'] = encoder.content_type
                 return requests.post(
@@ -308,8 +307,8 @@ class KalturaClient(object):
                 e, KalturaClientException.ERROR_READ_FAILED)
 
     # Send http request
-    def doHttpRequest(self, url, params=KalturaParams(), files=KalturaFiles()):
-        if len(files.get()) == 0:
+    def doHttpRequest(self, url, params=KalturaParams(), files=None):
+        if not files:
             requestTimeout = self.config.requestTimeout
         else:
             # 10 seconds is a reasonable default timeout
@@ -521,7 +520,7 @@ class KalturaClient(object):
 class KalturaServiceActionCall(object):
 
     def __init__(self, service, action, params=KalturaParams(),
-                 files=KalturaFiles()):
+                 files=None):
         self.service = service
         self.action = action
         self.params = params
@@ -537,7 +536,9 @@ class KalturaServiceActionCall(object):
         return multiRequestParams.get()
 
     def getFilesForMultiRequest(self, multiRequestIndex):
-        multiRequestParams = KalturaFiles()
-        for (key, val) in self.files.get().items():
-            multiRequestParams.put("%s:%s" % (multiRequestIndex, key), val)
-        return multiRequestParams.get()
+        if not self.files:
+            return
+        multiRequestParams = {}
+        for (key, val) in self.files.items():
+            multiRequestParams["%s:%s" % (multiRequestIndex, key)] = val
+        return multiRequestParams

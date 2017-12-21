@@ -78,7 +78,6 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('    getXmlNodeText,');
 		$this->appendLine('    KalturaClientPlugin,');
 		$this->appendLine('    KalturaEnumsFactory,');
-		$this->appendLine('    KalturaFiles,');
 		$this->appendLine('    KalturaObjectBase,');
 		$this->appendLine('    KalturaObjectFactory,');
 		$this->appendLine('    KalturaParams,');
@@ -632,7 +631,6 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		    if ($haveFiles === false && $paramType == "file")
 	    	{
 		        $haveFiles = true;
-	        	$this->appendLine("        kfiles = KalturaFiles()");
 	    	}
 	    
 			switch ($paramType) 
@@ -657,7 +655,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 					$this->appendLine("        kparams.addMapIfDefined(\"$paramName\", $argName)");
 					break;
 				case "file" :
-					$this->appendLine ( "        kfiles.put(\"$paramName\", " . $argName . ");" );
+					$this->appendLine ( "        kfiles = {\"$paramName\": " . $argName . "}" );
 					break;
 				default : // for objects
 					$this->appendLine("        kparams.addObjectIfDefined(\"$paramName\", $argName)");

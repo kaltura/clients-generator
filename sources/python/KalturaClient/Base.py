@@ -209,21 +209,6 @@ class KalturaParams(object):
         return binascii.hexlify(m.digest())
 
 
-# Request files container
-class KalturaFiles(object):
-    def __init__(self):
-        self.params = {}
-
-    def get(self):
-        return self.params
-
-    def put(self, key, value):
-        self.params[key] = value
-
-    def update(self, props):
-        self.params.update(props)
-
-
 # Kaltura objects factory
 class KalturaObjectFactory(object):
     objectFactories = {}
