@@ -122,7 +122,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
             {
             	if($propType === 'Boolean')
             	{
-            		$propType == 'boolean';
+            		$propType = 'boolean';
             	}
             	else 
             	{
@@ -217,7 +217,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
             {
             	if($propType === 'Boolean')
             	{
-            		$propType == 'boolean';
+            		$propType = 'boolean';
             	}
             	else 
             	{
