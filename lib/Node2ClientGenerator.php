@@ -518,6 +518,7 @@ class Node2ClientGenerator extends ClientGeneratorFromXml
 		$this->echoLine($this->requestClasses, "	 */");
 		$this->echoLine($this->requestClasses, "	set{$methodsName}($name){");
 		$this->echoLine($this->requestClasses, "		this.requestData['{$paramName}'] = {$name};");
+		$this->echoLine($this->requestClasses, "		return this;");
 		$this->echoLine($this->requestClasses, "	};");
 		$this->echoLine($this->requestClasses, "	");
 	
