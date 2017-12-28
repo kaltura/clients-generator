@@ -324,6 +324,27 @@ export abstract class KalturaObjectBase{
                                 throw new Error(`failed to parse property. Expected '${propertyName} to be kaltura object`);
                             }
                             break;
+                        case 'm': //map
+                            if (value instanceof Object) {
+                                const parsedObject = [];
+                                Object.keys(value).forEach(itemKey => {
+                                    var itemValue = value[itemKey];
+                                    if (itemValue instanceof KalturaObjectBase) {
+                                        parsedObject[itemKey] = itemValue.toRequestObject();
+                                    }
+
+                                });
+                                if (parsedObject) {
+                                    result = { status: 'exists', value: parsedObject };
+                                }
+                                else {
+                                    throw new Error("failed to parse map. Expected all '" + propertyName + " items to be kaltura object");
+                                }
+                            }
+                            else {
+                                throw new Error("failed to parse property '" + propertyName + " to be kaltura object");
+                            }
+                            break;
                         case 'd': // date
                             if (value instanceof Date) {
                                 result = { status : 'exists', value : KalturaUtils.toServerDate(value)};
