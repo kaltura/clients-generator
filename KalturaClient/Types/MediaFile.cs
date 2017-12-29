@@ -50,7 +50,6 @@ namespace Kaltura.Types
 		public const string ALT_CDN_CODE = "altCdnCode";
 		public const string PPV_MODULES = "ppvModules";
 		public const string PRODUCT_CODE = "productCode";
-		public const string FILE_SIZE = "fileSize";
 		#endregion
 
 		#region Private Fields
@@ -68,7 +67,6 @@ namespace Kaltura.Types
 		private string _AltCdnCode = null;
 		private StringValueArray _PpvModules;
 		private string _ProductCode = null;
-		private long _FileSize = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -193,15 +191,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductCode");
 			}
 		}
-		public long FileSize
-		{
-			get { return _FileSize; }
-			set 
-			{ 
-				_FileSize = value;
-				OnPropertyChanged("FileSize");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -257,9 +246,6 @@ namespace Kaltura.Types
 					case "productCode":
 						this._ProductCode = propertyNode.InnerText;
 						continue;
-					case "fileSize":
-						this._FileSize = ParseLong(propertyNode.InnerText);
-						continue;
 				}
 			}
 		}
@@ -285,7 +271,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("altCdnCode", this._AltCdnCode);
 			kparams.AddIfNotNull("ppvModules", this._PpvModules);
 			kparams.AddIfNotNull("productCode", this._ProductCode);
-			kparams.AddIfNotNull("fileSize", this._FileSize);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -320,8 +305,6 @@ namespace Kaltura.Types
 					return "PpvModules";
 				case PRODUCT_CODE:
 					return "ProductCode";
-				case FILE_SIZE:
-					return "FileSize";
 				default:
 					return base.getPropertyName(apiName);
 			}
