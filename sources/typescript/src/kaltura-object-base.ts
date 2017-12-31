@@ -321,6 +321,31 @@ export abstract class KalturaObjectBase{
                                 }
                             }else
                             {
+                                throw new Error(`failed to parse property. Expected '${propertyName} to be Array`);
+                            }
+                            break;
+                        case 'm': //map
+                            if (value instanceof Object) {
+                                const valueKeys = Object.keys(value);
+
+                                if (valueKeys.length > 0) {
+                                    const parsedObject = {};
+                                    valueKeys.forEach(itemKey => {
+                                        var itemValue = value[itemKey];
+                                        if (itemValue instanceof KalturaObjectBase) {
+                                            parsedObject[itemKey] = itemValue.toRequestObject();
+                                        }
+
+                                    });
+
+                                    if (valueKeys.length === Object.keys(parsedObject).length) {
+                                        result = {status: 'exists', value: parsedObject};
+                                    } else {
+                                        throw new Error(`failed to parse map. Expected all '${propertyName} items to be kaltura object`);
+                                    }
+                                }
+                            }else
+                            {
                                 throw new Error(`failed to parse property. Expected '${propertyName} to be kaltura object`);
                             }
                             break;
