@@ -54,7 +54,11 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
             let responseObject = null;
 
             if (unwrappedResponse) {
-                if (unwrappedResponse.objectType === 'KalturaAPIException') {
+                if (unwrappedResponse instanceof KalturaAPIException)
+                {
+                    // handle situation when multi request propagated actual api exception object.
+                    responseObject = unwrappedResponse;
+                }else if (unwrappedResponse.objectType === 'KalturaAPIException') {
                     responseObject = super._parseResponseProperty(
                         "",
                         {
@@ -78,8 +82,8 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
             if (!responseObject && this.responseType !== 'v') {
                 responseError = new KalturaAPIException('client::response_type_error', `server response is undefined, expected '${this.responseType} / ${this.responseSubType}'`);
             } else if (responseObject instanceof KalturaAPIException) {
-                    // got exception from library
-                    responseError = responseObject;
+                // got exception from library
+                responseError = responseObject;
             }else {
                 responseResult = responseObject;
             }

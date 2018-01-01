@@ -167,7 +167,7 @@ export abstract class KalturaObjectBase{
                             Object.keys(sourceValue).forEach(itemKey =>
                             {
                                 const itemValue = sourceValue[itemKey];
-                               const newItem =  this._createKalturaObject(property.subType);
+                                const newItem =  this._createKalturaObject(itemValue['objectType'], property.subType);
 
                                 if (itemValue && newItem) {
                                     newItem.fromResponseObject(itemValue);
@@ -177,6 +177,8 @@ export abstract class KalturaObjectBase{
                                 }
 
                             });
+
+                            result = parsedMap;
                         } else {
                             throw new Error(`failed to parse property '${propertyName}. Expected type object, got type '${typeof sourceValue}`);
                         }
@@ -247,7 +249,7 @@ export abstract class KalturaObjectBase{
 
         if (usedFallbackType && result)
         {
-                logger.warn(`[kaltura-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
+            logger.warn(`[kaltura-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
         }else if (!result)
         {
             logger.warn(`[kaltura-client]: Could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
@@ -315,6 +317,31 @@ export abstract class KalturaObjectBase{
                                         result = {status: 'exists', value: parsedArray};
                                     } else {
                                         throw new Error(`failed to parse array. Expected all '${propertyName} items to be kaltura object`);
+                                    }
+                                }
+                            }else
+                            {
+                                throw new Error(`failed to parse property. Expected '${propertyName} to be Array`);
+                            }
+                            break;
+                        case 'm': //map
+                            if (value instanceof Object) {
+                                const valueKeys = Object.keys(value);
+
+                                if (valueKeys.length > 0) {
+                                    const parsedObject = {};
+                                    valueKeys.forEach(itemKey => {
+                                        var itemValue = value[itemKey];
+                                        if (itemValue instanceof KalturaObjectBase) {
+                                            parsedObject[itemKey] = itemValue.toRequestObject();
+                                        }
+
+                                    });
+
+                                    if (valueKeys.length === Object.keys(parsedObject).length) {
+                                        result = {status: 'exists', value: parsedObject};
+                                    } else {
+                                        throw new Error(`failed to parse map. Expected all '${propertyName} items to be kaltura object`);
                                     }
                                 }
                             }else

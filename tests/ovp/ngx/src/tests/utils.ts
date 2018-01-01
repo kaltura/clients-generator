@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { TestsConfig } from "./tests-config";
+import { TestsConfig } from "../api/tests/tests-config";
 import { SessionStartAction } from "../api/types/SessionStartAction";
 import { KalturaSessionType } from "../api/types/KalturaSessionType";
 import { KalturaClient } from '../kaltura-client.service';

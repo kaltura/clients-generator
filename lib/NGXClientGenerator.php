@@ -1,5 +1,4 @@
 <?php
-CONST NewLine = "\n";
 
 require_once (__DIR__ . '/typescript/GeneratedFileData.php');
 require_once (__DIR__ . '/typescript/KalturaServerMetadata.php');

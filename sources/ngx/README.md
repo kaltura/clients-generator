@@ -1,6 +1,6 @@
-# Kaltura Typescript Client
+# Kaltura Angular Client
 
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Gitter chat](https://badges.gitter.im/kaltura-ng/kaltura-ng.png)](https://gitter.im/kaltura-ng/kaltura-ng)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Gitter chat](https://badges.gitter.im/kaltura-ng/kaltura-ng.png)](https://gitter.im/kaltura-ng/kaltura-ng) [![Build Status](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular.svg?branch=master)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular)
 
 > An easy-to-use facade to Kaltura server with typescript support for action requests, classes and enums.
 
@@ -55,7 +55,7 @@ An example of a vaild command will be: `npm install file:libs/kaltura-ngx-client
 5. if you already have older version, delete that file. You should do this only after you installed the new version.
 
 ## Running integration tests
-- In `src/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.
+- In `src/api/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.
 - Modify the file content to include valid information.
 - Run `npm run test` to test the library
 
