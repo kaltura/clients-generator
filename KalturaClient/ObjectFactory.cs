@@ -69,6 +69,8 @@ namespace Kaltura
 			string className = xmlElement["objectType"].InnerText;
 			switch (className)
 			{
+				case "KalturaPromotionListResponse":
+					return new ListResponse<Promotion>(xmlElement);
 				case "KalturaSocialCommentListResponse":
 					return new ListResponse<SocialComment>(xmlElement);
 				case "KalturaSocialFriendActivityListResponse":
