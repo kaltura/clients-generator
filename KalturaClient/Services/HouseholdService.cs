@@ -166,6 +166,51 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class HouseholdPurgeRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public int Id
+		{
+			set;
+			get;
+		}
+
+		public HouseholdPurgeRequestBuilder()
+			: base("household", "purge")
+		{
+		}
+
+		public HouseholdPurgeRequestBuilder(int id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class HouseholdResetFrequencyRequestBuilder : RequestBuilder<Household>
 	{
 		#region Constants
@@ -348,6 +393,11 @@ namespace Kaltura.Services
 		public static HouseholdGetRequestBuilder Get(int id = Int32.MinValue)
 		{
 			return new HouseholdGetRequestBuilder(id);
+		}
+
+		public static HouseholdPurgeRequestBuilder Purge(int id)
+		{
+			return new HouseholdPurgeRequestBuilder(id);
 		}
 
 		public static HouseholdResetFrequencyRequestBuilder ResetFrequency(HouseholdFrequencyType frequencyType)
