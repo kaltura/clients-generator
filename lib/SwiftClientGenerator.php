@@ -287,7 +287,7 @@ end
 
         $dependenciesNodes = $pluginNode->getElementsByTagName("dependency");
         foreach ($dependenciesNodes as $dependencyNode){
-            $dependencyName = $dependencyNode->getAttribute("pluginName");
+            $dependencyName = ucfirst($dependencyNode->getAttribute("pluginName"));
             $this->appendLine(" ssp.dependency 'KalturaClient/" .$dependencyName ."'");
 
         }
