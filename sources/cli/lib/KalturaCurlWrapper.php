@@ -37,9 +37,9 @@ class KalturaCurlWrapper
 	public $followRedirects = false;
 	public $range = '';
 
-    const FILE_DATA = 'fileData';
+	const FILE_DATA = 'fileData';
 
-    public function readHeader($ch, $string)
+	public function readHeader($ch, $string)
 	{
 		$this->responseHeaders .= $string;
 		return strlen($string);	
@@ -63,8 +63,8 @@ class KalturaCurlWrapper
 				}
 			}
 			if ($hasFiles){
-                $params = $this->setFileAccordingToPHPVersion($params);
-            }
+				$params = $this->setFileAccordingToPHPVersion($params);
+			}
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $hasFiles ? $params : http_build_query($params));
 		}
 		else if ($params)
@@ -108,19 +108,19 @@ class KalturaCurlWrapper
 		return $data;
 	}
 
-    /**
-     * @param $params the parameterds
-     * @return mixed
-     */
-    public function setFileAccordingToPHPVersion($params)
-    {
-        if (function_exists('curl_file_create')) // php 5.5+
-        {
-            $path = substr($params[self::FILE_DATA], 1);
-            $cFile = curl_file_create($path,mime_content_type($path));
-            $params[self::FILE_DATA] = $cFile;
-        }
-        return $params;
-    }
+	/**
+	 * @param $params the parameterds
+	 * @return mixed
+	 */
+	public function setFileAccordingToPHPVersion($params)
+	{
+		if (function_exists('curl_file_create')) // php 5.5+
+		{
+			$path = substr($params[self::FILE_DATA], 1);
+			$cFile = curl_file_create($path,mime_content_type($path));
+			$params[self::FILE_DATA] = $cFile;
+		}
+		return $params;
+	}
 }
 
