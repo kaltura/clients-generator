@@ -160,7 +160,7 @@ namespace Kaltura.Request
             if (getFiles().Count == 0)
             {
                 byte[] byteArray = Encoding.UTF8.GetBytes(json);
-                postStream.Write(byteArray, 0, json.Length);
+                postStream.Write(byteArray, 0, byteArray.Length);
             }
             else
             {
