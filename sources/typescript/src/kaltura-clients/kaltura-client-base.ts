@@ -40,7 +40,18 @@ export abstract class KalturaClientBase {
                 return request.handleResponse(result);
             },
             (error) => {
-                throw error;
+                let kalturaAPIException;
+                if (error instanceof KalturaAPIException) {
+                    kalturaAPIException = error;
+                } else if (error instanceof Error && error.message) {
+
+                    kalturaAPIException = new KalturaAPIException("client::unknown-error", error.message);
+                } else {
+                    const errorMessage = typeof error === 'string' ? error : 'Error connecting to server';
+                    kalturaAPIException = new KalturaAPIException("client::unknown-error", errorMessage);
+                }
+
+                throw kalturaAPIException;
             }
         );
 
