@@ -3,7 +3,7 @@
     "description": "An auto generated Composer package for the Kaltura API client library",
     "keywords": ["kaltura", "client library", "video", "open source video", "video platform", "api"],
     "minimum-stability": "stable",
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "Kaltura",
