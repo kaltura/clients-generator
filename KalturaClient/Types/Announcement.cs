@@ -45,6 +45,7 @@ namespace Kaltura.Types
 		public const string RECIPIENTS = "recipients";
 		public const string ID = "id";
 		public const string IMAGE_URL = "imageUrl";
+		public const string INCLUDE_MAIL = "includeMail";
 		#endregion
 
 		#region Private Fields
@@ -57,6 +58,7 @@ namespace Kaltura.Types
 		private AnnouncementRecipientsType _Recipients = null;
 		private int _Id = Int32.MinValue;
 		private string _ImageUrl = null;
+		private bool? _IncludeMail = null;
 		#endregion
 
 		#region Properties
@@ -131,6 +133,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageUrl");
 			}
 		}
+		public bool? IncludeMail
+		{
+			get { return _IncludeMail; }
+			set 
+			{ 
+				_IncludeMail = value;
+				OnPropertyChanged("IncludeMail");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -171,6 +182,9 @@ namespace Kaltura.Types
 					case "imageUrl":
 						this._ImageUrl = propertyNode.InnerText;
 						continue;
+					case "includeMail":
+						this._IncludeMail = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -191,6 +205,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("recipients", this._Recipients);
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("imageUrl", this._ImageUrl);
+			kparams.AddIfNotNull("includeMail", this._IncludeMail);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -215,6 +230,8 @@ namespace Kaltura.Types
 					return "Id";
 				case IMAGE_URL:
 					return "ImageUrl";
+				case INCLUDE_MAIL:
+					return "IncludeMail";
 				default:
 					return base.getPropertyName(apiName);
 			}

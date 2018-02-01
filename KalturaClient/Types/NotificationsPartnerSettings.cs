@@ -51,6 +51,7 @@ namespace Kaltura.Types
 		public const string CHURN_MAIL_SUBJECT = "churnMailSubject";
 		public const string SENDER_EMAIL = "senderEmail";
 		public const string MAIL_SENDER_NAME = "mailSenderName";
+		public const string MAIL_NOTIFICATION_ADAPTER_ID = "mailNotificationAdapterId";
 		#endregion
 
 		#region Private Fields
@@ -69,6 +70,7 @@ namespace Kaltura.Types
 		private string _ChurnMailSubject = null;
 		private string _SenderEmail = null;
 		private string _MailSenderName = null;
+		private long _MailNotificationAdapterId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -207,6 +209,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailSenderName");
 			}
 		}
+		public long MailNotificationAdapterId
+		{
+			get { return _MailNotificationAdapterId; }
+			set 
+			{ 
+				_MailNotificationAdapterId = value;
+				OnPropertyChanged("MailNotificationAdapterId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -265,6 +276,9 @@ namespace Kaltura.Types
 					case "mailSenderName":
 						this._MailSenderName = propertyNode.InnerText;
 						continue;
+					case "mailNotificationAdapterId":
+						this._MailNotificationAdapterId = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -291,6 +305,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("churnMailSubject", this._ChurnMailSubject);
 			kparams.AddIfNotNull("senderEmail", this._SenderEmail);
 			kparams.AddIfNotNull("mailSenderName", this._MailSenderName);
+			kparams.AddIfNotNull("mailNotificationAdapterId", this._MailNotificationAdapterId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -327,6 +342,8 @@ namespace Kaltura.Types
 					return "SenderEmail";
 				case MAIL_SENDER_NAME:
 					return "MailSenderName";
+				case MAIL_NOTIFICATION_ADAPTER_ID:
+					return "MailNotificationAdapterId";
 				default:
 					return base.getPropertyName(apiName);
 			}
