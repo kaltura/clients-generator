@@ -605,10 +605,11 @@ end
 		if(!$this->shouldIncludeService($serviceId)) {
 			return;
 		}
-		
+
 		$actionNodes = $serviceNode->childNodes;
 		$asExtension = false;
-		if($serviceNode->getAttribute("plugin") != $this->pluginName) {
+        $servicePlugin = $serviceNode->getAttribute("plugin");
+		if($servicePlugin != $this->pluginName) {
 			
 			if($this->pluginName) {
 				foreach($actionNodes as $actionNode)
@@ -649,7 +650,7 @@ end
 			
 			try 
 			{
-				$this->writeAction($serviceId, $actionNode);
+				$this->writeAction($serviceId, $asExtension, $actionNode);
 			}
 			catch(Exception $e) 
 			{
@@ -657,11 +658,13 @@ end
 			}
 		}
 		$this->appendLine("}");
-		
-		$file = $this->_baseClientPath . "/Classes/Services/$swiftServiceName.swift";
+
+		$fileName = $asExtension ? "/Classes/Services/$swiftServiceName+Extension.swift"
+            : "/Classes/Services/$swiftServiceName.swift";
+
+		$file = $this->_baseClientPath . $fileName;
 		$this->addFile($file, $this->getTextBlock());
 	}
-
 
 
     function getTokenizerType($resultType, $arrayType){
@@ -687,16 +690,16 @@ end
 
     }
 
-	function writeAction($serviceId, DOMElement $actionNode) 
+	function writeAction($serviceId, $asExtension, DOMElement $actionNode)
 	{
 
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action)) {
 			return;
 		}
-		
+
 		$actionPlugin = $actionNode->getAttribute("plugin");
-		if($actionPlugin != null && $actionPlugin != $this->pluginName) {
+		if($actionPlugin != $this->pluginName && ($actionPlugin || $asExtension)) {
 			return;
 		}
 			
