@@ -240,7 +240,7 @@ namespace Kaltura
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
 		public static string PaymentGatewaySuspended = "6051";
-		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
+		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";

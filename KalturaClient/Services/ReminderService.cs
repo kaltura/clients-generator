@@ -132,6 +132,76 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class ReminderDeleteWithTokenRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string TYPE = "type";
+		public const string TOKEN = "token";
+		public new const string PARTNER_ID = "partnerId";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public ReminderType Type
+		{
+			set;
+			get;
+		}
+		public string Token
+		{
+			set;
+			get;
+		}
+		public new int PartnerId
+		{
+			set;
+			get;
+		}
+
+		public ReminderDeleteWithTokenRequestBuilder()
+			: base("reminder", "deleteWithToken")
+		{
+		}
+
+		public ReminderDeleteWithTokenRequestBuilder(long id, ReminderType type, string token, int partnerId)
+			: this()
+		{
+			this.Id = id;
+			this.Type = type;
+			this.Token = token;
+			this.PartnerId = partnerId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("type"))
+				kparams.AddIfNotNull("type", Type);
+			if (!isMapped("token"))
+				kparams.AddIfNotNull("token", Token);
+			if (!isMapped("partnerId"))
+				kparams.AddIfNotNull("partnerId", PartnerId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
 	public class ReminderListRequestBuilder : RequestBuilder<ListResponse<Reminder>>
 	{
 		#region Constants
@@ -199,6 +269,11 @@ namespace Kaltura.Services
 		public static ReminderDeleteRequestBuilder Delete(long id, ReminderType type)
 		{
 			return new ReminderDeleteRequestBuilder(id, type);
+		}
+
+		public static ReminderDeleteWithTokenRequestBuilder DeleteWithToken(long id, ReminderType type, string token, int partnerId)
+		{
+			return new ReminderDeleteWithTokenRequestBuilder(id, type, token, partnerId);
 		}
 
 		public static ReminderListRequestBuilder List(ReminderFilter filter, FilterPager pager = null)

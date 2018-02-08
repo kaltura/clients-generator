@@ -123,6 +123,67 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class FollowTvSeriesDeleteWithTokenRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string ASSET_ID = "assetId";
+		public const string TOKEN = "token";
+		public new const string PARTNER_ID = "partnerId";
+		#endregion
+
+		public int AssetId
+		{
+			set;
+			get;
+		}
+		public string Token
+		{
+			set;
+			get;
+		}
+		public new int PartnerId
+		{
+			set;
+			get;
+		}
+
+		public FollowTvSeriesDeleteWithTokenRequestBuilder()
+			: base("followtvseries", "deleteWithToken")
+		{
+		}
+
+		public FollowTvSeriesDeleteWithTokenRequestBuilder(int assetId, string token, int partnerId)
+			: this()
+		{
+			this.AssetId = assetId;
+			this.Token = token;
+			this.PartnerId = partnerId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetId"))
+				kparams.AddIfNotNull("assetId", AssetId);
+			if (!isMapped("token"))
+				kparams.AddIfNotNull("token", Token);
+			if (!isMapped("partnerId"))
+				kparams.AddIfNotNull("partnerId", PartnerId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
 	public class FollowTvSeriesListRequestBuilder : RequestBuilder<ListResponse<FollowTvSeries>>
 	{
 		#region Constants
@@ -190,6 +251,11 @@ namespace Kaltura.Services
 		public static FollowTvSeriesDeleteRequestBuilder Delete(int assetId)
 		{
 			return new FollowTvSeriesDeleteRequestBuilder(assetId);
+		}
+
+		public static FollowTvSeriesDeleteWithTokenRequestBuilder DeleteWithToken(int assetId, string token, int partnerId)
+		{
+			return new FollowTvSeriesDeleteWithTokenRequestBuilder(assetId, token, partnerId);
 		}
 
 		public static FollowTvSeriesListRequestBuilder List(FollowTvSeriesFilter filter, FilterPager pager = null)

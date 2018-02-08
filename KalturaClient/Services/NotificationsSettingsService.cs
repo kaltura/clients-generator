@@ -109,6 +109,69 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class NotificationsSettingsUpdateRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string SETTINGS = "settings";
+		public const string TOKEN = "token";
+		public new const string PARTNER_ID = "partnerId";
+		#endregion
+
+		public NotificationsSettings Settings
+		{
+			set;
+			get;
+		}
+		public string Token
+		{
+			set;
+			get;
+		}
+		public new int PartnerId
+		{
+			set;
+			get;
+		}
+
+		public NotificationsSettingsUpdateRequestBuilder()
+			: base("notificationssettings", "update")
+		{
+		}
+
+		public NotificationsSettingsUpdateRequestBuilder(NotificationsSettings settings, string token, int partnerId)
+			: this()
+		{
+			this.Settings = settings;
+			this.Token = token;
+			this.PartnerId = partnerId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("settings"))
+				kparams.AddIfNotNull("settings", Settings);
+			if (!isMapped("token"))
+				kparams.AddIfNotNull("token", Token);
+			if (!isMapped("partnerId"))
+				kparams.AddIfNotNull("partnerId", PartnerId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 
 	public class NotificationsSettingsService
 	{
@@ -124,6 +187,11 @@ namespace Kaltura.Services
 		public static NotificationsSettingsUpdateRequestBuilder Update(NotificationsSettings settings)
 		{
 			return new NotificationsSettingsUpdateRequestBuilder(settings);
+		}
+
+		public static NotificationsSettingsUpdateRequestBuilder Update(NotificationsSettings settings, string token, int partnerId)
+		{
+			return new NotificationsSettingsUpdateRequestBuilder(settings, token, partnerId);
 		}
 	}
 }

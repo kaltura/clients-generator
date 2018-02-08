@@ -123,6 +123,67 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class UserInterestDeleteWithTokenRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string TOKEN = "token";
+		public new const string PARTNER_ID = "partnerId";
+		#endregion
+
+		public string Id
+		{
+			set;
+			get;
+		}
+		public string Token
+		{
+			set;
+			get;
+		}
+		public new int PartnerId
+		{
+			set;
+			get;
+		}
+
+		public UserInterestDeleteWithTokenRequestBuilder()
+			: base("userinterest", "deleteWithToken")
+		{
+		}
+
+		public UserInterestDeleteWithTokenRequestBuilder(string id, string token, int partnerId)
+			: this()
+		{
+			this.Id = id;
+			this.Token = token;
+			this.PartnerId = partnerId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("token"))
+				kparams.AddIfNotNull("token", Token);
+			if (!isMapped("partnerId"))
+				kparams.AddIfNotNull("partnerId", PartnerId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
 	public class UserInterestListRequestBuilder : RequestBuilder<ListResponse<UserInterest>>
 	{
 		#region Constants
@@ -167,6 +228,11 @@ namespace Kaltura.Services
 		public static UserInterestDeleteRequestBuilder Delete(string id)
 		{
 			return new UserInterestDeleteRequestBuilder(id);
+		}
+
+		public static UserInterestDeleteWithTokenRequestBuilder DeleteWithToken(string id, string token, int partnerId)
+		{
+			return new UserInterestDeleteWithTokenRequestBuilder(id, token, partnerId);
 		}
 
 		public static UserInterestListRequestBuilder List()
