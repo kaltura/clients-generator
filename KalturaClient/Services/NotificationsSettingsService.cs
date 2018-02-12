@@ -109,7 +109,7 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class NotificationsSettingsUpdateRequestBuilder : RequestBuilder<bool>
+	public class NotificationsSettingsUpdateWithTokenRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
 		public const string SETTINGS = "settings";
@@ -133,12 +133,12 @@ namespace Kaltura.Services
 			get;
 		}
 
-		public NotificationsSettingsUpdateRequestBuilder()
-			: base("notificationssettings", "update")
+		public NotificationsSettingsUpdateWithTokenRequestBuilder()
+			: base("notificationssettings", "updateWithToken")
 		{
 		}
 
-		public NotificationsSettingsUpdateRequestBuilder(NotificationsSettings settings, string token, int partnerId)
+		public NotificationsSettingsUpdateWithTokenRequestBuilder(NotificationsSettings settings, string token, int partnerId)
 			: this()
 		{
 			this.Settings = settings;
@@ -189,9 +189,9 @@ namespace Kaltura.Services
 			return new NotificationsSettingsUpdateRequestBuilder(settings);
 		}
 
-		public static NotificationsSettingsUpdateRequestBuilder Update(NotificationsSettings settings, string token, int partnerId)
+		public static NotificationsSettingsUpdateWithTokenRequestBuilder UpdateWithToken(NotificationsSettings settings, string token, int partnerId)
 		{
-			return new NotificationsSettingsUpdateRequestBuilder(settings, token, partnerId);
+			return new NotificationsSettingsUpdateWithTokenRequestBuilder(settings, token, partnerId);
 		}
 	}
 }
