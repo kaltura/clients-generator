@@ -39,12 +39,14 @@ namespace Kaltura.Types
 		public const string PUSH_NOTIFICATION_ENABLED = "pushNotificationEnabled";
 		public const string PUSH_FOLLOW_ENABLED = "pushFollowEnabled";
 		public const string MAIL_ENABLED = "mailEnabled";
+		public const string SMS_ENABLED = "smsEnabled";
 		#endregion
 
 		#region Private Fields
 		private bool? _PushNotificationEnabled = null;
 		private bool? _PushFollowEnabled = null;
 		private bool? _MailEnabled = null;
+		private bool? _SmsEnabled = null;
 		#endregion
 
 		#region Properties
@@ -75,6 +77,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailEnabled");
 			}
 		}
+		public bool? SmsEnabled
+		{
+			get { return _SmsEnabled; }
+			set 
+			{ 
+				_SmsEnabled = value;
+				OnPropertyChanged("SmsEnabled");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -97,6 +108,9 @@ namespace Kaltura.Types
 					case "mailEnabled":
 						this._MailEnabled = ParseBool(propertyNode.InnerText);
 						continue;
+					case "smsEnabled":
+						this._SmsEnabled = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -111,6 +125,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("pushNotificationEnabled", this._PushNotificationEnabled);
 			kparams.AddIfNotNull("pushFollowEnabled", this._PushFollowEnabled);
 			kparams.AddIfNotNull("mailEnabled", this._MailEnabled);
+			kparams.AddIfNotNull("smsEnabled", this._SmsEnabled);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -123,6 +138,8 @@ namespace Kaltura.Types
 					return "PushFollowEnabled";
 				case MAIL_ENABLED:
 					return "MailEnabled";
+				case SMS_ENABLED:
+					return "SmsEnabled";
 				default:
 					return base.getPropertyName(apiName);
 			}
