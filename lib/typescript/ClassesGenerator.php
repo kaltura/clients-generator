@@ -117,11 +117,6 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
     function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
         $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
-        if ($serviceAction->resultType === KalturaServerTypes::File) {
-            $actionNG2ResultType = "string";
-        }else {
-            $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
-        }
 
         $importedItems = array($className,'KalturaRequest');
 
@@ -145,8 +140,27 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         $createClassArgs->importedItems = &$importedItems;
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->id);
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action',false,KalturaServerTypes::Simple,'constant', $serviceAction->name);
-        $base = $this->hasFileProperty($serviceAction->params) ? "KalturaUploadRequest" : "KalturaRequest";
-        $createClassArgs->base = "{$base}<{$actionNG2ResultType}>";
+
+        if ($serviceAction->resultType === KalturaServerTypes::File)
+        {
+            $actionNG2ResultType = "{ url: string }";
+            $baseFullType = "KalturaFileRequest";
+            $baseType = "KalturaFileRequest";
+
+        }else if ($this->hasFileProperty($serviceAction->params))
+        {
+            $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
+            $baseFullType = "KalturaUploadRequest<{$actionNG2ResultType}>";
+            $baseType = "KalturaUploadRequest";
+        }
+        else
+        {
+            $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
+            $baseFullType = "KalturaRequest<{$actionNG2ResultType}>";
+            $baseType = "KalturaRequest";
+        }
+
+        $createClassArgs->base = "{$baseFullType}";
 
         $classDescription = $this->utils->formatDescription($serviceAction->description, "Usage: ");
         $createClassArgs->documentation = "/**
@@ -157,16 +171,23 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
  * Server response type:         {$actionNG2ResultType}
  * Server failure response type: KalturaAPIException
  * @class
- * @extends {$base}
+ * @extends {$baseType}
  */";
 
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
 
-        if (isset($resultType->subType)) {
-            $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : {$resultType->subType}  }";
+        // calculate ctor super execution argument
+        if ($serviceAction->resultType === KalturaServerTypes::File)
+        {
+            $createClassArgs->superArgs = "";
         }else
         {
-            $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : null }";
+            if (isset($resultType->subType)) {
+                $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : {$resultType->subType}  }";
+            }else
+            {
+                $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : null }";
+            }
         }
         $createClassArgs->requireDataInCtor = $this->hasRequiredProperty($serviceAction->params);
 

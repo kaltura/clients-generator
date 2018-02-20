@@ -67,6 +67,7 @@ require_once(__DIR__ . "/lib/CSharp2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ErlangClientGenerator.php");
 require_once(__DIR__ . "/lib/JsClientGenerator.php");
 require_once(__DIR__ . "/lib/TypescriptClientGenerator.php");
+require_once(__DIR__ . "/lib/NGXClientGenerator.php");
 require_once(__DIR__ . "/lib/NodeClientGenerator.php");
 require_once(__DIR__ . "/lib/Node2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ObjCClientGenerator.php");

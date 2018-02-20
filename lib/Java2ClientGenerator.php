@@ -53,7 +53,31 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			$desc = str_replace(array("&", "<", ">"), array("&amp;", "&lt;", "&gt;"), $desc);
 			$formatDesc = wordwrap(str_replace(array("\t", "\n", "\r"), " ", $desc), 80, "\n" . $prefix . "  ");
 			if($desc)
-				return($prefix . "/**  $formatDesc  */");
+			{
+				$ret = "$prefix/**\n";
+				$ret .= "$prefix * $formatDesc\n";
+			
+				$paramNodes = $propertyNode->getElementsByTagName("param");
+				if($paramNodes->length)
+				{
+					$ret .= "$prefix * \n";
+				}
+				
+				foreach($paramNodes as $paramNode) 
+				{
+					$paramName = $paramNode->getAttribute("name");
+					$paramDesc = $paramNode->getAttribute("description");
+					$paramDesc = str_replace(array("&", "<", ">"), array("&amp;", "&lt;", "&gt;"), $paramDesc);
+					$paramDesc = str_replace(array("\t", "\n", "\r"), array('', "\n$prefix * ", ''), wordwrap($paramDesc, 80, "\n"));
+					
+					$argName = $this->replaceReservedWords($paramName);
+				
+					$ret .= "$prefix * @param $argName $paramDesc\n";
+				}
+				
+				$ret .= "$prefix */";
+				return $ret;
+			}
 		}
 		return "";
 	}
@@ -1026,12 +1050,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$methodsName = ucfirst($name);
 		
 		$this->appendLine("	/**");
-		if($description)
-		{
-			$this->appendLine("	 * $description");
-			$this->appendLine("	 * ");
-		}
-		$this->appendLine("	 * @param $name");
+		$this->appendLine("	 * @param $name $description");
 		$this->appendLine("	 */");
 		$this->appendLine("	public void set{$methodsName}($type $name){");
 		$this->appendLine("		params.add(\"$paramName\", $name);");
@@ -1044,12 +1063,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$methodsName = ucfirst($name);
 		
 		$this->appendLine("	/**");
-		if($description)
-		{
-			$this->appendLine("	 * $description");
-			$this->appendLine("	 * ");
-		}
-		$this->appendLine("	 * @param $name");
+		$this->appendLine("	 * @param $name $description");
 		$this->appendLine("	 */");
 		$this->appendLine("	public void set{$methodsName}($type $name){");
 		$this->appendLine("		this.{$configurationName}Configuration.put(\"$paramName\", $name);");

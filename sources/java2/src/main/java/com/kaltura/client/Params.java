@@ -256,6 +256,9 @@ public class Params extends LinkedHashMap<String, Object> implements Serializabl
 	
 	/**
 	 * Pay attention - this function does not support setting value to null.
+	 * 
+	 * @param key param name
+	 * @param value param value
 	 */
 	public void add(String key, EnumAsString value) {
 		if (value == null)
@@ -266,6 +269,9 @@ public class Params extends LinkedHashMap<String, Object> implements Serializabl
 
 	/**
 	 * Pay attention - this function does not support setting value to null.
+	 * 
+	 * @param key param name
+	 * @param value param value
 	 */
 	public void add(String key, EnumAsInt value)  {
 		if (value == null)

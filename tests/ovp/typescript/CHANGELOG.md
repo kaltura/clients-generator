@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.1.1"></a>
+## [6.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v6.1.0...v6.1.1) (2017-12-07)
+
+### Bugs
+
+* non-chunked file upload progress fix
+
+
+<a name="6.1.0"></a>
+## [6.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v6.0.0...v6.1.0) (2017-12-05)
+
+### Features
+
+* support requests that serve files by returning a valid download url for that files
+
+
+
+<a name="6.0.0"></a>
+# [6.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.2...v6.0.0) (2017-11-26)
+
+
+### Bug Fixes
+
+* append action value to endpoint uri only if provided by request ([e53a9b5](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/e53a9b5))
+* generate endpoint to service with '/api_v3/' as a prefix. ([fdaf513](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/fdaf513))
+* support empty array as a valid resopnse ([6c677df](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/6c677df))
+* Fix upload file in IE11 and edge and Safari
+
+### Features
+
+* add unit-testing ([2683820](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/2683820))
+* update services according to new schema from 08/10/17 18:46:25 ([0350d10](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/0350d10))
+
+
+### BREAKING CHANGES
+
+* before:
+The service api provided by the application included `/api_v3/` when provided
+```
+"https://www.kaltura.com/api_v3/"
+```
+
+after:
+The service api provided by the application shouldn't include `/api_v3/` when provided
+```
+"https://www.kaltura.com"
+```
+
+
+
 <a name="5.1.2"></a>
 ## [5.1.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.1...v5.1.2) (2017-10-29)
 

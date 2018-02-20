@@ -49,6 +49,7 @@ namespace Kaltura
         private const string MASTER_PASSWORD = "@MASTER_PASSWORD@";
         private const string MASTER_DEVICE = "@MASTER_DEVICE@";
         private const int MASTER_DEVICE_BRAND = @MASTER_DEVICE_BRAND@;
+        private const int IMPERSONATION_TEST_USER_ID = @IMPERSONATION_TEST_USER_ID@;
 
         private static int code = 0;
 
@@ -76,6 +77,7 @@ namespace Kaltura
         private static void OnOperatorLogin(ClientTester tester)
         {
             tester.ListUserRoles();
+			tester.ListUserRolesWithImpersonation();
         }
 
         private static void OnMasterLogin(ClientTester tester)
@@ -138,6 +140,15 @@ namespace Kaltura
         {
             openTasks ++;
             UserRoleService.List()
+                .SetCompletion(new OnCompletedHandler<ListResponse<UserRole>>(OnUserRoleListComplete))
+                .Execute(client);
+        }
+
+        private void ListUserRolesWithImpersonation()
+        {
+            openTasks++;
+            UserRoleService.List()
+                .WithUserId(IMPERSONATION_TEST_USER_ID)
                 .SetCompletion(new OnCompletedHandler<ListResponse<UserRole>>(OnUserRoleListComplete))
                 .Execute(client);
         }
