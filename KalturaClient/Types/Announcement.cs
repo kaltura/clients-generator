@@ -48,6 +48,7 @@ namespace Kaltura.Types
 		public const string INCLUDE_MAIL = "includeMail";
 		public const string MAIL_TEMPLATE = "mailTemplate";
 		public const string MAIL_SUBJECT = "mailSubject";
+		public const string INCLUDE_SMS = "includeSms";
 		#endregion
 
 		#region Private Fields
@@ -63,6 +64,7 @@ namespace Kaltura.Types
 		private bool? _IncludeMail = null;
 		private string _MailTemplate = null;
 		private string _MailSubject = null;
+		private bool? _IncludeSms = null;
 		#endregion
 
 		#region Properties
@@ -164,6 +166,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailSubject");
 			}
 		}
+		public bool? IncludeSms
+		{
+			get { return _IncludeSms; }
+			set 
+			{ 
+				_IncludeSms = value;
+				OnPropertyChanged("IncludeSms");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -213,6 +224,9 @@ namespace Kaltura.Types
 					case "mailSubject":
 						this._MailSubject = propertyNode.InnerText;
 						continue;
+					case "includeSms":
+						this._IncludeSms = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -236,6 +250,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("includeMail", this._IncludeMail);
 			kparams.AddIfNotNull("mailTemplate", this._MailTemplate);
 			kparams.AddIfNotNull("mailSubject", this._MailSubject);
+			kparams.AddIfNotNull("includeSms", this._IncludeSms);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -266,6 +281,8 @@ namespace Kaltura.Types
 					return "MailTemplate";
 				case MAIL_SUBJECT:
 					return "MailSubject";
+				case INCLUDE_SMS:
+					return "IncludeSms";
 				default:
 					return base.getPropertyName(apiName);
 			}
