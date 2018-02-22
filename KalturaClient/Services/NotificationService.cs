@@ -141,6 +141,51 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class NotificationSendSmsRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string MESSAGE = "message";
+		#endregion
+
+		public string Message
+		{
+			set;
+			get;
+		}
+
+		public NotificationSendSmsRequestBuilder()
+			: base("notification", "sendSms")
+		{
+		}
+
+		public NotificationSendSmsRequestBuilder(string message)
+			: this()
+		{
+			this.Message = message;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("message"))
+				kparams.AddIfNotNull("message", Message);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class NotificationSetDevicePushTokenRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -201,6 +246,11 @@ namespace Kaltura.Services
 		public static NotificationSendPushRequestBuilder SendPush(int userId, PushMessage pushMessage)
 		{
 			return new NotificationSendPushRequestBuilder(userId, pushMessage);
+		}
+
+		public static NotificationSendSmsRequestBuilder SendSms(string message)
+		{
+			return new NotificationSendSmsRequestBuilder(message);
 		}
 
 		public static NotificationSetDevicePushTokenRequestBuilder SetDevicePushToken(string pushToken)
