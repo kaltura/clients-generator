@@ -284,7 +284,7 @@ class KalturaSession
 				'AES-128-CBC',
 				substr(sha1($key, true), 0, 16),
 				OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
-				$iv
+				self::AES_IV
 			);
 
 		}
