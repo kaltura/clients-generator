@@ -270,7 +270,7 @@ class KalturaSession
 
 	protected static function aesDecrypt($key, $message)
 	{
-		if (function_exists('mcrypt_encrypt')) {
+		if (function_exists('mcrypt_decrypt')) {
 		    return mcrypt_decrypt(
 			MCRYPT_RIJNDAEL_128,
 			substr(sha1($key, true), 0, 16),
@@ -278,7 +278,7 @@ class KalturaSession
 			MCRYPT_MODE_CBC, 
 			self::AES_IV
 		    );
-	}else{
+		}else{
 		    return openssl_decrypt(
 				$message,
 				'AES-128-CBC',
