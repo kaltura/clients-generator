@@ -242,24 +242,52 @@ class KalturaSession
 	// KS V2 functions
 	protected static function aesEncrypt($key, $message)
 	{
-		return mcrypt_encrypt(
-			MCRYPT_RIJNDAEL_128,
-			substr(sha1($key, true), 0, 16),
-			$message,
-			MCRYPT_MODE_CBC, 
-			self::AES_IV
-		);
+		// no need for an IV since we add a random string to the message anyway
+		$iv = str_repeat("\0", 16);
+		$key = substr(sha1($key, true), 0, 16);
+		if (function_exists('mcrypt_encrypt')) {
+			return mcrypt_encrypt(
+				MCRYPT_RIJNDAEL_128,
+				$key,
+				$message,
+				MCRYPT_MODE_CBC,
+				$iv
+			);
+		}else {
+			// Pad with null byte to be compatible with mcrypt PKCS#5 padding
+			$blockSize = 16;
+			$padLength = $blockSize - strlen($message) % $blockSize;
+			$message .= str_repeat(chr(0), $padLength);
+			return openssl_encrypt(
+				$message,
+				'AES-128-CBC',
+				$key,
+				OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
+				$iv
+			);
+		}
 	}
 
 	protected static function aesDecrypt($key, $message)
 	{
-		return mcrypt_decrypt(
+		if (function_exists('mcrypt_encrypt')) {
+		    return mcrypt_decrypt(
 			MCRYPT_RIJNDAEL_128,
 			substr(sha1($key, true), 0, 16),
 			$message,
 			MCRYPT_MODE_CBC, 
 			self::AES_IV
-		);
+		    );
+	}else{
+		    return openssl_decrypt(
+				$message,
+				'AES-128-CBC',
+				substr(sha1($key, true), 0, 16),
+				OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
+				$iv
+			);
+
+		}
 	}
 
 	public static function generateKsV2($adminSecret, $userId, $type, $partnerId, $expiry, $privileges, $masterPartnerId, $additionalData)
