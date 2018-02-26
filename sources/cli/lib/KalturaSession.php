@@ -242,7 +242,7 @@ class KalturaSession
 	// KS V2 functions
 	protected static function aesEncrypt($key, $message)
 	{
-		// no need for an IV since we add a random string to the message anyway
+		
 		$key = substr(sha1($key, true), 0, 16);
 		if (function_exists('mcrypt_encrypt')) {
 			return mcrypt_encrypt(
@@ -250,7 +250,7 @@ class KalturaSession
 				$key,
 				$message,
 				MCRYPT_MODE_CBC,
-				self::AES_IV
+				self::AES_IV // no need for a real IV since we add a random string to the message anyway
 			);
 		}else {
 			// Pad with null byte to be compatible with mcrypt PKCS#5 padding
