@@ -91,6 +91,7 @@ class KalturaClient(object):
     FIELD_EXPIRY =              '_e'
     FIELD_TYPE =                '_t'
     FIELD_USER =                '_u'
+    ENCODING =                  'utf8'
 
     def __init__(self, config):
         self.config = None
@@ -421,10 +422,10 @@ class KalturaClient(object):
         rand = random.randint(0, 0x10000)
         expiry = int(time.time()) + expiry
         fields = [partnerId, partnerId, expiry, type_, rand, userId, privileges]
-        fields = [x if isinstance(x, six.binary_type) else six.text_type(x).encode("utf8") for x in fields]
+        fields = [x if isinstance(x, six.binary_type) else six.text_type(x).encode(KalturaClient.ENCODING) for x in fields]
         info = six.b(';').join(fields)
         signature = binascii.hexlify(
-            KalturaClient.hash(adminSecretForSigning.encode("utf8") + info))
+            KalturaClient.hash(adminSecretForSigning.encode(KalturaClient.ENCODING) + info))
         decodedKS = signature + six.b("|") + info
         KS = base64.b64encode(decodedKS)
         return KS
@@ -450,17 +451,17 @@ class KalturaClient(object):
         fields[KalturaClient.FIELD_USER] = str(userId)
 
         # build fields string
-        fieldsStr = urllib.urlencode(fields)
+        fieldsStr = six.moves.urllib.parse.urlencode(fields).encode(KalturaClient.ENCODING)
         fieldsStr = Random.get_random_bytes(KalturaClient.RANDOM_SIZE) + fieldsStr
         fieldsStr = KalturaClient.hash(fieldsStr) + fieldsStr
 
         # encrypt and encode
-        cipher = AES.new(KalturaClient.hash(adminSecretForSigning)[:16], AES.MODE_CBC, '\0' * 16)
+        cipher = AES.new(KalturaClient.hash(adminSecretForSigning.encode(KalturaClient.ENCODING))[:16], AES.MODE_CBC, six.b('\0') * 16)
         if len(fieldsStr) % cipher.block_size != 0:
-            fieldsStr += '\0' * (cipher.block_size - len(fieldsStr) % cipher.block_size)
+            fieldsStr += six.b('\0') * (cipher.block_size - len(fieldsStr) % cipher.block_size)
         encryptedFields = cipher.encrypt(fieldsStr)
-        decodedKs = "v2|%s|%s" % (partnerId, encryptedFields)
-        return base64.b64encode(decodedKs).replace('+', '-').replace('/', '_')
+        decodedKs = ("v2|%s|" % partnerId).encode(KalturaClient.ENCODING) + encryptedFields
+        return base64.urlsafe_b64encode(decodedKs)
 
     @staticmethod
     def hash(msg):
