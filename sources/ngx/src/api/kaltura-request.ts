@@ -2,6 +2,7 @@ import { KalturaResponse } from "./kaltura-response";
 import { KalturaRequestBase, KalturaRequestBaseArgs } from "./kaltura-request-base";
 import { KalturaAPIException } from './kaltura-api-exception';
 import { KalturaObjectBase } from './kaltura-object-base';
+import { kalturaClientConfig } from './kaltura-client-config';
 
 export interface KalturaRequestArgs extends KalturaRequestBaseArgs
 {
@@ -28,18 +29,11 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
         return this;
     }
 
-    private _unwrapResponse(response : any) : any
+    private _unwrapResponse(response: any): any
     {
-        // if response is object without 'objectType' property and with 'result' property -> it is ott response
-        if (response && typeof response === 'object' && !response.objectType && response.result)
+        if (kalturaClientConfig.response.nestedResponse)
         {
-            // if response.result is object without 'objectType' property and with 'error' property -> it is ott error response
-            if (typeof response.result === 'object' && !response.result.objectType && response.result.error) {
-                return response.result.error;
-            }else
-            {
-                return response.result;
-            }
+            return response ? response.result || response.error : null;
         }else {
             return response;
         }

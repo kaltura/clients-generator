@@ -9,6 +9,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 * non-chunked file upload progress fix
 
+<a name="7.2.0"></a>
+## [7.2.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.1.0...v7.2.0) (2018-03-04)
+
+### Features
+
+* parse server response graph according to origin (ovp, ott) using configuration.
+* use KalturaLogger instead of writing directly to console.
 
 <a name="7.1.0"></a>
 ## [7.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.2...v7.1.0) (2017-11-30)

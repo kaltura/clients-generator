@@ -15,6 +15,7 @@ tests/config.ini
 
 # IDE
 .idea
+.DS_Store
 
 # Development files/folders
 output/
