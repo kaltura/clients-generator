@@ -144,7 +144,7 @@ export abstract class KalturaObjectBase{
                         result = sourceValue * 1;
                         break;
                     case 'es': // enum of type number
-                        result = typeof sourceValue === 'string' ? sourceValue : undefined;
+                        result = typeof sourceValue !== 'undefined' && sourceValue !== null ? sourceValue.toString() : undefined;
                         break;
                     case 'o': // object
                         const propertyObjectType = sourceValue['objectType'];
