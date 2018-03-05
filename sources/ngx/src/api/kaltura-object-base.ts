@@ -143,6 +143,9 @@ export abstract class KalturaObjectBase{
                     case 'en': // enum of type number
                         result = sourceValue * 1;
                         break;
+                    case 'es': // enum of type number
+                        result = typeof sourceValue === 'string' ? sourceValue : undefined;
+                        break;
                     case 'o': // object
                         const propertyObjectType = sourceValue['objectType'];
 
@@ -207,15 +210,6 @@ export abstract class KalturaObjectBase{
                             result = KalturaUtils.fromServerDate(sourceValue*1)
                         }else {
                             throw new Error(`failed to parse property '${propertyName}. Expected type date, got type '${typeof sourceValue}`);
-                        }
-                        break;
-                    case "es":
-                        result = this._createKalturaObject(property.subType);
-
-                        if (result && typeof result !== 'undefined') {
-                            result['_value'] = sourceValue + '';
-                        } else {
-                            throw new Error(`Failed to create kaltura enum for type '${property.subType}'`);
                         }
                         break;
                     default:
@@ -357,12 +351,7 @@ export abstract class KalturaObjectBase{
                             }
                             break;
                         case 'es': // enum of type string
-                            if (typeof value._value !== 'undefined') {
-                                result = { status : 'exists', value : value._value};
-                            }else
-                            {
-                                throw new Error(`failed to parse property. Expected '${propertyName} to be of type string enum`);
-                            }
+                            result = { status : 'exists', value : typeof value === 'string' ? value : undefined};
                             break;
                         case 'f':
                             if (value instanceof FormData)

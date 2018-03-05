@@ -58,33 +58,14 @@ export enum {$enumTypeName} {
                 $values = array();
                 foreach ($enum->values as $item) {
                     $enumValueName = $this->getEnumValueName($item);
-                    $values[] = "static {$enumValueName} = new {$enumTypeName}('{$item->value}');";
+                    $values[] = $enumValueName . " = '" . $item->value . "'";
                 }
 
-                $fileContent = "
+                 $fileContent = "
 {$this->getBanner()}
-import { KalturaObjectBase } from '../kaltura-object-base';
-import { KalturaTypesFactory } from '../kaltura-types-factory';
-
-export class {$enumTypeName} extends KalturaObjectBase {
-    private _value : string;
-    constructor( value?:string | number){
-        super();
-        this._value = value + '';
-    }
-
-    equals(obj : this) : boolean
-    {
-        return obj && obj.toString() === this._value;
-    }
-
-    toString(){
-        return this._value;
-    }
-
-    {$this->utils->buildExpression($values, NewLine, 1)}
-}
-KalturaTypesFactory.registerType('$enum->name',$enumTypeName);";
+export enum {$enumTypeName} {
+    {$this->utils->buildExpression($values,',' . NewLine, 1)}
+}";
                 break;
         }
 

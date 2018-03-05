@@ -34,12 +34,4 @@ export class KalturaUtils
 		    return null;
 	    }
     }
-
-    static fromEnumOfStringToValue<T>(value : T) : string{
-        return value ? value.toString() : null
-    }
-
-    static toEnumOfStringToValue<T>(value : string, objectConstructor : {new(value:string) : T}) : T{
-        return new objectConstructor(value);
-    }
 }

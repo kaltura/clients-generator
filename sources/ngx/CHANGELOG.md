@@ -2,13 +2,42 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="8.0.0"></a>
+## [8.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.2.0...v8.0.0) ()
+
+
+### Features
+
+* use typescript support for enum of type string
+* upgrade stack to angular 5 and add support for AOT compilation
+
+### BREAKING CHANGES
+
+Before
+to compare values of two enum of type string you would do one of the following.
+
+compare using `.toString()`:
+```
+value === KalturaConversionProfileType.media.toString()
+```
+
+compare using `.equals()`:
+```
+value.equals(KalturaConversionProfileType.media)
+```
+
+After
+you should compare using regular `===` syntax
+```
+value === KalturaConversionProfileType.media
+```
+
 <a name="7.1.1"></a>
 ## [7.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.1.0...v7.1.1) (2017-12-07)
 
-### Bugs
+### Features
 
 * non-chunked file upload progress fix
-
 
 <a name="7.1.0"></a>
 ## [7.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.2...v7.1.0) (2017-11-30)
