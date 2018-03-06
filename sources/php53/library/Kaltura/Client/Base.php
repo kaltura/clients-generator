@@ -800,8 +800,10 @@ class Base
 		else {
 			// Pad with null byte to be compatible with mcrypt PKCS#5 padding
 			$blockSize = 16;
-			$padLength = $blockSize - strlen($message) % $blockSize;
-			$message .= str_repeat(chr(0), $padLength);
+			if (strlen($message) % $blockSize) {
+				$padLength = $blockSize - strlen($message) % $blockSize;
+				$message .= str_repeat("\0", $padLength);
+			}
 			return openssl_encrypt(
 				$message,
 				'AES-128-CBC',
