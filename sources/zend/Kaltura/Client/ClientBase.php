@@ -906,7 +906,7 @@ class Kaltura_Client_ClientBase
 			$blockSize = 16;
 			if (strlen($str) % $blockSize) {
 			    $padLength = $blockSize - strlen($message) % $blockSize;
-			    $message .= str_repeat(chr(0), $padLength);
+			    $message .= str_repeat("\0", $padLength);
 			}
 			return openssl_encrypt(
 				$message,
