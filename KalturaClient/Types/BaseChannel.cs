@@ -37,27 +37,16 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID = "id";
-		public const string NAME = "name";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
-		private string _Name = null;
 		#endregion
 
 		#region Properties
 		public long Id
 		{
 			get { return _Id; }
-		}
-		public string Name
-		{
-			get { return _Name; }
-			set 
-			{ 
-				_Name = value;
-				OnPropertyChanged("Name");
-			}
 		}
 		#endregion
 
@@ -75,9 +64,6 @@ namespace Kaltura.Types
 					case "id":
 						this._Id = ParseLong(propertyNode.InnerText);
 						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
 				}
 			}
 		}
@@ -90,7 +76,6 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBaseChannel");
 			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("name", this._Name);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -99,8 +84,6 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
-				case NAME:
-					return "Name";
 				default:
 					return base.getPropertyName(apiName);
 			}
