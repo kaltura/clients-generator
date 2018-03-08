@@ -2,6 +2,8 @@ import { KalturaResponse } from "./kaltura-response";
 import { KalturaRequestBase, KalturaRequestBaseArgs } from "./kaltura-request-base";
 import { KalturaAPIException } from './kaltura-api-exception';
 import { KalturaObjectBase } from './kaltura-object-base';
+import { KalturaRequestOptions, KalturaRequestOptionsArgs } from './kaltura-request-options';
+import { environment } from '../environment';
 
 export interface KalturaRequestArgs extends KalturaRequestBaseArgs
 {
@@ -11,6 +13,7 @@ export interface KalturaRequestArgs extends KalturaRequestBaseArgs
 
 export abstract class KalturaRequest<T> extends KalturaRequestBase {
 
+    private __requestOptions__: KalturaRequestOptions;
     protected callback: (response: KalturaResponse<T>) => void;
     private responseType : string;
     private responseSubType : string;
@@ -28,21 +31,16 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
         return this;
     }
 
-    private _unwrapResponse(response : any) : any
-    {
-        // if response is object without 'objectType' property and with 'result' property -> it is ott response
-        if (response && typeof response === 'object' && !response.objectType && response.result)
-        {
-            // if response.result is object without 'objectType' property and with 'error' property -> it is ott error response
-            if (typeof response.result === 'object' && !response.result.objectType && response.result.error) {
-                return response.result.error;
-            }else
-            {
+    private _unwrapResponse(response: any): any {
+        if (environment.response.nestedResponse) {
+            if (response && response.hasOwnProperty('result')) {
                 return response.result;
+            } else if (response && response.hasOwnProperty('error')) {
+                return response.error;
             }
-        }else {
-            return response;
         }
+
+        return response;
     }
 
     handleResponse(response: any): KalturaResponse<T> {
@@ -106,5 +104,26 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
         return result;
     }
 
+    setRequestOptions(optionArgs: KalturaRequestOptionsArgs): this;
+    setRequestOptions(options: KalturaRequestOptions): this;
+    setRequestOptions(arg: KalturaRequestOptionsArgs | KalturaRequestOptions): this {
+        this.__requestOptions__ = arg instanceof KalturaRequestOptions ? arg : new KalturaRequestOptions(arg);
+        return this;
+    }
 
+    getRequestOptions(): KalturaRequestOptions {
+        return this.__requestOptions__;
+    }
+
+    buildRequest(defaultRequestOptions: KalturaRequestOptions): {} {
+        const requestOptionsObject = this.__requestOptions__ ? this.__requestOptions__.toRequestObject() : {};
+        const defaultRequestOptionsObject = defaultRequestOptions ? defaultRequestOptions.toRequestObject() : {};
+
+        return Object.assign(
+            {},
+            defaultRequestOptionsObject,
+            requestOptionsObject,
+            this.toRequestObject()
+        );
+    }
 }

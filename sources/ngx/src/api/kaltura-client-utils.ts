@@ -1,5 +1,5 @@
 
-export class KalturaUtils
+export class KalturaClientUtils
 {
     static fromServerDate(value : number) : Date
     {

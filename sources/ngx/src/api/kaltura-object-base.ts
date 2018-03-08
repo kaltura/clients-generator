@@ -1,4 +1,4 @@
-import { KalturaUtils } from "./utils/kaltura-utils";
+import { KalturaClientUtils } from "./kaltura-client-utils";
 import { KalturaTypesFactory } from './kaltura-types-factory';
 import { KalturaLogger } from './kaltura-logger';
 
@@ -207,7 +207,7 @@ export abstract class KalturaObjectBase{
                         break;
                     case 'd': // date
                         if (this._isNumeric(sourceValue)) {
-                            result = KalturaUtils.fromServerDate(sourceValue*1)
+                            result = KalturaClientUtils.fromServerDate(sourceValue*1)
                         }else {
                             throw new Error(`failed to parse property '${propertyName}. Expected type date, got type '${typeof sourceValue}`);
                         }
@@ -243,10 +243,10 @@ export abstract class KalturaObjectBase{
 
         if (usedFallbackType && result)
         {
-            logger.warn(`[kaltura-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
+            logger.warn(`[kaltura-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
         }else if (!result)
         {
-            logger.warn(`[kaltura-client]: Could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “acceptedTypes” attribute?)`);
+            logger.warn(`[kaltura-client]: Could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
         }
 
         return result;
@@ -345,7 +345,7 @@ export abstract class KalturaObjectBase{
                             break;
                         case 'd': // date
                             if (value instanceof Date) {
-                                result = { status : 'exists', value : KalturaUtils.toServerDate(value)};
+                                result = { status : 'exists', value : KalturaClientUtils.toServerDate(value)};
                             }else {
                                 throw new Error(`failed to parse property. Expected '${propertyName} to be date`);
                             }

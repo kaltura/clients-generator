@@ -23,17 +23,17 @@ class ClassesGenerator extends TypescriptGeneratorBase
             $result[] = $this->createClassFile($class);
         }
 
-        $result[] = $this->createRequestBaseFile($this->serverMetadata->apiVersion);
+        $result[] = $this->createRequestOptionsFile($this->serverMetadata->apiVersion);
 
         return $result;
     }
 
 
 
-    function createRequestBaseFile($apiVersion)
+    function createRequestOptionsFile($apiVersion)
     {
         $createClassArgs = new stdClass();
-        $createClassArgs->name = "KalturaRequestBase";
+        $createClassArgs->name = "KalturaRequestOptions";
         $createClassArgs->description = "";
         $createClassArgs->base = "KalturaObjectBase";
         $createClassArgs->basePath = "./";
@@ -58,7 +58,7 @@ class ClassesGenerator extends TypescriptGeneratorBase
             $customProperties,
             $this->serverMetadata->requestSharedParameters
         );
-        $createClassArgs->requireDataInCtor = true;
+        $createClassArgs->requireDataInCtor = false;
 
 
         $customMetadataProperties = array();
@@ -66,15 +66,20 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $createClassArgs->customMetadataProperties = $customMetadataProperties;
 
 
-        $classBody = $this->createClassExp($createClassArgs);
+        $generatedCode = $this->createClassExp($createClassArgs);
 
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from './kaltura-object-base';
-{$classBody}
+import { InjectionToken } from '@angular/core';
+{$generatedCode[0]}
+
+export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaRequestOptionsArgs> = new InjectionToken('kaltura client default request options');
+
+{$generatedCode[1]}
 ";
 
         $file = new GeneratedFileData();
-        $file->path = "kaltura-request-base.ts";
+        $file->path = "kaltura-request-options.ts";
         $file->content = $fileContent;
         $result[] = $file;
         return $file;
@@ -96,13 +101,15 @@ import { KalturaObjectMetadata } from './kaltura-object-base';
         $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('objectType',false,KalturaServerTypes::Simple,'constant', $class->name);
         $createClassArgs->requireDataInCtor = false;
 
-        $classBody = $this->createClassExp($createClassArgs);
+        $generatedCode = $this->createClassExp($createClassArgs);
 
         $classFunctionName = ucfirst($class->name);
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from '../kaltura-object-base';
 import { KalturaTypesFactory } from '../kaltura-types-factory';
-{$classBody}
+{$generatedCode[0]}
+
+{$generatedCode[1]}
 KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 ";
 
@@ -191,14 +198,16 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
         }
         $createClassArgs->requireDataInCtor = $this->hasRequiredProperty($serviceAction->params);
 
-        $classBody = $this->createClassExp($createClassArgs);
+        $generatedCode = $this->createClassExp($createClassArgs);
 
 
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from '../kaltura-object-base';
 {$importResultType}
 
-{$classBody}
+{$generatedCode[0]}
+
+{$generatedCode[1]}
 ";
 
         $file = new GeneratedFileData();
@@ -259,9 +268,7 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
             $aggregatedData->propertiesMetadata
         );
 
-        $result = "{$this->utils->buildExpression($aggregatedData->imports,NewLine)}
-
-export interface {$classTypeName}Args {$this->utils->ifExp($baseStrippedClassName, " extends " . $baseStrippedClassName . "Args","")} {
+        $generatedBody = "export interface {$classTypeName}Args {$this->utils->ifExp($baseStrippedClassName, " extends " . $baseStrippedClassName . "Args","")} {
     {$this->utils->buildExpression($aggregatedData->constructorArgs, NewLine, 1)}
 }
 
@@ -275,11 +282,11 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         super({$superArgs});";
 
         if (count($aggregatedData->assignPropertiesDefault)) {
-            $result .= "
+            $generatedBody .= "
         {$this->utils->buildExpression($aggregatedData->assignPropertiesDefault, NewLine, 2)}";
         }
 
-    $result .= "
+    $generatedBody .= "
     }
 
     protected _getMetadata() : KalturaObjectMetadata
@@ -295,6 +302,10 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
     }
 }
 ";
+
+        $result = array();
+        $result[] = $this->utils->buildExpression($aggregatedData->imports,NewLine);
+        $result[] = $generatedBody;
 
         return $result;
     }
