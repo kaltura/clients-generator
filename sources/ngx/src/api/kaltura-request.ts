@@ -30,7 +30,7 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
     }
 
     private _unwrapResponse(response: any): any {
-        if (environment.response.nestedResponse) {
+        if (kalturaClientConfig.response.nestedResponse) {
             if (response && response.hasOwnProperty('result')) {
                 return response.result;
             } else if (response && response.hasOwnProperty('error')) {
