@@ -3,6 +3,11 @@ const getJsonIndent = require('./libs/get-json-indent');
 
 module.exports = createLocalNpmPackageJson;
 
+function formatTwoDigitsNumber(value)
+{
+  return ("0" + value).slice(-2);
+}
+
 function createLocalNpmPackageJson(packageContentAsString) {
 
   if (packageContentAsString) {
@@ -11,7 +16,7 @@ function createLocalNpmPackageJson(packageContentAsString) {
     var packageContent = JSON.parse(packageContentAsString);
 
     var now = new Date();
-    packageContent.version = packageContent.version + '-v' + now.getFullYear() + ("0" + (now.getMonth() + 1)).slice(-2) + ("0" + now.getDate()).slice(-2) + '-' + now.getHours() + now.getMinutes() + now.getSeconds();
+    packageContent.version = packageContent.version + '-v' + now.getFullYear() + formatTwoDigitsNumber(now.getMonth() + 1) + formatTwoDigitsNumber(now.getDate()) + '-' + formatTwoDigitsNumber(now.getHours()) + formatTwoDigitsNumber(now.getMinutes()) + formatTwoDigitsNumber(now.getSeconds());
     packageContent.devDependencies = {};
     packageContent.peerDependencies = packageContent.dependencies;
     packageContent.dependencies = {};

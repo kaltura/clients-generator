@@ -17,9 +17,9 @@ export class KalturaRequestAdapter {
 
     public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): Observable<T> {
 
-        const parameters = prepareParameters(request, clientOptions.clientTag, defaultRequestOptions);
+        const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-        const endpointUrl = createEndpoint(clientOptions.endpointUrl, parameters['service'], parameters['action']);
+        const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
         delete parameters['service'];
         delete parameters['action'];
 

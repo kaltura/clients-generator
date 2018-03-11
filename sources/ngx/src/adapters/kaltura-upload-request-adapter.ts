@@ -89,32 +89,35 @@ export class KalturaUploadRequestAdapter {
 
     private _chunkUpload(request: KalturaUploadRequest<any>, uploadChunkData: UploadByChunksData): Observable<any> {
         return Observable.create(observer => {
-            const parameters = prepareParameters(request, this.clientOptions.clientTag, this.defaultRequestOptions);
+            const parameters = prepareParameters(request, this.clientOptions, this.defaultRequestOptions);
 
             let isComplete = false;
             const { propertyName, file } = request.getFileInfo();
             let data = this._getFormData(propertyName, file.name, file);
 
             let fileStart = 0;
-            let uploadSize: number = null;
+            let actualChunkFileSize: number = null;
 
             if (uploadChunkData.enabled) {
-                uploadSize =  (this.clientOptions ? this.clientOptions.chunkFileSize : null)  || 5e6; // default
-                if (this.clientOptions.endpointUrl) {
-                    if (uploadSize < 1e6) {
-                        console.warn(`user requested for invalid upload chunk size '${uploadSize}'. minimal value 1Mb. using minimal value 1Mb instead`);
-                        uploadSize = 1e6;
+                const userChunkFileSize = this.clientOptions ? this.clientOptions.chunkFileSize : null;
+
+                if (userChunkFileSize && Number.isFinite(userChunkFileSize) && !Number.isNaN(userChunkFileSize)) {
+                    if (actualChunkFileSize < 1e6) {
+                        console.warn(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 1Mb. using minimal value 1Mb instead`);
+                        actualChunkFileSize = 1e6;
                     } else {
-                        console.log(`using user requetsed chunk size '${uploadSize}'`);
+                        console.log(`using user requetsed chunk size '${userChunkFileSize}'`);
+                        actualChunkFileSize =  userChunkFileSize;
                     }
                 } else {
                     console.log(`using default chunk size 5Mb`);
+                    actualChunkFileSize =  5e6; // default
                 }
 
-                uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= uploadSize;
+                uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= actualChunkFileSize;
 
                 fileStart = uploadChunkData.resumeAt;
-                const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + uploadSize;
+                const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + actualChunkFileSize;
 
                 data = this._getFormData(propertyName, file.name, file.slice(fileStart, fileEnd, file.type));
 
@@ -125,7 +128,7 @@ export class KalturaUploadRequestAdapter {
                 console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
             }
 
-            let endpointUrl = createEndpoint(this.clientOptions.endpointUrl, parameters['service'], parameters['action']);
+            let endpointUrl = createEndpoint(request, this.clientOptions, parameters['service'], parameters['action']);
             delete parameters['service'];
             delete parameters['action'];
             const querystring = buildQuerystring(parameters);
@@ -140,6 +143,9 @@ export class KalturaUploadRequestAdapter {
                     try {
                         if (xhr.status === 200) {
                             resp = JSON.parse(xhr.response);
+                        } else if (xhr.status === 0) {
+                            observer.complete();
+                            return;
                         } else {
                             resp = new KalturaClientException('client::upload-failure', xhr.responseText || 'failed to upload file');
                         }
