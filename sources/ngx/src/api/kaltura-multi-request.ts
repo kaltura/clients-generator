@@ -5,6 +5,8 @@ import { KalturaRequestBase } from "./kaltura-request-base";
 import { KalturaMultiResponse } from "./kaltura-multi-response";
 import { KalturaAPIException } from "./kaltura-api-exception";
 import { KalturaObjectMetadata } from './kaltura-object-base';
+import { KalturaRequestOptions } from './kaltura-request-options';
+import { environment } from '../environment';
 
 
 export class KalturaMultiRequest extends KalturaRequestBase {
@@ -18,11 +20,11 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         this.requests = args;
     }
 
-    toRequestObject(): any {
+    buildRequest(defaultRequestOptions: KalturaRequestOptions): {} {
         const result = super.toRequestObject();
 
         for (let i = 0, length = this.requests.length; i < length; i++) {
-            result[i] = this.requests[i].toRequestObject();
+            result[i] = this.requests[i].buildRequest(defaultRequestOptions);
         }
 
         return result;
@@ -41,21 +43,16 @@ export class KalturaMultiRequest extends KalturaRequestBase {
 
     }
 
-    private _unwrapResponse(response : any) : any
-    {
-        // if response is object without 'objectType' property and with 'result' property -> it is ott response
-        if (response && typeof response === 'object' && !response.objectType && response.result)
-        {
-            // if response.result is object without 'objectType' property and with 'error' property -> it is ott error response
-            if (typeof response.result === 'object' && !response.result.objectType && response.result.error) {
-                return response.result.error;
-            }else
-            {
+    private _unwrapResponse(response: any): any {
+        if (environment.response.nestedResponse) {
+            if (response && response.hasOwnProperty('result')) {
                 return response.result;
+            } else if (response && response.hasOwnProperty('error')) {
+                return response.error;
             }
-        }else {
-            return response;
         }
+
+        return response;
     }
 
     setCompletion(callback: (response: KalturaMultiResponse) => void): KalturaMultiRequest {
@@ -63,7 +60,7 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         return this;
     }
 
-    handleResponse(responses: any[]): KalturaMultiResponse {
+    handleResponse(responses: any): KalturaMultiResponse {
         const kalturaResponses: KalturaResponse<any>[] = [];
 
         const unwrappedResponse = this._unwrapResponse(responses);
