@@ -1,14 +1,9 @@
-# Kaltura Angular Client
+# Kaltura Angular X Client
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Gitter chat](https://badges.gitter.im/kaltura-ng/kaltura-ng.png)](https://gitter.im/kaltura-ng/kaltura-ng) [![Build Status](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular.svg?branch=master)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular)
 
 > An easy-to-use facade to Kaltura server with typescript support for action requests, classes and enums.
 
-This library uses `Typescript` files that are transpiled  into `ECMAScript 5` using `commonjs` as a module system.
-
-This library have **_zero dependencies_** at runtime and it can be used in any Javascript project. Those who are using Typescript will benefit even more.
-
- >Visit our [live demonstration](https://goo.gl/c02JX2) for code snippets and common use cases.
 
 ## Installation
 
@@ -24,7 +19,7 @@ To keep being update review the [changelog](CHANGELOG.md) frequently.
 
  **Have a question?** Ask us on [Gitter](https://gitter.im/kaltura-ng/kaltura-ng).
 
- **Found a bug?** create [github issue](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/issues)
+ **Found a bug?** create [kaltura/clients-generator issue](https://github.com/kaltura/clients-generator/issues)
 
 
 

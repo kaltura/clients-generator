@@ -321,6 +321,10 @@ class Base
 		{
 			$requestHeaders[] = 'Accept: application/json';
 		}
+		elseif($this->config->getFormat() == self::KALTURA_SERVICE_FORMAT_XML)
+		{
+			$requestHeaders[] = 'Accept: application/xml';
+		}
 
 		$cookies = array();
 		$ch = curl_init();

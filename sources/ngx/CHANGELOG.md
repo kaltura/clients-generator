@@ -2,16 +2,188 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="7.1.1"></a>
-## [7.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.1.0...v7.1.1) (2017-12-07)
+<a name="9.1.0"></a>
+## 9.1.0 (2018-03-11)
 
-### Bugs
+### Features
+
+* tag network request by adding postfix to the client tag
+
+
+<a name="9.0.0"></a>
+## 9.0.0 (2018-03-10)
+
+### Fix
+
+* parse server response according to server type (OTT, OVP)
+* allow having a property of the request with the same name of a property defined as a shared request property. solves an issue introduced by the OTT server
+
+### Features
+
+* allow adding options property to requests with general information such as ks, partnerId, response profile.
+* allow adding options property to client service.
+* allow adding default options property to be used with all requests.
+* add `getFirstError()` method to kaltura multi response object which simplify extracting the error of the first request that failed.
+
+### BREAKING CHANGES
+
+
+* `KalturaClientConfiguration` was replaced with `KalturaClientOptions`. Declaring client options now uses injection token as shown below:
+
+Before (in `app.module.ts`):
+```
+export function clientConfigurationFactory() {
+    const result = new KalturaClientConfiguration();
+    result.endpointUrl = getKalturaServerUri();
+    result.clientTag = 'KMCng';
+    return result;
+}
+
+providers: [
+    ...
+    KalturaClient,
+    {
+      provide: KalturaClientConfiguration,
+      useFactory: clientConfigurationFactory
+    }
+]
+```
+
+After (in `app.module.ts`):
+```
+import {KalturaClientModule, KalturaClientOptions} from 'kaltura-ngx-client';
+
+export function kalturaClientOptionsFactory(): KalturaClientOptions {
+    return  {
+        endpointUrl: getKalturaServerUri(),
+        clientTag: 'app'
+    };
+}
+
+@NgModule({
+imports: [
+    ...
+    KalturaClientModule.forRoot(kalturaClientOptionsFactory)
+]
+```
+
+* `KalturaClient` exposes a method for setting default request options as fallback values
+
+Before (in `app.module.ts`):
+```
+import { KalturaClient } from 'kaltura-ngx-client';
+
+export class AppModule {
+    constructor(private _kalturaClient: KalturaClient) {
+    }
+
+    private onUserLoggedIn(ks: string, partnerId: number)
+      {
+          this._kalturaClient.ks = ks;
+          this._kalturaClient.partnerId = partnerId;
+      }
+}
+```
+
+After (in `app.module.ts`):
+```
+import { KalturaClient } from 'kaltura-ngx-client';
+
+export class AppModule {
+    constructor(private _kalturaClient: KalturaClient) {
+    }
+
+    private onUserLoggedIn(ks: string, partnerId: number)
+      {
+          this._kalturaClient.resetDefaultRequestOptions({
+              ks,
+              partnerId
+          });
+      }
+}
+```
+
+* changing client options manually is done using a dedicated method
+
+```
+import { KalturaClient } from 'kaltura-ngx-client';
+
+export class AppModule {
+    constructor(private _kalturaClient: KalturaClient) {
+        _kalturaClient.overrideOptions({
+            endpointUrl: 'new endpoint url'
+        })
+    }
+}
+
+```
+
+
+* setting request options on any request can be done as follows:
+
+Before
+```
+ return this._kalturaClient.request(new PlaylistExecuteAction({
+         id: this.data.id,
+         acceptedTypes: [KalturaMediaEntry],
+         responseProfile: responseProfile
+       }));
+```
+
+
+After
+```
+return this._kalturaClient.request(new PlaylistExecuteAction({
+         id: this.data.id
+       }).setRequestOptions({
+            acceptedTypes: [KalturaMediaEntry],
+            responseProfile: responseProfile
+        })
+      ));
+```
+
+
+<a name="8.0.0"></a>
+## 8.0.0 (2018-03-01)
+
+### Features
+
+* use typescript support for enum of type string
+* upgrade stack to angular 5 and add support for AOT compilation
+
+### BREAKING CHANGES
+
+* The client uses Typescript support for string enums (starting version 2.4.0).
+
+Before
+to compare values of two enum of type string you would do one of the following.
+```
+value.equals(KalturaConversionProfileType.media)
+```
+
+After
+The transpiled code is using values of type string and you can use regular operators on those values.
+```
+value === KalturaConversionProfileType.media
+```
+
+If your IDE supports Find&Replace using regex you can use the following expression `[.]equals\((.+?)\)` and replace with ` === $1` (where $1 is a place holder for the value extract from the expression. This syntax is used in IntelliJ and WebStorm)
+
+In addition, you no longer need to use `.toString()` to get the value represented by string. During the migration you are encourage not to try and remove the usage of `.toString()` since this function is used also with Ecma5 objects. Leaving those expression will have no effect since you essentially convert string to string.
+
+
+
+
+
+<a name="7.1.1"></a>
+## 7.1.1 (2017-12-07)
+
+### Features
 
 * non-chunked file upload progress fix
 
-
 <a name="7.1.0"></a>
-## [7.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.2...v7.1.0) (2017-11-30)
+## 7.1.0 (2017-11-30)
 
 ### Features
 
@@ -19,7 +191,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="7.0.2"></a>
-## [7.0.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.1...v7.0.2) (2017-11-28)
+## 7.0.2 (2017-11-28)
 
 ### Features
 
@@ -27,12 +199,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 
 <a name="7.0.1"></a>
-## [7.0.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v7.0.0...v7.0.1) (2017-11-28)
+## 7.0.1 (2017-11-28)
 
 
 ### Bug Fixes
 
-* use ngc during tranpiling to support angular-cli based applications ([8076c96](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/8076c96))
+* use ngc during tranpiling to support angular-cli based applications (8076c96)
 
 
 
@@ -42,7 +214,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* embed generated api into kaltura-client ([0446c00](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/0446c00))
+* embed generated api into kaltura-client (0446c00)
 
 
 ### BREAKING CHANGES
@@ -65,20 +237,20 @@ import { ... } from '@kaltura-ng/kaltura-client/api/types'
 
 
 <a name="6.0.0"></a>
-# [6.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.2...v6.0.0) (2017-11-26)
+# 6.0.0 (2017-11-26)
 
 
 ### Bug Fixes
 
-* append action value to endpoint uri only if provided by request ([e53a9b5](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/e53a9b5))
-* generate endpoint to service with '/api_v3/' as a prefix. ([fdaf513](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/fdaf513))
-* support empty array as a valid resopnse ([6c677df](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/6c677df))
+* append action value to endpoint uri only if provided by request (e53a9b5)
+* generate endpoint to service with '/api_v3/' as a prefix. (fdaf513)
+* support empty array as a valid resopnse (6c677df)
 * Fix upload file in IE11 and edge and Safari
 
 ### Features
 
-* add unit-testing ([2683820](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/2683820))
-* update services according to new schema from 08/10/17 18:46:25 ([0350d10](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/0350d10))
+* add unit-testing (2683820)
+* update services according to new schema from 08/10/17 18:46:25 (0350d10)
 
 
 ### BREAKING CHANGES
@@ -98,58 +270,58 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 <a name="5.1.2"></a>
-## [5.1.2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.1...v5.1.2) (2017-10-29)
+## 5.1.2 (2017-10-29)
 
 
 ### Bug Fixes
 
-* compile issue with typescript version ([c3cfd95](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/c3cfd95))
-* use chunk upload only for services that support it ([43dd5e2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/43dd5e2))
+* compile issue with typescript version (c3cfd95)
+* use chunk upload only for services that support it (43dd5e2)
 
 
 
 <a name="5.1.1"></a>
-## [5.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.1.0...v5.1.1) (2017-10-22)
+## 5.1.1 (2017-10-22)
 
 
 ### Bug Fixes
 
-* upload of new files whose size is smaller then the chunk size ([107635e](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/107635e))
+* upload of new files whose size is smaller then the chunk size (107635e)
 
 
 
 <a name="5.1.0"></a>
-# [5.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v5.0.0...v5.1.0) (2017-10-16)
+# 5.1.0 (2017-10-16)
 
 
 ### Bug Fixes
 
-* generated package.json private attribute is set to false to allow publish to npm ([525a295](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/525a295))
-* remove gibrish that prevented compilation ([c61caac](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/c61caac))
+* generated package.json private attribute is set to false to allow publish to npm (525a295)
+* remove gibrish that prevented compilation (c61caac)
 
 
 ### Features
 
-* add documentation to service actions ([301586e](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/301586e))
-* support chunk file upload and resume upload action ([e04830a](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/e04830a))
-* syncing services with server changes on date 02/10/17 04:15:21 ([de7a5a1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/de7a5a1))
+* add documentation to service actions (301586e)
+* support chunk file upload and resume upload action (e04830a)
+* syncing services with server changes on date 02/10/17 04:15:21 (de7a5a1)
 
 
 
 <a name="5.0.0"></a>
-# [5.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v4.0.0...v5.0.0) (2017-08-14)
+# 5.0.0 (2017-08-14)
 
 
 ### Bug Fixes
 
-* fix 'acceptedTypes' property compilation issue. ([efe50aa](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/efe50aa))
+* fix 'acceptedTypes' property compilation issue. (efe50aa)
 
 
 ### Features
 
-* attach generated schema 'apiVersion' to each request ([5e5e2c8](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/5e5e2c8))
-* support kaltura object properties of type map ([c866ca2](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/c866ca2))
-* update services/actions ([46beb73](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/46beb73))
+* attach generated schema 'apiVersion' to each request (5e5e2c8)
+* support kaltura object properties of type map (c866ca2)
+* update services/actions (46beb73)
 
 
 ### BREAKING CHANGES
@@ -159,13 +331,13 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 <a name="4.0.0"></a>
-# [4.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v3.0.0...v4.0.0) (2017-07-13)
+# 4.0.0 (2017-07-13)
 
 
 ### Features
 
-* add service XInternal action XAddBulkDownload ([59b0ac6](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/59b0ac6))
-* prevent importing the complete library implicitly, force import types explicitly ([cdfa3a6](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/cdfa3a6))
+* add service XInternal action XAddBulkDownload (59b0ac6)
+* prevent importing the complete library implicitly, force import types explicitly (cdfa3a6)
 
 
 ### BREAKING CHANGES
@@ -184,12 +356,12 @@ import { UserLoginByLoginIdAction } from 'kaltura-typescript-client/types/UserLo
 
 
 <a name="3.0.0"></a>
-# [3.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v2.1.0...v3.0.0) (2017-07-13)
+# 3.0.0 (2017-07-13)
 
 
 ### Features
 
-* expose global ks and partner id from the client instead of from the configuration object. ([fac1eb7](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/fac1eb7))
+* expose global ks and partner id from the client instead of from the configuration object. (fac1eb7)
 
 
 ### BREAKING CHANGES
@@ -199,27 +371,27 @@ import { UserLoginByLoginIdAction } from 'kaltura-typescript-client/types/UserLo
 
 
 <a name="1.1.1"></a>
-## [1.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v1.1.0...v1.1.1) (2017-05-10)
+## 1.1.1 (2017-05-10)
 
 
 
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v2.0.0...v2.1.0) (2017-05-22)
+# 2.1.0 (2017-05-22)
 
 
 ### Features
 
-* separate dynamic info (ks, partnerid) from configuration info (client tag, endpointUrl) ([12bf78e](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/12bf78e))
+* separate dynamic info (ks, partnerid) from configuration info (client tag, endpointUrl) (12bf78e)
 
 
 
 <a name="2.0.0"></a>
-# [2.0.0](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v1.1.0...v2.0.0) (2017-05-18)
+# 2.0.0 (2017-05-18)
 
 
 ### Features
 
-* **kaltura-clients:** remove configuration objects, assign dynamic data directly on the clients ([8a30a72](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/commit/8a30a72))
+* **kaltura-clients:** remove configuration objects, assign dynamic data directly on the clients (8a30a72)
 
 
 ### BREAKING CHANGES
@@ -231,7 +403,7 @@ Any dynamic data assigned on them should be done directly on the client instance
 
 
 <a name="1.1.1"></a>
-## [1.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v1.1.0...v1.1.1) (2017-05-10)
+## 1.1.1 (2017-05-10)
 
 
 

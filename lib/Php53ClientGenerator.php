@@ -89,6 +89,7 @@ class Php53ClientGenerator extends ClientGeneratorFromXml
 		
 		$classNodes = $xpath->query("/xml/classes/class");
 		$this->appendLine('	private static $map = array(');
+		$this->appendLine("		'KalturaApiExceptionArg' => 'Kaltura\\Client\\ApiExceptionArg',");
 		foreach($classNodes as $classNode)
 		{
 			$kalturaType = $classNode->getAttribute('name');

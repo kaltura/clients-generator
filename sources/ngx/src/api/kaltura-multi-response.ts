@@ -1,4 +1,5 @@
 import { KalturaResponse } from "./kaltura-response";
+import { KalturaAPIException } from './kaltura-api-exception';
 
 export class KalturaMultiResponse extends Array<KalturaResponse<any>> {
     constructor(results: KalturaResponse<any>[] = []) {
@@ -16,6 +17,18 @@ export class KalturaMultiResponse extends Array<KalturaResponse<any>> {
 
     public hasErrors(): boolean {
         return this.filter(result => result.error).length > 0;
+    }
+
+    public getFirstError(): KalturaAPIException {
+        let result: KalturaAPIException = null;
+        for (let i = 0; i < this.length; i++) {
+            result = this[i].error;
+
+            if (result) {
+                break;
+            }
+        }
+        return result;
     }
 
 

@@ -1,3 +1,4 @@
+<?php
 // ===================================================================================================
 //                           _  __     _ _
 //                          | |/ /__ _| | |_ _  _ _ _ __ _
@@ -8,7 +9,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2011  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -25,3 +26,47 @@
 //
 // @ignore
 // ===================================================================================================
+
+/**
+ * @namespace
+ */
+namespace Kaltura\Client;
+
+/**
+ * Thrown for API server errors
+ * 
+ * @package Kaltura
+ * @subpackage Client
+ */
+class ApiExceptionArg extends \Kaltura\Client\ObjectBase 
+{
+	public function getKalturaObjectType()
+	{
+		return 'KalturaApiExceptionArg';
+	}
+	
+	public function __construct(\SimpleXMLElement $xml = null)
+	{
+		parent::__construct($xml);
+		
+		if(is_null($xml))
+			return;
+		
+		if(count($xml->name))
+			$this->name = (string)$xml->name;
+		if(count($xml->value))
+			$this->value = (string)$xml->value;
+	}
+	/**
+	 * Argument name
+	 * @var string
+	 * @readonly
+	 */
+	public $name = null;
+
+	/**
+	 * Argument value
+	 * @var string
+	 */
+	public $value = null;
+}
