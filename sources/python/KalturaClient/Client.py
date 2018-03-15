@@ -49,7 +49,6 @@ import hashlib
 import mimetypes
 import random
 import base64
-import urllib
 import types
 import time
 import os
