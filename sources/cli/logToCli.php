@@ -104,7 +104,7 @@ function parseMultirequest($parsedParams)
 	{
 		foreach ($paramsByRequest as $requestIndex => &$curParams)
 		{
-			if ($requestIndex == 'common')
+			if ($requestIndex === 'common')
 				continue;
 			$curParams = array_merge($curParams, $paramsByRequest['common']);
 		}
@@ -143,8 +143,27 @@ function genKalcliCommand($parsedParams)
 	return $res;
 }
 
+function flattenArray($input, $prefix)
+{
+	$result = array();
+	foreach ($input as $key => $value)
+	{
+		if (is_array($value))
+		{
+			$result = array_merge($result, flattenArray($value, $prefix . "$key:"));
+		}
+		else
+		{
+			$result[$prefix . $key] = $value;
+		}
+	}
+	return $result;
+}
+
 function generateOutput($parsedParams, $multireqMode)
 {
+	$parsedParams = flattenArray($parsedParams, '');
+
 	if (isset($parsedParams['service']) && $parsedParams['service'] == 'multirequest')
 	{
 		if ($multireqMode == 'multi')
@@ -188,12 +207,15 @@ if (isset($options['single']))
 // read parameters from stdin
 $f = fopen('php://stdin', 'r');
 $logSection = '';
+$lastTrimmedLine = '';
 for (;;)
 {
 	$line = fgets($f);
 	$trimmedLine = trim($line);
-	if (!$trimmedLine || $trimmedLine == ']')
+	if ((!$trimmedLine && $lastTrimmedLine != ')') || 
+		$trimmedLine == ']')
 		break;
+	$lastTrimmedLine = $trimmedLine;
 	$logSection .= $line;
 }
 fclose($f);
@@ -214,11 +236,49 @@ if ($arrayPos !== false)
 }
 else if ($curlPos !== false)
 {
-	$logSection = substr($logSection, $curlPos);
-	$parsedUrl = parse_url(trim($logSection));
-	$parsedParams = null;
-	parse_str($parsedUrl['query'], $parsedParams);
+	$parsedParams = array();
+
+	// post body
+	$postPos = strpos($logSection, 'post: ');
+	if ($postPos !== false)
+	{
+		$postBody = explode("\n", substr($logSection, $postPos + 6));
+		$postBody = reset($postBody);
+		$parsedParams = array_merge($parsedParams, json_decode($postBody, true));
+	}
+
+	$url = explode("\n", substr($logSection, $curlPos + 6));
+	$url = reset($url);
+	$parsedUrl = parse_url(trim($url));
 	
+	// query string
+	if (isset($parsedUrl['query']))
+	{
+		$curParams = null;
+		parse_str($parsedUrl['query'], $curParams);
+		$parsedParams = array_merge($parsedParams, $curParams);
+	}
+
+	// url path
+	$urlPath = $parsedUrl['path'];
+	$apiPos = strpos($urlPath, '/api_v3/');
+	if ($apiPos !== false)
+	{
+		$curParams = substr($urlPath, $apiPos + 8);
+		if (substr($curParams, 0, 10) == 'index.php/')
+		{
+			$curParams = substr($curParams, 10);
+		}
+		
+		$pathParts = explode('/', $curParams);
+		reset($pathParts);
+		while(current($pathParts))
+		{
+			$key = each($pathParts);
+			$value = each($pathParts);
+			$parsedParams[$key['value']] = $value['value'];
+		}
+	}
 }
 else 
 {
