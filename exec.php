@@ -66,7 +66,6 @@ require_once(__DIR__ . "/lib/CSharpClientGenerator.php");
 require_once(__DIR__ . "/lib/CSharp2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ErlangClientGenerator.php");
 require_once(__DIR__ . "/lib/JsClientGenerator.php");
-require_once(__DIR__ . "/lib/NGXClientGenerator.php");
 require_once(__DIR__ . "/lib/NodeClientGenerator.php");
 require_once(__DIR__ . "/lib/Node2ClientGenerator.php");
 require_once(__DIR__ . "/lib/ObjCClientGenerator.php");
@@ -81,6 +80,14 @@ require_once(__DIR__ . "/lib/TestmeDocGenerator.php");
 require_once(__DIR__ . "/lib/TestmeGenerator.php");
 require_once(__DIR__ . "/lib/Xml2As3ClientGenerator.php");
 require_once(__DIR__ . "/lib/SwiftClientGenerator.php");
+
+// typescript files
+require_once(__DIR__ . '/lib/typescript/GeneratedFileData.php');
+require_once(__DIR__ . '/lib/typescript/KalturaServerMetadata.php');
+require_once(__DIR__ . '/lib/typescript/ClassesGenerator.php');
+require_once(__DIR__ . '/lib/typescript/EnumsGenerator.php');
+require_once(__DIR__ . '/lib/TypescriptClientGenerator.php');
+require_once(__DIR__ . '/lib/NGXClientGenerator.php');
 
 //the name of the summary file that will be used by the UI -
 $summaryFileName = 'summary.kinf';

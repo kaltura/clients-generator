@@ -5,22 +5,12 @@
 > An easy-to-use facade to Kaltura server with typescript support for action requests, classes and enums.
 
 
-## Installation
-
-use 'npm' to get the library
-```bash
-$ npm install @kaltura-ng/kaltura-client
-```
-
 ## Instructions
 
 ### Getting Started
 To keep being update review the [changelog](CHANGELOG.md) frequently.
 
- **Have a question?** Ask us on [Gitter](https://gitter.im/kaltura-ng/kaltura-ng).
-
  **Found a bug?** create [kaltura/clients-generator issue](https://github.com/kaltura/clients-generator/issues)
-
 
 
 ## Features list

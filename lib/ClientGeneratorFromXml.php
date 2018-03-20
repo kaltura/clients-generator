@@ -9,6 +9,7 @@ abstract class ClientGeneratorFromXml
 	protected $_xmlFile = "";
 	protected $_sourceName = "";
 	protected $_sourcePath = "";
+	protected $_extraSourcePath = "";
 	protected $_params = array();
 	protected $_licenseBuffer = '';
 	
@@ -72,12 +73,17 @@ abstract class ClientGeneratorFromXml
 		$this->excludeSourcePaths = explode(',', $excludeSourcePaths);
 	}
 
-	public function __construct($xmlFile, $sourcePath, Zend_Config $config)
+	public function __construct($xmlFile, $sourcePath, Zend_Config $config, $extraSourcePath = "")
 	{
 		$this->_xmlFile = realpath($xmlFile);
 		$this->_config = $config;
 		$this->_sourceName = $sourcePath;
 		$this->_sourcePath = realpath("sources/$sourcePath");
+
+		if ($extraSourcePath !== "")
+		{
+		    $this->_extraSourcePath = realpath("sources/shared/$extraSourcePath");
+		}
 		
 		if (!file_exists($this->_xmlFile))
 			throw new Exception("The file [" . $this->_xmlFile . "] was not found");
@@ -366,6 +372,13 @@ abstract class ClientGeneratorFromXml
 			KalturaLog::info("Copy sources from [$this->_sourcePath]");
 			$this->addSourceFiles($this->_sourcePath, $this->_sourcePath . DIRECTORY_SEPARATOR, "");
 		}
+
+        if (is_dir($this->_extraSourcePath))
+		{
+			KalturaLog::info("Copy additional sources from [$this->_extraSourcePath]");
+			$this->addSourceFiles($this->_extraSourcePath, $this->_extraSourcePath . DIRECTORY_SEPARATOR, "");
+		}
+
 
 		if ($this->testsPath && is_dir($this->testsPath))
 		{

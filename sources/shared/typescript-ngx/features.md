@@ -29,7 +29,7 @@ The following is a list of all features supported by the library:
 - [x] Resume file upload action
 - [x] Add unit-tests
 - [x] Support requests that serve files by returning a valid download url for that files.
-- [x] AOT compile support.
+- [x] AOT compile support (for kaltura-ngx-client library)
 - [x] Simplify syntax of enums representing strings.
 
  Below is a list of features to be added:
