@@ -49,7 +49,7 @@ class KalturaBaseTest(unittest.TestCase):
         #(client session is enough when we do operations in a users scope)
         self.config = GetConfig()
         self.client = KalturaClient(self.config)
-        self.ks = self.client.generateSession(ADMIN_SECRET, USER_NAME, 
+        self.ks = self.client.generateSessionV2(ADMIN_SECRET, USER_NAME, 
                                              KalturaSessionType.ADMIN, PARTNER_ID, 
                                              86400, "")
         self.client.setKs(self.ks)            
