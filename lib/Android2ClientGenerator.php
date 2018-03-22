@@ -133,13 +133,16 @@ class Android2ClientGenerator extends Java2ClientGenerator
             switch ($propType) {
                 case "long":
                 case "int":
-                case "boolean":
                 case "float":
                 case "String":
                 case "double":
                     $this->appendLine("        dest.write".ucfirst($propType)."(this.$propName);");
                     break;
 
+                case "boolean":
+                    $this->appendLine("        dest.writeValue(this.$propName);");
+                    break;
+                
                 case "Long":
                 case "Integer":
                 case "Boolean":
@@ -229,11 +232,15 @@ class Android2ClientGenerator extends Java2ClientGenerator
             switch ($propType) {
                 case "long":
                 case "int":
-                case "boolean":
                 case "float":
                 case "String":
                 case "double":
                     $this->appendLine("        this.$propName = in.read".ucfirst($propType)."();");
+                    break;
+
+                case "boolean":
+                    $upperValue = ucfirst($propType);
+                    $this->appendLine("        this.$propName = ($upperValue)in.readValue($upperValue.class.getClassLoader());");
                     break;
 
                 case "Long":
