@@ -1,0 +1,21 @@
+{
+    "name": "kaltura/ott-api-client-library",
+    "description": "An auto generated Composer package for the Kaltura OTT API client library",
+    "keywords": ["kaltura", "ott", "client library", "video", "api"],
+    "minimum-stability": "stable",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Kaltura",
+            "homepage": "http://www.kaltura.org/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "autoload": {
+        "psr-0": {
+            "Kaltura": "library"
+        }
+    }
+}
