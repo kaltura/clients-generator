@@ -19,8 +19,8 @@ export class KalturaClient {
 
     private _defaultRequestOptions: KalturaRequestOptions;
 
-    constructor(private _options: KalturaClientOptions,
-                defaultRequestOptionsArgs: KalturaRequestOptionsArgs) {
+    constructor(private _options?: KalturaClientOptions,
+                defaultRequestOptionsArgs?: KalturaRequestOptionsArgs) {
         this._defaultRequestOptions = new KalturaRequestOptions(defaultRequestOptionsArgs || {});
     }
 

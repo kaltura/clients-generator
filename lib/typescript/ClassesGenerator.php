@@ -53,7 +53,7 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $acceptedTypes = new stdClass();
         $acceptedTypes->name = "acceptedTypes";
         $acceptedTypes->localProperty = true;
-        $acceptedTypes->customDeclaration = "{new(...args) : KalturaObjectBase}[]";
+        $acceptedTypes->customDeclaration = "{new(...args: any[]) : KalturaObjectBase}[]";
         $acceptedTypes->optional = true;
         $acceptedTypes->type = KalturaServerTypes::ArrayOfObjects;
         $acceptedTypes->typeClassName = "KalturaObjectBase";
