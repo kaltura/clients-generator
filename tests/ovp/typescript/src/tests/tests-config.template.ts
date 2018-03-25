@@ -3,5 +3,5 @@ export const TestsConfig = {
     userName: "testUser",
     adminSecret: "@YOUR_ADMIN_SECRET@",
     endpointUrl: "@SERVICE_URL@",
-    clientTag: "typescript-client-tests"
+    clientTag: "ngx-tests"
 };

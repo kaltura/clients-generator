@@ -1,9 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import { TestsConfig } from "./tests-config";
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { SessionStartAction } from "../types/SessionStartAction";
-import { KalturaSessionType } from "../types/KalturaSessionType";
+import { KalturaClient } from "../kaltura-client-service";
+import { SessionStartAction } from "../api/types/SessionStartAction";
+import { KalturaSessionType } from "../api/types/KalturaSessionType";
 
 export function getTestFile(): string | Buffer {
   return fs.readFileSync(path.join(__dirname, "DemoVideo.flv"));
@@ -13,13 +13,13 @@ export function escapeRegExp(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\$&");
 }
 
-export function getClient(): Promise<KalturaBrowserHttpClient> {
+export function getClient(): Promise<KalturaClient> {
     const httpConfiguration = {
         endpointUrl: TestsConfig.endpointUrl,
         clientTag: TestsConfig.clientTag
     };
 
-    let client = new KalturaBrowserHttpClient(httpConfiguration);
+    let client = new KalturaClient(httpConfiguration);
 
 
     return client.request(new SessionStartAction({
@@ -28,7 +28,9 @@ export function getClient(): Promise<KalturaBrowserHttpClient> {
         type: KalturaSessionType.admin,
         partnerId: <any>TestsConfig.partnerId * 1
     })).then(ks => {
-        client.ks = ks;
+        client.setDefaultRequestOptions({
+            ks
+        });
         return client;
     },
         error => {

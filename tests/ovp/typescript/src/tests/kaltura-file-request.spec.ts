@@ -1,5 +1,5 @@
-import { ThumbAssetServeAction } from "../types/ThumbAssetServeAction";
-import { KalturaBrowserHttpClient, KalturaBrowserHttpClientConfiguration } from '../kaltura-clients/kaltura-browser-http-client';
+import { ThumbAssetServeAction } from "../api/types/ThumbAssetServeAction";
+import { KalturaClient } from "../kaltura-client-service";
 
 describe("Kaltura File request", () => {
     test("thumbasset service > serve action", (done) => {
@@ -8,14 +8,12 @@ describe("Kaltura File request", () => {
             thumbAssetId: '1_ep9epsxy'
         });
 
-        const config : KalturaBrowserHttpClientConfiguration =
-        {
-            endpointUrl: 'https://www.kaltura.com',
-            clientTag: 'ngxClientTag'
-        };
-
-        const predefinedClient = new KalturaBrowserHttpClient(config);
-        predefinedClient.ks = 'YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs';
+        const predefinedClient = new KalturaClient();
+        predefinedClient.setDefaultRequestOptions(
+            {
+                ks: 'YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs'
+            }
+        );
 
         predefinedClient.request(thumbRequest)
             .then(
@@ -39,14 +37,16 @@ describe("Kaltura File request", () => {
         });
 
 
-        const config : KalturaBrowserHttpClientConfiguration =
+        const config =
             {
                 endpointUrl: 'https://www.kaltura.com',
                 clientTag: 'ngxClientTag'
             };
 
-        const predefinedClient = new KalturaBrowserHttpClient(config);
-        predefinedClient.ks = 'YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs';
+        const predefinedClient = new KalturaClient();
+        predefinedClient.setDefaultRequestOptions({
+            ks: 'YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs'
+        });
 
         predefinedClient.multiRequest([thumbRequest])
             .then(

@@ -1,13 +1,13 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { FlavorAssetListAction } from "../types/FlavorAssetListAction";
-import { KalturaFlavorAssetListResponse } from "../types/KalturaFlavorAssetListResponse";
-import { KalturaFlavorAsset } from "../types/KalturaFlavorAsset";
-import { KalturaAssetFilter } from "../types/KalturaAssetFilter";
+import { KalturaClient } from "../kaltura-client-service";
+import { FlavorAssetListAction } from "../api/types/FlavorAssetListAction";
+import { KalturaFlavorAssetListResponse } from "../api/types/KalturaFlavorAssetListResponse";
+import { KalturaFlavorAsset } from "../api/types/KalturaFlavorAsset";
+import { KalturaAssetFilter } from "../api/types/KalturaAssetFilter";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 
 describe(`service "Flavor" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings

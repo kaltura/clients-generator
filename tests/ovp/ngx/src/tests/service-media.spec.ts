@@ -1,23 +1,25 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { MediaListAction } from "../types/MediaListAction";
-import { KalturaMediaListResponse } from "../types/KalturaMediaListResponse";
-import { KalturaMediaEntry } from "../types/KalturaMediaEntry";
-import { KalturaMediaType } from "../types/KalturaMediaType";
-import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import {KalturaBrowserHttpClient} from "../kaltura-clients/kaltura-browser-http-client";
+import {MediaListAction} from "../api/types/MediaListAction";
+import {KalturaMediaListResponse} from "../api/types/KalturaMediaListResponse";
+import {KalturaMediaEntry} from "../api/types/KalturaMediaEntry";
+import {KalturaMediaType} from "../api/types/KalturaMediaType";
+import {getClient} from "./utils";
+import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
+import {KalturaClient} from "../kaltura-client.service";
 
 describe(`service "Media" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings
 
-    return getClient()
-      .then(client => {
-        kalturaClient = client;
-      }).catch(error => {
-          // can do nothing since jasmine will ignore any exceptions thrown from before all
-      });
+    return new Promise((resolve => {
+      getClient()
+        .subscribe(client => {
+          kalturaClient = client;
+          resolve(client);
+        });
+    }));
   });
 
   afterAll(() => {
@@ -26,13 +28,12 @@ describe(`service "Media" tests`, () => {
 
   test(`invoke "list" action`, (done) => {
 
-      if (!kalturaClient)
-      {
-          fail(`failure during 'SessionStart'. aborting test`);
-          return;
-      }
+    if (!kalturaClient) {
+      fail(`failure during 'SessionStart'. aborting test`);
+      return;
+    }
 
-    kalturaClient.request(new MediaListAction()).then(
+    kalturaClient.request(new MediaListAction()).subscribe(
       (response) => {
         expect(response instanceof KalturaMediaListResponse).toBeTruthy();
 

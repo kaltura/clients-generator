@@ -23,7 +23,7 @@
     "build:prod": "gulp build --production",
     "lint": "tslint src/**/*.ts",
     "watch": "gulp watch",
-    "release": "standard-version",
+    "deploy": "rm -rf dist && npm run build && cd dist && npm pack && npm link",
     "test": "jest"
   },
   "repository": {
@@ -73,12 +73,10 @@
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testMatch": ["**/tests/*.spec.ts"],
     "moduleFileExtensions": [
       "ts",
-      "tsx",
       "js",
-      "jsx",
       "json"
     ]
   }

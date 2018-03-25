@@ -1,30 +1,30 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { BaseEntryListAction } from "../types/BaseEntryListAction";
-import { UserLoginByLoginIdAction } from "../types/UserLoginByLoginIdAction";
-import { KalturaDetachedResponseProfile } from "../types/KalturaDetachedResponseProfile";
-import { KalturaBaseEntryFilter } from "../types/KalturaBaseEntryFilter";
-import { KalturaSearchOperator } from "../types/KalturaSearchOperator";
-import { KalturaNullableBoolean } from "../types/KalturaNullableBoolean";
-import { AppTokenAddAction } from "../types/AppTokenAddAction";
-import { KalturaAppToken } from "../types/KalturaAppToken";
-import { KalturaSearchOperatorType } from "../types/KalturaSearchOperatorType";
-import { KalturaContentDistributionSearchItem } from "../types/KalturaContentDistributionSearchItem";
-import { UserGetAction } from "../types/UserGetAction";
-import { KalturaBaseEntryListResponse } from "../types/KalturaBaseEntryListResponse";
-import { KalturaPlaylist } from "../types/KalturaPlaylist";
-import { PartnerGetAction } from "../types/PartnerGetAction";
-import { KalturaPlaylistType } from "../types/KalturaPlaylistType";
-import { KalturaEntryReplacementStatus } from "../types/KalturaEntryReplacementStatus";
-import { KalturaMediaEntryFilterForPlaylist } from "../types/KalturaMediaEntryFilterForPlaylist";
-import { KalturaAPIException } from "../kaltura-api-exception";
-import { KalturaAppTokenHashType } from "../types/KalturaAppTokenHashType";
-import { KalturaMediaEntry } from "../types/KalturaMediaEntry";
+import { KalturaClient } from "../kaltura-client-service";
+import { BaseEntryListAction } from "../api/types/BaseEntryListAction";
+import { UserLoginByLoginIdAction } from "../api/types/UserLoginByLoginIdAction";
+import { KalturaDetachedResponseProfile } from "../api/types/KalturaDetachedResponseProfile";
+import { KalturaBaseEntryFilter } from "../api/types/KalturaBaseEntryFilter";
+import { KalturaSearchOperator } from "../api/types/KalturaSearchOperator";
+import { KalturaNullableBoolean } from "../api/types/KalturaNullableBoolean";
+import { AppTokenAddAction } from "../api/types/AppTokenAddAction";
+import { KalturaAppToken } from "../api/types/KalturaAppToken";
+import { KalturaSearchOperatorType } from "../api/types/KalturaSearchOperatorType";
+import { KalturaContentDistributionSearchItem } from "../api/types/KalturaContentDistributionSearchItem";
+import { UserGetAction } from "../api/types/UserGetAction";
+import { KalturaBaseEntryListResponse } from "../api/types/KalturaBaseEntryListResponse";
+import { KalturaPlaylist } from "../api/types/KalturaPlaylist";
+import { PartnerGetAction } from "../api/types/PartnerGetAction";
+import { KalturaPlaylistType } from "../api/types/KalturaPlaylistType";
+import { KalturaEntryReplacementStatus } from "../api/types/KalturaEntryReplacementStatus";
+import { KalturaMediaEntryFilterForPlaylist } from "../api/types/KalturaMediaEntryFilterForPlaylist";
+import { KalturaAPIException } from "../api/kaltura-api-exception";
+import { KalturaAppTokenHashType } from "../api/types/KalturaAppTokenHashType";
+import { KalturaMediaEntry } from "../api/types/KalturaMediaEntry";
 import { getClient, escapeRegExp } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
-import { KalturaFilterPager } from "../types/KalturaFilterPager";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { KalturaFilterPager } from "../api/types/KalturaFilterPager";
 
 describe("Kaltura server API request", () => {
-    let kalturaClient: KalturaBrowserHttpClient = null;
+    let kalturaClient: KalturaClient = null;
 
     beforeAll(async () => {
         LoggerSettings.logLevel = LogLevels.error; // suspend warnings
@@ -51,18 +51,20 @@ describe("Kaltura server API request", () => {
             const userLoginByLoginIdAction: UserLoginByLoginIdAction = new UserLoginByLoginIdAction(
                 {
                     loginId: "a",
-                    password: "a",
-                    ks: "valid ks",
-                    partnerId: 1234,
-                    responseProfile: new KalturaDetachedResponseProfile().setData(data => {
-                        data.fields = "fields";
-                    })
+                    password: "a"
                 }
-            );
+            ).setRequestOptions({
+                ks: "valid ks",
+                partnerId: 1234,
+                responseProfile: new KalturaDetachedResponseProfile().setData(data => {
+                    data.fields = "fields";
+                })
+            });
+
             expect(userLoginByLoginIdAction).toBeDefined();
             expect(userLoginByLoginIdAction instanceof UserLoginByLoginIdAction).toBeTruthy();
 
-            const pojoRequest = <any>userLoginByLoginIdAction.toRequestObject();
+            const pojoRequest = <any>userLoginByLoginIdAction.buildRequest(null);
             expect(pojoRequest.service).toBe("user");
             expect(pojoRequest.action).toBe("loginByLoginId");
             expect(pojoRequest.ks).toBe("valid ks");
@@ -87,7 +89,7 @@ describe("Kaltura server API request", () => {
             expect(request.filter.advancedSearch).toBeDefined();
             expect(request.filter.advancedSearch instanceof KalturaSearchOperator).toBeTruthy();
 
-            const pojoRequest: any = <any>request.toRequestObject();
+            const pojoRequest: any = <any>request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
 
             expect(pojoRequest.filter).toBeDefined();
@@ -101,11 +103,13 @@ describe("Kaltura server API request", () => {
         test("ignore undefined/null/empty array values in request", () => {
             const request = new BaseEntryListAction(
                 {
-                    filter: new KalturaBaseEntryFilter(),
+                    filter: new KalturaBaseEntryFilter()
+                })
+                .setRequestOptions({
                     responseProfile: new KalturaDetachedResponseProfile()
                 });
 
-            const pojoRequest = <any>request.toRequestObject();
+            const pojoRequest = <any>request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.hasOwnProperty("pager")).toBeFalsy();
             expect(pojoRequest.filter).toBeDefined();
@@ -120,7 +124,7 @@ describe("Kaltura server API request", () => {
                     filter: new KalturaBaseEntryFilter()
                 });
 
-            const pojoRequest = <any>request.toRequestObject();
+            const pojoRequest = <any>request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(typeof pojoRequest.objectType).toBe("undefined");
         });
@@ -135,7 +139,7 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.filter.isRoot).toBe(1);
             expect(typeof pojoRequest.filter.isRoot === "number");
@@ -154,7 +158,7 @@ describe("Kaltura server API request", () => {
 
             expect(KalturaAppTokenHashType.sha1).toBe(KalturaAppTokenHashType.sha1);
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.appToken.hashType).toBe(KalturaAppTokenHashType.sha1.toString());
             expect(typeof pojoRequest.appToken.hashType === "string");
@@ -169,7 +173,7 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.filter).toBeDefined();
             expect(pojoRequest.filter instanceof KalturaBaseEntryFilter).toBeFalsy();
@@ -225,7 +229,7 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
 
             const requestFilter: any = pojoRequest.filter;
@@ -244,13 +248,13 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            let pojoRequest: any = request.toRequestObject();
+            let pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.filter).toBeDefined();
             expect(typeof pojoRequest.filter.partnerIdEqual).toBe("undefined");
 
             request.filter.partnerIdEqual = 123;
-            pojoRequest = request.toRequestObject();
+            pojoRequest = request.buildRequest(null);
             expect(pojoRequest.filter).toBeDefined();
             expect(pojoRequest.filter.partnerIdEqual).toBe(123);
         });
@@ -262,13 +266,13 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            let pojoRequest: any = request.toRequestObject();
+            let pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.filter).toBeDefined();
             expect(typeof pojoRequest.filter.freeText).toBe("undefined");
 
             request.filter.freeText = "free";
-            pojoRequest = request.toRequestObject();
+            pojoRequest = request.buildRequest(null);
             expect(pojoRequest.filter).toBeDefined();
             expect(pojoRequest.filter.freeText).toBe("free");
 
@@ -289,7 +293,7 @@ describe("Kaltura server API request", () => {
 
             expect(request.userId).toBeUndefined();
 
-            let pojoRequest: any = request.toRequestObject();
+            let pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.userId).toBeUndefined();
         });
@@ -317,7 +321,7 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
 
             const requestFilter: any = pojoRequest.filter;
@@ -343,7 +347,7 @@ describe("Kaltura server API request", () => {
                     password: "password"
                 });
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
 
             expect(pojoRequest["loginId"]).toBe("username");
@@ -358,7 +362,7 @@ describe("Kaltura server API request", () => {
                 expiry: 1234
             });
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.expiry).toBe(1234);
 
@@ -384,18 +388,20 @@ describe("Kaltura server API request", () => {
             });
 
 
-            const pojoRequest: any = requestWithDefaultKS.toRequestObject();
+            const pojoRequest: any = requestWithDefaultKS.buildRequest();
             expect(pojoRequest).toBeDefined();
             expect(pojoRequest.ks).toBeUndefined();
 
             // build request with custom ks
             const requestWithCustomKS = new UserLoginByLoginIdAction({
                 loginId: "username",
-                password: "password",
-                ks: "custom request KS"
-            });
+                password: "password"
+            })
+                .setRequestOptions({
+                    ks: "custom request KS"
+                });
 
-            const pojoRequest2: any = requestWithCustomKS.toRequestObject();
+            const pojoRequest2: any = requestWithCustomKS.buildRequest(null);
 
             expect(pojoRequest2).toBeDefined();
             expect(pojoRequest2.ks).toBe("custom request KS");
@@ -426,7 +432,7 @@ describe("Kaltura server API request", () => {
                 }
             );
 
-            const pojoRequest: any = request.toRequestObject();
+            const pojoRequest: any = request.buildRequest(null);
 
 
             expect(pojoRequest).toBeDefined();
@@ -740,8 +746,10 @@ describe("Kaltura server API request", () => {
         });
 
         test("parse kaltura api exception response", (done) => {
-            const listAction: BaseEntryListAction = new BaseEntryListAction();
-            listAction.ks = "invalid ks";
+            const listAction: BaseEntryListAction = new BaseEntryListAction()
+                .setRequestOptions({
+                    ks: "invalid ks"
+                });
 
             kalturaClient.request(listAction).then(
                 (response) => {

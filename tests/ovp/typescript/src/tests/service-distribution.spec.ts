@@ -1,18 +1,18 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { DistributionProviderListAction } from "../types/DistributionProviderListAction";
-import { KalturaDistributionProviderListResponse } from "../types/KalturaDistributionProviderListResponse";
-import { KalturaDistributionProvider } from "../types/KalturaDistributionProvider";
-import { DistributionProfileListAction } from "../types/DistributionProfileListAction";
-import { KalturaDistributionProfileListResponse } from "../types/KalturaDistributionProfileListResponse";
-import { KalturaDistributionProfile } from "../types/KalturaDistributionProfile";
-import { EntryDistributionListAction } from "../types/EntryDistributionListAction";
-import { KalturaEntryDistributionListResponse } from "../types/KalturaEntryDistributionListResponse";
-import { KalturaEntryDistribution } from "../types/KalturaEntryDistribution";
+import { KalturaClient } from "../kaltura-client-service";
+import { DistributionProviderListAction } from "../api/types/DistributionProviderListAction";
+import { KalturaDistributionProviderListResponse } from "../api/types/KalturaDistributionProviderListResponse";
+import { KalturaDistributionProvider } from "../api/types/KalturaDistributionProvider";
+import { DistributionProfileListAction } from "../api/types/DistributionProfileListAction";
+import { KalturaDistributionProfileListResponse } from "../api/types/KalturaDistributionProfileListResponse";
+import { KalturaDistributionProfile } from "../api/types/KalturaDistributionProfile";
+import { EntryDistributionListAction } from "../api/types/EntryDistributionListAction";
+import { KalturaEntryDistributionListResponse } from "../api/types/KalturaEntryDistributionListResponse";
+import { KalturaEntryDistribution } from "../api/types/KalturaEntryDistribution";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 
 describe(`service "Distribution" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
     beforeAll(async () => {
         LoggerSettings.logLevel = LogLevels.error; // suspend warnings

@@ -5,10 +5,16 @@ require_once (__DIR__. '/GeneratedFileData.php');
 
 class ClassesGenerator extends TypescriptGeneratorBase
 {
+    private $framework = null;
+    private $disableDateParsing = false;
 
-    function __construct($serverMetadata)
+    function __construct($serverMetadata, $framework, $disableDateParsing)
     {
         parent::__construct($serverMetadata);
+
+        $this->framework = $framework;
+        $this->disableDateParsing = $disableDateParsing;
+
     }
 
     public function generate()
@@ -68,15 +74,23 @@ class ClassesGenerator extends TypescriptGeneratorBase
 
         $generatedCode = $this->createClassExp($createClassArgs);
 
+        $isAngularFramework = $this->framework === 'ngx';
+
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from './kaltura-object-base';
-import { InjectionToken } from '@angular/core';
 {$generatedCode[0]}
+{$this->utils->ifExp($isAngularFramework, "import { InjectionToken } from '@angular/core';", "")}
+";
 
+        if($isAngularFramework)
+        {
+            $fileContent .= "
 export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaRequestOptionsArgs> = new InjectionToken('kaltura client default request options');
 
-{$generatedCode[1]}
 ";
+        }
+
+        $fileContent .= $generatedCode[1];
 
         $file = new GeneratedFileData();
         $file->path = "kaltura-request-options.ts";

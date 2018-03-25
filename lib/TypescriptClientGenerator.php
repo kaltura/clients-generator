@@ -6,13 +6,34 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 	protected $_baseClientPath = "src/api";
 	protected $_usePrivateAttributes;
 	private $serverMetadata;
+	private $_serverType = null;
+	private $_disableDateParsing = false;
+    private $_framework;
 
-	function __construct($xmlPath, Zend_Config $config, $sourcePath = "typescript")
+	function __construct($xmlPath, Zend_Config $config, $framework = "typescript")
 	{
-		parent::__construct($xmlPath, $sourcePath, $config, "typescript-ngx");
+		parent::__construct($xmlPath, $framework, $config);
+
+		$this->setAdditionalSourcesPath('shared/typescript-ngx');
 		$this->_usePrivateAttributes = isset($config->usePrivateAttributes) ? $config->usePrivateAttributes : false;
+		$this->_framework = $framework;
+		KalturaLog::info("typescript generator: setting target client framework to '$framework'");
 	}
 
+    public function setTestsPath($testsDir)
+    {
+        parent::setTestsPath($testsDir);
+        $this->_serverType = $testsDir;
+    }
+
+    public function setCustomFlags($customFlags)
+    {
+        if (strpos($customFlags, "disable-date-parsing") !== false)
+        {
+            $this->_disableDateParsing = true;
+            KalturaLog::info("typescript generator: set custom flag disable-date-parsing");
+        }
+    }
 
 	public function generate()
 	{
@@ -22,7 +43,7 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		$xpath = new DOMXPath ($this->_doc);
 		$this->serverMetadata = $this->extractData($xpath);
 
-		$classesGenerator = new ClassesGenerator($this->serverMetadata);
+		$classesGenerator = new ClassesGenerator($this->serverMetadata, $this->_framework, $this->_disableDateParsing);
 		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
 			$classesGenerator->generate(),
@@ -316,10 +337,6 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		return $result;
 	}
 
-
-
-
-
 	function mapToTypescriptType(DOMElement $xmlnode, $allowEmptyTypes)
 	{
 		$result = new stdClass();
@@ -368,12 +385,11 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 					$enumType = $xmlnode->getAttribute("enumType");
 					$isTime = $xmlnode->getAttribute("isTime");
 
-					if ($isTime == "1")
+					if ($isTime == "1" && $this->_disableDateParsing === false)
 					{
 						$result->type = KalturaServerTypes::Date;
 						$result->className = "";
-					}else
-						if ($enumType)
+					}else if ($enumType)
 					{
 						if ($typeValue == "string")
 						{

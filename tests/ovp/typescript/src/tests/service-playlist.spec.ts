@@ -1,16 +1,16 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { PlaylistListAction } from "../types/PlaylistListAction";
-import { KalturaPlaylistListResponse } from "../types/KalturaPlaylistListResponse";
-import { KalturaPlaylist } from "../types/KalturaPlaylist";
-import { KalturaPlaylistType } from "../types/KalturaPlaylistType";
-import { PlaylistAddAction } from "../types/PlaylistAddAction";
-import { PlaylistDeleteAction } from "../types/PlaylistDeleteAction";
-import { PlaylistUpdateAction } from "../types/PlaylistUpdateAction";
+import { KalturaClient } from "../kaltura-client-service";
+import { PlaylistListAction } from "../api/types/PlaylistListAction";
+import { KalturaPlaylistListResponse } from "../api/types/KalturaPlaylistListResponse";
+import { KalturaPlaylist } from "../api/types/KalturaPlaylist";
+import { KalturaPlaylistType } from "../api/types/KalturaPlaylistType";
+import { PlaylistAddAction } from "../api/types/PlaylistAddAction";
+import { PlaylistDeleteAction } from "../api/types/PlaylistDeleteAction";
+import { PlaylistUpdateAction } from "../api/types/PlaylistUpdateAction";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 
 describe(`service "Playlist" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings

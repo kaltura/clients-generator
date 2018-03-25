@@ -67,7 +67,7 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         let responseObject = null;
 
         if (!unwrappedResponse || !(unwrappedResponse instanceof Array) || unwrappedResponse.length !== this.requests.length) {
-            const response = new KalturaAPIException('client::response_type_error', `server response is invalid, expected array of ${this.requests.length}`);
+            const response = new KalturaAPIException(`server response is invalid, expected array of ${this.requests.length}`, 'client::response_type_error', null);
             for (let i = 0, len = this.requests.length; i < len; i++) {
                 kalturaResponses.push(this.requests[i].handleResponse(response));
             }

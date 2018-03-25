@@ -1,8 +1,3 @@
-import { Inject, Injectable, Optional, Self } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/of';
-import { HttpClient } from '@angular/common/http';
 import { KalturaRequest } from './api/kaltura-request';
 import { KalturaMultiRequest } from './api/kaltura-multi-request';
 import { KalturaMultiResponse } from './api/kaltura-multi-response';
@@ -10,22 +5,22 @@ import { KalturaFileRequest } from './api/kaltura-file-request';
 import { KalturaUploadRequest } from './api/kaltura-upload-request';
 import { KalturaRequestAdapter } from './adapters/kaltura-request-adapter';
 import { KalturaFileRequestAdapter } from './adapters/kaltura-file-request-adapter';
-import { KalturaClientOptions, KALTURA_CLIENT_OPTIONS } from './kaltura-client-options';
+import { KalturaClientOptions } from './kaltura-client-options';
 import { KalturaMultiRequestAdapter } from './adapters/kaltura-multi-request-adapter';
 import { KalturaClientException } from './api/kaltura-client-exception';
 import { KalturaUploadRequestAdapter } from './adapters/kaltura-upload-request-adapter';
 import {
-    KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS, KalturaRequestOptions,
+    KalturaRequestOptions,
     KalturaRequestOptionsArgs
 } from './api/kaltura-request-options';
+import { CancelableAction } from './cancelable-action';
 
-@Injectable()
 export class KalturaClient {
 
     private _defaultRequestOptions: KalturaRequestOptions;
 
-    constructor(private _http: HttpClient, @Inject(KALTURA_CLIENT_OPTIONS) @Optional() @Self() private _options: KalturaClientOptions,
-                @Inject(KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS) @Optional() @Self()  defaultRequestOptionsArgs: KalturaRequestOptionsArgs) {
+    constructor(private _options: KalturaClientOptions,
+                defaultRequestOptionsArgs: KalturaRequestOptionsArgs) {
         this._defaultRequestOptions = new KalturaRequestOptions(defaultRequestOptionsArgs || {});
     }
 
@@ -67,7 +62,7 @@ export class KalturaClient {
 
     private _validateOptions(): Error | null {
         if (!this._options) {
-            return new KalturaClientException('client::missing_options','cannot transmit request, missing client options (did you forgot to provide options manually or using KALTURA_CLIENT_OPTIONS?)');
+            return new KalturaClientException('client::missing_options','cannot transmit request, missing client options (did you forgot to provide options manually?)');
         }
 
         if (!this._options.endpointUrl) {
@@ -81,14 +76,14 @@ export class KalturaClient {
         return null;
     }
 
-    public request<T>(request: KalturaRequest<T>): Observable<T>;
-    public request<T>(request: KalturaFileRequest): Observable<{ url: string }>;
-    public request<T>(request: KalturaRequest<T> | KalturaFileRequest): Observable<T | { url: string }> {
+    public request<T>(request: KalturaRequest<T>): CancelableAction<T>;
+    public request<T>(request: KalturaFileRequest): CancelableAction<{ url: string }>;
+    public request<T>(request: KalturaRequest<T> | KalturaFileRequest): CancelableAction<T | { url: string }> {
 
         const optionsViolationError = this._validateOptions();
 
         if (optionsViolationError) {
-            return Observable.throw(optionsViolationError);
+            return CancelableAction.reject(optionsViolationError);
         }
 
         if (request instanceof KalturaFileRequest) {
@@ -98,30 +93,30 @@ export class KalturaClient {
             return new KalturaUploadRequestAdapter(this._options, this._defaultRequestOptions).transmit(request);
         }
         else if (request instanceof KalturaRequest) {
-            return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions);
+            return new KalturaRequestAdapter().transmit(request, this._options, this._defaultRequestOptions);
         } else {
-            return Observable.throw(new KalturaClientException("client::request_type_error", 'unsupported request type requested'));
+            return CancelableAction.reject(new KalturaClientException("client::request_type_error", 'unsupported request type requested'));
         }
     }
 
-    public multiRequest(requests: KalturaRequest<any>[]): Observable<KalturaMultiResponse>
-    public multiRequest(request: KalturaMultiRequest): Observable<KalturaMultiResponse>;
-    public multiRequest(arg: KalturaMultiRequest | KalturaRequest<any>[]): Observable<KalturaMultiResponse> {
+    public multiRequest(requests: KalturaRequest<any>[]): CancelableAction<KalturaMultiResponse>
+    public multiRequest(request: KalturaMultiRequest): CancelableAction<KalturaMultiResponse>;
+    public multiRequest(arg: KalturaMultiRequest | KalturaRequest<any>[]): CancelableAction<KalturaMultiResponse> {
         const optionsViolationError = this._validateOptions();
         if (optionsViolationError) {
-            return Observable.throw(optionsViolationError);
+            return CancelableAction.reject(optionsViolationError);
         }
 
         const request = arg instanceof KalturaMultiRequest ? arg : (arg instanceof Array ? new KalturaMultiRequest(...arg) : null);
         if (!request) {
-            return Observable.throw(new KalturaClientException('client::invalid_request', `Expected argument of type Array or KalturaMultiRequest`));
+            return CancelableAction.reject(new KalturaClientException('client::invalid_request', `Expected argument of type Array or KalturaMultiRequest`));
         }
 
         const containsFileRequest = request.requests.some(item => item instanceof KalturaFileRequest);
         if (containsFileRequest) {
-            return Observable.throw(new KalturaClientException('client::invalid_request', `multi-request not support requests of type 'KalturaFileRequest', use regular request instead`));
+            return CancelableAction.reject(new KalturaClientException('client::invalid_request', `multi-request not support requests of type 'KalturaFileRequest', use regular request instead`));
         } else {
-            return new KalturaMultiRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions);
+            return new KalturaMultiRequestAdapter().transmit(request, this._options, this._defaultRequestOptions);
         }
     }
 }

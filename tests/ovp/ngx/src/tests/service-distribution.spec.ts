@@ -1,33 +1,34 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { DistributionProviderListAction } from "../types/DistributionProviderListAction";
-import { KalturaDistributionProviderListResponse } from "../types/KalturaDistributionProviderListResponse";
-import { KalturaDistributionProvider } from "../types/KalturaDistributionProvider";
-import { DistributionProfileListAction } from "../types/DistributionProfileListAction";
-import { KalturaDistributionProfileListResponse } from "../types/KalturaDistributionProfileListResponse";
-import { KalturaDistributionProfile } from "../types/KalturaDistributionProfile";
-import { EntryDistributionListAction } from "../types/EntryDistributionListAction";
-import { KalturaEntryDistributionListResponse } from "../types/KalturaEntryDistributionListResponse";
-import { KalturaEntryDistribution } from "../types/KalturaEntryDistribution";
-import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import {DistributionProviderListAction} from "../api/types/DistributionProviderListAction";
+import {KalturaDistributionProviderListResponse} from "../api/types/KalturaDistributionProviderListResponse";
+import {KalturaDistributionProvider} from "../api/types/KalturaDistributionProvider";
+import {DistributionProfileListAction} from "../api/types/DistributionProfileListAction";
+import {KalturaDistributionProfileListResponse} from "../api/types/KalturaDistributionProfileListResponse";
+import {KalturaDistributionProfile} from "../api/types/KalturaDistributionProfile";
+import {EntryDistributionListAction} from "../api/types/EntryDistributionListAction";
+import {KalturaEntryDistributionListResponse} from "../api/types/KalturaEntryDistributionListResponse";
+import {KalturaEntryDistribution} from "../api/types/KalturaEntryDistribution";
+import {getClient} from "./utils";
+import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
+import {KalturaClient} from "../kaltura-client.service";
 
 describe(`service "Distribution" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
-    beforeAll(async () => {
-        LoggerSettings.logLevel = LogLevels.error; // suspend warnings
+  beforeAll(async () => {
+    LoggerSettings.logLevel = LogLevels.error; // suspend warnings
 
-        return getClient()
-            .then(client => {
-                kalturaClient = client;
-            }).catch(error => {
-                // can do nothing since jasmine will ignore any exceptions thrown from before all
-            });
-    });
+    return new Promise((resolve => {
+      getClient()
+        .subscribe(client => {
+          kalturaClient = client;
+          resolve(client);
+        });
+    }));
+  });
 
   test("distribution provider list", (done) => {
     kalturaClient.request(new DistributionProviderListAction())
-      .then(
+      .subscribe(
         response => {
           expect(response instanceof KalturaDistributionProviderListResponse).toBeTruthy();
           expect(Array.isArray(response.objects)).toBeTruthy();
@@ -42,7 +43,7 @@ describe(`service "Distribution" tests`, () => {
 
   test("distribution profile list", (done) => {
     kalturaClient.request(new DistributionProfileListAction())
-      .then(
+      .subscribe(
         response => {
           expect(response instanceof KalturaDistributionProfileListResponse).toBeTruthy();
           expect(Array.isArray(response.objects)).toBeTruthy();
@@ -57,7 +58,7 @@ describe(`service "Distribution" tests`, () => {
 
   test("entry distribution list", (done) => {
     kalturaClient.request(new EntryDistributionListAction())
-      .then(
+      .subscribe(
         response => {
           expect(response instanceof KalturaEntryDistributionListResponse).toBeTruthy();
           expect(Array.isArray(response.objects)).toBeTruthy();

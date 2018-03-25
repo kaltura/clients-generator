@@ -9,7 +9,7 @@ abstract class ClientGeneratorFromXml
 	protected $_xmlFile = "";
 	protected $_sourceName = "";
 	protected $_sourcePath = "";
-	protected $_extraSourcePath = "";
+	protected $_additionalSourcesPath = "";
 	protected $_params = array();
 	protected $_licenseBuffer = '';
 	
@@ -73,18 +73,13 @@ abstract class ClientGeneratorFromXml
 		$this->excludeSourcePaths = explode(',', $excludeSourcePaths);
 	}
 
-	public function __construct($xmlFile, $sourcePath, Zend_Config $config, $extraSourcePath = "")
+	public function __construct($xmlFile, $sourcePath, Zend_Config $config)
 	{
 		$this->_xmlFile = realpath($xmlFile);
 		$this->_config = $config;
 		$this->_sourceName = $sourcePath;
 		$this->_sourcePath = realpath("sources/$sourcePath");
 
-		if ($extraSourcePath !== "")
-		{
-		    $this->_extraSourcePath = realpath("sources/shared/$extraSourcePath");
-		}
-		
 		if (!file_exists($this->_xmlFile))
 			throw new Exception("The file [" . $this->_xmlFile . "] was not found");
 			
@@ -373,10 +368,10 @@ abstract class ClientGeneratorFromXml
 			$this->addSourceFiles($this->_sourcePath, $this->_sourcePath . DIRECTORY_SEPARATOR, "");
 		}
 
-        if (is_dir($this->_extraSourcePath))
+        if (is_dir($this->_additionalSourcesPath))
 		{
-			KalturaLog::info("Copy additional sources from [$this->_extraSourcePath]");
-			$this->addSourceFiles($this->_extraSourcePath, $this->_extraSourcePath . DIRECTORY_SEPARATOR, "");
+			KalturaLog::info("Copy additional sources from [$this->_additionalSourcesPath]");
+			$this->addSourceFiles($this->_additionalSourcesPath, $this->_additionalSourcesPath . DIRECTORY_SEPARATOR, "");
 		}
 
 
@@ -405,12 +400,24 @@ abstract class ClientGeneratorFromXml
 		$this->outputPath = $outputPath;
 		$this->copyPath = $copyPath;
 	}
-	
+
+	public function setAdditionalSourcesPath($path)
+    {
+        if ($path !== "")
+        {
+            $this->_additionalSourcesPath = realpath("sources/$path");
+            KalturaLog::info("set addition sources path $path");
+        }
+    }
+
 	public function setTestsPath($testsDir)
 	{
 		$testsPath = realpath("tests/$testsDir");
 		if(file_exists("$testsPath/{$this->_sourceName}"))
-			$this->testsPath = realpath("$testsPath/{$this->_sourceName}");
+		{
+            $this->testsPath = realpath("$testsPath/{$this->_sourceName}");
+            KalturaLog::info("set tests path $testsPath");
+        }
 	}
 	
 	public function setParam($key, $value)

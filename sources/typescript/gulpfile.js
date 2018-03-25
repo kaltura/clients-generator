@@ -12,6 +12,11 @@ var jeditor = require("gulp-json-editor");
 var merge = require('merge2');  // Require separate installation
 //var KarmaServer = require('karma').Server;
 
+function formatTwoDigitsNumber(value)
+{
+  return ("0" + value).slice(-2);
+}
+
 //set configuration
 const tsconfig = require('./tsconfig.json').compilerOptions;
 
@@ -79,10 +84,13 @@ function compileTS(opt) {
 gulp.task('extras', function () {
   var packageFileResult = gulp.src(['package.json'], {base: './'})
     .pipe(jeditor(function(json) {
+      var now = new Date();
+      json.version = json.version + '-v' + now.getFullYear() + formatTwoDigitsNumber(now.getMonth() + 1) + formatTwoDigitsNumber(now.getDate()) + '-' + formatTwoDigitsNumber(now.getHours()) + formatTwoDigitsNumber(now.getMinutes()) + formatTwoDigitsNumber(now.getSeconds());
+
       json.peerDependencies = json.dependencies;
       json.dependencies = {};
       json.devDependencies = {};
-      json.private = false;
+      json.private = true;
       json.scripts = {};
       return json; // must return JSON object.
     }))

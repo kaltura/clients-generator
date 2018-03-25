@@ -2,7 +2,7 @@
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Gitter chat](https://badges.gitter.im/kaltura-ng/kaltura-ng.png)](https://gitter.im/kaltura-ng/kaltura-ng) [![Build Status](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular.svg?branch=master)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular)
 
-> An easy-to-use facade to Kaltura server with typescript support for action requests, classes and enums.
+> An easy-to-use facade to Kaltura server with Angular X support for action requests, classes and enums.
 
 
 ## Instructions
@@ -31,7 +31,7 @@ $ npm run deploy
 3. copy this file to your project (we recommend coping it to folder `libs`)
 4. run the following command
  ```
- npm install file:the_path_to_the_file_includeing_its_name
+ npm install file:the_path_to_the_file_including_its_name.tgz
  ```
 > make sure you prefix the path with `file:` as shown above.
 

@@ -1,13 +1,13 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { MediaListAction } from "../types/MediaListAction";
-import { KalturaMediaListResponse } from "../types/KalturaMediaListResponse";
-import { KalturaMediaEntry } from "../types/KalturaMediaEntry";
-import { KalturaMediaType } from "../types/KalturaMediaType";
+import { KalturaClient } from "../kaltura-client-service";
+import { MediaListAction } from "../api/types/MediaListAction";
+import { KalturaMediaListResponse } from "../api/types/KalturaMediaListResponse";
+import { KalturaMediaEntry } from "../api/types/KalturaMediaEntry";
+import { KalturaMediaType } from "../api/types/KalturaMediaType";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 
 describe(`service "Media" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings

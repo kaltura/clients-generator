@@ -1,21 +1,22 @@
-import { KalturaResponse } from "../kaltura-response";
-import { KalturaMultiRequest } from "../kaltura-multi-request";
-import { UserLoginByLoginIdAction } from "../types/UserLoginByLoginIdAction";
-import { UserGetByLoginIdAction } from "../types/UserGetByLoginIdAction";
-import { PermissionListAction } from "../types/PermissionListAction";
-import { PartnerGetAction } from "../types/PartnerGetAction";
-import { KalturaAPIException } from "../kaltura-api-exception";
-import { KalturaMultiResponse } from "../kaltura-multi-response";
-import { KalturaUser } from "../types/KalturaUser";
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
+import { KalturaResponse } from "../api/kaltura-response";
+import { KalturaMultiRequest } from "../api/kaltura-multi-request";
+import { UserLoginByLoginIdAction } from "../api/types/UserLoginByLoginIdAction";
+import { UserGetByLoginIdAction } from "../api/types/UserGetByLoginIdAction";
+import { PermissionListAction } from "../api/types/PermissionListAction";
+import { PartnerGetAction } from "../api/types/PartnerGetAction";
+import { KalturaAPIException } from "../api/kaltura-api-exception";
+import { KalturaMultiResponse } from "../api/kaltura-multi-response";
+import { KalturaUser } from "../api/types/KalturaUser";
+import { KalturaClient } from "../kaltura-client-service";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { KalturaRequestOptions } from '../api/kaltura-request-options';
 
 describe("Kaltura server API multi request", () => {
   const fakeUserName = "";
   const fakePassword = "";
 
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings
@@ -41,7 +42,7 @@ describe("Kaltura server API multi request", () => {
         })
       );
 
-      const pojoRequest = multiRequest.toRequestObject();
+      const pojoRequest = multiRequest.buildRequest(null);
 
       expect(multiRequest instanceof KalturaMultiRequest).toBeTruthy();
       expect(pojoRequest instanceof KalturaMultiRequest).toBeFalsy();
@@ -60,7 +61,7 @@ describe("Kaltura server API multi request", () => {
         new PartnerGetAction(12)
       );
 
-      const pojoRequest = multiRequest.toRequestObject();
+      const pojoRequest = multiRequest.buildRequest(null);
 
       expect(pojoRequest["0"]).toBeDefined();
       expect(pojoRequest["1"]).toBeDefined();
@@ -98,21 +99,30 @@ describe("Kaltura server API multi request", () => {
           loginId: fakeUserName,
           password: fakePassword
         }),
-        new UserGetByLoginIdAction({ loginId: fakeUserName }).setDependency(["ks", 1, ""]),
-        new PartnerGetAction().setDependency(["ks", 1, ""], ["id", 2, "partnerId"])
+        new UserGetByLoginIdAction({ loginId: fakeUserName })
+            .setRequestOptions(
+                  new KalturaRequestOptions()
+                    .setDependency(["ks", 0])
+                ),
+        new PartnerGetAction()
+            .setDependency(["id", 1, "partnerId"])
+            .setRequestOptions(
+                new KalturaRequestOptions()
+                    .setDependency(["ks", 0])
+            ),
       );
 
-      const pojoRequest = multiRequest1.toRequestObject();
+      const pojoRequest = multiRequest1.buildRequest(null);
       expect(pojoRequest).toBeDefined();
 
       const multiRequest1Request1 = pojoRequest["1"];
       const multiRequest1Request2 = pojoRequest["2"];
 
       expect(multiRequest1Request1).toBeDefined();
-      expect(multiRequest1Request1.ks).toBe("{2:result}");
+      expect(multiRequest1Request1.ks).toBe("{1:result}");
       expect(multiRequest1Request2).toBeDefined();
-      expect(multiRequest1Request2.ks).toBe("{2:result}");
-      expect(multiRequest1Request2.id).toBe("{3:result:partnerId}");
+      expect(multiRequest1Request2.ks).toBe("{1:result}");
+      expect(multiRequest1Request2.id).toBe("{2:result:partnerId}");
 
       const multiRequest2 = new KalturaMultiRequest(
         new UserLoginByLoginIdAction({
@@ -120,12 +130,19 @@ describe("Kaltura server API multi request", () => {
           password: fakePassword
         }),
         new UserGetByLoginIdAction({ loginId: fakeUserName })
-          .setDependency({ property: "ks", request: 1 }),
+            .setRequestOptions(
+                new KalturaRequestOptions()
+                    .setDependency({ property: "ks", request: 0 }),
+            ),
         new PartnerGetAction(null)
-          .setDependency({ property: "ks", request: 1 }, { property: "id", request: 2, targetPath: ["partnerId"] })
+          .setDependency({ property: "id", request: 1, targetPath: ["partnerId"] })
+            .setRequestOptions(
+                new KalturaRequestOptions()
+                    .setDependency({ property: "ks", request: 0 }),
+            ),
       );
 
-      const pojoRequest2 = multiRequest2.toRequestObject();
+      const pojoRequest2 = multiRequest2.buildRequest(null);
       expect(pojoRequest2).toBeDefined();
 
       const multiRequest2request1 = pojoRequest2["1"];
@@ -159,9 +176,7 @@ describe("Kaltura server API multi request", () => {
           }),
         new PartnerGetAction()
           .setDependency(["ks", 1, ""], ["id", 2, "partnerId"])
-      ).setData((request) => {
-        request.ks = null; // Override provided ks from the kaltura request configuration
-      }).setCompletion(responses => {
+      ).setCompletion(responses => {
         // TODO [kmc] should add a test failing if this callback wasn"t called
         expect(responses.hasErrors()).toBe(false);
       })).then(
@@ -192,9 +207,7 @@ describe("Kaltura server API multi request", () => {
           }),
         new PartnerGetAction()
           .setDependency(["ks", 1, ""], ["id", 2, "partnerId"])
-      ).setData((request) => {
-        request.ks = null; // Override provided ks from the kaltura request configuration
-      }).setCompletion(responses => {
+      ).setCompletion(responses => {
         // TODO [kmc] should add a test failing if this callback wasn"t called
         expect(responses.hasErrors()).toBe(true);
       })).then(

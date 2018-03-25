@@ -61,13 +61,10 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
                     // handle situation when multi request propagated actual api exception object.
                     responseObject = unwrappedResponse;
                 }else if (unwrappedResponse.objectType === 'KalturaAPIException') {
-                    responseObject = super._parseResponseProperty(
-                        "",
-                        {
-                            type: 'o',
-                            subType: 'KalturaAPIException'
-                        },
-                        unwrappedResponse
+                    responseObject = new KalturaAPIException(
+                        unwrappedResponse.message,
+                        unwrappedResponse.code,
+                        unwrappedResponse.args
                     );
                 } else {
                     responseObject = super._parseResponseProperty(
@@ -82,7 +79,7 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
             }
 
             if (!responseObject && this.responseType !== 'v') {
-                responseError = new KalturaAPIException('client::response_type_error', `server response is undefined, expected '${this.responseType} / ${this.responseSubType}'`);
+                responseError = new KalturaAPIException(`server response is undefined, expected '${this.responseType} / ${this.responseSubType}'`, 'client::response_type_error', null);
             } else if (responseObject instanceof KalturaAPIException) {
                 // got exception from library
                 responseError = responseObject;
@@ -90,8 +87,7 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
                 responseResult = responseObject;
             }
         } catch (ex) {
-            // TODO [kmc] should implement
-            responseError = new KalturaAPIException('client::general_error', ex.message);
+            responseError = new KalturaAPIException(ex.message, 'client::general_error', null);
         }
 
 

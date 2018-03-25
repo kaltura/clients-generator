@@ -1,8 +1,8 @@
-import { KalturaClient } from "../kaltura-client-service";
-import { WidgetListAction } from "../api/types/WidgetListAction";
-import { KalturaWidgetListResponse } from "../api/types/KalturaWidgetListResponse";
-import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import {WidgetListAction} from "../api/types/WidgetListAction";
+import {KalturaWidgetListResponse} from "../api/types/KalturaWidgetListResponse";
+import {getClient} from "./utils";
+import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
+import {KalturaClient} from "../kaltura-client.service";
 
 describe(`service "Widget" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -10,12 +10,13 @@ describe(`service "Widget" tests`, () => {
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings
 
-    return getClient()
-      .then(client => {
-        kalturaClient = client;
-      }).catch(error => {
-        // can do nothing since jasmine will ignore any exceptions thrown from before all
-      });
+    return new Promise((resolve => {
+      getClient()
+        .subscribe(client => {
+          kalturaClient = client;
+          resolve(client);
+        });
+    }));
   });
 
   afterAll(() => {
@@ -24,7 +25,7 @@ describe(`service "Widget" tests`, () => {
 
   test("widgets list", (done) => {
     kalturaClient.request(new WidgetListAction())
-      .then(
+      .subscribe(
         response => {
           expect(response instanceof KalturaWidgetListResponse).toBeTruthy();
           done();

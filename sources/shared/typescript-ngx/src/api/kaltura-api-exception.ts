@@ -1,21 +1,8 @@
-import { KalturaTypesFactory } from './kaltura-types-factory';
-import { KalturaObjectBase, KalturaObjectMetadata } from './kaltura-object-base';
-export class KalturaAPIException extends KalturaObjectBase {
-    constructor(public code?: string, public message?: string, public args?: any) {
-        super();
-    }
+export class KalturaAPIException extends Error {
+    constructor(public message: string, public code: string, public args: any) {
+        super(message);
 
-    protected _getMetadata() : KalturaObjectMetadata
-    {
-        const result = super._getMetadata();
-        Object.assign(
-            result.properties,
-            {
-                code : { readOnly: true, type: 's' },
-                message : { type: 's' }
-            });
-
-        return result;
+        // Set the prototype explicitly.
+        Object.setPrototypeOf(this, KalturaAPIException.prototype);
     }
 }
-KalturaTypesFactory.registerType('KalturaAPIException',KalturaAPIException);

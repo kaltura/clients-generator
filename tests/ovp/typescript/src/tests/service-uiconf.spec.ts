@@ -1,15 +1,15 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { UiConfListAction } from "../types/UiConfListAction";
-import { KalturaUiConfListResponse } from "../types/KalturaUiConfListResponse";
-import { KalturaUiConf } from "../types/KalturaUiConf";
-import { KalturaUiConfFilter } from "../types/KalturaUiConfFilter";
-import { KalturaUiConfObjType } from "../types/KalturaUiConfObjType";
-import { UiConfListTemplatesAction } from "../types/UiConfListTemplatesAction";
+import { KalturaClient } from "../kaltura-client-service";
+import { UiConfListAction } from "../api/types/UiConfListAction";
+import { KalturaUiConfListResponse } from "../api/types/KalturaUiConfListResponse";
+import { KalturaUiConf } from "../api/types/KalturaUiConf";
+import { KalturaUiConfFilter } from "../api/types/KalturaUiConfFilter";
+import { KalturaUiConfObjType } from "../api/types/KalturaUiConfObjType";
+import { UiConfListTemplatesAction } from "../api/types/UiConfListTemplatesAction";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 
 describe(`service "UIConf" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings

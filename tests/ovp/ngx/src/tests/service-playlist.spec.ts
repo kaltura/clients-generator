@@ -1,26 +1,28 @@
-import { KalturaBrowserHttpClient } from "../kaltura-clients/kaltura-browser-http-client";
-import { PlaylistListAction } from "../types/PlaylistListAction";
-import { KalturaPlaylistListResponse } from "../types/KalturaPlaylistListResponse";
-import { KalturaPlaylist } from "../types/KalturaPlaylist";
-import { KalturaPlaylistType } from "../types/KalturaPlaylistType";
-import { PlaylistAddAction } from "../types/PlaylistAddAction";
-import { PlaylistDeleteAction } from "../types/PlaylistDeleteAction";
-import { PlaylistUpdateAction } from "../types/PlaylistUpdateAction";
-import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../kaltura-logger";
+import {PlaylistListAction} from "../api/types/PlaylistListAction";
+import {KalturaPlaylistListResponse} from "../api/types/KalturaPlaylistListResponse";
+import {KalturaPlaylist} from "../api/types/KalturaPlaylist";
+import {KalturaPlaylistType} from "../api/types/KalturaPlaylistType";
+import {PlaylistAddAction} from "../api/types/PlaylistAddAction";
+import {PlaylistDeleteAction} from "../api/types/PlaylistDeleteAction";
+import {PlaylistUpdateAction} from "../api/types/PlaylistUpdateAction";
+import {getClient} from "./utils";
+import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
+import {KalturaClient} from "../kaltura-client.service";
+import "rxjs/add/operator/switchMap";
 
 describe(`service "Playlist" tests`, () => {
-  let kalturaClient: KalturaBrowserHttpClient = null;
+  let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
     LoggerSettings.logLevel = LogLevels.error; // suspend warnings
 
-    return getClient()
-      .then(client => {
-        kalturaClient = client;
-      }).catch(error => {
-        // can do nothing since jasmine will ignore any exceptions thrown from before all
-      });
+    return new Promise((resolve => {
+      getClient()
+        .subscribe(client => {
+          kalturaClient = client;
+          resolve(client);
+        });
+    }));
   });
 
   afterAll(() => {
@@ -28,7 +30,7 @@ describe(`service "Playlist" tests`, () => {
   });
 
   test(`invoke "list" action`, (done) => {
-    kalturaClient.request(new PlaylistListAction()).then(
+    kalturaClient.request(new PlaylistListAction()).subscribe(
       (response) => {
         expect(response instanceof KalturaPlaylistListResponse).toBeTruthy();
 
@@ -53,12 +55,12 @@ describe(`service "Playlist" tests`, () => {
       name: "tstest.PlaylistTests.test_createRemote",
       playlistType: KalturaPlaylistType.staticList
     });
-    kalturaClient.request(new PlaylistAddAction({ playlist }))
-      .then(
+    kalturaClient.request(new PlaylistAddAction({playlist}))
+      .subscribe(
         (response) => {
           expect(response instanceof KalturaPlaylist).toBeTruthy();
           expect(typeof response.id).toBe("string");
-          kalturaClient.request(new PlaylistDeleteAction({ id: response.id }));
+          kalturaClient.request(new PlaylistDeleteAction({id: response.id}));
           done();
         },
         (error) => {
@@ -74,21 +76,22 @@ describe(`service "Playlist" tests`, () => {
       referenceId: "tstest.PlaylistTests.test_update",
       playlistType: KalturaPlaylistType.staticList
     });
-    kalturaClient.request(new PlaylistAddAction({ playlist }))
-      .then(({ id }) => {
+    kalturaClient.request(new PlaylistAddAction({playlist}))
+      .switchMap(({id}) => {
           playlist.name = "Changed!";
-          return kalturaClient.request(new PlaylistUpdateAction({ id, playlist }));
+          return kalturaClient.request(new PlaylistUpdateAction({id, playlist}));
         }
       )
-      .then(({ id, name }) => {
+      .switchMap(({id, name}) => {
         expect(name).toBe("Changed!");
-        kalturaClient.request(new PlaylistDeleteAction({ id }));
-        done();
+        return kalturaClient.request(new PlaylistDeleteAction({id}));
       })
-      .catch((error) => {
-        fail(error);
-        done();
-      });
+      .subscribe(() => {
+            done();
+        },
+        error => {
+          fail(error);
+        });
   });
 
   test(`invoke "createRemote:dynamicList" action`, (done) => {
@@ -97,12 +100,12 @@ describe(`service "Playlist" tests`, () => {
       playlistType: KalturaPlaylistType.dynamic,
       totalResults: 0
     });
-    kalturaClient.request(new PlaylistAddAction({ playlist }))
-      .then(
+    kalturaClient.request(new PlaylistAddAction({playlist}))
+      .subscribe(
         (response) => {
           expect(response instanceof KalturaPlaylist).toBeTruthy();
           expect(typeof response.id).toBe("string");
-          kalturaClient.request(new PlaylistDeleteAction({ id: response.id }));
+          kalturaClient.request(new PlaylistDeleteAction({id: response.id}));
           done();
         },
         (error) => {
