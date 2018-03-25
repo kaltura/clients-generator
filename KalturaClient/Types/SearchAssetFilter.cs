@@ -39,12 +39,14 @@ namespace Kaltura.Types
 		public const string KSQL = "kSql";
 		public const string TYPE_IN = "typeIn";
 		public const string ID_IN = "idIn";
+		public const string EXCLUDE_WATCHED = "excludeWatched";
 		#endregion
 
 		#region Private Fields
 		private string _KSql = null;
 		private string _TypeIn = null;
 		private string _IdIn = null;
+		private bool? _ExcludeWatched = null;
 		#endregion
 
 		#region Properties
@@ -75,6 +77,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		public bool? ExcludeWatched
+		{
+			get { return _ExcludeWatched; }
+			set 
+			{ 
+				_ExcludeWatched = value;
+				OnPropertyChanged("ExcludeWatched");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -97,6 +108,9 @@ namespace Kaltura.Types
 					case "idIn":
 						this._IdIn = propertyNode.InnerText;
 						continue;
+					case "excludeWatched":
+						this._ExcludeWatched = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -111,6 +125,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("typeIn", this._TypeIn);
 			kparams.AddIfNotNull("idIn", this._IdIn);
+			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -123,6 +138,8 @@ namespace Kaltura.Types
 					return "TypeIn";
 				case ID_IN:
 					return "IdIn";
+				case EXCLUDE_WATCHED:
+					return "ExcludeWatched";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -38,11 +38,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID_EQUAL = "idEqual";
 		public const string KSQL = "kSql";
+		public const string EXCLUDE_WATCHED = "excludeWatched";
 		#endregion
 
 		#region Private Fields
 		private int _IdEqual = Int32.MinValue;
 		private string _KSql = null;
+		private bool? _ExcludeWatched = null;
 		#endregion
 
 		#region Properties
@@ -64,6 +66,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("KSql");
 			}
 		}
+		public bool? ExcludeWatched
+		{
+			get { return _ExcludeWatched; }
+			set 
+			{ 
+				_ExcludeWatched = value;
+				OnPropertyChanged("ExcludeWatched");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -83,6 +94,9 @@ namespace Kaltura.Types
 					case "kSql":
 						this._KSql = propertyNode.InnerText;
 						continue;
+					case "excludeWatched":
+						this._ExcludeWatched = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -96,6 +110,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaChannelFilter");
 			kparams.AddIfNotNull("idEqual", this._IdEqual);
 			kparams.AddIfNotNull("kSql", this._KSql);
+			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -106,6 +121,8 @@ namespace Kaltura.Types
 					return "IdEqual";
 				case KSQL:
 					return "KSql";
+				case EXCLUDE_WATCHED:
+					return "ExcludeWatched";
 				default:
 					return base.getPropertyName(apiName);
 			}
