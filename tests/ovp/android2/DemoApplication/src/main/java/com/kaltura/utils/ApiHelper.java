@@ -51,7 +51,7 @@ public class ApiHelper {
         return APIOkRequestsExecutor.getExecutor();
     }
 
-    public static void execute(RequestBuilder<?> requestBuilder) {
+    public static void execute(RequestBuilder<?, ?, ?> requestBuilder) {
         getRequestQueue().queue(requestBuilder.build(getClient()));
     }
 }
