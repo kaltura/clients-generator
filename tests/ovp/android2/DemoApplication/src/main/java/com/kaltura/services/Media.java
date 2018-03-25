@@ -45,7 +45,7 @@ public class Media {
         pager.setPageSize(pageSize);
 
         // execute the list action of the mediaService object to recieve the list of entries
-        RequestBuilder<ListResponse<MediaEntry>> requestBuilder = MediaService.list(filter, pager)
+        MediaService.ListMediaBuilder requestBuilder = MediaService.list(filter, pager)
         .setCompletion(new OnCompletion<Response<ListResponse<MediaEntry>>>() {
             @Override
             public void onComplete(Response<ListResponse<MediaEntry>> response) {
@@ -74,7 +74,7 @@ public class Media {
      * @throws APIException
      */
     public static void getEntrybyId(final String TAG, String entryId, final OnCompletion<Response<MediaEntry>> onCompletion) {
-        RequestBuilder<MediaEntry> requestBuilder = MediaService.get(entryId)
+        MediaService.GetMediaBuilder requestBuilder = MediaService.get(entryId)
         .setCompletion(new OnCompletion<Response<MediaEntry>>() {
             @Override
             public void onComplete(Response<MediaEntry> response) {
@@ -111,7 +111,7 @@ public class Media {
         entry.setDescription(description);
         entry.setTags(tag);
 
-        RequestBuilder<MediaEntry> requestBuilder = MediaService.add(entry)
+        MediaService.AddMediaBuilder requestBuilder = MediaService.add(entry)
         .setCompletion(new OnCompletion<Response<MediaEntry>>() {
             @Override
             public void onComplete(Response<MediaEntry> response) {
