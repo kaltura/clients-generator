@@ -272,7 +272,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
     public function writeDefaultSubSpec($name){
         $this->append(" 
 s.subspec '$name' do |sp|
-    sp.source_files = 'Classes/**/*'
+    sp.source_files = 'KalturaClient/Classes/**/*'
     sp.dependency 'Log', '1.0'
 end
 ");
