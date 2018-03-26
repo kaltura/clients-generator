@@ -9,6 +9,14 @@ from KalturaClient.Base import IKalturaLogger
 
 from KalturaClient.Plugins.Core import KalturaSessionType
 
+generateSessionFunction = KalturaClient.generateSessionV2
+# generateSessionV2() needs the Crypto module, if we don't have it, we fallback to generateSession()
+try:
+    from Crypto import Random
+    from Crypto.Cipher import AES
+except ImportError:
+    generateSessionFunction = KalturaClient.generateSession
+
 dir = os.path.dirname(__file__)
 filename = os.path.join(dir, 'config.ini')
 
@@ -49,7 +57,7 @@ class KalturaBaseTest(unittest.TestCase):
         #(client session is enough when we do operations in a users scope)
         self.config = GetConfig()
         self.client = KalturaClient(self.config)
-        self.ks = self.client.generateSessionV2(ADMIN_SECRET, USER_NAME, 
+        self.ks = generateSessionFunction(ADMIN_SECRET, USER_NAME, 
                                              KalturaSessionType.ADMIN, PARTNER_ID, 
                                              86400, "")
         self.client.setKs(self.ks)            
