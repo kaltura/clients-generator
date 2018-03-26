@@ -253,7 +253,10 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		    $actionLabel = $actionName;
 		    if ($actionNode->getAttribute("deprecated"))
 		    	$actionLabel .= ' (deprecated)';
-		    
+
+			if ($actionNode->getAttribute("beta"))
+				$actionLabel .= ' (beta)';
+
             $json[] = array(
 				'action' => $actionName,
 				'name' => $actionName,
