@@ -5,6 +5,7 @@ import { KalturaClientException } from '../api/kaltura-client-exception';
 import { Observable } from 'rxjs/Observable';
 import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaClientOptions } from '../kaltura-client-options';
+import { KalturaAPIException } from '../api/kaltura-api-exception';
 
 interface UploadByChunksData {
     enabled: boolean;
@@ -54,20 +55,38 @@ export class KalturaUploadRequestAdapter {
 
             const handleChunkUploadError = reason => {
                 requestSubscription = null;
-                observer.throw(reason);
+                observer.error(reason);
             };
 
-            const handleChunkUploadSuccess = response => {
+            const handleChunkUploadSuccess = result => {
                 if (!data.enabled || data.finalChunk) {
                     requestSubscription = null;
-                    observer.next(response);
-                    observer.complete();
+
+                    try {
+                        const response = request.handleResponse(result);
+
+                        if (response.error) {
+                            observer.error(response.error);
+                        } else {
+                            observer.next(response.result);
+                            observer.complete();
+                        }
+                    } catch (error) {
+                        if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
+                            observer.error(error);
+                        } else {
+                            const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
+                            observer.error(new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response'));
+                        }
+                    }
+
+
                 } else {
                     requestSubscription = this._chunkUpload(request, data).subscribe(handleChunkUploadSuccess, handleChunkUploadError);
                 }
             };
 
-            this._chunkUpload(request, data)
+            requestSubscription = this._chunkUpload(request, data)
                 .subscribe(handleChunkUploadSuccess, handleChunkUploadError);
 
 
@@ -92,7 +111,7 @@ export class KalturaUploadRequestAdapter {
             const parameters = prepareParameters(request, this.clientOptions, this.defaultRequestOptions);
 
             let isComplete = false;
-            const { propertyName, file } = request.getFileInfo();
+            const {propertyName, file} = request.getFileInfo();
             let data = this._getFormData(propertyName, file.name, file);
 
             let fileStart = 0;
@@ -107,11 +126,11 @@ export class KalturaUploadRequestAdapter {
                         actualChunkFileSize = 1e6;
                     } else {
                         console.log(`using user requetsed chunk size '${userChunkFileSize}'`);
-                        actualChunkFileSize =  userChunkFileSize;
+                        actualChunkFileSize = userChunkFileSize;
                     }
                 } else {
                     console.log(`using default chunk size 5Mb`);
-                    actualChunkFileSize =  5e6; // default
+                    actualChunkFileSize = 5e6; // default
                 }
 
                 uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= actualChunkFileSize;
@@ -138,14 +157,15 @@ export class KalturaUploadRequestAdapter {
 
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4) {
+                    if (isComplete) {
+                        return;
+                    }
+                    isComplete = true;
                     let resp;
 
                     try {
                         if (xhr.status === 200) {
                             resp = JSON.parse(xhr.response);
-                        } else if (xhr.status === 0) {
-                            observer.complete();
-                            return;
                         } else {
                             resp = new KalturaClientException('client::upload-failure', xhr.responseText || 'failed to upload file');
                         }
@@ -154,11 +174,11 @@ export class KalturaUploadRequestAdapter {
                     }
 
                     if (resp instanceof Error) {
-                        observer.throw(resp);
+                        observer.error(resp);
                     } else {
                         if (uploadChunkData.enabled) {
                             if (typeof resp.uploadedFileSize === "undefined" || resp.uploadedFileSize === null) {
-                                observer.throw(new KalturaClientException('client::upload-failure', `uploaded chunk of file failed, expected response with property 'uploadedFileSize'`));
+                                observer.error(new KalturaClientException('client::upload-failure', `uploaded chunk of file failed, expected response with property 'uploadedFileSize'`));
                                 return;
                             } else if (!uploadChunkData.finalChunk) {
                                 uploadChunkData.resumeAt = Number(resp.uploadedFileSize);
@@ -188,11 +208,10 @@ export class KalturaUploadRequestAdapter {
 
             return () => {
                 if (!isComplete) {
-                    xhr.abort();
                     isComplete = true;
+                    xhr.abort();
                 }
             };
         });
     }
-
 }

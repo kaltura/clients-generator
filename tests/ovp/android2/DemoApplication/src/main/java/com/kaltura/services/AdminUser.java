@@ -46,7 +46,7 @@ public class AdminUser {
             public void run() {
                 final Client client = ApiHelper.getClient();
 
-                RequestBuilder<String> requestBuilder = UserService.loginByLoginId(email, password)
+                UserService.LoginByLoginIdUserBuilder requestBuilder = UserService.loginByLoginId(email, password)
                 .setCompletion(new OnCompletion<Response<String>>() {
                     @Override
                     public void onComplete(final Response<String> response) {

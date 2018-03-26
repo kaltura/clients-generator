@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="9.1.0"></a>
+
+## 10.0.0 (2018-03-12)
+
+### Fix
+
+* upload file abort and network connectivity behavior
+* unhandled error when overriding
+* in kaltura client rename `overrideOptions` to `appendOptions`
+* in kaltura client rename `resetOptions` to `setdOptions`
+* in kaltura client rename `overrideDefaultRequestOptions` to `appendDefaultRequestOptions`
+* in kaltura client rename `resetDefaultRequestOptions` to `setDefaultRequestOptions`
+
 ## 9.1.0 (2018-03-11)
 
 ### Features
@@ -10,7 +21,7 @@ All notable changes to this project will be documented in this file. See [standa
 * tag network request by adding postfix to the client tag
 
 
-<a name="9.0.0"></a>
+
 ## 9.0.0 (2018-03-10)
 
 ### Fix
@@ -95,7 +106,7 @@ export class AppModule {
 
     private onUserLoggedIn(ks: string, partnerId: number)
       {
-          this._kalturaClient.resetDefaultRequestOptions({
+          this._kalturaClient.setDefaultRequestOptions({
               ks,
               partnerId
           });
@@ -110,7 +121,7 @@ import { KalturaClient } from 'kaltura-ngx-client';
 
 export class AppModule {
     constructor(private _kalturaClient: KalturaClient) {
-        _kalturaClient.overrideOptions({
+        _kalturaClient.appendOptions({
             endpointUrl: 'new endpoint url'
         })
     }
@@ -143,7 +154,7 @@ return this._kalturaClient.request(new PlaylistExecuteAction({
 ```
 
 
-<a name="8.0.0"></a>
+
 ## 8.0.0 (2018-03-01)
 
 ### Features
@@ -175,14 +186,14 @@ In addition, you no longer need to use `.toString()` to get the value represente
 
 
 
-<a name="7.1.1"></a>
+
 ## 7.1.1 (2017-12-07)
 
 ### Features
 
 * non-chunked file upload progress fix
 
-<a name="7.1.0"></a>
+
 ## 7.1.0 (2017-11-30)
 
 ### Features
@@ -190,7 +201,7 @@ In addition, you no longer need to use `.toString()` to get the value represente
 * support requests that serve files by returning a valid download url for that files
 
 
-<a name="7.0.2"></a>
+
 ## 7.0.2 (2017-11-28)
 
 ### Features
@@ -198,7 +209,7 @@ In addition, you no longer need to use `.toString()` to get the value represente
 * update api using schema from 26/11/17 01:43:07
 
 
-<a name="7.0.1"></a>
+
 ## 7.0.1 (2017-11-28)
 
 
@@ -208,7 +219,7 @@ In addition, you no longer need to use `.toString()` to get the value represente
 
 
 
-<a name="7.0.0"></a>
+
 # 7.0.0 (2017-11-27)
 
 
@@ -236,7 +247,7 @@ import { ... } from '@kaltura-ng/kaltura-client/api/types'
 
 
 
-<a name="6.0.0"></a>
+
 # 6.0.0 (2017-11-26)
 
 
@@ -269,7 +280,7 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 
-<a name="5.1.2"></a>
+
 ## 5.1.2 (2017-10-29)
 
 
@@ -280,7 +291,7 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 
-<a name="5.1.1"></a>
+
 ## 5.1.1 (2017-10-22)
 
 
@@ -290,7 +301,7 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 
-<a name="5.1.0"></a>
+
 # 5.1.0 (2017-10-16)
 
 
@@ -308,7 +319,7 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 
-<a name="5.0.0"></a>
+
 # 5.0.0 (2017-08-14)
 
 
@@ -330,7 +341,7 @@ The service api provided by the application shouldn't include `/api_v3/` when pr
 
 
 
-<a name="4.0.0"></a>
+
 # 4.0.0 (2017-07-13)
 
 
@@ -355,7 +366,7 @@ import { UserLoginByLoginIdAction } from 'kaltura-typescript-client/types/UserLo
 
 
 
-<a name="3.0.0"></a>
+
 # 3.0.0 (2017-07-13)
 
 
@@ -370,12 +381,12 @@ import { UserLoginByLoginIdAction } from 'kaltura-typescript-client/types/UserLo
 
 
 
-<a name="1.1.1"></a>
+
 ## 1.1.1 (2017-05-10)
 
 
 
-<a name="2.1.0"></a>
+
 # 2.1.0 (2017-05-22)
 
 
@@ -385,7 +396,7 @@ import { UserLoginByLoginIdAction } from 'kaltura-typescript-client/types/UserLo
 
 
 
-<a name="2.0.0"></a>
+
 # 2.0.0 (2017-05-18)
 
 
@@ -402,12 +413,12 @@ Any dynamic data assigned on them should be done directly on the client instance
 
 
 
-<a name="1.1.1"></a>
+
 ## 1.1.1 (2017-05-10)
 
 
 
-<a name="1.1.0"></a>
+
 # [1.1.0](http://github.com/KalturaGeneratedAPIClientsTypescript/compare/v1.0.0...v1.1.0) (2017-05-09)
 
 
@@ -426,7 +437,7 @@ Any dynamic data assigned on them should be done directly on the client instance
 
 
 
-<a name="1.0.0"></a>
+
 # 1.0.0 (2017-05-08)
 
 
@@ -436,7 +447,7 @@ Any dynamic data assigned on them should be done directly on the client instance
 
 
 
-<a name="1.0.0-beta.1"></a>
+
 # 1.0.0-beta.1 (2017-05-07)
 
 - [x] Bundle only used actions, classes and enums (a.k.a kaltura types) in your application to reduce bundle size.
