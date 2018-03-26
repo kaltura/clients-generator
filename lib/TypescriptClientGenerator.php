@@ -26,19 +26,16 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
         $this->_serverType = $testsDir;
     }
 
-    public function setCustomFlags($customFlags)
-    {
-        parent::setCustomFlags($customFlags);
-
-        if (in_array('disableDateParsing', $this->customFlags))
-        {
-            $this->_disableDateParsing = true;
-            KalturaLog::info("typescript generator: set custom flag disableDateParsing");
-        }
-    }
 
 	public function generate()
 	{
+		$this->_disableDateParsing = $this->getParam('disableDateParsing') ? true : false;
+
+		if ($this->_disableDateParsing)
+		{
+			KalturaLog::info("typescript generator: disable date parsing feature");
+		}
+
 		parent::generate();
 
 		// Convert xml strcuture to plain old php objects

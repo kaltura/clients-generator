@@ -18,7 +18,6 @@ abstract class ClientGeneratorFromXml
 	protected $package = 'External';
 	protected $subpackage = 'Kaltura';
 	protected $excludeSourcePaths = array();
-	protected $customFlags = array();
 	protected $outputPath = null;
 	protected $copyPath = null;
 	protected $testsPath = null;
@@ -397,11 +396,6 @@ abstract class ClientGeneratorFromXml
 		
 		throw new Exception("File [$fileName] not found");
 	}
-
-	public function setCustomFlags ($customFlags)
-    {
-        $this->customFlags = explode(',', $customFlags);
-    }
 
 	public function setOutputPath($outputPath, $copyPath)
 	{

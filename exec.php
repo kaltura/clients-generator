@@ -284,11 +284,6 @@ foreach($config as $name => $item)
 		}
 	}
 
-	if ($item->get("customFlags"))
-    {
-        $instance->setCustomFlags ($item->get("customFlags"));
-    }
-
 	if (isset ($item->excludeSourcePaths))
 	{
 		$instance->setExcludeSourcePaths ($item->excludeSourcePaths);
