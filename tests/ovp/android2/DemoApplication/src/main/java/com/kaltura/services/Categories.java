@@ -46,7 +46,7 @@ public class Categories {
         pager.setPageSize(pageSize);
 
         // execute the list action of the mediaService object to recieve the list of entries
-        RequestBuilder<ListResponse<Category>> requestBuilder = CategoryService.list(filter)
+        CategoryService.ListCategoryBuilder requestBuilder = CategoryService.list(filter)
         .setCompletion(new OnCompletion<Response<ListResponse<Category>>>() {
             @Override
             public void onComplete(Response<ListResponse<Category>> response) {
