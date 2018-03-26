@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 10.1.0 (2018-03-25)
+
+### Fix
+
+* expose args value on KalturaAPIException if provided by the server
+
+### Features
+
+* update services/actions according with schema from 24/03/18 20:17:56
 
 ## 10.0.0 (2018-03-12)
 
