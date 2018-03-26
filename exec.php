@@ -98,8 +98,7 @@ $options = getopt('hx:r:t:c:', array(
 	'xml:',
 	'root:',
 	'tests:',
-	'dont-gzip',
-	'custom'
+	'dont-gzip'
 ));
 
 function showHelpAndExit()
@@ -111,7 +110,6 @@ function showHelpAndExit()
 	echo "\t\t-x, --xml:    \tUse XML path or URL as source XML.\n";
 	echo "\t\t-r, --root:   \tRoot path, default is /opt/kaltura.\n";
 	echo "\t\t-t, --tests:  \tUse different tests configuration, valid values are OVP or OTT, default is OVP.\n";
-	echo "\t\t-c, --custom:  \tSet custom flags (advanced)\n";
 	echo "\t\t--dont-gzip:  \tTar the packages without gzip.\n";
 	
 	exit;
@@ -120,7 +118,7 @@ function showHelpAndExit()
 $schemaXmlPath = null;
 $rootPath = realpath('/opt/kaltura');
 $testsDir = 'ovp';
-$customFlags = null;
+
 $gzip = true;
 foreach($options as $option => $value)
 {
@@ -140,10 +138,6 @@ foreach($options as $option => $value)
 	{
 		$testsDir = strtolower($value);
 	}
-    elseif($option == 'c' || $option == 'custom')
-    {
-        $customFlags = strtolower($value);
-    }
 	elseif($option == 'dont-gzip')
 	{
 		$gzip = false;
@@ -289,7 +283,12 @@ foreach($config as $name => $item)
 			$instance->setParam($key, $val);
 		}
 	}
-	
+
+	if ($item->get("customFlags"))
+    {
+        $instance->setCustomFlags ($item->get("customFlags"));
+    }
+
 	if (isset ($item->excludeSourcePaths))
 	{
 		$instance->setExcludeSourcePaths ($item->excludeSourcePaths);
@@ -338,11 +337,6 @@ foreach($config as $name => $item)
 	KalturaLog::info("Generate client library [$name]");
 	$instance->setOutputPath($outputPath, $copyPath);
 	$instance->setTestsPath($testsDir);
-
-	if ($customFlags !== null && method_exists($instance, "setCustomFlags"))
-	{
-	    $instance->setCustomFlags($customFlags);
-	}
 
 	$instance->generate();
 	

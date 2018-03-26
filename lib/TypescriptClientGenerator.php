@@ -28,10 +28,12 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 
     public function setCustomFlags($customFlags)
     {
-        if (strpos($customFlags, "disable-date-parsing") !== false)
+        parent::setCustomFlags($customFlags);
+
+        if (in_array('disableDateParsing', $this->customFlags))
         {
             $this->_disableDateParsing = true;
-            KalturaLog::info("typescript generator: set custom flag disable-date-parsing");
+            KalturaLog::info("typescript generator: set custom flag disableDateParsing");
         }
     }
 

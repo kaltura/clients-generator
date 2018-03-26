@@ -18,6 +18,7 @@ abstract class ClientGeneratorFromXml
 	protected $package = 'External';
 	protected $subpackage = 'Kaltura';
 	protected $excludeSourcePaths = array();
+	protected $customFlags = array();
 	protected $outputPath = null;
 	protected $copyPath = null;
 	protected $testsPath = null;
@@ -71,6 +72,11 @@ abstract class ClientGeneratorFromXml
 	public function setExcludeSourcePaths ($excludeSourcePaths)
 	{
 		$this->excludeSourcePaths = explode(',', $excludeSourcePaths);
+	}
+
+	public function setCustomFlags ($customFlags)
+	{
+		$this->customFlags = explode(',', $customFlags);
 	}
 
 	public function __construct($xmlFile, $sourcePath, Zend_Config $config)
