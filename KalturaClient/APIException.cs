@@ -348,6 +348,7 @@ namespace Kaltura
 		public static string MissingParameter = "500053";
 		public static string MultirequestIndexNotZeroBased = "500042";
 		public static string MultirequestInvalidIndex = "500043";
+		public static string MultirequestGenericMethod = "500064";
 		#endregion
 
 		#region Private Fields
