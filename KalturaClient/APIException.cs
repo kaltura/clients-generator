@@ -333,6 +333,7 @@ namespace Kaltura
 		public static string DuplicateAsset = "500049";
 		public static string DuplicateFile = "500050";
 		public static string UnableToCreateHouseholdForRole = "500062";
+		public static string HttpMethodNotSupported = "500065";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";
