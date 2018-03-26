@@ -88,7 +88,7 @@ public class FileUploader extends Observable {
     }
 
     private void uploadChunk(final File outFile, final int numRead, final boolean finalChunk, boolean resume, int resumeAt) {
-        RequestBuilder<UploadToken> requestBuilder = UploadTokenService.upload(uploadToken.getId(), outFile, resume, finalChunk, resumeAt)
+        UploadTokenService.UploadUploadTokenBuilder requestBuilder = UploadTokenService.upload(uploadToken.getId(), outFile, resume, finalChunk, resumeAt)
                 .setCompletion(new OnCompletion<Response<UploadToken>>() {
                     @Override
                     public void onComplete(Response<UploadToken> response) {
@@ -157,7 +157,7 @@ public class FileUploader extends Observable {
         UploadedFileTokenResource fileTokenResource = new UploadedFileTokenResource();
         fileTokenResource.setToken(uploadToken.getId());
 
-        RequestBuilder<MediaEntry> requestBuilder =  MediaService.addContent(entry.getId(), fileTokenResource)
+        MediaService.AddContentMediaBuilder requestBuilder =  MediaService.addContent(entry.getId(), fileTokenResource)
         .setCompletion(new OnCompletion<Response<MediaEntry>>() {
             @Override
             public void onComplete(Response<MediaEntry> response) {
@@ -195,7 +195,7 @@ public class FileUploader extends Observable {
         Log.w(TAG, "\nUploading a video file...");
         readSum = 0;
 
-        RequestBuilder<UploadToken> requestBuilder = UploadTokenService.add().setCompletion(new OnCompletion<Response<UploadToken>>() {
+        UploadTokenService.AddUploadTokenBuilder requestBuilder = UploadTokenService.add().setCompletion(new OnCompletion<Response<UploadToken>>() {
             @Override
             public void onComplete(Response<UploadToken> response) {
                 if(response.isSuccess()) {

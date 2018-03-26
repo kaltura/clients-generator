@@ -40,7 +40,7 @@ public class FlavorAssets {
     public static void listAllFlavorsFromContext(String TAG, String entryId, String flavorTags, OnCompletion<Response<EntryContextDataResult>> onCompletion) throws APIException {
         EntryContextDataParams params = new EntryContextDataParams();
         params.setFlavorTags(flavorTags);
-        RequestBuilder<EntryContextDataResult> requestBuilder = BaseEntryService.getContextData(entryId, params)
+        BaseEntryService.GetContextDataBaseEntryBuilder requestBuilder = BaseEntryService.getContextData(entryId, params)
         .setCompletion(onCompletion);
     }
 }
