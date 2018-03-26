@@ -32,9 +32,9 @@ export class KalturaClient {
         }
     }
 
-    public overrideOptions(options: KalturaClientOptions): void {
+    public appendOptions(options: KalturaClientOptions): void {
         if (!options) {
-            throw new KalturaClientException('client::override_options',`missing required argument 'options'`);
+            throw new KalturaClientException('client::append_options',`missing required argument 'options'`);
         }
 
         this._options = Object.assign(
@@ -42,27 +42,27 @@ export class KalturaClient {
         );
     }
 
-    public resetOptions(options: KalturaClientOptions): void {
+    public setOptions(options: KalturaClientOptions): void {
         if (!options) {
-            throw new KalturaClientException('client::reset_options',`missing required argument 'options'`);
+            throw new KalturaClientException('client::set_options',`missing required argument 'options'`);
         }
 
         this._options = options;
     }
 
-    public overrideDefaultRequestOptions(args: KalturaRequestOptionsArgs): void {
+    public appendDefaultRequestOptions(args: KalturaRequestOptionsArgs): void {
         if (!args) {
-            throw new KalturaClientException('client::override_default_request_options',`missing required argument 'args'`);
+            throw new KalturaClientException('client::append_default_request_options',`missing required argument 'args'`);
         }
 
         this._defaultRequestOptions = Object.assign(
-            this._defaultRequestOptions || {}, new KalturaRequestOptions(args)
+            this._defaultRequestOptions || new KalturaRequestOptions(), new KalturaRequestOptions(args)
         );
     }
 
-    public resetDefaultRequestOptions(args: KalturaRequestOptionsArgs): void {
+    public setDefaultRequestOptions(args: KalturaRequestOptionsArgs): void {
         if (!args) {
-            throw new KalturaClientException('client::reset_default_request_options',`missing required argument 'args'`);
+            throw new KalturaClientException('client::set_default_request_options',`missing required argument 'args'`);
         }
 
         this._defaultRequestOptions = new KalturaRequestOptions(args);

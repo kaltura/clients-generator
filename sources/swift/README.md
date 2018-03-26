@@ -1,6 +1,6 @@
 # KalturaClient
 
-[![CI Status](http://img.shields.io/travis/kaltura/KalturaGeneratedAPIClientsSwift.svg?style=flat)](https://travis-ci.org/tan-tan-kanarek/KalturaClient)
+[![CI Status](http://img.shields.io/travis/kaltura/KalturaGeneratedAPIClientsSwift.svg?style=flat)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsSwift)
 [![Version](https://img.shields.io/cocoapods/v/KalturaClient.svg?style=flat)](http://cocoapods.org/pods/KalturaClient)
 [![License](https://img.shields.io/cocoapods/l/KalturaClient.svg?style=flat)](http://cocoapods.org/pods/KalturaClient)
 [![Platform](https://img.shields.io/cocoapods/p/KalturaClient.svg?style=flat)](http://cocoapods.org/pods/KalturaClient)
