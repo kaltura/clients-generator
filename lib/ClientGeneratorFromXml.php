@@ -74,10 +74,7 @@ abstract class ClientGeneratorFromXml
 		$this->excludeSourcePaths = explode(',', $excludeSourcePaths);
 	}
 
-	public function setCustomFlags ($customFlags)
-	{
-		$this->customFlags = explode(',', $customFlags);
-	}
+
 
 	public function __construct($xmlFile, $sourcePath, Zend_Config $config)
 	{
@@ -375,17 +372,17 @@ abstract class ClientGeneratorFromXml
 		}
 
         if (is_dir($this->_additionalSourcesPath))
-		{
-			KalturaLog::info("Copy additional sources from [$this->_additionalSourcesPath]");
-			$this->addSourceFiles($this->_additionalSourcesPath, $this->_additionalSourcesPath . DIRECTORY_SEPARATOR, "");
-		}
-
+        {
+            KalturaLog::info("Copy additional sources from [$this->_additionalSourcesPath]");
+            $this->addSourceFiles($this->_additionalSourcesPath, $this->_additionalSourcesPath . DIRECTORY_SEPARATOR, "");
+        }
 
 		if ($this->testsPath && is_dir($this->testsPath))
 		{
 			KalturaLog::info("Copy tests from [$this->testsPath]");
 			$this->addSourceFiles($this->testsPath, $this->testsPath . DIRECTORY_SEPARATOR, "");
 		}
+
 	}
 	
 	public function getSourceFilePath($fileName)
@@ -400,7 +397,12 @@ abstract class ClientGeneratorFromXml
 		
 		throw new Exception("File [$fileName] not found");
 	}
-	
+
+	public function setCustomFlags ($customFlags)
+    {
+        $this->customFlags = explode(',', $customFlags);
+    }
+
 	public function setOutputPath($outputPath, $copyPath)
 	{
 		$this->outputPath = $outputPath;

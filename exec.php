@@ -93,12 +93,12 @@ require_once(__DIR__ . '/lib/NGXClientGenerator.php');
 $summaryFileName = 'summary.kinf';
 $tmpXmlFileName = tempnam(sys_get_temp_dir(), 'kaltura.generator.');
 
-$options = getopt('hx:r:t:c:', array(
+$options = getopt('hx:r:t:', array(
 	'help',
 	'xml:',
 	'root:',
 	'tests:',
-	'dont-gzip'
+	'dont-gzip',
 ));
 
 function showHelpAndExit()
@@ -337,7 +337,6 @@ foreach($config as $name => $item)
 	KalturaLog::info("Generate client library [$name]");
 	$instance->setOutputPath($outputPath, $copyPath);
 	$instance->setTestsPath($testsDir);
-
 	$instance->generate();
 	
 	KalturaLog::info("Saving client library to [$outputPath]");
