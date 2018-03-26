@@ -1,2 +1,1 @@
-import 'zone.js';
-import 'reflect-metadata';
+import "jest-preset-angular";
