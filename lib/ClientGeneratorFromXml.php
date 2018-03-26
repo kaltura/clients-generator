@@ -409,23 +409,23 @@ abstract class ClientGeneratorFromXml
 		$this->copyPath = $copyPath;
 	}
 
-	public function setAdditionalSourcesPath($path)
-    {
-        if ($path !== "")
-        {
-            $this->_additionalSourcesPath = realpath("sources/$path");
-            KalturaLog::info("set addition sources path $path");
-        }
-    }
+    public function setAdditionalSourcesPath($path)
+	{
+		if ($path !== "")
+		{
+			$this->_additionalSourcesPath = realpath("sources/$path");
+			KalturaLog::info("set addition sources path $path");
+		}
+	}
 
 	public function setTestsPath($testsDir)
 	{
 		$testsPath = realpath("tests/$testsDir");
 		if(file_exists("$testsPath/{$this->_sourceName}"))
 		{
-            $this->testsPath = realpath("$testsPath/{$this->_sourceName}");
-            KalturaLog::info("set tests path $testsPath");
-        }
+			$this->testsPath = realpath("$testsPath/{$this->_sourceName}");
+			KalturaLog::info("set tests path $testsPath");
+		}
 	}
 	
 	public function setParam($key, $value)
