@@ -371,11 +371,11 @@ abstract class ClientGeneratorFromXml
 			$this->addSourceFiles($this->_sourcePath, $this->_sourcePath . DIRECTORY_SEPARATOR, "");
 		}
 
-        if (is_dir($this->_additionalSourcesPath))
-        {
-            KalturaLog::info("Copy additional sources from [$this->_additionalSourcesPath]");
-            $this->addSourceFiles($this->_additionalSourcesPath, $this->_additionalSourcesPath . DIRECTORY_SEPARATOR, "");
-        }
+		if (is_dir($this->_additionalSourcesPath))
+		{
+			KalturaLog::info("Copy additional sources from [$this->_additionalSourcesPath]");
+			$this->addSourceFiles($this->_additionalSourcesPath, $this->_additionalSourcesPath . DIRECTORY_SEPARATOR, "");
+		}
 
 		if ($this->testsPath && is_dir($this->testsPath))
 		{
