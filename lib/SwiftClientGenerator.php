@@ -4,7 +4,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 {
 	private $_csprojIncludes = array();
 	protected $_baseClientPath = "KalturaClient";
-	protected static $reservedWords = array('protocol', 'repeat', 'extension');
+	protected static $reservedWords = array('protocol', 'repeat', 'extension', 'requestId');
 	protected $xpath;
 	protected $pluginName = null;
 	protected $configurationParams = array();
