@@ -597,7 +597,12 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 			return;
 		
 		$description = $actionNode->getAttribute('description');
-		
+
+		$serviceTitle = $serviceId.$actionId;
+		if ($actionNode->getAttribute('beta'))
+			$serviceTitle .= ' (beta)';
+
+
 		$this->startNewFile("actions/$serviceId.$actionId.html");
 		$this->appendHeader();
 		
@@ -605,7 +610,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		<h2>Kaltura API</h2>');
 		$this->appendLine('		<table class="action">');
 		$this->appendLine('			<tr>');
-		$this->appendLine("				<th colspan=\"5\" class=\"service_action_title\">$serviceId.$actionId</th>");
+		$this->appendLine("				<th colspan=\"5\" class=\"service_action_title\">$serviceTitle</th>");
 		$this->appendLine('			</tr>');
 		$this->appendLine('			<tr>');
 		$this->appendLine('				<td colspan="5" class="title">Description:</td>');
