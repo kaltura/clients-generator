@@ -33,69 +33,41 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class SearchAssetFilter : BaseSearchAssetFilter
+	public class SearchAssetListFilter : SearchAssetFilter
 	{
 		#region Constants
-		public const string KSQL = "kSql";
-		public const string TYPE_IN = "typeIn";
-		public const string ID_IN = "idIn";
+		public const string EXCLUDE_WATCHED = "excludeWatched";
 		#endregion
 
 		#region Private Fields
-		private string _KSql = null;
-		private string _TypeIn = null;
-		private string _IdIn = null;
+		private bool? _ExcludeWatched = null;
 		#endregion
 
 		#region Properties
-		public string KSql
+		public bool? ExcludeWatched
 		{
-			get { return _KSql; }
+			get { return _ExcludeWatched; }
 			set 
 			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
-		public string TypeIn
-		{
-			get { return _TypeIn; }
-			set 
-			{ 
-				_TypeIn = value;
-				OnPropertyChanged("TypeIn");
-			}
-		}
-		public string IdIn
-		{
-			get { return _IdIn; }
-			set 
-			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
+				_ExcludeWatched = value;
+				OnPropertyChanged("ExcludeWatched");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public SearchAssetFilter()
+		public SearchAssetListFilter()
 		{
 		}
 
-		public SearchAssetFilter(XmlElement node) : base(node)
+		public SearchAssetListFilter(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "kSql":
-						this._KSql = propertyNode.InnerText;
-						continue;
-					case "typeIn":
-						this._TypeIn = propertyNode.InnerText;
-						continue;
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
+					case "excludeWatched":
+						this._ExcludeWatched = ParseBool(propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -107,22 +79,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSearchAssetFilter");
-			kparams.AddIfNotNull("kSql", this._KSql);
-			kparams.AddIfNotNull("typeIn", this._TypeIn);
-			kparams.AddIfNotNull("idIn", this._IdIn);
+				kparams.AddReplace("objectType", "KalturaSearchAssetListFilter");
+			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case KSQL:
-					return "KSql";
-				case TYPE_IN:
-					return "TypeIn";
-				case ID_IN:
-					return "IdIn";
+				case EXCLUDE_WATCHED:
+					return "ExcludeWatched";
 				default:
 					return base.getPropertyName(apiName);
 			}
