@@ -36,7 +36,7 @@ describe("Kaltura File request", () => {
         result => {
           expect(result).toBeDefined();
           expect(result.url).toBeDefined();
-          expect(result.url).toBe("https://www.kaltura.com/api_v3/service/thumbasset/action/serve?clientTag=typescript-tests?apiVersion=3.3.0&ks=YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs&thumbAssetId=1_ep9epsxy&format=1");
+          expect(result.url).toBe("https://www.kaltura.com/api_v3/service/thumbasset/action/serve?clientTag=ngx-tests?apiVersion=3.3.0&ks=YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs&thumbAssetId=1_ep9epsxy&format=1");
 
           done();
         },
