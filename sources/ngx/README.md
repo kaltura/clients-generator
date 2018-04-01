@@ -27,7 +27,7 @@ Since this library was designed to be consumed directly and not using npmjs repo
 $ npm install
 $ npm run deploy
 ```
-2. open folder `dist` and find a `tar.gz` file starging with `kaltura-ngx-client-v`.
+2. open folder `dist` and find a `tar.gz` file starting with `kaltura-ngx-client-v`.
 3. copy this file to your project (we recommend coping it to folder `libs`)
 4. run the following command
  ```
