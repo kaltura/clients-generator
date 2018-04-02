@@ -4,10 +4,11 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 {
 	private $_csprojIncludes = array();
 	protected $_baseClientPath = "KalturaClient";
-	protected static $reservedWords = array('protocol', 'repeat', 'extension');
+	protected static $reservedWords = array('protocol', 'repeat', 'extension', 'requestId', 'operator');
 	protected $xpath;
 	protected $pluginName = null;
 	protected $configurationParams = array();
+	protected $usedPlugins = array();
 	
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "swift")
 	{
@@ -272,14 +273,24 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
     public function writeDefaultSubSpec($name){
         $this->append(" 
 s.subspec '$name' do |sp|
-    sp.source_files = 'Classes/**/*'
+    sp.source_files = 'KalturaClient/Classes/**/*'
     sp.dependency 'Log', '1.0'
 end
 ");
     }
+    
+    protected function addFile($fileName, $fileContents, $addLicense = true) {
+    	$this->usedPlugins[$this->pluginName] = true;
+    	return parent::addFile($fileName, $fileContents, $addLicense);
+    }
+    
     public function writeSubSpec(DOMElement $pluginNode , $defaultSubSpecName){
     	
     	$pluginName = $pluginNode->getAttribute("name");
+    	if(!$this->usedPlugins[$pluginName]) {
+    		return;
+    	}
+    		
     	$subSpecName = ucfirst($pluginName);
     	$this->appendLine("s.subspec '$subSpecName' do |ssp|");
         $this->appendLine(" ssp.source_files = 'KalturaClient/Plugins/" .$pluginName ."/**/*'");
