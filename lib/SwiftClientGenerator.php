@@ -249,7 +249,10 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$defaultSubSpecName = "Core";
         $this->_licenseBuffer = '';
         $this->startNewTextBlock();
-        $podSpecHeader = file_get_contents("$this->testsPath/podSpecHeader.txt");
+        $headerFiles = glob("$this->testsPath/*.spec.header");
+        $headerFile = reset($headerFiles);
+        $specName = basename($headerFile, '.spec.header');
+        $podSpecHeader = file_get_contents($headerFile);
         $this->appendLine($podSpecHeader);
 
         //2. adding core subspec ( default )
@@ -262,7 +265,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         }
 		$this->appendLine("s.default_subspec = '$defaultSubSpecName'");
         $this->appendLine("end");
-        $file = "KalturaClient.podspec";
+        $file = "$specName.podspec";
         $this->addFile($file, $this->getTextBlock());
 
     }
