@@ -7,11 +7,13 @@ class ClassesGenerator extends TypescriptGeneratorBase
 {
     private $framework = null;
     private $disableDateParsing = false;
+    private $targetKalturaServer;
 
-    function __construct($serverMetadata, $framework, $disableDateParsing)
+    function __construct($serverMetadata, $framework, $disableDateParsing, $targetKalturaServer)
     {
         parent::__construct($serverMetadata);
 
+		$this->targetKalturaServer = $targetKalturaServer;
         $this->framework = $framework;
         $this->disableDateParsing = $disableDateParsing;
 
@@ -29,14 +31,15 @@ class ClassesGenerator extends TypescriptGeneratorBase
             $result[] = $this->createClassFile($class);
         }
 
-        $result[] = $this->createRequestOptionsFile($this->serverMetadata->apiVersion);
+        $result[] = $this->createRequestOptionsFile();
+        $result[] = $this->createEnvironmentsFile();
 
         return $result;
     }
 
 
 
-    function createRequestOptionsFile($apiVersion)
+    function createRequestOptionsFile()
     {
         $createClassArgs = new stdClass();
         $createClassArgs->name = "KalturaRequestOptions";
@@ -68,7 +71,6 @@ class ClassesGenerator extends TypescriptGeneratorBase
 
 
         $customMetadataProperties = array();
-        $customMetadataProperties[] = $this->createMetadataProperty('apiVersion',false,KalturaServerTypes::Simple,'constant', $apiVersion);
         $createClassArgs->customMetadataProperties = $customMetadataProperties;
 
 
@@ -98,6 +100,34 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
         $result[] = $file;
         return $file;
     }
+
+    function createEnvironmentsFile()
+    {
+        $nestedResponse = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
+        $fileContent = "export interface Environment {
+    request: {
+        apiVersion: string
+    }
+    response: {
+        nestedResponse: boolean
+    };
+}
+
+export const environment: Environment = {
+    request: {
+        apiVersion: '{$this->serverMetadata->apiVersion}'
+    },
+    response: {
+        nestedResponse: {$nestedResponse}
+    }
+}";
+
+	    $file = new GeneratedFileData();
+	    $file->path = "../environment.ts";
+	    $file->content = $fileContent;
+	    $result[] = $file;
+	    return $file;
+	}
 
     function createClassFile(ClassType $class)
     {

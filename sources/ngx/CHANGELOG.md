@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 10.1.1 (2018-04-08)
+
+### Fix
+
+* provide the api version as part of the multi-request payload instead of sending it as part of each inner requests payload 
+
+
 ## 10.1.0 (2018-03-25)
 
 ### Fix

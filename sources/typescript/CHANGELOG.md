@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+
+## 6.1.2 (2018-04-08)
+
+### Fix
+
+* provide the api version as part of the multi-request payload instead of sending it as part of each inner requests payload 
+
+
 <a name="6.1.1"></a>
 ## [6.1.1](https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/compare/v6.1.0...v6.1.1) (2017-12-07)
 
