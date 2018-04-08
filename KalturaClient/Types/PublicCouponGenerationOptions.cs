@@ -33,63 +33,41 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Coupon : ObjectBase
+	public class PublicCouponGenerationOptions : CouponGenerationOptions
 	{
 		#region Constants
-		public const string COUPONS_GROUP = "couponsGroup";
-		public const string STATUS = "status";
-		public const string TOTAL_USES = "totalUses";
-		public const string LEFT_USES = "leftUses";
+		public const string CODE = "code";
 		#endregion
 
 		#region Private Fields
-		private CouponsGroup _CouponsGroup;
-		private CouponStatus _Status = null;
-		private int _TotalUses = Int32.MinValue;
-		private int _LeftUses = Int32.MinValue;
+		private string _Code = null;
 		#endregion
 
 		#region Properties
-		public CouponsGroup CouponsGroup
+		public string Code
 		{
-			get { return _CouponsGroup; }
-		}
-		public CouponStatus Status
-		{
-			get { return _Status; }
-		}
-		public int TotalUses
-		{
-			get { return _TotalUses; }
-		}
-		public int LeftUses
-		{
-			get { return _LeftUses; }
+			get { return _Code; }
+			set 
+			{ 
+				_Code = value;
+				OnPropertyChanged("Code");
+			}
 		}
 		#endregion
 
 		#region CTor
-		public Coupon()
+		public PublicCouponGenerationOptions()
 		{
 		}
 
-		public Coupon(XmlElement node) : base(node)
+		public PublicCouponGenerationOptions(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "couponsGroup":
-						this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(propertyNode);
-						continue;
-					case "status":
-						this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), propertyNode.InnerText);
-						continue;
-					case "totalUses":
-						this._TotalUses = ParseInt(propertyNode.InnerText);
-						continue;
-					case "leftUses":
-						this._LeftUses = ParseInt(propertyNode.InnerText);
+					case "code":
+						this._Code = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -101,25 +79,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCoupon");
-			kparams.AddIfNotNull("couponsGroup", this._CouponsGroup);
-			kparams.AddIfNotNull("status", this._Status);
-			kparams.AddIfNotNull("totalUses", this._TotalUses);
-			kparams.AddIfNotNull("leftUses", this._LeftUses);
+				kparams.AddReplace("objectType", "KalturaPublicCouponGenerationOptions");
+			kparams.AddIfNotNull("code", this._Code);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case COUPONS_GROUP:
-					return "CouponsGroup";
-				case STATUS:
-					return "Status";
-				case TOTAL_USES:
-					return "TotalUses";
-				case LEFT_USES:
-					return "LeftUses";
+				case CODE:
+					return "Code";
 				default:
 					return base.getPropertyName(apiName);
 			}

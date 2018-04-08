@@ -33,63 +33,83 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Coupon : ObjectBase
+	public class RandomCouponGenerationOptions : CouponGenerationOptions
 	{
 		#region Constants
-		public const string COUPONS_GROUP = "couponsGroup";
-		public const string STATUS = "status";
-		public const string TOTAL_USES = "totalUses";
-		public const string LEFT_USES = "leftUses";
+		public const string NUMBER_OF_COUPONS = "numberOfCoupons";
+		public const string USE_LETTERS = "useLetters";
+		public const string USE_NUMBERS = "useNumbers";
+		public const string USE_SPECIAL_CHARACTERS = "useSpecialCharacters";
 		#endregion
 
 		#region Private Fields
-		private CouponsGroup _CouponsGroup;
-		private CouponStatus _Status = null;
-		private int _TotalUses = Int32.MinValue;
-		private int _LeftUses = Int32.MinValue;
+		private int _NumberOfCoupons = Int32.MinValue;
+		private bool? _UseLetters = null;
+		private bool? _UseNumbers = null;
+		private bool? _UseSpecialCharacters = null;
 		#endregion
 
 		#region Properties
-		public CouponsGroup CouponsGroup
+		public int NumberOfCoupons
 		{
-			get { return _CouponsGroup; }
+			get { return _NumberOfCoupons; }
+			set 
+			{ 
+				_NumberOfCoupons = value;
+				OnPropertyChanged("NumberOfCoupons");
+			}
 		}
-		public CouponStatus Status
+		public bool? UseLetters
 		{
-			get { return _Status; }
+			get { return _UseLetters; }
+			set 
+			{ 
+				_UseLetters = value;
+				OnPropertyChanged("UseLetters");
+			}
 		}
-		public int TotalUses
+		public bool? UseNumbers
 		{
-			get { return _TotalUses; }
+			get { return _UseNumbers; }
+			set 
+			{ 
+				_UseNumbers = value;
+				OnPropertyChanged("UseNumbers");
+			}
 		}
-		public int LeftUses
+		public bool? UseSpecialCharacters
 		{
-			get { return _LeftUses; }
+			get { return _UseSpecialCharacters; }
+			set 
+			{ 
+				_UseSpecialCharacters = value;
+				OnPropertyChanged("UseSpecialCharacters");
+			}
 		}
 		#endregion
 
 		#region CTor
-		public Coupon()
+		public RandomCouponGenerationOptions()
 		{
 		}
 
-		public Coupon(XmlElement node) : base(node)
+		public RandomCouponGenerationOptions(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "couponsGroup":
-						this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(propertyNode);
+					case "numberOfCoupons":
+						this._NumberOfCoupons = ParseInt(propertyNode.InnerText);
 						continue;
-					case "status":
-						this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), propertyNode.InnerText);
+					case "useLetters":
+						this._UseLetters = ParseBool(propertyNode.InnerText);
 						continue;
-					case "totalUses":
-						this._TotalUses = ParseInt(propertyNode.InnerText);
+					case "useNumbers":
+						this._UseNumbers = ParseBool(propertyNode.InnerText);
 						continue;
-					case "leftUses":
-						this._LeftUses = ParseInt(propertyNode.InnerText);
+					case "useSpecialCharacters":
+						this._UseSpecialCharacters = ParseBool(propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -101,25 +121,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCoupon");
-			kparams.AddIfNotNull("couponsGroup", this._CouponsGroup);
-			kparams.AddIfNotNull("status", this._Status);
-			kparams.AddIfNotNull("totalUses", this._TotalUses);
-			kparams.AddIfNotNull("leftUses", this._LeftUses);
+				kparams.AddReplace("objectType", "KalturaRandomCouponGenerationOptions");
+			kparams.AddIfNotNull("numberOfCoupons", this._NumberOfCoupons);
+			kparams.AddIfNotNull("useLetters", this._UseLetters);
+			kparams.AddIfNotNull("useNumbers", this._UseNumbers);
+			kparams.AddIfNotNull("useSpecialCharacters", this._UseSpecialCharacters);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case COUPONS_GROUP:
-					return "CouponsGroup";
-				case STATUS:
-					return "Status";
-				case TOTAL_USES:
-					return "TotalUses";
-				case LEFT_USES:
-					return "LeftUses";
+				case NUMBER_OF_COUPONS:
+					return "NumberOfCoupons";
+				case USE_LETTERS:
+					return "UseLetters";
+				case USE_NUMBERS:
+					return "UseNumbers";
+				case USE_SPECIAL_CHARACTERS:
+					return "UseSpecialCharacters";
 				default:
 					return base.getPropertyName(apiName);
 			}

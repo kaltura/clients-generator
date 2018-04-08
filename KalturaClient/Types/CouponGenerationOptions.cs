@@ -33,66 +33,24 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Coupon : ObjectBase
+	public class CouponGenerationOptions : ObjectBase
 	{
 		#region Constants
-		public const string COUPONS_GROUP = "couponsGroup";
-		public const string STATUS = "status";
-		public const string TOTAL_USES = "totalUses";
-		public const string LEFT_USES = "leftUses";
 		#endregion
 
 		#region Private Fields
-		private CouponsGroup _CouponsGroup;
-		private CouponStatus _Status = null;
-		private int _TotalUses = Int32.MinValue;
-		private int _LeftUses = Int32.MinValue;
 		#endregion
 
 		#region Properties
-		public CouponsGroup CouponsGroup
-		{
-			get { return _CouponsGroup; }
-		}
-		public CouponStatus Status
-		{
-			get { return _Status; }
-		}
-		public int TotalUses
-		{
-			get { return _TotalUses; }
-		}
-		public int LeftUses
-		{
-			get { return _LeftUses; }
-		}
 		#endregion
 
 		#region CTor
-		public Coupon()
+		public CouponGenerationOptions()
 		{
 		}
 
-		public Coupon(XmlElement node) : base(node)
+		public CouponGenerationOptions(XmlElement node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
-			{
-				switch (propertyNode.Name)
-				{
-					case "couponsGroup":
-						this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(propertyNode);
-						continue;
-					case "status":
-						this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), propertyNode.InnerText);
-						continue;
-					case "totalUses":
-						this._TotalUses = ParseInt(propertyNode.InnerText);
-						continue;
-					case "leftUses":
-						this._LeftUses = ParseInt(propertyNode.InnerText);
-						continue;
-				}
-			}
 		}
 		#endregion
 
@@ -101,25 +59,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCoupon");
-			kparams.AddIfNotNull("couponsGroup", this._CouponsGroup);
-			kparams.AddIfNotNull("status", this._Status);
-			kparams.AddIfNotNull("totalUses", this._TotalUses);
-			kparams.AddIfNotNull("leftUses", this._LeftUses);
+				kparams.AddReplace("objectType", "KalturaCouponGenerationOptions");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case COUPONS_GROUP:
-					return "CouponsGroup";
-				case STATUS:
-					return "Status";
-				case TOTAL_USES:
-					return "TotalUses";
-				case LEFT_USES:
-					return "LeftUses";
 				default:
 					return base.getPropertyName(apiName);
 			}
