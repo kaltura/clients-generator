@@ -66,7 +66,7 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
         {},
         request.buildRequest(defaultRequestOptions),
         {
-	        apiFormat: environment.request.apiVersion,
+	        apiVersion: environment.request.apiVersion,
             format: 1
         }
     );
