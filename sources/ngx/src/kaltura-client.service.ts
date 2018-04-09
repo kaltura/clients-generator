@@ -25,11 +25,8 @@ export class KalturaClient {
     private _defaultRequestOptions: KalturaRequestOptions;
 
     constructor(private _http: HttpClient, @Inject(KALTURA_CLIENT_OPTIONS) @Optional() @Self() private _options: KalturaClientOptions,
-                @Inject(KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS) @Optional() @Self() private defaultRequestOptionsArgs: KalturaRequestOptionsArgs) {
-        if (defaultRequestOptionsArgs)
-        {
-            this._defaultRequestOptions = new KalturaRequestOptions(this.defaultRequestOptionsArgs || {});
-        }
+                @Inject(KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS) @Optional() @Self()  defaultRequestOptionsArgs: KalturaRequestOptionsArgs) {
+        this._defaultRequestOptions = new KalturaRequestOptions(defaultRequestOptionsArgs || {});
     }
 
     public appendOptions(options: KalturaClientOptions): void {
@@ -103,7 +100,7 @@ export class KalturaClient {
         else if (request instanceof KalturaRequest) {
             return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions);
         } else {
-            throw new KalturaClientException("client::request_type_error", 'unsupported request type requested');
+            return Observable.throw(new KalturaClientException("client::request_type_error", 'unsupported request type requested'));
         }
     }
 

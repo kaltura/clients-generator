@@ -21,6 +21,7 @@ function createLocalNpmPackageJson(packageContentAsString) {
     packageContent.peerDependencies = packageContent.dependencies;
     packageContent.dependencies = {};
     packageContent.scripts = {};
+    delete packageContent.jest;
     packageContent.private =  true; // IMPORTANT - this library uses a name that is reserved and shouldn't be publish to NPM respository. before publishing it make sure you change its' name to something else
 
     if (packageContent.config && packageContent.config.npmDistDirectory) {
