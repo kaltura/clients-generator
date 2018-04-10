@@ -7,6 +7,8 @@ import { KalturaFileRequest } from '../api/kaltura-file-request';
 import { CancelableAction } from '../cancelable-action';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { KalturaClientException } from '../api/kaltura-client-exception';
+import { environment } from '../environment';
+
 
 export function  createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string): string {
     const endpoint = options.endpointUrl;
@@ -64,6 +66,7 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
         {},
         request.buildRequest(defaultRequestOptions),
         {
+	        apiVersion: environment.request.apiVersion,
             format: 1
         }
     );
