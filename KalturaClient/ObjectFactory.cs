@@ -109,6 +109,8 @@ namespace Kaltura
 					return new ListResponse<SubscriptionSet>(xmlElement);
 				case "KalturaProductPriceListResponse":
 					return new ListResponse<ProductPrice>(xmlElement);
+				case "KalturaCouponsGroupListResponse":
+					return new ListResponse<CouponsGroup>(xmlElement);
 				case "KalturaPriceDetailsListResponse":
 					return new ListResponse<PriceDetails>(xmlElement);
 				case "KalturaPricePlanListResponse":

@@ -130,6 +130,35 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class CouponsGroupListRequestBuilder : RequestBuilder<ListResponse<CouponsGroup>>
+	{
+		#region Constants
+		#endregion
+
+
+		public CouponsGroupListRequestBuilder()
+			: base("couponsgroup", "list")
+		{
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<ListResponse<CouponsGroup>>(result);
+		}
+	}
+
 	public class CouponsGroupUpdateRequestBuilder : RequestBuilder<CouponsGroup>
 	{
 		#region Constants
@@ -197,6 +226,11 @@ namespace Kaltura.Services
 		public static CouponsGroupGetRequestBuilder Get(long id)
 		{
 			return new CouponsGroupGetRequestBuilder(id);
+		}
+
+		public static CouponsGroupListRequestBuilder List()
+		{
+			return new CouponsGroupListRequestBuilder();
 		}
 
 		public static CouponsGroupUpdateRequestBuilder Update(int id, CouponsGroup couponsGroup)
