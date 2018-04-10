@@ -130,6 +130,58 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class CouponsGroupUpdateRequestBuilder : RequestBuilder<CouponsGroup>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string COUPONS_GROUP = "couponsGroup";
+		#endregion
+
+		public int Id
+		{
+			set;
+			get;
+		}
+		public CouponsGroup CouponsGroup
+		{
+			set;
+			get;
+		}
+
+		public CouponsGroupUpdateRequestBuilder()
+			: base("couponsgroup", "update")
+		{
+		}
+
+		public CouponsGroupUpdateRequestBuilder(int id, CouponsGroup couponsGroup)
+			: this()
+		{
+			this.Id = id;
+			this.CouponsGroup = couponsGroup;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("couponsGroup"))
+				kparams.AddIfNotNull("couponsGroup", CouponsGroup);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<CouponsGroup>(result);
+		}
+	}
+
 
 	public class CouponsGroupService
 	{
@@ -145,6 +197,11 @@ namespace Kaltura.Services
 		public static CouponsGroupGetRequestBuilder Get(long id)
 		{
 			return new CouponsGroupGetRequestBuilder(id);
+		}
+
+		public static CouponsGroupUpdateRequestBuilder Update(int id, CouponsGroup couponsGroup)
+		{
+			return new CouponsGroupUpdateRequestBuilder(id, couponsGroup);
 		}
 	}
 }
