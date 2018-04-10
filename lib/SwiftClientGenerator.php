@@ -4,10 +4,11 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 {
 	private $_csprojIncludes = array();
 	protected $_baseClientPath = "KalturaClient";
-	protected static $reservedWords = array('protocol', 'repeat', 'extension');
+	protected static $reservedWords = array('protocol', 'repeat', 'extension', 'requestId', 'operator');
 	protected $xpath;
 	protected $pluginName = null;
 	protected $configurationParams = array();
+	protected $usedPlugins = array();
 	
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "swift")
 	{
@@ -248,7 +249,10 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		$defaultSubSpecName = "Core";
         $this->_licenseBuffer = '';
         $this->startNewTextBlock();
-        $podSpecHeader = file_get_contents("$this->testsPath/podSpecHeader.txt");
+        $headerFiles = glob("$this->testsPath/*.spec.header");
+        $headerFile = reset($headerFiles);
+        $specName = basename($headerFile, '.spec.header');
+        $podSpecHeader = file_get_contents($headerFile);
         $this->appendLine($podSpecHeader);
 
         //2. adding core subspec ( default )
@@ -261,7 +265,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         }
 		$this->appendLine("s.default_subspec = '$defaultSubSpecName'");
         $this->appendLine("end");
-        $file = "KalturaClient.podspec";
+        $file = "$specName.podspec";
         $this->addFile($file, $this->getTextBlock());
 
     }
@@ -272,14 +276,24 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
     public function writeDefaultSubSpec($name){
         $this->append(" 
 s.subspec '$name' do |sp|
-    sp.source_files = 'Classes/**/*'
+    sp.source_files = 'KalturaClient/Classes/**/*'
     sp.dependency 'Log', '1.0'
 end
 ");
     }
+    
+    protected function addFile($fileName, $fileContents, $addLicense = true) {
+    	$this->usedPlugins[$this->pluginName] = true;
+    	return parent::addFile($fileName, $fileContents, $addLicense);
+    }
+    
     public function writeSubSpec(DOMElement $pluginNode , $defaultSubSpecName){
     	
     	$pluginName = $pluginNode->getAttribute("name");
+    	if(!$this->usedPlugins[$pluginName]) {
+    		return;
+    	}
+    		
     	$subSpecName = ucfirst($pluginName);
     	$this->appendLine("s.subspec '$subSpecName' do |ssp|");
         $this->appendLine(" ssp.source_files = 'KalturaClient/Plugins/" .$pluginName ."/**/*'");
