@@ -35,6 +35,51 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class CouponsGroupDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public CouponsGroupDeleteRequestBuilder()
+			: base("couponsgroup", "delete")
+		{
+		}
+
+		public CouponsGroupDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class CouponsGroupGenerateRequestBuilder : RequestBuilder<StringValueArray>
 	{
 		#region Constants
@@ -216,6 +261,11 @@ namespace Kaltura.Services
 	{
 		private CouponsGroupService()
 		{
+		}
+
+		public static CouponsGroupDeleteRequestBuilder Delete(long id)
+		{
+			return new CouponsGroupDeleteRequestBuilder(id);
 		}
 
 		public static CouponsGroupGenerateRequestBuilder Generate(long id, CouponGenerationOptions couponGenerationOptions)
