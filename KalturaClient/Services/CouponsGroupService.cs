@@ -166,7 +166,7 @@ namespace Kaltura.Services
 		public const string COUPONS_GROUP = "couponsGroup";
 		#endregion
 
-		public int Id
+		public long Id
 		{
 			set;
 			get;
@@ -182,7 +182,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public CouponsGroupUpdateRequestBuilder(int id, CouponsGroup couponsGroup)
+		public CouponsGroupUpdateRequestBuilder(long id, CouponsGroup couponsGroup)
 			: this()
 		{
 			this.Id = id;
@@ -233,7 +233,7 @@ namespace Kaltura.Services
 			return new CouponsGroupListRequestBuilder();
 		}
 
-		public static CouponsGroupUpdateRequestBuilder Update(int id, CouponsGroup couponsGroup)
+		public static CouponsGroupUpdateRequestBuilder Update(long id, CouponsGroup couponsGroup)
 		{
 			return new CouponsGroupUpdateRequestBuilder(id, couponsGroup);
 		}
