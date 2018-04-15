@@ -5,9 +5,9 @@
     <Product>KalturaClient</Product>
 	<AssemblyName>KalturaClient.Net.Core</AssemblyName>
     <PackageId>KalturaClient.Net.Core</PackageId>
-    <Version>4.8.43.43151</Version>
-    <AssemblyVersion>4.8.43.43151</AssemblyVersion>
-    <FileVersion>4.8.43.43151</FileVersion>
+    <Version>4.8.44.15707</Version>
+    <AssemblyVersion>4.8.44.15707</AssemblyVersion>
+    <FileVersion>4.8.44.15707</FileVersion>
     <NeutralLanguage>en</NeutralLanguage>
     <Copyright>Copyright ©  2008</Copyright>
     <TargetFramework>netstandard2.0</TargetFramework>
