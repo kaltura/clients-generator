@@ -44,6 +44,7 @@ namespace Kaltura.Types
 		public const string MAX_USES_NUMBER_ON_RENEWABLE_SUB = "maxUsesNumberOnRenewableSub";
 		public const string COUPON_GROUP_TYPE = "couponGroupType";
 		public const string MAX_HOUSEHOLD_USES = "maxHouseholdUses";
+		public const string DISCOUNT_CODE = "discountCode";
 		#endregion
 
 		#region Private Fields
@@ -55,6 +56,7 @@ namespace Kaltura.Types
 		private int _MaxUsesNumberOnRenewableSub = Int32.MinValue;
 		private CouponGroupType _CouponGroupType = null;
 		private int _MaxHouseholdUses = Int32.MinValue;
+		private long _DiscountCode = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -125,6 +127,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxHouseholdUses");
 			}
 		}
+		public long DiscountCode
+		{
+			get { return _DiscountCode; }
+			set 
+			{ 
+				_DiscountCode = value;
+				OnPropertyChanged("DiscountCode");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -162,6 +173,9 @@ namespace Kaltura.Types
 					case "maxHouseholdUses":
 						this._MaxHouseholdUses = ParseInt(propertyNode.InnerText);
 						continue;
+					case "discountCode":
+						this._DiscountCode = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -181,6 +195,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("maxUsesNumberOnRenewableSub", this._MaxUsesNumberOnRenewableSub);
 			kparams.AddIfNotNull("couponGroupType", this._CouponGroupType);
 			kparams.AddIfNotNull("maxHouseholdUses", this._MaxHouseholdUses);
+			kparams.AddIfNotNull("discountCode", this._DiscountCode);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -203,6 +218,8 @@ namespace Kaltura.Types
 					return "CouponGroupType";
 				case MAX_HOUSEHOLD_USES:
 					return "MaxHouseholdUses";
+				case DISCOUNT_CODE:
+					return "DiscountCode";
 				default:
 					return base.getPropertyName(apiName);
 			}
