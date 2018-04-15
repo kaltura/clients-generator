@@ -854,7 +854,7 @@ class Base
 		{
 			$code = "{$xml->error->code}";
 			$message = "{$xml->error->message}";
-			$arguments = ParseUtils::unmarshalArray($xml->error->args, 'KalturaApiExceptionArg');
+			$arguments = $xml->error->args ? ParseUtils::unmarshalArray($xml->error->args, 'KalturaApiExceptionArg') : array();
 			if($throwException)
 				throw $this->getAPIException($message, $code, $arguments);
 			else
