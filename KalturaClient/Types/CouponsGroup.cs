@@ -38,7 +38,6 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID = "id";
 		public const string NAME = "name";
-		public const string DESCRIPTIONS = "descriptions";
 		public const string START_DATE = "startDate";
 		public const string END_DATE = "endDate";
 		public const string MAX_USES_NUMBER = "maxUsesNumber";
@@ -50,7 +49,6 @@ namespace Kaltura.Types
 		#region Private Fields
 		private string _Id = null;
 		private string _Name = null;
-		private IList<TranslationToken> _Descriptions;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
 		private int _MaxUsesNumber = Int32.MinValue;
@@ -71,15 +69,6 @@ namespace Kaltura.Types
 			{ 
 				_Name = value;
 				OnPropertyChanged("Name");
-			}
-		}
-		public IList<TranslationToken> Descriptions
-		{
-			get { return _Descriptions; }
-			set 
-			{ 
-				_Descriptions = value;
-				OnPropertyChanged("Descriptions");
 			}
 		}
 		public long StartDate
@@ -155,13 +144,6 @@ namespace Kaltura.Types
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
-					case "descriptions":
-						this._Descriptions = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Descriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
 					case "startDate":
 						this._StartDate = ParseLong(propertyNode.InnerText);
 						continue;
@@ -193,7 +175,6 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaCouponsGroup");
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("descriptions", this._Descriptions);
 			kparams.AddIfNotNull("startDate", this._StartDate);
 			kparams.AddIfNotNull("endDate", this._EndDate);
 			kparams.AddIfNotNull("maxUsesNumber", this._MaxUsesNumber);
@@ -210,8 +191,6 @@ namespace Kaltura.Types
 					return "Id";
 				case NAME:
 					return "Name";
-				case DESCRIPTIONS:
-					return "Descriptions";
 				case START_DATE:
 					return "StartDate";
 				case END_DATE:
