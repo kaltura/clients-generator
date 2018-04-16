@@ -290,7 +290,7 @@ end
     public function writeSubSpec(DOMElement $pluginNode , $defaultSubSpecName){
     	
     	$pluginName = $pluginNode->getAttribute("name");
-    	if(!$this->usedPlugins[$pluginName]) {
+    	if(!isset($this->usedPlugins[$pluginName])) {
     		return;
     	}
     		
