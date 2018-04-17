@@ -44,6 +44,8 @@ namespace Kaltura.Types
 		public const string SESSION_PRIVILEGES = "sessionPrivileges";
 		public const string TOKEN = "token";
 		public const string SESSION_USER_ID = "sessionUserId";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		#endregion
 
 		#region Private Fields
@@ -55,6 +57,8 @@ namespace Kaltura.Types
 		private string _SessionPrivileges = null;
 		private string _Token = null;
 		private string _SessionUserId = null;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -115,6 +119,14 @@ namespace Kaltura.Types
 				OnPropertyChanged("SessionUserId");
 			}
 		}
+		public long CreateDate
+		{
+			get { return _CreateDate; }
+		}
+		public long UpdateDate
+		{
+			get { return _UpdateDate; }
+		}
 		#endregion
 
 		#region CTor
@@ -152,6 +164,12 @@ namespace Kaltura.Types
 					case "sessionUserId":
 						this._SessionUserId = propertyNode.InnerText;
 						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -171,6 +189,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("sessionPrivileges", this._SessionPrivileges);
 			kparams.AddIfNotNull("token", this._Token);
 			kparams.AddIfNotNull("sessionUserId", this._SessionUserId);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -193,6 +213,10 @@ namespace Kaltura.Types
 					return "Token";
 				case SESSION_USER_ID:
 					return "SessionUserId";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				default:
 					return base.getPropertyName(apiName);
 			}
