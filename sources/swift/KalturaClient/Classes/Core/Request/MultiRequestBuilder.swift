@@ -75,6 +75,15 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
         else if let responses = response.data as? [Any]{
             allResponse = responses
         }
+        
+        guard response.data != nil && response.error == nil && allResponse.count == self.requests.count else {
+            if let block = completion {
+                block(nil, response.error)
+            }
+            
+            return;
+        }
+        
         var allParsedResponse = [Any?]()
         for (index, request) in self.requests.enumerated() {
             let singelResponse = allResponse[index]

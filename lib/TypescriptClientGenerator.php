@@ -9,6 +9,7 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 	private $_serverType = null;
 	private $_disableDateParsing = false;
     private $_framework;
+    private $_targetKalturaServer;
 
 	function __construct($xmlPath, Zend_Config $config, $framework = "typescript")
 	{
@@ -24,6 +25,7 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
     {
         parent::setTestsPath($testsDir);
         $this->_serverType = $testsDir;
+        $this->_targetKalturaServer = $testsDir;
     }
 
 
@@ -42,7 +44,7 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		$xpath = new DOMXPath ($this->_doc);
 		$this->serverMetadata = $this->extractData($xpath);
 
-		$classesGenerator = new ClassesGenerator($this->serverMetadata, $this->_framework, $this->_disableDateParsing);
+		$classesGenerator = new ClassesGenerator($this->serverMetadata, $this->_framework, $this->_disableDateParsing, $this->_targetKalturaServer);
 		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
 			$classesGenerator->generate(),
