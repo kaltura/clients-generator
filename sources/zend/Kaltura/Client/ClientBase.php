@@ -337,8 +337,15 @@ class Kaltura_Client_ClientBase
 	{
 		$this->responseHeaders = array();
 		$requestHeaders = $this->config->requestHeaders;
+        
+        // Check for GET and append params to url
+        if( $this->config->method == self::METHOD_GET ) {
+            $opt = http_build_query($params, null, "&");
+            $url = $url . '?' . $opt;
+        }
 
 		$params = $this->jsonEncode($params);
+        
 		$this->log("curl: $url");
 		$this->log("post: $params");
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
@@ -888,16 +895,39 @@ class Kaltura_Client_ClientBase
 		return str_replace(array('+', '/'), array('-', '_'), base64_encode($decodedKs));
 	}
 
-	protected static function aesEncrypt($key, $message)
-	{
-		return mcrypt_encrypt(
-			MCRYPT_RIJNDAEL_128,
-			substr(sha1($key, true), 0, 16),
-			$message,
-			MCRYPT_MODE_CBC,
-			str_repeat("\0", 16)	// no need for an IV since we add a random string to the message anyway
-		);
-	}
+    protected static function aesEncrypt($key, $message)
+    {
+        $iv = str_repeat("\0", 16);    // no need for an IV since we add a random string to the message anyway
+        $key = substr(sha1($key, true), 0, 16);
+        if (function_exists('mcrypt_encrypt')) 
+        {
+            return mcrypt_encrypt(
+                MCRYPT_RIJNDAEL_128,
+                $key,
+                $message,
+                MCRYPT_MODE_CBC,
+                $iv
+            );
+        } 
+        else 
+        {
+            // Pad with null byte to be compatible with mcrypt PKCS#5 padding
+            // See http://thefsb.tumblr.com/post/110749271235/using-opensslendecrypt-in-php-instead-of as reference
+            $blockSize = 16;
+            if (strlen($str) % $blockSize) 
+            {
+                $padLength = $blockSize - strlen($message) % $blockSize;
+                $message .= str_repeat(chr("\0"), $padLength);
+            }
+            return openssl_encrypt(
+                $message,
+                'AES-128-CBC',
+                $key,
+                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
+                $iv
+            );
+        }
+    }
 
 	private function hash ( $salt , $str )
 	{

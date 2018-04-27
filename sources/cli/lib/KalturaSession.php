@@ -240,26 +240,69 @@ class KalturaSession
 	}
 
 	// KS V2 functions
-	protected static function aesEncrypt($key, $message)
-	{
-		return mcrypt_encrypt(
-			MCRYPT_RIJNDAEL_128,
-			substr(sha1($key, true), 0, 16),
-			$message,
-			MCRYPT_MODE_CBC, 
-			self::AES_IV
-		);
-	}
+    protected static function aesEncrypt($key, $message)
+    {
+        $key = substr(sha1($key, true), 0, 16);
+        if (function_exists('mcrypt_encrypt')) 
+        {
+            return mcrypt_encrypt(
+                MCRYPT_RIJNDAEL_128,
+                $key,
+                $message,
+                MCRYPT_MODE_CBC,
+                self::AES_IV
+            );
+        } 
+        else 
+        {
+            // Pad with null byte to be compatible with mcrypt PKCS#5 padding
+            // See http://thefsb.tumblr.com/post/110749271235/using-opensslendecrypt-in-php-instead-of as reference
+            $blockSize = 16;
+            if (strlen($str) % $blockSize) 
+            {
+                $padLength = $blockSize - strlen($message) % $blockSize;
+                $message .= str_repeat(chr("\0"), $padLength);
+            }
+            return openssl_encrypt(
+                $message,
+                'AES-128-CBC',
+                $key,
+                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
+                self::AES_IV
+            );
+        }
+    }
 
 	protected static function aesDecrypt($key, $message)
 	{
-		return mcrypt_decrypt(
-			MCRYPT_RIJNDAEL_128,
-			substr(sha1($key, true), 0, 16),
-			$message,
-			MCRYPT_MODE_CBC, 
-			self::AES_IV
-		);
+        if (function_exists('mcrypt_encrypt')) 
+        {
+            return mcrypt_decrypt(
+                MCRYPT_RIJNDAEL_128,
+                $key,
+                $message,
+                MCRYPT_MODE_CBC,
+                self::AES_IV
+            );
+        } 
+        else 
+        {
+            // Pad with null byte to be compatible with mcrypt PKCS#5 padding
+            // See http://thefsb.tumblr.com/post/110749271235/using-opensslendecrypt-in-php-instead-of as reference
+            $blockSize = 16;
+            if (strlen($str) % $blockSize) 
+            {
+                $padLength = $blockSize - strlen($message) % $blockSize;
+                $message .= str_repeat(chr("\0"), $padLength);
+            }
+            return openssl_decrypt(
+                $message,
+                'AES-128-CBC',
+                $key,
+                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
+                self::AES_IV
+            );
+        }
 	}
 
 	public static function generateKsV2($adminSecret, $userId, $type, $partnerId, $expiry, $privileges, $masterPartnerId, $additionalData)
