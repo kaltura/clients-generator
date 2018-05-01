@@ -580,6 +580,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 		$this->appendLine("	/**");
 		$this->appendLine("	 * @return $returnType");
+		$this->appendLine("	 * @throws Kaltura_Client_Exception");
 		$this->appendLine("	 */");
 		$this->appendLine("	$signature");
 		$this->appendLine("	{");
