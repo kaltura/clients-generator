@@ -1,0 +1,27 @@
+{
+  "$id": "StringValue",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 0
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 0
+        }
+      },
+      "required": [
+        "value",
+        "objectType"
+      ]
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}
