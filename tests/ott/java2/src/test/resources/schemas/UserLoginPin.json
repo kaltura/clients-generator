@@ -1,0 +1,37 @@
+{
+  "$id": "UserLoginPin",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "pinCode": {
+          "type": "string",
+          "minLength": 0
+        },
+        "expirationTime": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 0
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 0
+        }
+      },
+      "required": [
+        "pinCode",
+        "expirationTime",
+        "userId",
+        "objectType"
+      ]
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

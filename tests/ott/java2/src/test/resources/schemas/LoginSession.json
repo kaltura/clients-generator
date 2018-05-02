@@ -1,0 +1,21 @@
+{
+  "$id": "LoginSession",
+  "definitions": {
+    "LoginSession": {
+      "type": "object",
+      "properties": {
+        "ks": {"type": "string", "minLength": 10},
+        "objectType": {"type": "string", "enum": ["KalturaLoginSession"]}
+      },
+      "required": ["ks", "objectType"]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "result": {
+      "$ref": "#/definitions/LoginSession"
+    }
+  },
+  "executionTime": {"type": "number"},
+  "required": ["result", "executionTime"]
+}

@@ -1,0 +1,65 @@
+{
+  "$id": "SessionInfo",
+  "definitions": {
+    "SessionInfo": {
+      "type": "object",
+      "properties": {
+        "ks": {
+          "type": "string",
+          "minLength": 0
+        },
+        "sessionType": {
+          "type": "string",
+          "minLength": 0
+        },
+        "partnerId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 0
+        },
+        "expiry": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "privileges": {
+          "type": "string",
+          "minLength": 0
+        },
+        "udid": {
+          "type": "string",
+          "minLength": 0
+        },
+        "createDate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 0
+        }
+      },
+      "required": [
+        "ks",
+        "sessionType",
+        "partnerId",
+        "userId",
+        "udid",
+        "createDate",
+        "objectType"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "result": {
+      "ref": "#/definitions/SessionInfo"
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

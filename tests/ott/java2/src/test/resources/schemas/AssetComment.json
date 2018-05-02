@@ -1,0 +1,61 @@
+{
+  "$id": "AssetComment",
+  "definitions": {
+    "AssetComment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assetId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "assetType": {
+          "type": "string",
+          "minLength": 0
+        },
+        "subHeader": {
+          "type": "string",
+          "minLength": 0
+        },
+        "header": {
+          "type": "string",
+          "minLength": 0
+        },
+        "text": {
+          "type": "string",
+          "minLength": 0
+        },
+        "createDate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "writer": {
+          "type": "string",
+          "minLength": 0
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 0
+        }
+      },
+      "required": [
+        "assetId",
+        "assetType",
+        "createDate"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "result": {
+      "$ref": "#/definitions/AssetComment"
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

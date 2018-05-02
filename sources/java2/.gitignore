@@ -2,3 +2,9 @@ build
 .idea
 *.iml
 .gradle
+target/
+allure-results/
+.allure/
+log4j.log
+src/test/resources/test.properties
+src/test/java/com/kaltura/client/test/tests/Sandbox.java

@@ -1,0 +1,64 @@
+{
+  "$id": "Channel",
+  "type": "object",
+  "definitions": {
+    "Channel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 0
+        },
+        "description": {
+          "type": "string",
+          "minLength": 0
+        },
+        "assetTypes": {
+          "type": "array"
+        },
+        "filterExpression": {
+          "type": "string",
+          "minLength": 0
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "order": {
+          "type": "string",
+          "minLength": 0
+        },
+        "groupBy": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 0
+            },
+            "objectType": {
+              "type": "string",
+              "minLength": 0
+            }
+          }
+        },
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+    "required":["id","name"]
+    }
+  },
+  "properties": {
+    "result": {
+      "ref": "#/definitions/Channel"
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

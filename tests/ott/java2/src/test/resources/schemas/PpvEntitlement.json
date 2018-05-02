@@ -1,0 +1,110 @@
+{
+  "$id": "PpvEntitlement",
+  "definitions": {
+    "PpvEntitlement": {
+      "type": "object",
+      "properties": {
+        "mediaFileId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "mediaId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "ppv"
+          ]
+        },
+        "productId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currentUses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "endDate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "currentDate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "lastViewDate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "purchaseDate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "purchaseId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "paymentMethod": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deviceUdid": {
+          "type": "string",
+          "minLength": 5
+        },
+        "deviceName": {
+          "type": "string",
+          "minLength": 5
+        },
+        "isCancelationWindowEnabled": {
+          "type": "boolean"
+        },
+        "maxUses": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "isRenewable": {
+          "type": "boolean"
+        },
+        "isInGracePeriod": {
+          "type": "boolean"
+        },
+        "householdId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "objectType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mediaFileId",
+        "mediaId",
+        "id",
+        "type",
+        "productId",
+        "currentUses",
+        "endDate",
+        "currentDate",
+        "lastViewDate",
+        "purchaseDate",
+        "purchaseId",
+        "paymentMethod",
+        "deviceUdid",
+        "deviceName",
+        "isCancelationWindowEnabled",
+        "maxUses",
+        "isRenewable",
+        "isInGracePeriod",
+        "householdId"
+      ]
+    }
+  },
+  "$ref": "#/definitions/PpvEntitlement"
+}

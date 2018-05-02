@@ -1,0 +1,218 @@
+{
+  "$id": "MediaAsset",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "catchUpBuffer": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "trickPlayBuffer": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "enableRecordingPlaybackNonEntitledChannel": {
+          "type": "boolean"
+        },
+        "entryId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "id": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "type": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ratio": {
+                "type": "string",
+                "minLength": 1
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "isDefault": {
+                "type": "boolean"
+              },
+              "objectType": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "mediaFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "id": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "externalId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fileSize": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "objectType": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "metas": {
+          "type": "object",
+          "properties": {
+            "synopsis": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "objectType": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "Release year1": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "objectType": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        },
+        "tags": {
+          "type": "object",
+          "properties": {
+            "Free": {
+              "$ref": "MultilingualStringValueArray.json#/definitions/MultilingualStringValueArray"
+            },
+            "Genre": {
+              "$ref": "MultilingualStringValueArray.json#/definitions/MultilingualStringValueArray"
+            },
+            "Parental Rating": {
+              "$ref": "MultilingualStringValueArray.json#/definitions/MultilingualStringValueArray"
+            },
+            "Director": {
+              "$ref": "MultilingualStringValueArray.json#/definitions/MultilingualStringValueArray"
+            },
+            "Country": {
+              "$ref": "MultilingualStringValueArray.json#/definitions/MultilingualStringValueArray"
+            },
+            "Series name": {
+              "$ref": "MultilingualStringValueArray.json#/definitions/MultilingualStringValueArray"
+            }
+          }
+        },
+        "startDate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "endDate": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "enableCdvr": {
+          "type": "boolean"
+        },
+        "enableCatchUp": {
+          "type": "boolean"
+        },
+        "enableStartOver": {
+          "type": "boolean"
+        },
+        "enableTrickPlay": {
+          "type": "boolean"
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "entryId",
+        "id",
+        "type",
+        "name",
+        "description",
+        "images",
+        "mediaFiles",
+        "metas",
+        "tags",
+        "startDate",
+        "endDate",
+        "objectType"
+      ]
+    },
+    "executionTime": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "result"
+  ]
+}

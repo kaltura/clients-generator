@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Main Suite" parallel="tests" thread-count="3" configfailurepolicy="continue">
+    <test name="Services Tests">
+        <groups>
+            <run>
+                <exclude name="slow" />
+            </run>
+        </groups>
+
+        <packages>
+            <package name="com.kaltura.client.test.tests.servicesTests.*"/>
+            <package name="com.kaltura.client.test.tests.featuresTests.*"/>
+        </packages>
+
+        <!--<classes>-->
+            <!--<class name="com.kaltura.client.test.tests.servicesTests.ottUserTests.LoginTests" >-->
+                <!--<methods>-->
+                    <!--<include name="login" />-->
+                <!--</methods>-->
+            <!--</class>-->
+        <!--</classes>-->
+    </test>
+</suite>
