@@ -4,6 +4,7 @@ import com.kaltura.client.Client;
 import com.kaltura.client.Configuration;
 import com.kaltura.client.services.OttUserService;
 import com.kaltura.client.test.TestAPIOkRequestsExecutor;
+import com.kaltura.client.test.utils.DBUtils;
 import com.kaltura.client.test.utils.IngestUtils;
 import com.kaltura.client.types.*;
 import com.kaltura.client.utils.response.base.Response;
@@ -102,7 +103,8 @@ public class BaseTest {
     // getters for shared params
     public static String getAdministratorKs() {
         if (administratorKs == null) {
-            loginResponse = executor.executeSync(login(partnerId, getProperty(ADMINISTRATOR_USER_USERNAME), getProperty(ADMINISTRATOR_USER_PASSWORD),
+            String[] userInfo = DBUtils.getUserDataByRole("Administrator").split(":");
+            loginResponse = executor.executeSync(login(partnerId, userInfo[0], userInfo[1],
                     null,null));
             administratorKs = loginResponse.results.getLoginSession().getKs();
         }
@@ -111,7 +113,8 @@ public class BaseTest {
 
     public static String getOperatorKs() {
         if (operatorKs == null) {
-            loginResponse = executor.executeSync(login(partnerId, getProperty(OPERATOR_USER_USERNAME), getProperty(OPERATOR_USER_PASSWORD),
+            String[] userInfo = DBUtils.getUserDataByRole("Operator").split(":");
+            loginResponse = executor.executeSync(login(partnerId, userInfo[0], userInfo[1],
                     null,null));
             operatorKs = loginResponse.results.getLoginSession().getKs();
         }
@@ -120,7 +123,8 @@ public class BaseTest {
 
     public static String getManagerKs() {
         if (managerKs == null) {
-            loginResponse = executor.executeSync(login(partnerId, getProperty(MANAGER_USER_USERNAME), getProperty(MANAGER_USER_PASSWORD),
+            String[] userInfo = DBUtils.getUserDataByRole("Manager").split(":");
+            loginResponse = executor.executeSync(login(partnerId, userInfo[0], userInfo[1],
                     null,null));
             managerKs = loginResponse.results.getLoginSession().getKs();
         }
