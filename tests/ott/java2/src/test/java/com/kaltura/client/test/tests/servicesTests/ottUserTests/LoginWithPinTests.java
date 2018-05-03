@@ -9,6 +9,8 @@ import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.types.UserLoginPin;
 import com.kaltura.client.utils.response.base.Response;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -37,6 +39,7 @@ public class LoginWithPinTests extends BaseTest {
         adminClient.setUserId(Integer.parseInt(user.getId()));
     }
 
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/loginWithPin - loginWithPin with secret")
     @Test
     private void loginWithPin_with_secret() throws InterruptedException {
@@ -50,6 +53,7 @@ public class LoginWithPinTests extends BaseTest {
         assertThat(loginResponse.results.getUser().getUsername()).isEqualTo(user.getUsername());
     }
 
+    @Severity(SeverityLevel.NORMAL)
     @Description("ottUser/action/loginWithPin - loginWithPin with wrong secret - error 2008")
     @Test
     private void loginWithPin_with_wrong_secret() {
@@ -62,6 +66,7 @@ public class LoginWithPinTests extends BaseTest {
         assertThat(loginResponse.error.getCode()).isEqualTo(getAPIExceptionFromList(2008).getCode());
     }
 
+    @Severity(SeverityLevel.NORMAL)
     @Description("ottUser/action/loginWithPin - loginWithPin with expired pinCode - error 2004")
     @Test(groups = "slow")
     private void loginWithPin_with_expired_pinCode() {

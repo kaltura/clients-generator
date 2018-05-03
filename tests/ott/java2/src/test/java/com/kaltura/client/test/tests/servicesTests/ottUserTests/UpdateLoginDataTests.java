@@ -7,6 +7,8 @@ import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.utils.response.base.Response;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.Test;
 
 import static com.kaltura.client.test.servicesImpl.OttUserServiceImpl.register;
@@ -22,6 +24,7 @@ public class UpdateLoginDataTests extends BaseTest {
     private Response<OTTUser> ottUserResponse;
 
 
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/updateLoginData - updateLoginData")
     @Test
     private void updateLoginData() {
@@ -49,6 +52,7 @@ public class UpdateLoginDataTests extends BaseTest {
         assertThat(loginResponse.results.getLoginSession().getKs()).isNotNull();
     }
 
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/updateLoginData - updateLoginData with administratorKs")
     @Test
     private void updateLoginData_with_administratorKs() {

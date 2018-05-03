@@ -1,54 +1,42 @@
 package com.kaltura.client.test.tests.servicesTests.ottUserTests;
 
-import com.kaltura.client.services.OttUserService;
 import com.kaltura.client.test.tests.BaseTest;
-import com.kaltura.client.types.ListResponse;
 import com.kaltura.client.types.OTTUser;
-import com.kaltura.client.types.UserRole;
-import com.kaltura.client.types.UserRoleFilter;
 import com.kaltura.client.utils.response.base.Response;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
+import org.assertj.core.api.Assertions;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
-
+import static com.kaltura.client.services.OttUserService.*;
 import static com.kaltura.client.test.utils.OttUserUtils.generateOttUser;
 
 public class AddRoleTests extends BaseTest {
+
     private OTTUser user;
 
     @BeforeClass
     private void ottUser_addRole_tests_setup() {
-        user = generateOttUser();
-
-        // OttUser/action/register
-        OttUserService.RegisterOttUserBuilder registerOttUserBuilder = OttUserService.register(partnerId, user, defaultUserPassword);
-        registerOttUserBuilder.setKs(null);
-        Response<OTTUser> ottUserResponse = executor.executeSync(registerOttUserBuilder);
-        user = ottUserResponse.results;
+        // register user
+        user = executor.executeSync(register(partnerId, generateOttUser(), defaultUserPassword)).results;
     }
 
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/addRole - addRole")
     @Test(enabled = false)
     // TODO: 3/27/2018 finish and fix test 
-    private void addRole() {
-        // set client
-        client.setKs(getAdministratorKs());
-        client.setUserId(Integer.valueOf(user.getId()));
+    private void addRoleTest() {
+        int roleId = 3;
 
-        OttUserServiceImpl.addRole(client, 3);
+        // add role
+        AddRoleOttUserBuilder addRoleOttUserBuilder = addRole(roleId)
+                .setKs(getAdministratorKs())
+                .setUserId(Integer.valueOf(user.getId()));
+        Response<Boolean> booleanResponse = executor.executeSync(addRoleOttUserBuilder);
+        Assertions.assertThat(booleanResponse.results.booleanValue()).isEqualTo(true);
 
-        UserRoleFilter filter = new UserRoleFilter();
-        filter.setIdIn(user.getId());
-
-        client.setUserId(null);
-        Response<ListResponse<UserRole>> userRoleListResponse = UserRoleServiceImpl.list(client, filter);
-        List<UserRole> userRoles = userRoleListResponse.results.getObjects();
-
-        for (UserRole userRole : userRoles) {
-            System.out.println(userRole.getId().toString());
-        }
-
+        // TODO: 3/27/2018 finish and fix test
     }
 }

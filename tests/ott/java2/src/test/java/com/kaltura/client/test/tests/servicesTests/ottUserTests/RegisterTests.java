@@ -6,6 +6,8 @@ import com.kaltura.client.test.tests.BaseTest;
 import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.utils.response.base.Response;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -25,7 +27,7 @@ public class RegisterTests extends BaseTest {
         user = generateOttUser();
     }
 
-    // login tests
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/register - register")
     @Test
     private void register() {

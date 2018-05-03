@@ -1,29 +1,29 @@
 package com.kaltura.client.utils.request;
 
+import com.kaltura.client.Params;
+import com.kaltura.client.types.APIException;
+import com.kaltura.client.types.ListResponse;
+import com.kaltura.client.types.ObjectBase;
+import com.kaltura.client.utils.response.OnCompletion;
+import com.kaltura.client.utils.response.base.Response;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
-
-import com.kaltura.client.Params;
-import com.kaltura.client.types.APIException;
-import com.kaltura.client.types.ObjectBase;
-import com.kaltura.client.types.ListResponse;
-import com.kaltura.client.utils.response.OnCompletion;
-import com.kaltura.client.utils.response.base.Response;
 
 
 /**
  * Created by tehilarozin on 14/08/2016.
  */
 
-public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
+public abstract class RequestBuilder<ReturnedType, TokenizerType, SelfType> extends BaseRequestBuilder<ReturnedType, SelfType> {
 
 	protected String id;
 	protected String service;
 	protected String action;
 
-    public RequestBuilder(Class<RS> type, String service, String action) {
+    public RequestBuilder(Class<ReturnedType> type, String service, String action) {
         super(type);
         this.service = service;
         this.action = action;
@@ -129,7 +129,7 @@ public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
     }
 
     @SuppressWarnings("unchecked")
-	public TK getTokenizer() throws APIException {
+	public TokenizerType getTokenizer() throws APIException {
 		if(id == null) {
 			throw new APIException(APIException.FailureStep.OnRequest, "Request is not part of multi-request");
 		}
@@ -142,10 +142,10 @@ public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
         		interfaces[i] = parentInterfaces[i];
         	}
         	interfaces[parentInterfaces.length] = annotation.value();
-            return (TK) Proxy.newProxyInstance(type.getClassLoader(), interfaces, new Tokenizer(id + ":result"));
+            return (TokenizerType) Proxy.newProxyInstance(type.getClassLoader(), interfaces, new Tokenizer(id + ":result"));
     	}
     	else {
-    		return (TK) ("{" + id + ":result}");
+    		return (TokenizerType) ("{" + id + ":result}");
     	}
     }
 
@@ -180,15 +180,15 @@ public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
     }
 
     @SuppressWarnings("unchecked")
-	protected S link(String destKey, String requestId, String sourceKey) {
+	protected SelfType link(String destKey, String requestId, String sourceKey) {
         params.link(destKey, requestId, sourceKey);
-        return (S)this;
+        return (SelfType)this;
     }
 
     @SuppressWarnings("unchecked")
-	protected S setId(String id) {
+	protected SelfType setId(String id) {
         this.id = id;
-        return (S)this;
+        return (SelfType)this;
     }
 
     protected String getId() {
@@ -196,9 +196,9 @@ public abstract class RequestBuilder<RS, TK, S> extends BaseRequestBuilder<RS> {
     }
 
     @SuppressWarnings("unchecked")
-	public S setCompletion(OnCompletion<Response<RS>> onCompletion) {
+	public SelfType setCompletion(OnCompletion<Response<ReturnedType>> onCompletion) {
         this.onCompletion = onCompletion;
-        return (S)this;
+        return (SelfType)this;
     }
 
     @Override

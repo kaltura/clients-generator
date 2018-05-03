@@ -82,9 +82,7 @@ public class ListTests extends BaseTest {
     public void listSubscriptionWithCurrencyTest() {
         ProductPriceFilter filter = new ProductPriceFilter();
         filter.setSubscriptionIdIn(get5MinRenewableSubscription().getId());
-        ListProductPriceBuilder productPriceList = ProductPriceService.list(filter);
-        productPriceList.setCurrency(CURRENCY_EUR);
-        productPriceResponse = executor.executeSync(productPriceList);
+        productPriceResponse = executor.executeSync(ProductPriceService.list(filter).setCurrency(CURRENCY_EUR));
         // TODO: should we create ENUMs for currencies? A: Yes if library doesn't contain them
         assertThat(productPriceResponse.results.getObjects().get(0).getProductId()).isEqualToIgnoringCase(get5MinRenewableSubscription().getId().trim());
         assertThat(productPriceResponse.results.getObjects().get(0).getPurchaseStatus()).isEqualTo(PurchaseStatus.FOR_PURCHASE);
@@ -169,8 +167,8 @@ public class ListTests extends BaseTest {
         filter.setSubscriptionIdIn(get5MinRenewableSubscription().getId());
         filter.setFileIdIn(String.valueOf(getSharedWebMediaFile().getId()));
         filter.setIsLowest(false);
-        ListProductPriceBuilder productPriceListBeforePurchase = ProductPriceService.list(filter);
-        productPriceListBeforePurchase.setKs(OttUserUtils.getKs(Integer.parseInt(masterUser.getUserId()), null));
+        ListProductPriceBuilder productPriceListBeforePurchase = ProductPriceService.list(filter)
+                .setKs(OttUserUtils.getKs(Integer.parseInt(masterUser.getUserId()), null));
         productPriceResponse = executor.executeSync(productPriceListBeforePurchase);
         // should be 2 ss one item is subscription an another is media file
         assertThat(productPriceResponse.results.getTotalCount()).isEqualTo(2);
