@@ -33,26 +33,36 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class RuleAction : ObjectBase
+	public class AssetRule : ObjectBase
 	{
 		#region Constants
-		public const string TYPE = "type";
+		public const string ID = "id";
+		public const string NAME = "name";
 		public const string DESCRIPTION = "description";
+		public const string CONDITIONS = "conditions";
+		public const string ACTIONS = "actions";
 		#endregion
 
 		#region Private Fields
-		private RuleActionType _Type = null;
+		private long _Id = long.MinValue;
+		private string _Name = null;
 		private string _Description = null;
+		private IList<Condition> _Conditions;
+		private IList<RuleAction> _Actions;
 		#endregion
 
 		#region Properties
-		public RuleActionType Type
+		public long Id
 		{
-			get { return _Type; }
+			get { return _Id; }
+		}
+		public string Name
+		{
+			get { return _Name; }
 			set 
 			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		public string Description
@@ -64,24 +74,59 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
+		public IList<Condition> Conditions
+		{
+			get { return _Conditions; }
+			set 
+			{ 
+				_Conditions = value;
+				OnPropertyChanged("Conditions");
+			}
+		}
+		public IList<RuleAction> Actions
+		{
+			get { return _Actions; }
+			set 
+			{ 
+				_Actions = value;
+				OnPropertyChanged("Actions");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public RuleAction()
+		public AssetRule()
 		{
 		}
 
-		public RuleAction(XmlElement node) : base(node)
+		public AssetRule(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "type":
-						this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), propertyNode.InnerText);
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
 						continue;
 					case "description":
 						this._Description = propertyNode.InnerText;
+						continue;
+					case "conditions":
+						this._Conditions = new List<Condition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+						}
+						continue;
+					case "actions":
+						this._Actions = new List<RuleAction>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Actions.Add(ObjectFactory.Create<RuleAction>(arrayNode));
+						}
 						continue;
 				}
 			}
@@ -93,19 +138,28 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaRuleAction");
-			kparams.AddIfNotNull("type", this._Type);
+				kparams.AddReplace("objectType", "KalturaAssetRule");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("description", this._Description);
+			kparams.AddIfNotNull("conditions", this._Conditions);
+			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case TYPE:
-					return "Type";
+				case ID:
+					return "Id";
+				case NAME:
+					return "Name";
 				case DESCRIPTION:
 					return "Description";
+				case CONDITIONS:
+					return "Conditions";
+				case ACTIONS:
+					return "Actions";
 				default:
 					return base.getPropertyName(apiName);
 			}

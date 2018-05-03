@@ -239,8 +239,8 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentMethodExternalIdRequired = "6051";
-		public static string PaymentGatewayExternalVerification = "6052";
+		public static string PaymentGatewaySuspended = "6051";
+		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
@@ -327,6 +327,7 @@ namespace Kaltura
 		public static string ArgumentMaxValueCrossed = "500047";
 		public static string ArgumentMinValueCrossed = "500048";
 		public static string ArgumentsConflictEachOther = "500061";
+		public static string ArgumentsDuplicate = "500066";
 		public static string MediaIdsMustBeNumeric = "500029";
 		public static string EpgInternalIdsMustBeNumeric = "500030";
 		public static string ListTypeCannotBeEmptyOrAll = "500032";

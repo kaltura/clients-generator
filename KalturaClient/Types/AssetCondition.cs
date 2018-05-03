@@ -25,14 +25,75 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class RuleActionType : StringEnum
-	{
-		public static readonly RuleActionType BLOCK = new RuleActionType("BLOCK");
-		public static readonly RuleActionType START_DATE_OFFSET = new RuleActionType("START_DATE_OFFSET");
-		public static readonly RuleActionType END_DATE_OFFSET = new RuleActionType("END_DATE_OFFSET");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
 
-		private RuleActionType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class AssetCondition : Condition
+	{
+		#region Constants
+		public const string KSQL = "ksql";
+		#endregion
+
+		#region Private Fields
+		private string _Ksql = null;
+		#endregion
+
+		#region Properties
+		public string Ksql
+		{
+			get { return _Ksql; }
+			set 
+			{ 
+				_Ksql = value;
+				OnPropertyChanged("Ksql");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public AssetCondition()
+		{
+		}
+
+		public AssetCondition(XmlElement node) : base(node)
+		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "ksql":
+						this._Ksql = propertyNode.InnerText;
+						continue;
+				}
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaAssetCondition");
+			kparams.AddIfNotNull("ksql", this._Ksql);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case KSQL:
+					return "Ksql";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

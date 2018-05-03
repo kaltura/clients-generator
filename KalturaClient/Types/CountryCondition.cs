@@ -33,55 +33,55 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class RuleAction : ObjectBase
+	public class CountryCondition : Condition
 	{
 		#region Constants
-		public const string TYPE = "type";
-		public const string DESCRIPTION = "description";
+		public const string NOT = "not";
+		public const string COUNTRIES = "countries";
 		#endregion
 
 		#region Private Fields
-		private RuleActionType _Type = null;
-		private string _Description = null;
+		private bool? _Not = null;
+		private string _Countries = null;
 		#endregion
 
 		#region Properties
-		public RuleActionType Type
+		public bool? Not
 		{
-			get { return _Type; }
+			get { return _Not; }
 			set 
 			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
+				_Not = value;
+				OnPropertyChanged("Not");
 			}
 		}
-		public string Description
+		public string Countries
 		{
-			get { return _Description; }
+			get { return _Countries; }
 			set 
 			{ 
-				_Description = value;
-				OnPropertyChanged("Description");
+				_Countries = value;
+				OnPropertyChanged("Countries");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public RuleAction()
+		public CountryCondition()
 		{
 		}
 
-		public RuleAction(XmlElement node) : base(node)
+		public CountryCondition(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "type":
-						this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), propertyNode.InnerText);
+					case "not":
+						this._Not = ParseBool(propertyNode.InnerText);
 						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
+					case "countries":
+						this._Countries = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -93,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaRuleAction");
-			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("description", this._Description);
+				kparams.AddReplace("objectType", "KalturaCountryCondition");
+			kparams.AddIfNotNull("not", this._Not);
+			kparams.AddIfNotNull("countries", this._Countries);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case TYPE:
-					return "Type";
-				case DESCRIPTION:
-					return "Description";
+				case NOT:
+					return "Not";
+				case COUNTRIES:
+					return "Countries";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -33,28 +33,17 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class RuleAction : ObjectBase
+	public class Condition : ObjectBase
 	{
 		#region Constants
-		public const string TYPE = "type";
 		public const string DESCRIPTION = "description";
 		#endregion
 
 		#region Private Fields
-		private RuleActionType _Type = null;
 		private string _Description = null;
 		#endregion
 
 		#region Properties
-		public RuleActionType Type
-		{
-			get { return _Type; }
-			set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
-		}
 		public string Description
 		{
 			get { return _Description; }
@@ -67,19 +56,16 @@ namespace Kaltura.Types
 		#endregion
 
 		#region CTor
-		public RuleAction()
+		public Condition()
 		{
 		}
 
-		public RuleAction(XmlElement node) : base(node)
+		public Condition(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "type":
-						this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), propertyNode.InnerText);
-						continue;
 					case "description":
 						this._Description = propertyNode.InnerText;
 						continue;
@@ -93,8 +79,7 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaRuleAction");
-			kparams.AddIfNotNull("type", this._Type);
+				kparams.AddReplace("objectType", "KalturaCondition");
 			kparams.AddIfNotNull("description", this._Description);
 			return kparams;
 		}
@@ -102,8 +87,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case TYPE:
-					return "Type";
 				case DESCRIPTION:
 					return "Description";
 				default:
