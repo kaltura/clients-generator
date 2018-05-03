@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 6.2.0 (2018-05-03)
+
+### Features
+
+* parse relatedObjects in responses from the server
 
 ## 6.1.2 (2018-04-08)
 

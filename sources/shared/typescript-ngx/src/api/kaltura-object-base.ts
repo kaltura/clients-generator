@@ -51,7 +51,9 @@ export abstract class KalturaObjectBase{
 
     protected _getMetadata() : KalturaObjectMetadata
     {
-        return { properties : {}};
+        return { properties : {
+	        relatedObjects: { type: 'a', readOnly: true },
+        }};
     }
 
     public hasMetadataProperty(propertyName: string): boolean
