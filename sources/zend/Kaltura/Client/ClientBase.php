@@ -337,6 +337,12 @@ class Kaltura_Client_ClientBase
 	{
 		$this->responseHeaders = array();
 		$requestHeaders = $this->config->requestHeaders;
+        
+        // Check for GET and append params to url
+        if( $this->config->method == self::METHOD_GET ) {
+            $opt = http_build_query($params, null, "&");
+            $url = $url . '?' . $opt;
+        }
 
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
@@ -489,7 +495,7 @@ class Kaltura_Client_ClientBase
 		return $this->config;
 	}
 
-	/**
+/**
 	 * @param Kaltura_Client_Configuration $config
 	 */
 	public function setConfig(Kaltura_Client_Configuration $config)
