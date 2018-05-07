@@ -8,6 +8,8 @@ import com.kaltura.client.types.OTTUserDynamicData;
 import com.kaltura.client.types.StringValue;
 import com.kaltura.client.utils.response.base.Response;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -27,6 +29,7 @@ public class UpdateDynamicDataTests extends BaseTest {
         user = ottUserResponse.results;
     }
 
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/updateDynamicData - updateDynamicData")
     @Test
     private void updateDynamicData() {

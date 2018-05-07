@@ -248,7 +248,10 @@ public class GsonParser {
         }
         
         ListResponse<T> listResponse = new ListResponse<T>();
-        listResponse.setTotalCount(jsonObject.getAsJsonPrimitive("totalCount").getAsInt());
+         JsonPrimitive totalCount = jsonObject.getAsJsonPrimitive("totalCount");
+        if (null != totalCount) {
+            listResponse.setTotalCount(totalCount.getAsInt());
+        }
         listResponse.setObjects(parseArray(jsonObject.getAsJsonArray("objects"), clz));
 
         return listResponse;

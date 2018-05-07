@@ -21,15 +21,6 @@ public class Properties {
     public static final String PARTNER_ID = "partner_id";
 
     // global users
-    public static final String ADMINISTRATOR_USER_USERNAME = "administrator_user_username";
-    public static final String ADMINISTRATOR_USER_PASSWORD = "administrator_user_password";
-
-    public static final String OPERATOR_USER_USERNAME = "operator_user_username";
-    public static final String OPERATOR_USER_PASSWORD = "operator_user_password";
-
-    public static final String MANAGER_USER_USERNAME = "manager_user_username";
-    public static final String MANAGER_USER_PASSWORD = "manager_user_password";
-
     public static final String DEFAULT_USER_PASSWORD = "default_user_password";
 
     // file types
@@ -59,11 +50,6 @@ public class Properties {
 
     // product codes
     public static final String DEFAULT_PRODUCT_CODE = "default_product_code";
-
-    // discount modules
-    public static final String FIFTY_PERCENTS_ILS_DISCOUNT_NAME = "fifty_percents_ils_discount_name";
-    public static final String HUNDRED_PERCENTS_UKP_DISCOUNT_NAME = "hundred_percents_ukp_discount_name";
-
 
     public static String getProperty(String propertyKey) {
         if (resourceBundle == null) {

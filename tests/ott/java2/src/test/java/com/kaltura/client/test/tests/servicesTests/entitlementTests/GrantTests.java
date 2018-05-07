@@ -76,7 +76,7 @@ public class GrantTests extends BaseTest {
         client.setUserId(null);
 
         BillingTransaction billingTransaction;
-        TransactionHistoryFilter transactionHistoryfilter = new TransactionHistoryFilter();
+        TransactionHistoryFilter transactionHistoryfilter =  new TransactionHistoryFilter();
         transactionHistoryfilter.orderBy(TransactionHistoryOrderBy.CREATE_DATE_ASC.getValue());
         transactionHistoryfilter.entityReferenceEqual(EntityReferenceBy.USER.getValue());
 

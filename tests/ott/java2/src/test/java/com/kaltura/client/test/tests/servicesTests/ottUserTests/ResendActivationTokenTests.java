@@ -6,6 +6,8 @@ import com.kaltura.client.test.tests.BaseTest;
 import com.kaltura.client.types.OTTUser;
 import com.kaltura.client.utils.response.base.Response;
 import io.qameta.allure.Description;
+import io.qameta.allure.Severity;
+import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,6 +30,7 @@ public class ResendActivationTokenTests extends BaseTest {
         login(client, partnerId, user.getUsername(), defaultUserPassword, null, null);
     }
 
+    @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/resendActivationToken - resendActivationToken")
     @Test(enabled = false)
     private void resendActivationToken() {

@@ -3,7 +3,8 @@ package com.kaltura.client.test.utils;
 import com.kaltura.client.Logger;
 import com.kaltura.client.enums.AssetOrderBy;
 import com.kaltura.client.enums.AssetReferenceType;
-import com.kaltura.client.test.servicesImpl.AssetServiceImpl;
+import com.kaltura.client.services.AssetService;
+import com.kaltura.client.services.AssetService.*;
 import com.kaltura.client.types.*;
 import com.kaltura.client.utils.response.base.Response;
 import io.restassured.RestAssured;
@@ -78,6 +79,7 @@ public class IngestUtils extends BaseUtils {
     private static int PP_DEFAULT_MAX_VIEWS_VALUE = 0;
     private static boolean PP_DEFAULT_IS_RENEWABLE_VALUE = false;
     private static int PP_DEFAULT_RECURRING_PERIODS_VALUE = 1;
+
 
     // ingest new EPG (Programmes) // TODO: complete one-by-one needed fields to cover util ingest_epg from old project
     public static Response<ListResponse<Asset>> ingestEPG(String epgChannelName, Optional<Integer> programCount, Optional<String> firstProgramStartDate,
@@ -182,16 +184,20 @@ public class IngestUtils extends BaseUtils {
         int delayBetweenRetriesInSeconds = 3;
         int maxTimeExpectingValidResponseInSeconds = 60;
         await().pollInterval(delayBetweenRetriesInSeconds, TimeUnit.SECONDS).atMost(maxTimeExpectingValidResponseInSeconds, TimeUnit.SECONDS)
-                .until(isDataReturned(assetFilter, programCountValue*seasonCountValue));
+                .until(isDataReturned(getAnonymousKs(), assetFilter, programCountValue*seasonCountValue));
 
-        Response<ListResponse<Asset>> ingestedProgrammes = AssetServiceImpl.list(getClient(getAnonymousKs()), assetFilter, null);
+        Response<ListResponse<Asset>> ingestedProgrammes = executor.executeSync(
+                AssetService.list(assetFilter, null).setKs(getAnonymousKs()));
         // TODO: complete Asset.json at least for programs
         return ingestedProgrammes;
     }
 
-    private static Callable<Boolean> isDataReturned(SearchAssetFilter assetFilter, int totalCount) {
-        return () -> (AssetServiceImpl.list(getClient(getAnonymousKs()), assetFilter, null).error == null &&
-                AssetServiceImpl.list(getClient(getAnonymousKs()), assetFilter, null).results.getTotalCount() == totalCount);
+    private static Callable<Boolean> isDataReturned(String ks, SearchAssetFilter assetFilter, int totalCount) {
+        return () -> {
+            ListAssetBuilder listAssetBuilder = AssetService.list(assetFilter, null).setKs(ks);
+            return executor.executeSync(listAssetBuilder).error == null &&
+                executor.executeSync(listAssetBuilder).results.getTotalCount() == totalCount;
+        };
     }
 
     private static String getChannelXML(int partnerId, String epgChannelName, String programsXml) {
@@ -358,7 +364,9 @@ public class IngestUtils extends BaseUtils {
         String descriptionValue = description.orElse(MPP_DEFAULT_DESCRIPTION_VALUE);
         String startDateValue = startDate.orElse(MPP_DEFAULT_START_DATE_VALUE);
         String endDateValue = endDate.orElse(MPP_DEFAULT_END_DATE_VALUE);
-        String internalDiscountValue = internalDiscount.orElse(getProperty(HUNDRED_PERCENTS_UKP_DISCOUNT_NAME));
+        String defaultCurrencyOfDiscount4IngestMpp = "GBP";
+        int defaultPercentageOfDiscount4IngestMpp = 100;
+        String internalDiscountValue = internalDiscount.orElse(DBUtils.getDiscountByPercentAndCurrency(defaultCurrencyOfDiscount4IngestMpp, defaultPercentageOfDiscount4IngestMpp));
         String productCodeValue = productCode.orElse("");
         boolean isRenewableValue = isRenewable.orElse(MPP_DEFAULT_IS_RENEWABLE_VALUE);
         int gracePeriodMinuteValue = gracePeriodMinute.orElse(MPP_DEFAULT_GRACE_PERIOD_VALUE);
@@ -509,7 +517,9 @@ public class IngestUtils extends BaseUtils {
         int maxViewsValue = maxViews.orElse(PP_DEFAULT_MAX_VIEWS_VALUE);
         String priceValue = price.orElse(getProperty(PRICE_CODE_AMOUNT));
         String currencyValue = currency.orElse(CURRENCY_EUR);
-        String discountValue = discount.orElse(getProperty(HUNDRED_PERCENTS_UKP_DISCOUNT_NAME));
+        String defaultCurrencyOfDiscount4IngestMpp = "GBP";
+        int defaultPercentageOfDiscount4IngestMpp = 100;
+        String discountValue = discount.orElse(DBUtils.getDiscountByPercentAndCurrency(defaultCurrencyOfDiscount4IngestMpp, defaultPercentageOfDiscount4IngestMpp));
         boolean isRenewableValue = isRenewable.orElse(PP_DEFAULT_IS_RENEWABLE_VALUE);
         int recurringPeriodsValue = recurringPeriods.orElse(PP_DEFAULT_RECURRING_PERIODS_VALUE);
 
@@ -622,15 +632,17 @@ public class IngestUtils extends BaseUtils {
         String ppvCodeValue = ppvCode.orElse(getRandomValue("PPV_", MAX_RANDOM_GENERATED_VALUE_4_INGEST));
         boolean isActiveValue = isActive.isPresent() ? isActive.get() : true;
         String descriptionValue = description.orElse("My ingest PPV");
-        String discountValue = discount.orElseGet(() -> getProperty(FIFTY_PERCENTS_ILS_DISCOUNT_NAME));
-        double priceValue = price.orElseGet(() -> Double.valueOf(getProperty(PRICE_CODE_AMOUNT)));
+        String defaultCurrencyOfDiscount4IngestPpv = "ILS";
+        int defaultPercentageOfDiscount4IngestPpv = 50;
+        String discountValue = discount.orElse(DBUtils.getDiscountByPercentAndCurrency(defaultCurrencyOfDiscount4IngestPpv, defaultPercentageOfDiscount4IngestPpv));
+        double priceValue = price.orElse(Double.valueOf(getProperty(PRICE_CODE_AMOUNT)));
         String currencyValue = currency.orElse(CURRENCY_EUR);
-        String usageModuleValue = usageModule.orElseGet(() -> getProperty(DEFAULT_USAGE_MODULE_4_INGEST_PPV));
+        String usageModuleValue = usageModule.orElse(getProperty(DEFAULT_USAGE_MODULE_4_INGEST_PPV));
         boolean isSubscriptionOnlyValue = isSubscriptionOnly.isPresent() ? isSubscriptionOnly.get() : false;
         boolean isFirstDeviceLimitationValue = isFirstDeviceLimitation.isPresent() ? isFirstDeviceLimitation.get() : false;
-        String productCodeValue = productCode.orElseGet(() -> getProperty(DEFAULT_PRODUCT_CODE));
-        String firstFileTypeValue = firstFileType.orElseGet(() -> getProperty(WEB_FILE_TYPE));
-        String secondFileTypeValue = secondFileType.orElseGet(() -> getProperty(MOBILE_FILE_TYPE));
+        String productCodeValue = productCode.orElse(getProperty(DEFAULT_PRODUCT_CODE));
+        String firstFileTypeValue = firstFileType.orElse(getProperty(WEB_FILE_TYPE));
+        String secondFileTypeValue = secondFileType.orElse(getProperty(MOBILE_FILE_TYPE));
 
         String url = getProperty(INGEST_BASE_URL) + "/Ingest_" + getProperty(API_VERSION) + "/Service.svc?wsdl";
         HashMap headerMap = new HashMap<>();
@@ -808,21 +820,22 @@ public class IngestUtils extends BaseUtils {
 
         int delayBetweenRetriesInSeconds = 3;
         int maxTimeExpectingValidResponseInSeconds = 60;
-        await().pollInterval(delayBetweenRetriesInSeconds, TimeUnit.SECONDS).atMost(maxTimeExpectingValidResponseInSeconds, TimeUnit.SECONDS).until(isDataReturned(id, actionValue));
-        Response<Asset> mediaAssetDetails = AssetServiceImpl.get(getClient(getAnonymousKs()), id, AssetReferenceType.MEDIA);
+        await().pollInterval(delayBetweenRetriesInSeconds, TimeUnit.SECONDS).atMost(maxTimeExpectingValidResponseInSeconds, TimeUnit.SECONDS).until(isDataReturned(getAnonymousKs(), id, actionValue));
         if (!INGEST_ACTION_DELETE.equals(actionValue)) {
-            mediaAsset.setMediaFiles(mediaAssetDetails.results.getMediaFiles());
+            mediaAsset.setMediaFiles(executor.executeSync(
+                    AssetService.get(id, AssetReferenceType.MEDIA).setKs(getAnonymousKs())).results.getMediaFiles());
         }
 
         // TODO: 4/15/2018 add log for ingest and index failures
         return mediaAsset;
     }
 
-    private static Callable<Boolean> isDataReturned(String mediaId, String action) {
+    private static Callable<Boolean> isDataReturned(String ks, String mediaId, String action) {
+        GetAssetBuilder getAssetBuilder = AssetService.get(mediaId, AssetReferenceType.MEDIA).setKs(ks);
         if (INGEST_ACTION_DELETE.equals(action)) {
-            return () -> AssetServiceImpl.get(getClient(getAnonymousKs()), mediaId, AssetReferenceType.MEDIA).error != null;
+            return () -> (executor.executeSync(getAssetBuilder).error != null);
         } else {
-            return () -> AssetServiceImpl.get(getClient(getAnonymousKs()), mediaId, AssetReferenceType.MEDIA).error == null;
+            return () -> (executor.executeSync(getAssetBuilder).error == null);
         }
     }
 
@@ -965,9 +978,9 @@ public class IngestUtils extends BaseUtils {
         //mediaAsset.setStartDate(startDate);
         //mediaAsset.setEndDate(endDate);
 
-        await().pollInterval(3, TimeUnit.SECONDS).atMost(45, TimeUnit.SECONDS).until(isDataReturned(INGEST_ACTION_INSERT, id));
-        Response<Asset> mediaAssetDetails = AssetServiceImpl.get(getClient(getAnonymousKs()), id, AssetReferenceType.MEDIA);
-        mediaAsset.setMediaFiles(mediaAssetDetails.results.getMediaFiles());
+        await().pollInterval(3, TimeUnit.SECONDS).atMost(45, TimeUnit.SECONDS).until(isDataReturned(getAnonymousKs(), INGEST_ACTION_INSERT, id));
+        mediaAsset.setMediaFiles(executor.executeSync(
+                AssetService.get(id, AssetReferenceType.MEDIA).setKs(getAnonymousKs())).results.getMediaFiles());
 
         // TODO: 4/15/2018 add log for ingest and index failures
         return mediaAsset;

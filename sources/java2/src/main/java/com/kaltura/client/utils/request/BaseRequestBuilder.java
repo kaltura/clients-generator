@@ -19,9 +19,9 @@ import java.util.Map;
 /**
  * Created by tehilarozin on 14/08/2016.
  */
-public abstract class BaseRequestBuilder<T> extends RequestBuilderData implements RequestElement<T> {
+public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends RequestBuilderData<SelfType> implements RequestElement<ReturnedType> {
 
-	protected Class<T> type;
+	protected Class<ReturnedType> type;
     protected String url;
     protected Files files = null;
     protected HashMap<String, String> headers;
@@ -30,9 +30,9 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     /**
      * callback for the parsed response.
      */
-    protected OnCompletion<Response<T>> onCompletion;
+    protected OnCompletion<Response<ReturnedType>> onCompletion;
 
-    protected BaseRequestBuilder(Class<T> type) {
+    protected BaseRequestBuilder(Class<ReturnedType> type) {
     	super();
     	this.type = type;
     }
@@ -63,7 +63,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         params.putAll(objParams); // !! null params should be checked - should not appear in request body or be presented as empty string.
 	}
 
-    public BaseRequestBuilder<T> setFile(String key, FileHolder value) {
+    public BaseRequestBuilder<ReturnedType> setFile(String key, FileHolder value) {
         if (files != null) {
             files.add(key, value);
         }
@@ -142,33 +142,33 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
         }
     }
 
-    public RequestElement<T> build(final Client client) {
+    public RequestElement<ReturnedType> build(final Client client) {
         return build(client, false);
     }
 
     @SuppressWarnings("unchecked")
 	@Override
-    final public Response<T> parseResponse(ResponseElement response) {
-        T result = null;
+    final public Response<ReturnedType> parseResponse(ResponseElement response) {
+        ReturnedType result = null;
         APIException error = null;
 
         if (!response.isSuccess()) {
             error = generateErrorResponse(response);
         } else {
             try {
-                result = (T) parse(response.getResponse());
+                result = (ReturnedType) parse(response.getResponse());
             } catch (APIException e) {
                 error = e;
             }
         }
 
-        return new Response<T>(result, error);
+        return new Response<ReturnedType>(result, error);
     }
 
     @Override
-    public void onComplete(Response<T> response) {
+    public void onComplete(Response<ReturnedType> response) {
         if(onCompletion != null) {
-            onCompletion.onComplete((Response<T>) response);
+            onCompletion.onComplete((Response<ReturnedType>) response);
         }
     }
 
@@ -185,7 +185,7 @@ public abstract class BaseRequestBuilder<T> extends RequestBuilderData implement
     	return exception;
     }
     
-    public RequestElement<T> build(final Client client, boolean addSignature) {
+    public RequestElement<ReturnedType> build(final Client client, boolean addSignature) {
         connectionConfig = client != null ? client.getConnectionConfiguration() : Configuration.getDefaults();
 
         prepareParams(client, addSignature);
