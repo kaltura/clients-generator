@@ -320,7 +320,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @SuppressWarnings("rawtypes")
-	private ResponseElement onGotResponse(Response response, RequestElement action) {
+	protected ResponseElement onGotResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
 
         if (!response.isSuccessful()) { // in case response has failure status
@@ -342,7 +342,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         }
     }
 
-    private String getRequestId(Response response) {
+    protected String getRequestId(Response response) {
         try {
             return response.request().tag().toString();
         } catch (NullPointerException e) {

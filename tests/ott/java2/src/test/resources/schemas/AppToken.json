@@ -1,0 +1,58 @@
+{
+  "$id": "AppToken",
+  "definitions": {
+    "AppToken": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 0
+        },
+        "partnerId": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sessionDuration": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hashType": {
+          "type": "string",
+          "minLength": 0
+        },
+        "token": {
+          "type": "string",
+          "minLength": 0
+        },
+        "sessionUserId": {
+          "type": "string",
+          "minLength": 0
+        },
+        "objectType": {
+          "type": "string",
+          "enum": ["AppToken"],
+          "minLength": 0
+        }
+      },
+      "required": [
+        "id",
+        "partnerId",
+        "sessionDuration",
+        "hashType",
+        "token",
+        "sessionUserId",
+        "objectType"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "result": {
+      "ref": "#/definitions/AppToken"
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

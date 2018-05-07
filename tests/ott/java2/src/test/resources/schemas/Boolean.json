@@ -1,0 +1,9 @@
+{
+  "$id": "Boolean.json",
+  "type": "object",
+  "properties": {
+    "result": {"type": "boolean", "enum": [true]},
+    "executionTime": {"type": "number", "minimum": 0}
+  },
+  "required": ["result", "executionTime"]
+}
