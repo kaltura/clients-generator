@@ -10,7 +10,6 @@ public class ListTests extends BaseTest {
 
     @BeforeClass
     public void beforeClass() {
-        client = getClient(getOperatorKs());
 
         /*Ppv ppv = IngestUtils.ingestPPV(INGEST_ACTION_INSERT, true, "My ingest PPV", getProperty(FIFTY_PERCENTS_ILS_DISCOUNT_NAME),
                 Double.valueOf(getProperty(PRICE_CODE_AMOUNT_4_99)), CURRENCY_EUR, getProperty(DEFAULT_USAGE_MODULE_4_INGEST_PPV), false, false,

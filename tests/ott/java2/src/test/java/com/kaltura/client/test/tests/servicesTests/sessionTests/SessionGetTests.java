@@ -30,7 +30,7 @@ public class SessionGetTests extends BaseTest {
     @Description("session/action/get - master user")
     @Test
     private void getMasterUserSession() {
-        Household household = HouseholdUtils.createHouseHold(2, 1, false);
+        Household household = HouseholdUtils.createHousehold(2, 1, false);
         HouseholdUser user = HouseholdUtils.getMasterUserFromHousehold(household);
         String udid = HouseholdUtils.getDevicesListFromHouseHold(household).get(0).getUdid();
         String session = OttUserUtils.getKs(Integer.parseInt(user.getUserId()), udid);

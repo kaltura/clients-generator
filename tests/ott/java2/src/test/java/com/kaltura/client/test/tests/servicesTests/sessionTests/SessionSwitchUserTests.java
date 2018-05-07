@@ -34,7 +34,7 @@ public class SessionSwitchUserTests extends BaseTest {
     @Test
     private void SwitchUser() {
 
-        Household household = HouseholdUtils.createHouseHold(2, 1, false);
+        Household household = HouseholdUtils.createHousehold(2, 1, false);
         String udid = HouseholdUtils.getDevicesListFromHouseHold(household).get(0).getUdid();
         String masterUserKs = HouseholdUtils.getHouseholdMasterUserKs(household, udid);
         String secondUserId = HouseholdUtils.getRegularUsersListFromHouseHold(household).get(0).getUserId();
@@ -85,7 +85,7 @@ public class SessionSwitchUserTests extends BaseTest {
     @Description("/session/action/switchUser - user switch to himself")
     @Test
     private void SwitchUserToHimself() {
-        Household household = HouseholdUtils.createHouseHold(2, 1, false);
+        Household household = HouseholdUtils.createHousehold(2, 1, false);
         String udid = HouseholdUtils.getDevicesListFromHouseHold(household).get(0).getUdid();
         String masterUserKs = HouseholdUtils.getHouseholdMasterUserKs(household, udid);
         String masterUserId = HouseholdUtils.getMasterUserFromHousehold(household).getUserId();

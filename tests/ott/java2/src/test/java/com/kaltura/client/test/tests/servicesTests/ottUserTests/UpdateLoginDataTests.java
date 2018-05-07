@@ -1,7 +1,5 @@
 package com.kaltura.client.test.tests.servicesTests.ottUserTests;
 
-import com.kaltura.client.Client;
-import com.kaltura.client.test.servicesImpl.OttUserServiceImpl;
 import com.kaltura.client.test.tests.BaseTest;
 import com.kaltura.client.types.LoginResponse;
 import com.kaltura.client.types.OTTUser;
@@ -11,43 +9,44 @@ import io.qameta.allure.Severity;
 import io.qameta.allure.SeverityLevel;
 import org.testng.annotations.Test;
 
-import static com.kaltura.client.test.servicesImpl.OttUserServiceImpl.register;
+import static com.kaltura.client.services.OttUserService.*;
 import static com.kaltura.client.test.utils.BaseUtils.getAPIExceptionFromList;
 import static com.kaltura.client.test.utils.OttUserUtils.generateOttUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UpdateLoginDataTests extends BaseTest {
 
-    private Client client;
-
-    private Response<Boolean> booleanResponse;
-    private Response<OTTUser> ottUserResponse;
-
+    private Response<LoginResponse> loginResponse;
 
     @Severity(SeverityLevel.CRITICAL)
     @Description("ottUser/action/updateLoginData - updateLoginData")
     @Test
-    private void updateLoginData() {
-        client = getClient(null);
+    private void updateLoginDataTest() {
+        // register user
+        OTTUser user = executor.executeSync(register(partnerId, generateOttUser(), defaultUserPassword)).results;
 
-        ottUserResponse = register(client, partnerId, generateOttUser(), defaultUserPassword);
-        OTTUser user = ottUserResponse.results;
+        // login user
+        loginResponse = executor.executeSync(login(partnerId, user.getUsername(), defaultUserPassword));
+        String userKs = loginResponse.results.getLoginSession().getKs();
 
-        Response<LoginResponse> loginResponse = OttUserServiceImpl.login(client, partnerId, user.getUsername(), defaultUserPassword, null, null);
-        client.setKs(loginResponse.results.getLoginSession().getKs());
-
-        booleanResponse = OttUserServiceImpl.updateLoginData(client, user.getUsername(), defaultUserPassword, defaultUserPassword + 1);
+        // update user login data
+        String userNewPassword = defaultUserPassword + 1;
+        UpdateLoginDataOttUserBuilder updateLoginDataOttUserBuilder = updateLoginData(user.getUsername(), defaultUserPassword, userNewPassword)
+            .setKs(userKs);
+        Response<Boolean> booleanResponse = executor.executeSync(updateLoginDataOttUserBuilder);
 
         assertThat(booleanResponse.error).isNull();
         assertThat(booleanResponse.results.booleanValue()).isTrue();
 
         // try login with old password
-        loginResponse = OttUserServiceImpl.login(client, partnerId, user.getUsername(), defaultUserPassword, null, null);
+        loginResponse = executor.executeSync(login(partnerId, user.getUsername(), defaultUserPassword));
+
         assertThat(loginResponse.results).isNull();
         assertThat(loginResponse.error.getCode()).isEqualTo(getAPIExceptionFromList(1011).getCode());
 
         // try login with new password
-        loginResponse = OttUserServiceImpl.login(client, partnerId, user.getUsername(), defaultUserPassword + 1, null, null);
+        loginResponse = executor.executeSync(login(partnerId, user.getUsername(), userNewPassword));
+
         assertThat(loginResponse.error).isNull();
         assertThat(loginResponse.results.getLoginSession().getKs()).isNotNull();
     }
@@ -56,24 +55,30 @@ public class UpdateLoginDataTests extends BaseTest {
     @Description("ottUser/action/updateLoginData - updateLoginData with administratorKs")
     @Test
     private void updateLoginData_with_administratorKs() {
-        client = getClient(getAdministratorKs());
+        // register user
+        OTTUser user = executor.executeSync(register(partnerId, generateOttUser(), defaultUserPassword)).results;
 
-        ottUserResponse = register(client, partnerId, generateOttUser(), defaultUserPassword);
-        OTTUser user = ottUserResponse.results;
+        // login user
+        loginResponse = executor.executeSync(login(partnerId, user.getUsername(), defaultUserPassword));
 
-        booleanResponse = OttUserServiceImpl.updateLoginData(client, user.getUsername(), defaultUserPassword, defaultUserPassword + 1);
+        // update usser login data
+        String userNewPassword = defaultUserPassword + 2;
+        UpdateLoginDataOttUserBuilder updateLoginDataOttUserBuilder = updateLoginData(user.getUsername(), defaultUserPassword, userNewPassword)
+                .setKs(getAdministratorKs());
+        Response<Boolean> booleanResponse = executor.executeSync(updateLoginDataOttUserBuilder);
 
         assertThat(booleanResponse.error).isNull();
         assertThat(booleanResponse.results.booleanValue()).isTrue();
 
         // try login with old password
-        client = getClient(null);
-        Response<LoginResponse> loginResponse = OttUserServiceImpl.login(client, partnerId, user.getUsername(), defaultUserPassword, null, null);
+        loginResponse = executor.executeSync(login(partnerId, user.getUsername(), defaultUserPassword));
+
         assertThat(loginResponse.results).isNull();
         assertThat(loginResponse.error.getCode()).isEqualTo(getAPIExceptionFromList(1011).getCode());
 
         // try login with new password
-        loginResponse = OttUserServiceImpl.login(client, partnerId, user.getUsername(), defaultUserPassword + 1, null, null);
+        loginResponse = executor.executeSync(login(partnerId, user.getUsername(), userNewPassword));
+
         assertThat(loginResponse.error).isNull();
         assertThat(loginResponse.results.getLoginSession().getKs()).isNotNull();
     }

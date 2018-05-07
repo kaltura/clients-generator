@@ -34,7 +34,7 @@ public class DeleteTests extends BaseTest {
     private void ottUser_delete_tests_setup() {
         int numberOfDevicesInHousehold = 0;
         int numberOfUsersInHousehold = 2;
-        household = HouseholdUtils.createHouseHold(numberOfUsersInHousehold, numberOfDevicesInHousehold, false);
+        household = HouseholdUtils.createHousehold(numberOfUsersInHousehold, numberOfDevicesInHousehold, false);
     }
 
     @Severity(SeverityLevel.CRITICAL)
@@ -42,21 +42,22 @@ public class DeleteTests extends BaseTest {
     @Test
     private void delete() {
         // register user
-        RegisterOttUserBuilder registerOttUserBuilder = register(partnerId, generateOttUser(), defaultUserPassword);
-        registerOttUserBuilder.setKs(getAdministratorKs());
+        RegisterOttUserBuilder registerOttUserBuilder = register(partnerId, generateOttUser(), defaultUserPassword)
+                .setKs(getAdministratorKs());
         OTTUser user = executor.executeSync(registerOttUserBuilder).results;
 
         // delete user and assert success
-        deleteOttUserBuilder = OttUserService.delete();
-        deleteOttUserBuilder.setKs(getAdministratorKs());
-        deleteOttUserBuilder.setUserId(Integer.valueOf(user.getId()));
-
+        deleteOttUserBuilder = OttUserService.delete()
+                .setKs(getAdministratorKs())
+                .setUserId(Integer.valueOf(user.getId()));
         boolean result = executor.executeSync(deleteOttUserBuilder).results;
+
         assertThat(result).isTrue();
 
         // try to get user and assert error
-        GetOttUserBuilder getOttUserBuilder = OttUserService.get();
-        getOttUserBuilder.setKs(getAdministratorKs());
+        GetOttUserBuilder getOttUserBuilder = OttUserService.get()
+                .setKs(getAdministratorKs())
+                .setUserId(Integer.valueOf(user.getId()));
         Response<OTTUser> ottUserResponse = executor.executeSync(getOttUserBuilder);
 
         assertThat(ottUserResponse.results).isNull();
@@ -72,10 +73,8 @@ public class DeleteTests extends BaseTest {
 
         // try to delete master user and assert error
         deleteOttUserBuilder = OttUserService.delete()
-            .setKs(getAdministratorKs())
-            .setUserId(Integer.valueOf(masterUser.getUserId()));
-        deleteOttUserBuilder.setKs(getAdministratorKs());
-        deleteOttUserBuilder.setUserId(Integer.valueOf(masterUser.getUserId()));
+                .setKs(getAdministratorKs())
+                .setUserId(Integer.valueOf(masterUser.getUserId()));
         booleanResponse = executor.executeSync(deleteOttUserBuilder);
 
         assertThat(booleanResponse.results).isNull();
@@ -90,9 +89,9 @@ public class DeleteTests extends BaseTest {
         HouseholdUser defaultUser = getDefaultUserFromHousehold(household);
 
         // try to delete default user and assert error
-        deleteOttUserBuilder = OttUserService.delete();
-        deleteOttUserBuilder.setKs(getAdministratorKs());
-        deleteOttUserBuilder.setUserId(Integer.valueOf(defaultUser.getUserId()));
+        deleteOttUserBuilder = OttUserService.delete()
+                .setKs(getAdministratorKs())
+                .setUserId(Integer.valueOf(defaultUser.getUserId()));
         booleanResponse = executor.executeSync(deleteOttUserBuilder);
 
         assertThat(booleanResponse.results).isNull();
@@ -101,8 +100,8 @@ public class DeleteTests extends BaseTest {
 
     @AfterClass
     private void ottUser_delete_tests_tearDown() {
-        DeleteHouseholdBuilder deleteHouseholdBuilder = HouseholdService.delete(Math.toIntExact(household.getId()));
-        deleteHouseholdBuilder.setKs(getAdministratorKs());
+        DeleteHouseholdBuilder deleteHouseholdBuilder = HouseholdService.delete(Math.toIntExact(household.getId()))
+                .setKs(getAdministratorKs());
         executor.executeSync(deleteHouseholdBuilder);
     }
 

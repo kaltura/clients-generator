@@ -30,7 +30,7 @@ public class SessionRevokeTests extends BaseTest {
     @Description("/session/action/revoke - 2 different kss")
     @Test
     private void RevokeKs() {
-        Household household = HouseholdUtils.createHouseHold(2, 2, false);
+        Household household = HouseholdUtils.createHousehold(2, 2, false);
         String udid = HouseholdUtils.getDevicesListFromHouseHold(household).get(0).getUdid();
         String masterUserKs = HouseholdUtils.getHouseholdMasterUserKs(household, null);
         String masterUserKs2 = HouseholdUtils.getHouseholdMasterUserKs(household, udid);
