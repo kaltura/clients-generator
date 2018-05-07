@@ -29,6 +29,7 @@ namespace Kaltura.Request
         private StringBuilder requestData;
         private byte[] bufferRead;
         private HttpWebRequest request;
+		private WebResponse response;
         private Stream responseStream;
         // Create Decoder for appropriate enconding type.
         private Decoder streamDecode = Encoding.UTF8.GetDecoder();
@@ -230,7 +231,6 @@ namespace Kaltura.Request
         {
             // Call EndGetResponse, which produces the WebResponse object
             //  that came from the request issued above.
-            WebResponse response;
             try
             {
                 response = request.EndGetResponse(result);
@@ -290,6 +290,7 @@ namespace Kaltura.Request
                 }
                 // Close down the response stream.
                 responseStream.Close();
+				response.Close();
             }
             return;
         }
