@@ -20,7 +20,7 @@ export interface KalturaObjectPropertyMetadata
 
 export interface KalturaObjectBaseArgs
 {
-
+	relatedObjects? : KalturaObjectBase[];
 }
 
 const logger = new KalturaLogger('KalturaObjectBase');
@@ -28,8 +28,9 @@ const logger = new KalturaLogger('KalturaObjectBase');
 export abstract class KalturaObjectBase{
 
     private _dependentProperties : { [key : string] : DependentProperty} = {};
+	relatedObjects : KalturaObjectBase[]; // see developer notice in method '_getMetadata()'
 
-    setData(handler : (request :  this) => void) :  this {
+	setData(handler : (request :  this) => void) :  this {
         if (handler) {
             handler(this);
         }
@@ -42,6 +43,8 @@ export abstract class KalturaObjectBase{
         {
             Object.assign(this, data);
         }
+
+	    if (typeof this.relatedObjects === 'undefined') this.relatedObjects = [];
     }
 
     public getTypeName() : string
@@ -51,7 +54,12 @@ export abstract class KalturaObjectBase{
 
     protected _getMetadata() : KalturaObjectMetadata
     {
-        return { properties : {}};
+        // DEVELOPER NOTICE: according to the server schema, property 'relatedObjects' should have be of type 'KalturaListResponse'.
+        // this is not an option as it created circle reference where KalturaListResponse > KalturaObjectBase > KalturaListResponse.
+        // Hence, we cannot set the type explicitly and we need to expose the default type 'KalturaObjectBase'
+        return { properties : {
+	        relatedObjects: { type: 'a', readOnly: true, subTypeConstructor : null, subType : 'KalturaListResponse'},
+        }};
     }
 
     public hasMetadataProperty(propertyName: string): boolean
