@@ -18,7 +18,7 @@ import static com.kaltura.client.services.OttUserService.login;
 import static com.kaltura.client.test.IngestConstants.CURRENCY_EUR;
 import static com.kaltura.client.test.IngestConstants.FIVE_MINUTES_PERIOD;
 import static com.kaltura.client.test.Properties.*;
-import static com.kaltura.client.test.utils.HouseholdUtils.createHouseHold;
+import static com.kaltura.client.test.utils.HouseholdUtils.createHousehold;
 import static com.kaltura.client.test.utils.HouseholdUtils.getUsersListFromHouseHold;
 import static com.kaltura.client.test.utils.OttUserUtils.getUserById;
 import static org.awaitility.Awaitility.setDefaultTimeout;
@@ -92,13 +92,6 @@ public class BaseTest {
         partnerId = Integer.parseInt(getProperty(PARTNER_ID));
         defaultUserPassword = getProperty(DEFAULT_USER_PASSWORD);
     }
-
-
-/*    public static Client getClient(String ks) {
-        Client client = new Client(config);
-        client.setKs(ks);
-        return client;
-    }*/
 
     // getters for shared params
     public static String getAdministratorKs() {
@@ -196,13 +189,14 @@ public class BaseTest {
             int numOfDevices = 2;
 
             if (sharedHousehold == null) {
-                sharedHousehold = createHouseHold(numOfUsers, numOfDevices, true);
+                sharedHousehold = createHousehold(numOfUsers, numOfDevices, true);
                 List<HouseholdUser> sharedHouseholdUsers = getUsersListFromHouseHold(sharedHousehold);
                 for (HouseholdUser user : sharedHouseholdUsers) {
                     if (user.getIsMaster() != null && user.getIsMaster()) {
                         sharedMasterUser = user;
                     }
-                    if (user.getIsMaster() == null && user.getIsDefault() == null) {
+                    // TODO: ask Alon if we have cases when commented part should be there? What tests related to that logic?
+                    if (user.getIsMaster() == null/* && user.getIsDefault() == null*/) {
                         sharedUser = user;
                     }
                 }

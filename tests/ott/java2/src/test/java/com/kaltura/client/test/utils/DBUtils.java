@@ -21,6 +21,9 @@ public class DBUtils extends BaseUtils {
     //selects
     private static final String ACTIVATION_TOKEN_SELECT = "SELECT [ACTIVATION_TOKEN] FROM [Users].[dbo].[users] WHERE [USERNAME] = '%S'";
     private static final String EPG_CHANNEL_ID_SELECT = "SELECT [ID] FROM [TVinci].[dbo].[epg_channels] WHERE [GROUP_ID] = %d AND [NAME] = '%S'";
+    private static final String CHECK_IS_ACTIVATION_USERS_NEEDED = "select [IS_ACTIVATION_NEEDED]\n" +
+                                                        "from [Users].[dbo].[groups_parameters]\n" +
+                                                        "where group_id=%d";
     private static final String USER_BY_ROLE_SELECT = "select top(1) u.username, u.[password]\n" +
                                                         "from [Users].[dbo].[users] u with(nolock)\n" +
                                                         "join [Users].[dbo].[users_roles] ur with(nolock) on (u.id=ur.[user_id])\n" +
@@ -121,10 +124,38 @@ public class DBUtils extends BaseUtils {
         return code;
     }
 
-    public static String getUserDataByRole(String userRole) {
+    public static boolean isActivationOfUsersNeeded() {
         openConnection();
         try {
-            rs = stam.executeQuery(String.format(USER_BY_ROLE_SELECT, userRole, BaseTest.partnerId));
+            rs = stam.executeQuery(String.format(CHECK_IS_ACTIVATION_USERS_NEEDED, BaseTest.partnerId));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(DBUtils.class).error("No data about activation users in account " + BaseTest.partnerId);
+        }
+        int result =-1;
+        try {
+            result = rs.getInt("IS_ACTIVATION_NEEDED");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(DBUtils.class).error("IS_ACTIVATION_NEEDED can't be null");
+        }
+        closeConnection();
+        return result == 1;
+    }
+
+    public static String getUserDataByRole(String userRole) {
+        String sqlQuery = USER_BY_ROLE_SELECT;
+        if (isActivationOfUsersNeeded()) {
+            sqlQuery += " and u.activate_status=1";
+        }
+        openConnection();
+        try {
+            rs = stam.executeQuery(String.format(sqlQuery, userRole, BaseTest.partnerId));
         } catch (SQLException e) {
             e.printStackTrace();
         }

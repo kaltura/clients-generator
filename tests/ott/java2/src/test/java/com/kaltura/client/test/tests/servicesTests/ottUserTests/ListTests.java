@@ -30,7 +30,7 @@ public class ListTests extends BaseTest {
 
     @BeforeClass
     private void ottUser_list_tests_setup() {
-        household = HouseholdUtils.createHouseHold(numberOfUsersInHousehold, numberOfDevicesInHousehold, false);
+        household = HouseholdUtils.createHousehold(numberOfUsersInHousehold, numberOfDevicesInHousehold, false);
     }
 
     @Severity(SeverityLevel.CRITICAL)
@@ -53,7 +53,7 @@ public class ListTests extends BaseTest {
 
         // assert users list size
         assertThat(householdUserListResponse.error).isNull();
-        assertThat(users.size()).isEqualTo(numberOfUsersInHousehold + 1);
+        assertThat(users.size()).isEqualTo(numberOfUsersInHousehold + 2);
     }
 
     @Severity(SeverityLevel.CRITICAL)

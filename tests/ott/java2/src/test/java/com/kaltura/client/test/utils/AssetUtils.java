@@ -1,8 +1,7 @@
 package com.kaltura.client.test.utils;
 
-import com.kaltura.client.Client;
 import com.kaltura.client.enums.AssetReferenceType;
-import com.kaltura.client.test.servicesImpl.AssetServiceImpl;
+import com.kaltura.client.services.AssetService;
 import com.kaltura.client.types.*;
 import com.kaltura.client.utils.response.base.Response;
 
@@ -10,8 +9,9 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kaltura.client.services.AssetService.*;
 import static com.kaltura.client.test.tests.BaseTest.SharedHousehold.getSharedMasterUserKs;
-import static com.kaltura.client.test.tests.BaseTest.getClient;
+import static com.kaltura.client.test.tests.BaseTest.executor;
 
 public class AssetUtils extends BaseUtils {
 
@@ -41,10 +41,13 @@ public class AssetUtils extends BaseUtils {
     }
 
     public static List<Integer> getAssetFileIds(String assetId) {
-        Client client = getClient(getSharedMasterUserKs());
 
         AssetReferenceType assetReferenceType = AssetReferenceType.get(AssetReferenceType.MEDIA.getValue());
-        Response<Asset> assetResponse = AssetServiceImpl.get(client, assetId, assetReferenceType);
+
+        GetAssetBuilder getAssetBuilder = AssetService.get(assetId,assetReferenceType);
+        getAssetBuilder.setKs(getSharedMasterUserKs());
+        Response<Asset> assetResponse = executor.executeSync(getAssetBuilder);
+
         List<MediaFile> mediafiles = assetResponse.results.getMediaFiles();
 
         List<Integer> fileIdsList = new ArrayList<>();
