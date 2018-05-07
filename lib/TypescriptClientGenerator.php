@@ -264,6 +264,9 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 			if ($propertyNode->nodeType != XML_ELEMENT_NODE || $propertyNode->nodeName !== 'property')
 				continue;
 
+			if ($propertyNode->getAttribute("name") === 'relatedObjects')
+                continue;
+
 			$propertyItem = new ClassTypeProperty();
 			$propertyItem->name = $propertyNode->getAttribute("name");
 			$propertyItem->writeOnly = $propertyNode->getAttribute("writeOnly") == "1";
