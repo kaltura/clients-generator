@@ -27,8 +27,26 @@ const logger = new KalturaLogger('KalturaObjectBase');
 
 export abstract class KalturaObjectBase{
 
-    private _dependentProperties : { [key : string] : DependentProperty} = {};
+	private _allowedEmptyArray: string[] = [];
+	private _dependentProperties : { [key : string] : DependentProperty} = {};
 	relatedObjects : KalturaObjectBase[]; // see developer notice in method '_getMetadata()'
+
+
+	allowEmptyArray(... properties: string[]): this {
+		const metadata = this._getMetadata().properties;
+		for (const property of properties) {
+			const metadataProperty = metadata[property];
+			if (!metadataProperty) {
+				logger.warn(`ignore property '${property}' flaged to allow empty array as it doesn't not exists on type (did you set the right property in method 'allowEmptyArray'?)`);
+			} else if (metadataProperty.type !== 'a') {
+				logger.warn(`ignore property '${property}' flaged to allow empty array as it is not of type array (did you set the right property in method 'allowEmptyArray'?)`);
+			} else {
+				this._allowedEmptyArray.push(property);
+			}
+		}
+
+		return this;
+	}
 
 	setData(handler : (request :  this) => void) :  this {
         if (handler) {
@@ -314,12 +332,13 @@ export abstract class KalturaObjectBase{
                                     }
                                 });
 
-                                if (parsedArray.length !== 0) {
-                                    if (parsedArray.length === value.length) {
-                                        result = {status: 'exists', value: parsedArray};
-                                    } else {
-                                        throw new Error(`failed to parse array. Expected all '${propertyName} items to be kaltura object`);
-                                    }
+                                const allowEmptyArrayAsAValue = this._allowedEmptyArray.indexOf(propertyName) !== -1;
+	                            if (allowEmptyArrayAsAValue || parsedArray.length !== 0) {
+	                                if (parsedArray.length === value.length) {
+		                                result = {status: 'exists', value: parsedArray};
+	                                } else {
+		                                throw new Error(`failed to parse array. Expected all '${propertyName} items to be kaltura object`);
+	                                }
                                 }
                             }else
                             {
