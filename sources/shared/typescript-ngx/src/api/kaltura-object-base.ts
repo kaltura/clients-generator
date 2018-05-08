@@ -32,7 +32,7 @@ export abstract class KalturaObjectBase{
 	relatedObjects : KalturaObjectBase[]; // see developer notice in method '_getMetadata()'
 
 
-	allowEmptyArray(... properties: string[]) {
+	allowEmptyArray(... properties: string[]): this {
 		const metadata = this._getMetadata().properties;
 		for (const property of properties) {
 			const metadataProperty = metadata[property];
@@ -44,6 +44,8 @@ export abstract class KalturaObjectBase{
 				this._allowedEmptyArray.push(property);
 			}
 		}
+
+		return this;
 	}
 
 	setData(handler : (request :  this) => void) :  this {
