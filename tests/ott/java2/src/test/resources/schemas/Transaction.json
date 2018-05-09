@@ -1,0 +1,54 @@
+{
+  "$id": "Transaction",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paymentGatewayReferenceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "paymentGatewayResponseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "failReasonCode": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "createdAt": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "objectType": {
+          "type": "string",
+          "enum": ["KalturaTransaction"]
+        }
+      },
+      "required": [
+        "id",
+        "paymentGatewayReferenceId",
+        "paymentGatewayResponseId",
+        "state",
+        "failReasonCode",
+        "createdAt",
+        "objectType"
+      ]
+    },
+    "executionTime": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "result"
+  ]
+}

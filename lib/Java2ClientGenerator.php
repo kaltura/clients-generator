@@ -909,7 +909,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		$this->startNewTextBlock();
 		$this->appendLine($this->getBanner());
-		$this->appendLine("public abstract class RequestBuilderData {");
+		$this->appendLine("public abstract class RequestBuilderData<SelfType> {");
 		$this->appendLine("	");
 		$this->appendLine("	protected Params params = new Params();");
 		$this->appendLine("	");
@@ -1052,8 +1052,9 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	/**");
 		$this->appendLine("	 * @param $name $description");
 		$this->appendLine("	 */");
-		$this->appendLine("	public void set{$methodsName}($type $name){");
+		$this->appendLine("	public SelfType set{$methodsName}($type $name){");
 		$this->appendLine("		params.add(\"$paramName\", $name);");
+		$this->appendLine("		return (SelfType) this;");
 		$this->appendLine("	}");
 		$this->appendLine("	");
 	}

@@ -1,0 +1,40 @@
+{
+  "$id": "OTTUserDynamicData",
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 0
+        },
+        "key": {
+          "type": "string",
+          "minLength": 0
+        },
+        "value": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string",
+              "minLength": 0
+            },
+            "objectType": {
+              "type": "string",
+              "minLength": 0
+            }
+          }
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 0
+        }
+      }
+    },
+    "executionTime": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

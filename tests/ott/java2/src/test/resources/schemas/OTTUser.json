@@ -1,0 +1,51 @@
+{
+  "$id": "OTTUser",
+  "definitions": {
+    "OTTUser": {
+      "type": "object",
+      "properties": {
+        "householdId": {"type": "integer", "minimum": 0},
+        "email": {"type": "string", "minLength": 5},
+        "country": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "integer", "minimum": 0},
+            "name": {"type": "string", "minLength": 0},
+            "code": {"type": "string", "minLength": 0},
+            "objectType": {"type": "string", "enum": ["KalturaCountry"]}
+          },
+          "required": ["id", "name", "code", "objectType"]
+        },
+        "countryId": {"type": "integer", "minimum": 0},
+        "userType": {
+          "type": "object",
+          "properties": {
+            "description": {"type": "string", "minLength": 0},
+            "objectType": {"type": "string", "enum": ["KalturaOTTUserType"]}
+          },
+          "required": ["description", "objectType"]
+        },
+        "dynamicData": {"type": "object"},
+        "isHouseholdMaster": {"type": "boolean"},
+        "suspentionState": {"type": "string", "minLength": 1},
+        "suspensionState": {"type": "string", "minLength": 1},
+        "userState": {"type": "string", "minLength": 1},
+        "id": {"type": "string", "minLength": 1},
+        "username": {"type": "string", "minLength": 1},
+        "firstName": {"type": "string", "minLength": 1},
+        "lastName": {"type": "string", "minLength": 1},
+        "objectType": {"type": "string", "enum": ["KalturaOTTUser"]}
+      },
+      "required": ["householdId", "email", "countryId", "dynamicData", "isHouseholdMaster", "suspentionState",
+        "suspensionState", "userState", "id", "username", "firstName", "lastName", "objectType"]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "result": {
+      "$ref": "#/definitions/OTTUser"
+    },
+    "executionTime": {"type": "number"}
+  },
+  "required": ["result", "executionTime"]
+}

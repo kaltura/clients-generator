@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 
-public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>> {
+public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>, MultiRequestBuilder> {
     private static final String TAG = "MultiRequestBuilder";
 
     /**

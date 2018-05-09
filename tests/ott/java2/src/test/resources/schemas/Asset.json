@@ -1,0 +1,18 @@
+{
+  "$id": "Asset",
+  "definitions": {
+    "Asset": {
+      "type": "object",
+      "properties": {
+        "objectType": {
+          "type": "string",
+          "minLength": 0
+        }
+      }
+    }
+  },
+  "executionTime": {
+    "type": "number",
+    "minimum": 0
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$id": "MultilingualStringValueArray",
+  "definitions": {
+    "MultilingualStringValueArray": {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "objectType": {
+                "type": "string",
+                "enum": ["KalturaMultilingualStringValue"]
+              }
+            }
+          }
+        },
+        "objectType": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$ref": "#/definitions/MultilingualStringValueArray"
+}
