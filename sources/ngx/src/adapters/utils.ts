@@ -17,7 +17,7 @@ export function  createEndpoint(request: KalturaRequestBase, options: KalturaCli
 
 	if (clientTag)
 	{
-		result += `?${buildQuerystring({clientTag})}`;
+		result += `?${_buildQuerystring({clientTag})}`;
 	}
 	return result;
 }
@@ -35,18 +35,26 @@ export function createClientTag(request: KalturaRequestBase, options: KalturaCli
 	}
 }
 
-export function buildQuerystring(data: {}, prefix?: string) {
+function _buildQuerystring(data: {}, prefix?: string) {
 	let str = [], p;
 	for (p in data) {
 		if (data.hasOwnProperty(p)) {
 			let k = prefix ? prefix + "[" + p + "]" : p, v = data[p];
 			str.push((v !== null && typeof v === "object") ?
-				buildQuerystring(v, k) :
+				_buildQuerystring(v, k) :
 				encodeURIComponent(k) + "=" + encodeURIComponent(v));
 		}
 	}
 	return str.join("&");
 
+}
+
+
+export function buildUrl(url: string, querystring: {}) {
+    let formattedUrl = (url).trim();
+    const urlHasQuerystring = formattedUrl.indexOf('?') !== -1;
+    const formattedQuerystring = _buildQuerystring(querystring);
+    return `${formattedUrl}${urlHasQuerystring ? '&' : '?'}${formattedQuerystring}`;
 }
 
 export function getHeaders(): any {
