@@ -28,49 +28,66 @@
 using System;
 using System.Xml;
 using System.Collections.Generic;
-using Kaltura.Enums;
+using System.IO;
 using Kaltura.Request;
+using Kaltura.Types;
+using Kaltura.Enums;
 
-namespace Kaltura.Types
+namespace Kaltura.Services
 {
-	public class AccessControlBlockAction : AssetRuleAction
+	public class AssetUserRuleAddRequestBuilder : RequestBuilder<AssetUserRule>
 	{
 		#region Constants
+		public const string ASSET_USER_RULE = "assetUserRule";
 		#endregion
 
-		#region Private Fields
-		#endregion
+		public AssetUserRule AssetUserRule
+		{
+			set;
+			get;
+		}
 
-		#region Properties
-		#endregion
-
-		#region CTor
-		public AccessControlBlockAction()
+		public AssetUserRuleAddRequestBuilder()
+			: base("assetuserrule", "add")
 		{
 		}
 
-		public AccessControlBlockAction(XmlElement node) : base(node)
+		public AssetUserRuleAddRequestBuilder(AssetUserRule assetUserRule)
+			: this()
 		{
+			this.AssetUserRule = assetUserRule;
 		}
-		#endregion
 
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
+		public override Params getParameters(bool includeServiceAndAction)
 		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAccessControlBlockAction");
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetUserRule"))
+				kparams.AddIfNotNull("assetUserRule", AssetUserRule);
 			return kparams;
 		}
-		protected override string getPropertyName(string apiName)
+
+		public override Files getFiles()
 		{
-			switch(apiName)
-			{
-				default:
-					return base.getPropertyName(apiName);
-			}
+			Files kfiles = base.getFiles();
+			return kfiles;
 		}
-		#endregion
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<AssetUserRule>(result);
+		}
+	}
+
+
+	public class AssetUserRuleService
+	{
+		private AssetUserRuleService()
+		{
+		}
+
+		public static AssetUserRuleAddRequestBuilder Add(AssetUserRule assetUserRule)
+		{
+			return new AssetUserRuleAddRequestBuilder(assetUserRule);
+		}
 	}
 }
-

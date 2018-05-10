@@ -33,55 +33,63 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class TimeOffsetRuleAction : AssetRuleAction
+	public class AssetUserRule : AssetRuleBase
 	{
 		#region Constants
-		public const string OFFSET = "offset";
-		public const string TIME_ZONE = "timeZone";
+		public const string CONDITIONS = "conditions";
+		public const string ACTIONS = "actions";
 		#endregion
 
 		#region Private Fields
-		private int _Offset = Int32.MinValue;
-		private bool? _TimeZone = null;
+		private IList<AssetCondition> _Conditions;
+		private IList<AssetUserRuleAction> _Actions;
 		#endregion
 
 		#region Properties
-		public int Offset
+		public IList<AssetCondition> Conditions
 		{
-			get { return _Offset; }
+			get { return _Conditions; }
 			set 
 			{ 
-				_Offset = value;
-				OnPropertyChanged("Offset");
+				_Conditions = value;
+				OnPropertyChanged("Conditions");
 			}
 		}
-		public bool? TimeZone
+		public IList<AssetUserRuleAction> Actions
 		{
-			get { return _TimeZone; }
+			get { return _Actions; }
 			set 
 			{ 
-				_TimeZone = value;
-				OnPropertyChanged("TimeZone");
+				_Actions = value;
+				OnPropertyChanged("Actions");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public TimeOffsetRuleAction()
+		public AssetUserRule()
 		{
 		}
 
-		public TimeOffsetRuleAction(XmlElement node) : base(node)
+		public AssetUserRule(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "offset":
-						this._Offset = ParseInt(propertyNode.InnerText);
+					case "conditions":
+						this._Conditions = new List<AssetCondition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<AssetCondition>(arrayNode));
+						}
 						continue;
-					case "timeZone":
-						this._TimeZone = ParseBool(propertyNode.InnerText);
+					case "actions":
+						this._Actions = new List<AssetUserRuleAction>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Actions.Add(ObjectFactory.Create<AssetUserRuleAction>(arrayNode));
+						}
 						continue;
 				}
 			}
@@ -93,19 +101,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaTimeOffsetRuleAction");
-			kparams.AddIfNotNull("offset", this._Offset);
-			kparams.AddIfNotNull("timeZone", this._TimeZone);
+				kparams.AddReplace("objectType", "KalturaAssetUserRule");
+			kparams.AddIfNotNull("conditions", this._Conditions);
+			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case OFFSET:
-					return "Offset";
-				case TIME_ZONE:
-					return "TimeZone";
+				case CONDITIONS:
+					return "Conditions";
+				case ACTIONS:
+					return "Actions";
 				default:
 					return base.getPropertyName(apiName);
 			}

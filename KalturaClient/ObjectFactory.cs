@@ -163,6 +163,8 @@ namespace Kaltura
 					return new ListResponse<AssetStatistics>(xmlElement);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(xmlElement);
+				case "KalturaAssetUserRuleListResponse":
+					return new ListResponse<AssetUserRule>(xmlElement);
 				case "KalturaCurrencyListResponse":
 					return new ListResponse<Currency>(xmlElement);
 				case "KalturaAssetRuleListResponse":

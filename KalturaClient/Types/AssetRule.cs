@@ -33,47 +33,19 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRule : ObjectBase
+	public class AssetRule : AssetRuleBase
 	{
 		#region Constants
-		public const string ID = "id";
-		public const string NAME = "name";
-		public const string DESCRIPTION = "description";
 		public const string CONDITIONS = "conditions";
 		public const string ACTIONS = "actions";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
-		private string _Name = null;
-		private string _Description = null;
 		private IList<Condition> _Conditions;
-		private IList<RuleAction> _Actions;
+		private IList<AssetRuleAction> _Actions;
 		#endregion
 
 		#region Properties
-		public long Id
-		{
-			get { return _Id; }
-		}
-		public string Name
-		{
-			get { return _Name; }
-			set 
-			{ 
-				_Name = value;
-				OnPropertyChanged("Name");
-			}
-		}
-		public string Description
-		{
-			get { return _Description; }
-			set 
-			{ 
-				_Description = value;
-				OnPropertyChanged("Description");
-			}
-		}
 		public IList<Condition> Conditions
 		{
 			get { return _Conditions; }
@@ -83,7 +55,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Conditions");
 			}
 		}
-		public IList<RuleAction> Actions
+		public IList<AssetRuleAction> Actions
 		{
 			get { return _Actions; }
 			set 
@@ -105,15 +77,6 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
-						continue;
 					case "conditions":
 						this._Conditions = new List<Condition>();
 						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
@@ -122,10 +85,10 @@ namespace Kaltura.Types
 						}
 						continue;
 					case "actions":
-						this._Actions = new List<RuleAction>();
+						this._Actions = new List<AssetRuleAction>();
 						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
 						{
-							this._Actions.Add(ObjectFactory.Create<RuleAction>(arrayNode));
+							this._Actions.Add(ObjectFactory.Create<AssetRuleAction>(arrayNode));
 						}
 						continue;
 				}
@@ -139,9 +102,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaAssetRule");
-			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("description", this._Description);
 			kparams.AddIfNotNull("conditions", this._Conditions);
 			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
@@ -150,12 +110,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
-				case NAME:
-					return "Name";
-				case DESCRIPTION:
-					return "Description";
 				case CONDITIONS:
 					return "Conditions";
 				case ACTIONS:

@@ -33,55 +33,64 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class TimeOffsetRuleAction : AssetRuleAction
+	public class AssetRuleBase : ObjectBase
 	{
 		#region Constants
-		public const string OFFSET = "offset";
-		public const string TIME_ZONE = "timeZone";
+		public const string ID = "id";
+		public const string NAME = "name";
+		public const string DESCRIPTION = "description";
 		#endregion
 
 		#region Private Fields
-		private int _Offset = Int32.MinValue;
-		private bool? _TimeZone = null;
+		private long _Id = long.MinValue;
+		private string _Name = null;
+		private string _Description = null;
 		#endregion
 
 		#region Properties
-		public int Offset
+		public long Id
 		{
-			get { return _Offset; }
+			get { return _Id; }
+		}
+		public string Name
+		{
+			get { return _Name; }
 			set 
 			{ 
-				_Offset = value;
-				OnPropertyChanged("Offset");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
-		public bool? TimeZone
+		public string Description
 		{
-			get { return _TimeZone; }
+			get { return _Description; }
 			set 
 			{ 
-				_TimeZone = value;
-				OnPropertyChanged("TimeZone");
+				_Description = value;
+				OnPropertyChanged("Description");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public TimeOffsetRuleAction()
+		public AssetRuleBase()
 		{
 		}
 
-		public TimeOffsetRuleAction(XmlElement node) : base(node)
+		public AssetRuleBase(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "offset":
-						this._Offset = ParseInt(propertyNode.InnerText);
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
 						continue;
-					case "timeZone":
-						this._TimeZone = ParseBool(propertyNode.InnerText);
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "description":
+						this._Description = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -93,19 +102,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaTimeOffsetRuleAction");
-			kparams.AddIfNotNull("offset", this._Offset);
-			kparams.AddIfNotNull("timeZone", this._TimeZone);
+				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("name", this._Name);
+			kparams.AddIfNotNull("description", this._Description);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case OFFSET:
-					return "Offset";
-				case TIME_ZONE:
-					return "TimeZone";
+				case ID:
+					return "Id";
+				case NAME:
+					return "Name";
+				case DESCRIPTION:
+					return "Description";
 				default:
 					return base.getPropertyName(apiName);
 			}
