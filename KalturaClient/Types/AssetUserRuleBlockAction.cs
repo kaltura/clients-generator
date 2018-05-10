@@ -25,15 +25,52 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class RuleActionType : StringEnum
-	{
-		public static readonly RuleActionType BLOCK = new RuleActionType("BLOCK");
-		public static readonly RuleActionType START_DATE_OFFSET = new RuleActionType("START_DATE_OFFSET");
-		public static readonly RuleActionType END_DATE_OFFSET = new RuleActionType("END_DATE_OFFSET");
-		public static readonly RuleActionType USER_BLOCK = new RuleActionType("USER_BLOCK");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
 
-		private RuleActionType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class AssetUserRuleBlockAction : AssetUserRuleAction
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public AssetUserRuleBlockAction()
+		{
+		}
+
+		public AssetUserRuleBlockAction(XmlElement node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaAssetUserRuleBlockAction");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+
