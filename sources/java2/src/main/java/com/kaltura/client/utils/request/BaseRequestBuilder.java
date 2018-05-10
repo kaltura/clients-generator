@@ -63,7 +63,7 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
         params.putAll(objParams); // !! null params should be checked - should not appear in request body or be presented as empty string.
 	}
 
-    public BaseRequestBuilder<ReturnedType> setFile(String key, FileHolder value) {
+    public BaseRequestBuilder<ReturnedType, SelfType> setFile(String key, FileHolder value) {
         if (files != null) {
             files.add(key, value);
         }

@@ -33,7 +33,7 @@
 /*
  String constants
  */
-static NSString* const KalturaServiceBaseUrl = @"/api_v3/";
+static NSString* const KalturaServiceBaseUrl = @"/api_v3";
 static NSString* const KalturaServiceFormatXml = @"2";
 NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
 
@@ -737,7 +737,7 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
     [self addRequestDefaultParams];
     [self addGlobalParamsAndSign];
     
-    NSMutableString* result = [[NSMutableString alloc] initWithFormat:@"%@%@service/%@/action/%@?", self.config.serviceUrl, KalturaServiceBaseUrl, aService, aAction];
+    NSMutableString* result = [[NSMutableString alloc] initWithFormat:@"%@%@/service/%@/action/%@?", self.config.serviceUrl, KalturaServiceBaseUrl, aService, aAction];
     [self->_params appendQueryString:result];
     [result autorelease];
     return result;

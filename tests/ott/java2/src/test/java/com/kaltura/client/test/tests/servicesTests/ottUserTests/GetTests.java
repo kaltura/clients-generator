@@ -33,8 +33,9 @@ public class GetTests extends BaseTest {
     @Description("ottUser/action/get - get")
     @Test
     private void getTest() {
-        GetOttUserBuilder getOttUserBuilder = get();
-        get().setKs(loginResponse.results.getLoginSession().getKs());
+        // get user
+        GetOttUserBuilder getOttUserBuilder = get()
+                .setKs(loginResponse.results.getLoginSession().getKs());
         Response<OTTUser> ottUserResponse = executor.executeSync(getOttUserBuilder);
 
         assertThat(loginResponse.error).isNull();

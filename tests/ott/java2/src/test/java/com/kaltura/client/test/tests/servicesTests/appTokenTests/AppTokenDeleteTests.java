@@ -16,48 +16,43 @@ import static com.kaltura.client.test.utils.BaseUtils.getAPIExceptionFromList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AppTokenDeleteTests extends BaseTest {
-
-    private AppTokenHashType hashType;
+    
     private String sessionUserId;
-    private AppToken appToken = new AppToken();
+    private AppToken appToken;
 
     @BeforeClass
     private void add_tests_before_class() {
         sessionUserId = getSharedUser().getUserId();
-        hashType = AppTokenHashType.SHA1;
-        appToken = AppTokenUtils.addAppToken(sessionUserId, hashType, null, null);
+        appToken = AppTokenUtils.addAppToken(sessionUserId, AppTokenHashType.SHA1, null, null);
     }
 
     @Description("appToken/action/delete")
     @Test
+    // TODO: 5/3/2018 not clear test name! 
     private void addAppToken() {
         // Add token
-
-        AddAppTokenBuilder addAppTokenBuilder = AppTokenService.add(appToken);
-        addAppTokenBuilder.setKs(getOperatorKs());
+        AddAppTokenBuilder addAppTokenBuilder = AppTokenService.add(appToken).setKs(getOperatorKs());
         Response<AppToken> appTokenResponse = executor.executeSync(addAppTokenBuilder);
 
         assertThat(appTokenResponse.error).isNull();
         assertThat(appTokenResponse.results.getExpiry()).isNull();
 
         // Delete token
-
-        DeleteAppTokenBuilder deleteAppTokenBuilder = AppTokenService.delete(appTokenResponse.results.getId());
-        deleteAppTokenBuilder.setKs(getOperatorKs());
+        DeleteAppTokenBuilder deleteAppTokenBuilder = AppTokenService.delete(appTokenResponse.results.getId()).setKs(getOperatorKs());
         Response<Boolean> deleteTokenResponse = executor.executeSync(deleteAppTokenBuilder);
 
         assertThat(deleteTokenResponse.results).isTrue();
 
         // Try to delete token using invalid token id
-
-        deleteAppTokenBuilder = AppTokenService.delete("1234");
+        String invalidTokenId = "1234";
+        deleteAppTokenBuilder = AppTokenService.delete(invalidTokenId).setKs(getOperatorKs());
         deleteTokenResponse = executor.executeSync(deleteAppTokenBuilder);
 
+        // TODO: 5/3/2018 split two scenarios into separate tests 
         assertThat(deleteTokenResponse.error.getCode()).isEqualTo(getAPIExceptionFromList(500055).getCode());
 
         // Try to delete token again - exception returned
-
-        deleteAppTokenBuilder = AppTokenService.delete(appTokenResponse.results.getId());
+        deleteAppTokenBuilder = AppTokenService.delete(appTokenResponse.results.getId()).setKs(getOperatorKs());
         deleteTokenResponse = executor.executeSync(deleteAppTokenBuilder);
 
         assertThat(deleteTokenResponse.error.getCode()).isEqualTo(getAPIExceptionFromList(500055).getCode());

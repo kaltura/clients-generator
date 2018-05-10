@@ -26,7 +26,7 @@ public class PurchaseUtils {
     private static Response<Asset> assetResponse;
 
     // TODO: 14/MAR/2018 add return
-    public static void purchasePpv(Optional<Integer> mediaId, Optional<Integer> fileId, @Nullable String purchaseCurrency) {
+    public static void purchasePpv(String ks, Optional<Integer> mediaId, Optional<Integer> fileId, @Nullable String purchaseCurrency) {
         purchasePpvDetailsMap = new HashMap<>();
         int paymentGatewayId = 0;
 
@@ -35,7 +35,7 @@ public class PurchaseUtils {
             internalFileId = fileId.get();
         } else {
             GetAssetBuilder mediaAsset = AssetService.get(String.valueOf(mediaId.get()), AssetReferenceType.MEDIA);
-            assetResponse = executor.executeSync(mediaAsset);
+            assetResponse = executor.executeSync(mediaAsset.setKs(ks));
             internalFileId = assetResponse.results.getMediaFiles().get(0).getId();
         }
 
@@ -45,7 +45,7 @@ public class PurchaseUtils {
         filter.setIsLowest(false);
 
         ListProductPriceBuilder productPriceListBeforePurchase = ProductPriceService.list(filter);
-        productPriceResponse = executor.executeSync(productPriceListBeforePurchase);
+        productPriceResponse = executor.executeSync(productPriceListBeforePurchase.setKs(ks));
 
         double price = productPriceResponse.results.getObjects().get(0).getPrice().getAmount();
         String ppvModuleId = ((PpvPrice)productPriceResponse.results.getObjects().get(0)).getPpvModuleId();
@@ -63,7 +63,7 @@ public class PurchaseUtils {
         purchase.setPaymentGatewayId(Optional.of(paymentGatewayId).get());
 
         PurchaseTransactionBuilder transactionBuilder = TransactionService.purchase(purchase);
-        executor.executeSync(transactionBuilder);
+        executor.executeSync(transactionBuilder.setKs(ks));
 
         // TODO: complete the purchase ppv test
         purchasePpvDetailsMap.put("price", String.valueOf(price));

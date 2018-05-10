@@ -42,7 +42,7 @@ public class TestAPIOkRequestsExecutor extends APIOkRequestsExecutor {
     protected ResponseElement onGotResponse(okhttp3.Response okhttpResponse, RequestElement action) {
         ResponseElement responseElement = super.onGotResponse(okhttpResponse, action);
 //        logger.debug("response body:\n" + responseElement.getResponse()); // was found in base class
-//        logger.debug("response headers:\n" + response.headers());
+//        logger.debug("response headers:\n" + okhttpResponse.headers());
 
         if (responseElement.isSuccess()) {
             Response response = action.parseResponse(responseElement);

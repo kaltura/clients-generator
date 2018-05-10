@@ -58,8 +58,9 @@ public class ListTests extends BaseTest {
 
         int numberOfUsers = 2;
         int numberOfDevices = 1;
-        household = HouseholdUtils.createHouseHold(numberOfUsers, numberOfDevices, true);
+        household = HouseholdUtils.createHousehold(numberOfUsers, numberOfDevices, true);
         classMasterUserKs = HouseholdUtils.getHouseholdUserKs(household, HouseholdUtils.getDevicesListFromHouseHold(household).get(0).getUdid());
+
     }
 
     @Severity(SeverityLevel.NORMAL)
@@ -82,7 +83,7 @@ public class ListTests extends BaseTest {
     public void listSubscriptionWithCurrencyTest() {
         ProductPriceFilter filter = new ProductPriceFilter();
         filter.setSubscriptionIdIn(get5MinRenewableSubscription().getId());
-        productPriceResponse = executor.executeSync(ProductPriceService.list(filter).setCurrency(CURRENCY_EUR));
+        productPriceResponse = executor.executeSync(ProductPriceService.list(filter).setCurrency(CURRENCY_EUR).setKs(getOperatorKs()));
         // TODO: should we create ENUMs for currencies? A: Yes if library doesn't contain them
         assertThat(productPriceResponse.results.getObjects().get(0).getProductId()).isEqualToIgnoringCase(get5MinRenewableSubscription().getId().trim());
         assertThat(productPriceResponse.results.getObjects().get(0).getPurchaseStatus()).isEqualTo(PurchaseStatus.FOR_PURCHASE);
@@ -96,7 +97,7 @@ public class ListTests extends BaseTest {
     public void listWithoutRequiredFields() {
         ProductPriceFilter filter = new ProductPriceFilter();
         ListProductPriceBuilder productPriceList = ProductPriceService.list(filter);
-        productPriceResponse = executor.executeSync(productPriceList);
+        productPriceResponse = executor.executeSync(productPriceList.setKs(getOperatorKs()));
 
         int errorCode = 500056;
         assertThat(productPriceResponse.results).isNull();
@@ -112,7 +113,7 @@ public class ListTests extends BaseTest {
         // TODO: after fix of BEO-4967 change HouseholdDevice.json to have only 1 enum value in objectType
 
         ListEntitlementBuilder entitlementListBeforePurchase = EntitlementService.list(entitlementPpvsFilter, null);
-        entitlementResponse = executor.executeSync(entitlementListBeforePurchase);
+        entitlementResponse = executor.executeSync(entitlementListBeforePurchase.setKs(classMasterUserKs));
         assertThat(entitlementResponse.results.getTotalCount()).isEqualTo(0);
 
         ProductPriceFilter ppFilter = new ProductPriceFilter();
@@ -121,17 +122,17 @@ public class ListTests extends BaseTest {
         ppFilter.setFileIdIn(String.valueOf(webMediaFileId));
         ppFilter.setIsLowest(false);
         ListProductPriceBuilder productPriceListBeforePurchase = ProductPriceService.list(ppFilter);
-        productPriceResponse = executor.executeSync(productPriceListBeforePurchase);
+        productPriceResponse = executor.executeSync(productPriceListBeforePurchase.setKs(classMasterUserKs));
         // TODO: 4/8/2018 talk with Max about the assertions (currently it not asserting nothing as only actual was implemented)
         assertThat(productPriceResponse.results.getTotalCount()).isEqualTo(1);
         assertThat(productPriceResponse.results.getObjects().get(0).getPurchaseStatus()).isEqualTo(PurchaseStatus.FOR_PURCHASE);
         assertThat(productPriceResponse.results.getObjects().get(0).getProductType()).isEqualTo(TransactionType.PPV);
         assertThat(((PpvPrice)productPriceResponse.results.getObjects().get(0)).getFileId()).isEqualTo(webMediaFileId);
 
-        PurchaseUtils.purchasePpv(Optional.empty(), Optional.of(webMediaFileId), null);
+        PurchaseUtils.purchasePpv(classMasterUserKs, Optional.empty(), Optional.of(webMediaFileId), null);
 
         ListEntitlementBuilder entitlementListAfterPurchase = EntitlementService.list(entitlementPpvsFilter, null);
-        entitlementResponse = executor.executeSync(entitlementListAfterPurchase);
+        entitlementResponse = executor.executeSync(entitlementListAfterPurchase.setKs(classMasterUserKs));
         assertThat(entitlementResponse.results.getTotalCount()).isEqualTo(1);
         assertThat(((PpvEntitlement) entitlementResponse.results.getObjects().get(0)).getMediaFileId()).isEqualTo(webMediaFileId);
         assertThat(((PpvEntitlement) entitlementResponse.results.getObjects().get(0)).getMediaId()).isEqualTo(getSharedMediaAsset().getId().intValue());
@@ -140,7 +141,7 @@ public class ListTests extends BaseTest {
         assertThat(entitlementResponse.results.getObjects().get(0).getPaymentMethod()).isIn(PaymentMethodType.OFFLINE, PaymentMethodType.UNKNOWN);
 
         ListProductPriceBuilder productPriceListAfterPurchase = ProductPriceService.list(ppFilter);
-        productPriceResponse = executor.executeSync(productPriceListAfterPurchase);
+        productPriceResponse = executor.executeSync(productPriceListAfterPurchase.setKs(classMasterUserKs));
         // only 1 item mention in filter
         assertThat(productPriceResponse.results.getTotalCount()).isEqualTo(1);
         assertThat(productPriceResponse.results.getObjects().get(0).getPurchaseStatus()).isEqualTo(PurchaseStatus.PPV_PURCHASED);
@@ -148,7 +149,7 @@ public class ListTests extends BaseTest {
 
         ppFilter.setFileIdIn(String.valueOf(mobileMediaFileId));
         ListProductPriceBuilder productPriceListAfterPurchaseForAnotherFileFromTheSameMedia = ProductPriceService.list(ppFilter);
-        productPriceResponse = executor.executeSync(productPriceListAfterPurchaseForAnotherFileFromTheSameMedia);
+        productPriceResponse = executor.executeSync(productPriceListAfterPurchaseForAnotherFileFromTheSameMedia.setKs(classMasterUserKs));
         assertThat(productPriceResponse.results.getTotalCount()).isEqualTo(1);
         assertThat(productPriceResponse.results.getObjects().get(0).getPurchaseStatus()).isEqualTo(PurchaseStatus.PPV_PURCHASED);
         assertThat(((PpvPrice) productPriceResponse.results.getObjects().get(0)).getFileId()).isEqualTo(mobileMediaFileId);
@@ -160,7 +161,7 @@ public class ListTests extends BaseTest {
     public void productPriceSubscriptionAndPpvBeforePurchaseTest() {
         int numberOfUsers = 1;
         int numberOfDevices = 1;
-        Household household = HouseholdUtils.createHouseHold(numberOfUsers, numberOfDevices, true);
+        Household household = HouseholdUtils.createHousehold(numberOfUsers, numberOfDevices, true);
         HouseholdUser masterUser = HouseholdUtils.getMasterUserFromHousehold(household);
 
         ProductPriceFilter filter = new ProductPriceFilter();
