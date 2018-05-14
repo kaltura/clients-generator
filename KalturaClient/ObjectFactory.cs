@@ -135,6 +135,8 @@ namespace Kaltura
 					return new ListResponse<PersonalFeed>(xmlElement);
 				case "KalturaTopicListResponse":
 					return new ListResponse<Topic>(xmlElement);
+				case "KalturaGenericListResponse":
+					return new ListResponse<T>(xmlElement);
 				case "KalturaIntegerValueListResponse":
 					return new ListResponse<IntegerValue>(xmlElement);
 				case "KalturaReportListResponse":

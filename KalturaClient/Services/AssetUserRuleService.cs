@@ -78,6 +78,132 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetUserRuleDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public AssetUserRuleDeleteRequestBuilder()
+			: base("assetuserrule", "delete")
+		{
+		}
+
+		public AssetUserRuleDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
+	public class AssetUserRuleListRequestBuilder : RequestBuilder<ListResponse<AssetUserRule>>
+	{
+		#region Constants
+		#endregion
+
+
+		public AssetUserRuleListRequestBuilder()
+			: base("assetuserrule", "list")
+		{
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<ListResponse<AssetUserRule>>(result);
+		}
+	}
+
+	public class AssetUserRuleUpdateRequestBuilder : RequestBuilder<AssetUserRule>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string ASSET_USER_RULE = "assetUserRule";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public AssetUserRule AssetUserRule
+		{
+			set;
+			get;
+		}
+
+		public AssetUserRuleUpdateRequestBuilder()
+			: base("assetuserrule", "update")
+		{
+		}
+
+		public AssetUserRuleUpdateRequestBuilder(long id, AssetUserRule assetUserRule)
+			: this()
+		{
+			this.Id = id;
+			this.AssetUserRule = assetUserRule;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("assetUserRule"))
+				kparams.AddIfNotNull("assetUserRule", AssetUserRule);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<AssetUserRule>(result);
+		}
+	}
+
 
 	public class AssetUserRuleService
 	{
@@ -88,6 +214,21 @@ namespace Kaltura.Services
 		public static AssetUserRuleAddRequestBuilder Add(AssetUserRule assetUserRule)
 		{
 			return new AssetUserRuleAddRequestBuilder(assetUserRule);
+		}
+
+		public static AssetUserRuleDeleteRequestBuilder Delete(long id)
+		{
+			return new AssetUserRuleDeleteRequestBuilder(id);
+		}
+
+		public static AssetUserRuleListRequestBuilder List()
+		{
+			return new AssetUserRuleListRequestBuilder();
+		}
+
+		public static AssetUserRuleUpdateRequestBuilder Update(long id, AssetUserRule assetUserRule)
+		{
+			return new AssetUserRuleUpdateRequestBuilder(id, assetUserRule);
 		}
 	}
 }
