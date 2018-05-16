@@ -78,7 +78,50 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class AssetUserRuleDeleteRequestBuilder : RequestBuilder<bool>
+	public class AssetUserRuleAddRuleToUserRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string RULE_ID = "ruleId";
+		#endregion
+
+		public long RuleId
+		{
+			set;
+			get;
+		}
+
+		public AssetUserRuleAddRuleToUserRequestBuilder()
+			: base("assetuserrule", "addRuleToUser")
+		{
+		}
+
+		public AssetUserRuleAddRuleToUserRequestBuilder(long ruleId)
+			: this()
+		{
+			this.RuleId = ruleId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("ruleId"))
+				kparams.AddIfNotNull("ruleId", RuleId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
+	public class AssetUserRuleDeleteRequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public const string ID = "id";
@@ -117,26 +160,38 @@ namespace Kaltura.Services
 
 		public override object Deserialize(XmlElement result)
 		{
-			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
-				return true;
-			return false;
+			return null;
 		}
 	}
 
 	public class AssetUserRuleListRequestBuilder : RequestBuilder<ListResponse<AssetUserRule>>
 	{
 		#region Constants
+		public const string FILTER = "filter";
 		#endregion
 
+		public AssetUserRuleFilter Filter
+		{
+			set;
+			get;
+		}
 
 		public AssetUserRuleListRequestBuilder()
 			: base("assetuserrule", "list")
 		{
 		}
 
+		public AssetUserRuleListRequestBuilder(AssetUserRuleFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -149,6 +204,49 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetUserRule>>(result);
+		}
+	}
+
+	public class AssetUserRuleRemoveRuleToUserRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string RULE_ID = "ruleId";
+		#endregion
+
+		public long RuleId
+		{
+			set;
+			get;
+		}
+
+		public AssetUserRuleRemoveRuleToUserRequestBuilder()
+			: base("assetuserrule", "removeRuleToUser")
+		{
+		}
+
+		public AssetUserRuleRemoveRuleToUserRequestBuilder(long ruleId)
+			: this()
+		{
+			this.RuleId = ruleId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("ruleId"))
+				kparams.AddIfNotNull("ruleId", RuleId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
 		}
 	}
 
@@ -216,14 +314,24 @@ namespace Kaltura.Services
 			return new AssetUserRuleAddRequestBuilder(assetUserRule);
 		}
 
+		public static AssetUserRuleAddRuleToUserRequestBuilder AddRuleToUser(long ruleId)
+		{
+			return new AssetUserRuleAddRuleToUserRequestBuilder(ruleId);
+		}
+
 		public static AssetUserRuleDeleteRequestBuilder Delete(long id)
 		{
 			return new AssetUserRuleDeleteRequestBuilder(id);
 		}
 
-		public static AssetUserRuleListRequestBuilder List()
+		public static AssetUserRuleListRequestBuilder List(AssetUserRuleFilter filter = null)
 		{
-			return new AssetUserRuleListRequestBuilder();
+			return new AssetUserRuleListRequestBuilder(filter);
+		}
+
+		public static AssetUserRuleRemoveRuleToUserRequestBuilder RemoveRuleToUser(long ruleId)
+		{
+			return new AssetUserRuleRemoveRuleToUserRequestBuilder(ruleId);
 		}
 
 		public static AssetUserRuleUpdateRequestBuilder Update(long id, AssetUserRule assetUserRule)
