@@ -36,23 +36,23 @@ namespace Kaltura.Types
 	public class AssetUserRuleFilter : Filter
 	{
 		#region Constants
-		public const string ASSOCIATED_USER_ID_EQUAL_CURRENT = "associatedUserIdEqualCurrent";
+		public const string ATTACHED_USER_ID_EQUAL_CURRENT = "attachedUserIdEqualCurrent";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private bool? _AssociatedUserIdEqualCurrent = null;
+		private bool? _AttachedUserIdEqualCurrent = null;
 		private AssetUserRuleOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		public bool? AssociatedUserIdEqualCurrent
+		public bool? AttachedUserIdEqualCurrent
 		{
-			get { return _AssociatedUserIdEqualCurrent; }
+			get { return _AttachedUserIdEqualCurrent; }
 			set 
 			{ 
-				_AssociatedUserIdEqualCurrent = value;
-				OnPropertyChanged("AssociatedUserIdEqualCurrent");
+				_AttachedUserIdEqualCurrent = value;
+				OnPropertyChanged("AttachedUserIdEqualCurrent");
 			}
 		}
 		public new AssetUserRuleOrderBy OrderBy
@@ -77,8 +77,8 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "associatedUserIdEqualCurrent":
-						this._AssociatedUserIdEqualCurrent = ParseBool(propertyNode.InnerText);
+					case "attachedUserIdEqualCurrent":
+						this._AttachedUserIdEqualCurrent = ParseBool(propertyNode.InnerText);
 						continue;
 					case "orderBy":
 						this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), propertyNode.InnerText);
@@ -94,7 +94,7 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaAssetUserRuleFilter");
-			kparams.AddIfNotNull("associatedUserIdEqualCurrent", this._AssociatedUserIdEqualCurrent);
+			kparams.AddIfNotNull("attachedUserIdEqualCurrent", this._AttachedUserIdEqualCurrent);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -102,8 +102,8 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case ASSOCIATED_USER_ID_EQUAL_CURRENT:
-					return "AssociatedUserIdEqualCurrent";
+				case ATTACHED_USER_ID_EQUAL_CURRENT:
+					return "AttachedUserIdEqualCurrent";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

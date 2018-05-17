@@ -78,7 +78,7 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class AssetUserRuleAddRuleToUserRequestBuilder : RequestBuilder<object>
+	public class AssetUserRuleAttachUser RequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public const string RULE_ID = "ruleId";
@@ -90,12 +90,12 @@ namespace Kaltura.Services
 			get;
 		}
 
-		public AssetUserRuleAddRuleToUserRequestBuilder()
-			: base("assetuserrule", "addRuleToUser")
+		public AssetUserRuleAttachUser RequestBuilder()
+			: base("assetuserrule", "attachUser ")
 		{
 		}
 
-		public AssetUserRuleAddRuleToUserRequestBuilder(long ruleId)
+		public AssetUserRuleAttachUser RequestBuilder(long ruleId)
 			: this()
 		{
 			this.RuleId = ruleId;
@@ -164,6 +164,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetUserRuleDetachUserRequestBuilder : RequestBuilder<object>
+	{
+		#region Constants
+		public const string RULE_ID = "ruleId";
+		#endregion
+
+		public long RuleId
+		{
+			set;
+			get;
+		}
+
+		public AssetUserRuleDetachUserRequestBuilder()
+			: base("assetuserrule", "detachUser")
+		{
+		}
+
+		public AssetUserRuleDetachUserRequestBuilder(long ruleId)
+			: this()
+		{
+			this.RuleId = ruleId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("ruleId"))
+				kparams.AddIfNotNull("ruleId", RuleId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+	}
+
 	public class AssetUserRuleListRequestBuilder : RequestBuilder<ListResponse<AssetUserRule>>
 	{
 		#region Constants
@@ -204,49 +247,6 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetUserRule>>(result);
-		}
-	}
-
-	public class AssetUserRuleRemoveRuleToUserRequestBuilder : RequestBuilder<object>
-	{
-		#region Constants
-		public const string RULE_ID = "ruleId";
-		#endregion
-
-		public long RuleId
-		{
-			set;
-			get;
-		}
-
-		public AssetUserRuleRemoveRuleToUserRequestBuilder()
-			: base("assetuserrule", "removeRuleToUser")
-		{
-		}
-
-		public AssetUserRuleRemoveRuleToUserRequestBuilder(long ruleId)
-			: this()
-		{
-			this.RuleId = ruleId;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("ruleId"))
-				kparams.AddIfNotNull("ruleId", RuleId);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(XmlElement result)
-		{
-			return null;
 		}
 	}
 
@@ -314,9 +314,9 @@ namespace Kaltura.Services
 			return new AssetUserRuleAddRequestBuilder(assetUserRule);
 		}
 
-		public static AssetUserRuleAddRuleToUserRequestBuilder AddRuleToUser(long ruleId)
+		public static AssetUserRuleAttachUser RequestBuilder AttachUser (long ruleId)
 		{
-			return new AssetUserRuleAddRuleToUserRequestBuilder(ruleId);
+			return new AssetUserRuleAttachUser RequestBuilder(ruleId);
 		}
 
 		public static AssetUserRuleDeleteRequestBuilder Delete(long id)
@@ -324,14 +324,14 @@ namespace Kaltura.Services
 			return new AssetUserRuleDeleteRequestBuilder(id);
 		}
 
+		public static AssetUserRuleDetachUserRequestBuilder DetachUser(long ruleId)
+		{
+			return new AssetUserRuleDetachUserRequestBuilder(ruleId);
+		}
+
 		public static AssetUserRuleListRequestBuilder List(AssetUserRuleFilter filter = null)
 		{
 			return new AssetUserRuleListRequestBuilder(filter);
-		}
-
-		public static AssetUserRuleRemoveRuleToUserRequestBuilder RemoveRuleToUser(long ruleId)
-		{
-			return new AssetUserRuleRemoveRuleToUserRequestBuilder(ruleId);
 		}
 
 		public static AssetUserRuleUpdateRequestBuilder Update(long id, AssetUserRule assetUserRule)
