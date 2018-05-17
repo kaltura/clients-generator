@@ -17,8 +17,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 To allow sending empty arrays for properties, use `allowEmptyArray()` method:
 ```
-const profile = new KalturaAccessControl();
-profile.allowEmptyArray('restrictions');
+yourObjectInstance.allowEmptyArray('theRelevantArrayPropertyName')
 ``` 
 this will instruct the kaltura client to send empty arrays if assigned for `restrictions` property.
 
