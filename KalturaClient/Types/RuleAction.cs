@@ -49,11 +49,6 @@ namespace Kaltura.Types
 		public RuleActionType Type
 		{
 			get { return _Type; }
-			set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
 		}
 		public string Description
 		{
