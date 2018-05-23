@@ -319,10 +319,7 @@ class KalturaClient(object):
         return data
 
     def parsePostResult(self, postResult):
-        if len(postResult) > 1024:
-            self.log("result (xml): %s bytes" % len(postResult))
-        else:
-            self.log("result (xml): %s" % postResult)
+    	self.log("result (xml): %s" % postResult)
 
         try:
             resultXml = etree.fromstring(postResult)
