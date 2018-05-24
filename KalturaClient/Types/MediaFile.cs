@@ -33,13 +33,12 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class MediaFile : ObjectBase
+	public class MediaFile : AssetFile
 	{
 		#region Constants
 		public const string ASSET_ID = "assetId";
 		public const string ID = "id";
 		public const string TYPE = "type";
-		public const string URL = "url";
 		public const string DURATION = "duration";
 		public const string EXTERNAL_ID = "externalId";
 		public const string BILLING_TYPE = "billingType";
@@ -57,7 +56,6 @@ namespace Kaltura.Types
 		private int _AssetId = Int32.MinValue;
 		private int _Id = Int32.MinValue;
 		private string _Type = null;
-		private string _Url = null;
 		private long _Duration = long.MinValue;
 		private string _ExternalId = null;
 		private string _BillingType = null;
@@ -92,15 +90,6 @@ namespace Kaltura.Types
 			{ 
 				_Type = value;
 				OnPropertyChanged("Type");
-			}
-		}
-		public string Url
-		{
-			get { return _Url; }
-			set 
-			{ 
-				_Url = value;
-				OnPropertyChanged("Url");
 			}
 		}
 		public long Duration
@@ -224,9 +213,6 @@ namespace Kaltura.Types
 					case "type":
 						this._Type = propertyNode.InnerText;
 						continue;
-					case "url":
-						this._Url = propertyNode.InnerText;
-						continue;
 					case "duration":
 						this._Duration = ParseLong(propertyNode.InnerText);
 						continue;
@@ -274,7 +260,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("assetId", this._AssetId);
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("url", this._Url);
 			kparams.AddIfNotNull("duration", this._Duration);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("billingType", this._BillingType);
@@ -298,8 +283,6 @@ namespace Kaltura.Types
 					return "Id";
 				case TYPE:
 					return "Type";
-				case URL:
-					return "Url";
 				case DURATION:
 					return "Duration";
 				case EXTERNAL_ID:

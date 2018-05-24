@@ -87,7 +87,7 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class AssetFilePlayManifestRequestBuilder : RequestBuilder<string>
+	public class AssetFilePlayManifestRequestBuilder : RequestBuilder<AssetFile>
 	{
 		#region Constants
 		public new const string PARTNER_ID = "partnerId";
@@ -171,7 +171,7 @@ namespace Kaltura.Services
 
 		public override object Deserialize(XmlElement result)
 		{
-			return result.InnerText;
+			return ObjectFactory.Create<AssetFile>(result);
 		}
 	}
 
