@@ -78,7 +78,7 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class AssetUserRuleAttachUser RequestBuilder : RequestBuilder<object>
+	public class AssetUserRuleAttachUserRequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public const string RULE_ID = "ruleId";
@@ -90,12 +90,12 @@ namespace Kaltura.Services
 			get;
 		}
 
-		public AssetUserRuleAttachUser RequestBuilder()
-			: base("assetuserrule", "attachUser ")
+		public AssetUserRuleAttachUserRequestBuilder()
+			: base("assetuserrule", "attachUser")
 		{
 		}
 
-		public AssetUserRuleAttachUser RequestBuilder(long ruleId)
+		public AssetUserRuleAttachUserRequestBuilder(long ruleId)
 			: this()
 		{
 			this.RuleId = ruleId;
@@ -314,9 +314,9 @@ namespace Kaltura.Services
 			return new AssetUserRuleAddRequestBuilder(assetUserRule);
 		}
 
-		public static AssetUserRuleAttachUser RequestBuilder AttachUser (long ruleId)
+		public static AssetUserRuleAttachUserRequestBuilder AttachUser(long ruleId)
 		{
-			return new AssetUserRuleAttachUser RequestBuilder(ruleId);
+			return new AssetUserRuleAttachUserRequestBuilder(ruleId);
 		}
 
 		public static AssetUserRuleDeleteRequestBuilder Delete(long id)
