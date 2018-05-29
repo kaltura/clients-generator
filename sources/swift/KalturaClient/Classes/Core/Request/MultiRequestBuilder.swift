@@ -127,7 +127,8 @@ public class MultiRequestBuilder: ArrayRequestBuilder<Any?, BaseTokenizedObject,
     public func link(tokenFromRespose: BaseTokenizedObject, tokenToRequest: BaseTokenizedObject) -> Self{
         
         var request = self.requests[tokenToRequest.requestId]
-        request.params = link(params: request.params, keys: tokenToRequest.tokens, token: tokenFromRespose.result)
+        let params = request.params
+        request.params = link(params: params, keys: tokenToRequest.tokens, token: tokenFromRespose.result)
         
         return self
     }
