@@ -105,6 +105,8 @@ namespace Kaltura
 					return new ListResponse<OTTUser>(xmlElement);
 				case "KalturaCollectionListResponse":
 					return new ListResponse<Collection>(xmlElement);
+				case "KalturaDiscountDetailsListResponse":
+					return new ListResponse<DiscountDetails>(xmlElement);
 				case "KalturaSubscriptionSetListResponse":
 					return new ListResponse<SubscriptionSet>(xmlElement);
 				case "KalturaProductPriceListResponse":
