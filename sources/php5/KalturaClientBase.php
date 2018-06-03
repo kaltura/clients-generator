@@ -488,12 +488,6 @@ class KalturaClientBase
 	private function doCurl($url, $params = array(), $files = array())
 	{
 		$requestHeaders = $this->config->requestHeaders;
-        
-        // Check for GET and append params to url
-        if( $this->config->method == self::METHOD_GET ) {
-            $opt = http_build_query($params, null, "&");
-            $url = $url . '?' . $opt;
-        }
 		
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
