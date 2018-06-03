@@ -313,12 +313,6 @@ class Base
 	{
 		$this->responseHeaders = array();
 		$requestHeaders = $this->config->getRequestHeaders();
-        
-        // Check for GET and append params to url
-        if( $this->config->method == self::METHOD_GET ) {
-            $opt = http_build_query($params, null, "&");
-            $url = $url . '?' . $opt;
-        }
 
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
@@ -344,7 +338,7 @@ class Base
 				// deprecated since PHP 5.5. CURLFile must be used instead.
 				if (PHP_VERSION_ID >= 50500) {
 					$params[$key] = new \CURLFile($file);
-                    } else {
+				} else {
 					$params[$key] = "@" . $file; // let curl know its a file
 				}
 			}
