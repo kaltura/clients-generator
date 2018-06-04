@@ -978,7 +978,7 @@ public class IngestUtils extends BaseUtils {
         //mediaAsset.setStartDate(startDate);
         //mediaAsset.setEndDate(endDate);
 
-        await().pollInterval(3, TimeUnit.SECONDS).atMost(45, TimeUnit.SECONDS).until(isDataReturned(getAnonymousKs(), INGEST_ACTION_INSERT, id));
+        await().pollInterval(3, TimeUnit.SECONDS).atMost(45, TimeUnit.SECONDS).until(isDataReturned(getAnonymousKs(), id, INGEST_ACTION_INSERT));
         mediaAsset.setMediaFiles(executor.executeSync(
                 AssetService.get(id, AssetReferenceType.MEDIA).setKs(getAnonymousKs())).results.getMediaFiles());
 

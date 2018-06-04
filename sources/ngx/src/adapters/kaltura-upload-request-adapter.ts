@@ -1,11 +1,12 @@
 import { KalturaUploadRequest } from '../api/kaltura-upload-request';
-import { buildQuerystring, createEndpoint, prepareParameters } from './utils';
+import { buildUrl, createEndpoint, prepareParameters } from './utils';
 import { ISubscription } from 'rxjs/Subscription';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { Observable } from 'rxjs/Observable';
 import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaClientOptions } from '../kaltura-client-options';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
+import { environment } from '../environment';
 
 interface UploadByChunksData {
     enabled: boolean;
@@ -106,6 +107,22 @@ export class KalturaUploadRequestAdapter {
         return result;
     }
 
+    private _unwrapResponse(response: any): any {
+        if (environment.response.nestedResponse) {
+            if (response && response.hasOwnProperty('result')) {
+                if (response.result.hasOwnProperty('error')) {
+                    return response.result.error;
+                } else {
+                    return response.result;
+                }
+            } else if (response && response.hasOwnProperty('error')) {
+                return response.error;
+            }
+        }
+
+        return response;
+    }
+
     private _chunkUpload(request: KalturaUploadRequest<any>, uploadChunkData: UploadByChunksData): Observable<any> {
         return Observable.create(observer => {
             const parameters = prepareParameters(request, this.clientOptions, this.defaultRequestOptions);
@@ -150,8 +167,7 @@ export class KalturaUploadRequestAdapter {
             let endpointUrl = createEndpoint(request, this.clientOptions, parameters['service'], parameters['action']);
             delete parameters['service'];
             delete parameters['action'];
-            const querystring = buildQuerystring(parameters);
-            endpointUrl = `${endpointUrl}?${querystring}`;
+            endpointUrl = buildUrl(endpointUrl, parameters);
 
             const xhr = new XMLHttpRequest();
 
@@ -165,7 +181,15 @@ export class KalturaUploadRequestAdapter {
 
                     try {
                         if (xhr.status === 200) {
-                            resp = JSON.parse(xhr.response);
+                            resp = this._unwrapResponse(JSON.parse(xhr.response));
+
+                            if (resp && resp.objectType === 'KalturaAPIException') {
+                                resp = new KalturaAPIException(
+                                    resp.message,
+                                    resp.code,
+                                    resp.args
+                                );
+                            }
                         } else {
                             resp = new KalturaClientException('client::upload-failure', xhr.responseText || 'failed to upload file');
                         }
