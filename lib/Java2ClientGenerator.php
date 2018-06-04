@@ -309,6 +309,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				continue;
 			}
 
+			$propReadOnly = $propertyNode->getAttribute("readOnly");
+			if($propReadOnly == "1") {
+			    continue;
+			}
+			
 			$hasProperties = true;
 			$propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
 			$propType = $propertyNode->getAttribute("type");
@@ -381,13 +386,18 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			$arrFunctions[] = "	public $javaType get{$functionName}(){";
 			$arrFunctions[] = "		return this.$propName;";
 			$arrFunctions[] = "	}";
-			$arrFunctions[] = "	public void set{$functionName}($javaType $propName){";
-			$arrFunctions[] = "		this.$propName = $propName;";
-			$arrFunctions[] = "	}\n";
-			if($this->isSimpleType($propType)) {
-				$arrFunctions[] = "	public void $propName(String multirequestToken){";
-				$arrFunctions[] = "		setToken(\"$propName\", multirequestToken);";
-				$arrFunctions[] = "	}\n";
+			
+			$propReadOnly = $propertyNode->getAttribute("readOnly");
+			if($propReadOnly != "1")
+			{
+			    $arrFunctions[] = "	public void set{$functionName}($javaType $propName){";
+			    $arrFunctions[] = "		this.$propName = $propName;";
+			    $arrFunctions[] = "	}\n";
+			    if($this->isSimpleType($propType)) {
+			        $arrFunctions[] = "	public void $propName(String multirequestToken){";
+			        $arrFunctions[] = "		setToken(\"$propName\", multirequestToken);";
+			        $arrFunctions[] = "	}\n";
+			    }
 			}
 			
 			$propertyLine = "private $javaType $propName";
