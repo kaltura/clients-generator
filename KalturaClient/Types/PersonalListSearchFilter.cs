@@ -36,43 +36,21 @@ namespace Kaltura.Types
 	public class PersonalListSearchFilter : BaseSearchAssetFilter
 	{
 		#region Constants
-		public const string TYPE_IN = "typeIn";
-		public const string KSQL = "kSql";
-		public const string PARTNER_LIST_TYPE_EQUAL = "partnerListTypeEqual";
+		public const string PARTNER_LIST_TYPE_IN = "partnerListTypeIn";
 		#endregion
 
 		#region Private Fields
-		private string _TypeIn = null;
-		private string _KSql = null;
-		private int _PartnerListTypeEqual = Int32.MinValue;
+		private string _PartnerListTypeIn = null;
 		#endregion
 
 		#region Properties
-		public string TypeIn
+		public string PartnerListTypeIn
 		{
-			get { return _TypeIn; }
+			get { return _PartnerListTypeIn; }
 			set 
 			{ 
-				_TypeIn = value;
-				OnPropertyChanged("TypeIn");
-			}
-		}
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
-		public int PartnerListTypeEqual
-		{
-			get { return _PartnerListTypeEqual; }
-			set 
-			{ 
-				_PartnerListTypeEqual = value;
-				OnPropertyChanged("PartnerListTypeEqual");
+				_PartnerListTypeIn = value;
+				OnPropertyChanged("PartnerListTypeIn");
 			}
 		}
 		#endregion
@@ -88,14 +66,8 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "typeIn":
-						this._TypeIn = propertyNode.InnerText;
-						continue;
-					case "kSql":
-						this._KSql = propertyNode.InnerText;
-						continue;
-					case "partnerListTypeEqual":
-						this._PartnerListTypeEqual = ParseInt(propertyNode.InnerText);
+					case "partnerListTypeIn":
+						this._PartnerListTypeIn = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -108,21 +80,15 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaPersonalListSearchFilter");
-			kparams.AddIfNotNull("typeIn", this._TypeIn);
-			kparams.AddIfNotNull("kSql", this._KSql);
-			kparams.AddIfNotNull("partnerListTypeEqual", this._PartnerListTypeEqual);
+			kparams.AddIfNotNull("partnerListTypeIn", this._PartnerListTypeIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case TYPE_IN:
-					return "TypeIn";
-				case KSQL:
-					return "KSql";
-				case PARTNER_LIST_TYPE_EQUAL:
-					return "PartnerListTypeEqual";
+				case PARTNER_LIST_TYPE_IN:
+					return "PartnerListTypeIn";
 				default:
 					return base.getPropertyName(apiName);
 			}

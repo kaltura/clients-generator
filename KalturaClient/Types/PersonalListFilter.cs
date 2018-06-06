@@ -36,23 +36,23 @@ namespace Kaltura.Types
 	public class PersonalListFilter : Filter
 	{
 		#region Constants
-		public const string PARTNER_LIST_TYPE_EQUAL = "partnerListTypeEqual";
+		public const string PARTNER_LIST_TYPE_IN = "partnerListTypeIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private int _PartnerListTypeEqual = Int32.MinValue;
+		private string _PartnerListTypeIn = null;
 		private PersonalListOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		public int PartnerListTypeEqual
+		public string PartnerListTypeIn
 		{
-			get { return _PartnerListTypeEqual; }
+			get { return _PartnerListTypeIn; }
 			set 
 			{ 
-				_PartnerListTypeEqual = value;
-				OnPropertyChanged("PartnerListTypeEqual");
+				_PartnerListTypeIn = value;
+				OnPropertyChanged("PartnerListTypeIn");
 			}
 		}
 		public new PersonalListOrderBy OrderBy
@@ -77,8 +77,8 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "partnerListTypeEqual":
-						this._PartnerListTypeEqual = ParseInt(propertyNode.InnerText);
+					case "partnerListTypeIn":
+						this._PartnerListTypeIn = propertyNode.InnerText;
 						continue;
 					case "orderBy":
 						this._OrderBy = (PersonalListOrderBy)StringEnum.Parse(typeof(PersonalListOrderBy), propertyNode.InnerText);
@@ -94,7 +94,7 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaPersonalListFilter");
-			kparams.AddIfNotNull("partnerListTypeEqual", this._PartnerListTypeEqual);
+			kparams.AddIfNotNull("partnerListTypeIn", this._PartnerListTypeIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -102,8 +102,8 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case PARTNER_LIST_TYPE_EQUAL:
-					return "PartnerListTypeEqual";
+				case PARTNER_LIST_TYPE_IN:
+					return "PartnerListTypeIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

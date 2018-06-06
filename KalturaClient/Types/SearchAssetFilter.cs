@@ -36,27 +36,16 @@ namespace Kaltura.Types
 	public class SearchAssetFilter : BaseSearchAssetFilter
 	{
 		#region Constants
-		public const string KSQL = "kSql";
 		public const string TYPE_IN = "typeIn";
 		public const string ID_IN = "idIn";
 		#endregion
 
 		#region Private Fields
-		private string _KSql = null;
 		private string _TypeIn = null;
 		private string _IdIn = null;
 		#endregion
 
 		#region Properties
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -88,9 +77,6 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "kSql":
-						this._KSql = propertyNode.InnerText;
-						continue;
 					case "typeIn":
 						this._TypeIn = propertyNode.InnerText;
 						continue;
@@ -108,7 +94,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaSearchAssetFilter");
-			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("typeIn", this._TypeIn);
 			kparams.AddIfNotNull("idIn", this._IdIn);
 			return kparams;
@@ -117,8 +102,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case KSQL:
-					return "KSql";
 				case TYPE_IN:
 					return "TypeIn";
 				case ID_IN:
