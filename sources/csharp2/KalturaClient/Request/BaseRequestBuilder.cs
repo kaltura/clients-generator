@@ -276,6 +276,13 @@ namespace Kaltura.Request
                     string responseString = requestData.ToString();
                     this.Log("result (serialized): " + responseString);
 
+					var responseHeadersBuilder = new StringBuilder();
+                    foreach (string key in response.Headers.AllKeys)
+                    {
+                        responseHeadersBuilder.Append($"{key}:{response.Headers[key]} ; ");
+                    }
+                    this.Log("result headers: " + responseHeadersBuilder.ToString());
+
                     DateTime endTime = DateTime.Now;
 
                     this.Log("execution time for [" + getPath() + "]: [" + (endTime - startTime).ToString() + "]");
