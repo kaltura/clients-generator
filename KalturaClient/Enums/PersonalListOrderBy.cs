@@ -29,8 +29,8 @@ namespace Kaltura.Enums
 {
 	public sealed class PersonalListOrderBy : StringEnum
 	{
-		public static readonly PersonalListOrderBy START_DATE_DESC = new PersonalListOrderBy("START_DATE_DESC");
-		public static readonly PersonalListOrderBy START_DATE_ASC = new PersonalListOrderBy("START_DATE_ASC");
+		public static readonly PersonalListOrderBy CREATE_DATE_DESC = new PersonalListOrderBy("CREATE_DATE_DESC");
+		public static readonly PersonalListOrderBy CREATE_DATE_ASC = new PersonalListOrderBy("CREATE_DATE_ASC");
 
 		private PersonalListOrderBy(string name) : base(name) { }
 	}
