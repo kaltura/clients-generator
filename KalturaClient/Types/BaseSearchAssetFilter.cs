@@ -36,23 +36,23 @@ namespace Kaltura.Types
 	public class BaseSearchAssetFilter : AssetFilter
 	{
 		#region Constants
-		public const string KSQL = "ksql";
+		public const string KSQL = "kSql";
 		public const string GROUP_BY = "groupBy";
 		#endregion
 
 		#region Private Fields
-		private string _Ksql = null;
+		private string _KSql = null;
 		private IList<AssetGroupBy> _GroupBy;
 		#endregion
 
 		#region Properties
-		public string Ksql
+		public string KSql
 		{
-			get { return _Ksql; }
+			get { return _KSql; }
 			set 
 			{ 
-				_Ksql = value;
-				OnPropertyChanged("Ksql");
+				_KSql = value;
+				OnPropertyChanged("KSql");
 			}
 		}
 		public IList<AssetGroupBy> GroupBy
@@ -77,8 +77,8 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "ksql":
-						this._Ksql = propertyNode.InnerText;
+					case "kSql":
+						this._KSql = propertyNode.InnerText;
 						continue;
 					case "groupBy":
 						this._GroupBy = new List<AssetGroupBy>();
@@ -98,7 +98,7 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBaseSearchAssetFilter");
-			kparams.AddIfNotNull("ksql", this._Ksql);
+			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("groupBy", this._GroupBy);
 			return kparams;
 		}
@@ -107,7 +107,7 @@ namespace Kaltura.Types
 			switch(apiName)
 			{
 				case KSQL:
-					return "Ksql";
+					return "KSql";
 				case GROUP_BY:
 					return "GroupBy";
 				default:
