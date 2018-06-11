@@ -33,50 +33,55 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Condition : ObjectBase
+	public class AssetRuleFilter : Filter
 	{
 		#region Constants
-		public const string TYPE = "type";
-		public const string DESCRIPTION = "description";
+		public const string CONDITIONS_CONTAIN_TYPE = "conditionsContainType";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private RuleConditionType _Type = null;
-		private string _Description = null;
+		private RuleConditionType _ConditionsContainType = null;
+		private AssetRuleOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		public RuleConditionType Type
+		public RuleConditionType ConditionsContainType
 		{
-			get { return _Type; }
-		}
-		public string Description
-		{
-			get { return _Description; }
+			get { return _ConditionsContainType; }
 			set 
 			{ 
-				_Description = value;
-				OnPropertyChanged("Description");
+				_ConditionsContainType = value;
+				OnPropertyChanged("ConditionsContainType");
+			}
+		}
+		public new AssetRuleOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public Condition()
+		public AssetRuleFilter()
 		{
 		}
 
-		public Condition(XmlElement node) : base(node)
+		public AssetRuleFilter(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "type":
-						this._Type = (RuleConditionType)StringEnum.Parse(typeof(RuleConditionType), propertyNode.InnerText);
+					case "conditionsContainType":
+						this._ConditionsContainType = (RuleConditionType)StringEnum.Parse(typeof(RuleConditionType), propertyNode.InnerText);
 						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
+					case "orderBy":
+						this._OrderBy = (AssetRuleOrderBy)StringEnum.Parse(typeof(AssetRuleOrderBy), propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -88,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCondition");
-			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("description", this._Description);
+				kparams.AddReplace("objectType", "KalturaAssetRuleFilter");
+			kparams.AddIfNotNull("conditionsContainType", this._ConditionsContainType);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case TYPE:
-					return "Type";
-				case DESCRIPTION:
-					return "Description";
+				case CONDITIONS_CONTAIN_TYPE:
+					return "ConditionsContainType";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

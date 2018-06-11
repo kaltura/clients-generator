@@ -126,17 +126,31 @@ namespace Kaltura.Services
 	public class AssetRuleListRequestBuilder : RequestBuilder<ListResponse<AssetRule>>
 	{
 		#region Constants
+		public const string FILTER = "filter";
 		#endregion
 
+		public AssetRuleFilter Filter
+		{
+			set;
+			get;
+		}
 
 		public AssetRuleListRequestBuilder()
 			: base("assetrule", "list")
 		{
 		}
 
+		public AssetRuleListRequestBuilder(AssetRuleFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -221,9 +235,9 @@ namespace Kaltura.Services
 			return new AssetRuleDeleteRequestBuilder(id);
 		}
 
-		public static AssetRuleListRequestBuilder List()
+		public static AssetRuleListRequestBuilder List(AssetRuleFilter filter = null)
 		{
-			return new AssetRuleListRequestBuilder();
+			return new AssetRuleListRequestBuilder(filter);
 		}
 
 		public static AssetRuleUpdateRequestBuilder Update(long id, AssetRule assetRule)

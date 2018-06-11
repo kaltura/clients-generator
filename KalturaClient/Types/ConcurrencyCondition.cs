@@ -33,50 +33,55 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Condition : ObjectBase
+	public class ConcurrencyCondition : AssetCondition
 	{
 		#region Constants
-		public const string TYPE = "type";
-		public const string DESCRIPTION = "description";
+		public const string LIMIT = "limit";
+		public const string CONCURRENCY_LIMITATION_TYPE = "concurrencyLimitationType";
 		#endregion
 
 		#region Private Fields
-		private RuleConditionType _Type = null;
-		private string _Description = null;
+		private int _Limit = Int32.MinValue;
+		private ConcurrencyLimitationType _ConcurrencyLimitationType = null;
 		#endregion
 
 		#region Properties
-		public RuleConditionType Type
+		public int Limit
 		{
-			get { return _Type; }
-		}
-		public string Description
-		{
-			get { return _Description; }
+			get { return _Limit; }
 			set 
 			{ 
-				_Description = value;
-				OnPropertyChanged("Description");
+				_Limit = value;
+				OnPropertyChanged("Limit");
+			}
+		}
+		public ConcurrencyLimitationType ConcurrencyLimitationType
+		{
+			get { return _ConcurrencyLimitationType; }
+			set 
+			{ 
+				_ConcurrencyLimitationType = value;
+				OnPropertyChanged("ConcurrencyLimitationType");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public Condition()
+		public ConcurrencyCondition()
 		{
 		}
 
-		public Condition(XmlElement node) : base(node)
+		public ConcurrencyCondition(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "type":
-						this._Type = (RuleConditionType)StringEnum.Parse(typeof(RuleConditionType), propertyNode.InnerText);
+					case "limit":
+						this._Limit = ParseInt(propertyNode.InnerText);
 						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
+					case "concurrencyLimitationType":
+						this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -88,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCondition");
-			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("description", this._Description);
+				kparams.AddReplace("objectType", "KalturaConcurrencyCondition");
+			kparams.AddIfNotNull("limit", this._Limit);
+			kparams.AddIfNotNull("concurrencyLimitationType", this._ConcurrencyLimitationType);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case TYPE:
-					return "Type";
-				case DESCRIPTION:
-					return "Description";
+				case LIMIT:
+					return "Limit";
+				case CONCURRENCY_LIMITATION_TYPE:
+					return "ConcurrencyLimitationType";
 				default:
 					return base.getPropertyName(apiName);
 			}
