@@ -29,7 +29,7 @@
 				</not>
 			</condition>
 		</fail>
-		<input message="Please enter Kaltura client lib version" addproperty="kaltura.client.version" defaultvalue="3.3.1" />
+		<input message="Please enter Kaltura client lib version" addproperty="kaltura.client.version" defaultvalue="@VERSION@" />
 	</target>
 		
 	<target name="check-contrib">

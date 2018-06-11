@@ -1,5 +1,5 @@
 ## Kaltura node.js API Client Library.
-Compatible with Kaltura server version 10.20.0 and above.
+Compatible with Kaltura server version @VERSION@ and above.
 
 ## Very Basic sanity
 - Edit tests/config.js and set partner_id, secret and service_url to match your ENV
