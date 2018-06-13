@@ -37,11 +37,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string CONDITIONS_CONTAIN_TYPE = "conditionsContainType";
+		public const string ASSET_APPLIED = "assetApplied";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private RuleConditionType _ConditionsContainType = null;
+		private SlimAsset _AssetApplied;
 		private AssetRuleOrderBy _OrderBy = null;
 		#endregion
 
@@ -53,6 +55,15 @@ namespace Kaltura.Types
 			{ 
 				_ConditionsContainType = value;
 				OnPropertyChanged("ConditionsContainType");
+			}
+		}
+		public SlimAsset AssetApplied
+		{
+			get { return _AssetApplied; }
+			set 
+			{ 
+				_AssetApplied = value;
+				OnPropertyChanged("AssetApplied");
 			}
 		}
 		public new AssetRuleOrderBy OrderBy
@@ -80,6 +91,9 @@ namespace Kaltura.Types
 					case "conditionsContainType":
 						this._ConditionsContainType = (RuleConditionType)StringEnum.Parse(typeof(RuleConditionType), propertyNode.InnerText);
 						continue;
+					case "assetApplied":
+						this._AssetApplied = ObjectFactory.Create<SlimAsset>(propertyNode);
+						continue;
 					case "orderBy":
 						this._OrderBy = (AssetRuleOrderBy)StringEnum.Parse(typeof(AssetRuleOrderBy), propertyNode.InnerText);
 						continue;
@@ -95,6 +109,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaAssetRuleFilter");
 			kparams.AddIfNotNull("conditionsContainType", this._ConditionsContainType);
+			kparams.AddIfNotNull("assetApplied", this._AssetApplied);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -104,6 +119,8 @@ namespace Kaltura.Types
 			{
 				case CONDITIONS_CONTAIN_TYPE:
 					return "ConditionsContainType";
+				case ASSET_APPLIED:
+					return "AssetApplied";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
