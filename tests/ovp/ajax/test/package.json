@@ -1,6 +1,6 @@
 {
   "name": "kaltura-ajax-client-library",
-  "version": "1.0.0",
+  "version": "@VERSION@",
   "description": "Kaltura JavaScript API Client Library.",
   "main": "index.js",
   "directories": {

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kaltura</groupId>
     <artifactId>KalturaApiClient</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>@VERSION@-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <properties>

@@ -12,7 +12,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.kaltura</groupId>
 	<artifactId>KalturaClient</artifactId>
-	<version>3.3.1</version>
+	<version>@VERSION@-SNAPSHOT</version>
 
 	<!-- Project description -->
 	<name>KalturaClient Java Library</name>
