@@ -202,7 +202,7 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class ReminderListRequestBuilder : StandaloneRequestBuilder<ListResponse<Reminder>>
+	public class ReminderListRequestBuilder : RequestBuilder<ListResponse<Reminder>>
 	{
 		#region Constants
 		public const string FILTER = "filter";

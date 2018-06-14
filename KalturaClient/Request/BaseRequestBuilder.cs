@@ -279,7 +279,7 @@ namespace Kaltura.Request
 					var responseHeadersBuilder = new StringBuilder();
                     foreach (string key in response.Headers.AllKeys)
                     {
-                        responseHeadersBuilder.Append($"{key}:{response.Headers[key]} ; ");
+                        responseHeadersBuilder.Append(key+":"+response.Headers[key]+" ; ");
                     }
                     this.Log("result headers: " + responseHeadersBuilder.ToString());
 
