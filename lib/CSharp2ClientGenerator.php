@@ -750,7 +750,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$signature = $this->getSignature($paramNodes, false);
 		
-		$parentType = $enableInMultiRequest ? "RequestBuilder<$dotNetOutputType>" : "StandaloneRequestBuilder<$dotNetOutputType>";
+		$parentType = $enableInMultiRequest ? "RequestBuilder<$dotNetOutputType>" : "RequestBuilder<$dotNetOutputType>";
 		$this->appendLine("	public class $requestBuilderName : $parentType");
 		$this->appendLine("	{");
 		
