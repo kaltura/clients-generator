@@ -134,6 +134,13 @@
         </dependency>
 
         <!-- Dependencies for testing -->
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.12</version>
+		    <scope>test</scope>
+		</dependency>		        
+		        
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
