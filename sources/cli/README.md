@@ -249,7 +249,7 @@ Paste the log portion here
     [format] => 3
     [ignoreNull] => 1
     [clientTag] => batch: ip-10-154-241-19 KAsyncDbCleanup index: 0 sessionId: 1978407734
-    [apiVersion] => 3.2.0
+    [apiVersion] => @VERSION@
     [partnerId] => -1
     [ks] => MzZjYjRlOWM5ODcxNGZhMzY3MTNmODU2NDYyMWE1MmE0ZjViNGM5Y3wtMTs7MTQzNjgwNzg5MDsyOzE0MzQyMTU4OTAuMjQzO2JhdGNoVXNlcjtkaXNhYmxlZW5
 0aXRsZW1lbnQ7LTE7
@@ -262,7 +262,7 @@ Paste the log portion here
 Sample output:
 ```
 Command lines:
-kalcli -x batch cleanExclusiveJobs apiVersion=3.2.0 'clientTag=batch: ip-10-154-241-19 KAsyncDbCleanup index: 0 sessionId: 1978407734' format=3 ignoreNull=1 kalsig=2ec6af9816b5172dbe0c36c6c30a5ac8 'ks=MzZjYjRlOWM5ODcxNGZhMzY3MTNmODU2NDYyMWE1MmE0ZjViNGM5Y3wtMTs7MTQzNjgwNzg5MDsyOzE0MzQyMTU4OTAuMjQzO2JhdGNoVXNlcjtkaXNhYmxlZW5
+kalcli -x batch cleanExclusiveJobs apiVersion=@VERSION@ 'clientTag=batch: ip-10-154-241-19 KAsyncDbCleanup index: 0 sessionId: 1978407734' format=3 ignoreNull=1 kalsig=2ec6af9816b5172dbe0c36c6c30a5ac8 'ks=MzZjYjRlOWM5ODcxNGZhMzY3MTNmODU2NDYyMWE1MmE0ZjViNGM5Y3wtMTs7MTQzNjgwNzg5MDsyOzE0MzQyMTU4OTAuMjQzO2JhdGNoVXNlcjtkaXNhYmxlZW5
 0aXRsZW1lbnQ7LTE7' partnerId=-1
 ```
 

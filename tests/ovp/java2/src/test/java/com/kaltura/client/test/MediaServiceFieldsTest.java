@@ -72,14 +72,12 @@ public class MediaServiceFieldsTest extends BaseTest {
         final CountDownLatch doneSignal = new CountDownLatch(1);
 		final String testString = "Kaltura test: " + getName();
 		final int testInt = 42;
-		final Boolean testEnumAsInt = false;
 		final ContainerFormat testEnumAsString = ContainerFormat.ISMV;
 
 		ThumbParams paramsAdd = new ThumbParams();
 		paramsAdd.setName(testString);
 		paramsAdd.setDescription(testString);
 		paramsAdd.setDensity(testInt);
-		paramsAdd.setIsSystemDefault(testEnumAsInt);
 		paramsAdd.setFormat(testEnumAsString);
 
 		AddThumbParamsBuilder requestBuilder = ThumbParamsService.add(paramsAdd)
@@ -92,14 +90,12 @@ public class MediaServiceFieldsTest extends BaseTest {
 
 				assertEquals(testString, paramsAdded.getDescription());
 				assertEquals(testInt, (int) paramsAdded.getDensity());
-				assertEquals(testEnumAsInt, paramsAdded.getIsSystemDefault());
 				assertEquals(testEnumAsString, paramsAdded.getFormat());
 
 				// Null value not passed
 				ThumbParams paramsUpdate = new ThumbParams();
 				paramsUpdate.setDescription(null);
 				paramsUpdate.setDensity(Integer.MIN_VALUE);
-				paramsUpdate.setIsSystemDefault(null);
 				paramsUpdate.setFormat(null);
 
 				UpdateThumbParamsBuilder requestBuilder = ThumbParamsService.update(paramsAdded.getId(), paramsUpdate)
@@ -119,7 +115,6 @@ public class MediaServiceFieldsTest extends BaseTest {
 						
 								assertEquals(testString, paramsGot.getDescription());
 								assertEquals(testInt, (int) paramsGot.getDensity());
-								assertEquals(testEnumAsInt, paramsGot.getIsSystemDefault());
 								assertEquals(testEnumAsString, paramsGot.getFormat());
 
 								DeleteThumbParamsBuilder requestBuilder = ThumbParamsService.delete(paramsAdded.getId());

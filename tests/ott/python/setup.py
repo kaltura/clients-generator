@@ -1,9 +1,9 @@
 from setuptools import setup
 
 setup(
-    name='KalturaApiClient',
+    name='KalturaOttApiClient',
     version='@VERSION@',
-    url='https://github.com/kaltura/KalturaGeneratedAPIClientsPython',
+    url='https://github.com/kaltura/KalturaOttGeneratedAPIClientsPython',
     packages=['KalturaClient', 'KalturaClient.Plugins'],
     install_requires=['requests>=2.4.2', 'requests-toolbelt', 'six'],
     license='AGPLv3+',
@@ -21,7 +21,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
-    keywords='Kaltura API client',
-    description='A Python module for accessing the Kaltura API.',
+    keywords='Kaltura OTT API client',
+    description='A Python module for accessing the Kaltura OTT API.',
     long_description=open('README.txt').read(),
 )

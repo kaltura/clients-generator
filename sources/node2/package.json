@@ -1,6 +1,6 @@
 {
   "name": "kaltura-client",
-  "version": "1.0.9",
+  "version": "@VERSION@",
   "description": "Kaltura NodeJS client library (new implementation)",
   "main": "KalturaClient.js",
   "scripts": {
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "shortid": "^2.2.8",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0"
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
   }
 }

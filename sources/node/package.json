@@ -1,6 +1,6 @@
 {
   "name": "kaltura",
-  "version": "3.3.3",
+  "version": "@VERSION@",
   "description": "Kaltura NodeJS clientlibs",
   "main": "index.js",
   "scripts": {
