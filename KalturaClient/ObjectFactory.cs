@@ -97,6 +97,8 @@ namespace Kaltura
 					return new ListResponse<ConfigurationGroupTag>(xmlElement);
 				case "KalturaConfigurationGroupListResponse":
 					return new ListResponse<ConfigurationGroup>(xmlElement);
+				case "KalturaSSOAdapterProfileListResponse":
+					return new ListResponse<SSOAdapterProfile>(xmlElement);
 				case "KalturaUserInterestListResponse":
 					return new ListResponse<UserInterest>(xmlElement);
 				case "KalturaFavoriteListResponse":
