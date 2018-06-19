@@ -11,8 +11,6 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         parent::__construct($serverMetadata);
     }
 
-
-
     public function generate()
     {
         $result = array();
@@ -24,7 +22,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         $fileContent = $classIndex->content . $enumIndex->content . $actionIndex->content;
 
         $file = new GeneratedFileData();
-        $file->path = "./types/all.ts";
+        $file->path = "./types/index.ts";
         $file->content = $fileContent;
         $result[] = $file;
 

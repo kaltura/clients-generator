@@ -149,12 +149,11 @@ export const environment: Environment = {
 
         $classFunctionName = ucfirst($class->name);
         $fileContent = "{$this->getBanner()}
-import { KalturaObjectMetadata } from '../kaltura-object-base';
-import { KalturaTypesFactory } from '../kaltura-types-factory';
+import { KalturaObjectMetadata, KalturaObjectBaseFactory } from '../kaltura-object-base';
 {$generatedCode[0]}
 
 {$generatedCode[1]}
-KalturaTypesFactory.registerType('$class->name',$classFunctionName);
+KalturaObjectBaseFactory.registerType('$class->name',$classFunctionName);
 ";
 
         $file = new GeneratedFileData();
@@ -221,8 +220,6 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
  *
  * Server response type:         {$actionNG2ResultType}
  * Server failure response type: KalturaAPIException
- * @class
- * @extends {$baseType}
  */";
 
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
