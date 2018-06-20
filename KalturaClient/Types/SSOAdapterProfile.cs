@@ -40,7 +40,7 @@ namespace Kaltura.Types
 		public const string NAME = "name";
 		public const string IS_ACTIVE = "isActive";
 		public const string ADAPTER_URL = "adapterUrl";
-		public const string SSO_ADAPTER_SETTINGS = "ssoAdapterSettings";
+		public const string SETTINGS = "settings";
 		public const string EXTERNAL_IDENTIFIER = "externalIdentifier";
 		public const string SHARED_SECRET = "sharedSecret";
 		#endregion
@@ -50,7 +50,7 @@ namespace Kaltura.Types
 		private string _Name = null;
 		private int _IsActive = Int32.MinValue;
 		private string _AdapterUrl = null;
-		private IDictionary<string, StringValue> _SsoAdapterSettings;
+		private IDictionary<string, StringValue> _Settings;
 		private string _ExternalIdentifier = null;
 		private string _SharedSecret = null;
 		#endregion
@@ -87,13 +87,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterUrl");
 			}
 		}
-		public IDictionary<string, StringValue> SsoAdapterSettings
+		public IDictionary<string, StringValue> Settings
 		{
-			get { return _SsoAdapterSettings; }
+			get { return _Settings; }
 			set 
 			{ 
-				_SsoAdapterSettings = value;
-				OnPropertyChanged("SsoAdapterSettings");
+				_Settings = value;
+				OnPropertyChanged("Settings");
 			}
 		}
 		public string ExternalIdentifier
@@ -139,14 +139,14 @@ namespace Kaltura.Types
 					case "adapterUrl":
 						this._AdapterUrl = propertyNode.InnerText;
 						continue;
-					case "ssoAdapterSettings":
+					case "settings":
 						{
 							string key;
-							this._SsoAdapterSettings = new Dictionary<string, StringValue>();
+							this._Settings = new Dictionary<string, StringValue>();
 							foreach(XmlElement arrayNode in propertyNode.ChildNodes)
 							{
 								key = arrayNode["itemKey"].InnerText;;
-								this._SsoAdapterSettings[key] = ObjectFactory.Create<StringValue>(arrayNode);
+								this._Settings[key] = ObjectFactory.Create<StringValue>(arrayNode);
 							}
 						}
 						continue;
@@ -171,7 +171,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("isActive", this._IsActive);
 			kparams.AddIfNotNull("adapterUrl", this._AdapterUrl);
-			kparams.AddIfNotNull("ssoAdapterSettings", this._SsoAdapterSettings);
+			kparams.AddIfNotNull("settings", this._Settings);
 			kparams.AddIfNotNull("externalIdentifier", this._ExternalIdentifier);
 			kparams.AddIfNotNull("sharedSecret", this._SharedSecret);
 			return kparams;
@@ -188,8 +188,8 @@ namespace Kaltura.Types
 					return "IsActive";
 				case ADAPTER_URL:
 					return "AdapterUrl";
-				case SSO_ADAPTER_SETTINGS:
-					return "SsoAdapterSettings";
+				case SETTINGS:
+					return "Settings";
 				case EXTERNAL_IDENTIFIER:
 					return "ExternalIdentifier";
 				case SHARED_SECRET:
