@@ -27,14 +27,11 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class PlaybackContextType : StringEnum
+	public sealed class UrlType : StringEnum
 	{
-		public static readonly PlaybackContextType TRAILER = new PlaybackContextType("TRAILER");
-		public static readonly PlaybackContextType CATCHUP = new PlaybackContextType("CATCHUP");
-		public static readonly PlaybackContextType START_OVER = new PlaybackContextType("START_OVER");
-		public static readonly PlaybackContextType PLAYBACK = new PlaybackContextType("PLAYBACK");
-		public static readonly PlaybackContextType DOWNLOAD = new PlaybackContextType("DOWNLOAD");
+		public static readonly UrlType PLAYMANIFEST = new UrlType("PLAYMANIFEST");
+		public static readonly UrlType DIRECT = new UrlType("DIRECT");
 
-		private PlaybackContextType(string name) : base(name) { }
+		private UrlType(string name) : base(name) { }
 	}
 }
