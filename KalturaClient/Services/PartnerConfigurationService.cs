@@ -35,6 +35,49 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class PartnerConfigurationListRequestBuilder : RequestBuilder<ListResponse<PartnerConfiguration>>
+	{
+		#region Constants
+		public const string FILTER = "filter";
+		#endregion
+
+		public PartnerConfigurationFilter Filter
+		{
+			set;
+			get;
+		}
+
+		public PartnerConfigurationListRequestBuilder()
+			: base("partnerconfiguration", "list")
+		{
+		}
+
+		public PartnerConfigurationListRequestBuilder(PartnerConfigurationFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<ListResponse<PartnerConfiguration>>(result);
+		}
+	}
+
 	public class PartnerConfigurationUpdateRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -85,6 +128,11 @@ namespace Kaltura.Services
 	{
 		private PartnerConfigurationService()
 		{
+		}
+
+		public static PartnerConfigurationListRequestBuilder List(PartnerConfigurationFilter filter)
+		{
+			return new PartnerConfigurationListRequestBuilder(filter);
 		}
 
 		public static PartnerConfigurationUpdateRequestBuilder Update(PartnerConfiguration configuration)

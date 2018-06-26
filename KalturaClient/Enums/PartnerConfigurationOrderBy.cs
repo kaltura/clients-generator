@@ -27,13 +27,10 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class PartnerConfigurationType : StringEnum
+	public sealed class PartnerConfigurationOrderBy : StringEnum
 	{
-		public static readonly PartnerConfigurationType DEFAULTPAYMENTGATEWAY = new PartnerConfigurationType("DefaultPaymentGateway");
-		public static readonly PartnerConfigurationType ENABLEPAYMENTGATEWAYSELECTION = new PartnerConfigurationType("EnablePaymentGatewaySelection");
-		public static readonly PartnerConfigurationType OSSADAPTER = new PartnerConfigurationType("OSSAdapter");
-		public static readonly PartnerConfigurationType CONCURRENCY = new PartnerConfigurationType("Concurrency");
+		public static readonly PartnerConfigurationOrderBy NONE = new PartnerConfigurationOrderBy("NONE");
 
-		private PartnerConfigurationType(string name) : base(name) { }
+		private PartnerConfigurationOrderBy(string name) : base(name) { }
 	}
 }
