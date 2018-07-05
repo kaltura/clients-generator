@@ -29,7 +29,14 @@ namespace Kaltura.Enums
 {
 	public sealed class MetaOrderBy : StringEnum
 	{
-		public static readonly MetaOrderBy NONE = new MetaOrderBy("NONE");
+		public static readonly MetaOrderBy NAME_ASC = new MetaOrderBy("NAME_ASC");
+		public static readonly MetaOrderBy NAME_DESC = new MetaOrderBy("NAME_DESC");
+		public static readonly MetaOrderBy SYSTEM_NAME_ASC = new MetaOrderBy("SYSTEM_NAME_ASC");
+		public static readonly MetaOrderBy SYSTEM_NAME_DESC = new MetaOrderBy("SYSTEM_NAME_DESC");
+		public static readonly MetaOrderBy CREATE_DATE_ASC = new MetaOrderBy("CREATE_DATE_ASC");
+		public static readonly MetaOrderBy CREATE_DATE_DESC = new MetaOrderBy("CREATE_DATE_DESC");
+		public static readonly MetaOrderBy UPDATE_DATE_ASC = new MetaOrderBy("UPDATE_DATE_ASC");
+		public static readonly MetaOrderBy UPDATE_DATE_DESC = new MetaOrderBy("UPDATE_DATE_DESC");
 
 		private MetaOrderBy(string name) : base(name) { }
 	}

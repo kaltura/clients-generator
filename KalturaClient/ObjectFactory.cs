@@ -141,12 +141,6 @@ namespace Kaltura
 					return new ListResponse<PersonalFeed>(xmlElement);
 				case "KalturaTopicListResponse":
 					return new ListResponse<Topic>(xmlElement);
-				case "KalturaGenericListResponse":
-					return new ListResponse<T>(xmlElement);
-				case "KalturaIntegerValueListResponse":
-					return new ListResponse<IntegerValue>(xmlElement);
-				case "KalturaReportListResponse":
-					return new ListResponse<Report>(xmlElement);
 				case "KalturaSeriesRecordingListResponse":
 					return new ListResponse<SeriesRecording>(xmlElement);
 				case "KalturaHouseholdPremiumServiceListResponse":
@@ -159,20 +153,48 @@ namespace Kaltura
 					return new ListResponse<BillingTransaction>(xmlElement);
 				case "KalturaEntitlementListResponse":
 					return new ListResponse<Entitlement>(xmlElement);
+				case "KalturaPartnerConfigurationListResponse":
+					return new ListResponse<PartnerConfiguration>(xmlElement);
+				case "KalturaGenericListResponse":
+					return new ListResponse<T>(xmlElement);
+				case "KalturaIntegerValueListResponse":
+					return new ListResponse<IntegerValue>(xmlElement);
+				case "KalturaReportListResponse":
+					return new ListResponse<Report>(xmlElement);
+				case "KalturaAssetStructMetaListResponse":
+					return new ListResponse<AssetStructMeta>(xmlElement);
+				case "KalturaMediaFileTypeListResponse":
+					return new ListResponse<MediaFileType>(xmlElement);
+				case "KalturaChannelListResponse":
+					return new ListResponse<Channel>(xmlElement);
+				case "KalturaImageListResponse":
+					return new ListResponse<Image>(xmlElement);
+				case "KalturaRatioListResponse":
+					return new ListResponse<Ratio>(xmlElement);
+				case "KalturaTagListResponse":
+					return new ListResponse<Tag>(xmlElement);
+				case "KalturaAssetListResponse":
+					return new ListResponse<Asset>(xmlElement);
+				case "KalturaAssetStructListResponse":
+					return new ListResponse<AssetStruct>(xmlElement);
+				case "KalturaImageTypeListResponse":
+					return new ListResponse<ImageType>(xmlElement);
 				case "KalturaAssetCountListResponse":
 					return new ListResponse<AssetsCount>(xmlElement);
 				case "KalturaBookmarkListResponse":
 					return new ListResponse<Bookmark>(xmlElement);
-				case "KalturaAssetListResponse":
-					return new ListResponse<Asset>(xmlElement);
 				case "KalturaAssetCommentListResponse":
 					return new ListResponse<AssetComment>(xmlElement);
 				case "KalturaAssetStatisticsListResponse":
 					return new ListResponse<AssetStatistics>(xmlElement);
+				case "KalturaMediaFileListResponse":
+					return new ListResponse<MediaFile>(xmlElement);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(xmlElement);
-				case "KalturaPartnerConfigurationListResponse":
-					return new ListResponse<PartnerConfiguration>(xmlElement);
+				case "KalturaBulkListResponse":
+					return new ListResponse<Bulk>(xmlElement);
+				case "KalturaDrmProfileListResponse":
+					return new ListResponse<DrmProfile>(xmlElement);
 				case "KalturaAssetUserRuleListResponse":
 					return new ListResponse<AssetUserRule>(xmlElement);
 				case "KalturaCurrencyListResponse":

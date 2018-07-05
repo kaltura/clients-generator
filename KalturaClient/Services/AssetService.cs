@@ -35,6 +35,49 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class AssetAddRequestBuilder : RequestBuilder<Asset>
+	{
+		#region Constants
+		public const string ASSET = "asset";
+		#endregion
+
+		public Asset Asset
+		{
+			set;
+			get;
+		}
+
+		public AssetAddRequestBuilder()
+			: base("asset", "add")
+		{
+		}
+
+		public AssetAddRequestBuilder(Asset asset)
+			: this()
+		{
+			this.Asset = asset;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("asset"))
+				kparams.AddIfNotNull("asset", Asset);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<Asset>(result);
+		}
+	}
+
 	public class AssetCountRequestBuilder : RequestBuilder<AssetCount>
 	{
 		#region Constants
@@ -75,6 +118,60 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AssetCount>(result);
+		}
+	}
+
+	public class AssetDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string ASSET_REFERENCE_TYPE = "assetReferenceType";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public AssetReferenceType AssetReferenceType
+		{
+			set;
+			get;
+		}
+
+		public AssetDeleteRequestBuilder()
+			: base("asset", "delete")
+		{
+		}
+
+		public AssetDeleteRequestBuilder(long id, AssetReferenceType assetReferenceType)
+			: this()
+		{
+			this.Id = id;
+			this.AssetReferenceType = assetReferenceType;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("assetReferenceType"))
+				kparams.AddIfNotNull("assetReferenceType", AssetReferenceType);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
 		}
 	}
 
@@ -304,6 +401,121 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetRemoveMetasAndTagsRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string ASSET_REFERENCE_TYPE = "assetReferenceType";
+		public const string ID_IN = "idIn";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public AssetReferenceType AssetReferenceType
+		{
+			set;
+			get;
+		}
+		public string IdIn
+		{
+			set;
+			get;
+		}
+
+		public AssetRemoveMetasAndTagsRequestBuilder()
+			: base("asset", "removeMetasAndTags")
+		{
+		}
+
+		public AssetRemoveMetasAndTagsRequestBuilder(long id, AssetReferenceType assetReferenceType, string idIn)
+			: this()
+		{
+			this.Id = id;
+			this.AssetReferenceType = assetReferenceType;
+			this.IdIn = idIn;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("assetReferenceType"))
+				kparams.AddIfNotNull("assetReferenceType", AssetReferenceType);
+			if (!isMapped("idIn"))
+				kparams.AddIfNotNull("idIn", IdIn);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
+	public class AssetUpdateRequestBuilder : RequestBuilder<Asset>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string ASSET = "asset";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public Asset Asset
+		{
+			set;
+			get;
+		}
+
+		public AssetUpdateRequestBuilder()
+			: base("asset", "update")
+		{
+		}
+
+		public AssetUpdateRequestBuilder(long id, Asset asset)
+			: this()
+		{
+			this.Id = id;
+			this.Asset = asset;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("asset"))
+				kparams.AddIfNotNull("asset", Asset);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<Asset>(result);
+		}
+	}
+
 
 	public class AssetService
 	{
@@ -311,9 +523,19 @@ namespace Kaltura.Services
 		{
 		}
 
+		public static AssetAddRequestBuilder Add(Asset asset)
+		{
+			return new AssetAddRequestBuilder(asset);
+		}
+
 		public static AssetCountRequestBuilder Count(SearchAssetFilter filter = null)
 		{
 			return new AssetCountRequestBuilder(filter);
+		}
+
+		public static AssetDeleteRequestBuilder Delete(long id, AssetReferenceType assetReferenceType)
+		{
+			return new AssetDeleteRequestBuilder(id, assetReferenceType);
 		}
 
 		public static AssetGetRequestBuilder Get(string id, AssetReferenceType assetReferenceType)
@@ -334,6 +556,16 @@ namespace Kaltura.Services
 		public static AssetListRequestBuilder List(AssetFilter filter = null, FilterPager pager = null)
 		{
 			return new AssetListRequestBuilder(filter, pager);
+		}
+
+		public static AssetRemoveMetasAndTagsRequestBuilder RemoveMetasAndTags(long id, AssetReferenceType assetReferenceType, string idIn)
+		{
+			return new AssetRemoveMetasAndTagsRequestBuilder(id, assetReferenceType, idIn);
+		}
+
+		public static AssetUpdateRequestBuilder Update(long id, Asset asset)
+		{
+			return new AssetUpdateRequestBuilder(id, asset);
 		}
 	}
 }

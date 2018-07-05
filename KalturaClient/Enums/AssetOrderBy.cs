@@ -38,6 +38,8 @@ namespace Kaltura.Enums
 		public static readonly AssetOrderBy START_DATE_DESC = new AssetOrderBy("START_DATE_DESC");
 		public static readonly AssetOrderBy START_DATE_ASC = new AssetOrderBy("START_DATE_ASC");
 		public static readonly AssetOrderBy LIKES_DESC = new AssetOrderBy("LIKES_DESC");
+		public static readonly AssetOrderBy CREATE_DATE_ASC = new AssetOrderBy("CREATE_DATE_ASC");
+		public static readonly AssetOrderBy CREATE_DATE_DESC = new AssetOrderBy("CREATE_DATE_DESC");
 
 		private AssetOrderBy(string name) : base(name) { }
 	}

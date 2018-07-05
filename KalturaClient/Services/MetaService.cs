@@ -35,6 +35,94 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class MetaAddRequestBuilder : RequestBuilder<Meta>
+	{
+		#region Constants
+		public const string META = "meta";
+		#endregion
+
+		public Meta Meta
+		{
+			set;
+			get;
+		}
+
+		public MetaAddRequestBuilder()
+			: base("meta", "add")
+		{
+		}
+
+		public MetaAddRequestBuilder(Meta meta)
+			: this()
+		{
+			this.Meta = meta;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("meta"))
+				kparams.AddIfNotNull("meta", Meta);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<Meta>(result);
+		}
+	}
+
+	public class MetaDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public MetaDeleteRequestBuilder()
+			: base("meta", "delete")
+		{
+		}
+
+		public MetaDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class MetaListRequestBuilder : RequestBuilder<ListResponse<Meta>>
 	{
 		#region Constants
@@ -85,7 +173,7 @@ namespace Kaltura.Services
 		public const string META = "meta";
 		#endregion
 
-		public string Id
+		public long Id
 		{
 			set;
 			get;
@@ -101,7 +189,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public MetaUpdateRequestBuilder(string id, Meta meta)
+		public MetaUpdateRequestBuilder(long id, Meta meta)
 			: this()
 		{
 			this.Id = id;
@@ -137,12 +225,22 @@ namespace Kaltura.Services
 		{
 		}
 
+		public static MetaAddRequestBuilder Add(Meta meta)
+		{
+			return new MetaAddRequestBuilder(meta);
+		}
+
+		public static MetaDeleteRequestBuilder Delete(long id)
+		{
+			return new MetaDeleteRequestBuilder(id);
+		}
+
 		public static MetaListRequestBuilder List(MetaFilter filter = null)
 		{
 			return new MetaListRequestBuilder(filter);
 		}
 
-		public static MetaUpdateRequestBuilder Update(string id, Meta meta)
+		public static MetaUpdateRequestBuilder Update(long id, Meta meta)
 		{
 			return new MetaUpdateRequestBuilder(id, meta);
 		}

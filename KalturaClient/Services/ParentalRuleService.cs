@@ -35,6 +35,94 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class ParentalRuleAddRequestBuilder : RequestBuilder<ParentalRule>
+	{
+		#region Constants
+		public const string PARENTAL_RULE = "parentalRule";
+		#endregion
+
+		public ParentalRule ParentalRule
+		{
+			set;
+			get;
+		}
+
+		public ParentalRuleAddRequestBuilder()
+			: base("parentalrule", "add")
+		{
+		}
+
+		public ParentalRuleAddRequestBuilder(ParentalRule parentalRule)
+			: this()
+		{
+			this.ParentalRule = parentalRule;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("parentalRule"))
+				kparams.AddIfNotNull("parentalRule", ParentalRule);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<ParentalRule>(result);
+		}
+	}
+
+	public class ParentalRuleDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public ParentalRuleDeleteRequestBuilder()
+			: base("parentalrule", "delete")
+		{
+		}
+
+		public ParentalRuleDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class ParentalRuleDisableRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -188,6 +276,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class ParentalRuleGetRequestBuilder : RequestBuilder<ParentalRule>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public ParentalRuleGetRequestBuilder()
+			: base("parentalrule", "get")
+		{
+		}
+
+		public ParentalRuleGetRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<ParentalRule>(result);
+		}
+	}
+
 	public class ParentalRuleListRequestBuilder : RequestBuilder<ListResponse<ParentalRule>>
 	{
 		#region Constants
@@ -231,11 +362,73 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class ParentalRuleUpdateRequestBuilder : RequestBuilder<ParentalRule>
+	{
+		#region Constants
+		public const string ID = "id";
+		public const string PARENTAL_RULE = "parentalRule";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+		public ParentalRule ParentalRule
+		{
+			set;
+			get;
+		}
+
+		public ParentalRuleUpdateRequestBuilder()
+			: base("parentalrule", "update")
+		{
+		}
+
+		public ParentalRuleUpdateRequestBuilder(long id, ParentalRule parentalRule)
+			: this()
+		{
+			this.Id = id;
+			this.ParentalRule = parentalRule;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("parentalRule"))
+				kparams.AddIfNotNull("parentalRule", ParentalRule);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<ParentalRule>(result);
+		}
+	}
+
 
 	public class ParentalRuleService
 	{
 		private ParentalRuleService()
 		{
+		}
+
+		public static ParentalRuleAddRequestBuilder Add(ParentalRule parentalRule)
+		{
+			return new ParentalRuleAddRequestBuilder(parentalRule);
+		}
+
+		public static ParentalRuleDeleteRequestBuilder Delete(long id)
+		{
+			return new ParentalRuleDeleteRequestBuilder(id);
 		}
 
 		public static ParentalRuleDisableRequestBuilder Disable(long ruleId, EntityReferenceBy entityReference)
@@ -253,9 +446,19 @@ namespace Kaltura.Services
 			return new ParentalRuleEnableRequestBuilder(ruleId, entityReference);
 		}
 
+		public static ParentalRuleGetRequestBuilder Get(long id)
+		{
+			return new ParentalRuleGetRequestBuilder(id);
+		}
+
 		public static ParentalRuleListRequestBuilder List(ParentalRuleFilter filter)
 		{
 			return new ParentalRuleListRequestBuilder(filter);
+		}
+
+		public static ParentalRuleUpdateRequestBuilder Update(long id, ParentalRule parentalRule)
+		{
+			return new ParentalRuleUpdateRequestBuilder(id, parentalRule);
 		}
 	}
 }

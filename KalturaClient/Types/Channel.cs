@@ -33,31 +33,39 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Channel : BaseChannel
+	public class Channel : ObjectBase
 	{
 		#region Constants
+		public const string ID = "id";
 		public const string NAME = "name";
+		public const string MULTILINGUAL_NAME = "multilingualName";
+		public const string SYSTEM_NAME = "systemName";
 		public const string DESCRIPTION = "description";
-		public const string IMAGES = "images";
-		public const string ASSET_TYPES = "assetTypes";
-		public const string FILTER_EXPRESSION = "filterExpression";
+		public const string MULTILINGUAL_DESCRIPTION = "multilingualDescription";
 		public const string IS_ACTIVE = "isActive";
-		public const string ORDER = "order";
-		public const string GROUP_BY = "groupBy";
+		public const string ORDER_BY = "orderBy";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		#endregion
 
 		#region Private Fields
+		private long _Id = long.MinValue;
 		private string _Name = null;
+		private IList<TranslationToken> _MultilingualName;
+		private string _SystemName = null;
 		private string _Description = null;
-		private IList<MediaImage> _Images;
-		private IList<IntegerValue> _AssetTypes;
-		private string _FilterExpression = null;
+		private IList<TranslationToken> _MultilingualDescription;
 		private bool? _IsActive = null;
-		private AssetOrderBy _Order = null;
-		private AssetGroupBy _GroupBy;
+		private ChannelOrder _OrderBy;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		#endregion
 
 		#region Properties
+		public long Id
+		{
+			get { return _Id; }
+		}
 		public string Name
 		{
 			get { return _Name; }
@@ -65,6 +73,24 @@ namespace Kaltura.Types
 			{ 
 				_Name = value;
 				OnPropertyChanged("Name");
+			}
+		}
+		public IList<TranslationToken> MultilingualName
+		{
+			get { return _MultilingualName; }
+			set 
+			{ 
+				_MultilingualName = value;
+				OnPropertyChanged("MultilingualName");
+			}
+		}
+		public string SystemName
+		{
+			get { return _SystemName; }
+			set 
+			{ 
+				_SystemName = value;
+				OnPropertyChanged("SystemName");
 			}
 		}
 		public string Description
@@ -76,31 +102,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
-		public IList<MediaImage> Images
+		public IList<TranslationToken> MultilingualDescription
 		{
-			get { return _Images; }
+			get { return _MultilingualDescription; }
 			set 
 			{ 
-				_Images = value;
-				OnPropertyChanged("Images");
-			}
-		}
-		public IList<IntegerValue> AssetTypes
-		{
-			get { return _AssetTypes; }
-			set 
-			{ 
-				_AssetTypes = value;
-				OnPropertyChanged("AssetTypes");
-			}
-		}
-		public string FilterExpression
-		{
-			get { return _FilterExpression; }
-			set 
-			{ 
-				_FilterExpression = value;
-				OnPropertyChanged("FilterExpression");
+				_MultilingualDescription = value;
+				OnPropertyChanged("MultilingualDescription");
 			}
 		}
 		public bool? IsActive
@@ -112,23 +120,22 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsActive");
 			}
 		}
-		public AssetOrderBy Order
+		public ChannelOrder OrderBy
 		{
-			get { return _Order; }
+			get { return _OrderBy; }
 			set 
 			{ 
-				_Order = value;
-				OnPropertyChanged("Order");
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
-		public AssetGroupBy GroupBy
+		public long CreateDate
 		{
-			get { return _GroupBy; }
-			set 
-			{ 
-				_GroupBy = value;
-				OnPropertyChanged("GroupBy");
-			}
+			get { return _CreateDate; }
+		}
+		public long UpdateDate
+		{
+			get { return _UpdateDate; }
 		}
 		#endregion
 
@@ -143,37 +150,43 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
 					case "name":
 						this._Name = propertyNode.InnerText;
+						continue;
+					case "multilingualName":
+						this._MultilingualName = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
+						continue;
+					case "systemName":
+						this._SystemName = propertyNode.InnerText;
 						continue;
 					case "description":
 						this._Description = propertyNode.InnerText;
 						continue;
-					case "images":
-						this._Images = new List<MediaImage>();
+					case "multilingualDescription":
+						this._MultilingualDescription = new List<TranslationToken>();
 						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
 						{
-							this._Images.Add(ObjectFactory.Create<MediaImage>(arrayNode));
+							this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 						}
-						continue;
-					case "assetTypes":
-						this._AssetTypes = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._AssetTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
-					case "filterExpression":
-						this._FilterExpression = propertyNode.InnerText;
 						continue;
 					case "isActive":
 						this._IsActive = ParseBool(propertyNode.InnerText);
 						continue;
-					case "order":
-						this._Order = (AssetOrderBy)StringEnum.Parse(typeof(AssetOrderBy), propertyNode.InnerText);
+					case "orderBy":
+						this._OrderBy = ObjectFactory.Create<ChannelOrder>(propertyNode);
 						continue;
-					case "groupBy":
-						this._GroupBy = ObjectFactory.Create<AssetGroupBy>(propertyNode);
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -186,36 +199,42 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaChannel");
+			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
+			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
+			kparams.AddIfNotNull("systemName", this._SystemName);
 			kparams.AddIfNotNull("description", this._Description);
-			kparams.AddIfNotNull("images", this._Images);
-			kparams.AddIfNotNull("assetTypes", this._AssetTypes);
-			kparams.AddIfNotNull("filterExpression", this._FilterExpression);
+			kparams.AddIfNotNull("multilingualDescription", this._MultilingualDescription);
 			kparams.AddIfNotNull("isActive", this._IsActive);
-			kparams.AddIfNotNull("order", this._Order);
-			kparams.AddIfNotNull("groupBy", this._GroupBy);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case ID:
+					return "Id";
 				case NAME:
 					return "Name";
+				case MULTILINGUAL_NAME:
+					return "MultilingualName";
+				case SYSTEM_NAME:
+					return "SystemName";
 				case DESCRIPTION:
 					return "Description";
-				case IMAGES:
-					return "Images";
-				case ASSET_TYPES:
-					return "AssetTypes";
-				case FILTER_EXPRESSION:
-					return "FilterExpression";
+				case MULTILINGUAL_DESCRIPTION:
+					return "MultilingualDescription";
 				case IS_ACTIVE:
 					return "IsActive";
-				case ORDER:
-					return "Order";
-				case GROUP_BY:
-					return "GroupBy";
+				case ORDER_BY:
+					return "OrderBy";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

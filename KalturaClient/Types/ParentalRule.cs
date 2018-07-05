@@ -48,6 +48,9 @@ namespace Kaltura.Types
 		public const string EPG_TAG_VALUES = "epgTagValues";
 		public const string IS_DEFAULT = "isDefault";
 		public const string ORIGIN = "origin";
+		public const string IS_ACTIVE = "isActive";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		#endregion
 
 		#region Private Fields
@@ -63,6 +66,9 @@ namespace Kaltura.Types
 		private IList<StringValue> _EpgTagValues;
 		private bool? _IsDefault = null;
 		private RuleLevel _Origin = null;
+		private bool? _IsActive = null;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -154,20 +160,27 @@ namespace Kaltura.Types
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
-			set 
-			{ 
-				_IsDefault = value;
-				OnPropertyChanged("IsDefault");
-			}
 		}
 		public RuleLevel Origin
 		{
 			get { return _Origin; }
+		}
+		public bool? IsActive
+		{
+			get { return _IsActive; }
 			set 
 			{ 
-				_Origin = value;
-				OnPropertyChanged("Origin");
+				_IsActive = value;
+				OnPropertyChanged("IsActive");
 			}
+		}
+		public long CreateDate
+		{
+			get { return _CreateDate; }
+		}
+		public long UpdateDate
+		{
+			get { return _UpdateDate; }
 		}
 		#endregion
 
@@ -226,6 +239,15 @@ namespace Kaltura.Types
 					case "origin":
 						this._Origin = (RuleLevel)StringEnum.Parse(typeof(RuleLevel), propertyNode.InnerText);
 						continue;
+					case "isActive":
+						this._IsActive = ParseBool(propertyNode.InnerText);
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -249,6 +271,9 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("epgTagValues", this._EpgTagValues);
 			kparams.AddIfNotNull("isDefault", this._IsDefault);
 			kparams.AddIfNotNull("origin", this._Origin);
+			kparams.AddIfNotNull("isActive", this._IsActive);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -279,6 +304,12 @@ namespace Kaltura.Types
 					return "IsDefault";
 				case ORIGIN:
 					return "Origin";
+				case IS_ACTIVE:
+					return "IsActive";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

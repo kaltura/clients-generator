@@ -38,35 +38,45 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ASSET_ID = "assetId";
 		public const string ID = "id";
-		public const string TYPE = "type";
+		public const string TYPE_ID = "typeId";
 		public const string DURATION = "duration";
 		public const string EXTERNAL_ID = "externalId";
-		public const string BILLING_TYPE = "billingType";
-		public const string QUALITY = "quality";
-		public const string HANDLING_TYPE = "handlingType";
-		public const string CDN_NAME = "cdnName";
-		public const string CDN_CODE = "cdnCode";
-		public const string ALT_CDN_CODE = "altCdnCode";
-		public const string PPV_MODULES = "ppvModules";
-		public const string PRODUCT_CODE = "productCode";
+		public const string ALT_EXTERNAL_ID = "altExternalId";
 		public const string FILE_SIZE = "fileSize";
+		public const string ADDITIONAL_DATA = "additionalData";
+		public const string ALT_STREAMING_CODE = "altStreamingCode";
+		public const string ALTERNATIVE_CDN_ADAPATER_PROFILE_ID = "alternativeCdnAdapaterProfileId";
+		public const string END_DATE = "endDate";
+		public const string START_DATE = "startDate";
+		public const string EXTERNAL_STORE_ID = "externalStoreId";
+		public const string IS_DEFAULT_LANGUAGE = "isDefaultLanguage";
+		public const string LANGUAGE = "language";
+		public const string ORDER_NUM = "orderNum";
+		public const string OUTPUT_PROTECATION_LEVEL = "outputProtecationLevel";
+		public const string CDN_ADAPATER_PROFILE_ID = "cdnAdapaterProfileId";
+		public const string STATUS = "status";
 		#endregion
 
 		#region Private Fields
 		private int _AssetId = Int32.MinValue;
 		private int _Id = Int32.MinValue;
-		private string _Type = null;
+		private int _TypeId = Int32.MinValue;
 		private long _Duration = long.MinValue;
 		private string _ExternalId = null;
-		private string _BillingType = null;
-		private string _Quality = null;
-		private string _HandlingType = null;
-		private string _CdnName = null;
-		private string _CdnCode = null;
-		private string _AltCdnCode = null;
-		private StringValueArray _PpvModules;
-		private string _ProductCode = null;
+		private string _AltExternalId = null;
 		private long _FileSize = long.MinValue;
+		private string _AdditionalData = null;
+		private string _AltStreamingCode = null;
+		private long _AlternativeCdnAdapaterProfileId = long.MinValue;
+		private long _EndDate = long.MinValue;
+		private long _StartDate = long.MinValue;
+		private string _ExternalStoreId = null;
+		private bool? _IsDefaultLanguage = null;
+		private string _Language = null;
+		private int _OrderNum = Int32.MinValue;
+		private string _OutputProtecationLevel = null;
+		private long _CdnAdapaterProfileId = long.MinValue;
+		private bool? _Status = null;
 		#endregion
 
 		#region Properties
@@ -83,13 +93,13 @@ namespace Kaltura.Types
 		{
 			get { return _Id; }
 		}
-		public string Type
+		public int TypeId
 		{
-			get { return _Type; }
+			get { return _TypeId; }
 			set 
 			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
+				_TypeId = value;
+				OnPropertyChanged("TypeId");
 			}
 		}
 		public long Duration
@@ -110,76 +120,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		public string BillingType
+		public string AltExternalId
 		{
-			get { return _BillingType; }
+			get { return _AltExternalId; }
 			set 
 			{ 
-				_BillingType = value;
-				OnPropertyChanged("BillingType");
-			}
-		}
-		public string Quality
-		{
-			get { return _Quality; }
-			set 
-			{ 
-				_Quality = value;
-				OnPropertyChanged("Quality");
-			}
-		}
-		public string HandlingType
-		{
-			get { return _HandlingType; }
-			set 
-			{ 
-				_HandlingType = value;
-				OnPropertyChanged("HandlingType");
-			}
-		}
-		public string CdnName
-		{
-			get { return _CdnName; }
-			set 
-			{ 
-				_CdnName = value;
-				OnPropertyChanged("CdnName");
-			}
-		}
-		public string CdnCode
-		{
-			get { return _CdnCode; }
-			set 
-			{ 
-				_CdnCode = value;
-				OnPropertyChanged("CdnCode");
-			}
-		}
-		public string AltCdnCode
-		{
-			get { return _AltCdnCode; }
-			set 
-			{ 
-				_AltCdnCode = value;
-				OnPropertyChanged("AltCdnCode");
-			}
-		}
-		public StringValueArray PpvModules
-		{
-			get { return _PpvModules; }
-			set 
-			{ 
-				_PpvModules = value;
-				OnPropertyChanged("PpvModules");
-			}
-		}
-		public string ProductCode
-		{
-			get { return _ProductCode; }
-			set 
-			{ 
-				_ProductCode = value;
-				OnPropertyChanged("ProductCode");
+				_AltExternalId = value;
+				OnPropertyChanged("AltExternalId");
 			}
 		}
 		public long FileSize
@@ -189,6 +136,114 @@ namespace Kaltura.Types
 			{ 
 				_FileSize = value;
 				OnPropertyChanged("FileSize");
+			}
+		}
+		public string AdditionalData
+		{
+			get { return _AdditionalData; }
+			set 
+			{ 
+				_AdditionalData = value;
+				OnPropertyChanged("AdditionalData");
+			}
+		}
+		public string AltStreamingCode
+		{
+			get { return _AltStreamingCode; }
+			set 
+			{ 
+				_AltStreamingCode = value;
+				OnPropertyChanged("AltStreamingCode");
+			}
+		}
+		public long AlternativeCdnAdapaterProfileId
+		{
+			get { return _AlternativeCdnAdapaterProfileId; }
+			set 
+			{ 
+				_AlternativeCdnAdapaterProfileId = value;
+				OnPropertyChanged("AlternativeCdnAdapaterProfileId");
+			}
+		}
+		public long EndDate
+		{
+			get { return _EndDate; }
+			set 
+			{ 
+				_EndDate = value;
+				OnPropertyChanged("EndDate");
+			}
+		}
+		public long StartDate
+		{
+			get { return _StartDate; }
+			set 
+			{ 
+				_StartDate = value;
+				OnPropertyChanged("StartDate");
+			}
+		}
+		public string ExternalStoreId
+		{
+			get { return _ExternalStoreId; }
+			set 
+			{ 
+				_ExternalStoreId = value;
+				OnPropertyChanged("ExternalStoreId");
+			}
+		}
+		public bool? IsDefaultLanguage
+		{
+			get { return _IsDefaultLanguage; }
+			set 
+			{ 
+				_IsDefaultLanguage = value;
+				OnPropertyChanged("IsDefaultLanguage");
+			}
+		}
+		public string Language
+		{
+			get { return _Language; }
+			set 
+			{ 
+				_Language = value;
+				OnPropertyChanged("Language");
+			}
+		}
+		public int OrderNum
+		{
+			get { return _OrderNum; }
+			set 
+			{ 
+				_OrderNum = value;
+				OnPropertyChanged("OrderNum");
+			}
+		}
+		public string OutputProtecationLevel
+		{
+			get { return _OutputProtecationLevel; }
+			set 
+			{ 
+				_OutputProtecationLevel = value;
+				OnPropertyChanged("OutputProtecationLevel");
+			}
+		}
+		public long CdnAdapaterProfileId
+		{
+			get { return _CdnAdapaterProfileId; }
+			set 
+			{ 
+				_CdnAdapaterProfileId = value;
+				OnPropertyChanged("CdnAdapaterProfileId");
+			}
+		}
+		public bool? Status
+		{
+			get { return _Status; }
+			set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
 			}
 		}
 		#endregion
@@ -210,8 +265,8 @@ namespace Kaltura.Types
 					case "id":
 						this._Id = ParseInt(propertyNode.InnerText);
 						continue;
-					case "type":
-						this._Type = propertyNode.InnerText;
+					case "typeId":
+						this._TypeId = ParseInt(propertyNode.InnerText);
 						continue;
 					case "duration":
 						this._Duration = ParseLong(propertyNode.InnerText);
@@ -219,32 +274,47 @@ namespace Kaltura.Types
 					case "externalId":
 						this._ExternalId = propertyNode.InnerText;
 						continue;
-					case "billingType":
-						this._BillingType = propertyNode.InnerText;
-						continue;
-					case "quality":
-						this._Quality = propertyNode.InnerText;
-						continue;
-					case "handlingType":
-						this._HandlingType = propertyNode.InnerText;
-						continue;
-					case "cdnName":
-						this._CdnName = propertyNode.InnerText;
-						continue;
-					case "cdnCode":
-						this._CdnCode = propertyNode.InnerText;
-						continue;
-					case "altCdnCode":
-						this._AltCdnCode = propertyNode.InnerText;
-						continue;
-					case "ppvModules":
-						this._PpvModules = ObjectFactory.Create<StringValueArray>(propertyNode);
-						continue;
-					case "productCode":
-						this._ProductCode = propertyNode.InnerText;
+					case "altExternalId":
+						this._AltExternalId = propertyNode.InnerText;
 						continue;
 					case "fileSize":
 						this._FileSize = ParseLong(propertyNode.InnerText);
+						continue;
+					case "additionalData":
+						this._AdditionalData = propertyNode.InnerText;
+						continue;
+					case "altStreamingCode":
+						this._AltStreamingCode = propertyNode.InnerText;
+						continue;
+					case "alternativeCdnAdapaterProfileId":
+						this._AlternativeCdnAdapaterProfileId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "externalStoreId":
+						this._ExternalStoreId = propertyNode.InnerText;
+						continue;
+					case "isDefaultLanguage":
+						this._IsDefaultLanguage = ParseBool(propertyNode.InnerText);
+						continue;
+					case "language":
+						this._Language = propertyNode.InnerText;
+						continue;
+					case "orderNum":
+						this._OrderNum = ParseInt(propertyNode.InnerText);
+						continue;
+					case "outputProtecationLevel":
+						this._OutputProtecationLevel = propertyNode.InnerText;
+						continue;
+					case "cdnAdapaterProfileId":
+						this._CdnAdapaterProfileId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "status":
+						this._Status = ParseBool(propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -259,18 +329,23 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaMediaFile");
 			kparams.AddIfNotNull("assetId", this._AssetId);
 			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("type", this._Type);
+			kparams.AddIfNotNull("typeId", this._TypeId);
 			kparams.AddIfNotNull("duration", this._Duration);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
-			kparams.AddIfNotNull("billingType", this._BillingType);
-			kparams.AddIfNotNull("quality", this._Quality);
-			kparams.AddIfNotNull("handlingType", this._HandlingType);
-			kparams.AddIfNotNull("cdnName", this._CdnName);
-			kparams.AddIfNotNull("cdnCode", this._CdnCode);
-			kparams.AddIfNotNull("altCdnCode", this._AltCdnCode);
-			kparams.AddIfNotNull("ppvModules", this._PpvModules);
-			kparams.AddIfNotNull("productCode", this._ProductCode);
+			kparams.AddIfNotNull("altExternalId", this._AltExternalId);
 			kparams.AddIfNotNull("fileSize", this._FileSize);
+			kparams.AddIfNotNull("additionalData", this._AdditionalData);
+			kparams.AddIfNotNull("altStreamingCode", this._AltStreamingCode);
+			kparams.AddIfNotNull("alternativeCdnAdapaterProfileId", this._AlternativeCdnAdapaterProfileId);
+			kparams.AddIfNotNull("endDate", this._EndDate);
+			kparams.AddIfNotNull("startDate", this._StartDate);
+			kparams.AddIfNotNull("externalStoreId", this._ExternalStoreId);
+			kparams.AddIfNotNull("isDefaultLanguage", this._IsDefaultLanguage);
+			kparams.AddIfNotNull("language", this._Language);
+			kparams.AddIfNotNull("orderNum", this._OrderNum);
+			kparams.AddIfNotNull("outputProtecationLevel", this._OutputProtecationLevel);
+			kparams.AddIfNotNull("cdnAdapaterProfileId", this._CdnAdapaterProfileId);
+			kparams.AddIfNotNull("status", this._Status);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -281,30 +356,40 @@ namespace Kaltura.Types
 					return "AssetId";
 				case ID:
 					return "Id";
-				case TYPE:
-					return "Type";
+				case TYPE_ID:
+					return "TypeId";
 				case DURATION:
 					return "Duration";
 				case EXTERNAL_ID:
 					return "ExternalId";
-				case BILLING_TYPE:
-					return "BillingType";
-				case QUALITY:
-					return "Quality";
-				case HANDLING_TYPE:
-					return "HandlingType";
-				case CDN_NAME:
-					return "CdnName";
-				case CDN_CODE:
-					return "CdnCode";
-				case ALT_CDN_CODE:
-					return "AltCdnCode";
-				case PPV_MODULES:
-					return "PpvModules";
-				case PRODUCT_CODE:
-					return "ProductCode";
+				case ALT_EXTERNAL_ID:
+					return "AltExternalId";
 				case FILE_SIZE:
 					return "FileSize";
+				case ADDITIONAL_DATA:
+					return "AdditionalData";
+				case ALT_STREAMING_CODE:
+					return "AltStreamingCode";
+				case ALTERNATIVE_CDN_ADAPATER_PROFILE_ID:
+					return "AlternativeCdnAdapaterProfileId";
+				case END_DATE:
+					return "EndDate";
+				case START_DATE:
+					return "StartDate";
+				case EXTERNAL_STORE_ID:
+					return "ExternalStoreId";
+				case IS_DEFAULT_LANGUAGE:
+					return "IsDefaultLanguage";
+				case LANGUAGE:
+					return "Language";
+				case ORDER_NUM:
+					return "OrderNum";
+				case OUTPUT_PROTECATION_LEVEL:
+					return "OutputProtecationLevel";
+				case CDN_ADAPATER_PROFILE_ID:
+					return "CdnAdapaterProfileId";
+				case STATUS:
+					return "Status";
 				default:
 					return base.getPropertyName(apiName);
 			}

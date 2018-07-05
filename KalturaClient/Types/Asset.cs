@@ -48,10 +48,8 @@ namespace Kaltura.Types
 		public const string TAGS = "tags";
 		public const string START_DATE = "startDate";
 		public const string END_DATE = "endDate";
-		public const string ENABLE_CDVR = "enableCdvr";
-		public const string ENABLE_CATCH_UP = "enableCatchUp";
-		public const string ENABLE_START_OVER = "enableStartOver";
-		public const string ENABLE_TRICK_PLAY = "enableTrickPlay";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		public const string EXTERNAL_ID = "externalId";
 		#endregion
 
@@ -68,10 +66,8 @@ namespace Kaltura.Types
 		private IDictionary<string, MultilingualStringValueArray> _Tags;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
-		private bool? _EnableCdvr = null;
-		private bool? _EnableCatchUp = null;
-		private bool? _EnableStartOver = null;
-		private bool? _EnableTrickPlay = null;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		private string _ExternalId = null;
 		#endregion
 
@@ -128,20 +124,10 @@ namespace Kaltura.Types
 		public IList<MediaImage> Images
 		{
 			get { return _Images; }
-			set 
-			{ 
-				_Images = value;
-				OnPropertyChanged("Images");
-			}
 		}
 		public IList<MediaFile> MediaFiles
 		{
 			get { return _MediaFiles; }
-			set 
-			{ 
-				_MediaFiles = value;
-				OnPropertyChanged("MediaFiles");
-			}
 		}
 		public IDictionary<string, Value> Metas
 		{
@@ -179,41 +165,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDate");
 			}
 		}
-		public bool? EnableCdvr
+		public long CreateDate
 		{
-			get { return _EnableCdvr; }
-			set 
-			{ 
-				_EnableCdvr = value;
-				OnPropertyChanged("EnableCdvr");
-			}
+			get { return _CreateDate; }
 		}
-		public bool? EnableCatchUp
+		public long UpdateDate
 		{
-			get { return _EnableCatchUp; }
-			set 
-			{ 
-				_EnableCatchUp = value;
-				OnPropertyChanged("EnableCatchUp");
-			}
-		}
-		public bool? EnableStartOver
-		{
-			get { return _EnableStartOver; }
-			set 
-			{ 
-				_EnableStartOver = value;
-				OnPropertyChanged("EnableStartOver");
-			}
-		}
-		public bool? EnableTrickPlay
-		{
-			get { return _EnableTrickPlay; }
-			set 
-			{ 
-				_EnableTrickPlay = value;
-				OnPropertyChanged("EnableTrickPlay");
-			}
+			get { return _UpdateDate; }
 		}
 		public string ExternalId
 		{
@@ -305,17 +263,11 @@ namespace Kaltura.Types
 					case "endDate":
 						this._EndDate = ParseLong(propertyNode.InnerText);
 						continue;
-					case "enableCdvr":
-						this._EnableCdvr = ParseBool(propertyNode.InnerText);
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
 						continue;
-					case "enableCatchUp":
-						this._EnableCatchUp = ParseBool(propertyNode.InnerText);
-						continue;
-					case "enableStartOver":
-						this._EnableStartOver = ParseBool(propertyNode.InnerText);
-						continue;
-					case "enableTrickPlay":
-						this._EnableTrickPlay = ParseBool(propertyNode.InnerText);
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
 						continue;
 					case "externalId":
 						this._ExternalId = propertyNode.InnerText;
@@ -343,10 +295,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("tags", this._Tags);
 			kparams.AddIfNotNull("startDate", this._StartDate);
 			kparams.AddIfNotNull("endDate", this._EndDate);
-			kparams.AddIfNotNull("enableCdvr", this._EnableCdvr);
-			kparams.AddIfNotNull("enableCatchUp", this._EnableCatchUp);
-			kparams.AddIfNotNull("enableStartOver", this._EnableStartOver);
-			kparams.AddIfNotNull("enableTrickPlay", this._EnableTrickPlay);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			return kparams;
 		}
@@ -378,14 +328,10 @@ namespace Kaltura.Types
 					return "StartDate";
 				case END_DATE:
 					return "EndDate";
-				case ENABLE_CDVR:
-					return "EnableCdvr";
-				case ENABLE_CATCH_UP:
-					return "EnableCatchUp";
-				case ENABLE_START_OVER:
-					return "EnableStartOver";
-				case ENABLE_TRICK_PLAY:
-					return "EnableTrickPlay";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				case EXTERNAL_ID:
 					return "ExternalId";
 				default:
