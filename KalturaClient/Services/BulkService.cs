@@ -87,7 +87,7 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class BulkServeLog RequestBuilder : RequestBuilder<Bulk>
+	public class BulkServeLogRequestBuilder : RequestBuilder<Bulk>
 	{
 		#region Constants
 		public const string ID = "id";
@@ -99,12 +99,12 @@ namespace Kaltura.Services
 			get;
 		}
 
-		public BulkServeLog RequestBuilder()
-			: base("bulk", "serveLog ")
+		public BulkServeLogRequestBuilder()
+			: base("bulk", "serveLog")
 		{
 		}
 
-		public BulkServeLog RequestBuilder(long id)
+		public BulkServeLogRequestBuilder(long id)
 			: this()
 		{
 			this.Id = id;
@@ -142,9 +142,9 @@ namespace Kaltura.Services
 			return new BulkListRequestBuilder(filter, pager);
 		}
 
-		public static BulkServeLog RequestBuilder ServeLog (long id)
+		public static BulkServeLogRequestBuilder ServeLog(long id)
 		{
-			return new BulkServeLog RequestBuilder(id);
+			return new BulkServeLogRequestBuilder(id);
 		}
 	}
 }
