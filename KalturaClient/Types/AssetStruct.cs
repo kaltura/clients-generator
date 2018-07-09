@@ -44,6 +44,11 @@ namespace Kaltura.Types
 		public const string META_IDS = "metaIds";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
+		public const string FEATURES = "features";
+		public const string PLURAL_NAME = "pluralName";
+		public const string PARENT_ID = "parentId";
+		public const string CONNECTING_META_ID = "connectingMetaId";
+		public const string CONNECTED_PARENT_META_ID = "connectedParentMetaId";
 		#endregion
 
 		#region Private Fields
@@ -55,6 +60,11 @@ namespace Kaltura.Types
 		private string _MetaIds = null;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
+		private string _Features = null;
+		private string _PluralName = null;
+		private long _ParentId = long.MinValue;
+		private long _ConnectingMetaId = long.MinValue;
+		private long _ConnectedParentMetaId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -115,6 +125,51 @@ namespace Kaltura.Types
 		{
 			get { return _UpdateDate; }
 		}
+		public string Features
+		{
+			get { return _Features; }
+			set 
+			{ 
+				_Features = value;
+				OnPropertyChanged("Features");
+			}
+		}
+		public string PluralName
+		{
+			get { return _PluralName; }
+			set 
+			{ 
+				_PluralName = value;
+				OnPropertyChanged("PluralName");
+			}
+		}
+		public long ParentId
+		{
+			get { return _ParentId; }
+			set 
+			{ 
+				_ParentId = value;
+				OnPropertyChanged("ParentId");
+			}
+		}
+		public long ConnectingMetaId
+		{
+			get { return _ConnectingMetaId; }
+			set 
+			{ 
+				_ConnectingMetaId = value;
+				OnPropertyChanged("ConnectingMetaId");
+			}
+		}
+		public long ConnectedParentMetaId
+		{
+			get { return _ConnectedParentMetaId; }
+			set 
+			{ 
+				_ConnectedParentMetaId = value;
+				OnPropertyChanged("ConnectedParentMetaId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -156,6 +211,21 @@ namespace Kaltura.Types
 					case "updateDate":
 						this._UpdateDate = ParseLong(propertyNode.InnerText);
 						continue;
+					case "features":
+						this._Features = propertyNode.InnerText;
+						continue;
+					case "pluralName":
+						this._PluralName = propertyNode.InnerText;
+						continue;
+					case "parentId":
+						this._ParentId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "connectingMetaId":
+						this._ConnectingMetaId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "connectedParentMetaId":
+						this._ConnectedParentMetaId = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -175,6 +245,11 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("metaIds", this._MetaIds);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("features", this._Features);
+			kparams.AddIfNotNull("pluralName", this._PluralName);
+			kparams.AddIfNotNull("parentId", this._ParentId);
+			kparams.AddIfNotNull("connectingMetaId", this._ConnectingMetaId);
+			kparams.AddIfNotNull("connectedParentMetaId", this._ConnectedParentMetaId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -197,6 +272,16 @@ namespace Kaltura.Types
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case FEATURES:
+					return "Features";
+				case PLURAL_NAME:
+					return "PluralName";
+				case PARENT_ID:
+					return "ParentId";
+				case CONNECTING_META_ID:
+					return "ConnectingMetaId";
+				case CONNECTED_PARENT_META_ID:
+					return "ConnectedParentMetaId";
 				default:
 					return base.getPropertyName(apiName);
 			}

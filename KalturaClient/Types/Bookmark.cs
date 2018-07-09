@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string FINISHED_WATCHING = "finishedWatching";
 		public const string PLAYER_DATA = "playerData";
 		public const string PROGRAM_ID = "programId";
+		public const string IS_REPORTING_MODE = "isReportingMode";
 		#endregion
 
 		#region Private Fields
@@ -51,6 +52,7 @@ namespace Kaltura.Types
 		private bool? _FinishedWatching = null;
 		private BookmarkPlayerData _PlayerData;
 		private long _ProgramId = long.MinValue;
+		private bool? _IsReportingMode = null;
 		#endregion
 
 		#region Properties
@@ -93,6 +95,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProgramId");
 			}
 		}
+		public bool? IsReportingMode
+		{
+			get { return _IsReportingMode; }
+			set 
+			{ 
+				_IsReportingMode = value;
+				OnPropertyChanged("IsReportingMode");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -124,6 +135,9 @@ namespace Kaltura.Types
 					case "programId":
 						this._ProgramId = ParseLong(propertyNode.InnerText);
 						continue;
+					case "isReportingMode":
+						this._IsReportingMode = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -141,6 +155,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("finishedWatching", this._FinishedWatching);
 			kparams.AddIfNotNull("playerData", this._PlayerData);
 			kparams.AddIfNotNull("programId", this._ProgramId);
+			kparams.AddIfNotNull("isReportingMode", this._IsReportingMode);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -159,6 +174,8 @@ namespace Kaltura.Types
 					return "PlayerData";
 				case PROGRAM_ID:
 					return "ProgramId";
+				case IS_REPORTING_MODE:
+					return "IsReportingMode";
 				default:
 					return base.getPropertyName(apiName);
 			}
