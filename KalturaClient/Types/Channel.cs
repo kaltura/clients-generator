@@ -33,10 +33,9 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class Channel : ObjectBase
+	public class Channel : BaseChannel
 	{
 		#region Constants
-		public const string ID = "id";
 		public const string NAME = "name";
 		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string SYSTEM_NAME = "systemName";
@@ -49,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
 		private string _Name = null;
 		private IList<TranslationToken> _MultilingualName;
 		private string _SystemName = null;
@@ -62,10 +60,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		public long Id
-		{
-			get { return _Id; }
-		}
 		public string Name
 		{
 			get { return _Name; }
@@ -150,9 +144,6 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
@@ -199,7 +190,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaChannel");
-			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("systemName", this._SystemName);
@@ -215,8 +205,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
 				case NAME:
 					return "Name";
 				case MULTILINGUAL_NAME:
