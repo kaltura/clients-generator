@@ -37,13 +37,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string STATUS_IN = "statusIn";
-		public const string FILTER_EXPRESSION = "filterExpression";
+		public const string KSQL = "kSql";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _StatusIn = null;
-		private string _FilterExpression = null;
+		private string _KSql = null;
 		private RecordingOrderBy _OrderBy = null;
 		#endregion
 
@@ -57,13 +57,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("StatusIn");
 			}
 		}
-		public string FilterExpression
+		public string KSql
 		{
-			get { return _FilterExpression; }
+			get { return _KSql; }
 			set 
 			{ 
-				_FilterExpression = value;
-				OnPropertyChanged("FilterExpression");
+				_KSql = value;
+				OnPropertyChanged("KSql");
 			}
 		}
 		public new RecordingOrderBy OrderBy
@@ -91,8 +91,8 @@ namespace Kaltura.Types
 					case "statusIn":
 						this._StatusIn = propertyNode.InnerText;
 						continue;
-					case "filterExpression":
-						this._FilterExpression = propertyNode.InnerText;
+					case "kSql":
+						this._KSql = propertyNode.InnerText;
 						continue;
 					case "orderBy":
 						this._OrderBy = (RecordingOrderBy)StringEnum.Parse(typeof(RecordingOrderBy), propertyNode.InnerText);
@@ -109,7 +109,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaRecordingFilter");
 			kparams.AddIfNotNull("statusIn", this._StatusIn);
-			kparams.AddIfNotNull("filterExpression", this._FilterExpression);
+			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -119,8 +119,8 @@ namespace Kaltura.Types
 			{
 				case STATUS_IN:
 					return "StatusIn";
-				case FILTER_EXPRESSION:
-					return "FilterExpression";
+				case KSQL:
+					return "KSql";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

@@ -195,6 +195,8 @@ namespace Kaltura
 					return new ListResponse<Bulk>(xmlElement);
 				case "KalturaDrmProfileListResponse":
 					return new ListResponse<DrmProfile>(xmlElement);
+				case "KalturaMediaConcurrencyRuleListResponse":
+					return new ListResponse<MediaConcurrencyRule>(xmlElement);
 				case "KalturaAssetUserRuleListResponse":
 					return new ListResponse<AssetUserRule>(xmlElement);
 				case "KalturaCurrencyListResponse":

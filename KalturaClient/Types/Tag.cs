@@ -66,11 +66,6 @@ namespace Kaltura.Types
 		public string TagValue
 		{
 			get { return _Tag; }
-			set 
-			{ 
-				_Tag = value;
-				OnPropertyChanged("Tag");
-			}
 		}
 		public IList<TranslationToken> MultilingualTag
 		{

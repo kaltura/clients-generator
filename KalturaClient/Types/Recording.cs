@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string TYPE = "type";
 		public const string VIEWABLE_UNTIL_DATE = "viewableUntilDate";
 		public const string IS_PROTECTED = "isProtected";
+		public const string EXTERNAL_ID = "externalId";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
 		#endregion
@@ -53,6 +54,7 @@ namespace Kaltura.Types
 		private RecordingType _Type = null;
 		private long _ViewableUntilDate = long.MinValue;
 		private bool? _IsProtected = null;
+		private string _ExternalId = null;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
 		#endregion
@@ -86,6 +88,15 @@ namespace Kaltura.Types
 		public bool? IsProtected
 		{
 			get { return _IsProtected; }
+		}
+		public string ExternalId
+		{
+			get { return _ExternalId; }
+			set 
+			{ 
+				_ExternalId = value;
+				OnPropertyChanged("ExternalId");
+			}
 		}
 		public long CreateDate
 		{
@@ -126,6 +137,9 @@ namespace Kaltura.Types
 					case "isProtected":
 						this._IsProtected = ParseBool(propertyNode.InnerText);
 						continue;
+					case "externalId":
+						this._ExternalId = propertyNode.InnerText;
+						continue;
 					case "createDate":
 						this._CreateDate = ParseLong(propertyNode.InnerText);
 						continue;
@@ -149,6 +163,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("viewableUntilDate", this._ViewableUntilDate);
 			kparams.AddIfNotNull("isProtected", this._IsProtected);
+			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
@@ -169,6 +184,8 @@ namespace Kaltura.Types
 					return "ViewableUntilDate";
 				case IS_PROTECTED:
 					return "IsProtected";
+				case EXTERNAL_ID:
+					return "ExternalId";
 				case CREATE_DATE:
 					return "CreateDate";
 				case UPDATE_DATE:

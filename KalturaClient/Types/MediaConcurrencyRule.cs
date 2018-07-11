@@ -33,54 +33,83 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class MultilingualStringValue : Value
+	public class MediaConcurrencyRule : ObjectBase
 	{
 		#region Constants
-		public const string VALUE = "value";
-		public const string MULTILINGUAL_VALUE = "multilingualValue";
+		public const string ID = "id";
+		public const string NAME = "name";
+		public const string CONCURRENCY_LIMITATION_TYPE = "concurrencyLimitationType";
+		public const string LIMITATION = "limitation";
 		#endregion
 
 		#region Private Fields
-		private string _Value = null;
-		private IList<TranslationToken> _MultilingualValue;
+		private string _Id = null;
+		private string _Name = null;
+		private ConcurrencyLimitationType _ConcurrencyLimitationType = null;
+		private int _Limitation = Int32.MinValue;
 		#endregion
 
 		#region Properties
-		public string Value
+		public string Id
 		{
-			get { return _Value; }
-		}
-		public IList<TranslationToken> MultilingualValue
-		{
-			get { return _MultilingualValue; }
+			get { return _Id; }
 			set 
 			{ 
-				_MultilingualValue = value;
-				OnPropertyChanged("MultilingualValue");
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
+		}
+		public string Name
+		{
+			get { return _Name; }
+			set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
+		}
+		public ConcurrencyLimitationType ConcurrencyLimitationType
+		{
+			get { return _ConcurrencyLimitationType; }
+			set 
+			{ 
+				_ConcurrencyLimitationType = value;
+				OnPropertyChanged("ConcurrencyLimitationType");
+			}
+		}
+		public int Limitation
+		{
+			get { return _Limitation; }
+			set 
+			{ 
+				_Limitation = value;
+				OnPropertyChanged("Limitation");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public MultilingualStringValue()
+		public MediaConcurrencyRule()
 		{
 		}
 
-		public MultilingualStringValue(XmlElement node) : base(node)
+		public MediaConcurrencyRule(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "value":
-						this._Value = propertyNode.InnerText;
+					case "id":
+						this._Id = propertyNode.InnerText;
 						continue;
-					case "multilingualValue":
-						this._MultilingualValue = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "concurrencyLimitationType":
+						this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), propertyNode.InnerText);
+						continue;
+					case "limitation":
+						this._Limitation = ParseInt(propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -92,19 +121,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaMultilingualStringValue");
-			kparams.AddIfNotNull("value", this._Value);
-			kparams.AddIfNotNull("multilingualValue", this._MultilingualValue);
+				kparams.AddReplace("objectType", "KalturaMediaConcurrencyRule");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("name", this._Name);
+			kparams.AddIfNotNull("concurrencyLimitationType", this._ConcurrencyLimitationType);
+			kparams.AddIfNotNull("limitation", this._Limitation);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case VALUE:
-					return "Value";
-				case MULTILINGUAL_VALUE:
-					return "MultilingualValue";
+				case ID:
+					return "Id";
+				case NAME:
+					return "Name";
+				case CONCURRENCY_LIMITATION_TYPE:
+					return "ConcurrencyLimitationType";
+				case LIMITATION:
+					return "Limitation";
 				default:
 					return base.getPropertyName(apiName);
 			}
