@@ -37,12 +37,14 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string STATUS_IN = "statusIn";
+		public const string EXTERNAL_RECORDING_ID_IN = "externalRecordingIdIn";
 		public const string KSQL = "kSql";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _StatusIn = null;
+		private string _ExternalRecordingIdIn = null;
 		private string _KSql = null;
 		private RecordingOrderBy _OrderBy = null;
 		#endregion
@@ -55,6 +57,15 @@ namespace Kaltura.Types
 			{ 
 				_StatusIn = value;
 				OnPropertyChanged("StatusIn");
+			}
+		}
+		public string ExternalRecordingIdIn
+		{
+			get { return _ExternalRecordingIdIn; }
+			set 
+			{ 
+				_ExternalRecordingIdIn = value;
+				OnPropertyChanged("ExternalRecordingIdIn");
 			}
 		}
 		public string KSql
@@ -91,6 +102,9 @@ namespace Kaltura.Types
 					case "statusIn":
 						this._StatusIn = propertyNode.InnerText;
 						continue;
+					case "externalRecordingIdIn":
+						this._ExternalRecordingIdIn = propertyNode.InnerText;
+						continue;
 					case "kSql":
 						this._KSql = propertyNode.InnerText;
 						continue;
@@ -109,6 +123,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaRecordingFilter");
 			kparams.AddIfNotNull("statusIn", this._StatusIn);
+			kparams.AddIfNotNull("externalRecordingIdIn", this._ExternalRecordingIdIn);
 			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
@@ -119,6 +134,8 @@ namespace Kaltura.Types
 			{
 				case STATUS_IN:
 					return "StatusIn";
+				case EXTERNAL_RECORDING_ID_IN:
+					return "ExternalRecordingIdIn";
 				case KSQL:
 					return "KSql";
 				case ORDER_BY:
