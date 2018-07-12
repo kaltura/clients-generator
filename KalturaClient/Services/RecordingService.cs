@@ -259,6 +259,96 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class RecordingNotifyRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string EXTERNAL_DOMAIN_RECORDING_ID = "externalDomainRecordingId";
+		public const string RECORDING_STATUS = "recordingStatus";
+		public const string DOMAIN_ID = "domainId";
+		public const string EXTERNAL_EPG_ID = "externalEpgId";
+		public const string RECORDING_TYPE = "recordingType";
+		public const string IS_PROTECTED = "isProtected";
+		#endregion
+
+		public string ExternalDomainRecordingId
+		{
+			set;
+			get;
+		}
+		public RecordingStatus RecordingStatus
+		{
+			set;
+			get;
+		}
+		public int DomainId
+		{
+			set;
+			get;
+		}
+		public string ExternalEpgId
+		{
+			set;
+			get;
+		}
+		public RecordingType RecordingType
+		{
+			set;
+			get;
+		}
+		public bool IsProtected
+		{
+			set;
+			get;
+		}
+
+		public RecordingNotifyRequestBuilder()
+			: base("recording", "notify")
+		{
+		}
+
+		public RecordingNotifyRequestBuilder(string externalDomainRecordingId, RecordingStatus recordingStatus, int domainId, string externalEpgId, RecordingType recordingType, bool isProtected)
+			: this()
+		{
+			this.ExternalDomainRecordingId = externalDomainRecordingId;
+			this.RecordingStatus = recordingStatus;
+			this.DomainId = domainId;
+			this.ExternalEpgId = externalEpgId;
+			this.RecordingType = recordingType;
+			this.IsProtected = isProtected;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("externalDomainRecordingId"))
+				kparams.AddIfNotNull("externalDomainRecordingId", ExternalDomainRecordingId);
+			if (!isMapped("recordingStatus"))
+				kparams.AddIfNotNull("recordingStatus", RecordingStatus);
+			if (!isMapped("domainId"))
+				kparams.AddIfNotNull("domainId", DomainId);
+			if (!isMapped("externalEpgId"))
+				kparams.AddIfNotNull("externalEpgId", ExternalEpgId);
+			if (!isMapped("recordingType"))
+				kparams.AddIfNotNull("recordingType", RecordingType);
+			if (!isMapped("isProtected"))
+				kparams.AddIfNotNull("isProtected", IsProtected);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class RecordingProtectRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -332,6 +422,11 @@ namespace Kaltura.Services
 		public static RecordingListRequestBuilder List(RecordingFilter filter = null, FilterPager pager = null)
 		{
 			return new RecordingListRequestBuilder(filter, pager);
+		}
+
+		public static RecordingNotifyRequestBuilder Notify(string externalDomainRecordingId, RecordingStatus recordingStatus, int domainId, string externalEpgId = null, RecordingType recordingType = null, bool isProtected = False)
+		{
+			return new RecordingNotifyRequestBuilder(externalDomainRecordingId, recordingStatus, domainId, externalEpgId, recordingType, isProtected);
 		}
 
 		public static RecordingProtectRequestBuilder Protect(long id)
