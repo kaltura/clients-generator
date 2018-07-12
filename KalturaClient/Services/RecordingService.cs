@@ -424,7 +424,7 @@ namespace Kaltura.Services
 			return new RecordingListRequestBuilder(filter, pager);
 		}
 
-		public static RecordingNotifyRequestBuilder Notify(string externalDomainRecordingId, RecordingStatus recordingStatus, int domainId, string externalEpgId = null, RecordingType recordingType = null, bool isProtected = False)
+		public static RecordingNotifyRequestBuilder Notify(string externalDomainRecordingId, RecordingStatus recordingStatus, int domainId, string externalEpgId = null, RecordingType recordingType = null, bool isProtected = false)
 		{
 			return new RecordingNotifyRequestBuilder(externalDomainRecordingId, recordingStatus, domainId, externalEpgId, recordingType, isProtected);
 		}
