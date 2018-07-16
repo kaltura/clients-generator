@@ -38,6 +38,7 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ASSET_ID = "assetId";
 		public const string ID = "id";
+		public const string TYPE = "type";
 		public const string TYPE_ID = "typeId";
 		public const string DURATION = "duration";
 		public const string EXTERNAL_ID = "externalId";
@@ -60,6 +61,7 @@ namespace Kaltura.Types
 		#region Private Fields
 		private int _AssetId = Int32.MinValue;
 		private int _Id = Int32.MinValue;
+		private string _Type = null;
 		private int _TypeId = Int32.MinValue;
 		private long _Duration = long.MinValue;
 		private string _ExternalId = null;
@@ -92,6 +94,10 @@ namespace Kaltura.Types
 		public int Id
 		{
 			get { return _Id; }
+		}
+		public string Type
+		{
+			get { return _Type; }
 		}
 		public int TypeId
 		{
@@ -265,6 +271,9 @@ namespace Kaltura.Types
 					case "id":
 						this._Id = ParseInt(propertyNode.InnerText);
 						continue;
+					case "type":
+						this._Type = propertyNode.InnerText;
+						continue;
 					case "typeId":
 						this._TypeId = ParseInt(propertyNode.InnerText);
 						continue;
@@ -329,6 +338,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaMediaFile");
 			kparams.AddIfNotNull("assetId", this._AssetId);
 			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("typeId", this._TypeId);
 			kparams.AddIfNotNull("duration", this._Duration);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
@@ -356,6 +366,8 @@ namespace Kaltura.Types
 					return "AssetId";
 				case ID:
 					return "Id";
+				case TYPE:
+					return "Type";
 				case TYPE_ID:
 					return "TypeId";
 				case DURATION:
