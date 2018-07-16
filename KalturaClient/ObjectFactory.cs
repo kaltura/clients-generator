@@ -141,18 +141,6 @@ namespace Kaltura
 					return new ListResponse<PersonalFeed>(xmlElement);
 				case "KalturaTopicListResponse":
 					return new ListResponse<Topic>(xmlElement);
-				case "KalturaSeriesRecordingListResponse":
-					return new ListResponse<SeriesRecording>(xmlElement);
-				case "KalturaHouseholdPremiumServiceListResponse":
-					return new ListResponse<HouseholdPremiumService>(xmlElement);
-				case "KalturaCDVRAdapterProfileListResponse":
-					return new ListResponse<CDVRAdapterProfile>(xmlElement);
-				case "KalturaRecordingListResponse":
-					return new ListResponse<Recording>(xmlElement);
-				case "KalturaBillingTransactionListResponse":
-					return new ListResponse<BillingTransaction>(xmlElement);
-				case "KalturaEntitlementListResponse":
-					return new ListResponse<Entitlement>(xmlElement);
 				case "KalturaPartnerConfigurationListResponse":
 					return new ListResponse<PartnerConfiguration>(xmlElement);
 				case "KalturaGenericListResponse":
@@ -193,6 +181,18 @@ namespace Kaltura
 					return new ListResponse<AssetHistory>(xmlElement);
 				case "KalturaBulkListResponse":
 					return new ListResponse<Bulk>(xmlElement);
+				case "KalturaSeriesRecordingListResponse":
+					return new ListResponse<SeriesRecording>(xmlElement);
+				case "KalturaHouseholdPremiumServiceListResponse":
+					return new ListResponse<HouseholdPremiumService>(xmlElement);
+				case "KalturaCDVRAdapterProfileListResponse":
+					return new ListResponse<CDVRAdapterProfile>(xmlElement);
+				case "KalturaRecordingListResponse":
+					return new ListResponse<Recording>(xmlElement);
+				case "KalturaBillingTransactionListResponse":
+					return new ListResponse<BillingTransaction>(xmlElement);
+				case "KalturaEntitlementListResponse":
+					return new ListResponse<Entitlement>(xmlElement);
 				case "KalturaDrmProfileListResponse":
 					return new ListResponse<DrmProfile>(xmlElement);
 				case "KalturaMediaConcurrencyRuleListResponse":
