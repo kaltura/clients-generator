@@ -25,15 +25,52 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class RuleConditionType : StringEnum
-	{
-		public static readonly RuleConditionType ASSET = new RuleConditionType("ASSET");
-		public static readonly RuleConditionType COUNTRY = new RuleConditionType("COUNTRY");
-		public static readonly RuleConditionType CONCURRENCY = new RuleConditionType("CONCURRENCY");
-		public static readonly RuleConditionType IP_RANGE = new RuleConditionType("IP_RANGE");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
 
-		private RuleConditionType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BlockPlaybackAction : AssetRuleAction
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public BlockPlaybackAction()
+		{
+		}
+
+		public BlockPlaybackAction(XmlElement node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBlockPlaybackAction");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

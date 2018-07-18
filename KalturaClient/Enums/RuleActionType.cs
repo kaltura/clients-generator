@@ -33,6 +33,8 @@ namespace Kaltura.Enums
 		public static readonly RuleActionType START_DATE_OFFSET = new RuleActionType("START_DATE_OFFSET");
 		public static readonly RuleActionType END_DATE_OFFSET = new RuleActionType("END_DATE_OFFSET");
 		public static readonly RuleActionType USER_BLOCK = new RuleActionType("USER_BLOCK");
+		public static readonly RuleActionType ALLOW_PLAYBACK = new RuleActionType("ALLOW_PLAYBACK");
+		public static readonly RuleActionType BLOCK_PLAYBACK = new RuleActionType("BLOCK_PLAYBACK");
 
 		private RuleActionType(string name) : base(name) { }
 	}
