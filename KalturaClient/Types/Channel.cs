@@ -38,9 +38,11 @@ namespace Kaltura.Types
 		#region Constants
 		public const string NAME = "name";
 		public const string MULTILINGUAL_NAME = "multilingualName";
+		public const string OLD_NAME = "oldName";
 		public const string SYSTEM_NAME = "systemName";
 		public const string DESCRIPTION = "description";
 		public const string MULTILINGUAL_DESCRIPTION = "multilingualDescription";
+		public const string OLD_DESCRIPTION = "oldDescription";
 		public const string IS_ACTIVE = "isActive";
 		public const string ORDER_BY = "orderBy";
 		public const string CREATE_DATE = "createDate";
@@ -50,9 +52,11 @@ namespace Kaltura.Types
 		#region Private Fields
 		private string _Name = null;
 		private IList<TranslationToken> _MultilingualName;
+		private string _OldName = null;
 		private string _SystemName = null;
 		private string _Description = null;
 		private IList<TranslationToken> _MultilingualDescription;
+		private string _OldDescription = null;
 		private bool? _IsActive = null;
 		private ChannelOrder _OrderBy;
 		private long _CreateDate = long.MinValue;
@@ -71,6 +75,15 @@ namespace Kaltura.Types
 			{ 
 				_MultilingualName = value;
 				OnPropertyChanged("MultilingualName");
+			}
+		}
+		public string OldName
+		{
+			get { return _OldName; }
+			set 
+			{ 
+				_OldName = value;
+				OnPropertyChanged("OldName");
 			}
 		}
 		public string SystemName
@@ -93,6 +106,15 @@ namespace Kaltura.Types
 			{ 
 				_MultilingualDescription = value;
 				OnPropertyChanged("MultilingualDescription");
+			}
+		}
+		public string OldDescription
+		{
+			get { return _OldDescription; }
+			set 
+			{ 
+				_OldDescription = value;
+				OnPropertyChanged("OldDescription");
 			}
 		}
 		public bool? IsActive
@@ -144,6 +166,9 @@ namespace Kaltura.Types
 							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 						}
 						continue;
+					case "oldName":
+						this._OldName = propertyNode.InnerText;
+						continue;
 					case "systemName":
 						this._SystemName = propertyNode.InnerText;
 						continue;
@@ -156,6 +181,9 @@ namespace Kaltura.Types
 						{
 							this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 						}
+						continue;
+					case "oldDescription":
+						this._OldDescription = propertyNode.InnerText;
 						continue;
 					case "isActive":
 						this._IsActive = ParseBool(propertyNode.InnerText);
@@ -182,9 +210,11 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaChannel");
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
+			kparams.AddIfNotNull("oldName", this._OldName);
 			kparams.AddIfNotNull("systemName", this._SystemName);
 			kparams.AddIfNotNull("description", this._Description);
 			kparams.AddIfNotNull("multilingualDescription", this._MultilingualDescription);
+			kparams.AddIfNotNull("oldDescription", this._OldDescription);
 			kparams.AddIfNotNull("isActive", this._IsActive);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
@@ -199,12 +229,16 @@ namespace Kaltura.Types
 					return "Name";
 				case MULTILINGUAL_NAME:
 					return "MultilingualName";
+				case OLD_NAME:
+					return "OldName";
 				case SYSTEM_NAME:
 					return "SystemName";
 				case DESCRIPTION:
 					return "Description";
 				case MULTILINGUAL_DESCRIPTION:
 					return "MultilingualDescription";
+				case OLD_DESCRIPTION:
+					return "OldDescription";
 				case IS_ACTIVE:
 					return "IsActive";
 				case ORDER_BY:
