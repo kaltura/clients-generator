@@ -39,19 +39,19 @@ namespace Kaltura.Types
 		public const string ENABLE_CDVR_STATE = "enableCdvrState";
 		public const string ENABLE_CATCH_UP_STATE = "enableCatchUpState";
 		public const string ENABLE_START_OVER_STATE = "enableStartOverState";
-		public const string BUFFER_CATCH_UP = "bufferCatchUp";
-		public const string BUFFER_TRICK_PLAY = "bufferTrickPlay";
+		public const string BUFFER_CATCH_UP_SETTING = "bufferCatchUpSetting";
+		public const string BUFFER_TRICK_PLAY_SETTING = "bufferTrickPlaySetting";
 		public const string ENABLE_RECORDING_PLAYBACK_NON_ENTITLED_CHANNEL_STATE = "enableRecordingPlaybackNonEntitledChannelState";
 		public const string ENABLE_TRICK_PLAY_STATE = "enableTrickPlayState";
 		public const string EXTERNAL_EPG_INGEST_ID = "externalEpgIngestId";
 		public const string EXTERNAL_CDVR_ID = "externalCdvrId";
-		public const string CDVR_ENABLED = "cdvrEnabled";
-		public const string CATCH_UP_ENABLED = "catchUpEnabled";
-		public const string START_OVER_ENABLED = "startOverEnabled";
-		public const string SUMMED_CATCH_UP_BUFFER = "summedCatchUpBuffer";
-		public const string SUMMED_TRICK_PLAY_BUFFER = "summedTrickPlayBuffer";
-		public const string RECORDING_PLAYBACK_NON_ENTITLED_CHANNEL_ENABLED = "recordingPlaybackNonEntitledChannelEnabled";
-		public const string TRICK_PLAY_ENABLED = "trickPlayEnabled";
+		public const string ENABLE_CDVR = "enableCdvr";
+		public const string ENABLE_CATCH_UP = "enableCatchUp";
+		public const string ENABLE_START_OVER = "enableStartOver";
+		public const string CATCH_UP_BUFFER = "catchUpBuffer";
+		public const string TRICK_PLAY_BUFFER = "trickPlayBuffer";
+		public const string ENABLE_RECORDING_PLAYBACK_NON_ENTITLED_CHANNEL = "enableRecordingPlaybackNonEntitledChannel";
+		public const string ENABLE_TRICK_PLAY = "enableTrickPlay";
 		public const string CHANNEL_TYPE = "channelType";
 		#endregion
 
@@ -59,19 +59,19 @@ namespace Kaltura.Types
 		private TimeShiftedTvState _EnableCdvrState = null;
 		private TimeShiftedTvState _EnableCatchUpState = null;
 		private TimeShiftedTvState _EnableStartOverState = null;
-		private long _BufferCatchUp = long.MinValue;
-		private long _BufferTrickPlay = long.MinValue;
+		private long _BufferCatchUpSetting = long.MinValue;
+		private long _BufferTrickPlaySetting = long.MinValue;
 		private TimeShiftedTvState _EnableRecordingPlaybackNonEntitledChannelState = null;
 		private TimeShiftedTvState _EnableTrickPlayState = null;
 		private string _ExternalEpgIngestId = null;
 		private string _ExternalCdvrId = null;
-		private bool? _CdvrEnabled = null;
-		private bool? _CatchUpEnabled = null;
-		private bool? _StartOverEnabled = null;
-		private long _SummedCatchUpBuffer = long.MinValue;
-		private long _SummedTrickPlayBuffer = long.MinValue;
-		private bool? _RecordingPlaybackNonEntitledChannelEnabled = null;
-		private bool? _TrickPlayEnabled = null;
+		private bool? _EnableCdvr = null;
+		private bool? _EnableCatchUp = null;
+		private bool? _EnableStartOver = null;
+		private long _CatchUpBuffer = long.MinValue;
+		private long _TrickPlayBuffer = long.MinValue;
+		private bool? _EnableRecordingPlaybackNonEntitledChannel = null;
+		private bool? _EnableTrickPlay = null;
 		private LinearChannelType _ChannelType = null;
 		#endregion
 
@@ -103,22 +103,22 @@ namespace Kaltura.Types
 				OnPropertyChanged("EnableStartOverState");
 			}
 		}
-		public long BufferCatchUp
+		public long BufferCatchUpSetting
 		{
-			get { return _BufferCatchUp; }
+			get { return _BufferCatchUpSetting; }
 			set 
 			{ 
-				_BufferCatchUp = value;
-				OnPropertyChanged("BufferCatchUp");
+				_BufferCatchUpSetting = value;
+				OnPropertyChanged("BufferCatchUpSetting");
 			}
 		}
-		public long BufferTrickPlay
+		public long BufferTrickPlaySetting
 		{
-			get { return _BufferTrickPlay; }
+			get { return _BufferTrickPlaySetting; }
 			set 
 			{ 
-				_BufferTrickPlay = value;
-				OnPropertyChanged("BufferTrickPlay");
+				_BufferTrickPlaySetting = value;
+				OnPropertyChanged("BufferTrickPlaySetting");
 			}
 		}
 		public TimeShiftedTvState EnableRecordingPlaybackNonEntitledChannelState
@@ -157,33 +157,33 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalCdvrId");
 			}
 		}
-		public bool? CdvrEnabled
+		public bool? EnableCdvr
 		{
-			get { return _CdvrEnabled; }
+			get { return _EnableCdvr; }
 		}
-		public bool? CatchUpEnabled
+		public bool? EnableCatchUp
 		{
-			get { return _CatchUpEnabled; }
+			get { return _EnableCatchUp; }
 		}
-		public bool? StartOverEnabled
+		public bool? EnableStartOver
 		{
-			get { return _StartOverEnabled; }
+			get { return _EnableStartOver; }
 		}
-		public long SummedCatchUpBuffer
+		public long CatchUpBuffer
 		{
-			get { return _SummedCatchUpBuffer; }
+			get { return _CatchUpBuffer; }
 		}
-		public long SummedTrickPlayBuffer
+		public long TrickPlayBuffer
 		{
-			get { return _SummedTrickPlayBuffer; }
+			get { return _TrickPlayBuffer; }
 		}
-		public bool? RecordingPlaybackNonEntitledChannelEnabled
+		public bool? EnableRecordingPlaybackNonEntitledChannel
 		{
-			get { return _RecordingPlaybackNonEntitledChannelEnabled; }
+			get { return _EnableRecordingPlaybackNonEntitledChannel; }
 		}
-		public bool? TrickPlayEnabled
+		public bool? EnableTrickPlay
 		{
-			get { return _TrickPlayEnabled; }
+			get { return _EnableTrickPlay; }
 		}
 		public LinearChannelType ChannelType
 		{
@@ -216,11 +216,11 @@ namespace Kaltura.Types
 					case "enableStartOverState":
 						this._EnableStartOverState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
 						continue;
-					case "bufferCatchUp":
-						this._BufferCatchUp = ParseLong(propertyNode.InnerText);
+					case "bufferCatchUpSetting":
+						this._BufferCatchUpSetting = ParseLong(propertyNode.InnerText);
 						continue;
-					case "bufferTrickPlay":
-						this._BufferTrickPlay = ParseLong(propertyNode.InnerText);
+					case "bufferTrickPlaySetting":
+						this._BufferTrickPlaySetting = ParseLong(propertyNode.InnerText);
 						continue;
 					case "enableRecordingPlaybackNonEntitledChannelState":
 						this._EnableRecordingPlaybackNonEntitledChannelState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
@@ -234,26 +234,26 @@ namespace Kaltura.Types
 					case "externalCdvrId":
 						this._ExternalCdvrId = propertyNode.InnerText;
 						continue;
-					case "cdvrEnabled":
-						this._CdvrEnabled = ParseBool(propertyNode.InnerText);
+					case "enableCdvr":
+						this._EnableCdvr = ParseBool(propertyNode.InnerText);
 						continue;
-					case "catchUpEnabled":
-						this._CatchUpEnabled = ParseBool(propertyNode.InnerText);
+					case "enableCatchUp":
+						this._EnableCatchUp = ParseBool(propertyNode.InnerText);
 						continue;
-					case "startOverEnabled":
-						this._StartOverEnabled = ParseBool(propertyNode.InnerText);
+					case "enableStartOver":
+						this._EnableStartOver = ParseBool(propertyNode.InnerText);
 						continue;
-					case "summedCatchUpBuffer":
-						this._SummedCatchUpBuffer = ParseLong(propertyNode.InnerText);
+					case "catchUpBuffer":
+						this._CatchUpBuffer = ParseLong(propertyNode.InnerText);
 						continue;
-					case "summedTrickPlayBuffer":
-						this._SummedTrickPlayBuffer = ParseLong(propertyNode.InnerText);
+					case "trickPlayBuffer":
+						this._TrickPlayBuffer = ParseLong(propertyNode.InnerText);
 						continue;
-					case "recordingPlaybackNonEntitledChannelEnabled":
-						this._RecordingPlaybackNonEntitledChannelEnabled = ParseBool(propertyNode.InnerText);
+					case "enableRecordingPlaybackNonEntitledChannel":
+						this._EnableRecordingPlaybackNonEntitledChannel = ParseBool(propertyNode.InnerText);
 						continue;
-					case "trickPlayEnabled":
-						this._TrickPlayEnabled = ParseBool(propertyNode.InnerText);
+					case "enableTrickPlay":
+						this._EnableTrickPlay = ParseBool(propertyNode.InnerText);
 						continue;
 					case "channelType":
 						this._ChannelType = (LinearChannelType)StringEnum.Parse(typeof(LinearChannelType), propertyNode.InnerText);
@@ -272,19 +272,19 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("enableCdvrState", this._EnableCdvrState);
 			kparams.AddIfNotNull("enableCatchUpState", this._EnableCatchUpState);
 			kparams.AddIfNotNull("enableStartOverState", this._EnableStartOverState);
-			kparams.AddIfNotNull("bufferCatchUp", this._BufferCatchUp);
-			kparams.AddIfNotNull("bufferTrickPlay", this._BufferTrickPlay);
+			kparams.AddIfNotNull("bufferCatchUpSetting", this._BufferCatchUpSetting);
+			kparams.AddIfNotNull("bufferTrickPlaySetting", this._BufferTrickPlaySetting);
 			kparams.AddIfNotNull("enableRecordingPlaybackNonEntitledChannelState", this._EnableRecordingPlaybackNonEntitledChannelState);
 			kparams.AddIfNotNull("enableTrickPlayState", this._EnableTrickPlayState);
 			kparams.AddIfNotNull("externalEpgIngestId", this._ExternalEpgIngestId);
 			kparams.AddIfNotNull("externalCdvrId", this._ExternalCdvrId);
-			kparams.AddIfNotNull("cdvrEnabled", this._CdvrEnabled);
-			kparams.AddIfNotNull("catchUpEnabled", this._CatchUpEnabled);
-			kparams.AddIfNotNull("startOverEnabled", this._StartOverEnabled);
-			kparams.AddIfNotNull("summedCatchUpBuffer", this._SummedCatchUpBuffer);
-			kparams.AddIfNotNull("summedTrickPlayBuffer", this._SummedTrickPlayBuffer);
-			kparams.AddIfNotNull("recordingPlaybackNonEntitledChannelEnabled", this._RecordingPlaybackNonEntitledChannelEnabled);
-			kparams.AddIfNotNull("trickPlayEnabled", this._TrickPlayEnabled);
+			kparams.AddIfNotNull("enableCdvr", this._EnableCdvr);
+			kparams.AddIfNotNull("enableCatchUp", this._EnableCatchUp);
+			kparams.AddIfNotNull("enableStartOver", this._EnableStartOver);
+			kparams.AddIfNotNull("catchUpBuffer", this._CatchUpBuffer);
+			kparams.AddIfNotNull("trickPlayBuffer", this._TrickPlayBuffer);
+			kparams.AddIfNotNull("enableRecordingPlaybackNonEntitledChannel", this._EnableRecordingPlaybackNonEntitledChannel);
+			kparams.AddIfNotNull("enableTrickPlay", this._EnableTrickPlay);
 			kparams.AddIfNotNull("channelType", this._ChannelType);
 			return kparams;
 		}
@@ -298,10 +298,10 @@ namespace Kaltura.Types
 					return "EnableCatchUpState";
 				case ENABLE_START_OVER_STATE:
 					return "EnableStartOverState";
-				case BUFFER_CATCH_UP:
-					return "BufferCatchUp";
-				case BUFFER_TRICK_PLAY:
-					return "BufferTrickPlay";
+				case BUFFER_CATCH_UP_SETTING:
+					return "BufferCatchUpSetting";
+				case BUFFER_TRICK_PLAY_SETTING:
+					return "BufferTrickPlaySetting";
 				case ENABLE_RECORDING_PLAYBACK_NON_ENTITLED_CHANNEL_STATE:
 					return "EnableRecordingPlaybackNonEntitledChannelState";
 				case ENABLE_TRICK_PLAY_STATE:
@@ -310,20 +310,20 @@ namespace Kaltura.Types
 					return "ExternalEpgIngestId";
 				case EXTERNAL_CDVR_ID:
 					return "ExternalCdvrId";
-				case CDVR_ENABLED:
-					return "CdvrEnabled";
-				case CATCH_UP_ENABLED:
-					return "CatchUpEnabled";
-				case START_OVER_ENABLED:
-					return "StartOverEnabled";
-				case SUMMED_CATCH_UP_BUFFER:
-					return "SummedCatchUpBuffer";
-				case SUMMED_TRICK_PLAY_BUFFER:
-					return "SummedTrickPlayBuffer";
-				case RECORDING_PLAYBACK_NON_ENTITLED_CHANNEL_ENABLED:
-					return "RecordingPlaybackNonEntitledChannelEnabled";
-				case TRICK_PLAY_ENABLED:
-					return "TrickPlayEnabled";
+				case ENABLE_CDVR:
+					return "EnableCdvr";
+				case ENABLE_CATCH_UP:
+					return "EnableCatchUp";
+				case ENABLE_START_OVER:
+					return "EnableStartOver";
+				case CATCH_UP_BUFFER:
+					return "CatchUpBuffer";
+				case TRICK_PLAY_BUFFER:
+					return "TrickPlayBuffer";
+				case ENABLE_RECORDING_PLAYBACK_NON_ENTITLED_CHANNEL:
+					return "EnableRecordingPlaybackNonEntitledChannel";
+				case ENABLE_TRICK_PLAY:
+					return "EnableTrickPlay";
 				case CHANNEL_TYPE:
 					return "ChannelType";
 				default:

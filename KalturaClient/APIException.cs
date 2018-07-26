@@ -218,6 +218,7 @@ namespace Kaltura
 		public static string ChannelSystemNameAlreadyInUse = "4060";
 		public static string ChannelDoesNotExist = "4064";
 		public static string ChannelMetaOrderByIsInvalid = "4061";
+		public static string AccountIsNotOpcSupported = "4074";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
