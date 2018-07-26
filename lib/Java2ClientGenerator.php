@@ -308,13 +308,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			if($propertyNode->nodeType != XML_ELEMENT_NODE) {
 				continue;
 			}
-
-			$propReadOnly = $propertyNode->getAttribute("readOnly");
-			if($propReadOnly == "1") {
-			    continue;
-			}
 			
-			$hasProperties = true;
+			$hasProperties = true;			
 			$propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
 			$propType = $propertyNode->getAttribute("type");
 			
