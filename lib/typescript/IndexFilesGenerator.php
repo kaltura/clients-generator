@@ -39,7 +39,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
             $className = ucfirst($class->name);
             $classFileName = $className; // $this->utils->toLispCase($className);
 
-            $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
+            $fileContent .= "export { {$className}, {$className}Args } from './{$classFileName}'" . NewLine;
         }
 
         $file = new GeneratedFileData();
@@ -78,7 +78,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
                 $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
                 $classFileName = $className ; //$this->utils->toLispCase($className);
 
-                $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
+                $fileContent .= "export { {$className}, {$className}Args } from './{$classFileName}'" . NewLine;
             }
         }
 

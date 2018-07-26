@@ -131,6 +131,8 @@ export const environment: Environment = {
 
     function createClassFile(ClassType $class)
     {
+        $isAngularFramework = $this->framework === 'ngx';
+
         $createClassArgs = new stdClass();
         $createClassArgs->name = $class->name;
         $createClassArgs->description = $class->description;
@@ -149,12 +151,17 @@ export const environment: Environment = {
 
         $classFunctionName = ucfirst($class->name);
         $fileContent = "{$this->getBanner()}
-import { KalturaObjectMetadata, KalturaObjectBaseFactory } from '../kaltura-object-base';
+import { KalturaObjectMetadata, {$this->utils->ifExp($isAngularFramework, "typesMappingStorage", "KalturaObjectBaseFactory")} } from '../kaltura-object-base';
 {$generatedCode[0]}
 
 {$generatedCode[1]}
-KalturaObjectBaseFactory.registerType('$class->name',$classFunctionName);
 ";
+        if($isAngularFramework)
+        {
+			$fileContent .= "typesMappingStorage['$class->name'] = $classFunctionName;";
+		} else {
+			$fileContent .= "KalturaObjectBaseFactory.registerType('$class->name',$classFunctionName);";
+		}
 
         $file = new GeneratedFileData();
         $fileName = $class->name; //$this->utils->toLispCase($class->name);
