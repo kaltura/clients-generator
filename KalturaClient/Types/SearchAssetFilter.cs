@@ -38,13 +38,11 @@ namespace Kaltura.Types
 		#region Constants
 		public new const string KSQL = "kSql";
 		public const string TYPE_IN = "typeIn";
-		public const string ID_IN = "idIn";
 		#endregion
 
 		#region Private Fields
 		private string _KSql = null;
 		private string _TypeIn = null;
-		private string _IdIn = null;
 		#endregion
 
 		#region Properties
@@ -66,15 +64,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
-		public string IdIn
-		{
-			get { return _IdIn; }
-			set 
-			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -94,9 +83,6 @@ namespace Kaltura.Types
 					case "typeIn":
 						this._TypeIn = propertyNode.InnerText;
 						continue;
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
 				}
 			}
 		}
@@ -110,7 +96,6 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaSearchAssetFilter");
 			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("typeIn", this._TypeIn);
-			kparams.AddIfNotNull("idIn", this._IdIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -121,8 +106,6 @@ namespace Kaltura.Types
 					return "KSql";
 				case TYPE_IN:
 					return "TypeIn";
-				case ID_IN:
-					return "IdIn";
 				default:
 					return base.getPropertyName(apiName);
 			}
