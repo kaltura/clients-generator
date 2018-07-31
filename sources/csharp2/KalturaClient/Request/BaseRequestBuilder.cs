@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Kaltura.Types;
+using String = System.String;
 
 namespace Kaltura.Request
 {
@@ -18,21 +20,11 @@ namespace Kaltura.Request
 
     public abstract class BaseRequestBuilder<T> : RequestConfiguration, IBaseRequestBuilder
     {
-        const int BUFFER_SIZE = 1024;
-
         private string service;
         private OnCompletedHandler<T> onCompletion;
         private OnErrorHandler onError;
         private Client client = null;
-
-        private DateTime startTime;
-        private StringBuilder requestData;
-        private byte[] bufferRead;
-        private HttpWebRequest request;
-		private WebResponse response;
-        private Stream responseStream;
-        // Create Decoder for appropriate enconding type.
-        private Decoder streamDecode = Encoding.UTF8.GetDecoder();
+        private readonly string requestId;
 
         public string Boundary
         {
@@ -43,8 +35,9 @@ namespace Kaltura.Request
         public BaseRequestBuilder(string service)
         {
             this.service = service;
-            bufferRead = new byte[BUFFER_SIZE];
-            requestData = new StringBuilder(System.String.Empty);
+            
+            // Generate a unique task id to group logs
+            requestId = (Interlocked.Increment(ref Client.REQUEST_COUNTER)).ToString("X5");
         }
 
         abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
@@ -54,7 +47,8 @@ namespace Kaltura.Request
         {
             if (client != null && client.Configuration.Logger != null)
             {
-                client.Configuration.Logger.Log(msg);
+                var msgtoLog = $"KalturaClient > [{requestId}] > {msg}";
+                client.Configuration.Logger.Log(msgtoLog);
             }
         }
 
@@ -75,121 +69,221 @@ namespace Kaltura.Request
             return this;
         }
 
+        public virtual Params getParameters(bool includeServiceAndAction)
+        {
+            Params kparams = new Params();
+
+            if (client != null)
+                kparams.Add(client.RequestConfiguration.ToParams(false));
+
+            kparams.Add(base.ToParams(false));
+
+            if (includeServiceAndAction)
+                kparams.Add("service", service);
+
+            return kparams;
+        }
+
+        public virtual Files getFiles()
+        {
+            return new Files();
+        }
+
         public virtual BaseRequestBuilder<T> Build(Client client)
         {
             this.client = client;
             Boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             return this;
         }
+        
+        public virtual void OnComplete(object response, Exception error)
+        {
+            if (onCompletion != null)
+            {
+                onCompletion((T)response, error);
+            }
+            if (onError != null && error != null)
+            {
+                onError(error);
+            }
+        }
+
+        public async Task<T> ExecuteAsync(Client client = null)
+        {
+            var sw = new Stopwatch();
+            sw.Start();
+
+            if (this.client == null) { this.Build(client); }
+            if (this.client == null) { OnComplete(null, new ClientException("No client instance defined")); }
+
+            var url = client.Configuration.ServiceUrl + "/api_v3" + getPath();
+
+            
+
+            this.Log(string.Format("url : [{0}]", url));
+
+            var files = getFiles();
+            var request = BuildRequest(url, files, client.Configuration.Timeout);
+            await WriteRequestBodyAsync(files, request);
+            var responseObject = await GetResponseAsync(request);
+            this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
+
+            return responseObject;
+        }
 
         public void Execute(Client client = null)
         {
-            startTime = DateTime.Now;
-
-            if (this.client == null)
+            var task = this.ExecuteAsync(client).ContinueWith(t =>
             {
-                this.Build(client);
+                if (t.Status == TaskStatus.Faulted) { OnComplete(null, t.Exception); return; }
+
+                var result = t.Result;
+                OnComplete(result, null);
+            }).ConfigureAwait(false);
+        }
+
+        public T ExecuteAndWaitForResponse(Client client = null)
+        {
+            var result = ExecuteAsync(client).GetAwaiter().GetResult();
+            return result;
+        }
+
+
+
+        private async Task<T> GetResponseAsync(HttpWebRequest request)
+        {
+            T responseObject = default(T);
+            try
+            {
+                using (var response = await request.GetResponseAsync())
+                using (var responseStream = response.GetResponseStream())
+                using (var responseReader = new StreamReader(responseStream))
+                {
+                    var responseString = await responseReader.ReadToEndAsync();
+                    var headersStr = GetResponseHeadersString(response);
+                    this.Log(string.Format("result : {0}", responseString));
+                    this.Log(string.Format("result headers : {0}", headersStr));
+
+                    var xml = new XmlDocument();
+                    xml.LoadXml(responseString);
+
+                    ValidateXmlResult(xml);
+                    var resultXml = xml["xml"]["result"];
+
+                    // Check if response is error and throw
+                    var apiError = GetAPIError(resultXml);
+                    if (apiError != null)
+                    {
+                        throw apiError;
+                    }
+
+                    // this cast should always work because the code is generated for every type and it returns its own object
+                    // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
+                    responseObject = (T) Deserialize(resultXml);
+                }
+            }
+            catch (WebException wex)
+            {
+                using (var errorResponse = wex.Response)
+                {
+                    var httpResponse = (HttpWebResponse) errorResponse;
+                    this.Log(string.Format("Error code : {0}", httpResponse.StatusCode));
+                    using (var responseDataStream = errorResponse.GetResponseStream())
+                    using (var reader = new StreamReader(responseDataStream))
+                    {
+                        var text = await reader.ReadToEndAsync();
+                        this.Log(string.Format("ErrorResponse : {0}", text));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{0}", request.RequestUri, e));
             }
 
-            if (this.client == null)
-            {
-                OnComplete(null, new ClientException("No client instance defined"));
-            }
+            return responseObject;
+        }
 
-            string url = client.Configuration.ServiceUrl + "/api_v3" + getPath();
-            this.Log("url: [" + url + "]");
+        private async Task WriteRequestBodyAsync(Files files, HttpWebRequest request)
+        {
+            var requestBodyStr = GetRequestBodyString(files);
+            var requestBody = Encoding.UTF8.GetBytes(requestBodyStr);
+            using (var postStream = await request.GetRequestStreamAsync())
+            {
+                await postStream.WriteAsync(requestBody, 0, requestBody.Length);
+            }
+        }
 
-            // build request
-            request = (HttpWebRequest)HttpWebRequest.Create(url);
-            if (getFiles().Count == 0)
-            {
-                request.Timeout = client.Configuration.Timeout;
-            }
-            else
-            {
-                request.Timeout = Timeout.Infinite;
-            }
+        private HttpWebRequest BuildRequest(string url, Files files, int timeout)
+        {
+            Client client;
+            var request = (HttpWebRequest) HttpWebRequest.Create(url);
+            request.Timeout = files.Count == 0 ? timeout : Timeout.Infinite;
             request.Method = "POST";
 
             request.Headers = getHeaders();
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Accept = "application/xml";
             request.ContentType = getContentType();
-
-            // Add proxy information if required
-            CreateProxy(request);
-
-            request.BeginGetRequestStream(new AsyncCallback(RequestCallback), this);
+            request.Proxy = CreateProxy();
+            return request;
         }
 
-        public T ExecuteAndWaitForResponse(Client client = null)
+        private static string GetResponseHeadersString(WebResponse response)
         {
-            var taskWrapper = Task.Run(() =>
+            var responseHeadersBuilder = new StringBuilder();
+            foreach (var key in response.Headers.AllKeys)
             {
-                var taskResult = new TaskCompletionSource<T>();
-                this.SetCompletion((result, err) =>
-                    {
-                        if (err != null)
-                        {
-                            taskResult.TrySetException(err);
-                        }
-                        else
-                        {
-                            taskResult.TrySetResult(result);
-                        }
-                    })
-                    .Execute(client);
-                return taskResult.Task;
-            });
-
-            taskWrapper.Wait();
-            return taskWrapper.Result;
+                responseHeadersBuilder.Append(key + ":" + response.Headers[key] + " ; ");
+            }
+            return responseHeadersBuilder.ToString();
         }
 
-        private void RequestCallback(IAsyncResult result)
+        private string GetRequestBodyString(Files files)
         {
-            Params parameters = getParameters(false);
+            var requestBody = "";
+            var parameters = getParameters(false);
             parameters.Add(client.ClientConfiguration.ToParams(false));
             parameters.Add("format", EServiceFormat.RESPONSE_TYPE_XML.GetHashCode());
             parameters.Add("kalsig", Signature(parameters));
 
-            string json = parameters.ToJson();
-            this.Log("full reqeust data: [" + json + "]");
+            var json = parameters.ToJson();
+            this.Log(string.Format("full reqeust data: [{0}]", json));
 
-            Stream postStream = request.EndGetRequestStream(result);
+            requestBody = files.Count == 0 ? json : GetMultipartRequestBody(files, json);
 
-            if (getFiles().Count == 0)
-            {
-                byte[] byteArray = Encoding.UTF8.GetBytes(json);
-                postStream.Write(byteArray, 0, byteArray.Length);
-            }
-            else
-            {
-                byte[] paramsBuffer = BuildMultiPartParamsBuffer(json);
-                postStream.Write(paramsBuffer, 0, paramsBuffer.Length);
-
-                SortedList<string, MultiPartFileDescriptor> filesDescriptions = new SortedList<string, MultiPartFileDescriptor>();
-                foreach (KeyValuePair<string, Stream> file in getFiles())
-                    filesDescriptions.Add(file.Key, BuildMultiPartFileDescriptor(file));
-
-                foreach (KeyValuePair<string, MultiPartFileDescriptor> fileDesc in filesDescriptions)
-                {
-                    postStream.Write(fileDesc.Value._Header, 0, fileDesc.Value._Header.Length);
-
-                    byte[] buffer = new Byte[checked(Math.Min((uint)1048576, fileDesc.Value._Stream.Length))];
-                    int bytesRead = 0;
-                    while ((bytesRead = fileDesc.Value._Stream.Read(buffer, 0, buffer.Length)) != 0)
-                        postStream.Write(buffer, 0, bytesRead);
-
-                    postStream.Write(fileDesc.Value._Footer, 0, fileDesc.Value._Footer.Length);
-                }
-            }
-            postStream.Close();
-
-            request.BeginGetResponse(new AsyncCallback(ResponseCallback), this);
+            return requestBody;
         }
 
-        private byte[] BuildMultiPartParamsBuffer(string json)
+        private string GetMultipartRequestBody(Files files, string json)
+        {
+            string requestBody;
+            var sb = new StringBuilder();
+            var paramsBuffer = BuildMultiPartParamsBuffer(json);
+            sb.Append(paramsBuffer);
+            foreach (var fileEntry in files)
+            {
+                var fileStream = fileEntry.Value;
+                if (fileStream is FileStream)
+                {
+                    var fs = (FileStream)fileStream;
+                    sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"" + Path.GetFileName(fs.Name) + "\"" + "\r\n");
+                }
+                else if (fileStream is MemoryStream)
+                {
+                    sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"Memory-Stream-Upload\"" + "\r\n");
+                }
+
+                sb.Append("Content-Type: application/octet-stream" + "\r\n");
+                sb.Append("\r\n");
+                sb.Append("\r\n--" + Boundary + "\r\n");
+            }
+
+            requestBody = sb.ToString();
+            return requestBody;
+        }
+
+        private string BuildMultiPartParamsBuffer(string json)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("--" + Boundary + "\r\n");
@@ -198,108 +292,7 @@ namespace Kaltura.Request
             sb.Append(HttpUtility.UrlDecode(json));
             sb.Append("\r\n--" + Boundary + "\r\n");
 
-            return Encoding.UTF8.GetBytes(sb.ToString());
-        }
-
-        private MultiPartFileDescriptor BuildMultiPartFileDescriptor(KeyValuePair<string, Stream> fileEntry)
-        {
-            MultiPartFileDescriptor result = new MultiPartFileDescriptor();
-            result._Stream = fileEntry.Value;
-
-            // Build header
-            StringBuilder sb = new StringBuilder();
-            Stream fileStream = fileEntry.Value;
-            if (fileStream is FileStream)
-            {
-                FileStream fs = (FileStream)fileStream;
-                sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"" + Path.GetFileName(fs.Name) + "\"" + "\r\n");
-            }
-            else if (fileStream is MemoryStream)
-            {
-                sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"Memory-Stream-Upload\"" + "\r\n");
-            }
-            sb.Append("Content-Type: application/octet-stream" + "\r\n");
-            sb.Append("\r\n");
-            result._Header = Encoding.UTF8.GetBytes(sb.ToString());
-
-            result._Footer = Encoding.UTF8.GetBytes("\r\n--" + Boundary + "\r\n");
-
-            return result;
-        }
-
-        private void ResponseCallback(IAsyncResult result)
-        {
-            // Call EndGetResponse, which produces the WebResponse object
-            //  that came from the request issued above.
-            try
-            {
-                response = request.EndGetResponse(result);
-            }
-            catch (WebException e)
-            {
-                OnComplete(null, e);
-                return;
-            }
-
-            //  Start reading data from the response stream.
-            responseStream = response.GetResponseStream();
-
-            //  Pass rs.BufferRead to BeginRead. Read data into rs.BufferRead
-            responseStream.BeginRead(bufferRead, 0, BUFFER_SIZE, new AsyncCallback(ReadCallBack), this);
-        }
-
-        private void ReadCallBack(IAsyncResult result)
-        {
-            // Read rs.BufferRead to verify that it contains data. 
-            int read = responseStream.EndRead(result);
-            if (read > 0)
-            {
-                // Prepare a Char array buffer for converting to Unicode.
-                Char[] charBuffer = new Char[BUFFER_SIZE];
-
-                // Convert byte stream to Char array and then to String.
-                // len contains the number of characters converted to Unicode.
-                int len = streamDecode.GetChars(bufferRead, 0, read, charBuffer, 0);
-                
-                // Append the recently read data to the RequestData stringbuilder
-                // object contained in RequestState.
-                requestData.Append(Encoding.UTF8.GetString(bufferRead, 0, read));
-
-                // Continue reading data until 
-                // responseStream.EndRead returns –1.
-                responseStream.BeginRead(bufferRead, 0, BUFFER_SIZE, new AsyncCallback(ReadCallBack), this);
-            }
-            else
-            {
-                if (requestData.Length > 0)
-                {
-                    string responseString = requestData.ToString();
-                    this.Log("result (serialized): " + responseString);
-
-					var responseHeadersBuilder = new StringBuilder();
-                    foreach (string key in response.Headers.AllKeys)
-                    {
-                        responseHeadersBuilder.Append(key+":"+response.Headers[key]+" ; ");
-                    }
-                    this.Log("result headers: " + responseHeadersBuilder.ToString());
-
-                    DateTime endTime = DateTime.Now;
-
-                    this.Log("execution time for [" + getPath() + "]: [" + (endTime - startTime).ToString() + "]");
-
-                    XmlDocument xml = new XmlDocument();
-                    xml.LoadXml(responseString);
-
-                    ValidateXmlResult(xml);
-                    XmlElement resultXml = xml["xml"]["result"];
-
-                    OnComplete(Deserialize(resultXml), GetAPIError(resultXml));
-                }
-                // Close down the response stream.
-                responseStream.Close();
-				response.Close();
-            }
-            return;
+            return sb.ToString();
         }
 
         private void ValidateXmlResult(XmlDocument doc)
@@ -317,31 +310,23 @@ namespace Kaltura.Request
             throw new SerializationException("Invalid result");
         }
 
-        protected APIException GetAPIError(XmlElement result)
+        private WebProxy CreateProxy()
         {
-            XmlElement error = result["error"];
-            if (error != null && error["code"] != null && error["message"] != null)
-            {
-                return new APIException(error["code"].InnerText, error["message"].InnerText);
-            }
-
-            return null;
-        }
-
-        private void CreateProxy(HttpWebRequest request)
-        {
+            var proxyToSet = new WebProxy();
             if (string.IsNullOrEmpty(client.Configuration.ProxyAddress))
-                return;
+                return null;
             Console.WriteLine("Create proxy");
             if (!(string.IsNullOrEmpty(client.Configuration.ProxyUser) || string.IsNullOrEmpty(client.Configuration.ProxyPassword)))
             {
                 ICredentials credentials = new NetworkCredential(client.Configuration.ProxyUser, client.Configuration.ProxyPassword);
-                request.Proxy = new WebProxy(client.Configuration.ProxyAddress, false, null, credentials);
+                proxyToSet = new WebProxy(client.Configuration.ProxyAddress, false, null, credentials);
             }
             else
             {
-                request.Proxy = new WebProxy(client.Configuration.ProxyAddress);
+                proxyToSet = new WebProxy(client.Configuration.ProxyAddress);
             }
+
+            return proxyToSet;
         }
 
         private string Signature(Params kparams)
@@ -357,16 +342,17 @@ namespace Kaltura.Request
             return sBuilder.ToString();
         }
 
-        public virtual void OnComplete(object response, Exception error)
+
+       
+        protected APIException GetAPIError(XmlElement result)
         {
-            if (onCompletion != null)
+            XmlElement error = result["error"];
+            if (error != null && error["code"] != null && error["message"] != null)
             {
-                onCompletion((T)response, error);
+                return new APIException(error["code"].InnerText, error["message"].InnerText);
             }
-            if (onError != null && error != null)
-            {
-                onError(error);
-            }
+
+            return null;
         }
 
         protected string getContentType()
@@ -391,40 +377,6 @@ namespace Kaltura.Request
             return "/service/" + service;
         }
 
-        public virtual Params getParameters(bool includeServiceAndAction)
-        {
-            Params kparams = new Params();
-
-            if (client != null)
-                kparams.Add(client.RequestConfiguration.ToParams(false));
-
-            kparams.Add(base.ToParams(false));
-
-            if (includeServiceAndAction)
-                kparams.Add("service", service);
-
-            return kparams;
-        }
-
-        public virtual Files getFiles()
-        {
-            return new Files();
-        }
-
-        #region Support Types
-
-        private struct MultiPartFileDescriptor
-        {
-            public Stream _Stream;
-            public byte[] _Header;
-            public byte[] _Footer;
-
-            public long GetTotalLength()
-            {
-                return _Stream.Length + _Header.LongLength + _Footer.LongLength;
-            }
-        }
-
-        #endregion
+       
     }
 }
