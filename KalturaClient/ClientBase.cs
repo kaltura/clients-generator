@@ -44,6 +44,8 @@ namespace Kaltura
 {
     public class ClientBase : ClientUtils
     {
+        internal static int REQUEST_COUNTER = 0;
+
         protected ClientConfiguration clientConfiguration = new ClientConfiguration();
         protected RequestConfiguration requestConfiguration = new RequestConfiguration();
         
