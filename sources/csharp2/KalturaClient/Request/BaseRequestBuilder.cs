@@ -24,6 +24,7 @@ namespace Kaltura.Request
         private OnCompletedHandler<T> onCompletion;
         private OnErrorHandler onError;
         private Client client = null;
+        private readonly string requestId;
 
         public string Boundary
         {
@@ -34,16 +35,19 @@ namespace Kaltura.Request
         public BaseRequestBuilder(string service)
         {
             this.service = service;
+            
+            // Generate a unique task id to group logs
+            requestId = (Interlocked.Increment(ref Client.REQUEST_COUNTER)).ToString("X5");
         }
 
         abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
         abstract public object Deserialize(XmlElement xmlElement);
 
-        private void Log(string msg, string requestId)
+        private void Log(string msg)
         {
             if (client != null && client.Configuration.Logger != null)
             {
-                var msgtoLog = $"KalturaClient > [{client.ClientTag}] > [{requestId}] > {msg}";
+                var msgtoLog = $"KalturaClient > [{requestId}] > {msg}";
                 client.Configuration.Logger.Log(msgtoLog);
             }
         }
@@ -114,16 +118,15 @@ namespace Kaltura.Request
 
             var url = client.Configuration.ServiceUrl + "/api_v3" + getPath();
 
-            var requestId = (Interlocked.Increment(ref Client.REQUEST_COUNTER)).ToString("X5");
-            // Generate a unique task id to group logs
+            
 
-            this.Log(string.Format("url : [{0}]", url), requestId);
+            this.Log(string.Format("url : [{0}]", url));
 
             var files = getFiles();
             var request = BuildRequest(url, files, client.Configuration.Timeout);
-            await WriteRequestBodyAsync(files, request, requestId);
-            var responseObject = await GetResponseAsync(request, requestId);
-            this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed), requestId);
+            await WriteRequestBodyAsync(files, request);
+            var responseObject = await GetResponseAsync(request);
+            this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
 
             return responseObject;
         }
@@ -147,7 +150,7 @@ namespace Kaltura.Request
 
 
 
-        private async Task<T> GetResponseAsync(HttpWebRequest request, string requestId)
+        private async Task<T> GetResponseAsync(HttpWebRequest request)
         {
             T responseObject = default(T);
             try
@@ -158,8 +161,8 @@ namespace Kaltura.Request
                 {
                     var responseString = await responseReader.ReadToEndAsync();
                     var headersStr = GetResponseHeadersString(response);
-                    this.Log(string.Format("result : {0}", responseString), requestId);
-                    this.Log(string.Format("result headers : {0}", headersStr), requestId);
+                    this.Log(string.Format("result : {0}", responseString));
+                    this.Log(string.Format("result headers : {0}", headersStr));
 
                     var xml = new XmlDocument();
                     xml.LoadXml(responseString);
@@ -184,26 +187,26 @@ namespace Kaltura.Request
                 using (var errorResponse = wex.Response)
                 {
                     var httpResponse = (HttpWebResponse) errorResponse;
-                    this.Log(string.Format("Error code : {0}", httpResponse.StatusCode), requestId);
+                    this.Log(string.Format("Error code : {0}", httpResponse.StatusCode));
                     using (var responseDataStream = errorResponse.GetResponseStream())
                     using (var reader = new StreamReader(responseDataStream))
                     {
                         var text = await reader.ReadToEndAsync();
-                        this.Log(string.Format("ErrorResponse : {0}", text), requestId);
+                        this.Log(string.Format("ErrorResponse : {0}", text));
                     }
                 }
             }
             catch (Exception e)
             {
-                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{0}", request.RequestUri, e), requestId);
+                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{0}", request.RequestUri, e));
             }
 
             return responseObject;
         }
 
-        private async Task WriteRequestBodyAsync(Files files, HttpWebRequest request, string requestId)
+        private async Task WriteRequestBodyAsync(Files files, HttpWebRequest request)
         {
-            var requestBodyStr = GetRequestBodyString(files, requestId);
+            var requestBodyStr = GetRequestBodyString(files);
             var requestBody = Encoding.UTF8.GetBytes(requestBodyStr);
             using (var postStream = await request.GetRequestStreamAsync())
             {
@@ -236,7 +239,7 @@ namespace Kaltura.Request
             return responseHeadersBuilder.ToString();
         }
 
-        private string GetRequestBodyString(Files files, string requestId)
+        private string GetRequestBodyString(Files files)
         {
             var requestBody = "";
             var parameters = getParameters(false);
@@ -245,7 +248,7 @@ namespace Kaltura.Request
             parameters.Add("kalsig", Signature(parameters));
 
             var json = parameters.ToJson();
-            this.Log(string.Format("full reqeust data: [{0}]", json), requestId);
+            this.Log(string.Format("full reqeust data: [{0}]", json));
 
             requestBody = files.Count == 0 ? json : GetMultipartRequestBody(files, json);
 
