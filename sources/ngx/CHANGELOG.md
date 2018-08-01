@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 11.0.0 (2018-05-09)
+
+### BREAKING CHANGES
+
+upgrade Angular stack from v5 to v6 which affected library public API
+
+* module imports change
+
+before - nested imports were supported
+```
+import { KalturaUser } from 'kaltura-ngx-client/api/types/KalturaUser';
+import { CategoryUpdateAction } from "kaltura-ngx-client/api/types/CategoryUpdateAction";
+```
+
+after - all imports should be done against the library entry point
+```
+ import { KalturaUser, CategoryUpdateAction } from 'kaltura-ngx-client';
+```
+
+* rename `KalturaTypesFactory` to `KalturaObjectBaseFactory` 
+before
+```
+import { KalturaTypesFactory } from 'kaltura-ngx-client';
+
+const clonedEntry = Object.assign(KalturaTypesFactory.createObject(entry), entry);
+```
+
+after
+```
+import { KalturaObjectBaseFactory } from 'kaltura-ngx-client';
+
+const clonedEntry = Object.assign(KalturaObjectBaseFactory.createObject(entry), entry);
+```
+  
+
 ## 10.3.1 (2018-05-09)
 
 ### Fix
