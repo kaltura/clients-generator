@@ -62,7 +62,7 @@
   "engines": {
     "node": ">= 8.9.0",
     "npm": ">= 5.5.1"
-  }
+  },
   "jest": {
     "preset": "jest-preset-angular",
     "setupTestFrameworkScriptFile": "<rootDir>/src/tests/setup-jest.ts",
