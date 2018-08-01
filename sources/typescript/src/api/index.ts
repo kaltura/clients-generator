@@ -6,5 +6,5 @@ export { KalturaRequest } from './kaltura-request';
 export { KalturaRequestBase } from './kaltura-request-base';
 export { KalturaUploadRequest } from './kaltura-upload-request';
 export { KalturaResponse } from './kaltura-response';
-export { KalturaObjectBaseFactory } from './kaltura-object-base';
+export { KalturaTypesFactory } from './kaltura-types-factory';
 export * from './kaltura-request-options';

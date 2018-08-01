@@ -150,8 +150,16 @@ export const environment: Environment = {
         $generatedCode = $this->createClassExp($createClassArgs);
 
         $classFunctionName = ucfirst($class->name);
+        $imports = "";
+        if($isAngularFramework)
+        {
+            $imports .= "import { KalturaObjectMetadata, typesMappingStorage } from '../kaltura-object-base';";
+        } else {
+            $imports .= "import { KalturaObjectMetadata } from '../kaltura-object-base';
+import { KalturaTypesFactory } from '../kaltura-types-factory';";
+        }
         $fileContent = "{$this->getBanner()}
-import { KalturaObjectMetadata, {$this->utils->ifExp($isAngularFramework, "typesMappingStorage", "KalturaObjectBaseFactory")} } from '../kaltura-object-base';
+{$imports}
 {$generatedCode[0]}
 
 {$generatedCode[1]}
@@ -160,7 +168,8 @@ import { KalturaObjectMetadata, {$this->utils->ifExp($isAngularFramework, "types
         {
 			$fileContent .= "typesMappingStorage['$class->name'] = $classFunctionName;";
 		} else {
-			$fileContent .= "KalturaObjectBaseFactory.registerType('$class->name',$classFunctionName);";
+			$fileContent .= "KalturaTypesFactory.registerType('$class->name',$classFunctionName);
+";
 		}
 
         $file = new GeneratedFileData();
@@ -173,6 +182,7 @@ import { KalturaObjectMetadata, {$this->utils->ifExp($isAngularFramework, "types
 
     function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
+        $isAngularFramework = $this->framework === 'ngx';
         $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
 
         $importedItems = array($className,'KalturaRequest');
@@ -226,7 +236,15 @@ import { KalturaObjectMetadata, {$this->utils->ifExp($isAngularFramework, "types
  * {$this->utils->buildExpression($classDescription,NewLine . ' * ')}
  *
  * Server response type:         {$actionNG2ResultType}
- * Server failure response type: KalturaAPIException
+ * Server failure response type: KalturaAPIException";
+
+        if (!$isAngularFramework)
+        {
+        $createClassArgs->documentation .= "
+ * @class
+ * @extends {$baseType}";
+        }
+        $createClassArgs->documentation .= "
  */";
 
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);

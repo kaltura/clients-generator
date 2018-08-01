@@ -1,4 +1,5 @@
 import { KalturaClientUtils } from "./kaltura-client-utils";
+import { KalturaTypesFactory } from './kaltura-types-factory';
 import { KalturaLogger } from './kaltura-logger';
 
 export type DependentProperty = { property : string, request : number, targetPath? : string[] };
@@ -24,35 +25,7 @@ export interface KalturaObjectBaseArgs
 
 const logger = new KalturaLogger('KalturaObjectBase');
 
-export type KalturaObjectClass = { new(...args) : KalturaObjectBase };
-const typesMappingStorage : { [key : string] : KalturaObjectClass} = {};
-
-export class KalturaObjectBaseFactory {
-	static registerType(typeName : string, objectCtor: KalturaObjectClass) : void
-	{
-		typesMappingStorage[typeName] = objectCtor;
-	}
-
-	static createObject(type: KalturaObjectBase) : KalturaObjectBase;
-	static createObject(typeName : string) : KalturaObjectBase;
-	static createObject(type : any) : KalturaObjectBase
-	{
-		let typeName = '';
-
-		if (type instanceof KalturaObjectBase)
-		{
-			typeName = type.getTypeName();
-		}else if(typeof type === 'string')
-		{
-			typeName = type;
-		}
-
-		const factory : KalturaObjectClass = typeName ? typesMappingStorage[typeName] : null;
-		return factory ? new factory() : null;
-	}
-}
-
-export abstract class KalturaObjectBase {
+export abstract class KalturaObjectBase{
 
 	private _allowedEmptyArray: string[] = [];
 	private _dependentProperties : { [key : string] : DependentProperty} = {};
@@ -285,13 +258,13 @@ export abstract class KalturaObjectBase {
 		let usedFallbackType = false;
 		if (objectType)
 		{
-			result = KalturaObjectBaseFactory.createObject(objectType);
+			result = KalturaTypesFactory.createObject(objectType);
 		}
 
 		if (!result && fallbackObjectType)
 		{
 			usedFallbackType = true;
-			result = KalturaObjectBaseFactory.createObject(fallbackObjectType);
+			result = KalturaTypesFactory.createObject(fallbackObjectType);
 		}
 
 		if (usedFallbackType && result)
