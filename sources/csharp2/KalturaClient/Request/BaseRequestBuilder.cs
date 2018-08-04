@@ -42,6 +42,7 @@ namespace Kaltura.Request
 
         abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
         abstract public object Deserialize(XmlElement xmlElement);
+        abstract public object DeserializeObject(object xmlElement);
 
         private void Log(string msg)
         {
@@ -164,22 +165,11 @@ namespace Kaltura.Request
                     this.Log(string.Format("result : {0}", responseString));
                     this.Log(string.Format("result headers : {0}", headersStr));
 
-                    var xml = new XmlDocument();
-                    xml.LoadXml(responseString);
-
-                    ValidateXmlResult(xml);
-                    var resultXml = xml["xml"]["result"];
-
-                    // Check if response is error and throw
-                    var apiError = GetAPIError(resultXml);
-                    if (apiError != null)
-                    {
-                        throw apiError;
-                    }
+                    var responseDictionary = (Dictionary<string,object>)ClientBase.serializer.DeserializeObject(responseString);
 
                     // this cast should always work because the code is generated for every type and it returns its own object
                     // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
-                    responseObject = (T) Deserialize(resultXml);
+                    responseObject = (T) DeserializeObject(responseDictionary["result"]);
                 }
             }
             catch (WebException wex)
@@ -223,7 +213,7 @@ namespace Kaltura.Request
 
             request.Headers = getHeaders();
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Accept = "application/xml";
+            request.Accept = "application/json";
             request.ContentType = getContentType();
             request.Proxy = CreateProxy();
             return request;
@@ -244,7 +234,7 @@ namespace Kaltura.Request
             var requestBody = "";
             var parameters = getParameters(false);
             parameters.Add(client.ClientConfiguration.ToParams(false));
-            parameters.Add("format", EServiceFormat.RESPONSE_TYPE_XML.GetHashCode());
+            parameters.Add("format", EServiceFormat.RESPONSE_TYPE_JSON.GetHashCode());
             parameters.Add("kalsig", Signature(parameters));
 
             var json = parameters.ToJson();

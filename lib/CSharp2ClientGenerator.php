@@ -107,6 +107,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 	{
 		$this->startNewTextBlock();
 		$this->appendLine('using System;');
+		$this->appendLine('using System.Collections.Generic;');
 		$this->appendLine('using System.Xml;');
 		$this->appendLine('using System.Runtime.Serialization;');
 		$this->appendLine('using System.Text.RegularExpressions;');
@@ -125,10 +126,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				return null;');
 		$this->appendLine('			}');
 		$this->appendLine('				');
-		$this->appendLine('			string className = xmlElement["objectType"].InnerText;');
+		$this->appendLine('			var className = xmlElement["objectType"].InnerText;');
 		$this->appendLine('			className = prefixRegex.Replace(className, "");');
 		$this->appendLine('			');
-		$this->appendLine('			Type type = Type.GetType("Kaltura.Types." + className);');
+		$this->appendLine('			var type = Type.GetType("Kaltura.Types." + className);');
 		$this->appendLine('			if (type == null)');
 		$this->appendLine('			{');
 		$this->appendLine('				type = typeof(T);');
@@ -138,6 +139,27 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				throw new SerializationException("Invalid object type");');
 		$this->appendLine('			');
 		$this->appendLine('			return (T)System.Activator.CreateInstance(type, xmlElement);');
+        $this->appendLine('		}');
+        $this->appendLine('		public static T Create<T>(Dictionary<string,object> data) where T : ObjectBase');
+		$this->appendLine('		{');
+		$this->appendLine('			if (data["objectType"] == null)');
+		$this->appendLine('			{');
+		$this->appendLine('				return null;');
+		$this->appendLine('			}');
+		$this->appendLine('				');
+		$this->appendLine('			var className = (string)data["objectType"];');
+		$this->appendLine('			className = prefixRegex.Replace(className, "");');
+		$this->appendLine('			');
+		$this->appendLine('			var type = Type.GetType("Kaltura.Types." + className);');
+		$this->appendLine('			if (type == null)');
+		$this->appendLine('			{');
+		$this->appendLine('				type = typeof(T);');
+		$this->appendLine('			}');
+		$this->appendLine('			');
+		$this->appendLine('			if (type == null)');
+		$this->appendLine('				throw new SerializationException("Invalid object type");');
+		$this->appendLine('			');
+		$this->appendLine('			return (T)System.Activator.CreateInstance(type, data);');
 		$this->appendLine('		}');
 		$this->appendLine('		');
 		$this->appendLine('		public static IListResponse Create(XmlElement xmlElement)');
@@ -169,7 +191,36 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		');
 		$this->appendLine('			return null;');
 		$this->appendLine('		}');
-		$this->appendLine("	}");
+        $this->appendLine('		public static IListResponse Create(Dictionary<string,object> data)');
+		$this->appendLine('		{');
+		$this->appendLine('			if (data["objectType"] == null)');
+		$this->appendLine('			{');
+		$this->appendLine('				return null;');
+		$this->appendLine('			}');
+		$this->appendLine('			');
+		$this->appendLine('			string className = (string)data["objectType"];');
+		$this->appendLine('			switch (className)');
+		$this->appendLine('			{');
+		
+		foreach($classNodes as $classNode)
+		{
+			$type = $classNode->getAttribute("name");
+			if ($this->shouldIncludeType($type) && $this->isClassInherit($type, 'KalturaListResponse'))
+			{
+				$arrayType = $this->getListResponseType($type);
+				if($arrayType)
+				{
+					$this->appendLine("				case \"$type\":");
+					$this->appendLine("					return new ListResponse<$arrayType>(data);");
+				}
+			}
+		}
+		
+		$this->appendLine('			}');
+		$this->appendLine('		');
+		$this->appendLine('			return null;');
+		$this->appendLine('		}');
+        $this->appendLine("	}");
 		$this->appendLine("}");
 		$this->appendLine();
 
@@ -582,7 +633,80 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			$this->appendLine("				}");
 			$this->appendLine("			}");
 		}
+        $this->appendLine("		}");
+        
+		$this->appendLine("");
+        $this->appendLine("		public $className(Dictionary<string,object> data) : base(data)");
+		$this->appendLine("		{");
+        foreach($classNode->childNodes as $propertyNode)
+        {
+            if ($propertyNode->nodeType != XML_ELEMENT_NODE)
+					continue;
+            $propType = $propertyNode->getAttribute("type");
+            $propName = $propertyNode->getAttribute("name");
+            $isEnum = $propertyNode->hasAttribute("enumType");
+            $dotNetPropName = $this->upperCaseFirstLetter($propName);
+            
+            switch($propType)
+            {
+                case "bigint":
+                    $this->appendLine("			    this._$dotNetPropName = data.TryGetValueSafe<long>(\"$propName\");");
+                    break;
+                case "int":
+                case "time":
+                    if ($isEnum)
+                    {
+                        $enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
+                        $this->appendLine("			    this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), data.TryGetValueSafe<string>(\"$propName\"));");
+                    }
+                    else
+                        $this->appendLine("			    this._$dotNetPropName = data.TryGetValueSafe<int>(\"$propName\");");
+                    break;
+                case "string":
+                    if ($isEnum)
+                    {
+                        $enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
+                        $this->appendLine("			    this._$dotNetPropName = ($enumType)StringEnum.Parse(typeof($enumType), data.TryGetValueSafe<string>(\"$propName\"));");
+                    }
+                    else
+                        $this->appendLine("			    this._$dotNetPropName = data.TryGetValueSafe<string>(\"$propName\");");
+                    break;
+                case "bool":
+                case "float":
+                        $this->appendLine("			    this._$dotNetPropName = data.TryGetValueSafe<$propType>(\"$propName\");");
+                    break;
+                case "array":
+                    $arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
+                    if($arrayType == 'Object')
+                        $arrayType = 'ObjectBase';
+                    $this->appendLine("			    this._$dotNetPropName = new List<$arrayType>();");
+                    $this->appendLine("			    foreach(var dataDictionary in data.TryGetValueSafe(\"$propName\", new List<Dictionary<string,object>>()))");
+                    $this->appendLine("			    {");
+                    $this->appendLine("			        this._$dotNetPropName.Add(ObjectFactory.Create<$arrayType>(dataDictionary));");
+                    $this->appendLine("			    }");
+                    break;
+                case "map":
+                    $arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
+                    if($arrayType == 'Object')
+                        $arrayType = 'ObjectBase';
+
+                    $this->appendLine("			    this._$dotNetPropName = new Dictionary<string, $arrayType>();");
+                    $this->appendLine("			    foreach(var keyValuePair in data.TryGetValueSafe(\"$propName\", new Dictionary<string, object>()))");
+                    $this->appendLine("			    {");
+                    $this->appendLine("			        this._{$dotNetPropName}[keyValuePair.Key] = ObjectFactory.Create<$arrayType>((Dictionary<string,object>)keyValuePair.Value);");
+                    $this->appendLine("				}");
+                    break;
+                default:
+                    $propType = $this->getCSharpName($propType);
+                    $this->appendLine("			    this._$dotNetPropName = ObjectFactory.Create<$propType>(data.TryGetValueSafe<Dictionary<string,object>>(\"$propName\"));");
+                    break;
+            }
+
+        }
 		$this->appendLine("		}");
+
+
+
 		$this->appendLine("		#endregion");
 		$this->appendLine("");
 
@@ -934,7 +1058,61 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			$this->appendLine("			return null;");
 		}
 		$this->appendLine("		}");
-		
+        
+        $this->appendLine("		public override object DeserializeObject(object result)");
+		$this->appendLine("		{");
+		if ($resultType)
+		{
+			switch ($resultType)
+			{
+				case "array":
+					$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
+					$this->appendLine("			var list = new List<$arrayType>();");
+					$this->appendLine("			foreach(var node in (List<Dictionary<string,object>>)result)");
+					$this->appendLine("			{");
+					$this->appendLine("				list.Add(ObjectFactory.Create<$arrayType>(node));");
+					$this->appendLine("			}");
+					$this->appendLine("			return list;");
+					break;
+				case "map":
+					$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
+					$this->appendLine("			var map = new Dictionary<string, $arrayType>();");
+					$this->appendLine("			foreach(var node in (Dictionary<string,Dictionary<string,object>>)result)");
+					$this->appendLine("			{");
+					$this->appendLine("				map.Add(node.Key, ObjectFactory.Create<$arrayType>(node.Value));");
+					$this->appendLine("			}");
+					$this->appendLine("			return map;");
+					break;
+				case "bigint":
+					$this->appendLine("			return (long)result;");
+					break;
+				case "int":
+					$this->appendLine("			return (int)(result);");
+					break;
+				case "float":
+					$this->appendLine("			return (float)result;");
+					break;
+				case "bool":
+                    $this->appendLine("			var resultStr = (string)result;");
+                    $this->appendLine("			if (resultStr.Equals(\"1\") || resultStr.ToLower().Equals(\"true\"))");
+                    $this->appendLine("				return true;");
+                    $this->appendLine("			return false;");
+					break;
+				case "string":
+					$this->appendLine("			return (string)result;");
+					break;
+				default:
+					$resultType = $this->getCSharpName($resultType);
+					$this->appendLine("			return ObjectFactory.Create<$resultType>((Dictionary<string,object>)result);");
+					break;
+			}
+		}
+		else 
+		{
+			$this->appendLine("			return null;");
+		}
+		$this->appendLine("		}");
+
 		$this->appendLine("	}");
 		$this->appendLine();
 		
@@ -1147,6 +1325,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->startNewTextBlock();
 
 		$this->appendLine("using System;");
+		$this->appendLine("using System.Collections.Generic;");
 		$this->appendLine("using Kaltura.Types;");
 		$this->appendLine("using Kaltura.Enums;");
 		$this->appendLine();
@@ -1171,7 +1350,18 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			}
 
 			$this-> writeRequestBuilderConfigurationExtentionMethod($configurationProperty, $configurationProperty, $type, $description);
-		}
+        }
+        
+        $this->appendLine("");
+        $this->appendLine("		public static T TryGetValueSafe<T>(this IDictionary<string,object> sourceDictionary, string key, T defaultReturnValue = default(T))");
+        $this->appendLine("		{");
+        $this->appendLine("				var returnVal = defaultReturnValue;");
+        $this->appendLine("				object objValue;");
+        $this->appendLine("				sourceDictionary.TryGetValue(key, out objValue);");
+        $this->appendLine("				if (objValue != null) { returnVal = (T)objValue; }");
+        $this->appendLine("");
+        $this->appendLine("				return returnVal;");
+        $this->appendLine("		}");
 		$this->appendLine("	}");
 		$this->appendLine("}");
 

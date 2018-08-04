@@ -85,6 +85,15 @@ namespace Kaltura.Types
             }
 		}
 
+        public ObjectBase(Dictionary<string, object> data)
+        {
+            this.RelatedObjects = new Dictionary<string, IListResponse>();
+            foreach (var keyValuePair in data)
+            {
+                this.RelatedObjects[keyValuePair.Key] = ObjectFactory.Create(data);
+            }
+        }
+
         #endregion
 
         #region Methods

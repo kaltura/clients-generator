@@ -117,5 +117,21 @@ namespace Kaltura.Request
 
             return responses;
         }
+
+        public override object DeserializeObject(object results)
+        {
+            List<object> responses = new List<object>();
+
+            foreach (var result in (List<Dictionary<string,object>>)results)
+            {
+                //TODO: see if error and return
+                var request = requests[responses.Count];
+                var response = request.DeserializeObject(result);
+
+                responses.Add(response);
+            }
+
+            return responses;
+        }
     }
 }
