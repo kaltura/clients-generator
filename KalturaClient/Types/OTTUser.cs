@@ -50,6 +50,9 @@ namespace Kaltura.Types
 		public const string IS_HOUSEHOLD_MASTER = "isHouseholdMaster";
 		public const string SUSPENSION_STATE = "suspensionState";
 		public const string USER_STATE = "userState";
+		public const string ROLE_IDS = "roleIds";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		#endregion
 
 		#region Private Fields
@@ -67,6 +70,9 @@ namespace Kaltura.Types
 		private bool? _IsHouseholdMaster = null;
 		private HouseholdSuspensionState _SuspensionState = null;
 		private UserState _UserState = null;
+		private string _RoleIds = null;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -176,6 +182,23 @@ namespace Kaltura.Types
 		{
 			get { return _UserState; }
 		}
+		public string RoleIds
+		{
+			get { return _RoleIds; }
+			set 
+			{ 
+				_RoleIds = value;
+				OnPropertyChanged("RoleIds");
+			}
+		}
+		public long CreateDate
+		{
+			get { return _CreateDate; }
+		}
+		public long UpdateDate
+		{
+			get { return _UpdateDate; }
+		}
 		#endregion
 
 		#region CTor
@@ -239,6 +262,15 @@ namespace Kaltura.Types
 					case "userState":
 						this._UserState = (UserState)StringEnum.Parse(typeof(UserState), propertyNode.InnerText);
 						continue;
+					case "roleIds":
+						this._RoleIds = propertyNode.InnerText;
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -264,6 +296,9 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("isHouseholdMaster", this._IsHouseholdMaster);
 			kparams.AddIfNotNull("suspensionState", this._SuspensionState);
 			kparams.AddIfNotNull("userState", this._UserState);
+			kparams.AddIfNotNull("roleIds", this._RoleIds);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -298,6 +333,12 @@ namespace Kaltura.Types
 					return "SuspensionState";
 				case USER_STATE:
 					return "UserState";
+				case ROLE_IDS:
+					return "RoleIds";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				default:
 					return base.getPropertyName(apiName);
 			}
