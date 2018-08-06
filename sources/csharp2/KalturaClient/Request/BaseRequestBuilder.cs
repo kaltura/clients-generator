@@ -198,7 +198,7 @@ namespace Kaltura.Request
             }
             catch (Exception e)
             {
-                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{0}", request.RequestUri, e));
+                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{1}", request.RequestUri, e));
             }
 
             return responseObject;
