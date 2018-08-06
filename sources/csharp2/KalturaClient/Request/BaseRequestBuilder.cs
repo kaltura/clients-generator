@@ -166,10 +166,12 @@ namespace Kaltura.Request
                     this.Log(string.Format("result headers : {0}", headersStr));
 
                     var responseDictionary = (Dictionary<string,object>)ClientBase.serializer.DeserializeObject(responseString);
+                    // OTT Clients need to extract result sub object form response while OVP will get the result data in the root response object
+                    var resultObjectDictionary = responseDictionary.TryGetValueSafe("result", responseDictionary);
 
                     // this cast should always work because the code is generated for every type and it returns its own object
                     // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
-                    responseObject = (T) DeserializeObject(responseDictionary["result"]);
+                    responseObject = (T) DeserializeObject(resultObjectDictionary);
                 }
             }
             catch (WebException wex)

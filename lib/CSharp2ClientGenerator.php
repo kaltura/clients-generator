@@ -657,7 +657,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
                     if ($isEnum)
                     {
                         $enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-                        $this->appendLine("			    this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), data.TryGetValueSafe<string>(\"$propName\"));");
+                        $this->appendLine("			    this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), data.TryGetValueSafe<int>(\"$propName\"));");
                     }
                     else
                         $this->appendLine("			    this._$dotNetPropName = data.TryGetValueSafe<int>(\"$propName\");");
