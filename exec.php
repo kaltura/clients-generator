@@ -1,7 +1,7 @@
-<?php 
+<?php
 /**
  * Client Libraries Generator - generate all the clients specified in the given config.ini according to Kaltura API reflection.
- * 
+ *
  * Create your client generator by -
  *      1 Choose a unique name to identify your generator (you can see which names are already in use in file 'config/generator.all.ini').
  * 		2 Copy one of the existing client generators (*ClientGenerator.php) and prefix it with your generator identifier.
@@ -17,11 +17,11 @@
  *			generator = XXXXXClientGenerator
  *
  * To run the generator, use command line to run: php exec.php [arguments]
- * 
+ *
  * Optional arguments:
  * 		1. Generate Single - The first argument dictates that a single generator should be run instead of all defined in the config.ini
  * 							To use this argument, pass a valid id of one of the available generator classes.
- * 
+ *
  * config.ini file paramteres:
  * 		1. The client name is defined by block brackets (ini object) [client_name]
  * 		2. under the [clientname], define the generator parameters, each in new line, as following:
@@ -30,19 +30,19 @@
  * 			c. include - whether to include any specific API services from the client library (overrides exclude)
  * 			d. plugins - whether to include any specific API services from plugins
  * 			e. additional - whether to include any additional objects not directly defined through API services
- * 			f. internal - whether to show this client in the Client Libraries UI in the testme console, or not. 
+ * 			f. internal - whether to show this client in the Client Libraries UI in the testme console, or not.
  * 							note that setting schemaxml, will also make the client internal
- * 			g. nopackage - whether to generate a tar.gz package from the client library folder 
- * 			h. nofolder - there will not be client folder, the client files will be in output folder (if it's a single file like XML schema) 
+ * 			g. nopackage - whether to generate a tar.gz package from the client library folder
+ * 			h. nofolder - there will not be client folder, the client files will be in output folder (if it's a single file like XML schema)
  * 			i. ignore - whether to ignore any objects although defined through API services by inheritance
- * 			j. schemaxml - if empty, will introspect the code and create the schema XML, 
+ * 			j. schemaxml - if empty, will introspect the code and create the schema XML,
  * 							otherwise this should be a url to download schema XML from. Setting this will make the client internal
- * 
+ *
  * Notes:
  * 		* Kaltura API ignores only un-sent parameters. Thus, if you would like a parameter value to be left unchanged
  * 			or in classes that contain read-only parameters, make sure to NOT send any un-changed parameters in your HTTP requests.
- * 			A common issue with this, is with languages like Java and ActionScript where Boolean variables can't be set to null, 
- * 			thus it is uknown if the variable was modified before constructing the HTTP request to the server. If this is the case with your language, 
+ * 			A common issue with this, is with languages like Java and ActionScript where Boolean variables can't be set to null,
+ * 			thus it is uknown if the variable was modified before constructing the HTTP request to the server. If this is the case with your language,
  * 			either create a Nullable Boolean type, or keep a map of changed parameters, then only send the variables in that map.
  */
 error_reporting(E_ALL);
@@ -86,6 +86,7 @@ require_once(__DIR__ . '/lib/typescript/GeneratedFileData.php');
 require_once(__DIR__ . '/lib/typescript/KalturaServerMetadata.php');
 require_once(__DIR__ . '/lib/typescript/ClassesGenerator.php');
 require_once(__DIR__ . '/lib/typescript/EnumsGenerator.php');
+require_once(__DIR__ . '/lib/typescript/IndexFilesGenerator.php');
 require_once(__DIR__ . '/lib/TypescriptClientGenerator.php');
 require_once(__DIR__ . '/lib/NGXClientGenerator.php');
 
@@ -111,7 +112,7 @@ function showHelpAndExit()
 	echo "\t\t-r, --root:   \tRoot path, default is /opt/kaltura.\n";
 	echo "\t\t-t, --tests:  \tUse different tests configuration, valid values are OVP or OTT, default is OVP.\n";
 	echo "\t\t--dont-gzip:  \tTar the packages without gzip.\n";
-	
+
 	exit;
 }
 
@@ -144,13 +145,13 @@ foreach($options as $option => $value)
 	}
 
 	array_shift($argv);
-}	 
+}
 
 //pass the name of the generator as the first argument of the command line to
 //generate a single library. if this argument is empty or 'all', generator will create all libs.
 $generateSingle = isset($argv[1]) ? $argv[1] : null;
 
-//second command line argument specifies the output path, if not specified will default to 
+//second command line argument specifies the output path, if not specified will default to
 //<content root>/content/clientlibs
 if (isset($argv[2]))
 {
@@ -230,10 +231,10 @@ foreach($config as $name => $item)
 
 	if(!$item->tags)
 		$item->tags = $name;
-	
+
 	//get the generator class name
 	$generator = $item->get("generator");
-	
+
 	//check if this client should not be packaged as tar.gz file
 	$shouldNotPackage = $item->get("nopackage");
 
@@ -243,10 +244,10 @@ foreach($config as $name => $item)
 	// check if generator is valid (not null and there is a class by this name)
 	if ($generator === null)
 		continue;
-	
+
 	if (!class_exists($generator))
 		throw new Exception("Generator [".$generator."] not found");
-	
+
 	if($libsToGenerate && !in_array(strtolower($name), $libsToGenerate))
 		continue;
 
@@ -258,24 +259,24 @@ foreach($config as $name => $item)
 			'linktext' => $item->get('linktext'));
 		$generatedClients[$name] = $params;
 	}
-	
+
 	KalturaLog::info("Now generating: $name using $generator");
-	
+
 	// create the API schema to be used by the generator
 	$reflectionClass = new ReflectionClass($generator);
-	
+
 	$instance = $reflectionClass->newInstance($tmpXmlFileName, $item);
 	/* @var $instance ClientGeneratorFromXml */
-	
+
 	if($item->get("generateDocs"))
 		$instance->setGenerateDocs($item->get("generateDocs"));
-		
+
 	if($item->get("package"))
 		$instance->setPackage($item->get("package"));
-		
+
 	if($item->get("subpackage"))
 		$instance->setSubpackage($item->get("subpackage"));
-	
+
 	if (isset($item->params) && $item->params)
 	{
 		foreach($item->params as $key => $val)
@@ -288,13 +289,13 @@ foreach($config as $name => $item)
 	{
 		$instance->setExcludeSourcePaths ($item->excludeSourcePaths);
 	}
-	
+
 	$copyPath = null;
 	if($item->get("copyPath"))
 		$copyPath = fixPath("$rootPath/app/" . $item->get("copyPath"));
-	
+
 	if ($mainOutput)
-	{ 
+	{
 		$outputPath = $outputPathBase;
 	}
 	else
@@ -302,17 +303,17 @@ foreach($config as $name => $item)
 		$destination = $name;
 		if($item->destinationName)
 			$destination = $item->destinationName;
-		
+
 		$outputPath = fixPath("$outputPathBase/$destination");
 		$clearPath = null;
 		if($item->get("clearPath"))
 			$clearPath = fixPath("$rootPath/app/" . $item->get("clearPath"));
 		else
 			$clearPath = $copyPath;
-		
+
 		if(!file_exists($clearPath))
 			$clearPath = null;
-			
+
 		if($clearPath || file_exists($outputPath))
 		{
 			if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
@@ -328,24 +329,24 @@ foreach($config as $name => $item)
 			}
 		}
 	}
-		
+
 	KalturaLog::info("Generate client library [$name]");
 	$instance->setOutputPath($outputPath, $copyPath);
 	$instance->setTestsPath($testsDir);
 	$instance->generate();
-	
+
 	KalturaLog::info("Saving client library to [$outputPath]");
-	
+
 	$oldMask = umask();
 	umask(0);
-		
+
 	$instance->done($outputPath);
 	umask($oldMask);
-	
+
 	//tar gzip the client library
-	if (!$shouldNotPackage) 
+	if (!$shouldNotPackage)
 		createPackage($outputPath, $name, $generatedDate, $gzip);
-		
+
 	KalturaLog::info("$name generated successfully");
 }
 
@@ -383,19 +384,19 @@ function createPackage($outputPath, $generatorName, $generatedDate, $gzip)
 		$options = $gzip ? '-czf' : '-cf';
 		$cmd = "tar $options \"$gzipOutputPath\" ../".$generatorName;
 		$oldDir = getcwd();
-		
+
 		$outputPath = realpath($outputPath);
 		KalturaLog::debug("Changing dir to [$outputPath]");
 		chdir($outputPath);
-		
-		KalturaLog::info("Executing: $cmd"); 
+
+		KalturaLog::info("Executing: $cmd");
 		passthru($cmd);
-		
+
 		if (file_exists($gzipOutputPath))
 			KalturaLog::info("Package created successfully: $gzipOutputPath");
 		else
 			KalturaLog::err("Failed to create package");
-			
+
 		KalturaLog::debug("Restoring dir to [$oldDir]");
 		chdir($oldDir);
 	}

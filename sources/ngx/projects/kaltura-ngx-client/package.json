@@ -1,0 +1,25 @@
+{
+  "name": "kaltura-ngx-client",
+  "private": true,
+  "version": "11.0.0",
+  "description": "Kaltura Angular based client",
+  "keywords": [
+    "Kaltura"
+  ],
+  "license": "AGPL-3.0",
+  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "contributors": [
+    {
+      "name": "Eran Sakal",
+      "email": "eran@sakalim.com"
+    },
+    {
+      "name": "Amir Chervinsky",
+      "email": "amir.chr@gmail.com"
+    }
+  ],
+  "peerdependencies": {
+    "@angular/core": "^5.2.0",
+    "@angular/common": "^5.2.0"
+  }
+}

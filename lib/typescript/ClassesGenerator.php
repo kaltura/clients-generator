@@ -131,6 +131,8 @@ export const environment: Environment = {
 
     function createClassFile(ClassType $class)
     {
+        $isAngularFramework = $this->framework === 'ngx';
+
         $createClassArgs = new stdClass();
         $createClassArgs->name = $class->name;
         $createClassArgs->description = $class->description;
@@ -148,14 +150,27 @@ export const environment: Environment = {
         $generatedCode = $this->createClassExp($createClassArgs);
 
         $classFunctionName = ucfirst($class->name);
+        $imports = "";
+        if($isAngularFramework)
+        {
+            $imports .= "import { KalturaObjectMetadata, typesMappingStorage } from '../kaltura-object-base';";
+        } else {
+            $imports .= "import { KalturaObjectMetadata } from '../kaltura-object-base';
+import { KalturaTypesFactory } from '../kaltura-types-factory';";
+        }
         $fileContent = "{$this->getBanner()}
-import { KalturaObjectMetadata } from '../kaltura-object-base';
-import { KalturaTypesFactory } from '../kaltura-types-factory';
+{$imports}
 {$generatedCode[0]}
 
 {$generatedCode[1]}
-KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 ";
+        if($isAngularFramework)
+        {
+			$fileContent .= "typesMappingStorage['$class->name'] = $classFunctionName;";
+		} else {
+			$fileContent .= "KalturaTypesFactory.registerType('$class->name',$classFunctionName);
+";
+		}
 
         $file = new GeneratedFileData();
         $fileName = $class->name; //$this->utils->toLispCase($class->name);
@@ -167,6 +182,7 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 
     function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
+        $isAngularFramework = $this->framework === 'ngx';
         $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
 
         $importedItems = array($className,'KalturaRequest');
@@ -220,9 +236,15 @@ KalturaTypesFactory.registerType('$class->name',$classFunctionName);
  * {$this->utils->buildExpression($classDescription,NewLine . ' * ')}
  *
  * Server response type:         {$actionNG2ResultType}
- * Server failure response type: KalturaAPIException
+ * Server failure response type: KalturaAPIException";
+
+        if (!$isAngularFramework)
+        {
+        $createClassArgs->documentation .= "
  * @class
- * @extends {$baseType}
+ * @extends {$baseType}";
+        }
+        $createClassArgs->documentation .= "
  */";
 
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
