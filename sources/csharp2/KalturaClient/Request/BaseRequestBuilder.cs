@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Kaltura.Types;
-using String = System.String;
 
 namespace Kaltura.Request
 {
     public delegate void OnCompletedHandler<T>(T response, Exception error);
     public delegate void OnErrorHandler(Exception error);
 
-    public abstract class BaseRequestBuilder<T> : RequestConfiguration, IBaseRequestBuilder
+    public abstract class BaseRequestBuilder<T> : BaseRequest, IBaseRequestBuilder
     {
         private string service;
         private OnCompletedHandler<T> onCompletion;
@@ -41,8 +40,6 @@ namespace Kaltura.Request
         }
 
         abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
-        abstract public object Deserialize(XmlElement xmlElement);
-        abstract public object DeserializeObject(object xmlElement);
 
         private void Log(string msg)
         {
@@ -101,6 +98,7 @@ namespace Kaltura.Request
         {
             if (onCompletion != null)
             {
+                response = response == null? default(T):response;
                 onCompletion((T)response, error);
             }
             if (onError != null && error != null)
@@ -165,13 +163,7 @@ namespace Kaltura.Request
                     this.Log(string.Format("result : {0}", responseString));
                     this.Log(string.Format("result headers : {0}", headersStr));
 
-                    var responseDictionary = (Dictionary<string,object>)ClientBase.serializer.DeserializeObject(responseString);
-                    // OTT Clients need to extract result sub object form response while OVP will get the result data in the root response object
-                    var resultObjectDictionary = responseDictionary.TryGetValueSafe("result", responseDictionary);
-
-                    // this cast should always work because the code is generated for every type and it returns its own object
-                    // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
-                    responseObject = (T) DeserializeObject(resultObjectDictionary);
+                    responseObject = base.ParseResponseString<T>(responseString);
                 }
             }
             catch (WebException wex)
@@ -190,7 +182,8 @@ namespace Kaltura.Request
             }
             catch (Exception e)
             {
-                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{0}", request.RequestUri, e));
+                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{1}", request.RequestUri, e));
+                throw e;
             }
 
             return responseObject;

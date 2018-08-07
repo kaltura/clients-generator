@@ -140,9 +140,9 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('			');
 		$this->appendLine('			return (T)System.Activator.CreateInstance(type, xmlElement);');
         $this->appendLine('		}');
-        $this->appendLine('		public static T Create<T>(Dictionary<string,object> data) where T : ObjectBase');
+        $this->appendLine('		public static T Create<T>(IDictionary<string,object> data) where T : ObjectBase');
 		$this->appendLine('		{');
-		$this->appendLine('			if (data["objectType"] == null)');
+		$this->appendLine('			if (data == null || data["objectType"] == null)');
 		$this->appendLine('			{');
 		$this->appendLine('				return null;');
 		$this->appendLine('			}');
@@ -191,10 +191,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		');
 		$this->appendLine('			return null;');
 		$this->appendLine('		}');
-        $this->appendLine('		public static IListResponse Create(Dictionary<string,object> data)');
+        $this->appendLine('		public static IListResponse Create(IDictionary<string,object> data)');
 		$this->appendLine('		{');
-		$this->appendLine('			if (data["objectType"] == null)');
-		$this->appendLine('			{');
+        $this->appendLine('			if (data == null || data["objectType"] == null)');
+        $this->appendLine('			{');
 		$this->appendLine('				return null;');
 		$this->appendLine('			}');
 		$this->appendLine('			');
@@ -636,7 +636,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
         $this->appendLine("		}");
         
 		$this->appendLine("");
-        $this->appendLine("		public $className(Dictionary<string,object> data) : base(data)");
+        $this->appendLine("		public $className(IDictionary<string,object> data) : base(data)");
 		$this->appendLine("		{");
         foreach($classNode->childNodes as $propertyNode)
         {
@@ -680,9 +680,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
                     if($arrayType == 'Object')
                         $arrayType = 'ObjectBase';
                     $this->appendLine("			    this._$dotNetPropName = new List<$arrayType>();");
-                    $this->appendLine("			    foreach(var dataDictionary in data.TryGetValueSafe(\"$propName\", new List<Dictionary<string,object>>()))");
+                    $this->appendLine("			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>(\"$propName\", new List<object>()))");
                     $this->appendLine("			    {");
-                    $this->appendLine("			        this._$dotNetPropName.Add(ObjectFactory.Create<$arrayType>(dataDictionary));");
+                    $this->appendLine("			        if (dataDictionary == null) { continue; }");
+                    $this->appendLine("			        this._$dotNetPropName.Add(ObjectFactory.Create<$arrayType>((IDictionary<string,object>)dataDictionary));");
                     $this->appendLine("			    }");
                     break;
                 case "map":
@@ -693,12 +694,12 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
                     $this->appendLine("			    this._$dotNetPropName = new Dictionary<string, $arrayType>();");
                     $this->appendLine("			    foreach(var keyValuePair in data.TryGetValueSafe(\"$propName\", new Dictionary<string, object>()))");
                     $this->appendLine("			    {");
-                    $this->appendLine("			        this._{$dotNetPropName}[keyValuePair.Key] = ObjectFactory.Create<$arrayType>((Dictionary<string,object>)keyValuePair.Value);");
+                    $this->appendLine("			        this._{$dotNetPropName}[keyValuePair.Key] = ObjectFactory.Create<$arrayType>((IDictionary<string,object>)keyValuePair.Value);");
                     $this->appendLine("				}");
                     break;
                 default:
                     $propType = $this->getCSharpName($propType);
-                    $this->appendLine("			    this._$dotNetPropName = ObjectFactory.Create<$propType>(data.TryGetValueSafe<Dictionary<string,object>>(\"$propName\"));");
+                    $this->appendLine("			    this._$dotNetPropName = ObjectFactory.Create<$propType>(data.TryGetValueSafe<IDictionary<string,object>>(\"$propName\"));");
                     break;
             }
 
@@ -770,7 +771,14 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			$compileElement = $csprojDoc->createElement("Compile");
 			$compileElement->setAttribute("Include", str_replace("/","\\", $include));
 			$compileItemGroupElement->appendChild($compileElement);
-		}
+        }
+        
+        // This is adding the BaseRequest.cs that is comming from test folder (it is different between OTT and OVP)
+        // so adding a Compile element to the csproj
+        $compileElement = $csprojDoc->createElement("Compile");
+        $compileElement->setAttribute("Include", "Request\\BaseRequest.cs");
+        $compileItemGroupElement->appendChild($compileElement);
+
 		$this->addFile("KalturaClient/KalturaClient.csproj", $csprojDoc->saveXML(), false);
 	}
 
@@ -1068,7 +1076,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				case "array":
 					$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
 					$this->appendLine("			var list = new List<$arrayType>();");
-					$this->appendLine("			foreach(var node in (List<Dictionary<string,object>>)result)");
+					$this->appendLine("			foreach(var node in (IEnumerable<IDictionary<string,object>>)result)");
 					$this->appendLine("			{");
 					$this->appendLine("				list.Add(ObjectFactory.Create<$arrayType>(node));");
 					$this->appendLine("			}");
@@ -1077,7 +1085,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				case "map":
 					$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
 					$this->appendLine("			var map = new Dictionary<string, $arrayType>();");
-					$this->appendLine("			foreach(var node in (Dictionary<string,Dictionary<string,object>>)result)");
+					$this->appendLine("			foreach(var node in (IDictionary<string,IDictionary<string,object>>)result)");
 					$this->appendLine("			{");
 					$this->appendLine("				map.Add(node.Key, ObjectFactory.Create<$arrayType>(node.Value));");
 					$this->appendLine("			}");
@@ -1103,7 +1111,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					break;
 				default:
 					$resultType = $this->getCSharpName($resultType);
-					$this->appendLine("			return ObjectFactory.Create<$resultType>((Dictionary<string,object>)result);");
+					$this->appendLine("			return ObjectFactory.Create<$resultType>((IDictionary<string,object>)result);");
 					break;
 			}
 		}
@@ -1355,12 +1363,22 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
         $this->appendLine("");
         $this->appendLine("		public static T TryGetValueSafe<T>(this IDictionary<string,object> sourceDictionary, string key, T defaultReturnValue = default(T))");
         $this->appendLine("		{");
-        $this->appendLine("				var returnVal = defaultReturnValue;");
-        $this->appendLine("				object objValue;");
-        $this->appendLine("				sourceDictionary.TryGetValue(key, out objValue);");
-        $this->appendLine("				if (objValue != null) { returnVal = (T)objValue; }");
-        $this->appendLine("");
-        $this->appendLine("				return returnVal;");
+        $this->appendLine("		    if (sourceDictionary == null) { return defaultReturnValue; }");
+        $this->appendLine("		    ");
+        $this->appendLine("		    object returnVal = defaultReturnValue;");
+        $this->appendLine("		    object objValue;");
+        $this->appendLine("		    sourceDictionary.TryGetValue(key, out objValue);");
+        $this->appendLine("		    if (objValue != null)");
+        $this->appendLine("		    {");
+        $this->appendLine("		        if      (typeof(T) == typeof(int)) { returnVal = int.Parse(objValue.ToString()); }");
+        $this->appendLine("		        else if (typeof(T) == typeof(long)) { returnVal = long.Parse(objValue.ToString()); }");
+        $this->appendLine("		        else if (typeof(T) == typeof(float)) { returnVal = float.Parse(objValue.ToString()); }");
+        $this->appendLine("		        else if (typeof(T) == typeof(double)) { returnVal = double.Parse(objValue.ToString()); }");
+        $this->appendLine("		        else if (typeof(T) == typeof(decimal)) { returnVal = decimal.Parse(objValue.ToString()); }");
+        $this->appendLine("		        else { returnVal = (T)objValue; }");
+        $this->appendLine("		    }");
+        $this->appendLine("		    ");
+        $this->appendLine("		    return (T)returnVal;");
         $this->appendLine("		}");
 		$this->appendLine("	}");
 		$this->appendLine("}");

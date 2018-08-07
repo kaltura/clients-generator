@@ -85,13 +85,17 @@ namespace Kaltura.Types
             }
 		}
 
-        public ObjectBase(Dictionary<string, object> data)
+        public ObjectBase(IDictionary<string, object> data)
         {
-            this.RelatedObjects = new Dictionary<string, IListResponse>();
-            foreach (var keyValuePair in data)
+            var relatedObjects = data.TryGetValueSafe<object>("relatedObjects");
+            if (relatedObjects != null)
             {
-                this.RelatedObjects[keyValuePair.Key] = ObjectFactory.Create(data);
+                foreach (var keyValuePair in (Dictionary<string,IListResponse>)relatedObjects)
+                {
+                    this.RelatedObjects[keyValuePair.Key] = ObjectFactory.Create(data);
+                }
             }
+          
         }
 
         #endregion
