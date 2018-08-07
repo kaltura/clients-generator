@@ -195,10 +195,13 @@ namespace Kaltura.Request
                         this.Log(string.Format("ErrorResponse : {0}", text));
                     }
                 }
+                
+                throw wex;
             }
             catch (Exception e)
             {
                 this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{1}", request.RequestUri, e));
+                throw e;
             }
 
             return responseObject;
