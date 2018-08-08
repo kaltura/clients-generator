@@ -33,41 +33,55 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class GroupPermission : Permission
+	public class PermissionFilter : Filter
 	{
 		#region Constants
-		public const string GROUP = "group";
+		public const string CURRENT_USER_PERMISSIONS_CONTAINS = "currentUserPermissionsContains";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _Group = null;
+		private bool? _CurrentUserPermissionsContains = null;
+		private PermissionOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		public string Group
+		public bool? CurrentUserPermissionsContains
 		{
-			get { return _Group; }
+			get { return _CurrentUserPermissionsContains; }
 			set 
 			{ 
-				_Group = value;
-				OnPropertyChanged("Group");
+				_CurrentUserPermissionsContains = value;
+				OnPropertyChanged("CurrentUserPermissionsContains");
+			}
+		}
+		public new PermissionOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public GroupPermission()
+		public PermissionFilter()
 		{
 		}
 
-		public GroupPermission(XmlElement node) : base(node)
+		public PermissionFilter(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "group":
-						this._Group = propertyNode.InnerText;
+					case "currentUserPermissionsContains":
+						this._CurrentUserPermissionsContains = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (PermissionOrderBy)StringEnum.Parse(typeof(PermissionOrderBy), propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -79,16 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaGroupPermission");
-			kparams.AddIfNotNull("group", this._Group);
+				kparams.AddReplace("objectType", "KalturaPermissionFilter");
+			kparams.AddIfNotNull("currentUserPermissionsContains", this._CurrentUserPermissionsContains);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case GROUP:
-					return "Group";
+				case CURRENT_USER_PERMISSIONS_CONTAINS:
+					return "CurrentUserPermissionsContains";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

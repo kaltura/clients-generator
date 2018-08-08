@@ -195,6 +195,8 @@ namespace Kaltura
 					return new ListResponse<Entitlement>(xmlElement);
 				case "KalturaDrmProfileListResponse":
 					return new ListResponse<DrmProfile>(xmlElement);
+				case "KalturaPermissionListResponse":
+					return new ListResponse<Permission>(xmlElement);
 				case "KalturaMediaConcurrencyRuleListResponse":
 					return new ListResponse<MediaConcurrencyRule>(xmlElement);
 				case "KalturaAssetUserRuleListResponse":

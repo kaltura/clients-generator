@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2017  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -38,13 +38,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID = "id";
 		public const string NAME = "name";
-		public const string PERMISSION_ITEMS = "permissionItems";
+		public const string FRIENDLY_NAME = "friendlyName";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Name = null;
-		private IList<PermissionItem> _PermissionItems;
+		private string _FriendlyName = null;
 		#endregion
 
 		#region Properties
@@ -61,13 +61,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		public IList<PermissionItem> PermissionItems
+		public string FriendlyName
 		{
-			get { return _PermissionItems; }
+			get { return _FriendlyName; }
 			set 
 			{ 
-				_PermissionItems = value;
-				OnPropertyChanged("PermissionItems");
+				_FriendlyName = value;
+				OnPropertyChanged("FriendlyName");
 			}
 		}
 		#endregion
@@ -89,12 +89,8 @@ namespace Kaltura.Types
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
-					case "permissionItems":
-						this._PermissionItems = new List<PermissionItem>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._PermissionItems.Add(ObjectFactory.Create<PermissionItem>(arrayNode));
-						}
+					case "friendlyName":
+						this._FriendlyName = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -109,7 +105,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaPermission");
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("permissionItems", this._PermissionItems);
+			kparams.AddIfNotNull("friendlyName", this._FriendlyName);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -120,8 +116,8 @@ namespace Kaltura.Types
 					return "Id";
 				case NAME:
 					return "Name";
-				case PERMISSION_ITEMS:
-					return "PermissionItems";
+				case FRIENDLY_NAME:
+					return "FriendlyName";
 				default:
 					return base.getPropertyName(apiName);
 			}

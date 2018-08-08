@@ -25,75 +25,12 @@
 //
 // @ignore
 // ===================================================================================================
-using System;
-using System.Xml;
-using System.Collections.Generic;
-using Kaltura.Enums;
-using Kaltura.Request;
-
-namespace Kaltura.Types
+namespace Kaltura.Enums
 {
-	public class GroupPermission : Permission
+	public sealed class PermissionOrderBy : StringEnum
 	{
-		#region Constants
-		public const string GROUP = "group";
-		#endregion
+		public static readonly PermissionOrderBy NONE = new PermissionOrderBy("NONE");
 
-		#region Private Fields
-		private string _Group = null;
-		#endregion
-
-		#region Properties
-		public string Group
-		{
-			get { return _Group; }
-			set 
-			{ 
-				_Group = value;
-				OnPropertyChanged("Group");
-			}
-		}
-		#endregion
-
-		#region CTor
-		public GroupPermission()
-		{
-		}
-
-		public GroupPermission(XmlElement node) : base(node)
-		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
-			{
-				switch (propertyNode.Name)
-				{
-					case "group":
-						this._Group = propertyNode.InnerText;
-						continue;
-				}
-			}
-		}
-		#endregion
-
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
-		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaGroupPermission");
-			kparams.AddIfNotNull("group", this._Group);
-			return kparams;
-		}
-		protected override string getPropertyName(string apiName)
-		{
-			switch(apiName)
-			{
-				case GROUP:
-					return "Group";
-				default:
-					return base.getPropertyName(apiName);
-			}
-		}
-		#endregion
+		private PermissionOrderBy(string name) : base(name) { }
 	}
 }
-
