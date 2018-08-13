@@ -625,6 +625,7 @@ namespace Kaltura.Services
 		#region Constants
 		public new const string PARTNER_ID = "partnerId";
 		public const string USERNAME = "username";
+		public const string TEMPLATE_NAME = "templateName";
 		#endregion
 
 		public new int PartnerId
@@ -637,17 +638,23 @@ namespace Kaltura.Services
 			set;
 			get;
 		}
+		public string TemplateName
+		{
+			set;
+			get;
+		}
 
 		public OttUserResetPasswordRequestBuilder()
 			: base("ottuser", "resetPassword")
 		{
 		}
 
-		public OttUserResetPasswordRequestBuilder(int partnerId, string username)
+		public OttUserResetPasswordRequestBuilder(int partnerId, string username, string templateName)
 			: this()
 		{
 			this.PartnerId = partnerId;
 			this.Username = username;
+			this.TemplateName = templateName;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -657,6 +664,8 @@ namespace Kaltura.Services
 				kparams.AddIfNotNull("partnerId", PartnerId);
 			if (!isMapped("username"))
 				kparams.AddIfNotNull("username", Username);
+			if (!isMapped("templateName"))
+				kparams.AddIfNotNull("templateName", TemplateName);
 			return kparams;
 		}
 
@@ -1021,9 +1030,9 @@ namespace Kaltura.Services
 			return new OttUserResendActivationTokenRequestBuilder(partnerId, username);
 		}
 
-		public static OttUserResetPasswordRequestBuilder ResetPassword(int partnerId, string username)
+		public static OttUserResetPasswordRequestBuilder ResetPassword(int partnerId, string username, string templateName = null)
 		{
-			return new OttUserResetPasswordRequestBuilder(partnerId, username);
+			return new OttUserResetPasswordRequestBuilder(partnerId, username, templateName);
 		}
 
 		public static OttUserSetInitialPasswordRequestBuilder SetInitialPassword(int partnerId, string token, string password)
