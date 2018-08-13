@@ -11,8 +11,6 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         parent::__construct($serverMetadata);
     }
 
-
-
     public function generate()
     {
         $result = array();
@@ -24,7 +22,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
         $fileContent = $classIndex->content . $enumIndex->content . $actionIndex->content;
 
         $file = new GeneratedFileData();
-        $file->path = "./types/all.ts";
+        $file->path = "./types/index.ts";
         $file->content = $fileContent;
         $result[] = $file;
 
@@ -41,7 +39,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
             $className = ucfirst($class->name);
             $classFileName = $className; // $this->utils->toLispCase($className);
 
-            $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
+            $fileContent .= "export { {$className}, {$className}Args } from './{$classFileName}'" . NewLine;
         }
 
         $file = new GeneratedFileData();
@@ -80,7 +78,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
                 $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
                 $classFileName = $className ; //$this->utils->toLispCase($className);
 
-                $fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
+                $fileContent .= "export { {$className}, {$className}Args } from './{$classFileName}'" . NewLine;
             }
         }
 

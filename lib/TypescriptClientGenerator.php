@@ -3,7 +3,7 @@ CONST NewLine = "\n";
 
 class TypescriptClientGenerator extends ClientGeneratorFromXml
 {
-	protected $_baseClientPath = "src/api";
+	protected $_srcAPIBasePath;
 	protected $_usePrivateAttributes;
 	private $serverMetadata;
 	private $_serverType = null;
@@ -11,11 +11,12 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
     private $_framework;
     private $_targetKalturaServer;
 
-	function __construct($xmlPath, Zend_Config $config, $framework = "typescript")
+	function __construct($xmlPath, Zend_Config $config, $framework = "typescript", $srcAPIBasePath = "src/api")
 	{
 		parent::__construct($xmlPath, $framework, $config);
 
-		$this->setAdditionalSourcesPath('shared/typescript-ngx');
+		$this->_srcAPIBasePath = $srcAPIBasePath;
+
 		$this->_usePrivateAttributes = isset($config->usePrivateAttributes) ? $config->usePrivateAttributes : false;
 		$this->_framework = $framework;
 		KalturaLog::info("typescript generator: setting target client framework to '$framework'");
@@ -45,15 +46,17 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		$this->serverMetadata = $this->extractData($xpath);
 
 		$classesGenerator = new ClassesGenerator($this->serverMetadata, $this->_framework, $this->_disableDateParsing, $this->_targetKalturaServer);
+		$indexFilesGenerator = new IndexFilesGenerator($this->serverMetadata);
 		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
 			$classesGenerator->generate(),
-			$enumsGenerator->generate()
+			$enumsGenerator->generate(),
+			$indexFilesGenerator->generate()
 		);
 
 		foreach($files as $file)
 		{
-			$this->addFile($this->_baseClientPath . "/" . $file->path, $file->content,false);
+			$this->addFile($this->_srcAPIBasePath . "/" . $file->path, $file->content,false);
 		}
 	}
 

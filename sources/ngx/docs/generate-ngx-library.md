@@ -8,19 +8,19 @@
 git clone https://github.com/kaltura/clients-generator
 ```
 
-2. Download latest version of `KalturaClient.xml`.
+2. Download latest published version of `KalturaClient.xml`.
 ```bash
-$ curl -O http://www.kaltura.com/api_v3/api_schema.php
-$ mv api_schema.php KalturaClient.xml
+$ curl -O http://www.kaltura.com/api_v3/api_schema.php > KalturaClient.xml
 ```
 
-3. Change the generator so it will build the library with your changes.
+3. change source codes:
 - Generator scripts can be found in folder `lib/typescript`.
-- Static resources shared between OVP and OTT can be found in folder `sources/ngx`.
-- Static resources of OVP library can be found in folder `tests/ovp/ngx`.
-- Static resources of OTT library can be found in folder `tests/ott/ngx`.
+- Static resources shared between `Angular` client and `Typescript` client can be found in folder `sources/shared/typescript-ngx`.
+- Static `Angular` resources shared between `OVP` and `OTT` can be found in folder `sources/ngx`.
+- Static resources of `OVP` library can be found in folder `tests/ovp/ngx`.
+- Static resources of `OTT` library can be found in folder `tests/ott/ngx`.
 
-4. Generate ngx library into `output/ngx` folder.
+4. Generate ngx library into `output/ngx` folder using the following command
 ```bash
 $ /usr/local/php5/bin/php exec.php ngx ./output
 ```
