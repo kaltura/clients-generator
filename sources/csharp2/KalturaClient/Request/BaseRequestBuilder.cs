@@ -47,7 +47,7 @@ namespace Kaltura.Request
         {
             if (client != null && client.Configuration.Logger != null)
             {
-                var msgtoLog = string.Format("KalturaClient > [{0}] > {1}", requestId, msg);
+                var msgtoLog = string.Format("[{0}] > {1}", requestId, msg);
                 client.Configuration.Logger.Log(msgtoLog);
             }
         }
