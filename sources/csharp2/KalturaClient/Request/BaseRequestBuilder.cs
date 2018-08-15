@@ -47,7 +47,7 @@ namespace Kaltura.Request
         {
             if (client != null && client.Configuration.Logger != null)
             {
-                var msgtoLog = $"KalturaClient > [{requestId}] > {msg}";
+                var msgtoLog = string.Format("[{0}] > {1}", requestId, msg);
                 client.Configuration.Logger.Log(msgtoLog);
             }
         }
@@ -191,7 +191,7 @@ namespace Kaltura.Request
                     using (var responseDataStream = errorResponse.GetResponseStream())
                     using (var reader = new StreamReader(responseDataStream))
                     {
-                        var text = await reader.ReadToEndAsync();
+                        var text = reader.ReadToEnd();
                         this.Log(string.Format("ErrorResponse : {0}", text));
                     }
                 }
