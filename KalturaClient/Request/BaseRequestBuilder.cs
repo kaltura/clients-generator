@@ -144,7 +144,10 @@ namespace Kaltura.Request
 
         public T ExecuteAndWaitForResponse(Client client = null)
         {
-            var result = ExecuteAsync(client).GetAwaiter().GetResult();
+            // Wrapping the async method in task run to avoid deadlock of the syncronization context in some cases.
+            // https://stackoverflow.com/questions/17248680/await-works-but-calling-task-result-hangs-deadlocks
+            var result = Task.Run(() => ExecuteAsync(client)).Result;
+
             return result;
         }
 
