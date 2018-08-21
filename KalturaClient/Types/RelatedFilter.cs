@@ -36,29 +36,18 @@ namespace Kaltura.Types
 	public class RelatedFilter : BaseSearchAssetFilter
 	{
 		#region Constants
-		public new const string KSQL = "kSql";
 		public const string ID_EQUAL = "idEqual";
 		public const string TYPE_IN = "typeIn";
 		public const string EXCLUDE_WATCHED = "excludeWatched";
 		#endregion
 
 		#region Private Fields
-		private string _KSql = null;
 		private int _IdEqual = Int32.MinValue;
 		private string _TypeIn = null;
 		private bool? _ExcludeWatched = null;
 		#endregion
 
 		#region Properties
-		public new string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -99,9 +88,6 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "kSql":
-						this._KSql = propertyNode.InnerText;
-						continue;
 					case "idEqual":
 						this._IdEqual = ParseInt(propertyNode.InnerText);
 						continue;
@@ -122,7 +108,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaRelatedFilter");
-			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("idEqual", this._IdEqual);
 			kparams.AddIfNotNull("typeIn", this._TypeIn);
 			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
@@ -132,8 +117,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case KSQL:
-					return "KSql";
 				case ID_EQUAL:
 					return "IdEqual";
 				case TYPE_IN:
