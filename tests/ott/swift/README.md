@@ -1,6 +1,6 @@
 # KalturaOttClient
 
-[![CI Status](http://img.shields.io/travis/kaltura/KalturaGeneratedAPIClientsSwift.svg?style=flat)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsSwift)
+[![CI Status](http://img.shields.io/travis/kaltura/KalturaOttGeneratedAPIClientsSwift.svg?style=flat)](https://travis-ci.org/kaltura/KalturaOttGeneratedAPIClientsSwift)
 [![Version](https://img.shields.io/cocoapods/v/KalturaOttClient.svg?style=flat)](http://cocoapods.org/pods/KalturaOttClient)
 [![License](https://img.shields.io/cocoapods/l/KalturaOttClient.svg?style=flat)](http://cocoapods.org/pods/KalturaOttClient)
 [![Platform](https://img.shields.io/cocoapods/p/KalturaOttClient.svg?style=flat)](http://cocoapods.org/pods/KalturaOttClient)
@@ -28,7 +28,7 @@ community@kaltura.com
 All code in this project is released under the [AGPLv3 license](http://www.gnu.org/licenses/agpl-3.0.html) unless a different license for a particular library is specified in the applicable library path.   
 
 Copyright © Kaltura Inc. All rights reserved.   
-Authors and contributors: See [GitHub contributors list](https://github.com/kaltura/playkit-ios-samples/graphs/contributors).  
+Authors and contributors: See [GitHub contributors list](https://github.com/kaltura/KalturaOttGeneratedAPIClientsSwift/graphs/contributors).  
 
 ## Publishing
 

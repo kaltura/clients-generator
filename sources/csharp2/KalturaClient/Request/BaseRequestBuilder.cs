@@ -47,7 +47,7 @@ namespace Kaltura.Request
         {
             if (client != null && client.Configuration.Logger != null)
             {
-                var msgtoLog = $"KalturaClient > [{requestId}] > {msg}";
+                var msgtoLog = string.Format("[{0}] > {1}", requestId, msg);
                 client.Configuration.Logger.Log(msgtoLog);
             }
         }
@@ -144,7 +144,10 @@ namespace Kaltura.Request
 
         public T ExecuteAndWaitForResponse(Client client = null)
         {
-            var result = ExecuteAsync(client).GetAwaiter().GetResult();
+            // Wrapping the async method in task run to avoid deadlock of the syncronization context in some cases.
+            // https://stackoverflow.com/questions/17248680/await-works-but-calling-task-result-hangs-deadlocks
+            var result = Task.Run(() => ExecuteAsync(client)).Result;
+
             return result;
         }
 
@@ -191,7 +194,7 @@ namespace Kaltura.Request
                     using (var responseDataStream = errorResponse.GetResponseStream())
                     using (var reader = new StreamReader(responseDataStream))
                     {
-                        var text = await reader.ReadToEndAsync();
+                        var text = reader.ReadToEnd();
                         this.Log(string.Format("ErrorResponse : {0}", text));
                     }
                 }
