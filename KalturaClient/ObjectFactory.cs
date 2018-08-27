@@ -181,6 +181,8 @@ namespace Kaltura
 					return new ListResponse<AssetHistory>(xmlElement);
 				case "KalturaBulkListResponse":
 					return new ListResponse<Bulk>(xmlElement);
+				case "KalturaSegmentationTypeListResponse":
+					return new ListResponse<SegmentationType>(xmlElement);
 				case "KalturaSeriesRecordingListResponse":
 					return new ListResponse<SeriesRecording>(xmlElement);
 				case "KalturaHouseholdPremiumServiceListResponse":
