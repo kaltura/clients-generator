@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Kaltura.OttClient</id>
-    <version>5.0.1.43134</version>
+    <version>5.0.1.15064</version>
     <authors>Johnathan Amit-Kanarek, Arthur Vaverko, Jess Portnoy</authors>
     <owners>Johnathan Amit-Kanarek</owners>
     <projectUrl>https://github.com/kaltura/KalturaOttGeneratedAPIClientsCsharp</projectUrl>
