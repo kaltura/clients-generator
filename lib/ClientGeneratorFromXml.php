@@ -115,7 +115,10 @@ abstract class ClientGeneratorFromXml
 			return false;
 
 		$type = strval($type);
-		return !count($this->_includeTypes) || isset($this->_includeTypes[$type]);
+		if (!isset($this->_includeTypes[$type]) || !count($this->_includeTypes)){
+		    return false;
+		}
+
 	}
 
 	protected function shouldExtendType($type)
