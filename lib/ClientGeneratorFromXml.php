@@ -115,9 +115,7 @@ abstract class ClientGeneratorFromXml
 			return false;
 
 		$type = strval($type);
-		if ((!is_array($this->_includeTypes) && !$this->_includeTypes instanceof Countable)  || !count($this->_includeTypes)){
-		    return false;
-		}
+		return !is_array($this->_includeTypes) && !$this->_includeTypes instanceof Countable)  || !count($this->_includeTypes)||isset($this->_includeTypes[$type]);
 
 	}
 
