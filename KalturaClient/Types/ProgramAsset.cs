@@ -41,6 +41,10 @@ namespace Kaltura.Types
 		public const string RELATED_MEDIA_ID = "relatedMediaId";
 		public const string CRID = "crid";
 		public const string LINEAR_ASSET_ID = "linearAssetId";
+		public const string ENABLE_CDVR = "enableCdvr";
+		public const string ENABLE_CATCH_UP = "enableCatchUp";
+		public const string ENABLE_START_OVER = "enableStartOver";
+		public const string ENABLE_TRICK_PLAY = "enableTrickPlay";
 		#endregion
 
 		#region Private Fields
@@ -49,6 +53,10 @@ namespace Kaltura.Types
 		private long _RelatedMediaId = long.MinValue;
 		private string _Crid = null;
 		private long _LinearAssetId = long.MinValue;
+		private bool? _EnableCdvr = null;
+		private bool? _EnableCatchUp = null;
+		private bool? _EnableStartOver = null;
+		private bool? _EnableTrickPlay = null;
 		#endregion
 
 		#region Properties
@@ -97,6 +105,22 @@ namespace Kaltura.Types
 				OnPropertyChanged("LinearAssetId");
 			}
 		}
+		public bool? EnableCdvr
+		{
+			get { return _EnableCdvr; }
+		}
+		public bool? EnableCatchUp
+		{
+			get { return _EnableCatchUp; }
+		}
+		public bool? EnableStartOver
+		{
+			get { return _EnableStartOver; }
+		}
+		public bool? EnableTrickPlay
+		{
+			get { return _EnableTrickPlay; }
+		}
 		#endregion
 
 		#region CTor
@@ -125,6 +149,18 @@ namespace Kaltura.Types
 					case "linearAssetId":
 						this._LinearAssetId = ParseLong(propertyNode.InnerText);
 						continue;
+					case "enableCdvr":
+						this._EnableCdvr = ParseBool(propertyNode.InnerText);
+						continue;
+					case "enableCatchUp":
+						this._EnableCatchUp = ParseBool(propertyNode.InnerText);
+						continue;
+					case "enableStartOver":
+						this._EnableStartOver = ParseBool(propertyNode.InnerText);
+						continue;
+					case "enableTrickPlay":
+						this._EnableTrickPlay = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -141,6 +177,10 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("relatedMediaId", this._RelatedMediaId);
 			kparams.AddIfNotNull("crid", this._Crid);
 			kparams.AddIfNotNull("linearAssetId", this._LinearAssetId);
+			kparams.AddIfNotNull("enableCdvr", this._EnableCdvr);
+			kparams.AddIfNotNull("enableCatchUp", this._EnableCatchUp);
+			kparams.AddIfNotNull("enableStartOver", this._EnableStartOver);
+			kparams.AddIfNotNull("enableTrickPlay", this._EnableTrickPlay);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -157,6 +197,14 @@ namespace Kaltura.Types
 					return "Crid";
 				case LINEAR_ASSET_ID:
 					return "LinearAssetId";
+				case ENABLE_CDVR:
+					return "EnableCdvr";
+				case ENABLE_CATCH_UP:
+					return "EnableCatchUp";
+				case ENABLE_START_OVER:
+					return "EnableStartOver";
+				case ENABLE_TRICK_PLAY:
+					return "EnableTrickPlay";
 				default:
 					return base.getPropertyName(apiName);
 			}
