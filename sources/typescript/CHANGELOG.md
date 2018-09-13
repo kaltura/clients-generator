@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 6.3.2 (2018-09-13)
+
+### Fix
+
+*  upgrade dependencies to handle vulnerabilities
+
+
 ## 6.3.1 (2018-05-09)
 
 ### Fix

@@ -1,7 +1,7 @@
 {
   "name": "kaltura-typescript-client",
   "private": true,
-  "version": "6.3.1",
+  "version": "6.3.2",
   "description": "Kaltura Typescript client",
   "keywords": [
     "Kaltura"
@@ -43,23 +43,21 @@
     "@types/jest": "^21.1.5",
     "@types/jquery": "^2.0.40",
     "@types/ramda": "0.0.3",
-    "awesome-typescript-loader": "~3.0.0-beta.18",
+    "awesome-typescript-loader": "^5.2.1",
     "core-js": "2.4.1",
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-add-src": "^0.2.0",
+    "fs-extra": "^7.0.0",
+    "gulp": "^4.0.0",
+    "gulp-add-src": "^1.0.0",
     "gulp-json-editor": "^2.2.1",
     "gulp-load-plugins": "^1.4.0",
-    "gulp-sourcemaps": "^1.6.0",
+    "gulp-sourcemaps": "^2.6.4",
     "gulp-tslint": "~7.1.0",
-    "gulp-typescript": "^3.1.2",
+    "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-util": "^3.0.7",
     "jest": "^21.2.1",
     "merge2": "^1.0.2",
     "rimraf": "^2.5.1",
-    "run-sequence": "1.2.2",
-    "standard-version": "^4.0.0",
-    "ts-jest": "^21.1.3",
+    "ts-jest": "^21.2.4",
     "tslint": "4.3.1",
     "tslint-loader": "3.2.1",
     "typescript": "^2.4.0",
@@ -73,7 +71,9 @@
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "testMatch": ["**/tests/*.spec.ts"],
+    "testMatch": [
+      "**/tests/*.spec.ts"
+    ],
     "moduleFileExtensions": [
       "ts",
       "js",
