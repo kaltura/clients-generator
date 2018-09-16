@@ -36,24 +36,43 @@ namespace Kaltura.Types
 	public class SegmentRange : ObjectBase
 	{
 		#region Constants
+		public const string ID = "id";
+		public const string SYSTEMATIC_NAME = "systematicName";
 		public const string NAME = "name";
 		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string GTE = "gte";
 		public const string GT = "gt";
 		public const string LTE = "lte";
 		public const string LT = "lt";
+		public const string EQUALS = "equals";
 		#endregion
 
 		#region Private Fields
+		private long _Id = long.MinValue;
+		private string _SystematicName = null;
 		private string _Name = null;
 		private IList<TranslationToken> _MultilingualName;
 		private float _Gte = Single.MinValue;
 		private float _Gt = Single.MinValue;
 		private float _Lte = Single.MinValue;
 		private float _Lt = Single.MinValue;
+		private float _Equals = Single.MinValue;
 		#endregion
 
 		#region Properties
+		public long Id
+		{
+			get { return _Id; }
+		}
+		public string SystematicName
+		{
+			get { return _SystematicName; }
+			set 
+			{ 
+				_SystematicName = value;
+				OnPropertyChanged("SystematicName");
+			}
+		}
 		public string Name
 		{
 			get { return _Name; }
@@ -103,6 +122,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("Lt");
 			}
 		}
+		public float Equals
+		{
+			get { return _Equals; }
+			set 
+			{ 
+				_Equals = value;
+				OnPropertyChanged("Equals");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -116,6 +144,12 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "systematicName":
+						this._SystematicName = propertyNode.InnerText;
+						continue;
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
@@ -138,6 +172,9 @@ namespace Kaltura.Types
 					case "lt":
 						this._Lt = ParseFloat(propertyNode.InnerText);
 						continue;
+					case "equals":
+						this._Equals = ParseFloat(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -149,18 +186,25 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaSegmentRange");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("systematicName", this._SystematicName);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("gte", this._Gte);
 			kparams.AddIfNotNull("gt", this._Gt);
 			kparams.AddIfNotNull("lte", this._Lte);
 			kparams.AddIfNotNull("lt", this._Lt);
+			kparams.AddIfNotNull("equals", this._Equals);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case ID:
+					return "Id";
+				case SYSTEMATIC_NAME:
+					return "SystematicName";
 				case NAME:
 					return "Name";
 				case MULTILINGUAL_NAME:
@@ -173,6 +217,8 @@ namespace Kaltura.Types
 					return "Lte";
 				case LT:
 					return "Lt";
+				case EQUALS:
+					return "Equals";
 				default:
 					return base.getPropertyName(apiName);
 			}

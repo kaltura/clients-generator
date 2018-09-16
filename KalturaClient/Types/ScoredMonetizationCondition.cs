@@ -37,11 +37,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string SCORE = "score";
+		public const string DAYS = "days";
 		public const string ACTIONS = "actions";
 		#endregion
 
 		#region Private Fields
 		private int _Score = Int32.MinValue;
+		private int _Days = Int32.MinValue;
 		private IList<MonetizationCondition> _Actions;
 		#endregion
 
@@ -53,6 +55,15 @@ namespace Kaltura.Types
 			{ 
 				_Score = value;
 				OnPropertyChanged("Score");
+			}
+		}
+		public int Days
+		{
+			get { return _Days; }
+			set 
+			{ 
+				_Days = value;
+				OnPropertyChanged("Days");
 			}
 		}
 		public IList<MonetizationCondition> Actions
@@ -80,6 +91,9 @@ namespace Kaltura.Types
 					case "score":
 						this._Score = ParseInt(propertyNode.InnerText);
 						continue;
+					case "days":
+						this._Days = ParseInt(propertyNode.InnerText);
+						continue;
 					case "actions":
 						this._Actions = new List<MonetizationCondition>();
 						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
@@ -99,6 +113,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaScoredMonetizationCondition");
 			kparams.AddIfNotNull("score", this._Score);
+			kparams.AddIfNotNull("days", this._Days);
 			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
 		}
@@ -108,6 +123,8 @@ namespace Kaltura.Types
 			{
 				case SCORE:
 					return "Score";
+				case DAYS:
+					return "Days";
 				case ACTIONS:
 					return "Actions";
 				default:

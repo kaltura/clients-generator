@@ -37,13 +37,11 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string SOURCE = "source";
-		public const string THRESHOLD = "threshold";
 		public const string VALUES = "values";
 		#endregion
 
 		#region Private Fields
 		private SegmentSource _Source;
-		private int _Threshold = Int32.MinValue;
 		private IList<SegmentValue> _Values;
 		#endregion
 
@@ -55,15 +53,6 @@ namespace Kaltura.Types
 			{ 
 				_Source = value;
 				OnPropertyChanged("Source");
-			}
-		}
-		public int Threshold
-		{
-			get { return _Threshold; }
-			set 
-			{ 
-				_Threshold = value;
-				OnPropertyChanged("Threshold");
 			}
 		}
 		public IList<SegmentValue> Values
@@ -91,9 +80,6 @@ namespace Kaltura.Types
 					case "source":
 						this._Source = ObjectFactory.Create<SegmentSource>(propertyNode);
 						continue;
-					case "threshold":
-						this._Threshold = ParseInt(propertyNode.InnerText);
-						continue;
 					case "values":
 						this._Values = new List<SegmentValue>();
 						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
@@ -113,7 +99,6 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaSegmentValues");
 			kparams.AddIfNotNull("source", this._Source);
-			kparams.AddIfNotNull("threshold", this._Threshold);
 			kparams.AddIfNotNull("values", this._Values);
 			return kparams;
 		}
@@ -123,8 +108,6 @@ namespace Kaltura.Types
 			{
 				case SOURCE:
 					return "Source";
-				case THRESHOLD:
-					return "Threshold";
 				case VALUES:
 					return "Values";
 				default:

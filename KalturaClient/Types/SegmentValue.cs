@@ -37,6 +37,7 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID = "id";
+		public const string SYSTEMATIC_NAME = "systematicName";
 		public const string NAME = "name";
 		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string VALUE = "value";
@@ -45,6 +46,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private long _Id = long.MinValue;
+		private string _SystematicName = null;
 		private string _Name = null;
 		private IList<TranslationToken> _MultilingualName;
 		private string _Value = null;
@@ -55,10 +57,14 @@ namespace Kaltura.Types
 		public long Id
 		{
 			get { return _Id; }
+		}
+		public string SystematicName
+		{
+			get { return _SystematicName; }
 			set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
+				_SystematicName = value;
+				OnPropertyChanged("SystematicName");
 			}
 		}
 		public string Name
@@ -108,6 +114,9 @@ namespace Kaltura.Types
 					case "id":
 						this._Id = ParseLong(propertyNode.InnerText);
 						continue;
+					case "systematicName":
+						this._SystematicName = propertyNode.InnerText;
+						continue;
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
@@ -136,6 +145,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaSegmentValue");
 			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("systematicName", this._SystematicName);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("value", this._Value);
@@ -148,6 +158,8 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
+				case SYSTEMATIC_NAME:
+					return "SystematicName";
 				case NAME:
 					return "Name";
 				case MULTILINGUAL_NAME:

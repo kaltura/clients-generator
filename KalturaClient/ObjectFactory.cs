@@ -183,6 +183,8 @@ namespace Kaltura
 					return new ListResponse<Bulk>(xmlElement);
 				case "KalturaSegmentationTypeListResponse":
 					return new ListResponse<SegmentationType>(xmlElement);
+				case "KalturaUserSegmentListResponse":
+					return new ListResponse<UserSegment>(xmlElement);
 				case "KalturaSeriesRecordingListResponse":
 					return new ListResponse<SeriesRecording>(xmlElement);
 				case "KalturaHouseholdPremiumServiceListResponse":

@@ -33,73 +33,68 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class ContentScoreCondition : BaseSegmentCondition
+	public class UserSegment : ObjectBase
 	{
 		#region Constants
-		public const string SCORE = "score";
-		public const string DAYS = "days";
-		public const string ACTIONS = "actions";
+		public const string SEGMENT_ID = "segmentId";
+		public const string SEGMENTATION_TYPE_ID = "segmentationTypeId";
+		public const string USER_ID = "userId";
 		#endregion
 
 		#region Private Fields
-		private int _Score = Int32.MinValue;
-		private int _Days = Int32.MinValue;
-		private IList<ContentActionCondition> _Actions;
+		private long _SegmentId = long.MinValue;
+		private long _SegmentationTypeId = long.MinValue;
+		private string _UserId = null;
 		#endregion
 
 		#region Properties
-		public int Score
+		public long SegmentId
 		{
-			get { return _Score; }
+			get { return _SegmentId; }
 			set 
 			{ 
-				_Score = value;
-				OnPropertyChanged("Score");
+				_SegmentId = value;
+				OnPropertyChanged("SegmentId");
 			}
 		}
-		public int Days
+		public long SegmentationTypeId
 		{
-			get { return _Days; }
+			get { return _SegmentationTypeId; }
 			set 
 			{ 
-				_Days = value;
-				OnPropertyChanged("Days");
+				_SegmentationTypeId = value;
+				OnPropertyChanged("SegmentationTypeId");
 			}
 		}
-		public IList<ContentActionCondition> Actions
+		public string UserId
 		{
-			get { return _Actions; }
 			set 
 			{ 
-				_Actions = value;
-				OnPropertyChanged("Actions");
+				_UserId = value;
+				OnPropertyChanged("UserId");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public ContentScoreCondition()
+		public UserSegment()
 		{
 		}
 
-		public ContentScoreCondition(XmlElement node) : base(node)
+		public UserSegment(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "score":
-						this._Score = ParseInt(propertyNode.InnerText);
+					case "segmentId":
+						this._SegmentId = ParseLong(propertyNode.InnerText);
 						continue;
-					case "days":
-						this._Days = ParseInt(propertyNode.InnerText);
+					case "segmentationTypeId":
+						this._SegmentationTypeId = ParseLong(propertyNode.InnerText);
 						continue;
-					case "actions":
-						this._Actions = new List<ContentActionCondition>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Actions.Add(ObjectFactory.Create<ContentActionCondition>(arrayNode));
-						}
+					case "userId":
+						this._UserId = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -111,22 +106,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaContentScoreCondition");
-			kparams.AddIfNotNull("score", this._Score);
-			kparams.AddIfNotNull("days", this._Days);
-			kparams.AddIfNotNull("actions", this._Actions);
+				kparams.AddReplace("objectType", "KalturaUserSegment");
+			kparams.AddIfNotNull("segmentId", this._SegmentId);
+			kparams.AddIfNotNull("segmentationTypeId", this._SegmentationTypeId);
+			kparams.AddIfNotNull("userId", this._UserId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCORE:
-					return "Score";
-				case DAYS:
-					return "Days";
-				case ACTIONS:
-					return "Actions";
+				case SEGMENT_ID:
+					return "SegmentId";
+				case SEGMENTATION_TYPE_ID:
+					return "SegmentationTypeId";
+				case USER_ID:
+					return "UserId";
 				default:
 					return base.getPropertyName(apiName);
 			}

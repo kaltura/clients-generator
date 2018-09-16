@@ -36,25 +36,14 @@ namespace Kaltura.Types
 	public class ContentSource : SegmentSource
 	{
 		#region Constants
-		public const string TYPE = "type";
 		public const string FIELD = "field";
 		#endregion
 
 		#region Private Fields
-		private ContentFieldType _Type = null;
 		private string _Field = null;
 		#endregion
 
 		#region Properties
-		public ContentFieldType Type
-		{
-			get { return _Type; }
-			set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
-		}
 		public string Field
 		{
 			get { return _Field; }
@@ -77,9 +66,6 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "type":
-						this._Type = (ContentFieldType)StringEnum.Parse(typeof(ContentFieldType), propertyNode.InnerText);
-						continue;
 					case "field":
 						this._Field = propertyNode.InnerText;
 						continue;
@@ -94,7 +80,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaContentSource");
-			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("field", this._Field);
 			return kparams;
 		}
@@ -102,8 +87,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case TYPE:
-					return "Type";
 				case FIELD:
 					return "Field";
 				default:

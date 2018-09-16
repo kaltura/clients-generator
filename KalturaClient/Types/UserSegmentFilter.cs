@@ -33,73 +33,41 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class ContentScoreCondition : BaseSegmentCondition
+	public class UserSegmentFilter : Filter
 	{
 		#region Constants
-		public const string SCORE = "score";
-		public const string DAYS = "days";
-		public const string ACTIONS = "actions";
+		public const string USER_ID_EQUAL = "userIdEqual";
 		#endregion
 
 		#region Private Fields
-		private int _Score = Int32.MinValue;
-		private int _Days = Int32.MinValue;
-		private IList<ContentActionCondition> _Actions;
+		private string _UserIdEqual = null;
 		#endregion
 
 		#region Properties
-		public int Score
+		public string UserIdEqual
 		{
-			get { return _Score; }
+			get { return _UserIdEqual; }
 			set 
 			{ 
-				_Score = value;
-				OnPropertyChanged("Score");
-			}
-		}
-		public int Days
-		{
-			get { return _Days; }
-			set 
-			{ 
-				_Days = value;
-				OnPropertyChanged("Days");
-			}
-		}
-		public IList<ContentActionCondition> Actions
-		{
-			get { return _Actions; }
-			set 
-			{ 
-				_Actions = value;
-				OnPropertyChanged("Actions");
+				_UserIdEqual = value;
+				OnPropertyChanged("UserIdEqual");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public ContentScoreCondition()
+		public UserSegmentFilter()
 		{
 		}
 
-		public ContentScoreCondition(XmlElement node) : base(node)
+		public UserSegmentFilter(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "score":
-						this._Score = ParseInt(propertyNode.InnerText);
-						continue;
-					case "days":
-						this._Days = ParseInt(propertyNode.InnerText);
-						continue;
-					case "actions":
-						this._Actions = new List<ContentActionCondition>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Actions.Add(ObjectFactory.Create<ContentActionCondition>(arrayNode));
-						}
+					case "userIdEqual":
+						this._UserIdEqual = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -111,22 +79,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaContentScoreCondition");
-			kparams.AddIfNotNull("score", this._Score);
-			kparams.AddIfNotNull("days", this._Days);
-			kparams.AddIfNotNull("actions", this._Actions);
+				kparams.AddReplace("objectType", "KalturaUserSegmentFilter");
+			kparams.AddIfNotNull("userIdEqual", this._UserIdEqual);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCORE:
-					return "Score";
-				case DAYS:
-					return "Days";
-				case ACTIONS:
-					return "Actions";
+				case USER_ID_EQUAL:
+					return "UserIdEqual";
 				default:
 					return base.getPropertyName(apiName);
 			}

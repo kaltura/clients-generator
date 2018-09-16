@@ -31,6 +31,7 @@ namespace Kaltura.Enums
 	{
 		public static readonly MonetizationType PPV = new MonetizationType("ppv");
 		public static readonly MonetizationType SUBSCRIPTION = new MonetizationType("subscription");
+		public static readonly MonetizationType BOXSET = new MonetizationType("boxset");
 
 		private MonetizationType(string name) : base(name) { }
 	}
