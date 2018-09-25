@@ -41,6 +41,7 @@ namespace Kaltura.Types
 		public const string DEVICE_RULE_ID = "deviceRuleId";
 		public const string GEO_BLOCK_RULE_ID = "geoBlockRuleId";
 		public const string STATUS = "status";
+		public const string INHERITANCE_POLICY = "inheritancePolicy";
 		#endregion
 
 		#region Private Fields
@@ -49,6 +50,7 @@ namespace Kaltura.Types
 		private int _DeviceRuleId = Int32.MinValue;
 		private int _GeoBlockRuleId = Int32.MinValue;
 		private bool? _Status = null;
+		private AssetInheritancePolicy _InheritancePolicy = null;
 		#endregion
 
 		#region Properties
@@ -97,6 +99,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("Status");
 			}
 		}
+		public AssetInheritancePolicy InheritancePolicy
+		{
+			get { return _InheritancePolicy; }
+			set 
+			{ 
+				_InheritancePolicy = value;
+				OnPropertyChanged("InheritancePolicy");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -125,6 +136,9 @@ namespace Kaltura.Types
 					case "status":
 						this._Status = ParseBool(propertyNode.InnerText);
 						continue;
+					case "inheritancePolicy":
+						this._InheritancePolicy = (AssetInheritancePolicy)StringEnum.Parse(typeof(AssetInheritancePolicy), propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -141,6 +155,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("deviceRuleId", this._DeviceRuleId);
 			kparams.AddIfNotNull("geoBlockRuleId", this._GeoBlockRuleId);
 			kparams.AddIfNotNull("status", this._Status);
+			kparams.AddIfNotNull("inheritancePolicy", this._InheritancePolicy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -157,6 +172,8 @@ namespace Kaltura.Types
 					return "GeoBlockRuleId";
 				case STATUS:
 					return "Status";
+				case INHERITANCE_POLICY:
+					return "InheritancePolicy";
 				default:
 					return base.getPropertyName(apiName);
 			}

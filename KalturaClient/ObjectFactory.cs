@@ -149,6 +149,24 @@ namespace Kaltura
 					return new ListResponse<IntegerValue>(xmlElement);
 				case "KalturaReportListResponse":
 					return new ListResponse<Report>(xmlElement);
+				case "KalturaBulkListResponse":
+					return new ListResponse<Bulk>(xmlElement);
+				case "KalturaSegmentationTypeListResponse":
+					return new ListResponse<SegmentationType>(xmlElement);
+				case "KalturaUserSegmentListResponse":
+					return new ListResponse<UserSegment>(xmlElement);
+				case "KalturaSeriesRecordingListResponse":
+					return new ListResponse<SeriesRecording>(xmlElement);
+				case "KalturaHouseholdPremiumServiceListResponse":
+					return new ListResponse<HouseholdPremiumService>(xmlElement);
+				case "KalturaCDVRAdapterProfileListResponse":
+					return new ListResponse<CDVRAdapterProfile>(xmlElement);
+				case "KalturaRecordingListResponse":
+					return new ListResponse<Recording>(xmlElement);
+				case "KalturaBillingTransactionListResponse":
+					return new ListResponse<BillingTransaction>(xmlElement);
+				case "KalturaEntitlementListResponse":
+					return new ListResponse<Entitlement>(xmlElement);
 				case "KalturaAssetStructMetaListResponse":
 					return new ListResponse<AssetStructMeta>(xmlElement);
 				case "KalturaMediaFileTypeListResponse":
@@ -179,24 +197,6 @@ namespace Kaltura
 					return new ListResponse<MediaFile>(xmlElement);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(xmlElement);
-				case "KalturaBulkListResponse":
-					return new ListResponse<Bulk>(xmlElement);
-				case "KalturaSegmentationTypeListResponse":
-					return new ListResponse<SegmentationType>(xmlElement);
-				case "KalturaUserSegmentListResponse":
-					return new ListResponse<UserSegment>(xmlElement);
-				case "KalturaSeriesRecordingListResponse":
-					return new ListResponse<SeriesRecording>(xmlElement);
-				case "KalturaHouseholdPremiumServiceListResponse":
-					return new ListResponse<HouseholdPremiumService>(xmlElement);
-				case "KalturaCDVRAdapterProfileListResponse":
-					return new ListResponse<CDVRAdapterProfile>(xmlElement);
-				case "KalturaRecordingListResponse":
-					return new ListResponse<Recording>(xmlElement);
-				case "KalturaBillingTransactionListResponse":
-					return new ListResponse<BillingTransaction>(xmlElement);
-				case "KalturaEntitlementListResponse":
-					return new ListResponse<Entitlement>(xmlElement);
 				case "KalturaDrmProfileListResponse":
 					return new ListResponse<DrmProfile>(xmlElement);
 				case "KalturaPermissionListResponse":
