@@ -105,24 +105,6 @@ namespace Kaltura
 					return new ListResponse<Favorite>(xmlElement);
 				case "KalturaOTTUserListResponse":
 					return new ListResponse<OTTUser>(xmlElement);
-				case "KalturaCollectionListResponse":
-					return new ListResponse<Collection>(xmlElement);
-				case "KalturaDiscountDetailsListResponse":
-					return new ListResponse<DiscountDetails>(xmlElement);
-				case "KalturaSubscriptionSetListResponse":
-					return new ListResponse<SubscriptionSet>(xmlElement);
-				case "KalturaProductPriceListResponse":
-					return new ListResponse<ProductPrice>(xmlElement);
-				case "KalturaCouponsGroupListResponse":
-					return new ListResponse<CouponsGroup>(xmlElement);
-				case "KalturaPriceDetailsListResponse":
-					return new ListResponse<PriceDetails>(xmlElement);
-				case "KalturaPricePlanListResponse":
-					return new ListResponse<PricePlan>(xmlElement);
-				case "KalturaSubscriptionListResponse":
-					return new ListResponse<Subscription>(xmlElement);
-				case "KalturaProductsPriceListResponse":
-					return new ListResponse<ProductPrice>(xmlElement);
 				case "KalturaPersonalListListResponse":
 					return new ListResponse<PersonalList>(xmlElement);
 				case "KalturaEngagementListResponse":
@@ -167,6 +149,28 @@ namespace Kaltura
 					return new ListResponse<BillingTransaction>(xmlElement);
 				case "KalturaEntitlementListResponse":
 					return new ListResponse<Entitlement>(xmlElement);
+				case "KalturaAssetFilePpvListResponse":
+					return new ListResponse<AssetFilePpv>(xmlElement);
+				case "KalturaPpvListResponse":
+					return new ListResponse<Ppv>(xmlElement);
+				case "KalturaCollectionListResponse":
+					return new ListResponse<Collection>(xmlElement);
+				case "KalturaDiscountDetailsListResponse":
+					return new ListResponse<DiscountDetails>(xmlElement);
+				case "KalturaSubscriptionSetListResponse":
+					return new ListResponse<SubscriptionSet>(xmlElement);
+				case "KalturaProductPriceListResponse":
+					return new ListResponse<ProductPrice>(xmlElement);
+				case "KalturaCouponsGroupListResponse":
+					return new ListResponse<CouponsGroup>(xmlElement);
+				case "KalturaPriceDetailsListResponse":
+					return new ListResponse<PriceDetails>(xmlElement);
+				case "KalturaPricePlanListResponse":
+					return new ListResponse<PricePlan>(xmlElement);
+				case "KalturaSubscriptionListResponse":
+					return new ListResponse<Subscription>(xmlElement);
+				case "KalturaProductsPriceListResponse":
+					return new ListResponse<ProductPrice>(xmlElement);
 				case "KalturaAssetStructMetaListResponse":
 					return new ListResponse<AssetStructMeta>(xmlElement);
 				case "KalturaMediaFileTypeListResponse":

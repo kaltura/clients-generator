@@ -35,34 +35,34 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
-	public class PpvGetRequestBuilder : RequestBuilder<Ppv>
+	public class AssetFilePpvListRequestBuilder : RequestBuilder<ListResponse<AssetFilePpv>>
 	{
 		#region Constants
-		public const string ID = "id";
+		public const string FILTER = "filter";
 		#endregion
 
-		public long Id
+		public AssetFilePpvFilter Filter
 		{
 			set;
 			get;
 		}
 
-		public PpvGetRequestBuilder()
-			: base("ppv", "get")
+		public AssetFilePpvListRequestBuilder()
+			: base("assetfileppv", "list")
 		{
 		}
 
-		public PpvGetRequestBuilder(long id)
+		public AssetFilePpvListRequestBuilder(AssetFilePpvFilter filter)
 			: this()
 		{
-			this.Id = id;
+			this.Filter = filter;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("id"))
-				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -74,54 +74,20 @@ namespace Kaltura.Services
 
 		public override object Deserialize(XmlElement result)
 		{
-			return ObjectFactory.Create<Ppv>(result);
-		}
-	}
-
-	public class PpvListRequestBuilder : RequestBuilder<ListResponse<Ppv>>
-	{
-		#region Constants
-		#endregion
-
-
-		public PpvListRequestBuilder()
-			: base("ppv", "list")
-		{
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(XmlElement result)
-		{
-			return ObjectFactory.Create<ListResponse<Ppv>>(result);
+			return ObjectFactory.Create<ListResponse<AssetFilePpv>>(result);
 		}
 	}
 
 
-	public class PpvService
+	public class AssetFilePpvService
 	{
-		private PpvService()
+		private AssetFilePpvService()
 		{
 		}
 
-		public static PpvGetRequestBuilder Get(long id)
+		public static AssetFilePpvListRequestBuilder List(AssetFilePpvFilter filter)
 		{
-			return new PpvGetRequestBuilder(id);
-		}
-
-		public static PpvListRequestBuilder List()
-		{
-			return new PpvListRequestBuilder();
+			return new AssetFilePpvListRequestBuilder(filter);
 		}
 	}
 }
