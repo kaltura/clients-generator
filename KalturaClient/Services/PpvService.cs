@@ -81,17 +81,31 @@ namespace Kaltura.Services
 	public class PpvListRequestBuilder : RequestBuilder<ListResponse<Ppv>>
 	{
 		#region Constants
+		public const string FILTER = "filter";
 		#endregion
 
+		public PpvFilter Filter
+		{
+			set;
+			get;
+		}
 
 		public PpvListRequestBuilder()
 			: base("ppv", "list")
 		{
 		}
 
+		public PpvListRequestBuilder(PpvFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -119,9 +133,9 @@ namespace Kaltura.Services
 			return new PpvGetRequestBuilder(id);
 		}
 
-		public static PpvListRequestBuilder List()
+		public static PpvListRequestBuilder List(PpvFilter filter = null)
 		{
-			return new PpvListRequestBuilder();
+			return new PpvListRequestBuilder(filter);
 		}
 	}
 }

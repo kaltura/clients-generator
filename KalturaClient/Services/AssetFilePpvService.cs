@@ -35,6 +35,103 @@ using Kaltura.Enums;
 
 namespace Kaltura.Services
 {
+	public class AssetFilePpvAddRequestBuilder : RequestBuilder<AssetFilePpv>
+	{
+		#region Constants
+		public const string ASSET_FILE_PPV = "assetFilePpv";
+		#endregion
+
+		public AssetFilePpv AssetFilePpv
+		{
+			set;
+			get;
+		}
+
+		public AssetFilePpvAddRequestBuilder()
+			: base("assetfileppv", "add")
+		{
+		}
+
+		public AssetFilePpvAddRequestBuilder(AssetFilePpv assetFilePpv)
+			: this()
+		{
+			this.AssetFilePpv = assetFilePpv;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetFilePpv"))
+				kparams.AddIfNotNull("assetFilePpv", AssetFilePpv);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<AssetFilePpv>(result);
+		}
+	}
+
+	public class AssetFilePpvDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ASSET_FILE_ID = "assetFileId";
+		public const string PPV_MODULE_ID = "ppvModuleId";
+		#endregion
+
+		public long AssetFileId
+		{
+			set;
+			get;
+		}
+		public long PpvModuleId
+		{
+			set;
+			get;
+		}
+
+		public AssetFilePpvDeleteRequestBuilder()
+			: base("assetfileppv", "delete")
+		{
+		}
+
+		public AssetFilePpvDeleteRequestBuilder(long assetFileId, long ppvModuleId)
+			: this()
+		{
+			this.AssetFileId = assetFileId;
+			this.PpvModuleId = ppvModuleId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetFileId"))
+				kparams.AddIfNotNull("assetFileId", AssetFileId);
+			if (!isMapped("ppvModuleId"))
+				kparams.AddIfNotNull("ppvModuleId", PpvModuleId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class AssetFilePpvListRequestBuilder : RequestBuilder<ListResponse<AssetFilePpv>>
 	{
 		#region Constants
@@ -78,6 +175,67 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetFilePpvUpdateRequestBuilder : RequestBuilder<AssetFilePpv>
+	{
+		#region Constants
+		public const string ASSET_FILE_ID = "assetFileId";
+		public const string PPV_MODULE_ID = "ppvModuleId";
+		public const string ASSET_FILE_PPV = "assetFilePpv";
+		#endregion
+
+		public long AssetFileId
+		{
+			set;
+			get;
+		}
+		public long PpvModuleId
+		{
+			set;
+			get;
+		}
+		public AssetFilePpv AssetFilePpv
+		{
+			set;
+			get;
+		}
+
+		public AssetFilePpvUpdateRequestBuilder()
+			: base("assetfileppv", "update")
+		{
+		}
+
+		public AssetFilePpvUpdateRequestBuilder(long assetFileId, long ppvModuleId, AssetFilePpv assetFilePpv)
+			: this()
+		{
+			this.AssetFileId = assetFileId;
+			this.PpvModuleId = ppvModuleId;
+			this.AssetFilePpv = assetFilePpv;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetFileId"))
+				kparams.AddIfNotNull("assetFileId", AssetFileId);
+			if (!isMapped("ppvModuleId"))
+				kparams.AddIfNotNull("ppvModuleId", PpvModuleId);
+			if (!isMapped("assetFilePpv"))
+				kparams.AddIfNotNull("assetFilePpv", AssetFilePpv);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<AssetFilePpv>(result);
+		}
+	}
+
 
 	public class AssetFilePpvService
 	{
@@ -85,9 +243,24 @@ namespace Kaltura.Services
 		{
 		}
 
+		public static AssetFilePpvAddRequestBuilder Add(AssetFilePpv assetFilePpv)
+		{
+			return new AssetFilePpvAddRequestBuilder(assetFilePpv);
+		}
+
+		public static AssetFilePpvDeleteRequestBuilder Delete(long assetFileId, long ppvModuleId)
+		{
+			return new AssetFilePpvDeleteRequestBuilder(assetFileId, ppvModuleId);
+		}
+
 		public static AssetFilePpvListRequestBuilder List(AssetFilePpvFilter filter)
 		{
 			return new AssetFilePpvListRequestBuilder(filter);
+		}
+
+		public static AssetFilePpvUpdateRequestBuilder Update(long assetFileId, long ppvModuleId, AssetFilePpv assetFilePpv)
+		{
+			return new AssetFilePpvUpdateRequestBuilder(assetFileId, ppvModuleId, assetFilePpv);
 		}
 	}
 }
