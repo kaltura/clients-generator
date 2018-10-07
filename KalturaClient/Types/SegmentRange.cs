@@ -39,7 +39,6 @@ namespace Kaltura.Types
 		public const string ID = "id";
 		public const string SYSTEMATIC_NAME = "systematicName";
 		public const string NAME = "name";
-		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string GTE = "gte";
 		public const string GT = "gt";
 		public const string LTE = "lte";
@@ -51,7 +50,6 @@ namespace Kaltura.Types
 		private long _Id = long.MinValue;
 		private string _SystematicName = null;
 		private string _Name = null;
-		private IList<TranslationToken> _MultilingualName;
 		private float _Gte = Single.MinValue;
 		private float _Gt = Single.MinValue;
 		private float _Lte = Single.MinValue;
@@ -76,14 +74,10 @@ namespace Kaltura.Types
 		public string Name
 		{
 			get { return _Name; }
-		}
-		public IList<TranslationToken> MultilingualName
-		{
-			get { return _MultilingualName; }
 			set 
 			{ 
-				_MultilingualName = value;
-				OnPropertyChanged("MultilingualName");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		public float Gte
@@ -153,13 +147,6 @@ namespace Kaltura.Types
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
-					case "multilingualName":
-						this._MultilingualName = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
 					case "gte":
 						this._Gte = ParseFloat(propertyNode.InnerText);
 						continue;
@@ -189,7 +176,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("systematicName", this._SystematicName);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("gte", this._Gte);
 			kparams.AddIfNotNull("gt", this._Gt);
 			kparams.AddIfNotNull("lte", this._Lte);
@@ -207,8 +193,6 @@ namespace Kaltura.Types
 					return "SystematicName";
 				case NAME:
 					return "Name";
-				case MULTILINGUAL_NAME:
-					return "MultilingualName";
 				case GTE:
 					return "Gte";
 				case GT:

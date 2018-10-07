@@ -38,9 +38,7 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID = "id";
 		public const string NAME = "name";
-		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string DESCRIPTION = "description";
-		public const string MULTILINGUAL_DESCRIPTION = "multilingualDescription";
 		public const string CONDITIONS = "conditions";
 		public const string VALUE = "value";
 		#endregion
@@ -48,9 +46,7 @@ namespace Kaltura.Types
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Name = null;
-		private IList<TranslationToken> _MultilingualName;
 		private string _Description = null;
-		private IList<TranslationToken> _MultilingualDescription;
 		private IList<BaseSegmentCondition> _Conditions;
 		private BaseSegmentValue _Value;
 		#endregion
@@ -68,27 +64,19 @@ namespace Kaltura.Types
 		public string Name
 		{
 			get { return _Name; }
-		}
-		public IList<TranslationToken> MultilingualName
-		{
-			get { return _MultilingualName; }
 			set 
 			{ 
-				_MultilingualName = value;
-				OnPropertyChanged("MultilingualName");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		public string Description
 		{
 			get { return _Description; }
-		}
-		public IList<TranslationToken> MultilingualDescription
-		{
-			get { return _MultilingualDescription; }
 			set 
 			{ 
-				_MultilingualDescription = value;
-				OnPropertyChanged("MultilingualDescription");
+				_Description = value;
+				OnPropertyChanged("Description");
 			}
 		}
 		public IList<BaseSegmentCondition> Conditions
@@ -128,22 +116,8 @@ namespace Kaltura.Types
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
-					case "multilingualName":
-						this._MultilingualName = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
 					case "description":
 						this._Description = propertyNode.InnerText;
-						continue;
-					case "multilingualDescription":
-						this._MultilingualDescription = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
 						continue;
 					case "conditions":
 						this._Conditions = new List<BaseSegmentCondition>();
@@ -168,9 +142,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaSegmentationType");
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("description", this._Description);
-			kparams.AddIfNotNull("multilingualDescription", this._MultilingualDescription);
 			kparams.AddIfNotNull("conditions", this._Conditions);
 			kparams.AddIfNotNull("value", this._Value);
 			return kparams;
@@ -183,12 +155,8 @@ namespace Kaltura.Types
 					return "Id";
 				case NAME:
 					return "Name";
-				case MULTILINGUAL_NAME:
-					return "MultilingualName";
 				case DESCRIPTION:
 					return "Description";
-				case MULTILINGUAL_DESCRIPTION:
-					return "MultilingualDescription";
 				case CONDITIONS:
 					return "Conditions";
 				case VALUE:

@@ -36,25 +36,40 @@ namespace Kaltura.Types
 	public class ContentScoreCondition : BaseSegmentCondition
 	{
 		#region Constants
-		public const string SCORE = "score";
+		public const string MIN_SCORE = "minScore";
+		public const string MAX_SCORE = "maxScore";
 		public const string DAYS = "days";
+		public const string FIELD = "field";
+		public const string VALUE = "value";
 		public const string ACTIONS = "actions";
 		#endregion
 
 		#region Private Fields
-		private int _Score = Int32.MinValue;
+		private int _MinScore = Int32.MinValue;
+		private int _MaxScore = Int32.MinValue;
 		private int _Days = Int32.MinValue;
+		private string _Field = null;
+		private string _Value = null;
 		private IList<ContentActionCondition> _Actions;
 		#endregion
 
 		#region Properties
-		public int Score
+		public int MinScore
 		{
-			get { return _Score; }
+			get { return _MinScore; }
 			set 
 			{ 
-				_Score = value;
-				OnPropertyChanged("Score");
+				_MinScore = value;
+				OnPropertyChanged("MinScore");
+			}
+		}
+		public int MaxScore
+		{
+			get { return _MaxScore; }
+			set 
+			{ 
+				_MaxScore = value;
+				OnPropertyChanged("MaxScore");
 			}
 		}
 		public int Days
@@ -64,6 +79,24 @@ namespace Kaltura.Types
 			{ 
 				_Days = value;
 				OnPropertyChanged("Days");
+			}
+		}
+		public string Field
+		{
+			get { return _Field; }
+			set 
+			{ 
+				_Field = value;
+				OnPropertyChanged("Field");
+			}
+		}
+		public string Value
+		{
+			get { return _Value; }
+			set 
+			{ 
+				_Value = value;
+				OnPropertyChanged("Value");
 			}
 		}
 		public IList<ContentActionCondition> Actions
@@ -88,11 +121,20 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
-					case "score":
-						this._Score = ParseInt(propertyNode.InnerText);
+					case "minScore":
+						this._MinScore = ParseInt(propertyNode.InnerText);
+						continue;
+					case "maxScore":
+						this._MaxScore = ParseInt(propertyNode.InnerText);
 						continue;
 					case "days":
 						this._Days = ParseInt(propertyNode.InnerText);
+						continue;
+					case "field":
+						this._Field = propertyNode.InnerText;
+						continue;
+					case "value":
+						this._Value = propertyNode.InnerText;
 						continue;
 					case "actions":
 						this._Actions = new List<ContentActionCondition>();
@@ -112,8 +154,11 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaContentScoreCondition");
-			kparams.AddIfNotNull("score", this._Score);
+			kparams.AddIfNotNull("minScore", this._MinScore);
+			kparams.AddIfNotNull("maxScore", this._MaxScore);
 			kparams.AddIfNotNull("days", this._Days);
+			kparams.AddIfNotNull("field", this._Field);
+			kparams.AddIfNotNull("value", this._Value);
 			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
 		}
@@ -121,10 +166,16 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case SCORE:
-					return "Score";
+				case MIN_SCORE:
+					return "MinScore";
+				case MAX_SCORE:
+					return "MaxScore";
 				case DAYS:
 					return "Days";
+				case FIELD:
+					return "Field";
+				case VALUE:
+					return "Value";
 				case ACTIONS:
 					return "Actions";
 				default:

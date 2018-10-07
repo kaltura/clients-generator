@@ -39,7 +39,6 @@ namespace Kaltura.Types
 		public const string ID = "id";
 		public const string SYSTEMATIC_NAME = "systematicName";
 		public const string NAME = "name";
-		public const string MULTILINGUAL_NAME = "multilingualName";
 		public const string VALUE = "value";
 		public const string THRESHOLD = "threshold";
 		#endregion
@@ -48,7 +47,6 @@ namespace Kaltura.Types
 		private long _Id = long.MinValue;
 		private string _SystematicName = null;
 		private string _Name = null;
-		private IList<TranslationToken> _MultilingualName;
 		private string _Value = null;
 		private int _Threshold = Int32.MinValue;
 		#endregion
@@ -70,14 +68,10 @@ namespace Kaltura.Types
 		public string Name
 		{
 			get { return _Name; }
-		}
-		public IList<TranslationToken> MultilingualName
-		{
-			get { return _MultilingualName; }
 			set 
 			{ 
-				_MultilingualName = value;
-				OnPropertyChanged("MultilingualName");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		public string Value
@@ -120,13 +114,6 @@ namespace Kaltura.Types
 					case "name":
 						this._Name = propertyNode.InnerText;
 						continue;
-					case "multilingualName":
-						this._MultilingualName = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
 					case "value":
 						this._Value = propertyNode.InnerText;
 						continue;
@@ -147,7 +134,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("systematicName", this._SystematicName);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("multilingualName", this._MultilingualName);
 			kparams.AddIfNotNull("value", this._Value);
 			kparams.AddIfNotNull("threshold", this._Threshold);
 			return kparams;
@@ -162,8 +148,6 @@ namespace Kaltura.Types
 					return "SystematicName";
 				case NAME:
 					return "Name";
-				case MULTILINGUAL_NAME:
-					return "MultilingualName";
 				case VALUE:
 					return "Value";
 				case THRESHOLD:

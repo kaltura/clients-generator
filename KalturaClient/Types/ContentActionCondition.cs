@@ -38,12 +38,14 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ACTION = "action";
 		public const string LENGTH = "length";
+		public const string LENGTH_TYPE = "lengthType";
 		public const string MULTIPLIER = "multiplier";
 		#endregion
 
 		#region Private Fields
 		private ContentAction _Action = null;
 		private int _Length = Int32.MinValue;
+		private ContentActionConditionLengthType _LengthType = null;
 		private int _Multiplier = Int32.MinValue;
 		#endregion
 
@@ -64,6 +66,15 @@ namespace Kaltura.Types
 			{ 
 				_Length = value;
 				OnPropertyChanged("Length");
+			}
+		}
+		public ContentActionConditionLengthType LengthType
+		{
+			get { return _LengthType; }
+			set 
+			{ 
+				_LengthType = value;
+				OnPropertyChanged("LengthType");
 			}
 		}
 		public int Multiplier
@@ -94,6 +105,9 @@ namespace Kaltura.Types
 					case "length":
 						this._Length = ParseInt(propertyNode.InnerText);
 						continue;
+					case "lengthType":
+						this._LengthType = (ContentActionConditionLengthType)StringEnum.Parse(typeof(ContentActionConditionLengthType), propertyNode.InnerText);
+						continue;
 					case "multiplier":
 						this._Multiplier = ParseInt(propertyNode.InnerText);
 						continue;
@@ -110,6 +124,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaContentActionCondition");
 			kparams.AddIfNotNull("action", this._Action);
 			kparams.AddIfNotNull("length", this._Length);
+			kparams.AddIfNotNull("lengthType", this._LengthType);
 			kparams.AddIfNotNull("multiplier", this._Multiplier);
 			return kparams;
 		}
@@ -121,6 +136,8 @@ namespace Kaltura.Types
 					return "Action";
 				case LENGTH:
 					return "Length";
+				case LENGTH_TYPE:
+					return "LengthType";
 				case MULTIPLIER:
 					return "Multiplier";
 				default:
