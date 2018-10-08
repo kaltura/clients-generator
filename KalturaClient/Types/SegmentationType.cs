@@ -55,11 +55,6 @@ namespace Kaltura.Types
 		public long Id
 		{
 			get { return _Id; }
-			set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
 		public string Name
 		{

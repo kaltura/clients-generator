@@ -182,7 +182,7 @@ namespace Kaltura.Services
 		public const string SEGMENTATION_TYPE = "segmentationType";
 		#endregion
 
-		public int SegmentationTypeId
+		public long SegmentationTypeId
 		{
 			set;
 			get;
@@ -198,7 +198,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public SegmentationTypeUpdateRequestBuilder(int segmentationTypeId, SegmentationType segmentationType)
+		public SegmentationTypeUpdateRequestBuilder(long segmentationTypeId, SegmentationType segmentationType)
 			: this()
 		{
 			this.SegmentationTypeId = segmentationTypeId;
@@ -249,7 +249,7 @@ namespace Kaltura.Services
 			return new SegmentationTypeListRequestBuilder(filter, pager);
 		}
 
-		public static SegmentationTypeUpdateRequestBuilder Update(int segmentationTypeId, SegmentationType segmentationType)
+		public static SegmentationTypeUpdateRequestBuilder Update(long segmentationTypeId, SegmentationType segmentationType)
 		{
 			return new SegmentationTypeUpdateRequestBuilder(segmentationTypeId, segmentationType);
 		}
