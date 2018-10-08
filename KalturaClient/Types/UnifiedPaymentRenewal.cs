@@ -40,6 +40,7 @@ namespace Kaltura.Types
 		public const string DATE = "date";
 		public const string UNIFIED_PAYMENT_ID = "unifiedPaymentId";
 		public const string ENTITLEMENTS = "entitlements";
+		public const string USER_ID = "userId";
 		#endregion
 
 		#region Private Fields
@@ -47,6 +48,7 @@ namespace Kaltura.Types
 		private long _Date = long.MinValue;
 		private long _UnifiedPaymentId = long.MinValue;
 		private IList<EntitlementRenewalBase> _Entitlements;
+		private long _UserId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -86,6 +88,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("Entitlements");
 			}
 		}
+		public long UserId
+		{
+			get { return _UserId; }
+			set 
+			{ 
+				_UserId = value;
+				OnPropertyChanged("UserId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -115,6 +126,9 @@ namespace Kaltura.Types
 							this._Entitlements.Add(ObjectFactory.Create<EntitlementRenewalBase>(arrayNode));
 						}
 						continue;
+					case "userId":
+						this._UserId = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -130,6 +144,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("date", this._Date);
 			kparams.AddIfNotNull("unifiedPaymentId", this._UnifiedPaymentId);
 			kparams.AddIfNotNull("entitlements", this._Entitlements);
+			kparams.AddIfNotNull("userId", this._UserId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -144,6 +159,8 @@ namespace Kaltura.Types
 					return "UnifiedPaymentId";
 				case ENTITLEMENTS:
 					return "Entitlements";
+				case USER_ID:
+					return "UserId";
 				default:
 					return base.getPropertyName(apiName);
 			}

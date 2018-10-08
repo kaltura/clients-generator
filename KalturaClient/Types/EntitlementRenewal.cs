@@ -40,6 +40,7 @@ namespace Kaltura.Types
 		public const string DATE = "date";
 		public const string PURCHASE_ID = "purchaseId";
 		public const string SUBSCRIPTION_ID = "subscriptionId";
+		public const string USER_ID = "userId";
 		#endregion
 
 		#region Private Fields
@@ -47,6 +48,7 @@ namespace Kaltura.Types
 		private long _Date = long.MinValue;
 		private long _PurchaseId = long.MinValue;
 		private long _SubscriptionId = long.MinValue;
+		private long _UserId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -86,6 +88,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionId");
 			}
 		}
+		public long UserId
+		{
+			get { return _UserId; }
+			set 
+			{ 
+				_UserId = value;
+				OnPropertyChanged("UserId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -111,6 +122,9 @@ namespace Kaltura.Types
 					case "subscriptionId":
 						this._SubscriptionId = ParseLong(propertyNode.InnerText);
 						continue;
+					case "userId":
+						this._UserId = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -126,6 +140,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("date", this._Date);
 			kparams.AddIfNotNull("purchaseId", this._PurchaseId);
 			kparams.AddIfNotNull("subscriptionId", this._SubscriptionId);
+			kparams.AddIfNotNull("userId", this._UserId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -140,6 +155,8 @@ namespace Kaltura.Types
 					return "PurchaseId";
 				case SUBSCRIPTION_ID:
 					return "SubscriptionId";
+				case USER_ID:
+					return "UserId";
 				default:
 					return base.getPropertyName(apiName);
 			}
