@@ -233,13 +233,30 @@ public class Params extends LinkedHashMap<String, Object> implements Serializabl
 		}
 	}
 
-	public <T extends ObjectBase> void add(String key, Map<String, T>  params) {
-			if (containsKey(key) && get(key) instanceof HashMap) {
-				Params existingParams = (Params) get(key);
-				existingParams.putAll(params);
-			} else {
-				put(key, params);
+	@SuppressWarnings("unchecked")
+	public <T extends ObjectBase> void add(String key, Map<String, T>  map) {
+		if (map == null)
+			return;
+
+		if (map.isEmpty()) {
+			Params emptyParams = new Params();
+			emptyParams.put("-", "");
+			put(key, emptyParams);
+
+		} 
+		else {
+			Map<String, Params> items = new HashMap<String, Params>();
+			for(String subKey : map.keySet()) {
+				items.put(subKey, map.get(subKey).toParams());
 			}
+			
+			if (containsKey(key) && get(key) instanceof Map) {
+				Map<String, Params> existingKeys = (Map<String, Params>) get(key);
+				existingKeys.putAll(items);
+			} else {
+				put(key, items);
+			}			
+		}		
 	}
 
 	public Iterable<String> getKeys() {
