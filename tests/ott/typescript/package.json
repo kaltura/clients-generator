@@ -1,6 +1,5 @@
 {
   "name": "kaltura-ott-typescript-client",
-  "private": true,
   "version": "@VERSION@",
   "description": "Kaltura OTT Typescript client",
   "keywords": [

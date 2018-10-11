@@ -1,6 +1,5 @@
 {
   "name": "@kaltura-ng/kaltura-ott-client",
-  "private": true,
   "version": "@VERSION@",
   "description": "Kaltura OTT Angular based client",
   "keywords": [
