@@ -451,6 +451,7 @@ abstract class ClientGeneratorFromXml
 
 		$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
 		$fileContents = str_replace('@VERSION@', $this->version, $fileContents);
+		$fileContents = str_replace('@VERSION_JS@', preg_replace('/^(\d+\.\d+\.\d+)\.(\d+)$/', '$1-$2', $this->version), $fileContents);
 
 		$this->writeFile($fileName, $fileContents);
 	}
