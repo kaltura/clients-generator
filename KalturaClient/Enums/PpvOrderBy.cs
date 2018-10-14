@@ -29,7 +29,8 @@ namespace Kaltura.Enums
 {
 	public sealed class PpvOrderBy : StringEnum
 	{
-		public static readonly PpvOrderBy NONE = new PpvOrderBy("NONE");
+		public static readonly PpvOrderBy NAME_ASC = new PpvOrderBy("NAME_ASC");
+		public static readonly PpvOrderBy NAME_DESC = new PpvOrderBy("NAME_DESC");
 
 		private PpvOrderBy(string name) : base(name) { }
 	}

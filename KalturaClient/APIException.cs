@@ -361,6 +361,8 @@ namespace Kaltura
 		public static string ActionNotSpecified = "500033";
 		public static string InvalidActionParameter = "500054";
 		public static string InvalidActionParameters = "500013";
+		public static string RequestAborted = "500079";
+		public static string RequestSkipped = "500080";
 		public static string InvalidArgument = "50026";
 		public static string ArgumentMustBeNumeric = "500031";
 		public static string ArgumentCannotBeEmpty = "50027";
@@ -404,6 +406,8 @@ namespace Kaltura
 		public static string MultirequestIndexNotZeroBased = "500042";
 		public static string MultirequestInvalidIndex = "500043";
 		public static string MultirequestGenericMethod = "500064";
+		public static string MultirequestInvalidOperatorForConditionType = "500078";
+		public static string MultirequestInvalidConditionValue = "500077";
 		#endregion
 
 		#region Private Fields
