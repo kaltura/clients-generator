@@ -146,7 +146,7 @@ extension Dictionary where Key == String {
         
         
         result.append(prefix)
-        let sortedKeys = self.keys.sorted()
+        let sortedKeys = self.keys.sorted {$0.localizedStandardCompare($1) == .orderedAscending}
         for key in sortedKeys {
             
             let jsonObject = self[key]!

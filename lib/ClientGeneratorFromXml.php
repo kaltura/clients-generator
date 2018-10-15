@@ -115,7 +115,8 @@ abstract class ClientGeneratorFromXml
 			return false;
 
 		$type = strval($type);
-		return !count($this->_includeTypes) || isset($this->_includeTypes[$type]);
+		return ((!is_array($this->_includeTypes))  || !count($this->_includeTypes) || isset($this->_includeTypes[$type]));
+
 	}
 
 	protected function shouldExtendType($type)
@@ -450,6 +451,7 @@ abstract class ClientGeneratorFromXml
 
 		$fileContents = str_replace('@DATE@', date('y-m-d'), $fileContents);
 		$fileContents = str_replace('@VERSION@', $this->version, $fileContents);
+		$fileContents = str_replace('@VERSION_JS@', preg_replace('/^(\d+\.\d+\.\d+)\.(\d+)$/', '$1-$2', $this->version), $fileContents);
 
 		$this->writeFile($fileName, $fileContents);
 	}

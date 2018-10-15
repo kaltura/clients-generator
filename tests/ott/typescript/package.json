@@ -1,8 +1,7 @@
 {
-  "name": "kaltura-typescript-client",
-  "private": true,
-  "version": "6.3.2",
-  "description": "Kaltura Typescript client",
+  "name": "kaltura-ott-typescript-client",
+  "version": "@VERSION_JS@",
+  "description": "Kaltura OTT Typescript client",
   "keywords": [
     "Kaltura"
   ],
@@ -28,10 +27,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript.git"
+    "url": "https://github.com/kaltura/KalturaOttGeneratedAPIClientsTypescript.git"
   },
   "bugs": {
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/issues"
+    "url": "https://github.com/kaltura/KalturaOttGeneratedAPIClientsTypescript/issues"
   },
   "main": "./index.js",
   "dependencies": {
