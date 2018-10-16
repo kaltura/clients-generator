@@ -33,24 +33,48 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRuleBase : Rule
+	public class OrCondition : Condition
 	{
 		#region Constants
+		public const string CONDITIONS = "conditions";
 		#endregion
 
 		#region Private Fields
+		private IList<Condition> _Conditions;
 		#endregion
 
 		#region Properties
+		public IList<Condition> Conditions
+		{
+			get { return _Conditions; }
+			set 
+			{ 
+				_Conditions = value;
+				OnPropertyChanged("Conditions");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public AssetRuleBase()
+		public OrCondition()
 		{
 		}
 
-		public AssetRuleBase(XmlElement node) : base(node)
+		public OrCondition(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "conditions":
+						this._Conditions = new List<Condition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+						}
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -59,13 +83,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+				kparams.AddReplace("objectType", "KalturaOrCondition");
+			kparams.AddIfNotNull("conditions", this._Conditions);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case CONDITIONS:
+					return "Conditions";
 				default:
 					return base.getPropertyName(apiName);
 			}

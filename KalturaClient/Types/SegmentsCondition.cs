@@ -33,24 +33,44 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRuleBase : Rule
+	public class SegmentsCondition : Condition
 	{
 		#region Constants
+		public const string SEGMENTS_IDS = "segmentsIds";
 		#endregion
 
 		#region Private Fields
+		private string _SegmentsIds = null;
 		#endregion
 
 		#region Properties
+		public string SegmentsIds
+		{
+			get { return _SegmentsIds; }
+			set 
+			{ 
+				_SegmentsIds = value;
+				OnPropertyChanged("SegmentsIds");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public AssetRuleBase()
+		public SegmentsCondition()
 		{
 		}
 
-		public AssetRuleBase(XmlElement node) : base(node)
+		public SegmentsCondition(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "segmentsIds":
+						this._SegmentsIds = propertyNode.InnerText;
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -59,13 +79,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+				kparams.AddReplace("objectType", "KalturaSegmentsCondition");
+			kparams.AddIfNotNull("segmentsIds", this._SegmentsIds);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case SEGMENTS_IDS:
+					return "SegmentsIds";
 				default:
 					return base.getPropertyName(apiName);
 			}

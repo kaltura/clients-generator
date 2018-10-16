@@ -35,6 +35,7 @@ namespace Kaltura.Enums
 		public static readonly RuleActionType USER_BLOCK = new RuleActionType("USER_BLOCK");
 		public static readonly RuleActionType ALLOW_PLAYBACK = new RuleActionType("ALLOW_PLAYBACK");
 		public static readonly RuleActionType BLOCK_PLAYBACK = new RuleActionType("BLOCK_PLAYBACK");
+		public static readonly RuleActionType APPLY_DISCOUNT_MODULE = new RuleActionType("APPLY_DISCOUNT_MODULE");
 
 		private RuleActionType(string name) : base(name) { }
 	}

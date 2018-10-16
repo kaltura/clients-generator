@@ -33,41 +33,69 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class CountryCondition : NotCondition
+	public class BusinessModuleRuleFilter : Filter
 	{
 		#region Constants
-		public const string COUNTRIES = "countries";
+		public const string BUSINESS_MODULE_TYPE_APPLIED = "businessModuleTypeApplied";
+		public const string BUSINESS_MODULE_ID_APPLIED = "businessModuleIdApplied";
+		public const string SEGMENT_IDS_APPLIED = "segmentIdsApplied";
 		#endregion
 
 		#region Private Fields
-		private string _Countries = null;
+		private TransactionType _BusinessModuleTypeApplied = null;
+		private long _BusinessModuleIdApplied = long.MinValue;
+		private string _SegmentIdsApplied = null;
 		#endregion
 
 		#region Properties
-		public string Countries
+		public TransactionType BusinessModuleTypeApplied
 		{
-			get { return _Countries; }
+			get { return _BusinessModuleTypeApplied; }
 			set 
 			{ 
-				_Countries = value;
-				OnPropertyChanged("Countries");
+				_BusinessModuleTypeApplied = value;
+				OnPropertyChanged("BusinessModuleTypeApplied");
+			}
+		}
+		public long BusinessModuleIdApplied
+		{
+			get { return _BusinessModuleIdApplied; }
+			set 
+			{ 
+				_BusinessModuleIdApplied = value;
+				OnPropertyChanged("BusinessModuleIdApplied");
+			}
+		}
+		public string SegmentIdsApplied
+		{
+			get { return _SegmentIdsApplied; }
+			set 
+			{ 
+				_SegmentIdsApplied = value;
+				OnPropertyChanged("SegmentIdsApplied");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public CountryCondition()
+		public BusinessModuleRuleFilter()
 		{
 		}
 
-		public CountryCondition(XmlElement node) : base(node)
+		public BusinessModuleRuleFilter(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "countries":
-						this._Countries = propertyNode.InnerText;
+					case "businessModuleTypeApplied":
+						this._BusinessModuleTypeApplied = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
+						continue;
+					case "businessModuleIdApplied":
+						this._BusinessModuleIdApplied = ParseLong(propertyNode.InnerText);
+						continue;
+					case "segmentIdsApplied":
+						this._SegmentIdsApplied = propertyNode.InnerText;
 						continue;
 				}
 			}
@@ -79,16 +107,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCountryCondition");
-			kparams.AddIfNotNull("countries", this._Countries);
+				kparams.AddReplace("objectType", "KalturaBusinessModuleRuleFilter");
+			kparams.AddIfNotNull("businessModuleTypeApplied", this._BusinessModuleTypeApplied);
+			kparams.AddIfNotNull("businessModuleIdApplied", this._BusinessModuleIdApplied);
+			kparams.AddIfNotNull("segmentIdsApplied", this._SegmentIdsApplied);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case COUNTRIES:
-					return "Countries";
+				case BUSINESS_MODULE_TYPE_APPLIED:
+					return "BusinessModuleTypeApplied";
+				case BUSINESS_MODULE_ID_APPLIED:
+					return "BusinessModuleIdApplied";
+				case SEGMENT_IDS_APPLIED:
+					return "SegmentIdsApplied";
 				default:
 					return base.getPropertyName(apiName);
 			}

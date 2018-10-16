@@ -201,6 +201,8 @@ namespace Kaltura
 					return new ListResponse<MediaFile>(xmlElement);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(xmlElement);
+				case "KalturaBusinessModuleRuleListResponse":
+					return new ListResponse<BusinessModuleRule>(xmlElement);
 				case "KalturaDrmProfileListResponse":
 					return new ListResponse<DrmProfile>(xmlElement);
 				case "KalturaPermissionListResponse":

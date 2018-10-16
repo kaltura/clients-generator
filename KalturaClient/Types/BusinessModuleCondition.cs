@@ -33,24 +33,58 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRuleBase : Rule
+	public class BusinessModuleCondition : Condition
 	{
 		#region Constants
+		public const string BUSINESS_MODULE_TYPE = "businessModuleType";
+		public const string BUSINESS_MODULE_ID = "businessModuleId";
 		#endregion
 
 		#region Private Fields
+		private TransactionType _BusinessModuleType = null;
+		private long _BusinessModuleId = long.MinValue;
 		#endregion
 
 		#region Properties
+		public TransactionType BusinessModuleType
+		{
+			get { return _BusinessModuleType; }
+			set 
+			{ 
+				_BusinessModuleType = value;
+				OnPropertyChanged("BusinessModuleType");
+			}
+		}
+		public long BusinessModuleId
+		{
+			get { return _BusinessModuleId; }
+			set 
+			{ 
+				_BusinessModuleId = value;
+				OnPropertyChanged("BusinessModuleId");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public AssetRuleBase()
+		public BusinessModuleCondition()
 		{
 		}
 
-		public AssetRuleBase(XmlElement node) : base(node)
+		public BusinessModuleCondition(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "businessModuleType":
+						this._BusinessModuleType = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
+						continue;
+					case "businessModuleId":
+						this._BusinessModuleId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -59,13 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+				kparams.AddReplace("objectType", "KalturaBusinessModuleCondition");
+			kparams.AddIfNotNull("businessModuleType", this._BusinessModuleType);
+			kparams.AddIfNotNull("businessModuleId", this._BusinessModuleId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case BUSINESS_MODULE_TYPE:
+					return "BusinessModuleType";
+				case BUSINESS_MODULE_ID:
+					return "BusinessModuleId";
 				default:
 					return base.getPropertyName(apiName);
 			}

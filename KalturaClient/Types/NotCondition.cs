@@ -25,19 +25,75 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class RuleConditionType : StringEnum
-	{
-		public static readonly RuleConditionType ASSET = new RuleConditionType("ASSET");
-		public static readonly RuleConditionType COUNTRY = new RuleConditionType("COUNTRY");
-		public static readonly RuleConditionType CONCURRENCY = new RuleConditionType("CONCURRENCY");
-		public static readonly RuleConditionType IP_RANGE = new RuleConditionType("IP_RANGE");
-		public static readonly RuleConditionType BUSINESS_MODULE = new RuleConditionType("BUSINESS_MODULE");
-		public static readonly RuleConditionType SEGMENTS = new RuleConditionType("SEGMENTS");
-		public static readonly RuleConditionType DATE = new RuleConditionType("DATE");
-		public static readonly RuleConditionType OR = new RuleConditionType("OR");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
 
-		private RuleConditionType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class NotCondition : Condition
+	{
+		#region Constants
+		public const string NOT = "not";
+		#endregion
+
+		#region Private Fields
+		private bool? _Not = null;
+		#endregion
+
+		#region Properties
+		public bool? Not
+		{
+			get { return _Not; }
+			set 
+			{ 
+				_Not = value;
+				OnPropertyChanged("Not");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public NotCondition()
+		{
+		}
+
+		public NotCondition(XmlElement node) : base(node)
+		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "not":
+						this._Not = ParseBool(propertyNode.InnerText);
+						continue;
+				}
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaNotCondition");
+			kparams.AddIfNotNull("not", this._Not);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case NOT:
+					return "Not";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

@@ -33,24 +33,58 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRuleBase : Rule
+	public class DateCondition : NotCondition
 	{
 		#region Constants
+		public const string START_DATE = "startDate";
+		public const string END_DATE = "endDate";
 		#endregion
 
 		#region Private Fields
+		private long _StartDate = long.MinValue;
+		private long _EndDate = long.MinValue;
 		#endregion
 
 		#region Properties
+		public long StartDate
+		{
+			get { return _StartDate; }
+			set 
+			{ 
+				_StartDate = value;
+				OnPropertyChanged("StartDate");
+			}
+		}
+		public long EndDate
+		{
+			get { return _EndDate; }
+			set 
+			{ 
+				_EndDate = value;
+				OnPropertyChanged("EndDate");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public AssetRuleBase()
+		public DateCondition()
 		{
 		}
 
-		public AssetRuleBase(XmlElement node) : base(node)
+		public DateCondition(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -59,13 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+				kparams.AddReplace("objectType", "KalturaDateCondition");
+			kparams.AddIfNotNull("startDate", this._StartDate);
+			kparams.AddIfNotNull("endDate", this._EndDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case START_DATE:
+					return "StartDate";
+				case END_DATE:
+					return "EndDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

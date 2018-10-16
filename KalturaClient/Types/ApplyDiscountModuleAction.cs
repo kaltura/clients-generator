@@ -33,24 +33,44 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRuleBase : Rule
+	public class ApplyDiscountModuleAction : RuleAction
 	{
 		#region Constants
+		public const string DISCOUNT_MODULE_ID = "discountModuleId";
 		#endregion
 
 		#region Private Fields
+		private long _DiscountModuleId = long.MinValue;
 		#endregion
 
 		#region Properties
+		public long DiscountModuleId
+		{
+			get { return _DiscountModuleId; }
+			set 
+			{ 
+				_DiscountModuleId = value;
+				OnPropertyChanged("DiscountModuleId");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public AssetRuleBase()
+		public ApplyDiscountModuleAction()
 		{
 		}
 
-		public AssetRuleBase(XmlElement node) : base(node)
+		public ApplyDiscountModuleAction(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "discountModuleId":
+						this._DiscountModuleId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -59,13 +79,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+				kparams.AddReplace("objectType", "KalturaApplyDiscountModuleAction");
+			kparams.AddIfNotNull("discountModuleId", this._DiscountModuleId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case DISCOUNT_MODULE_ID:
+					return "DiscountModuleId";
 				default:
 					return base.getPropertyName(apiName);
 			}

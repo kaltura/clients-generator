@@ -33,24 +33,66 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class AssetRuleBase : Rule
+	public class BusinessModuleRule : Rule
 	{
 		#region Constants
+		public const string CONDITIONS = "conditions";
+		public const string ACTIONS = "actions";
 		#endregion
 
 		#region Private Fields
+		private IList<Condition> _Conditions;
+		private IList<ApplyDiscountModuleAction> _Actions;
 		#endregion
 
 		#region Properties
+		public IList<Condition> Conditions
+		{
+			get { return _Conditions; }
+			set 
+			{ 
+				_Conditions = value;
+				OnPropertyChanged("Conditions");
+			}
+		}
+		public IList<ApplyDiscountModuleAction> Actions
+		{
+			get { return _Actions; }
+			set 
+			{ 
+				_Actions = value;
+				OnPropertyChanged("Actions");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public AssetRuleBase()
+		public BusinessModuleRule()
 		{
 		}
 
-		public AssetRuleBase(XmlElement node) : base(node)
+		public BusinessModuleRule(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "conditions":
+						this._Conditions = new List<Condition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+						}
+						continue;
+					case "actions":
+						this._Actions = new List<ApplyDiscountModuleAction>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>(arrayNode));
+						}
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -59,13 +101,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetRuleBase");
+				kparams.AddReplace("objectType", "KalturaBusinessModuleRule");
+			kparams.AddIfNotNull("conditions", this._Conditions);
+			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case CONDITIONS:
+					return "Conditions";
+				case ACTIONS:
+					return "Actions";
 				default:
 					return base.getPropertyName(apiName);
 			}
