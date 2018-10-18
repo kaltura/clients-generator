@@ -36,12 +36,23 @@ namespace Kaltura.Types
 	public class SegmentationTypeFilter : Filter
 	{
 		#region Constants
+		public const string ID_IN = "idIn";
 		#endregion
 
 		#region Private Fields
+		private string _IdIn = null;
 		#endregion
 
 		#region Properties
+		public string IdIn
+		{
+			get { return _IdIn; }
+			set 
+			{ 
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -51,6 +62,15 @@ namespace Kaltura.Types
 
 		public SegmentationTypeFilter(XmlElement node) : base(node)
 		{
+			foreach (XmlElement propertyNode in node.ChildNodes)
+			{
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+				}
+			}
 		}
 		#endregion
 
@@ -60,12 +80,15 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaSegmentationTypeFilter");
+			kparams.AddIfNotNull("idIn", this._IdIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case ID_IN:
+					return "IdIn";
 				default:
 					return base.getPropertyName(apiName);
 			}

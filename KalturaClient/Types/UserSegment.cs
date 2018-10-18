@@ -37,13 +37,11 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string SEGMENT_ID = "segmentId";
-		public const string SEGMENTATION_TYPE_ID = "segmentationTypeId";
 		public const string USER_ID = "userId";
 		#endregion
 
 		#region Private Fields
 		private long _SegmentId = long.MinValue;
-		private long _SegmentationTypeId = long.MinValue;
 		private string _UserId = null;
 		#endregion
 
@@ -55,15 +53,6 @@ namespace Kaltura.Types
 			{ 
 				_SegmentId = value;
 				OnPropertyChanged("SegmentId");
-			}
-		}
-		public long SegmentationTypeId
-		{
-			get { return _SegmentationTypeId; }
-			set 
-			{ 
-				_SegmentationTypeId = value;
-				OnPropertyChanged("SegmentationTypeId");
 			}
 		}
 		public string UserId
@@ -90,9 +79,6 @@ namespace Kaltura.Types
 					case "segmentId":
 						this._SegmentId = ParseLong(propertyNode.InnerText);
 						continue;
-					case "segmentationTypeId":
-						this._SegmentationTypeId = ParseLong(propertyNode.InnerText);
-						continue;
 					case "userId":
 						this._UserId = propertyNode.InnerText;
 						continue;
@@ -108,7 +94,6 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaUserSegment");
 			kparams.AddIfNotNull("segmentId", this._SegmentId);
-			kparams.AddIfNotNull("segmentationTypeId", this._SegmentationTypeId);
 			kparams.AddIfNotNull("userId", this._UserId);
 			return kparams;
 		}
@@ -118,8 +103,6 @@ namespace Kaltura.Types
 			{
 				case SEGMENT_ID:
 					return "SegmentId";
-				case SEGMENTATION_TYPE_ID:
-					return "SegmentationTypeId";
 				case USER_ID:
 					return "UserId";
 				default:

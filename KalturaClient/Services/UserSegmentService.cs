@@ -82,16 +82,10 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public new const string USER_ID = "userId";
-		public const string SEGMENTATION_TYPE_ID = "segmentationTypeId";
 		public const string SEGMENT_ID = "segmentId";
 		#endregion
 
 		public new string UserId
-		{
-			set;
-			get;
-		}
-		public long SegmentationTypeId
 		{
 			set;
 			get;
@@ -107,11 +101,10 @@ namespace Kaltura.Services
 		{
 		}
 
-		public UserSegmentDeleteRequestBuilder(string userId, long segmentationTypeId, long segmentId)
+		public UserSegmentDeleteRequestBuilder(string userId, long segmentId)
 			: this()
 		{
 			this.UserId = userId;
-			this.SegmentationTypeId = segmentationTypeId;
 			this.SegmentId = segmentId;
 		}
 
@@ -120,8 +113,6 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("userId"))
 				kparams.AddIfNotNull("userId", UserId);
-			if (!isMapped("segmentationTypeId"))
-				kparams.AddIfNotNull("segmentationTypeId", SegmentationTypeId);
 			if (!isMapped("segmentId"))
 				kparams.AddIfNotNull("segmentId", SegmentId);
 			return kparams;
@@ -205,9 +196,9 @@ namespace Kaltura.Services
 			return new UserSegmentAddRequestBuilder(userSegment);
 		}
 
-		public static UserSegmentDeleteRequestBuilder Delete(string userId, long segmentationTypeId, long segmentId)
+		public static UserSegmentDeleteRequestBuilder Delete(string userId, long segmentId)
 		{
-			return new UserSegmentDeleteRequestBuilder(userId, segmentationTypeId, segmentId);
+			return new UserSegmentDeleteRequestBuilder(userId, segmentId);
 		}
 
 		public static UserSegmentListRequestBuilder List(UserSegmentFilter filter, FilterPager pager = null)
