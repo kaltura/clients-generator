@@ -244,7 +244,7 @@ namespace Kaltura.Services
 			return new SegmentationTypeDeleteRequestBuilder(id);
 		}
 
-		public static SegmentationTypeListRequestBuilder List(SegmentationTypeFilter filter, FilterPager pager = null)
+		public static SegmentationTypeListRequestBuilder List(SegmentationTypeFilter filter = null, FilterPager pager = null)
 		{
 			return new SegmentationTypeListRequestBuilder(filter, pager);
 		}
