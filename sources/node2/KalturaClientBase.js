@@ -311,7 +311,14 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 				}
 				client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + data);
  
-				let json = JSON.parse(data);
+				let json;
+				try {
+					json = JSON.parse(data);
+				} catch (err) {
+					json = {
+						error: err
+					}
+				}
 				if (json && typeof (json) === 'object' && json.code && json.message) {
 					if (callback) {
 						callback(false, json);
