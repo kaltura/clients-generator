@@ -33,21 +33,52 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class MonetizationCondition : ObjectBase
+	public class MonetizationCondition : BaseSegmentCondition
 	{
 		#region Constants
+		public const string MIN_VALUE = "minValue";
+		public const string MAX_VALUE = "maxValue";
+		public const string DAYS = "days";
 		public const string TYPE = "type";
-		public const string MINIMUM_PRICE = "minimumPrice";
-		public const string MULTIPLIER = "multiplier";
+		public const string OPERATOR = "operator";
 		#endregion
 
 		#region Private Fields
+		private int _MinValue = Int32.MinValue;
+		private int _MaxValue = Int32.MinValue;
+		private int _Days = Int32.MinValue;
 		private MonetizationType _Type = null;
-		private int _MinimumPrice = Int32.MinValue;
-		private int _Multiplier = Int32.MinValue;
+		private MathemticalOperatorType _Operator = null;
 		#endregion
 
 		#region Properties
+		public int MinValue
+		{
+			get { return _MinValue; }
+			set 
+			{ 
+				_MinValue = value;
+				OnPropertyChanged("MinValue");
+			}
+		}
+		public int MaxValue
+		{
+			get { return _MaxValue; }
+			set 
+			{ 
+				_MaxValue = value;
+				OnPropertyChanged("MaxValue");
+			}
+		}
+		public int Days
+		{
+			get { return _Days; }
+			set 
+			{ 
+				_Days = value;
+				OnPropertyChanged("Days");
+			}
+		}
 		public MonetizationType Type
 		{
 			get { return _Type; }
@@ -57,22 +88,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
-		public int MinimumPrice
+		public MathemticalOperatorType Operator
 		{
-			get { return _MinimumPrice; }
+			get { return _Operator; }
 			set 
 			{ 
-				_MinimumPrice = value;
-				OnPropertyChanged("MinimumPrice");
-			}
-		}
-		public int Multiplier
-		{
-			get { return _Multiplier; }
-			set 
-			{ 
-				_Multiplier = value;
-				OnPropertyChanged("Multiplier");
+				_Operator = value;
+				OnPropertyChanged("Operator");
 			}
 		}
 		#endregion
@@ -88,14 +110,20 @@ namespace Kaltura.Types
 			{
 				switch (propertyNode.Name)
 				{
+					case "minValue":
+						this._MinValue = ParseInt(propertyNode.InnerText);
+						continue;
+					case "maxValue":
+						this._MaxValue = ParseInt(propertyNode.InnerText);
+						continue;
+					case "days":
+						this._Days = ParseInt(propertyNode.InnerText);
+						continue;
 					case "type":
 						this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), propertyNode.InnerText);
 						continue;
-					case "minimumPrice":
-						this._MinimumPrice = ParseInt(propertyNode.InnerText);
-						continue;
-					case "multiplier":
-						this._Multiplier = ParseInt(propertyNode.InnerText);
+					case "operator":
+						this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), propertyNode.InnerText);
 						continue;
 				}
 			}
@@ -108,21 +136,27 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaMonetizationCondition");
+			kparams.AddIfNotNull("minValue", this._MinValue);
+			kparams.AddIfNotNull("maxValue", this._MaxValue);
+			kparams.AddIfNotNull("days", this._Days);
 			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("minimumPrice", this._MinimumPrice);
-			kparams.AddIfNotNull("multiplier", this._Multiplier);
+			kparams.AddIfNotNull("operator", this._Operator);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case MIN_VALUE:
+					return "MinValue";
+				case MAX_VALUE:
+					return "MaxValue";
+				case DAYS:
+					return "Days";
 				case TYPE:
 					return "Type";
-				case MINIMUM_PRICE:
-					return "MinimumPrice";
-				case MULTIPLIER:
-					return "Multiplier";
+				case OPERATOR:
+					return "Operator";
 				default:
 					return base.getPropertyName(apiName);
 			}
