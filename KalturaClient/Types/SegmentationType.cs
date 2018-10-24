@@ -42,7 +42,6 @@ namespace Kaltura.Types
 		public const string CONDITIONS = "conditions";
 		public const string VALUE = "value";
 		public const string CREATE_DATE = "createDate";
-		public const string AFFECTS_CONTENT_ORDERING = "affectsContentOrdering";
 		#endregion
 
 		#region Private Fields
@@ -52,7 +51,6 @@ namespace Kaltura.Types
 		private IList<BaseSegmentCondition> _Conditions;
 		private BaseSegmentValue _Value;
 		private long _CreateDate = long.MinValue;
-		private bool? _AffectsContentOrdering = null;
 		#endregion
 
 		#region Properties
@@ -100,15 +98,6 @@ namespace Kaltura.Types
 		{
 			get { return _CreateDate; }
 		}
-		public bool? AffectsContentOrdering
-		{
-			get { return _AffectsContentOrdering; }
-			set 
-			{ 
-				_AffectsContentOrdering = value;
-				OnPropertyChanged("AffectsContentOrdering");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -144,9 +133,6 @@ namespace Kaltura.Types
 					case "createDate":
 						this._CreateDate = ParseLong(propertyNode.InnerText);
 						continue;
-					case "affectsContentOrdering":
-						this._AffectsContentOrdering = ParseBool(propertyNode.InnerText);
-						continue;
 				}
 			}
 		}
@@ -164,7 +150,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("conditions", this._Conditions);
 			kparams.AddIfNotNull("value", this._Value);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
-			kparams.AddIfNotNull("affectsContentOrdering", this._AffectsContentOrdering);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -183,8 +168,6 @@ namespace Kaltura.Types
 					return "Value";
 				case CREATE_DATE:
 					return "CreateDate";
-				case AFFECTS_CONTENT_ORDERING:
-					return "AffectsContentOrdering";
 				default:
 					return base.getPropertyName(apiName);
 			}

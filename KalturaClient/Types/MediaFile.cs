@@ -56,6 +56,7 @@ namespace Kaltura.Types
 		public const string OUTPUT_PROTECATION_LEVEL = "outputProtecationLevel";
 		public const string CDN_ADAPATER_PROFILE_ID = "cdnAdapaterProfileId";
 		public const string STATUS = "status";
+		public const string CATALOG_END_DATE = "catalogEndDate";
 		#endregion
 
 		#region Private Fields
@@ -79,6 +80,7 @@ namespace Kaltura.Types
 		private string _OutputProtecationLevel = null;
 		private long _CdnAdapaterProfileId = long.MinValue;
 		private bool? _Status = null;
+		private long _CatalogEndDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -252,6 +254,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("Status");
 			}
 		}
+		public long CatalogEndDate
+		{
+			get { return _CatalogEndDate; }
+			set 
+			{ 
+				_CatalogEndDate = value;
+				OnPropertyChanged("CatalogEndDate");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -325,6 +336,9 @@ namespace Kaltura.Types
 					case "status":
 						this._Status = ParseBool(propertyNode.InnerText);
 						continue;
+					case "catalogEndDate":
+						this._CatalogEndDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -356,6 +370,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("outputProtecationLevel", this._OutputProtecationLevel);
 			kparams.AddIfNotNull("cdnAdapaterProfileId", this._CdnAdapaterProfileId);
 			kparams.AddIfNotNull("status", this._Status);
+			kparams.AddIfNotNull("catalogEndDate", this._CatalogEndDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -402,6 +417,8 @@ namespace Kaltura.Types
 					return "CdnAdapaterProfileId";
 				case STATUS:
 					return "Status";
+				case CATALOG_END_DATE:
+					return "CatalogEndDate";
 				default:
 					return base.getPropertyName(apiName);
 			}
