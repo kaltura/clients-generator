@@ -42,6 +42,8 @@ namespace Kaltura.Types
 		public const string CURRENCY = "currency";
 		public const string KS = "ks";
 		public const string RESPONSE_PROFILE = "responseProfile";
+		public const string ABORT_ALL_ON_ERROR = "abortAllOnError";
+		public const string SKIP_ON_ORROR = "skipOnOrror";
 		#endregion
 
 		#region Private Fields
@@ -51,6 +53,8 @@ namespace Kaltura.Types
 		private string _Currency = null;
 		private string _Ks = null;
 		private BaseResponseProfile _ResponseProfile;
+		private bool? _AbortAllOnError = null;
+		private SkipOptions _SkipOnOrror = null;
 		#endregion
 
 		#region Properties
@@ -108,6 +112,24 @@ namespace Kaltura.Types
 				OnPropertyChanged("ResponseProfile");
 			}
 		}
+		public bool? AbortAllOnError
+		{
+			get { return _AbortAllOnError; }
+			set 
+			{ 
+				_AbortAllOnError = value;
+				OnPropertyChanged("AbortAllOnError");
+			}
+		}
+		public SkipOptions SkipOnOrror
+		{
+			get { return _SkipOnOrror; }
+			set 
+			{ 
+				_SkipOnOrror = value;
+				OnPropertyChanged("SkipOnOrror");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -139,6 +161,12 @@ namespace Kaltura.Types
 					case "responseProfile":
 						this._ResponseProfile = ObjectFactory.Create<BaseResponseProfile>(propertyNode);
 						continue;
+					case "abortAllOnError":
+						this._AbortAllOnError = ParseBool(propertyNode.InnerText);
+						continue;
+					case "skipOnOrror":
+						this._SkipOnOrror = (SkipOptions)StringEnum.Parse(typeof(SkipOptions), propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -156,6 +184,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("currency", this._Currency);
 			kparams.AddIfNotNull("ks", this._Ks);
 			kparams.AddIfNotNull("responseProfile", this._ResponseProfile);
+			kparams.AddIfNotNull("abortAllOnError", this._AbortAllOnError);
+			kparams.AddIfNotNull("skipOnOrror", this._SkipOnOrror);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -174,6 +204,10 @@ namespace Kaltura.Types
 					return "Ks";
 				case RESPONSE_PROFILE:
 					return "ResponseProfile";
+				case ABORT_ALL_ON_ERROR:
+					return "AbortAllOnError";
+				case SKIP_ON_ORROR:
+					return "SkipOnOrror";
 				default:
 					return base.getPropertyName(apiName);
 			}
