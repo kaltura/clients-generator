@@ -81,5 +81,21 @@ namespace Kaltura.Request
 			requestBuilder.ResponseProfile = value;
 			return requestBuilder;
 		}
+		/// <summary>
+		/// Abort all following requests if current request has an error
+		/// </summary>
+		public static BaseRequestBuilder<T> WithAbortAllOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool value)
+		{
+			requestBuilder.AbortAllOnError = value;
+			return requestBuilder;
+		}
+		/// <summary>
+		/// Skip current request according to skip option
+		/// </summary>
+		public static BaseRequestBuilder<T> WithSkipOnOrror<T>(this BaseRequestBuilder<T> requestBuilder, string value)
+		{
+			requestBuilder.SkipOnOrror = value;
+			return requestBuilder;
+		}
 	}
 }
