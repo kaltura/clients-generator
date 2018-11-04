@@ -38,11 +38,15 @@ namespace Kaltura.Types
 		#region Constants
 		public const string CONDITIONS = "conditions";
 		public const string ACTIONS = "actions";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		#endregion
 
 		#region Private Fields
 		private IList<Condition> _Conditions;
 		private IList<ApplyDiscountModuleAction> _Actions;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -63,6 +67,14 @@ namespace Kaltura.Types
 				_Actions = value;
 				OnPropertyChanged("Actions");
 			}
+		}
+		public long CreateDate
+		{
+			get { return _CreateDate; }
+		}
+		public long UpdateDate
+		{
+			get { return _UpdateDate; }
 		}
 		#endregion
 
@@ -91,6 +103,12 @@ namespace Kaltura.Types
 							this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>(arrayNode));
 						}
 						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -104,6 +122,8 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaBusinessModuleRule");
 			kparams.AddIfNotNull("conditions", this._Conditions);
 			kparams.AddIfNotNull("actions", this._Actions);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -114,6 +134,10 @@ namespace Kaltura.Types
 					return "Conditions";
 				case ACTIONS:
 					return "Actions";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

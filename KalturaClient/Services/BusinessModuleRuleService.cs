@@ -121,6 +121,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class BusinessModuleRuleGetRequestBuilder : RequestBuilder<BusinessModuleRule>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public BusinessModuleRuleGetRequestBuilder()
+			: base("businessmodulerule", "get")
+		{
+		}
+
+		public BusinessModuleRuleGetRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<BusinessModuleRule>(result);
+		}
+	}
+
 	public class BusinessModuleRuleListRequestBuilder : RequestBuilder<ListResponse<BusinessModuleRule>>
 	{
 		#region Constants
@@ -231,6 +274,11 @@ namespace Kaltura.Services
 		public static BusinessModuleRuleDeleteRequestBuilder Delete(long id)
 		{
 			return new BusinessModuleRuleDeleteRequestBuilder(id);
+		}
+
+		public static BusinessModuleRuleGetRequestBuilder Get(long id)
+		{
+			return new BusinessModuleRuleGetRequestBuilder(id);
 		}
 
 		public static BusinessModuleRuleListRequestBuilder List(BusinessModuleRuleFilter filter = null)
