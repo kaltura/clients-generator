@@ -952,7 +952,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				$enumType = $configurationPropertyNode->getAttribute("enumType");
 				if($enumType)
 				{
-				    $type = $this->getJavaTypeName($type);
+				    $type = $this->getJavaTypeName($enumType);
 				    $imports .= "import com.kaltura.client.enums.$type;\n";				    
 				}
 				
