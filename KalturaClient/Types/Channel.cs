@@ -47,6 +47,7 @@ namespace Kaltura.Types
 		public const string ORDER_BY = "orderBy";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
+		public const string SUPPORT_SEGMENT_BASED_ORDERING = "supportSegmentBasedOrdering";
 		#endregion
 
 		#region Private Fields
@@ -61,6 +62,7 @@ namespace Kaltura.Types
 		private ChannelOrder _OrderBy;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
+		private bool? _SupportSegmentBasedOrdering = null;
 		#endregion
 
 		#region Properties
@@ -143,6 +145,15 @@ namespace Kaltura.Types
 		{
 			get { return _UpdateDate; }
 		}
+		public bool? SupportSegmentBasedOrdering
+		{
+			get { return _SupportSegmentBasedOrdering; }
+			set 
+			{ 
+				_SupportSegmentBasedOrdering = value;
+				OnPropertyChanged("SupportSegmentBasedOrdering");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -197,6 +208,9 @@ namespace Kaltura.Types
 					case "updateDate":
 						this._UpdateDate = ParseLong(propertyNode.InnerText);
 						continue;
+					case "supportSegmentBasedOrdering":
+						this._SupportSegmentBasedOrdering = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -219,6 +233,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("supportSegmentBasedOrdering", this._SupportSegmentBasedOrdering);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -247,6 +262,8 @@ namespace Kaltura.Types
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case SUPPORT_SEGMENT_BASED_ORDERING:
+					return "SupportSegmentBasedOrdering";
 				default:
 					return base.getPropertyName(apiName);
 			}
