@@ -92,9 +92,9 @@ namespace Kaltura.Request
 		/// <summary>
 		/// Skip current request according to skip option
 		/// </summary>
-		public static BaseRequestBuilder<T> WithSkipOnOrror<T>(this BaseRequestBuilder<T> requestBuilder, string value)
+		public static BaseRequestBuilder<T> WithSkipOnError<T>(this BaseRequestBuilder<T> requestBuilder, string value)
 		{
-			requestBuilder.SkipOnOrror = value;
+			requestBuilder.SkipOnError = value;
 			return requestBuilder;
 		}
 	}
