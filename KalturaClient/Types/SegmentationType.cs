@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string CONDITIONS = "conditions";
 		public const string VALUE = "value";
 		public const string CREATE_DATE = "createDate";
+		public const string VERSION = "version";
 		#endregion
 
 		#region Private Fields
@@ -51,6 +52,7 @@ namespace Kaltura.Types
 		private IList<BaseSegmentCondition> _Conditions;
 		private BaseSegmentValue _Value;
 		private long _CreateDate = long.MinValue;
+		private long _Version = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -98,6 +100,10 @@ namespace Kaltura.Types
 		{
 			get { return _CreateDate; }
 		}
+		public long Version
+		{
+			get { return _Version; }
+		}
 		#endregion
 
 		#region CTor
@@ -133,6 +139,9 @@ namespace Kaltura.Types
 					case "createDate":
 						this._CreateDate = ParseLong(propertyNode.InnerText);
 						continue;
+					case "version":
+						this._Version = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -150,6 +159,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("conditions", this._Conditions);
 			kparams.AddIfNotNull("value", this._Value);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("version", this._Version);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -168,6 +178,8 @@ namespace Kaltura.Types
 					return "Value";
 				case CREATE_DATE:
 					return "CreateDate";
+				case VERSION:
+					return "Version";
 				default:
 					return base.getPropertyName(apiName);
 			}
