@@ -393,7 +393,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         String url = request.getUrl();
 
         if (enableLogs) {
-//            Log.d(TAG, "request url: " + url + "\nrequest body:\n" + request.getBody() + "\n");
+        	logger.debug("request url: " + url + "\nrequest body:\n" + request.getBody() + "\n");
         }
 
 
