@@ -104,7 +104,10 @@ public class GsonParser {
     	}
 
         JsonPrimitive objectTypeElement = jsonObject.getAsJsonPrimitive(ObjectTypeKey);
-        if(objectTypeElement != null) {
+        if(objectTypeElement == null && jsonObject.has("error")) {
+        	throw parseException(jsonObject.getAsJsonObject("error"));
+        }
+        else {
 	        String objectType = objectTypeElement.getAsString();
 	        if(objectType.equals("KalturaAPIException")) {
 	        	throw parseException(jsonObject);
