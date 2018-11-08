@@ -85,7 +85,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public static CollectionListRequestBuilder List(CollectionFilter filter)
+		public static CollectionListRequestBuilder List(CollectionFilter filter = null)
 		{
 			return new CollectionListRequestBuilder(filter);
 		}
