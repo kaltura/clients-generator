@@ -39,9 +39,15 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILTER = "filter";
+		public const string PAGER = "pager";
 		#endregion
 
 		public CollectionFilter Filter
+		{
+			set;
+			get;
+		}
+		public FilterPager Pager
 		{
 			set;
 			get;
@@ -52,10 +58,11 @@ namespace Kaltura.Services
 		{
 		}
 
-		public CollectionListRequestBuilder(CollectionFilter filter)
+		public CollectionListRequestBuilder(CollectionFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
+			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -63,6 +70,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
+			if (!isMapped("pager"))
+				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -85,9 +94,9 @@ namespace Kaltura.Services
 		{
 		}
 
-		public static CollectionListRequestBuilder List(CollectionFilter filter = null)
+		public static CollectionListRequestBuilder List(CollectionFilter filter = null, FilterPager pager = null)
 		{
-			return new CollectionListRequestBuilder(filter);
+			return new CollectionListRequestBuilder(filter, pager);
 		}
 	}
 }
