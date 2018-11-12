@@ -38,11 +38,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string TYPE = "type";
 		public const string OPERATOR = "operator";
+		public const string DAYS = "days";
 		#endregion
 
 		#region Private Fields
 		private MonetizationType _Type = null;
 		private MathemticalOperatorType _Operator = null;
+		private int _Days = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -64,6 +66,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("Operator");
 			}
 		}
+		public int Days
+		{
+			get { return _Days; }
+			set 
+			{ 
+				_Days = value;
+				OnPropertyChanged("Days");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -83,6 +94,9 @@ namespace Kaltura.Types
 					case "operator":
 						this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), propertyNode.InnerText);
 						continue;
+					case "days":
+						this._Days = ParseInt(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -96,6 +110,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaMonetizationSource");
 			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("operator", this._Operator);
+			kparams.AddIfNotNull("days", this._Days);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -106,6 +121,8 @@ namespace Kaltura.Types
 					return "Type";
 				case OPERATOR:
 					return "Operator";
+				case DAYS:
+					return "Days";
 				default:
 					return base.getPropertyName(apiName);
 			}
