@@ -1,1 +1,2 @@
 include ':KalturaClient'
+include ':DemoApplication'
