@@ -40,7 +40,6 @@ namespace Kaltura.Types
 		public const string SYSTEMATIC_NAME = "systematicName";
 		public const string NAME = "name";
 		public const string VALUE = "value";
-		public const string THRESHOLD = "threshold";
 		#endregion
 
 		#region Private Fields
@@ -48,7 +47,6 @@ namespace Kaltura.Types
 		private string _SystematicName = null;
 		private string _Name = null;
 		private string _Value = null;
-		private int _Threshold = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -83,15 +81,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Value");
 			}
 		}
-		public int Threshold
-		{
-			get { return _Threshold; }
-			set 
-			{ 
-				_Threshold = value;
-				OnPropertyChanged("Threshold");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -117,9 +106,6 @@ namespace Kaltura.Types
 					case "value":
 						this._Value = propertyNode.InnerText;
 						continue;
-					case "threshold":
-						this._Threshold = ParseInt(propertyNode.InnerText);
-						continue;
 				}
 			}
 		}
@@ -135,7 +121,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("systematicName", this._SystematicName);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("value", this._Value);
-			kparams.AddIfNotNull("threshold", this._Threshold);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -150,8 +135,6 @@ namespace Kaltura.Types
 					return "Name";
 				case VALUE:
 					return "Value";
-				case THRESHOLD:
-					return "Threshold";
 				default:
 					return base.getPropertyName(apiName);
 			}

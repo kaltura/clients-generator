@@ -40,7 +40,7 @@ namespace Kaltura.Types
 		public const string MAX_SCORE = "maxScore";
 		public const string DAYS = "days";
 		public const string FIELD = "field";
-		public const string VALUE = "value";
+		public const string VALUES = "values";
 		public const string ACTIONS = "actions";
 		#endregion
 
@@ -49,7 +49,7 @@ namespace Kaltura.Types
 		private int _MaxScore = Int32.MinValue;
 		private int _Days = Int32.MinValue;
 		private string _Field = null;
-		private string _Value = null;
+		private IList<StringValue> _Values;
 		private IList<ContentActionCondition> _Actions;
 		#endregion
 
@@ -90,13 +90,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("Field");
 			}
 		}
-		public string Value
+		public IList<StringValue> Values
 		{
-			get { return _Value; }
+			get { return _Values; }
 			set 
 			{ 
-				_Value = value;
-				OnPropertyChanged("Value");
+				_Values = value;
+				OnPropertyChanged("Values");
 			}
 		}
 		public IList<ContentActionCondition> Actions
@@ -133,8 +133,12 @@ namespace Kaltura.Types
 					case "field":
 						this._Field = propertyNode.InnerText;
 						continue;
-					case "value":
-						this._Value = propertyNode.InnerText;
+					case "values":
+						this._Values = new List<StringValue>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Values.Add(ObjectFactory.Create<StringValue>(arrayNode));
+						}
 						continue;
 					case "actions":
 						this._Actions = new List<ContentActionCondition>();
@@ -158,7 +162,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("maxScore", this._MaxScore);
 			kparams.AddIfNotNull("days", this._Days);
 			kparams.AddIfNotNull("field", this._Field);
-			kparams.AddIfNotNull("value", this._Value);
+			kparams.AddIfNotNull("values", this._Values);
 			kparams.AddIfNotNull("actions", this._Actions);
 			return kparams;
 		}
@@ -174,8 +178,8 @@ namespace Kaltura.Types
 					return "Days";
 				case FIELD:
 					return "Field";
-				case VALUE:
-					return "Value";
+				case VALUES:
+					return "Values";
 				case ACTIONS:
 					return "Actions";
 				default:
