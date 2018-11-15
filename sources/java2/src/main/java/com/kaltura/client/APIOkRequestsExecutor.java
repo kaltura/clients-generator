@@ -202,10 +202,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @SuppressWarnings("rawtypes")
-	private String queue(final Request request, final RequestElement action) {
-
-        logger.debug("request [" + action.getUrl() + "]:\n" + action.getBody());
-        
+	private String queue(final Request request, final RequestElement action) {       
         try {
             Call call = getOkClient(action.config()).newCall(request);
             call.enqueue(new Callback() {
@@ -336,8 +333,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 logger.error("failed to retrieve the response body!");
             }
 
-            logger.debug("response body:\n" + responseString);
-
+            if (enableLogs) {
+            	logger.debug("response [" + requestId + "] body:\n" + responseString);
+            }
+            
             return new ExecutedRequest().requestId(requestId).response(responseString).code(response.code()).success(responseString != null);
         }
     }
@@ -392,16 +391,16 @@ public class APIOkRequestsExecutor implements RequestQueue {
     	
         String url = request.getUrl();
 
+        String requestId = idFactory.factorId(request.getTag());
         if (enableLogs) {
-        	logger.debug("request url: " + url + "\nrequest body:\n" + request.getBody() + "\n");
+        	logger.debug("request [" + requestId + "] url: " + url + "\nbody:\n" + request.getBody() + "\n");
         }
-
 
         return new Request.Builder()
                 .headers(Headers.of(request.getHeaders()))
                 .method(request.getMethod(), body)
                 .url(url)
-                .tag(idFactory.factorId(request.getTag()))
+                .tag(requestId)
                 .build();
     }
 
