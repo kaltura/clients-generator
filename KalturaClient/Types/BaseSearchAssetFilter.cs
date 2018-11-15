@@ -38,11 +38,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string KSQL = "kSql";
 		public const string GROUP_BY = "groupBy";
+		public const string GROUP_ORDER_BY = "groupOrderBy";
 		#endregion
 
 		#region Private Fields
 		private string _KSql = null;
 		private IList<AssetGroupBy> _GroupBy;
+		private GroupByOrder _GroupOrderBy = null;
 		#endregion
 
 		#region Properties
@@ -62,6 +64,15 @@ namespace Kaltura.Types
 			{ 
 				_GroupBy = value;
 				OnPropertyChanged("GroupBy");
+			}
+		}
+		public GroupByOrder GroupOrderBy
+		{
+			get { return _GroupOrderBy; }
+			set 
+			{ 
+				_GroupOrderBy = value;
+				OnPropertyChanged("GroupOrderBy");
 			}
 		}
 		#endregion
@@ -87,6 +98,9 @@ namespace Kaltura.Types
 							this._GroupBy.Add(ObjectFactory.Create<AssetGroupBy>(arrayNode));
 						}
 						continue;
+					case "groupOrderBy":
+						this._GroupOrderBy = (GroupByOrder)StringEnum.Parse(typeof(GroupByOrder), propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -100,6 +114,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaBaseSearchAssetFilter");
 			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("groupBy", this._GroupBy);
+			kparams.AddIfNotNull("groupOrderBy", this._GroupOrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -110,6 +125,8 @@ namespace Kaltura.Types
 					return "KSql";
 				case GROUP_BY:
 					return "GroupBy";
+				case GROUP_ORDER_BY:
+					return "GroupOrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}
