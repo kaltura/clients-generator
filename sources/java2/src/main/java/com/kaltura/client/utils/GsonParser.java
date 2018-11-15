@@ -107,7 +107,7 @@ public class GsonParser {
         if(objectTypeElement == null && jsonObject.has("error")) {
         	throw parseException(jsonObject.getAsJsonObject("error"));
         }
-        else {
+        else if(objectTypeElement != null) {
 	        String objectType = objectTypeElement.getAsString();
 	        if(objectType.equals("KalturaAPIException")) {
 	        	throw parseException(jsonObject);
