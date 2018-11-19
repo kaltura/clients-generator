@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 6.4.0 (2018-11-18)
+
+### Features
+
+* update minimal custom chunk size to 100Kb
+
+### Fix
+
+* use user custom chunk size if provided  
+
 ## 6.3.2 (2018-09-13)
 
 ### Fix

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 11.1.0 (2018-11-18)
+
+### Features
+
+* update minimal custom chunk size to 100Kb
+
+### Fix
+
+* use user custom chunk size if provided  
+
 ## 11.0.0 (2018-05-09)
 
 ### BREAKING CHANGES
