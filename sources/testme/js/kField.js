@@ -52,7 +52,7 @@ kField.prototype = {
 		
 		if(!this.jqHelp){
 			var helpText = this.param.name;
-			if(this.param.description.length)
+			if(this.param && this.param.description && this.param.description.length)
 				helpText += ' - ' + this.param.description;
 			
 			this.jqHelp = jQuery('<div><img src="images/help.png" class="help" title="' + helpText + '" /></div>');
