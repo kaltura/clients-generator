@@ -72,11 +72,6 @@ namespace Kaltura.Types
 		public string EpgId
 		{
 			get { return _EpgId; }
-			set 
-			{ 
-				_EpgId = value;
-				OnPropertyChanged("EpgId");
-			}
 		}
 		public long RelatedMediaId
 		{
@@ -99,27 +94,42 @@ namespace Kaltura.Types
 		public long LinearAssetId
 		{
 			get { return _LinearAssetId; }
-			set 
-			{ 
-				_LinearAssetId = value;
-				OnPropertyChanged("LinearAssetId");
-			}
 		}
 		public bool? EnableCdvr
 		{
 			get { return _EnableCdvr; }
+			set 
+			{ 
+				_EnableCdvr = value;
+				OnPropertyChanged("EnableCdvr");
+			}
 		}
 		public bool? EnableCatchUp
 		{
 			get { return _EnableCatchUp; }
+			set 
+			{ 
+				_EnableCatchUp = value;
+				OnPropertyChanged("EnableCatchUp");
+			}
 		}
 		public bool? EnableStartOver
 		{
 			get { return _EnableStartOver; }
+			set 
+			{ 
+				_EnableStartOver = value;
+				OnPropertyChanged("EnableStartOver");
+			}
 		}
 		public bool? EnableTrickPlay
 		{
 			get { return _EnableTrickPlay; }
+			set 
+			{ 
+				_EnableTrickPlay = value;
+				OnPropertyChanged("EnableTrickPlay");
+			}
 		}
 		#endregion
 
