@@ -43,7 +43,7 @@ namespace Kaltura.Types
 		public const string KS = "ks";
 		public const string RESPONSE_PROFILE = "responseProfile";
 		public const string ABORT_ALL_ON_ERROR = "abortAllOnError";
-		public const string SKIP_ON_ERROR = "skipOnError";
+		public const string SKIP_CONDITION = "skipCondition";
 		#endregion
 
 		#region Private Fields
@@ -54,7 +54,7 @@ namespace Kaltura.Types
 		private string _Ks = null;
 		private BaseResponseProfile _ResponseProfile;
 		private bool? _AbortAllOnError = null;
-		private SkipOptions _SkipOnError = null;
+		private SkipCondition _SkipCondition;
 		#endregion
 
 		#region Properties
@@ -121,13 +121,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("AbortAllOnError");
 			}
 		}
-		public SkipOptions SkipOnError
+		public SkipCondition SkipCondition
 		{
-			get { return _SkipOnError; }
+			get { return _SkipCondition; }
 			set 
 			{ 
-				_SkipOnError = value;
-				OnPropertyChanged("SkipOnError");
+				_SkipCondition = value;
+				OnPropertyChanged("SkipCondition");
 			}
 		}
 		#endregion
@@ -164,8 +164,8 @@ namespace Kaltura.Types
 					case "abortAllOnError":
 						this._AbortAllOnError = ParseBool(propertyNode.InnerText);
 						continue;
-					case "skipOnError":
-						this._SkipOnError = (SkipOptions)StringEnum.Parse(typeof(SkipOptions), propertyNode.InnerText);
+					case "skipCondition":
+						this._SkipCondition = ObjectFactory.Create<SkipCondition>(propertyNode);
 						continue;
 				}
 			}
@@ -185,7 +185,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("ks", this._Ks);
 			kparams.AddIfNotNull("responseProfile", this._ResponseProfile);
 			kparams.AddIfNotNull("abortAllOnError", this._AbortAllOnError);
-			kparams.AddIfNotNull("skipOnError", this._SkipOnError);
+			kparams.AddIfNotNull("skipCondition", this._SkipCondition);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -206,8 +206,8 @@ namespace Kaltura.Types
 					return "ResponseProfile";
 				case ABORT_ALL_ON_ERROR:
 					return "AbortAllOnError";
-				case SKIP_ON_ERROR:
-					return "SkipOnError";
+				case SKIP_CONDITION:
+					return "SkipCondition";
 				default:
 					return base.getPropertyName(apiName);
 			}
