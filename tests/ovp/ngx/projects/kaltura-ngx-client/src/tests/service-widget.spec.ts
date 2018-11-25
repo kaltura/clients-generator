@@ -1,8 +1,8 @@
-import {WidgetListAction} from "../api/types/WidgetListAction";
-import {KalturaWidgetListResponse} from "../api/types/KalturaWidgetListResponse";
-import {getClient} from "./utils";
-import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
-import {KalturaClient} from "../kaltura-client.service";
+import {WidgetListAction} from "../lib/api/types/WidgetListAction";
+import {KalturaWidgetListResponse} from "../lib/api/types/KalturaWidgetListResponse";
+import { asyncAssert, getClient } from "./utils";
+import {LoggerSettings, LogLevels} from "../lib/api/kaltura-logger";
+import {KalturaClient} from "../lib/kaltura-client.service";
 
 describe(`service "Widget" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -24,15 +24,17 @@ describe(`service "Widget" tests`, () => {
   });
 
   test("widgets list", (done) => {
+    expect.assertions(1);
     kalturaClient.request(new WidgetListAction())
       .subscribe(
         response => {
-          expect(response instanceof KalturaWidgetListResponse).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaWidgetListResponse).toBeTruthy();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });

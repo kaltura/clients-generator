@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 11.1.1 (2018-11-24)
+
+### Fix
+
+* re-enable library unit-tests
+
 ## 11.1.0 (2018-11-18)
 
 ### Features
