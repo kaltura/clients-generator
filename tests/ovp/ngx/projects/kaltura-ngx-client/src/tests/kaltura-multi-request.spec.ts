@@ -1,19 +1,19 @@
-import { KalturaResponse } from "../api/kaltura-response";
-import { KalturaMultiRequest } from "../api/kaltura-multi-request";
-import { UserLoginByLoginIdAction } from "../api/types/UserLoginByLoginIdAction";
-import { UserGetByLoginIdAction } from "../api/types/UserGetByLoginIdAction";
-import { PermissionListAction } from "../api/types/PermissionListAction";
-import { PartnerGetAction } from "../api/types/PartnerGetAction";
-import { KalturaAPIException } from "../api/kaltura-api-exception";
-import { KalturaMultiResponse } from "../api/kaltura-multi-response";
-import { KalturaUser } from "../api/types/KalturaUser";
-import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
-import { KalturaClient } from "../kaltura-client.service";
+import { KalturaResponse } from "../lib/api/kaltura-response";
+import { KalturaMultiRequest } from "../lib/api/kaltura-multi-request";
+import { UserLoginByLoginIdAction } from "../lib/api/types/UserLoginByLoginIdAction";
+import { UserGetByLoginIdAction } from "../lib/api/types/UserGetByLoginIdAction";
+import { PermissionListAction } from "../lib/api/types/PermissionListAction";
+import { PartnerGetAction } from "../lib/api/types/PartnerGetAction";
+import { KalturaAPIException } from "../lib/api/kaltura-api-exception";
+import { KalturaMultiResponse } from "../lib/api/kaltura-multi-response";
+import { KalturaUser } from "../lib/api/types/KalturaUser";
+import { asyncAssert, getClient } from "./utils";
+import { LoggerSettings, LogLevels } from "../lib/api/kaltura-logger";
+import { KalturaClient } from "../lib/kaltura-client.service";
 
 describe("Kaltura server API multi request", () => {
-    const fakeUserName = "";
-    const fakePassword = "";
+    const fakeUserName = "login";
+    const fakePassword = "pass";
 
     let kalturaClient: KalturaClient = null;
 
@@ -58,7 +58,7 @@ describe("Kaltura server API multi request", () => {
                 }),
                 new UserGetByLoginIdAction({ loginId: fakeUserName }),
                 new PermissionListAction(),
-                new PartnerGetAction(12)
+                new PartnerGetAction({id: 12})
             );
 
             const pojoRequest = multiRequest.buildRequest(null);
@@ -82,7 +82,7 @@ describe("Kaltura server API multi request", () => {
                 new PermissionListAction()
                     .setCompletion(() => {
                     }),
-                new PartnerGetAction(12)
+                new PartnerGetAction({ id: 12})
             );
 
             expect(multiRequest.requests).toBeDefined();
@@ -118,7 +118,7 @@ describe("Kaltura server API multi request", () => {
                     loginId: fakeUserName,
                     password: fakePassword
                 }),
-                new UserGetByLoginIdAction({ loginId: fakeUserName })
+                new UserGetByLoginIdAction({ loginId: fakeUserName }),
             new PartnerGetAction(null)
                 .setDependency({ property: "ks", request: 0 }, { property: "id", request: 1, targetPath: ["partnerId"] })
         );
@@ -137,69 +137,62 @@ describe("Kaltura server API multi request", () => {
 
     describe("Invoking multi request", () => {
         test("executes multi request set completion on some requests and on the multi request instance", (done) => {
+          expect.assertions(4);
             kalturaClient.multiRequest(new KalturaMultiRequest(
-                new UserLoginByLoginIdAction({
-                    loginId: fakeUserName,
-                    password: fakePassword
-                }),
-                new UserGetByLoginIdAction({ loginId: fakeUserName })
-                    .setDependency(["ks", 1, ""]),
+              new PermissionListAction(),
                 new PermissionListAction()
-                    .setDependency(["ks", 1, ""])
                     .setCompletion((response) => {
-                        // TODO [kmc] should add a test failing if this callback wasn"t called
+                      asyncAssert(() => {
                         expect(response).toBeDefined();
                         expect(response.result).toBeDefined();
                         expect(response.error).toBeUndefined();
-
-                    }),
-                new PartnerGetAction()
-                    .setDependency(["ks", 1, ""], ["id", 2, "partnerId"])
-            ).setData((request) => {
-                request.ks = null; // Override provided ks from the kaltura request configuration
-            }).setCompletion(responses => {
-                // TODO [kmc] should add a test failing if this callback wasn"t called
-                expect(responses.hasErrors()).toBe(false);
+                      });
+                    })
+            ).setCompletion(responses => {
+              asyncAssert(() => {
+                expect(responses.hasErrors()).toBeFalsy();
+              });
             })).subscribe(
                 (responses) => {
-                    done();
+                  done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
 
         test("handles multi request response with failure on some inner requests", (done) => {
+          expect.assertions(7);
             kalturaClient.multiRequest(new KalturaMultiRequest(
                 new UserLoginByLoginIdAction({
                     loginId: fakeUserName,
                     password: fakePassword
+                }).setCompletion((response) => {
+                  asyncAssert(() => {
+                    expect(response).toBeDefined();
+                    expect(response.result).toBeUndefined();
+                    expect(response.error).toBeDefined();
+                  });
                 }),
-                new UserGetByLoginIdAction({ loginId: fakeUserName })
-                    .setDependency(["ks", 1, ""]),
                 new PermissionListAction()
                     .setCompletion((response) => {
-                        // TODO [kmc] should add a test failing if this callback wasn"t called
+                      asyncAssert(() => {
                         expect(response).toBeDefined();
-                        expect(response.result).toBeUndefined();
-                        expect(response.error).toBeDefined();
+                        expect(response.result).toBeDefined();
+                        expect(response.error).toBeUndefined();
+                      });
                     }),
-                new PartnerGetAction()
-                    .setDependency(["ks", 1, ""], ["id", 2, "partnerId"])
-            ).setData((request) => {
-                request.ks = null; // Override provided ks from the kaltura request configuration
-            }).setCompletion(responses => {
-                // TODO [kmc] should add a test failing if this callback wasn"t called
+            ).setCompletion(responses => {
+              asyncAssert(() => {
                 expect(responses.hasErrors()).toBe(true);
+              });
             })).subscribe(
                 (responses) => {
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -212,7 +205,6 @@ describe("Kaltura server API multi request", () => {
                     password: fakePassword
                 }),
                 new UserGetByLoginIdAction({ loginId: fakeUserName })
-                    .setDependency(["ks", 1, ""])
             );
 
             expect(request.handleResponse(null).hasErrors()).toBeTruthy();
@@ -231,7 +223,7 @@ describe("Kaltura server API multi request", () => {
         test("exposes a function that return if one or more responses returned with errors.", () => {
             // response with errors
             const response1 = new KalturaMultiResponse([
-                new KalturaResponse<any>(null, new KalturaAPIException("12", "222")),
+                new KalturaResponse<any>(null, new KalturaAPIException("12", "222",null)),
             ]);
 
             expect(response1).toBeDefined();
