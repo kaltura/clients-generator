@@ -1,27 +1,27 @@
-import {BaseEntryListAction} from "../api/types/BaseEntryListAction";
-import {UserLoginByLoginIdAction} from "../api/types/UserLoginByLoginIdAction";
-import {KalturaDetachedResponseProfile} from "../api/types/KalturaDetachedResponseProfile";
-import {KalturaBaseEntryFilter} from "../api/types/KalturaBaseEntryFilter";
-import {KalturaSearchOperator} from "../api/types/KalturaSearchOperator";
-import {KalturaNullableBoolean} from "../api/types/KalturaNullableBoolean";
-import {AppTokenAddAction} from "../api/types/AppTokenAddAction";
-import {KalturaAppToken} from "../api/types/KalturaAppToken";
-import {KalturaSearchOperatorType} from "../api/types/KalturaSearchOperatorType";
-import {KalturaContentDistributionSearchItem} from "../api/types/KalturaContentDistributionSearchItem";
-import {UserGetAction} from "../api/types/UserGetAction";
-import {KalturaBaseEntryListResponse} from "../api/types/KalturaBaseEntryListResponse";
-import {KalturaPlaylist} from "../api/types/KalturaPlaylist";
-import {PartnerGetAction} from "../api/types/PartnerGetAction";
-import {KalturaPlaylistType} from "../api/types/KalturaPlaylistType";
-import {KalturaEntryReplacementStatus} from "../api/types/KalturaEntryReplacementStatus";
-import {KalturaMediaEntryFilterForPlaylist} from "../api/types/KalturaMediaEntryFilterForPlaylist";
-import {KalturaAPIException} from "../api/kaltura-api-exception";
-import {KalturaAppTokenHashType} from "../api/types/KalturaAppTokenHashType";
-import {KalturaMediaEntry} from "../api/types/KalturaMediaEntry";
-import {escapeRegExp, getClient} from "./utils";
-import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
-import {KalturaFilterPager} from "../api/types/KalturaFilterPager";
-import {KalturaClient} from "../kaltura-client.service";
+import {BaseEntryListAction} from "../lib/api/types/BaseEntryListAction";
+import {UserLoginByLoginIdAction} from "../lib/api/types/UserLoginByLoginIdAction";
+import {KalturaDetachedResponseProfile} from "../lib/api/types/KalturaDetachedResponseProfile";
+import {KalturaBaseEntryFilter} from "../lib/api/types/KalturaBaseEntryFilter";
+import {KalturaSearchOperator} from "../lib/api/types/KalturaSearchOperator";
+import {KalturaNullableBoolean} from "../lib/api/types/KalturaNullableBoolean";
+import {AppTokenAddAction} from "../lib/api/types/AppTokenAddAction";
+import {KalturaAppToken} from "../lib/api/types/KalturaAppToken";
+import {KalturaSearchOperatorType} from "../lib/api/types/KalturaSearchOperatorType";
+import {KalturaContentDistributionSearchItem} from "../lib/api/types/KalturaContentDistributionSearchItem";
+import {UserGetAction} from "../lib/api/types/UserGetAction";
+import {KalturaBaseEntryListResponse} from "../lib/api/types/KalturaBaseEntryListResponse";
+import {KalturaPlaylist} from "../lib/api/types/KalturaPlaylist";
+import {PartnerGetAction} from "../lib/api/types/PartnerGetAction";
+import {KalturaPlaylistType} from "../lib/api/types/KalturaPlaylistType";
+import {KalturaEntryReplacementStatus} from "../lib/api/types/KalturaEntryReplacementStatus";
+import {KalturaMediaEntryFilterForPlaylist} from "../lib/api/types/KalturaMediaEntryFilterForPlaylist";
+import {KalturaAPIException} from "../lib/api/kaltura-api-exception";
+import {KalturaAppTokenHashType} from "../lib/api/types/KalturaAppTokenHashType";
+import {KalturaMediaEntry} from "../lib/api/types/KalturaMediaEntry";
+import { asyncAssert, escapeRegExp, getClient } from "./utils";
+import {LoggerSettings, LogLevels} from "../lib/api/kaltura-logger";
+import {KalturaFilterPager} from "../lib/api/types/KalturaFilterPager";
+import {KalturaClient} from "../lib/kaltura-client.service";
 
 describe("Kaltura server API request", () => {
   let kalturaClient: KalturaClient = null;
@@ -450,15 +450,16 @@ describe("Kaltura server API request", () => {
             filter.statusIn = "2";
           })
         });
-
+      expect.assertions(1);
       kalturaClient.request(listAction).subscribe(
         (response) => {
-          expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
@@ -473,41 +474,44 @@ describe("Kaltura server API request", () => {
     });
 
     test("parse object response property", (done) => {
+      expect.assertions(3);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
-
-          expect(response.objects).toBeDefined();
-          const object1 = response.objects[0];
-          expect(object1).toBeDefined();
-
+          asyncAssert(() => {
+            expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+            expect(response.objects).toBeDefined();
+            const object1 = response.objects[0];
+            expect(object1).toBeDefined();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
 
     test("parse object response property that inherit from expected property type", (done) => {
+      expect.assertions(6);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.objects).toBeDefined();
 
-          const object0 = response.objects[0];
-          expect(object0).toBeDefined();
-          expect(object0 instanceof KalturaMediaEntry).toBeTruthy();
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.objects).toBeDefined();
 
-          const object4 = response.objects[4];
-          expect(object4).toBeDefined();
-          expect(object4 instanceof KalturaPlaylist).toBeTruthy();
+            const object0 = response.objects[0];
+            expect(object0).toBeDefined();
+            expect(object0 instanceof KalturaMediaEntry).toBeTruthy();
+
+            const object4 = response.objects[4];
+            expect(object4).toBeDefined();
+            expect(object4 instanceof KalturaPlaylist).toBeTruthy();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
@@ -517,48 +521,55 @@ describe("Kaltura server API request", () => {
     });
 
     test("parse number response property", (done) => {
+      expect.assertions(4);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.objects).toBeDefined();
-          const object0 = response.objects[0];
-          expect(object0).toBeDefined();
-          expect(object0.accessControlId).toBe(1880531);
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.objects).toBeDefined();
+            const object0 = response.objects[0];
+            expect(object0).toBeDefined();
+            expect(object0.accessControlId).toBe(1880531);
+          });
           done();
         },
         (error) => {
-          fail(error);
+          done.fail(error);
         }
       );
     });
 
     test("parse number response property while provided value is boolean", (done) => {
+      expect.assertions(2);
       kalturaClient.request(new PartnerGetAction({id: 1931861})).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.allowMultiNotification).toBe(0);
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.allowMultiNotification).toBe(0);
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
 
     test("parse number response property while provided value is valid number as string", (done) => {
+      expect.assertions(4);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.objects).toBeDefined();
-          const object1 = response.objects[1];
-          expect(object1).toBeDefined();
-          expect(object1.version).toBe(0);
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.objects).toBeDefined();
+            const object1 = response.objects[1];
+            expect(object1).toBeDefined();
+            expect(object1.version).toBe(0);
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
@@ -568,36 +579,42 @@ describe("Kaltura server API request", () => {
     });
 
     test("parse string response property", (done) => {
+      expect.assertions(4);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.objects).toBeDefined();
-          const object1 = response.objects[1];
-          expect(object1).toBeDefined();
-          expect(object1.name).toBe("Columbia Business School:Video as a Marketing Tool in Education");
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.objects).toBeDefined();
+            const object1 = response.objects[1];
+            expect(object1).toBeDefined();
+            expect(object1.name).toBe("Columbia Business School:Video as a Marketing Tool in Education");
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
 
     test("parse string response property while provided value is of type number", (done) => {
+      expect.assertions(2);
       kalturaClient.request(new PartnerGetAction({id: 1931861})).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.defConversionProfileType).toBe("1001");
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.defConversionProfileType).toBe("1001");
+          });
           done();
         },
         (error) => {
-          fail(error);
+          done.fail(error);
         }
       );
     });
 
     test("parse array response property", (done) => {
+      expect.assertions(6);
       kalturaClient.request(new BaseEntryListAction({
         pager: new KalturaFilterPager({
           pageSize: 30
@@ -605,19 +622,20 @@ describe("Kaltura server API request", () => {
       })).subscribe(
         (response) => {
 
-          expect(response).toBeDefined();
-          expect(response.totalCount).toBeGreaterThan(30);
-          expect(response.objects).toBeDefined();
-          expect(response.objects.length).toBe(30);
-          const object1 = response.objects[1];
-          expect(object1).toBeDefined();
-          const object23 = response.objects[23];
-          expect(object23).toBeDefined();
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.totalCount).toBeGreaterThan(30);
+            expect(response.objects).toBeDefined();
+            expect(response.objects.length).toBe(30);
+            const object1 = response.objects[1];
+            expect(object1).toBeDefined();
+            const object23 = response.objects[23];
+            expect(object23).toBeDefined();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
@@ -628,15 +646,17 @@ describe("Kaltura server API request", () => {
 
 
     test("parse boolean response property while provided value is valid number as string", (done) => {
+      expect.assertions(2);
       kalturaClient.request(new PartnerGetAction({id: 1931861})).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.adultContent).toBe(false);
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.adultContent).toBe(false);
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
@@ -651,45 +671,56 @@ describe("Kaltura server API request", () => {
 
     xtest("parse date response property", () => {
       pending("waiting to a server support for dates");
+      // expect.assertions(4);
       // kalturaClient.request(new BaseEntryListAction()).then(
       //     (response) =>
       //     {
-      //         const kalturaMediaEntry : KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
-      //         expect(kalturaMediaEntry.createdAt instanceof Date).toBeTruthy();// known dates are converted by the api
-      //         expect(kalturaMediaEntry.createdAt.getTime() ).toBe((new Date(1450013576 * 1000)).getTime()); // TODO [kmc] response.{typed array}.{DATE VALUE}
+      // asyncAssert(() => {
+      //   const kalturaMediaEntry : KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
+      //   expect(kalturaMediaEntry.createdAt instanceof Date).toBeTruthy();// known dates are converted by the api
+      //   expect(kalturaMediaEntry.createdAt.getTime() ).toBe((new Date(1450013576 * 1000)).getTime()); // TODO [kmc] response.{typed array}.{DATE VALUE}
+      // });
+
+      // done();
       //     },
       //     () =>
       //     {
-      //         fail("should not reach this part");
+      //         done.fail("should not reach this part");
       //     }
       // );
     });
 
     test("parse enum of type int response property", (done) => {
+      expect.assertions(4);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response).toBeDefined();
-          expect(response.objects).toBeDefined();
-          const object3: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
-          expect(object3).toBeDefined();
-          expect(object3.playlistType).toBe(KalturaPlaylistType.dynamic);
+          asyncAssert(() => {
+            expect(response).toBeDefined();
+            expect(response.objects).toBeDefined();
+            const object3: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
+            expect(object3).toBeDefined();
+            expect(object3.playlistType).toBe(KalturaPlaylistType.dynamic);
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
 
-    xtest("parse enum of type string response property when the provided value is of type int", () => {
+    xtest("parse enum of type string response property when the provided value is of type int", (done) => {
+      expect.assertions(1);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
-          expect(kalturaMediaEntry.replacementStatus).toBe(KalturaEntryReplacementStatus.none);
+          asyncAssert(() => {
+            const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
+            expect(kalturaMediaEntry.replacementStatus).toBe(KalturaEntryReplacementStatus.none);
+          });
+          done();
         },
         () => {
-          fail("should not reach this part");
+          done.fail("should not reach this part");
         }
       );
     });
@@ -703,6 +734,7 @@ describe("Kaltura server API request", () => {
     });
 
     test("parse array of objects response property", (done) => {
+      expect.assertions(10);
       kalturaClient.request(new BaseEntryListAction(
         {
           pager: new KalturaFilterPager({
@@ -711,35 +743,36 @@ describe("Kaltura server API request", () => {
         }
       )).subscribe(
         (response) => {
-          expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
 
-          // verify length of array and totalCount
-          expect(response.totalCount).toBeGreaterThan(30);
-          expect(response.objects).toBeDefined();
-          expect(response.objects.length).toBe(30);
+            // verify length of array and totalCount
+            expect(response.totalCount).toBeGreaterThan(30);
+            expect(response.objects).toBeDefined();
+            expect(response.objects.length).toBe(30);
 
-          // verify item is of the right type
-          const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
-          expect(kalturaMediaEntry).toBeDefined();
+            // verify item is of the right type
+            const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
+            expect(kalturaMediaEntry).toBeDefined();
 
-          const kalturaPlaylist: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
-          expect(kalturaPlaylist).toBeDefined();
+            const kalturaPlaylist: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
+            expect(kalturaPlaylist).toBeDefined();
 
-          // verify array inner item properties are exposed correctly
-          expect(kalturaMediaEntry.dataUrl).toMatch(new RegExp(`^${escapeRegExp("http(s)?://cdnapi(sec)?.kaltura.com/p/1931861/sp/193186100/playManifest/entryId/1_2vp1gp7u/format/url/protocol/http")}(s)?$`)); // simple value
-          expect(kalturaMediaEntry.id).toBe("1_2vp1gp7u"); // simple value OF BASE
+            // verify array inner item properties are exposed correctly
+            expect(kalturaMediaEntry.dataUrl).toMatch(new RegExp(`^${escapeRegExp("http(s)?://cdnapi(sec)?.kaltura.com/p/1931861/sp/193186100/playManifest/entryId/1_2vp1gp7u/format/url/protocol/http")}(s)?$`)); // simple value
+            expect(kalturaMediaEntry.id).toBe("1_2vp1gp7u"); // simple value OF BASE
 
 
-          // verify nested array is exposed correctly
-          const playlistFilterItem: KalturaMediaEntryFilterForPlaylist = kalturaPlaylist.filters[0];
-          expect(playlistFilterItem).toBeDefined();
-          expect(playlistFilterItem.limit).toBe(200); // // nested array item value
+            // verify nested array is exposed correctly
+            const playlistFilterItem: KalturaMediaEntryFilterForPlaylist = kalturaPlaylist.filters[0];
+            expect(playlistFilterItem).toBeDefined();
+            expect(playlistFilterItem.limit).toBe(200); // // nested array item value
 
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });
@@ -747,14 +780,15 @@ describe("Kaltura server API request", () => {
     test("parse kaltura api exception response", (done) => {
       const listAction: BaseEntryListAction = new BaseEntryListAction();
       listAction.setRequestOptions({ks: "invalid ks"});
-
+      expect.assertions(1);
       kalturaClient.request(listAction).subscribe(
         (response) => {
-          fail(`should not reach this part: ${response}`);
-          done();
+          done.fail(`should not reach this part: ${response}`);
         },
         (error) => {
-          expect(error instanceof KalturaAPIException).toBeTruthy();
+          asyncAssert(() => {
+            expect(error instanceof KalturaAPIException).toBeTruthy();
+          });
           done();
         }
       );
@@ -770,14 +804,16 @@ describe("Kaltura server API request", () => {
     });
 
     test("process request without setting completion to that request", (done) => {
+      expect.assertions(1);
       kalturaClient.request(new BaseEntryListAction()).subscribe(
         (response) => {
-          expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
     });

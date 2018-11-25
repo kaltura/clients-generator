@@ -1,14 +1,15 @@
-import {PlaylistListAction} from "../api/types/PlaylistListAction";
-import {KalturaPlaylistListResponse} from "../api/types/KalturaPlaylistListResponse";
-import {KalturaPlaylist} from "../api/types/KalturaPlaylist";
-import {KalturaPlaylistType} from "../api/types/KalturaPlaylistType";
-import {PlaylistAddAction} from "../api/types/PlaylistAddAction";
-import {PlaylistDeleteAction} from "../api/types/PlaylistDeleteAction";
-import {PlaylistUpdateAction} from "../api/types/PlaylistUpdateAction";
-import {getClient} from "./utils";
-import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
-import {KalturaClient} from "../kaltura-client.service";
-import "rxjs/add/operator/switchMap";
+import {PlaylistListAction} from "../lib/api/types/PlaylistListAction";
+import {KalturaPlaylistListResponse} from "../lib/api/types/KalturaPlaylistListResponse";
+import {KalturaPlaylist} from "../lib/api/types/KalturaPlaylist";
+import {KalturaPlaylistType} from "../lib/api/types/KalturaPlaylistType";
+import {PlaylistAddAction} from "../lib/api/types/PlaylistAddAction";
+import {PlaylistDeleteAction} from "../lib/api/types/PlaylistDeleteAction";
+import {PlaylistUpdateAction} from "../lib/api/types/PlaylistUpdateAction";
+import { asyncAssert, getClient } from "./utils";
+import {LoggerSettings, LogLevels} from "../lib/api/kaltura-logger";
+import {KalturaClient} from "../lib/kaltura-client.service";
+import { switchMap } from 'rxjs/operators';
+
 
 describe(`service "Playlist" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -30,22 +31,20 @@ describe(`service "Playlist" tests`, () => {
   });
 
   test(`invoke "list" action`, (done) => {
+    expect.assertions(4);
     kalturaClient.request(new PlaylistListAction()).subscribe(
       (response) => {
-        expect(response instanceof KalturaPlaylistListResponse).toBeTruthy();
-
-        expect(response.objects).toBeDefined();
-        expect(response.objects instanceof Array).toBeTruthy();
-
-        response.objects.forEach(entry => {
-          expect(entry instanceof KalturaPlaylist).toBeTruthy();
+        asyncAssert(() => {
+          expect(response instanceof KalturaPlaylistListResponse).toBeTruthy();
+          expect(response.objects).toBeDefined();
+          expect(response.objects instanceof Array).toBeTruthy();
+          expect(response.objects[0] instanceof KalturaPlaylist).toBeTruthy();
         });
 
         done();
       },
       () => {
-        fail(`failed to perform request`);
-        done();
+        done.fail(`failed to perform request`);
       }
     );
   });
@@ -55,17 +54,22 @@ describe(`service "Playlist" tests`, () => {
       name: "tstest.PlaylistTests.test_createRemote",
       playlistType: KalturaPlaylistType.staticList
     });
+    expect.assertions(2);
     kalturaClient.request(new PlaylistAddAction({playlist}))
       .subscribe(
         (response) => {
-          expect(response instanceof KalturaPlaylist).toBeTruthy();
-          expect(typeof response.id).toBe("string");
-          kalturaClient.request(new PlaylistDeleteAction({id: response.id}));
-          done();
+          kalturaClient.request(new PlaylistDeleteAction({id: response.id})).subscribe(
+            () => {
+              asyncAssert(() => {
+                expect(response instanceof KalturaPlaylist).toBeTruthy();
+                expect(typeof response.id).toBe("string");
+              });
+              done();
+            }
+          );
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
@@ -76,21 +80,25 @@ describe(`service "Playlist" tests`, () => {
       referenceId: "tstest.PlaylistTests.test_update",
       playlistType: KalturaPlaylistType.staticList
     });
+    expect.assertions(1);
     kalturaClient.request(new PlaylistAddAction({playlist}))
-      .switchMap(({id}) => {
+      .pipe(
+      switchMap(({id}) => {
           playlist.name = "Changed!";
           return kalturaClient.request(new PlaylistUpdateAction({id, playlist}));
         }
-      )
-      .switchMap(({id, name}) => {
-        expect(name).toBe("Changed!");
+      ),
+      switchMap(({id, name}) => {
+        asyncAssert(() => {
+          expect(name).toBe("Changed!");
+        });
         return kalturaClient.request(new PlaylistDeleteAction({id}));
-      })
+      }))
       .subscribe(() => {
             done();
         },
         error => {
-          fail(error);
+          done.fail(error);
         });
   });
 
@@ -100,17 +108,21 @@ describe(`service "Playlist" tests`, () => {
       playlistType: KalturaPlaylistType.dynamic,
       totalResults: 0
     });
+    expect.assertions(2);
     kalturaClient.request(new PlaylistAddAction({playlist}))
       .subscribe(
         (response) => {
-          expect(response instanceof KalturaPlaylist).toBeTruthy();
-          expect(typeof response.id).toBe("string");
-          kalturaClient.request(new PlaylistDeleteAction({id: response.id}));
-          done();
+          kalturaClient.request(new PlaylistDeleteAction({id: response.id}))
+            .subscribe(() => {
+              asyncAssert(() => {
+                expect(response instanceof KalturaPlaylist).toBeTruthy();
+                expect(typeof response.id).toBe("string");
+              });
+              done();
+            });
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });

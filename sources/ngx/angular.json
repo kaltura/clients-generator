@@ -20,26 +20,6 @@
               "project": "projects/kaltura-ngx-client/ng-package.prod.json"
             }
           }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/kaltura-ngx-client/src/test.ts",
-            "tsConfig": "projects/kaltura-ngx-client/tsconfig.spec.json",
-            "karmaConfig": "projects/kaltura-ngx-client/karma.conf.js"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/kaltura-ngx-client/tsconfig.lib.json",
-              "projects/kaltura-ngx-client/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }
