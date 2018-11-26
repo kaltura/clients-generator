@@ -90,11 +90,11 @@ namespace Kaltura.Request
 			return requestBuilder;
 		}
 		/// <summary>
-		/// Skip current request according to skip option
+		/// Skip current request according to skip condition
 		/// </summary>
-		public static BaseRequestBuilder<T> WithSkipOnError<T>(this BaseRequestBuilder<T> requestBuilder, string value)
+		public static BaseRequestBuilder<T> WithSkipCondition<T>(this BaseRequestBuilder<T> requestBuilder, SkipCondition value)
 		{
-			requestBuilder.SkipOnError = value;
+			requestBuilder.SkipCondition = value;
 			return requestBuilder;
 		}
 	}

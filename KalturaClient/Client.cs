@@ -35,8 +35,8 @@ namespace Kaltura
 	{
 		public Client(Configuration config) : base(config)
 		{
-				ApiVersion = "5.0.3.42010";
-				ClientTag = "dotnet:18-11-25";
+				ApiVersion = "5.0.3.22718";
+				ClientTag = "dotnet:18-11-26";
 		}
 	
 		#region Properties
@@ -239,26 +239,26 @@ namespace Kaltura
  			return AbortAllOnError;
  		}
 			
- 		public string SkipOnError
+ 		public SkipCondition SkipCondition
  		{
  			get
  			{
- 				return requestConfiguration.SkipOnError;
+ 				return requestConfiguration.SkipCondition;
  			}
  			set
  			{
- 				requestConfiguration.SkipOnError = value;
+ 				requestConfiguration.SkipCondition = value;
  			}
  		}
 			
- 		public void setSkipOnError(string value)
+ 		public void setSkipCondition(SkipCondition value)
  		{
- 			SkipOnError = value;
+ 			SkipCondition = value;
  		}
 			
- 		public string getSkipOnError()
+ 		public SkipCondition getSkipCondition()
  		{
- 			return SkipOnError;
+ 			return SkipCondition;
  		}
 		#endregion
 	}
