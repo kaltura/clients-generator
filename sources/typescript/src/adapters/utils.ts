@@ -72,63 +72,56 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
     );
 }
 
-export function createCancelableAction<T>(data : { endpoint : string, headers : any, body : any} ) : CancelableAction<T>
-{
-    const result = new CancelableAction<T>((resolve, reject) => {
-        const promise = new Promise((promiseResolve, promiseReject) => {
-            const xhr = new XMLHttpRequest();
-            let isComplete = false;
+export function createCancelableAction<T>(data : { endpoint : string, headers : any, body : any} ) : CancelableAction<T> {
+	const result = new CancelableAction<T>((resolve, reject) => {
+		const xhr = new XMLHttpRequest();
+		let isComplete = false;
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (isComplete) {
-                        return;
-                    }
-                    isComplete = true;
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState === 4) {
+				if (isComplete) {
+					return;
+				}
+				isComplete = true;
 
-                    let resp;
+				let resp;
 
-                    try {
-                        if (xhr.status === 200) {
-                            resp = JSON.parse(xhr.response);
-                        } else {
-                            resp = new KalturaClientException('client::requre-failure', xhr.responseText || 'failed to transmit request');
-                        }
-                    } catch (e) {
-                        resp = new Error(xhr.responseText);
-                    }
+				try {
+					if (xhr.status === 200) {
+						resp = JSON.parse(xhr.response);
+					} else {
+						resp = new KalturaClientException('client::requre-failure', xhr.responseText || 'failed to transmit request');
+					}
+				} catch (e) {
+					resp = new Error(xhr.responseText);
+				}
 
-                    if (resp instanceof Error || resp instanceof KalturaAPIException) {
-                        promiseReject({error: resp});
-                    } else {
-                        promiseResolve(resp);
-                    }
-                }
-            };
+				if (resp instanceof Error || resp instanceof KalturaAPIException) {
+					reject({error: resp});
+				} else {
+					resolve(resp);
+				}
+			}
+		};
 
-            xhr.open('POST', data.endpoint);
+		xhr.open('POST', data.endpoint);
 
-            if (data.headers)
-            {
-                Object.keys(data.headers).forEach(headerKey =>
-                {
-                    const headerValue = data.headers[headerKey];
-                    xhr.setRequestHeader(headerKey, headerValue);
-                });
-            }
+		if (data.headers) {
+			Object.keys(data.headers).forEach(headerKey => {
+				const headerValue = data.headers[headerKey];
+				xhr.setRequestHeader(headerKey, headerValue);
+			});
+		}
 
-            xhr.send(JSON.stringify(data.body));
+		xhr.send(JSON.stringify(data.body));
 
-            return () =>
-            {
-                if (!isComplete) {
-                    isComplete = true;
-                    xhr.abort();
-                }
-            };
-        }).then(resolve, reject);
+		return () => {
+			if (!isComplete) {
+				isComplete = true;
+				xhr.abort();
+			}
+		};
+	});
 
-    });
-
-    return result;
+	return result;
 }
