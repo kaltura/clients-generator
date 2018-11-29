@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 6.4.2 (2018-11-29)
+
+### Fix
+
+* typescript declaration issue for error response
+* async unit-tests 
+
+
 ## 6.4.1 (2018-11-28)
 
 ### Fix

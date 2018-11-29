@@ -97,7 +97,7 @@ export function createCancelableAction<T>(data : { endpoint : string, headers : 
 				}
 
 				if (resp instanceof Error || resp instanceof KalturaAPIException) {
-					reject({error: resp});
+					reject(resp);
 				} else {
 					resolve(resp);
 				}

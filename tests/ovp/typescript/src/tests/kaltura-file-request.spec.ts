@@ -1,5 +1,6 @@
 import { ThumbAssetServeAction } from "../api/types/ThumbAssetServeAction";
 import { KalturaClient } from "../kaltura-client-service";
+import { asyncAssert } from "./utils";
 
 xdescribe("Kaltura File request", () => {
     test("thumbasset service > serve action", (done) => {
@@ -21,17 +22,20 @@ xdescribe("Kaltura File request", () => {
             }
         );
 
+	    expect.assertions(3);
         predefinedClient.request(thumbRequest)
             .then(
                 result => {
-                    expect(result).toBeDefined();
-                    expect(result.url).toBeDefined();
-                    expect(result.url).toBe('https://www.kaltura.com/api_v3/service/thumbasset/action/serve?format=1&apiVersion=@VERSION@&thumbAssetId=1_ep9epsxy&ks=YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs&clientTag=ts');
+	                asyncAssert(() => {
+		                expect(result).toBeDefined();
+		                expect(result.url).toBeDefined();
+		                expect(result.url).toBe('https://www.kaltura.com/api_v3/service/thumbasset/action/serve?format=1&apiVersion=@VERSION@&thumbAssetId=1_ep9epsxy&ks=YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs&clientTag=ts');
 
+	                });
                     done();
                 },
                 error => {
-                    const s = '';
+                    done.fail(error);
                 });
 
     });
@@ -54,15 +58,18 @@ xdescribe("Kaltura File request", () => {
             ks: 'YWIyZDAxYWRhZmQ1NzhjMzQ5ZmI3Nzc4MzVhYTJkMGI1NDdhYzA5YnwxNzYzMzIxOzE3NjMzMjE7MTUxMjA1MzA1MzsyOzE1MTE5NjY2NTMuNTk7YWRtaW47ZGlzYWJsZWVudGl0bGVtZW50Ozs'
         });
 
+	    expect.assertions(3);
         predefinedClient.multiRequest([thumbRequest])
             .then(
                 result => {
-                    fail('got response instead of error');
+                    done.fail('got response instead of error');
                 },
                 error => {
-                    expect(error).toBeDefined();
-                    expect(error).toBeInstanceOf(Error);
-                    expect(error.message).toBe("multi-request not support requests of type 'KalturaFileRequest'");
+	                asyncAssert(() => {
+		                expect(error).toBeDefined();
+		                expect(error).toBeInstanceOf(Error);
+		                expect(error.message).toBe("multi-request not support requests of type 'KalturaFileRequest'");
+	                });
                     done();
                 });
 

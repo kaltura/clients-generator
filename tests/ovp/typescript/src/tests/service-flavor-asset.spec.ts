@@ -5,6 +5,7 @@ import { KalturaFlavorAsset } from "../api/types/KalturaFlavorAsset";
 import { KalturaAssetFilter } from "../api/types/KalturaAssetFilter";
 import { getClient } from "./utils";
 import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { asyncAssert } from "./utils";
 
 describe(`service "Flavor" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -28,17 +29,20 @@ describe(`service "Flavor" tests`, () => {
     const filter = new KalturaAssetFilter({
       entryIdEqual: "1_2vp1gp7u"
     });
+	  expect.assertions(4);
     kalturaClient.request(new FlavorAssetListAction({ filter }))
       .then(
         response => {
-          expect(response instanceof KalturaFlavorAssetListResponse).toBeTruthy();
-          expect(Array.isArray(response.objects)).toBeTruthy();
-          expect(response.objects.every(obj => obj instanceof KalturaFlavorAsset)).toBeTruthy();
+	        asyncAssert(() => {
+		        expect(response instanceof KalturaFlavorAssetListResponse).toBeTruthy();
+		        expect(Array.isArray(response.objects)).toBeTruthy();
+		        expect(response.objects.length).toBeGreaterThan(0);
+		        expect(response.objects[0] instanceof KalturaFlavorAsset).toBeTruthy();
+	        });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
