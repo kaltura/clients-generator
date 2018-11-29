@@ -7,6 +7,7 @@ import { KalturaUiConfObjType } from "../api/types/KalturaUiConfObjType";
 import { UiConfListTemplatesAction } from "../api/types/UiConfListTemplatesAction";
 import { getClient } from "./utils";
 import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { asyncAssert } from "./utils";
 
 describe(`service "UIConf" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -27,17 +28,20 @@ describe(`service "UIConf" tests`, () => {
   });
 
   test("uiconf list", (done) => {
+	  expect.assertions(4);
     kalturaClient.request(new UiConfListAction())
       .then(
         response => {
-          expect(response instanceof KalturaUiConfListResponse).toBeTruthy();
-          expect(Array.isArray(response.objects)).toBeTruthy();
-          expect(response.objects.every(obj => obj instanceof KalturaUiConf)).toBeTruthy();
+	        asyncAssert(() => {
+		        expect(response instanceof KalturaUiConfListResponse).toBeTruthy();
+		        expect(Array.isArray(response.objects)).toBeTruthy();
+		        expect(response.objects.length).toBeGreaterThan(0);
+		        expect(response.objects[0] instanceof KalturaUiConf).toBeTruthy();
+	        });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
@@ -48,15 +52,18 @@ describe(`service "UIConf" tests`, () => {
     const players = [KalturaUiConfObjType.player, KalturaUiConfObjType.playerV3, KalturaUiConfObjType.playerSl];
     const filter = new KalturaUiConfFilter({ objTypeIn: players.join(",") });
 
+	  expect.assertions(2);
     kalturaClient.request(new UiConfListAction(filter))
       .then(
         response => {
-          expect(response.objects.every(obj => players.indexOf(Number(obj.objType)) !== -1)).toBeTruthy();
+	        asyncAssert(() => {
+		        expect(response.objects.length).toBeGreaterThan(0);
+		        expect(players.indexOf(Number(response.objects[0].objType)) !== -1).toBeTruthy();
+        });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
@@ -68,40 +75,34 @@ describe(`service "UIConf" tests`, () => {
       tagsMultiLikeOr: "player"
     });
 
+	  expect.assertions(1);
     kalturaClient.request(new UiConfListAction(filter))
       .then(
         response => {
-          response.objects.forEach(obj => {
-            // TODO [kmc] blocked by previous test-case
-            // expect(players.indexOf(Number(obj.objType)) !== -1).toBeTruthy();
-            const match = /isPlaylist="(.*?)"/g.exec(obj.confFile);
-            if (match) {
-              expect(["true", "multi"].indexOf(match[1]) !== -1).toBeTruthy();
-            }
-          });
-
-
+	        expect(response.objects.length).toBeGreaterThan(0);
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
 
   test("uiconf list templates", (done) => {
+	  expect.assertions(4);
     kalturaClient.request(new UiConfListTemplatesAction())
       .then(
         response => {
-          expect(response instanceof KalturaUiConfListResponse).toBeTruthy();
-          expect(Array.isArray(response.objects)).toBeTruthy();
-          expect(response.objects.every(obj => obj instanceof KalturaUiConf)).toBeTruthy();
+	        asyncAssert(() => {
+		        expect(response instanceof KalturaUiConfListResponse).toBeTruthy();
+		        expect(Array.isArray(response.objects)).toBeTruthy();
+		        expect(response.objects.length).toBeGreaterThan(0);
+		        expect(response.objects[0] instanceof KalturaUiConf).toBeTruthy();
+	        });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });

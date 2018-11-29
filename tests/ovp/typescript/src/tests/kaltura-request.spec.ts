@@ -22,6 +22,7 @@ import { KalturaMediaEntry } from "../api/types/KalturaMediaEntry";
 import { getClient, escapeRegExp } from "./utils";
 import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { KalturaFilterPager } from "../api/types/KalturaFilterPager";
+import { asyncAssert } from "./utils";
 
 describe("Kaltura server API request", () => {
     let kalturaClient: KalturaClient = null;
@@ -451,14 +452,16 @@ describe("Kaltura server API request", () => {
                     })
                 });
 
+	        expect.assertions(1);
             kalturaClient.request(listAction).then(
                 (response) => {
-                    expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+	                asyncAssert(() => {
+		                expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -473,41 +476,45 @@ describe("Kaltura server API request", () => {
         });
 
         test("parse object response property", (done) => {
+	        expect.assertions(3);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+	                asyncAssert(() => {
+		                expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
 
-                    expect(response.objects).toBeDefined();
-                    const object1 = response.objects[0];
-                    expect(object1).toBeDefined();
+		                expect(response.objects).toBeDefined();
+		                const object1 = response.objects[0];
+		                expect(object1).toBeDefined();
+	                });
 
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
 
         test("parse object response property that inherit from expected property type", (done) => {
+	        expect.assertions(6);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.objects).toBeDefined();
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.objects).toBeDefined();
 
-                    const object0 = response.objects[0];
-                    expect(object0).toBeDefined();
-                    expect(object0 instanceof KalturaMediaEntry).toBeTruthy();
+		                const object0 = response.objects[0];
+		                expect(object0).toBeDefined();
+		                expect(object0 instanceof KalturaMediaEntry).toBeTruthy();
 
-                    const object4 = response.objects[4];
-                    expect(object4).toBeDefined();
-                    expect(object4 instanceof KalturaPlaylist).toBeTruthy();
+		                const object4 = response.objects[4];
+		                expect(object4).toBeDefined();
+		                expect(object4 instanceof KalturaPlaylist).toBeTruthy();
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -517,48 +524,55 @@ describe("Kaltura server API request", () => {
         });
 
         test("parse number response property", (done) => {
+	        expect.assertions(4);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.objects).toBeDefined();
-                    const object0 = response.objects[0];
-                    expect(object0).toBeDefined();
-                    expect(object0.accessControlId).toBe(1880531);
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.objects).toBeDefined();
+		                const object0 = response.objects[0];
+		                expect(object0).toBeDefined();
+		                expect(object0.accessControlId).toBe(1880531);
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
+                    done.fail(error);
                 }
             );
         });
 
         test("parse number response property while provided value is boolean", (done) => {
+	        expect.assertions(2);
             kalturaClient.request(new PartnerGetAction({ id: 1931861 })).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.allowMultiNotification).toBe(0);
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.allowMultiNotification).toBe(0);
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
 
         test("parse number response property while provided value is valid number as string", (done) => {
+	        expect.assertions(4);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.objects).toBeDefined();
-                    const object1 = response.objects[1];
-                    expect(object1).toBeDefined();
-                    expect(object1.version).toBe(0);
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.objects).toBeDefined();
+		                const object1 = response.objects[1];
+		                expect(object1).toBeDefined();
+		                expect(object1.version).toBe(0);
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -568,56 +582,62 @@ describe("Kaltura server API request", () => {
         });
 
         test("parse string response property", (done) => {
+	        expect.assertions(4);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.objects).toBeDefined();
-                    const object1 = response.objects[1];
-                    expect(object1).toBeDefined();
-                    expect(object1.name).toBe("Columbia Business School:Video as a Marketing Tool in Education");
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.objects).toBeDefined();
+		                const object1 = response.objects[1];
+		                expect(object1).toBeDefined();
+		                expect(object1.name).toBe("Columbia Business School:Video as a Marketing Tool in Education");
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
 
         test("parse string response property while provided value is of type number", (done) => {
+	        expect.assertions(2);
             kalturaClient.request(new PartnerGetAction({ id: 1931861 })).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.defConversionProfileType).toBe("1001");
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.defConversionProfileType).toBe("1001");
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
+                    done.fail(error);
                 }
             );
         });
 
         test("parse array response property", (done) => {
+	        expect.assertions(6);
             kalturaClient.request(new BaseEntryListAction({
                 pager: new KalturaFilterPager({
                     pageSize: 30
                 })
             })).then(
                 (response) => {
-
-                    expect(response).toBeDefined();
-                    expect(response.totalCount).toBeGreaterThan(30);
-                    expect(response.objects).toBeDefined();
-                    expect(response.objects.length).toBe(30);
-                    const object1 = response.objects[1];
-                    expect(object1).toBeDefined();
-                    const object23 = response.objects[23];
-                    expect(object23).toBeDefined();
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.totalCount).toBeGreaterThan(30);
+		                expect(response.objects).toBeDefined();
+		                expect(response.objects.length).toBe(30);
+		                const object1 = response.objects[1];
+		                expect(object1).toBeDefined();
+		                const object23 = response.objects[23];
+		                expect(object23).toBeDefined();
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -628,15 +648,17 @@ describe("Kaltura server API request", () => {
 
 
         test("parse boolean response property while provided value is valid number as string", (done) => {
+	        expect.assertions(2);
             kalturaClient.request(new PartnerGetAction({ id: 1931861 })).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.adultContent).toBe(false);
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.adultContent).toBe(false);
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -666,31 +688,38 @@ describe("Kaltura server API request", () => {
         });
 
         test("parse enum of type int response property", (done) => {
+	        expect.assertions(4);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response).toBeDefined();
-                    expect(response.objects).toBeDefined();
-                    const object3: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
-                    expect(object3).toBeDefined();
-                    expect(object3.playlistType).toBe(KalturaPlaylistType.dynamic);
+	                asyncAssert(() => {
+		                expect(response).toBeDefined();
+		                expect(response.objects).toBeDefined();
+		                const object3: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
+		                expect(object3).toBeDefined();
+		                expect(object3.playlistType).toBe(KalturaPlaylistType.dynamic);
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
 
-        xtest("parse enum of type string response property when the provided value is of type int", () => {
+        xtest("parse enum of type string response property when the provided value is of type int", (done) => {
+	        expect.assertions(2);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
                     const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
-                    expect(kalturaMediaEntry.replacementStatus).toBe(KalturaEntryReplacementStatus.none);
-                    expect(kalturaMediaEntry.replacementStatus.equals(KalturaEntryReplacementStatus.none)).toBeTruthy();
+	                asyncAssert(() => {
+		                expect(kalturaMediaEntry.replacementStatus).toBe(KalturaEntryReplacementStatus.none);
+		                expect(kalturaMediaEntry.replacementStatus.equals(KalturaEntryReplacementStatus.none)).toBeTruthy();
+	                });
+
+	                done();
                 },
                 () => {
-                    fail("should not reach this part");
+                    done.fail("should not reach this part");
                 }
             );
         });
@@ -704,6 +733,7 @@ describe("Kaltura server API request", () => {
         });
 
         test("parse array of objects response property", (done) => {
+	        expect.assertions(10);
             kalturaClient.request(new BaseEntryListAction(
                 {
                     pager: new KalturaFilterPager({
@@ -712,35 +742,36 @@ describe("Kaltura server API request", () => {
                 }
             )).then(
                 (response) => {
-                    expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+	                asyncAssert(() => {
+		                expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
 
-                    // verify length of array and totalCount
-                    expect(response.totalCount).toBeGreaterThan(30);
-                    expect(response.objects).toBeDefined();
-                    expect(response.objects.length).toBe(30);
+		                // verify length of array and totalCount
+		                expect(response.totalCount).toBeGreaterThan(30);
+		                expect(response.objects).toBeDefined();
+		                expect(response.objects.length).toBe(30);
 
-                    // verify item is of the right type
-                    const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
-                    expect(kalturaMediaEntry).toBeDefined();
+		                // verify item is of the right type
+		                const kalturaMediaEntry: KalturaMediaEntry = <KalturaMediaEntry>response.objects[0];
+		                expect(kalturaMediaEntry).toBeDefined();
 
-                    const kalturaPlaylist: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
-                    expect(kalturaPlaylist).toBeDefined();
+		                const kalturaPlaylist: KalturaPlaylist = <KalturaPlaylist>response.objects[4];
+		                expect(kalturaPlaylist).toBeDefined();
 
-                    // verify array inner item properties are exposed correctly
-                    expect(kalturaMediaEntry.dataUrl).toMatch(new RegExp(`^${escapeRegExp('http(s)?://cdnapi(sec)?.kaltura.com/p/1931861/sp/193186100/playManifest/entryId/1_2vp1gp7u/format/url/protocol/http')}(s)?$`)); // simple value
-                    expect(kalturaMediaEntry.id).toBe("1_2vp1gp7u"); // simple value OF BASE
+		                // verify array inner item properties are exposed correctly
+		                expect(kalturaMediaEntry.dataUrl).toMatch(new RegExp(`^${escapeRegExp('http(s)?://cdnapi(sec)?.kaltura.com/p/1931861/sp/193186100/playManifest/entryId/1_2vp1gp7u/format/url/protocol/http')}(s)?$`)); // simple value
+		                expect(kalturaMediaEntry.id).toBe("1_2vp1gp7u"); // simple value OF BASE
 
 
-                    // verify nested array is exposed correctly
-                    const playlistFilterItem: KalturaMediaEntryFilterForPlaylist = kalturaPlaylist.filters[0];
-                    expect(playlistFilterItem).toBeDefined();
-                    expect(playlistFilterItem.limit).toBe(200); // // nested array item value
+		                // verify nested array is exposed correctly
+		                const playlistFilterItem: KalturaMediaEntryFilterForPlaylist = kalturaPlaylist.filters[0];
+		                expect(playlistFilterItem).toBeDefined();
+		                expect(playlistFilterItem.limit).toBe(200); // // nested array item value
+	                });
 
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });
@@ -751,13 +782,15 @@ describe("Kaltura server API request", () => {
                     ks: "invalid ks"
                 });
 
+	        expect.assertions(1);
             kalturaClient.request(listAction).then(
                 (response) => {
-                    fail(`should not reach this part: ${response}`);
-                    done();
+                    done.fail(`should not reach this part: ${response}`);
                 },
                 (error) => {
-                    expect(error instanceof KalturaAPIException).toBeTruthy();
+	                asyncAssert(() => {
+		                expect(error instanceof KalturaAPIException).toBeTruthy();
+	                });
                     done();
                 }
             );
@@ -773,14 +806,16 @@ describe("Kaltura server API request", () => {
         });
 
         test("process request without setting completion to that request", (done) => {
+	        expect.assertions(1);
             kalturaClient.request(new BaseEntryListAction()).then(
                 (response) => {
-                    expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+	                asyncAssert(() => {
+		                expect(response instanceof KalturaBaseEntryListResponse).toBeTruthy();
+	                });
                     done();
                 },
                 (error) => {
-                    fail(error);
-                    done();
+                    done.fail(error);
                 }
             );
         });

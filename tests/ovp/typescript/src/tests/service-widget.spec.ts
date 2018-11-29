@@ -3,6 +3,7 @@ import { WidgetListAction } from "../api/types/WidgetListAction";
 import { KalturaWidgetListResponse } from "../api/types/KalturaWidgetListResponse";
 import { getClient } from "./utils";
 import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { asyncAssert } from "./utils";
 
 describe(`service "Widget" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -23,15 +24,17 @@ describe(`service "Widget" tests`, () => {
   });
 
   test("widgets list", (done) => {
+	  expect.assertions(1);
     kalturaClient.request(new WidgetListAction())
       .then(
         response => {
-          expect(response instanceof KalturaWidgetListResponse).toBeTruthy();
+	        asyncAssert(() => {
+		        expect(response instanceof KalturaWidgetListResponse).toBeTruthy();
+	        });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });

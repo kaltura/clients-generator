@@ -8,6 +8,7 @@ import { PlaylistDeleteAction } from "../api/types/PlaylistDeleteAction";
 import { PlaylistUpdateAction } from "../api/types/PlaylistUpdateAction";
 import { getClient } from "./utils";
 import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { asyncAssert } from "./utils";
 
 describe(`service "Playlist" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -28,22 +29,21 @@ describe(`service "Playlist" tests`, () => {
   });
 
   test(`invoke "list" action`, (done) => {
+	  expect.assertions(5);
     kalturaClient.request(new PlaylistListAction()).then(
       (response) => {
-        expect(response instanceof KalturaPlaylistListResponse).toBeTruthy();
-
-        expect(response.objects).toBeDefined();
-        expect(response.objects instanceof Array).toBeTruthy();
-
-        response.objects.forEach(entry => {
-          expect(entry instanceof KalturaPlaylist).toBeTruthy();
-        });
+	      asyncAssert(() => {
+		      expect(response instanceof KalturaPlaylistListResponse).toBeTruthy();
+		      expect(response.objects).toBeDefined();
+		      expect(response.objects instanceof Array).toBeTruthy();
+		      expect(response.objects.length).toBeGreaterThan(0);
+		      expect(response.objects[0] instanceof KalturaPlaylist).toBeTruthy();
+	      });
 
         done();
       },
       () => {
-        fail(`failed to perform request`);
-        done();
+        done.fail(`failed to perform request`);
       }
     );
   });
@@ -53,17 +53,26 @@ describe(`service "Playlist" tests`, () => {
       name: "tstest.PlaylistTests.test_createRemote",
       playlistType: KalturaPlaylistType.staticList
     });
+	  expect.assertions(2);
     kalturaClient.request(new PlaylistAddAction({ playlist }))
       .then(
         (response) => {
-          expect(response instanceof KalturaPlaylist).toBeTruthy();
-          expect(typeof response.id).toBe("string");
-          kalturaClient.request(new PlaylistDeleteAction({ id: response.id }));
-          done();
+	        asyncAssert(() => {
+		        expect(response instanceof KalturaPlaylist).toBeTruthy();
+		        expect(typeof response.id).toBe("string");
+	        });
+
+	        kalturaClient.request(new PlaylistDeleteAction({ id: response.id })).then(
+                () => {
+	                done();
+                },
+                () => {
+	                done();
+                }
+            );
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
@@ -74,6 +83,7 @@ describe(`service "Playlist" tests`, () => {
       referenceId: "tstest.PlaylistTests.test_update",
       playlistType: KalturaPlaylistType.staticList
     });
+	  expect.assertions(1);
     kalturaClient.request(new PlaylistAddAction({ playlist }))
       .then(({ id }) => {
           playlist.name = "Changed!";
@@ -81,13 +91,19 @@ describe(`service "Playlist" tests`, () => {
         }
       )
       .then(({ id, name }) => {
-        expect(name).toBe("Changed!");
-        kalturaClient.request(new PlaylistDeleteAction({ id }));
-        done();
+	      asyncAssert(() => {
+		      expect(name).toBe("Changed!");
+	      });
+            kalturaClient.request(new PlaylistDeleteAction({ id })).then(
+	            () => {
+		            done();
+	            },
+	            () => {
+		            done();
+	            });
       })
       .catch((error) => {
-        fail(error);
-        done();
+        done.fail(error);
       });
   });
 
@@ -97,17 +113,25 @@ describe(`service "Playlist" tests`, () => {
       playlistType: KalturaPlaylistType.dynamic,
       totalResults: 0
     });
+	  expect.assertions(2);
     kalturaClient.request(new PlaylistAddAction({ playlist }))
       .then(
         (response) => {
-          expect(response instanceof KalturaPlaylist).toBeTruthy();
-          expect(typeof response.id).toBe("string");
-          kalturaClient.request(new PlaylistDeleteAction({ id: response.id }));
-          done();
+	        asyncAssert(() => {
+		        expect(response instanceof KalturaPlaylist).toBeTruthy();
+		        expect(typeof response.id).toBe("string");
+	        });
+          kalturaClient.request(new PlaylistDeleteAction({ id: response.id })).then(
+	          () => {
+		          done();
+	          },
+	          () => {
+		          done();
+	          }
+          );
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         }
       );
   });
