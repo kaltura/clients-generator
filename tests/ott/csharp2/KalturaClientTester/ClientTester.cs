@@ -52,8 +52,8 @@ namespace Kaltura
         private const int IMPERSONATION_TEST_USER_ID = @IMPERSONATION_TEST_USER_ID@;
 
         private static int code = 0;
-
-        private string uniqueTag;
+        
+       private string uniqueTag;
         private string userId;
         private Client client;
         private int openTasks = 0;
@@ -94,11 +94,12 @@ namespace Kaltura
         private ClientTester(OnLogin onLogin, string username, string password, string udid = null)
         {
             this.onLogin = onLogin;
-
+        
             uniqueTag = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
 
             Configuration config = new Configuration();
             config.ServiceUrl = SERVICE_URL;
+            config.Logger = this;
             client = new Client(config);
 
             Login(username, password, udid);
@@ -193,6 +194,35 @@ namespace Kaltura
                 if (asset is ProgramAsset)
                     GetAsset(asset.Id.ToString(), AssetReferenceType.EPG_EXTERNAL);
             }
+
+            TestMultiRequest(assetsList);
+        }
+
+        private void TestMultiRequest(ListResponse<Asset> assetsList)
+        {
+            openTasks++;
+            var multi = new MultiRequestBuilder();
+            foreach (Asset asset in assetsList.Objects)
+            {
+                var req = (IRequestBuilder)AssetService.Get(asset.Id.ToString(), (asset is MediaAsset) ? AssetReferenceType.MEDIA : AssetReferenceType.EPG_EXTERNAL);
+                multi.Add(req);
+            }
+
+            multi.SetCompletion(new OnCompletedHandler<List<object>>(OnMultiRequestDone))
+                .Execute(client);
+        }
+
+        private void OnMultiRequestDone(List<object> response, Exception error)
+        {
+            if (error != null)
+            {
+                Console.WriteLine("Failed to get asset: " + error.Message);
+                code = -1;
+                openTasks = 0;
+                return;
+            }
+
+            openTasks--;
         }
 
         private void GetAsset(string id, AssetReferenceType assetReferenceType)
@@ -345,7 +375,28 @@ namespace Kaltura
         private void AddHouseholdDevice()
         {
             openTasks++;
-            HouseholdDeviceService.Delete(MASTER_DEVICE)
+
+            HouseholdDevice newDevice = new HouseholdDevice();
+            newDevice.Name = Guid.NewGuid().ToString();
+            newDevice.Udid = Guid.NewGuid().ToString();
+            newDevice.BrandId = MASTER_DEVICE_BRAND;
+
+            HouseholdDeviceService.Add(newDevice)
+                .SetCompletion(new OnCompletedHandler<HouseholdDevice>(OnHouseholdDeviceAddComplete))
+                .Execute(client);
+        }
+
+        public void OnHouseholdDeviceAddComplete(HouseholdDevice householdDevice, Exception error)
+        {
+            if (error != null)
+            {
+                Console.WriteLine("Failed to delete household device: " + error.Message);
+                code = -1;
+                openTasks = 0;
+                return;
+            }
+
+            HouseholdDeviceService.Delete(householdDevice.Udid)
                 .SetCompletion(new OnCompletedHandler<bool>(OnHouseholdDeviceDeleteComplete))
                 .Execute(client);
         }
@@ -373,26 +424,6 @@ namespace Kaltura
                     return;
                 }
 
-            }
-
-            HouseholdDevice newDevice = new HouseholdDevice();
-            newDevice.Name = MASTER_DEVICE;
-            newDevice.Udid = MASTER_DEVICE;
-            newDevice.BrandId = MASTER_DEVICE_BRAND;
-
-            HouseholdDeviceService.Add(newDevice)
-                .SetCompletion(new OnCompletedHandler<HouseholdDevice>(OnHouseholdDeviceAddComplete))
-                .Execute(client);
-        }
-
-        public void OnHouseholdDeviceAddComplete(HouseholdDevice householdDevice, Exception error)
-        {
-            if (error != null)
-            {
-                Console.WriteLine("Failed to delete household device: " + error.Message);
-                code = -1;
-                openTasks = 0;
-                return;
             }
 
             openTasks--;

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Kaltura.Types;
+using Newtonsoft.Json.Linq;
 using String = System.String;
 
 namespace Kaltura.Request
@@ -18,7 +19,7 @@ namespace Kaltura.Request
     public delegate void OnCompletedHandler<T>(T response, Exception error);
     public delegate void OnErrorHandler(Exception error);
 
-    public abstract class BaseRequestBuilder<T> : RequestConfiguration, IBaseRequestBuilder
+    public abstract class BaseRequestBuilder<T> : BaseRequest, IBaseRequestBuilder
     {
         private string service;
         private OnCompletedHandler<T> onCompletion;
@@ -35,13 +36,10 @@ namespace Kaltura.Request
         public BaseRequestBuilder(string service)
         {
             this.service = service;
-            
+
             // Generate a unique task id to group logs
             requestId = (Interlocked.Increment(ref Client.REQUEST_COUNTER)).ToString("X5");
         }
-
-        abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
-        abstract public object Deserialize(XmlElement xmlElement);
 
         private void Log(string msg)
         {
@@ -95,7 +93,7 @@ namespace Kaltura.Request
             Boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             return this;
         }
-        
+
         public virtual void OnComplete(object response, Exception error)
         {
             if (onCompletion != null)
@@ -118,8 +116,6 @@ namespace Kaltura.Request
 
             var url = client.Configuration.ServiceUrl + "/api_v3" + getPath();
 
-            
-
             this.Log(string.Format("url : [{0}]", url));
 
             var files = getFiles();
@@ -135,9 +131,14 @@ namespace Kaltura.Request
         {
             var task = this.ExecuteAsync(client).ContinueWith(t =>
             {
-                if (t.Status == TaskStatus.Faulted) { OnComplete(null, t.Exception); return; }
+                if (t.Status == TaskStatus.Faulted)
+                {
+                    var ex = t.Exception.InnerException == null ? t.Exception : t.Exception.InnerException;
+                    
+                    OnComplete(null, ex); return;
+                }
 
-                var result = t.Result;
+                var result = t.GetAwaiter().GetResult();
                 OnComplete(result, null);
             }).ConfigureAwait(false);
         }
@@ -146,7 +147,7 @@ namespace Kaltura.Request
         {
             // Wrapping the async method in task run to avoid deadlock of the syncronization context in some cases.
             // https://stackoverflow.com/questions/17248680/await-works-but-calling-task-result-hangs-deadlocks
-            var result = Task.Run(() => ExecuteAsync(client)).Result;
+            var result = Task.Run(() => ExecuteAsync(client)).GetAwaiter().GetResult();
 
             return result;
         }
@@ -166,30 +167,15 @@ namespace Kaltura.Request
                     var headersStr = GetResponseHeadersString(response);
                     this.Log(string.Format("result : {0}", responseString));
                     this.Log(string.Format("result headers : {0}", headersStr));
-
-                    var xml = new XmlDocument();
-                    xml.LoadXml(responseString);
-
-                    ValidateXmlResult(xml);
-                    var resultXml = xml["xml"]["result"];
-
-                    // Check if response is error and throw
-                    var apiError = GetAPIError(resultXml);
-                    if (apiError != null)
-                    {
-                        throw apiError;
-                    }
-
-                    // this cast should always work because the code is generated for every type and it returns its own object
-                    // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
-                    responseObject = (T) Deserialize(resultXml);
+                   
+                    responseObject = ParseResponseString<T>(responseString);
                 }
             }
             catch (WebException wex)
             {
                 using (var errorResponse = wex.Response)
                 {
-                    var httpResponse = (HttpWebResponse) errorResponse;
+                    var httpResponse = (HttpWebResponse)errorResponse;
                     this.Log(string.Format("Error code : {0}", httpResponse.StatusCode));
                     using (var responseDataStream = errorResponse.GetResponseStream())
                     using (var reader = new StreamReader(responseDataStream))
@@ -198,7 +184,7 @@ namespace Kaltura.Request
                         this.Log(string.Format("ErrorResponse : {0}", text));
                     }
                 }
-                
+
                 throw wex;
             }
             catch (Exception e)
@@ -223,13 +209,13 @@ namespace Kaltura.Request
         private HttpWebRequest BuildRequest(string url, Files files, int timeout)
         {
             Client client;
-            var request = (HttpWebRequest) HttpWebRequest.Create(url);
+            var request = (HttpWebRequest)HttpWebRequest.Create(url);
             request.Timeout = files.Count == 0 ? timeout : Timeout.Infinite;
             request.Method = "POST";
 
             request.Headers = getHeaders();
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Accept = "application/xml";
+            request.Accept = "application/json";
             request.ContentType = getContentType();
             request.Proxy = CreateProxy();
             return request;
@@ -250,7 +236,7 @@ namespace Kaltura.Request
             var requestBody = "";
             var parameters = getParameters(false);
             parameters.Add(client.ClientConfiguration.ToParams(false));
-            parameters.Add("format", EServiceFormat.RESPONSE_TYPE_XML.GetHashCode());
+            parameters.Add("format", EServiceFormat.RESPONSE_TYPE_JSON.GetHashCode());
             parameters.Add("kalsig", Signature(parameters));
 
             var json = parameters.ToJson();
@@ -348,19 +334,6 @@ namespace Kaltura.Request
             return sBuilder.ToString();
         }
 
-
-       
-        protected APIException GetAPIError(XmlElement result)
-        {
-            XmlElement error = result["error"];
-            if (error != null && error["code"] != null && error["message"] != null)
-            {
-                return new APIException(error["code"].InnerText, error["message"].InnerText);
-            }
-
-            return null;
-        }
-
         protected string getContentType()
         {
             if (getFiles().Count > 0)
@@ -383,6 +356,6 @@ namespace Kaltura.Request
             return "/service/" + service;
         }
 
-       
+
     }
 }

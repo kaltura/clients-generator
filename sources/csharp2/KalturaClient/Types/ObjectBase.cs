@@ -31,6 +31,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Kaltura.Request;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -64,24 +65,19 @@ namespace Kaltura.Types
 		{
 		}
 
-        public ObjectBase(XmlElement node)
+        public ObjectBase(JToken node)
         {
-            foreach (XmlElement propertyNode in node.ChildNodes)
+            var relatedObjects = node["relatedObjects"];
+            if (relatedObjects != null)
             {
-                switch (propertyNode.Name)
+                string key;
+                this.RelatedObjects = new Dictionary<string, IListResponse>();
+                foreach (var relatedObj in relatedObjects.Children<JProperty>())
                 {
-                    case "relatedObjects":
-                        {
-                            string key;
-                            this.RelatedObjects = new Dictionary<string, IListResponse>();
-                            foreach (XmlElement arrayNode in propertyNode.ChildNodes)
-                            {
-                                key = arrayNode["itemKey"].InnerText;
-                                this.RelatedObjects[key] = ObjectFactory.Create(arrayNode);
-                            }
-                        }
-                        continue;
+                    key = relatedObj.Name;
+                    this.RelatedObjects[key] = ObjectFactory.Create(relatedObj.Value);
                 }
+
             }
 		}
 

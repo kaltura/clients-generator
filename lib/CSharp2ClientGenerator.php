@@ -111,6 +111,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('using System.Runtime.Serialization;');
 		$this->appendLine('using System.Text.RegularExpressions;');
 		$this->appendLine('using Kaltura.Types;');
+		$this->appendLine('using Newtonsoft.Json.Linq;');
 		$this->appendLine();
 		$this->appendLine('namespace Kaltura');
 		$this->appendLine('{');
@@ -118,14 +119,14 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('	{');
 		$this->appendLine('		private static Regex prefixRegex = new Regex("^Kaltura");');
 		$this->appendLine('		');
-		$this->appendLine('		public static T Create<T>(XmlElement xmlElement) where T : ObjectBase');
+		$this->appendLine('		public static T Create<T>(JToken jToken) where T : ObjectBase');
 		$this->appendLine('		{');
-		$this->appendLine('			if (xmlElement["objectType"] == null)');
+		$this->appendLine('			if (jToken["objectType"] == null)');
 		$this->appendLine('			{');
 		$this->appendLine('				return null;');
 		$this->appendLine('			}');
 		$this->appendLine('				');
-		$this->appendLine('			string className = xmlElement["objectType"].InnerText;');
+		$this->appendLine('			string className = jToken["objectType"].Value<string>();');
 		$this->appendLine('			className = prefixRegex.Replace(className, "");');
 		$this->appendLine('			');
 		$this->appendLine('			Type type = Type.GetType("Kaltura.Types." + className);');
@@ -137,17 +138,17 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('			if (type == null)');
 		$this->appendLine('				throw new SerializationException("Invalid object type");');
 		$this->appendLine('			');
-		$this->appendLine('			return (T)System.Activator.CreateInstance(type, xmlElement);');
+		$this->appendLine('			return (T)System.Activator.CreateInstance(type, jToken);');
 		$this->appendLine('		}');
 		$this->appendLine('		');
-		$this->appendLine('		public static IListResponse Create(XmlElement xmlElement)');
+		$this->appendLine('		public static IListResponse Create(JToken jToken)');
 		$this->appendLine('		{');
-		$this->appendLine('			if (xmlElement["objectType"] == null)');
+		$this->appendLine('			if (jToken["objectType"] == null)');
 		$this->appendLine('			{');
 		$this->appendLine('				return null;');
 		$this->appendLine('			}');
 		$this->appendLine('			');
-		$this->appendLine('			string className = xmlElement["objectType"].InnerText;');
+		$this->appendLine('			string className = jToken["objectType"].Value<string>();');
 		$this->appendLine('			switch (className)');
 		$this->appendLine('			{');
 		
@@ -160,7 +161,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				if($arrayType)
 				{
 					$this->appendLine("				case \"$type\":");
-					$this->appendLine("					return new ListResponse<$arrayType>(xmlElement);");
+					$this->appendLine("					return new ListResponse<$arrayType>(jToken);");
 				}
 			}
 		}
@@ -289,7 +290,11 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("using System.Xml;");
 		$this->appendLine("using System.Collections.Generic;");
 		$this->appendLine("using Kaltura.Enums;");
-		$this->appendLine("using Kaltura.Request;");
+        $this->appendLine("using Kaltura.Request;");
+        $this->appendLine("using Newtonsoft.Json;");
+		$this->appendLine("using Newtonsoft.Json.Linq;");
+        
+        
 		$this->appendLine();
 		$this->appendLine("namespace Kaltura.Types");
 		$this->appendLine("{");
@@ -468,7 +473,8 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			
 			if($property['name'] === $className)
 				$propertyLine .= 'Value';
-
+            
+            $this->appendLine("		[JsonProperty]");
 			$this->appendLine("		" . $propertyLine);
 			$this->appendLine("		{");
 
@@ -480,11 +486,16 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			if (!isset($property['readOnly']) || !$property['readOnly'])
 			{
 				$this->appendLine("			set ");
-				$this->appendLine("			{ ");
-				$this->appendLine("				_{$property['name']} = value;");
-				$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
-				$this->appendLine("			}");
-			}
+            }
+            else
+            {
+                $this->appendLine("			private set ");
+            }
+            
+            $this->appendLine("			{ ");
+			$this->appendLine("				_{$property['name']} = value;");
+			$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
+			$this->appendLine("			}");
 
 			$this->appendLine("		}");
 		}
@@ -492,20 +503,18 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 
 		$this->appendLine("		#region CTor");
-		// CTor
+        
+        // CTor (constructor)
 		$this->appendLine("		public $className()");
 		$this->appendLine("		{");
 		$this->appendLine("		}");
 		$this->appendLine("");
 
-		$this->appendLine("		public $className(XmlElement node) : base(node)");
+		$this->appendLine("		public $className(JToken node) : base(node)");
 		$this->appendLine("		{");
 		if ($classNode->childNodes->length)
 		{
-			$this->appendLine("			foreach (XmlElement propertyNode in node.ChildNodes)");
-			$this->appendLine("			{");
-			$this->appendLine("				switch (propertyNode.Name)");
-			$this->appendLine("				{");
+
 			foreach($classNode->childNodes as $propertyNode)
 			{
 				if ($propertyNode->nodeType != XML_ELEMENT_NODE)
@@ -514,73 +523,72 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				$propType = $propertyNode->getAttribute("type");
 				$propName = $propertyNode->getAttribute("name");
 				$isEnum = $propertyNode->hasAttribute("enumType");
-				$dotNetPropName = $this->upperCaseFirstLetter($propName);
-				$this->appendLine("					case \"$propName\":");
-				switch($propType)
+                $dotNetPropName = $this->upperCaseFirstLetter($propName);
+		        $this->appendLine("			if(node[\"$propName\"] != null)");                
+		        $this->appendLine("			{");                
+                switch($propType)
 				{
 					case "bigint":
-						$this->appendLine("						this._$dotNetPropName = ParseLong(propertyNode.InnerText);");
+						$this->appendLine("				this._$dotNetPropName = ParseLong(node[\"$propName\"].Value<string>());");
 						break;
 					case "int":
 					case "time":
 						if ($isEnum)
 						{
 							$enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-							$this->appendLine("						this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), propertyNode.InnerText);");
+							$this->appendLine("				this._$dotNetPropName = ($enumType)ParseEnum(typeof($enumType), node[\"$propName\"].Value<string>());");
 						}
 						else
-							$this->appendLine("						this._$dotNetPropName = ParseInt(propertyNode.InnerText);");
+							$this->appendLine("				this._$dotNetPropName = ParseInt(node[\"$propName\"].Value<string>());");
 						break;
 					case "string":
 						if ($isEnum)
 						{
 							$enumType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-							$this->appendLine("						this._$dotNetPropName = ($enumType)StringEnum.Parse(typeof($enumType), propertyNode.InnerText);");
+							$this->appendLine("				this._$dotNetPropName = ($enumType)StringEnum.Parse(typeof($enumType), node[\"$propName\"].Value<string>());");
 						}
 						else
-							$this->appendLine("						this._$dotNetPropName = propertyNode.InnerText;");
+							$this->appendLine("				this._$dotNetPropName = node[\"$propName\"].Value<string>();");
 						break;
 					case "bool":
-						$this->appendLine("						this._$dotNetPropName = ParseBool(propertyNode.InnerText);");
+						$this->appendLine("				this._$dotNetPropName = ParseBool(node[\"$propName\"].Value<string>());");
 						break;
 					case "float":
-						$this->appendLine("						this._$dotNetPropName = ParseFloat(propertyNode.InnerText);");
+						$this->appendLine("				this._$dotNetPropName = ParseFloat(node[\"$propName\"].Value<string>());");
 						break;
 					case "array":
 						$arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
 						if($arrayType == 'Object')
 							$arrayType = 'ObjectBase';
 
-						$this->appendLine("						this._$dotNetPropName = new List<$arrayType>();");
-						$this->appendLine("						foreach(XmlElement arrayNode in propertyNode.ChildNodes)");
-						$this->appendLine("						{");
-						$this->appendLine("							this._$dotNetPropName.Add(ObjectFactory.Create<$arrayType>(arrayNode));");
-						$this->appendLine("						}");
+						$this->appendLine("				this._$dotNetPropName = new List<$arrayType>();");
+						$this->appendLine("				foreach(var arrayNode in node[\"$propName\"].Children())");
+						$this->appendLine("				{");
+						$this->appendLine("					this._$dotNetPropName.Add(ObjectFactory.Create<$arrayType>(arrayNode));");
+						$this->appendLine("				}");
 						break;
 					case "map":
 						$arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
 						if($arrayType == 'Object')
 							$arrayType = 'ObjectBase';
 
-						$this->appendLine("						{");		// TODO: remove the index once the keys are added to the response
-						$this->appendLine("							string key;");
-						$this->appendLine("							this._$dotNetPropName = new Dictionary<string, $arrayType>();");
-						$this->appendLine("							foreach(XmlElement arrayNode in propertyNode.ChildNodes)");
-						$this->appendLine("							{");
-						$this->appendLine("								key = arrayNode[\"itemKey\"].InnerText;;");
-						$this->appendLine("								this._{$dotNetPropName}[key] = ObjectFactory.Create<$arrayType>(arrayNode);");
-						$this->appendLine("							}");
-						$this->appendLine("						}");
+						$this->appendLine("				{");		// TODO: remove the index once the keys are added to the response
+						$this->appendLine("					string key;");
+						$this->appendLine("					this._$dotNetPropName = new Dictionary<string, $arrayType>();");
+						$this->appendLine("					foreach(var arrayNode in node[\"$propName\"].Children<JProperty>())");
+						$this->appendLine("					{");
+						$this->appendLine("						key = arrayNode.Name;");
+						$this->appendLine("						this._{$dotNetPropName}[key] = ObjectFactory.Create<$arrayType>(arrayNode.Value);");
+						$this->appendLine("					}");
+						$this->appendLine("				}");
 						break;
 					default: // sub object
 						$propType = $this->getCSharpName($propType);
-						$this->appendLine("						this._$dotNetPropName = ObjectFactory.Create<$propType>(propertyNode);");
+						$this->appendLine("				this._$dotNetPropName = ObjectFactory.Create<$propType>(node[\"$propName\"]);");
 						break;
-				}
-				$this->appendLine("						continue;");
+                }
+                $this->appendLine("			}");                                
 			}
-			$this->appendLine("				}");
-			$this->appendLine("			}");
 		}
 		$this->appendLine("		}");
 		$this->appendLine("		#endregion");
@@ -663,7 +671,8 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("using System.IO;");
 		$this->appendLine("using Kaltura.Request;");
 		$this->appendLine("using Kaltura.Types;");
-		$this->appendLine("using Kaltura.Enums;");
+        $this->appendLine("using Kaltura.Enums;");
+        $this->appendLine("using Newtonsoft.Json.Linq;");
 		$this->appendLine();
 		$this->appendLine("namespace Kaltura.Services");
 		$this->appendLine("{");
@@ -727,7 +736,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		switch($resultType)
 		{
 			case null:
-				$dotNetOutputType = "object";
+				$dotNetOutputType = "VoidResponse";
 				break;
 			case "array":
 				$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
@@ -739,6 +748,12 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				break;
 			case "bigint":
 				$dotNetOutputType = "long";
+                break;
+            case "bool":
+				$dotNetOutputType = "bool";
+                break;
+            case "string":
+				$dotNetOutputType = "string";
 				break;
 			default:
 				$dotNetOutputType = $this->getCSharpName($resultType);
@@ -880,7 +895,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("		}");
 
 		$this->appendLine();
-		$this->appendLine("		public override object Deserialize(XmlElement result)");
+		$this->appendLine("		public override object Deserialize(JToken result)");
 		$this->appendLine("		{");
 		if ($resultType)
 		{
@@ -889,39 +904,41 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				case "array":
 					$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
 					$this->appendLine("			IList<$arrayType> list = new List<$arrayType>();");
-					$this->appendLine("			foreach(XmlElement node in result.ChildNodes)");
+					$this->appendLine("			foreach(var node in result.Children())");
 					$this->appendLine("			{");
-					$this->appendLine("				list.Add(ObjectFactory.Create<$arrayType>(node));");
-					$this->appendLine("			}");
+                    $this->appendLine("				//TODO: Deserilize Array;");
+                    $this->appendLine("				list.Add(ObjectFactory.Create<$arrayType>(node));");
+                    $this->appendLine("			}");
 					$this->appendLine("			return list;");
 					break;
 				case "map":
 					$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
 					$this->appendLine("			string key;");
 					$this->appendLine("			IDictionary<string, $arrayType> map = new Dictionary<string, $arrayType>();");
-					$this->appendLine("			foreach(XmlElement node in result.ChildNodes)");
+					$this->appendLine("			foreach(var node in result.Children<JProperty>()");
 					$this->appendLine("			{");
-					$this->appendLine("				key = xmlElement[\"itemKey\"]");
-					$this->appendLine("				map.Add(key, ObjectFactory.Create<$arrayType>(node));");
+                    $this->appendLine("				//TODO: Deserilize map");
+                    $this->appendLine("				key = node.Name");
+                    $this->appendLine("				map.Add(key, ObjectFactory.Create<$arrayType>(node.Value));");
 					$this->appendLine("			}");
 					$this->appendLine("			return map;");
 					break;
 				case "bigint":
-					$this->appendLine("			return long.Parse(result.InnerText);");
+					$this->appendLine("			return result.Value<long>();");
 					break;
 				case "int":
-					$this->appendLine("			return int.Parse(result.InnerText);");
+					$this->appendLine("			return result.Value<int>();");
 					break;
 				case "float":
-					$this->appendLine("			return Single.Parse(result.InnerText);");
+					$this->appendLine("			return result.Value<float>();");
 					break;
 				case "bool":
-					$this->appendLine("			if (result.InnerText.Equals(\"1\") || result.InnerText.ToLower().Equals(\"true\"))");
+					$this->appendLine("			if (result.Value<string>().Equals(\"1\") || result.Value<string>().ToLower().Equals(\"true\"))");
 					$this->appendLine("				return true;");
 					$this->appendLine("			return false;");
 					break;
 				case "string":
-					$this->appendLine("			return result.InnerText;");
+					$this->appendLine("			return result.Value<string>();");
 					break;
 				default:
 					$resultType = $this->getCSharpName($resultType);
