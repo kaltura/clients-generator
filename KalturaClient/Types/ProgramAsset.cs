@@ -63,11 +63,6 @@ namespace Kaltura.Types
 		public long EpgChannelId
 		{
 			get { return _EpgChannelId; }
-			set 
-			{ 
-				_EpgChannelId = value;
-				OnPropertyChanged("EpgChannelId");
-			}
 		}
 		public string EpgId
 		{
@@ -94,6 +89,11 @@ namespace Kaltura.Types
 		public long LinearAssetId
 		{
 			get { return _LinearAssetId; }
+			set 
+			{ 
+				_LinearAssetId = value;
+				OnPropertyChanged("LinearAssetId");
+			}
 		}
 		public bool? EnableCdvr
 		{
