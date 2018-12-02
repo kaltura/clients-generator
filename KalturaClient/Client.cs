@@ -35,7 +35,7 @@ namespace Kaltura
 	{
 		public Client(Configuration config) : base(config)
 		{
-				ApiVersion = "5.0.3.15726";
+				ApiVersion = "5.0.3.17321";
 				ClientTag = "dotnet:18-12-02";
 		}
 	
@@ -83,6 +83,28 @@ namespace Kaltura
  		public string getApiVersion()
  		{
  			return ApiVersion;
+ 		}
+			
+ 		public bool AbortOnError
+ 		{
+ 			get
+ 			{
+ 				return clientConfiguration.AbortOnError;
+ 			}
+ 			set
+ 			{
+ 				clientConfiguration.AbortOnError = value;
+ 			}
+ 		}
+			
+ 		public void setAbortOnError(bool value)
+ 		{
+ 			AbortOnError = value;
+ 		}
+			
+ 		public bool getAbortOnError()
+ 		{
+ 			return AbortOnError;
  		}
 			
  		public int PartnerId
