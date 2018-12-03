@@ -1,12 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
 import {TestsConfig} from "./tests-config";
-import {SessionStartAction} from "../api/types/SessionStartAction";
-import {KalturaSessionType} from "../api/types/KalturaSessionType";
-import {KalturaClient} from "../kaltura-client.service";
+import {SessionStartAction} from "../lib/api/types/SessionStartAction";
+import {KalturaSessionType} from "../lib/api/types/KalturaSessionType";
+import {KalturaClient} from "../lib/kaltura-client.service";
 import {Observable} from "rxjs";
 import {TestBed} from "@angular/core/testing";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
+import { catchError, map } from 'rxjs/operators';
 
 export function getTestFile(): string | Buffer {
   return fs.readFileSync(path.join(__dirname, "DemoVideo.flv"));
@@ -14,6 +15,14 @@ export function getTestFile(): string | Buffer {
 
 export function escapeRegExp(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\$&");
+}
+
+export function asyncAssert(callback) {
+  try {
+    callback();
+  } catch(e) {
+    fail(e);
+  }
 }
 
 export function getClient(): Observable<KalturaClient> {
@@ -26,7 +35,7 @@ export function getClient(): Observable<KalturaClient> {
     clientTag: TestsConfig.clientTag
   };
 
-  let client = new KalturaClient(TestBed.get(HttpClient), httpConfiguration, null);
+  const client = new KalturaClient(TestBed.get(HttpClient), httpConfiguration, null);
 
 
   return client.request(new SessionStartAction({
@@ -34,12 +43,13 @@ export function getClient(): Observable<KalturaClient> {
     userId: TestsConfig.userName,
     type: KalturaSessionType.admin,
     partnerId: <any>TestsConfig.partnerId * 1
-  })).map(ks => {
+  })).pipe(
+    map(ks => {
       client.setDefaultRequestOptions({ks});
       return client;
-    },
-    error => {
-      console.error(`failed to create session with the following error "SessionStartAction"`);
+    }),
+    catchError( error => {
+      console.error('failed to create session with the following error "SessionStartAction"');
       throw error;
-    });
+    }));
 }

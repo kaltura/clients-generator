@@ -5,6 +5,7 @@ import { KalturaMediaEntry } from "../api/types/KalturaMediaEntry";
 import { KalturaMediaType } from "../api/types/KalturaMediaType";
 import { getClient } from "./utils";
 import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
+import { asyncAssert } from "./utils";
 
 describe(`service "Media" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -28,26 +29,25 @@ describe(`service "Media" tests`, () => {
 
       if (!kalturaClient)
       {
-          fail(`failure during 'SessionStart'. aborting test`);
+          done.fail(`failure during 'SessionStart'. aborting test`);
           return;
       }
 
+	  expect.assertions(5);
     kalturaClient.request(new MediaListAction()).then(
       (response) => {
-        expect(response instanceof KalturaMediaListResponse).toBeTruthy();
-
-        expect(response.objects).toBeDefined();
-        expect(response.objects instanceof Array).toBeTruthy();
-
-        response.objects.forEach(entry => {
-          expect(entry instanceof KalturaMediaEntry).toBeTruthy();
-        });
+	      asyncAssert(() => {
+              expect(response instanceof KalturaMediaListResponse).toBeTruthy();
+              expect(response.objects).toBeDefined();
+              expect(response.objects instanceof Array).toBeTruthy();
+              expect(response.objects.length).toBeGreaterThan(0);
+              expect(response.objects[0] instanceof KalturaMediaEntry).toBeTruthy();
+	      });
 
         done();
       },
       () => {
-        fail(`failed to perform request`);
-        done();
+        done.fail(`failed to perform request`);
       }
     );
   });

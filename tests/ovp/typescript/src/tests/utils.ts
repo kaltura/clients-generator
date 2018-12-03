@@ -9,6 +9,14 @@ export function getTestFile(): string | Buffer {
   return fs.readFileSync(path.join(__dirname, "DemoVideo.flv"));
 }
 
+export function asyncAssert(callback) {
+	try {
+		callback();
+	} catch(e) {
+		fail(e);
+	}
+}
+
 export function escapeRegExp(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\$&");
 }

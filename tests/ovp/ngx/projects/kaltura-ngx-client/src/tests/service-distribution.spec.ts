@@ -1,15 +1,15 @@
-import {DistributionProviderListAction} from "../api/types/DistributionProviderListAction";
-import {KalturaDistributionProviderListResponse} from "../api/types/KalturaDistributionProviderListResponse";
-import {KalturaDistributionProvider} from "../api/types/KalturaDistributionProvider";
-import {DistributionProfileListAction} from "../api/types/DistributionProfileListAction";
-import {KalturaDistributionProfileListResponse} from "../api/types/KalturaDistributionProfileListResponse";
-import {KalturaDistributionProfile} from "../api/types/KalturaDistributionProfile";
-import {EntryDistributionListAction} from "../api/types/EntryDistributionListAction";
-import {KalturaEntryDistributionListResponse} from "../api/types/KalturaEntryDistributionListResponse";
-import {KalturaEntryDistribution} from "../api/types/KalturaEntryDistribution";
-import {getClient} from "./utils";
-import {LoggerSettings, LogLevels} from "../api/kaltura-logger";
-import {KalturaClient} from "../kaltura-client.service";
+import {DistributionProviderListAction} from "../lib/api/types/DistributionProviderListAction";
+import {KalturaDistributionProviderListResponse} from "../lib/api/types/KalturaDistributionProviderListResponse";
+import {KalturaDistributionProvider} from "../lib/api/types/KalturaDistributionProvider";
+import {DistributionProfileListAction} from "../lib/api/types/DistributionProfileListAction";
+import {KalturaDistributionProfileListResponse} from "../lib/api/types/KalturaDistributionProfileListResponse";
+import {KalturaDistributionProfile} from "../lib/api/types/KalturaDistributionProfile";
+import {EntryDistributionListAction} from "../lib/api/types/EntryDistributionListAction";
+import {KalturaEntryDistributionListResponse} from "../lib/api/types/KalturaEntryDistributionListResponse";
+import {KalturaEntryDistribution} from "../lib/api/types/KalturaEntryDistribution";
+import { asyncAssert, getClient } from "./utils";
+import {LoggerSettings, LogLevels} from "../lib/api/kaltura-logger";
+import {KalturaClient} from "../lib/kaltura-client.service";
 
 describe(`service "Distribution" tests`, () => {
   let kalturaClient: KalturaClient = null;
@@ -27,47 +27,53 @@ describe(`service "Distribution" tests`, () => {
   });
 
   test("distribution provider list", (done) => {
+    expect.assertions(3);
     kalturaClient.request(new DistributionProviderListAction())
       .subscribe(
         response => {
-          expect(response instanceof KalturaDistributionProviderListResponse).toBeTruthy();
-          expect(Array.isArray(response.objects)).toBeTruthy();
-          expect(response.objects.every(obj => obj instanceof KalturaDistributionProvider)).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaDistributionProviderListResponse).toBeTruthy();
+            expect(Array.isArray(response.objects)).toBeTruthy();
+            expect(response.objects.every(obj => obj instanceof KalturaDistributionProvider)).toBeTruthy();
+          });
           done();
         },
         (error) => {
-          fail(error);
-          done();
+          done.fail(error);
         });
   });
 
   test("distribution profile list", (done) => {
+    expect.assertions(3);
     kalturaClient.request(new DistributionProfileListAction())
       .subscribe(
         response => {
-          expect(response instanceof KalturaDistributionProfileListResponse).toBeTruthy();
-          expect(Array.isArray(response.objects)).toBeTruthy();
-          expect(response.objects.every(obj => obj instanceof KalturaDistributionProfile)).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaDistributionProfileListResponse).toBeTruthy();
+            expect(Array.isArray(response.objects)).toBeTruthy();
+            expect(response.objects.every(obj => obj instanceof KalturaDistributionProfile)).toBeTruthy();
+          });
           done();
         },
         () => {
-          fail("should not reach this part");
-          done();
+          done.fail("should not reach this part");
         });
   });
 
   test("entry distribution list", (done) => {
+    expect.assertions(3);
     kalturaClient.request(new EntryDistributionListAction())
       .subscribe(
         response => {
-          expect(response instanceof KalturaEntryDistributionListResponse).toBeTruthy();
-          expect(Array.isArray(response.objects)).toBeTruthy();
-          expect(response.objects.every(obj => obj instanceof KalturaEntryDistribution)).toBeTruthy();
+          asyncAssert(() => {
+            expect(response instanceof KalturaEntryDistributionListResponse).toBeTruthy();
+            expect(Array.isArray(response.objects)).toBeTruthy();
+            expect(response.objects.every(obj => obj instanceof KalturaEntryDistribution)).toBeTruthy();
+          });
           done();
         },
         () => {
-          fail("should not reach this part");
-          done();
+          done.fail("should not reach this part");
         });
   });
 });
