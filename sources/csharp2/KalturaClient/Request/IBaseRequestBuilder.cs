@@ -8,5 +8,6 @@ namespace Kaltura.Request
     public interface IBaseRequestBuilder
     {
         object Deserialize(XmlElement results);
+        object DeserializeObject(object results);
     }
 }

@@ -59,6 +59,15 @@ namespace Kaltura
         private int openTasks = 0;
         private OnLogin onLogin;
 
+
+        private class ConsoleLogger : ILogger
+        {
+            public void Log(string msg)
+            {
+                Console.WriteLine(msg);
+            }
+        }
+
         static void Main(string[] args)
         {
             ClientTester operatorTester = new ClientTester(new OnLogin(OnOperatorLogin), OPERATOR_USERNAME, OPERATOR_PASSWORD);
@@ -99,6 +108,7 @@ namespace Kaltura
 
             Configuration config = new Configuration();
             config.ServiceUrl = SERVICE_URL;
+            config.Logger = new ConsoleLogger();
             client = new Client(config);
 
             Login(username, password, udid);
