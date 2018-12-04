@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialFriendActivityFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._ActionTypeIn = data.TryGetValueSafe<string>("actionTypeIn");
+			    this._OrderBy = (SocialFriendActivityOrderBy)StringEnum.Parse(typeof(SocialFriendActivityOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

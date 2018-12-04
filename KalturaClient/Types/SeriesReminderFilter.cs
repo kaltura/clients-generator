@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SeriesReminderFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._SeriesIdIn = data.TryGetValueSafe<string>("seriesIdIn");
+			    this._EpgChannelIdEqual = data.TryGetValueSafe<long>("epgChannelIdEqual");
+			    this._OrderBy = (SeriesReminderOrderBy)StringEnum.Parse(typeof(SeriesReminderOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

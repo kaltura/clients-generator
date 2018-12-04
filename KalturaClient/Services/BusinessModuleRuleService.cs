@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<BusinessModuleRule>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<BusinessModuleRule>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class BusinessModuleRuleDeleteRequestBuilder : RequestBuilder<object>
@@ -116,6 +120,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -162,6 +170,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<BusinessModuleRule>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<BusinessModuleRule>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class BusinessModuleRuleListRequestBuilder : RequestBuilder<ListResponse<BusinessModuleRule>>
@@ -204,6 +216,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<BusinessModuleRule>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<BusinessModuleRule>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -256,6 +272,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<BusinessModuleRule>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<BusinessModuleRule>((IDictionary<string,object>)result);
 		}
 	}
 

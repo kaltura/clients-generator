@@ -155,6 +155,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdDevice(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdId = data.TryGetValueSafe<int>("householdId");
+			    this._Udid = data.TryGetValueSafe<string>("udid");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._BrandId = data.TryGetValueSafe<int>("brandId");
+			    this._ActivatedOn = data.TryGetValueSafe<long>("activatedOn");
+			    this._Status = (DeviceStatus)StringEnum.Parse(typeof(DeviceStatus), data.TryGetValueSafe<string>("status"));
+			    this._DeviceFamilyId = data.TryGetValueSafe<long>("deviceFamilyId");
+			    this._Drm = ObjectFactory.Create<CustomDrmPlaybackPluginData>(data.TryGetValueSafe<IDictionary<string,object>>("drm"));
+		}
 		#endregion
 
 		#region Methods

@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DiscountDetailsFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+		}
 		#endregion
 
 		#region Methods

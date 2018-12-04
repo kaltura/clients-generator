@@ -104,6 +104,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PlaybackSource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Format = data.TryGetValueSafe<string>("format");
+			    this._Protocols = data.TryGetValueSafe<string>("protocols");
+			    this._Drm = new List<DrmPlaybackPluginData>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("drm", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Drm.Add(ObjectFactory.Create<DrmPlaybackPluginData>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DevicePin(IDictionary<string,object> data) : base(data)
+		{
+			    this._Pin = data.TryGetValueSafe<string>("pin");
+		}
 		#endregion
 
 		#region Methods

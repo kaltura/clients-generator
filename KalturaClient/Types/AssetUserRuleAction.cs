@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public AssetUserRuleAction(XmlElement node) : base(node)
 		{
 		}
+
+		public AssetUserRuleAction(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

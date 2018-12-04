@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SubscriptionDependencySetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._BaseSubscriptionIdIn = data.TryGetValueSafe<string>("baseSubscriptionIdIn");
+		}
 		#endregion
 
 		#region Methods

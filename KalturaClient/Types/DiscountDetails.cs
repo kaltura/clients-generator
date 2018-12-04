@@ -127,6 +127,20 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DiscountDetails(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultiCurrencyDiscount = new List<Discount>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multiCurrencyDiscount", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultiCurrencyDiscount.Add(ObjectFactory.Create<Discount>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+		}
 		#endregion
 
 		#region Methods

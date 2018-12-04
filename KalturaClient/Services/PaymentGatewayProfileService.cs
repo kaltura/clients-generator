@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<PaymentGatewayProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentGatewayProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PaymentGatewayProfileDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class PaymentGatewayProfileGenerateSharedSecretRequestBuilder : RequestBuilder<PaymentGatewayProfile>
@@ -163,6 +174,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<PaymentGatewayProfile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentGatewayProfile>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -225,6 +240,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<PaymentGatewayConfiguration>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentGatewayConfiguration>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PaymentGatewayProfileListRequestBuilder : RequestBuilder<ListResponse<PaymentGatewayProfile>>
@@ -253,6 +272,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<PaymentGatewayProfile>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<PaymentGatewayProfile>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -305,6 +328,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<PaymentGatewayProfile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentGatewayProfile>((IDictionary<string,object>)result);
 		}
 	}
 

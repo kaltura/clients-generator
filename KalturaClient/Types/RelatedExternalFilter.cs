@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RelatedExternalFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._UtcOffsetEqual = data.TryGetValueSafe<int>("utcOffsetEqual");
+			    this._FreeText = data.TryGetValueSafe<string>("freeText");
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._DynamicOrderBy = ObjectFactory.Create<DynamicOrderBy>(data.TryGetValueSafe<IDictionary<string,object>>("dynamicOrderBy"));
+			    this._OrderBy = (AssetOrderBy)StringEnum.Parse(typeof(AssetOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

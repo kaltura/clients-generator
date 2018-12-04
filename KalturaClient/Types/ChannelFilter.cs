@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ChannelFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._KSql = data.TryGetValueSafe<string>("kSql");
+			    this._ExcludeWatched = data.TryGetValueSafe<bool>("excludeWatched");
+			    this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

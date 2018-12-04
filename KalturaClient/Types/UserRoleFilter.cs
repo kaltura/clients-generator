@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserRoleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._CurrentUserRoleIdsContains = data.TryGetValueSafe<bool>("currentUserRoleIdsContains");
+			    this._OrderBy = (UserRoleOrderBy)StringEnum.Parse(typeof(UserRoleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

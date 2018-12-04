@@ -78,6 +78,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class ConfigurationGroupDeviceDeleteRequestBuilder : RequestBuilder<bool>
@@ -123,6 +130,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class ConfigurationGroupDeviceGetRequestBuilder : RequestBuilder<ConfigurationGroupDevice>
@@ -165,6 +179,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ConfigurationGroupDevice>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ConfigurationGroupDevice>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -217,6 +235,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<ConfigurationGroupDevice>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<ConfigurationGroupDevice>>((IDictionary<string,object>)result);
 		}
 	}
 

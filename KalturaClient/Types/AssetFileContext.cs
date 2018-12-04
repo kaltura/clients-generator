@@ -85,6 +85,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetFileContext(IDictionary<string,object> data) : base(data)
+		{
+			    this._ViewLifeCycle = data.TryGetValueSafe<string>("viewLifeCycle");
+			    this._FullLifeCycle = data.TryGetValueSafe<string>("fullLifeCycle");
+			    this._IsOfflinePlayBack = data.TryGetValueSafe<bool>("isOfflinePlayBack");
+		}
 		#endregion
 
 		#region Methods

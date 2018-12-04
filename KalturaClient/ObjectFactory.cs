@@ -26,6 +26,7 @@
 // @ignore
 // ===================================================================================================
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
@@ -44,10 +45,10 @@ namespace Kaltura
 				return null;
 			}
 				
-			string className = xmlElement["objectType"].InnerText;
+			var className = xmlElement["objectType"].InnerText;
 			className = prefixRegex.Replace(className, "");
 			
-			Type type = Type.GetType("Kaltura.Types." + className);
+			var type = Type.GetType("Kaltura.Types." + className);
 			if (type == null)
 			{
 				type = typeof(T);
@@ -57,6 +58,27 @@ namespace Kaltura
 				throw new SerializationException("Invalid object type");
 			
 			return (T)System.Activator.CreateInstance(type, xmlElement);
+		}
+		public static T Create<T>(IDictionary<string,object> data) where T : ObjectBase
+		{
+			if (data == null || data["objectType"] == null)
+			{
+				return null;
+			}
+				
+			var className = (string)data["objectType"];
+			className = prefixRegex.Replace(className, "");
+			
+			var type = Type.GetType("Kaltura.Types." + className);
+			if (type == null)
+			{
+				type = typeof(T);
+			}
+			
+			if (type == null)
+				throw new SerializationException("Invalid object type");
+			
+			return (T)System.Activator.CreateInstance(type, data);
 		}
 		
 		public static IListResponse Create(XmlElement xmlElement)
@@ -247,6 +269,198 @@ namespace Kaltura
 					return new ListResponse<ParentalRule>(xmlElement);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(xmlElement);
+			}
+		
+			return null;
+		}
+		public static IListResponse Create(IDictionary<string,object> data)
+		{
+			if (data == null || data["objectType"] == null)
+			{
+				return null;
+			}
+			
+			string className = (string)data["objectType"];
+			switch (className)
+			{
+				case "KalturaSocialCommentListResponse":
+					return new ListResponse<SocialComment>(data);
+				case "KalturaSocialFriendActivityListResponse":
+					return new ListResponse<SocialFriendActivity>(data);
+				case "KalturaSocialActionListResponse":
+					return new ListResponse<SocialAction>(data);
+				case "KalturaHouseholdPaymentMethodListResponse":
+					return new ListResponse<HouseholdPaymentMethod>(data);
+				case "KalturaPaymentMethodProfileListResponse":
+					return new ListResponse<PaymentMethodProfile>(data);
+				case "KalturaHouseholdPaymentGatewayListResponse":
+					return new ListResponse<HouseholdPaymentGateway>(data);
+				case "KalturaPaymentGatewayProfileListResponse":
+					return new ListResponse<PaymentGatewayProfile>(data);
+				case "KalturaHouseholdDeviceListResponse":
+					return new ListResponse<HouseholdDevice>(data);
+				case "KalturaHouseholdUserListResponse":
+					return new ListResponse<HouseholdUser>(data);
+				case "KalturaHomeNetworkListResponse":
+					return new ListResponse<HomeNetwork>(data);
+				case "KalturaConfigurationsListResponse":
+					return new ListResponse<Configurations>(data);
+				case "KalturaConfigurationGroupDeviceListResponse":
+					return new ListResponse<ConfigurationGroupDevice>(data);
+				case "KalturaConfigurationGroupTagListResponse":
+					return new ListResponse<ConfigurationGroupTag>(data);
+				case "KalturaConfigurationGroupListResponse":
+					return new ListResponse<ConfigurationGroup>(data);
+				case "KalturaSSOAdapterProfileListResponse":
+					return new ListResponse<SSOAdapterProfile>(data);
+				case "KalturaUserInterestListResponse":
+					return new ListResponse<UserInterest>(data);
+				case "KalturaFavoriteListResponse":
+					return new ListResponse<Favorite>(data);
+				case "KalturaOTTUserListResponse":
+					return new ListResponse<OTTUser>(data);
+				case "KalturaPersonalListListResponse":
+					return new ListResponse<PersonalList>(data);
+				case "KalturaEngagementListResponse":
+					return new ListResponse<Engagement>(data);
+				case "KalturaEngagementAdapterListResponse":
+					return new ListResponse<EngagementAdapter>(data);
+				case "KalturaReminderListResponse":
+					return new ListResponse<Reminder>(data);
+				case "KalturaInboxMessageListResponse":
+					return new ListResponse<InboxMessage>(data);
+				case "KalturaFollowTvSeriesListResponse":
+					return new ListResponse<FollowTvSeries>(data);
+				case "KalturaAnnouncementListResponse":
+					return new ListResponse<Announcement>(data);
+				case "KalturaPersonalFeedListResponse":
+					return new ListResponse<PersonalFeed>(data);
+				case "KalturaTopicListResponse":
+					return new ListResponse<Topic>(data);
+				case "KalturaPartnerConfigurationListResponse":
+					return new ListResponse<PartnerConfiguration>(data);
+				case "KalturaGenericListResponse":
+					return new ListResponse<T>(data);
+				case "KalturaIntegerValueListResponse":
+					return new ListResponse<IntegerValue>(data);
+				case "KalturaReportListResponse":
+					return new ListResponse<Report>(data);
+				case "KalturaBulkListResponse":
+					return new ListResponse<Bulk>(data);
+				case "KalturaSegmentationTypeListResponse":
+					return new ListResponse<SegmentationType>(data);
+				case "KalturaUserSegmentListResponse":
+					return new ListResponse<UserSegment>(data);
+				case "KalturaSeriesRecordingListResponse":
+					return new ListResponse<SeriesRecording>(data);
+				case "KalturaHouseholdPremiumServiceListResponse":
+					return new ListResponse<HouseholdPremiumService>(data);
+				case "KalturaCDVRAdapterProfileListResponse":
+					return new ListResponse<CDVRAdapterProfile>(data);
+				case "KalturaRecordingListResponse":
+					return new ListResponse<Recording>(data);
+				case "KalturaBillingTransactionListResponse":
+					return new ListResponse<BillingTransaction>(data);
+				case "KalturaEntitlementListResponse":
+					return new ListResponse<Entitlement>(data);
+				case "KalturaAssetFilePpvListResponse":
+					return new ListResponse<AssetFilePpv>(data);
+				case "KalturaPpvListResponse":
+					return new ListResponse<Ppv>(data);
+				case "KalturaCollectionListResponse":
+					return new ListResponse<Collection>(data);
+				case "KalturaDiscountDetailsListResponse":
+					return new ListResponse<DiscountDetails>(data);
+				case "KalturaSubscriptionSetListResponse":
+					return new ListResponse<SubscriptionSet>(data);
+				case "KalturaProductPriceListResponse":
+					return new ListResponse<ProductPrice>(data);
+				case "KalturaCouponsGroupListResponse":
+					return new ListResponse<CouponsGroup>(data);
+				case "KalturaPriceDetailsListResponse":
+					return new ListResponse<PriceDetails>(data);
+				case "KalturaPricePlanListResponse":
+					return new ListResponse<PricePlan>(data);
+				case "KalturaSubscriptionListResponse":
+					return new ListResponse<Subscription>(data);
+				case "KalturaProductsPriceListResponse":
+					return new ListResponse<ProductPrice>(data);
+				case "KalturaAssetStructMetaListResponse":
+					return new ListResponse<AssetStructMeta>(data);
+				case "KalturaMediaFileTypeListResponse":
+					return new ListResponse<MediaFileType>(data);
+				case "KalturaChannelListResponse":
+					return new ListResponse<Channel>(data);
+				case "KalturaImageListResponse":
+					return new ListResponse<Image>(data);
+				case "KalturaRatioListResponse":
+					return new ListResponse<Ratio>(data);
+				case "KalturaTagListResponse":
+					return new ListResponse<Tag>(data);
+				case "KalturaAssetListResponse":
+					return new ListResponse<Asset>(data);
+				case "KalturaAssetStructListResponse":
+					return new ListResponse<AssetStruct>(data);
+				case "KalturaImageTypeListResponse":
+					return new ListResponse<ImageType>(data);
+				case "KalturaAssetCountListResponse":
+					return new ListResponse<AssetsCount>(data);
+				case "KalturaBookmarkListResponse":
+					return new ListResponse<Bookmark>(data);
+				case "KalturaAssetCommentListResponse":
+					return new ListResponse<AssetComment>(data);
+				case "KalturaAssetStatisticsListResponse":
+					return new ListResponse<AssetStatistics>(data);
+				case "KalturaMediaFileListResponse":
+					return new ListResponse<MediaFile>(data);
+				case "KalturaAssetHistoryListResponse":
+					return new ListResponse<AssetHistory>(data);
+				case "KalturaBusinessModuleRuleListResponse":
+					return new ListResponse<BusinessModuleRule>(data);
+				case "KalturaDrmProfileListResponse":
+					return new ListResponse<DrmProfile>(data);
+				case "KalturaPermissionListResponse":
+					return new ListResponse<Permission>(data);
+				case "KalturaMediaConcurrencyRuleListResponse":
+					return new ListResponse<MediaConcurrencyRule>(data);
+				case "KalturaAssetUserRuleListResponse":
+					return new ListResponse<AssetUserRule>(data);
+				case "KalturaCurrencyListResponse":
+					return new ListResponse<Currency>(data);
+				case "KalturaAssetRuleListResponse":
+					return new ListResponse<AssetRule>(data);
+				case "KalturaLanguageListResponse":
+					return new ListResponse<Language>(data);
+				case "KalturaMetaListResponse":
+					return new ListResponse<Meta>(data);
+				case "KalturaDeviceBrandListResponse":
+					return new ListResponse<DeviceBrand>(data);
+				case "KalturaCountryListResponse":
+					return new ListResponse<Country>(data);
+				case "KalturaOSSAdapterProfileListResponse":
+					return new ListResponse<OSSAdapterProfile>(data);
+				case "KalturaSearchHistoryListResponse":
+					return new ListResponse<SearchHistory>(data);
+				case "KalturaDeviceFamilyListResponse":
+					return new ListResponse<DeviceFamily>(data);
+				case "KalturaRegionListResponse":
+					return new ListResponse<Region>(data);
+				case "KalturaUserAssetRuleListResponse":
+					return new ListResponse<UserAssetRule>(data);
+				case "KalturaCDNAdapterProfileListResponse":
+					return new ListResponse<CDNAdapterProfile>(data);
+				case "KalturaExportTaskListResponse":
+					return new ListResponse<ExportTask>(data);
+				case "KalturaExternalChannelProfileListResponse":
+					return new ListResponse<ExternalChannelProfile>(data);
+				case "KalturaRecommendationProfileListResponse":
+					return new ListResponse<RecommendationProfile>(data);
+				case "KalturaRegistrySettingsListResponse":
+					return new ListResponse<RegistrySettings>(data);
+				case "KalturaParentalRuleListResponse":
+					return new ListResponse<ParentalRule>(data);
+				case "KalturaUserRoleListResponse":
+					return new ListResponse<UserRole>(data);
 			}
 		
 			return null;

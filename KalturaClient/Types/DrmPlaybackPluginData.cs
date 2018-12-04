@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DrmPlaybackPluginData(IDictionary<string,object> data) : base(data)
+		{
+			    this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), data.TryGetValueSafe<string>("scheme"));
+			    this._LicenseURL = data.TryGetValueSafe<string>("licenseURL");
+		}
 		#endregion
 
 		#region Methods

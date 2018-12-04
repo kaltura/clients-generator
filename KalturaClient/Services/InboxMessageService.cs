@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<InboxMessage>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<InboxMessage>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class InboxMessageListRequestBuilder : RequestBuilder<ListResponse<InboxMessage>>
@@ -128,6 +132,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<InboxMessage>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<InboxMessage>>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class InboxMessageUpdateStatusRequestBuilder : RequestBuilder<bool>
@@ -179,6 +187,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}

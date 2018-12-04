@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConcurrencyPartnerConfig(IDictionary<string,object> data) : base(data)
+		{
+			    this._DeviceFamilyIds = data.TryGetValueSafe<string>("deviceFamilyIds");
+			    this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), data.TryGetValueSafe<string>("evictionPolicy"));
+		}
 		#endregion
 
 		#region Methods

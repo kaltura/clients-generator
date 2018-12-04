@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public SocialConfig(XmlElement node) : base(node)
 		{
 		}
+
+		public SocialConfig(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

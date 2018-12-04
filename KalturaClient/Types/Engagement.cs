@@ -174,6 +174,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Engagement(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._TotalNumberOfRecipients = data.TryGetValueSafe<int>("totalNumberOfRecipients");
+			    this._Type = (EngagementType)StringEnum.Parse(typeof(EngagementType), data.TryGetValueSafe<string>("type"));
+			    this._AdapterId = data.TryGetValueSafe<int>("adapterId");
+			    this._AdapterDynamicData = data.TryGetValueSafe<string>("adapterDynamicData");
+			    this._IntervalSeconds = data.TryGetValueSafe<int>("intervalSeconds");
+			    this._UserList = data.TryGetValueSafe<string>("userList");
+			    this._SendTimeInSeconds = data.TryGetValueSafe<long>("sendTimeInSeconds");
+			    this._CouponGroupId = data.TryGetValueSafe<int>("couponGroupId");
+		}
 		#endregion
 
 		#region Methods

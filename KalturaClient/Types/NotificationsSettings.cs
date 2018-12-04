@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public NotificationsSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._PushNotificationEnabled = data.TryGetValueSafe<bool>("pushNotificationEnabled");
+			    this._PushFollowEnabled = data.TryGetValueSafe<bool>("pushFollowEnabled");
+			    this._MailEnabled = data.TryGetValueSafe<bool>("mailEnabled");
+			    this._SmsEnabled = data.TryGetValueSafe<bool>("smsEnabled");
+		}
 		#endregion
 
 		#region Methods

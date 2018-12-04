@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ProductPrice(IDictionary<string,object> data) : base(data)
+		{
+			    this._ProductId = data.TryGetValueSafe<string>("productId");
+			    this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("productType"));
+			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._PurchaseStatus = (PurchaseStatus)StringEnum.Parse(typeof(PurchaseStatus), data.TryGetValueSafe<string>("purchaseStatus"));
+		}
 		#endregion
 
 		#region Methods

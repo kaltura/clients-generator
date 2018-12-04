@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DynamicOrderBy(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._OrderBy = (MetaTagOrderBy)StringEnum.Parse(typeof(MetaTagOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

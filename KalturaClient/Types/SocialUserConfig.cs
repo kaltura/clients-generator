@@ -76,6 +76,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialUserConfig(IDictionary<string,object> data) : base(data)
+		{
+			    this._ActionPermissionItems = new List<ActionPermissionItem>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actionPermissionItems", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ActionPermissionItems.Add(ObjectFactory.Create<ActionPermissionItem>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

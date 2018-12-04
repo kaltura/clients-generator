@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<PriceDetails>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<PriceDetails>>((IDictionary<string,object>)result);
+		}
 	}
 
 

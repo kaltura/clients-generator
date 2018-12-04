@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FollowTvSeriesFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = (FollowTvSeriesOrderBy)StringEnum.Parse(typeof(FollowTvSeriesOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

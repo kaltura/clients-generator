@@ -514,6 +514,81 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Subscription(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Channels = new List<BaseChannel>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("channels", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Channels.Add(ObjectFactory.Create<BaseChannel>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._FileTypes = new List<IntegerValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("fileTypes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._FileTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._IsRenewable = data.TryGetValueSafe<bool>("isRenewable");
+			    this._RenewalsNumber = data.TryGetValueSafe<int>("renewalsNumber");
+			    this._IsInfiniteRenewal = data.TryGetValueSafe<bool>("isInfiniteRenewal");
+			    this._Price = ObjectFactory.Create<PriceDetails>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._DiscountModule = ObjectFactory.Create<DiscountModule>(data.TryGetValueSafe<IDictionary<string,object>>("discountModule"));
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._MultilingualDescription = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualDescription", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._MediaId = data.TryGetValueSafe<int>("mediaId");
+			    this._ProrityInOrder = data.TryGetValueSafe<long>("prorityInOrder");
+			    this._PricePlanIds = data.TryGetValueSafe<string>("pricePlanIds");
+			    this._PreviewModule = ObjectFactory.Create<PreviewModule>(data.TryGetValueSafe<IDictionary<string,object>>("previewModule"));
+			    this._HouseholdLimitationsId = data.TryGetValueSafe<int>("householdLimitationsId");
+			    this._GracePeriodMinutes = data.TryGetValueSafe<int>("gracePeriodMinutes");
+			    this._PremiumServices = new List<PremiumService>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("premiumServices", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._PremiumServices.Add(ObjectFactory.Create<PremiumService>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._MaxViewsNumber = data.TryGetValueSafe<int>("maxViewsNumber");
+			    this._ViewLifeCycle = data.TryGetValueSafe<int>("viewLifeCycle");
+			    this._WaiverPeriod = data.TryGetValueSafe<int>("waiverPeriod");
+			    this._IsWaiverEnabled = data.TryGetValueSafe<bool>("isWaiverEnabled");
+			    this._UserTypes = new List<OTTUserType>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("userTypes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._UserTypes.Add(ObjectFactory.Create<OTTUserType>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._CouponsGroups = new List<CouponsGroup>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("couponsGroups", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._ProductCodes = new List<ProductCode>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("productCodes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ProductCodes.Add(ObjectFactory.Create<ProductCode>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._DependencyType = (SubscriptionDependencyType)StringEnum.Parse(typeof(SubscriptionDependencyType), data.TryGetValueSafe<string>("dependencyType"));
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._IsCancellationBlocked = data.TryGetValueSafe<bool>("isCancellationBlocked");
+		}
 		#endregion
 
 		#region Methods

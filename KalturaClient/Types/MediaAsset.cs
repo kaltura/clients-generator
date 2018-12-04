@@ -142,6 +142,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MediaAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalIds = data.TryGetValueSafe<string>("externalIds");
+			    this._EntryId = data.TryGetValueSafe<string>("entryId");
+			    this._DeviceRuleId = data.TryGetValueSafe<int>("deviceRuleId");
+			    this._GeoBlockRuleId = data.TryGetValueSafe<int>("geoBlockRuleId");
+			    this._Status = data.TryGetValueSafe<bool>("status");
+			    this._InheritancePolicy = (AssetInheritancePolicy)StringEnum.Parse(typeof(AssetInheritancePolicy), data.TryGetValueSafe<string>("inheritancePolicy"));
+		}
 		#endregion
 
 		#region Methods

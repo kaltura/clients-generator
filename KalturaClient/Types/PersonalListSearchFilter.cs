@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PersonalListSearchFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PartnerListTypeIn = data.TryGetValueSafe<string>("partnerListTypeIn");
+		}
 		#endregion
 
 		#region Methods

@@ -85,6 +85,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MultilingualStringValue(IDictionary<string,object> data) : base(data)
+		{
+			    this._Value = data.TryGetValueSafe<string>("value");
+			    this._MultilingualValue = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualValue", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

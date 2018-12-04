@@ -149,6 +149,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SubscriptionEntitlement(IDictionary<string,object> data) : base(data)
+		{
+			    this._NextRenewalDate = data.TryGetValueSafe<long>("nextRenewalDate");
+			    this._IsRenewableForPurchase = data.TryGetValueSafe<bool>("isRenewableForPurchase");
+			    this._IsRenewable = data.TryGetValueSafe<bool>("isRenewable");
+			    this._IsInGracePeriod = data.TryGetValueSafe<bool>("isInGracePeriod");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._PaymentMethodId = data.TryGetValueSafe<int>("paymentMethodId");
+			    this._ScheduledSubscriptionId = data.TryGetValueSafe<long>("scheduledSubscriptionId");
+			    this._UnifiedPaymentId = data.TryGetValueSafe<long>("unifiedPaymentId");
+			    this._IsSuspended = data.TryGetValueSafe<bool>("isSuspended");
+		}
 		#endregion
 
 		#region Methods

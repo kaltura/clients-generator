@@ -108,6 +108,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Tag(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Type = data.TryGetValueSafe<int>("type");
+			    this._Tag = data.TryGetValueSafe<string>("tag");
+			    this._MultilingualTag = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualTag", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualTag.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

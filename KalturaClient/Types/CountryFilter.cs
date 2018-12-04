@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public CountryFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._IpEqual = data.TryGetValueSafe<string>("ipEqual");
+			    this._IpEqualCurrent = data.TryGetValueSafe<bool>("ipEqualCurrent");
+			    this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

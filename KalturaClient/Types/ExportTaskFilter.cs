@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ExportTaskFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

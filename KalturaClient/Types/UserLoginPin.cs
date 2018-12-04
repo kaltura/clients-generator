@@ -95,6 +95,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserLoginPin(IDictionary<string,object> data) : base(data)
+		{
+			    this._PinCode = data.TryGetValueSafe<string>("pinCode");
+			    this._ExpirationTime = data.TryGetValueSafe<long>("expirationTime");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+		}
 		#endregion
 
 		#region Methods

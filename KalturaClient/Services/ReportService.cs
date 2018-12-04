@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Report>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Report>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class ReportListRequestBuilder : RequestBuilder<ListResponse<Report>>
@@ -127,6 +131,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Report>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Report>>((IDictionary<string,object>)result);
 		}
 	}
 

@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public ContentResource(XmlElement node) : base(node)
 		{
 		}
+
+		public ContentResource(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

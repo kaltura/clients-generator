@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<UnifiedPaymentRenewal>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<UnifiedPaymentRenewal>((IDictionary<string,object>)result);
+		}
 	}
 
 

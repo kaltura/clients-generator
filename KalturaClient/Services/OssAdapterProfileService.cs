@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OSSAdapterProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OSSAdapterProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OssAdapterProfileDeleteRequestBuilder : RequestBuilder<bool>
@@ -118,6 +122,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -164,6 +175,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OSSAdapterProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OSSAdapterProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OssAdapterProfileGetRequestBuilder : RequestBuilder<OSSAdapterProfile>
@@ -207,6 +222,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OSSAdapterProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OSSAdapterProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OssAdapterProfileListRequestBuilder : RequestBuilder<ListResponse<OSSAdapterProfile>>
@@ -235,6 +254,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<OSSAdapterProfile>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<OSSAdapterProfile>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -287,6 +310,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OSSAdapterProfile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OSSAdapterProfile>((IDictionary<string,object>)result);
 		}
 	}
 

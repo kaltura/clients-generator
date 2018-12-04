@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public NetworkActionStatus(IDictionary<string,object> data) : base(data)
+		{
+			    this._Status = (SocialStatus)StringEnum.Parse(typeof(SocialStatus), data.TryGetValueSafe<string>("status"));
+			    this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), data.TryGetValueSafe<string>("network"));
+		}
 		#endregion
 
 		#region Methods

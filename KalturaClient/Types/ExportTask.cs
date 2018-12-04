@@ -197,6 +197,25 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ExportTask(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Alias = data.TryGetValueSafe<string>("alias");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._DataType = (ExportDataType)StringEnum.Parse(typeof(ExportDataType), data.TryGetValueSafe<string>("dataType"));
+			    this._Filter = data.TryGetValueSafe<string>("filter");
+			    this._ExportType = (ExportType)StringEnum.Parse(typeof(ExportType), data.TryGetValueSafe<string>("exportType"));
+			    this._Frequency = data.TryGetValueSafe<long>("frequency");
+			    this._NotificationUrl = data.TryGetValueSafe<string>("notificationUrl");
+			    this._VodTypes = new List<IntegerValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("vodTypes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._VodTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+		}
 		#endregion
 
 		#region Methods

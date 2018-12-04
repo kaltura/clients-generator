@@ -142,6 +142,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetStatistics(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<int>("assetId");
+			    this._Likes = data.TryGetValueSafe<int>("likes");
+			    this._Views = data.TryGetValueSafe<int>("views");
+			    this._RatingCount = data.TryGetValueSafe<int>("ratingCount");
+			    this._Rating = data.TryGetValueSafe<float>("rating");
+			    this._BuzzScore = ObjectFactory.Create<BuzzScore>(data.TryGetValueSafe<IDictionary<string,object>>("buzzScore"));
+		}
 		#endregion
 
 		#region Methods

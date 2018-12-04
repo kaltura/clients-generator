@@ -173,6 +173,20 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AppToken(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Expiry = data.TryGetValueSafe<int>("expiry");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._SessionDuration = data.TryGetValueSafe<int>("sessionDuration");
+			    this._HashType = (AppTokenHashType)StringEnum.Parse(typeof(AppTokenHashType), data.TryGetValueSafe<string>("hashType"));
+			    this._SessionPrivileges = data.TryGetValueSafe<string>("sessionPrivileges");
+			    this._Token = data.TryGetValueSafe<string>("token");
+			    this._SessionUserId = data.TryGetValueSafe<string>("sessionUserId");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

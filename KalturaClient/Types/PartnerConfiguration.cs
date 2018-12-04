@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public PartnerConfiguration(XmlElement node) : base(node)
 		{
 		}
+
+		public PartnerConfiguration(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

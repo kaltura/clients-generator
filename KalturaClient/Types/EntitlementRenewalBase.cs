@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public EntitlementRenewalBase(IDictionary<string,object> data) : base(data)
+		{
+			    this._Price = data.TryGetValueSafe<float>("price");
+			    this._PurchaseId = data.TryGetValueSafe<long>("purchaseId");
+			    this._SubscriptionId = data.TryGetValueSafe<long>("subscriptionId");
+		}
 		#endregion
 
 		#region Methods

@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialCommentFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._SocialPlatformEqual = (SocialPlatform)StringEnum.Parse(typeof(SocialPlatform), data.TryGetValueSafe<string>("socialPlatformEqual"));
+			    this._CreateDateGreaterThan = data.TryGetValueSafe<long>("createDateGreaterThan");
+			    this._OrderBy = (SocialCommentOrderBy)StringEnum.Parse(typeof(SocialCommentOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

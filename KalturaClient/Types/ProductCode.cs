@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ProductCode(IDictionary<string,object> data) : base(data)
+		{
+			    this._InappProvider = data.TryGetValueSafe<string>("inappProvider");
+			    this._Code = data.TryGetValueSafe<string>("code");
+		}
 		#endregion
 
 		#region Methods

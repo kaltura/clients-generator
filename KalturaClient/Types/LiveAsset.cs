@@ -261,6 +261,27 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LiveAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._EnableCdvrState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableCdvrState"));
+			    this._EnableCatchUpState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableCatchUpState"));
+			    this._EnableStartOverState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableStartOverState"));
+			    this._BufferCatchUpSetting = data.TryGetValueSafe<long>("bufferCatchUpSetting");
+			    this._BufferTrickPlaySetting = data.TryGetValueSafe<long>("bufferTrickPlaySetting");
+			    this._EnableRecordingPlaybackNonEntitledChannelState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableRecordingPlaybackNonEntitledChannelState"));
+			    this._EnableTrickPlayState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableTrickPlayState"));
+			    this._ExternalEpgIngestId = data.TryGetValueSafe<string>("externalEpgIngestId");
+			    this._ExternalCdvrId = data.TryGetValueSafe<string>("externalCdvrId");
+			    this._EnableCdvr = data.TryGetValueSafe<bool>("enableCdvr");
+			    this._EnableCatchUp = data.TryGetValueSafe<bool>("enableCatchUp");
+			    this._EnableStartOver = data.TryGetValueSafe<bool>("enableStartOver");
+			    this._CatchUpBuffer = data.TryGetValueSafe<long>("catchUpBuffer");
+			    this._TrickPlayBuffer = data.TryGetValueSafe<long>("trickPlayBuffer");
+			    this._EnableRecordingPlaybackNonEntitledChannel = data.TryGetValueSafe<bool>("enableRecordingPlaybackNonEntitledChannel");
+			    this._EnableTrickPlay = data.TryGetValueSafe<bool>("enableTrickPlay");
+			    this._ChannelType = (LinearChannelType)StringEnum.Parse(typeof(LinearChannelType), data.TryGetValueSafe<string>("channelType"));
+		}
 		#endregion
 
 		#region Methods

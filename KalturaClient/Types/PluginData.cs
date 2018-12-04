@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public PluginData(XmlElement node) : base(node)
 		{
 		}
+
+		public PluginData(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConfigurationIdentifier(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+		}
 		#endregion
 
 		#region Methods

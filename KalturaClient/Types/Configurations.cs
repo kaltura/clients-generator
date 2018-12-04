@@ -174,6 +174,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Configurations(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
+			    this._AppName = data.TryGetValueSafe<string>("appName");
+			    this._ClientVersion = data.TryGetValueSafe<string>("clientVersion");
+			    this._Platform = (Platform)StringEnum.Parse(typeof(Platform), data.TryGetValueSafe<string>("platform"));
+			    this._ExternalPushId = data.TryGetValueSafe<string>("externalPushId");
+			    this._IsForceUpdate = data.TryGetValueSafe<bool>("isForceUpdate");
+			    this._Content = data.TryGetValueSafe<string>("content");
+		}
 		#endregion
 
 		#region Methods

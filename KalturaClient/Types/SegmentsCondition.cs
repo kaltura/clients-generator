@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SegmentsCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._SegmentsIds = data.TryGetValueSafe<string>("segmentsIds");
+		}
 		#endregion
 
 		#region Methods

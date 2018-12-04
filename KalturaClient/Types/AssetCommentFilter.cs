@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetCommentFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<int>("assetIdEqual");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._OrderBy = (AssetCommentOrderBy)StringEnum.Parse(typeof(AssetCommentOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

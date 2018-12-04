@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OTTCategory>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTCategory>((IDictionary<string,object>)result);
+		}
 	}
 
 

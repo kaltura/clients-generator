@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SearchAssetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+		}
 		#endregion
 
 		#region Methods

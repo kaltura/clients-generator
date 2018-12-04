@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ApiExceptionArg(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Value = data.TryGetValueSafe<string>("value");
+		}
 		#endregion
 
 		#region Methods

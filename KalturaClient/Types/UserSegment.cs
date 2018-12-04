@@ -85,6 +85,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserSegment(IDictionary<string,object> data) : base(data)
+		{
+			    this._SegmentId = data.TryGetValueSafe<long>("segmentId");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+		}
 		#endregion
 
 		#region Methods

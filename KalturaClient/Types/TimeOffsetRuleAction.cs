@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public TimeOffsetRuleAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._Offset = data.TryGetValueSafe<int>("offset");
+			    this._TimeZone = data.TryGetValueSafe<bool>("timeZone");
+		}
 		#endregion
 
 		#region Methods

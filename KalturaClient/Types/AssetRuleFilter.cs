@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetRuleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConditionsContainType = (RuleConditionType)StringEnum.Parse(typeof(RuleConditionType), data.TryGetValueSafe<string>("conditionsContainType"));
+			    this._AssetApplied = ObjectFactory.Create<SlimAsset>(data.TryGetValueSafe<IDictionary<string,object>>("assetApplied"));
+			    this._OrderBy = (AssetRuleOrderBy)StringEnum.Parse(typeof(AssetRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

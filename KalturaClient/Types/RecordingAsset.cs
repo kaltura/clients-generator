@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RecordingAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._RecordingId = data.TryGetValueSafe<string>("recordingId");
+			    this._RecordingType = (RecordingType)StringEnum.Parse(typeof(RecordingType), data.TryGetValueSafe<string>("recordingType"));
+		}
 		#endregion
 
 		#region Methods

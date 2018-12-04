@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MonetizationCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._MinValue = data.TryGetValueSafe<int>("minValue");
+			    this._MaxValue = data.TryGetValueSafe<int>("maxValue");
+			    this._Days = data.TryGetValueSafe<int>("days");
+			    this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), data.TryGetValueSafe<string>("type"));
+			    this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), data.TryGetValueSafe<string>("operator"));
+		}
 		#endregion
 
 		#region Methods

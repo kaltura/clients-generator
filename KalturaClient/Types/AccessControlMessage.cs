@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AccessControlMessage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._Code = data.TryGetValueSafe<string>("code");
+		}
 		#endregion
 
 		#region Methods

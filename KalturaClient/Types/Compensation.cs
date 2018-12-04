@@ -141,6 +141,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Compensation(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._SubscriptionId = data.TryGetValueSafe<long>("subscriptionId");
+			    this._CompensationType = (CompensationType)StringEnum.Parse(typeof(CompensationType), data.TryGetValueSafe<string>("compensationType"));
+			    this._Amount = data.TryGetValueSafe<float>("amount");
+			    this._TotalRenewalIterations = data.TryGetValueSafe<int>("totalRenewalIterations");
+			    this._AppliedRenewalIterations = data.TryGetValueSafe<int>("appliedRenewalIterations");
+			    this._PurchaseId = data.TryGetValueSafe<int>("purchaseId");
+		}
 		#endregion
 
 		#region Methods

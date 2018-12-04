@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SubscriptionPrice(IDictionary<string,object> data) : base(data)
+		{
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+		}
 		#endregion
 
 		#region Methods

@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FavoriteFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaTypeEqual = data.TryGetValueSafe<int>("mediaTypeEqual");
+			    this._MediaIdIn = data.TryGetValueSafe<string>("mediaIdIn");
+			    this._UdidEqualCurrent = data.TryGetValueSafe<bool>("udidEqualCurrent");
+			    this._OrderBy = (FavoriteOrderBy)StringEnum.Parse(typeof(FavoriteOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

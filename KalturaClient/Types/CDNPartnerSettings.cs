@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public CDNPartnerSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._DefaultAdapterId = data.TryGetValueSafe<int>("defaultAdapterId");
+			    this._DefaultRecordingAdapterId = data.TryGetValueSafe<int>("defaultRecordingAdapterId");
+		}
 		#endregion
 
 		#region Methods

@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PreviewModule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._LifeCycle = data.TryGetValueSafe<int>("lifeCycle");
+			    this._NonRenewablePeriod = data.TryGetValueSafe<int>("nonRenewablePeriod");
+		}
 		#endregion
 
 		#region Methods

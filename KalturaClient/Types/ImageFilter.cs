@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ImageFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._ImageObjectIdEqual = data.TryGetValueSafe<long>("imageObjectIdEqual");
+			    this._ImageObjectTypeEqual = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), data.TryGetValueSafe<string>("imageObjectTypeEqual"));
+			    this._IsDefaultEqual = data.TryGetValueSafe<bool>("isDefaultEqual");
+			    this._OrderBy = (ImageOrderBy)StringEnum.Parse(typeof(ImageOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

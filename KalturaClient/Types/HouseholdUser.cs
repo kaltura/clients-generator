@@ -132,6 +132,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdUser(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdId = data.TryGetValueSafe<int>("householdId");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._IsMaster = data.TryGetValueSafe<bool>("isMaster");
+			    this._HouseholdMasterUsername = data.TryGetValueSafe<string>("householdMasterUsername");
+			    this._Status = (HouseholdUserStatus)StringEnum.Parse(typeof(HouseholdUserStatus), data.TryGetValueSafe<string>("status"));
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+		}
 		#endregion
 
 		#region Methods

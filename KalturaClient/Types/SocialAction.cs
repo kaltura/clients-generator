@@ -136,6 +136,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._ActionType = (SocialActionType)StringEnum.Parse(typeof(SocialActionType), data.TryGetValueSafe<string>("actionType"));
+			    this._Time = data.TryGetValueSafe<long>("time");
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+			    this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetType"));
+			    this._Url = data.TryGetValueSafe<string>("url");
+		}
 		#endregion
 
 		#region Methods

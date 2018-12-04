@@ -212,6 +212,21 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DeviceReport(IDictionary<string,object> data) : base(data)
+		{
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
+			    this._Udid = data.TryGetValueSafe<string>("udid");
+			    this._PushParameters = ObjectFactory.Create<PushParams>(data.TryGetValueSafe<IDictionary<string,object>>("pushParameters"));
+			    this._VersionNumber = data.TryGetValueSafe<string>("versionNumber");
+			    this._VersionPlatform = (Platform)StringEnum.Parse(typeof(Platform), data.TryGetValueSafe<string>("versionPlatform"));
+			    this._VersionAppName = data.TryGetValueSafe<string>("versionAppName");
+			    this._LastAccessIP = data.TryGetValueSafe<string>("lastAccessIP");
+			    this._LastAccessDate = data.TryGetValueSafe<long>("lastAccessDate");
+			    this._UserAgent = data.TryGetValueSafe<string>("userAgent");
+			    this._OperationSystem = data.TryGetValueSafe<string>("operationSystem");
+		}
 		#endregion
 
 		#region Methods

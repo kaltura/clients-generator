@@ -62,6 +62,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<CDNPartnerSettings>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<CDNPartnerSettings>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class CdnPartnerSettingsUpdateRequestBuilder : RequestBuilder<CDNPartnerSettings>
@@ -104,6 +108,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<CDNPartnerSettings>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<CDNPartnerSettings>((IDictionary<string,object>)result);
 		}
 	}
 

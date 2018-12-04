@@ -85,6 +85,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<AssetFileContext>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetFileContext>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class AssetFilePlayManifestRequestBuilder : RequestBuilder<AssetFile>
@@ -172,6 +176,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AssetFile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetFile>((IDictionary<string,object>)result);
 		}
 	}
 

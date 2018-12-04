@@ -104,6 +104,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DynamicChannel(IDictionary<string,object> data) : base(data)
+		{
+			    this._KSql = data.TryGetValueSafe<string>("kSql");
+			    this._AssetTypes = new List<IntegerValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("assetTypes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._AssetTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._GroupBy = ObjectFactory.Create<AssetGroupBy>(data.TryGetValueSafe<IDictionary<string,object>>("groupBy"));
+		}
 		#endregion
 
 		#region Methods

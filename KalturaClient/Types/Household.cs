@@ -208,6 +208,25 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Household(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._HouseholdLimitationsId = data.TryGetValueSafe<int>("householdLimitationsId");
+			    this._DevicesLimit = data.TryGetValueSafe<int>("devicesLimit");
+			    this._UsersLimit = data.TryGetValueSafe<int>("usersLimit");
+			    this._ConcurrentLimit = data.TryGetValueSafe<int>("concurrentLimit");
+			    this._RegionId = data.TryGetValueSafe<int>("regionId");
+			    this._State = (HouseholdState)StringEnum.Parse(typeof(HouseholdState), data.TryGetValueSafe<string>("state"));
+			    this._IsFrequencyEnabled = data.TryGetValueSafe<bool>("isFrequencyEnabled");
+			    this._FrequencyNextDeviceAction = data.TryGetValueSafe<long>("frequencyNextDeviceAction");
+			    this._FrequencyNextUserAction = data.TryGetValueSafe<long>("frequencyNextUserAction");
+			    this._Restriction = (HouseholdRestriction)StringEnum.Parse(typeof(HouseholdRestriction), data.TryGetValueSafe<string>("restriction"));
+			    this._RoleId = data.TryGetValueSafe<int>("roleId");
+		}
 		#endregion
 
 		#region Methods

@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Compensation>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Compensation>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class CompensationDeleteRequestBuilder : RequestBuilder<object>
@@ -116,6 +120,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -161,6 +169,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Compensation>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Compensation>((IDictionary<string,object>)result);
 		}
 	}
 

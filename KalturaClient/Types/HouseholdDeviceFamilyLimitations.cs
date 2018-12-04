@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdDeviceFamilyLimitations(IDictionary<string,object> data) : base(data)
+		{
+			    this._Frequency = data.TryGetValueSafe<int>("frequency");
+			    this._DeviceLimit = data.TryGetValueSafe<int>("deviceLimit");
+			    this._ConcurrentLimit = data.TryGetValueSafe<int>("concurrentLimit");
+		}
 		#endregion
 
 		#region Methods

@@ -296,6 +296,27 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public NotificationsPartnerSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._PushNotificationEnabled = data.TryGetValueSafe<bool>("pushNotificationEnabled");
+			    this._PushSystemAnnouncementsEnabled = data.TryGetValueSafe<bool>("pushSystemAnnouncementsEnabled");
+			    this._PushStartHour = data.TryGetValueSafe<int>("pushStartHour");
+			    this._PushEndHour = data.TryGetValueSafe<int>("pushEndHour");
+			    this._InboxEnabled = data.TryGetValueSafe<bool>("inboxEnabled");
+			    this._MessageTTLDays = data.TryGetValueSafe<int>("messageTTLDays");
+			    this._AutomaticIssueFollowNotification = data.TryGetValueSafe<bool>("automaticIssueFollowNotification");
+			    this._TopicExpirationDurationDays = data.TryGetValueSafe<int>("topicExpirationDurationDays");
+			    this._ReminderEnabled = data.TryGetValueSafe<bool>("reminderEnabled");
+			    this._ReminderOffsetSec = data.TryGetValueSafe<int>("reminderOffsetSec");
+			    this._PushAdapterUrl = data.TryGetValueSafe<string>("pushAdapterUrl");
+			    this._ChurnMailTemplateName = data.TryGetValueSafe<string>("churnMailTemplateName");
+			    this._ChurnMailSubject = data.TryGetValueSafe<string>("churnMailSubject");
+			    this._SenderEmail = data.TryGetValueSafe<string>("senderEmail");
+			    this._MailSenderName = data.TryGetValueSafe<string>("mailSenderName");
+			    this._MailNotificationAdapterId = data.TryGetValueSafe<long>("mailNotificationAdapterId");
+			    this._SmsEnabled = data.TryGetValueSafe<bool>("smsEnabled");
+		}
 		#endregion
 
 		#region Methods

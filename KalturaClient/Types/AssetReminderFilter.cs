@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetReminderFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = (AssetReminderOrderBy)StringEnum.Parse(typeof(AssetReminderOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

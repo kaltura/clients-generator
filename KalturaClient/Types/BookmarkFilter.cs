@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BookmarkFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._OrderBy = (BookmarkOrderBy)StringEnum.Parse(typeof(BookmarkOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

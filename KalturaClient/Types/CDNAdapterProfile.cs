@@ -168,6 +168,22 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public CDNAdapterProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._BaseUrl = data.TryGetValueSafe<string>("baseUrl");
+			    this._Settings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("settings", new Dictionary<string, object>()))
+			    {
+			        this._Settings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+		}
 		#endregion
 
 		#region Methods

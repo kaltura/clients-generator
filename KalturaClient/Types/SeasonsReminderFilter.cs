@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SeasonsReminderFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._SeriesIdEqual = data.TryGetValueSafe<string>("seriesIdEqual");
+			    this._SeasonNumberIn = data.TryGetValueSafe<string>("seasonNumberIn");
+			    this._EpgChannelIdEqual = data.TryGetValueSafe<long>("epgChannelIdEqual");
+		}
 		#endregion
 
 		#region Methods

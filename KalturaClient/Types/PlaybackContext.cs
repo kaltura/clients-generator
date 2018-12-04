@@ -112,6 +112,28 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PlaybackContext(IDictionary<string,object> data) : base(data)
+		{
+			    this._Sources = new List<PlaybackSource>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("sources", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Sources.Add(ObjectFactory.Create<PlaybackSource>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<RuleAction>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<RuleAction>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Messages = new List<AccessControlMessage>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("messages", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Messages.Add(ObjectFactory.Create<AccessControlMessage>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

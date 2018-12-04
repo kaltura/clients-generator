@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ChannelExternalFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._UtcOffsetEqual = data.TryGetValueSafe<float>("utcOffsetEqual");
+			    this._FreeText = data.TryGetValueSafe<string>("freeText");
+		}
 		#endregion
 
 		#region Methods

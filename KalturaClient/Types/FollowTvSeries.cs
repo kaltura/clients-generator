@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FollowTvSeries(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<int>("assetId");
+		}
 		#endregion
 
 		#region Methods

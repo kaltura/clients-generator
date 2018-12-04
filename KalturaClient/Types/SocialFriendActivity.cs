@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialFriendActivity(IDictionary<string,object> data) : base(data)
+		{
+			    this._UserFullName = data.TryGetValueSafe<string>("userFullName");
+			    this._UserPictureUrl = data.TryGetValueSafe<string>("userPictureUrl");
+			    this._SocialAction = ObjectFactory.Create<SocialAction>(data.TryGetValueSafe<IDictionary<string,object>>("socialAction"));
+		}
 		#endregion
 
 		#region Methods

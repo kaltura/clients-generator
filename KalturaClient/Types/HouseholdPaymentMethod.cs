@@ -132,6 +132,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdPaymentMethod(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._Details = data.TryGetValueSafe<string>("details");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._PaymentMethodProfileId = data.TryGetValueSafe<int>("paymentMethodProfileId");
+		}
 		#endregion
 
 		#region Methods

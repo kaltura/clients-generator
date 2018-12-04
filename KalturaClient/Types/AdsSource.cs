@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AdsSource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Type = data.TryGetValueSafe<string>("type");
+			    this._AdsPolicy = (AdsPolicy)StringEnum.Parse(typeof(AdsPolicy), data.TryGetValueSafe<string>("adsPolicy"));
+			    this._AdsParam = data.TryGetValueSafe<string>("adsParam");
+		}
 		#endregion
 
 		#region Methods

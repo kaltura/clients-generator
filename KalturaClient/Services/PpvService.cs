@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Ppv>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Ppv>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PpvListRequestBuilder : RequestBuilder<ListResponse<Ppv>>
@@ -118,6 +122,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Ppv>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Ppv>>((IDictionary<string,object>)result);
 		}
 	}
 

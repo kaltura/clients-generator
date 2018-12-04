@@ -154,6 +154,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Image(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Version = data.TryGetValueSafe<string>("version");
+			    this._ImageTypeId = data.TryGetValueSafe<long>("imageTypeId");
+			    this._ImageObjectId = data.TryGetValueSafe<long>("imageObjectId");
+			    this._ImageObjectType = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), data.TryGetValueSafe<string>("imageObjectType"));
+			    this._Status = (ImageStatus)StringEnum.Parse(typeof(ImageStatus), data.TryGetValueSafe<string>("status"));
+			    this._Url = data.TryGetValueSafe<string>("url");
+			    this._ContentId = data.TryGetValueSafe<string>("contentId");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+		}
 		#endregion
 
 		#region Methods

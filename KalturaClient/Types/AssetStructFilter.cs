@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetStructFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._MetaIdEqual = data.TryGetValueSafe<long>("metaIdEqual");
+			    this._IsProtectedEqual = data.TryGetValueSafe<bool>("isProtectedEqual");
+			    this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

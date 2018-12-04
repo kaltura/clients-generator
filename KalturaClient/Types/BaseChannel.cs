@@ -67,6 +67,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BaseChannel(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+		}
 		#endregion
 
 		#region Methods

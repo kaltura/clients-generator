@@ -112,6 +112,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetHistory(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+			    this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetType"));
+			    this._Position = data.TryGetValueSafe<int>("position");
+			    this._Duration = data.TryGetValueSafe<int>("duration");
+			    this._WatchedDate = data.TryGetValueSafe<long>("watchedDate");
+			    this._FinishedWatching = data.TryGetValueSafe<bool>("finishedWatching");
+		}
 		#endregion
 
 		#region Methods

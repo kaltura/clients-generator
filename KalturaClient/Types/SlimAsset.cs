@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SlimAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Type = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("type"));
+		}
 		#endregion
 
 		#region Methods

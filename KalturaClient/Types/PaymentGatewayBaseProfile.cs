@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PaymentGatewayBaseProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._SelectedBy = (HouseholdPaymentGatewaySelectedBy)StringEnum.Parse(typeof(HouseholdPaymentGatewaySelectedBy), data.TryGetValueSafe<string>("selectedBy"));
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdUserFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdIdEqual = data.TryGetValueSafe<int>("householdIdEqual");
+			    this._OrderBy = (HouseholdUserOrderBy)StringEnum.Parse(typeof(HouseholdUserOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

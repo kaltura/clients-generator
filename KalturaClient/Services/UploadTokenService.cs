@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<UploadToken>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<UploadToken>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class UploadTokenUploadRequestBuilder : RequestBuilder<UploadToken>
@@ -126,6 +130,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<UploadToken>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<UploadToken>((IDictionary<string,object>)result);
 		}
 	}
 

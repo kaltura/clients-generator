@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetFilePpvFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
+			    this._AssetFileIdEqual = data.TryGetValueSafe<long>("assetFileIdEqual");
+			    this._OrderBy = (AssetFilePpvOrderBy)StringEnum.Parse(typeof(AssetFilePpvOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

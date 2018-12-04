@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BulkFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._StatusEqual = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), data.TryGetValueSafe<string>("statusEqual"));
+			    this._OrderBy = (BulkOrderBy)StringEnum.Parse(typeof(BulkOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

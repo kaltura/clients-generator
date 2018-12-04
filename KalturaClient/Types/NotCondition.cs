@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public NotCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Not = data.TryGetValueSafe<bool>("not");
+		}
 		#endregion
 
 		#region Methods

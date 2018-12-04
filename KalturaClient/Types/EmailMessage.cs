@@ -188,6 +188,24 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public EmailMessage(IDictionary<string,object> data) : base(data)
+		{
+			    this._TemplateName = data.TryGetValueSafe<string>("templateName");
+			    this._Subject = data.TryGetValueSafe<string>("subject");
+			    this._FirstName = data.TryGetValueSafe<string>("firstName");
+			    this._LastName = data.TryGetValueSafe<string>("lastName");
+			    this._SenderName = data.TryGetValueSafe<string>("senderName");
+			    this._SenderFrom = data.TryGetValueSafe<string>("senderFrom");
+			    this._SenderTo = data.TryGetValueSafe<string>("senderTo");
+			    this._BccAddress = data.TryGetValueSafe<string>("bccAddress");
+			    this._ExtraParameters = new List<KeyValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("extraParameters", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ExtraParameters.Add(ObjectFactory.Create<KeyValue>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

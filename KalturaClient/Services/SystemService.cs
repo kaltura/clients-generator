@@ -62,6 +62,10 @@ namespace Kaltura.Services
 		{
 			return long.Parse(result.InnerText);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return (long)result;
+		}
 	}
 
 	public class SystemGetVersionRequestBuilder : RequestBuilder<string>
@@ -91,6 +95,10 @@ namespace Kaltura.Services
 		{
 			return result.InnerText;
 		}
+		public override object DeserializeObject(object result)
+		{
+			return (string)result;
+		}
 	}
 
 	public class SystemPingRequestBuilder : RequestBuilder<bool>
@@ -119,6 +127,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}

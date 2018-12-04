@@ -62,6 +62,10 @@ namespace Kaltura.Services
 		{
 			return result.InnerText;
 		}
+		public override object DeserializeObject(object result)
+		{
+			return (string)result;
+		}
 	}
 
 	public class PermissionListRequestBuilder : RequestBuilder<ListResponse<Permission>>
@@ -104,6 +108,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Permission>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Permission>>((IDictionary<string,object>)result);
 		}
 	}
 

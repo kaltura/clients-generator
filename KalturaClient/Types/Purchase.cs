@@ -142,6 +142,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Purchase(IDictionary<string,object> data) : base(data)
+		{
+			    this._Currency = data.TryGetValueSafe<string>("currency");
+			    this._Price = data.TryGetValueSafe<float>("price");
+			    this._PaymentMethodId = data.TryGetValueSafe<int>("paymentMethodId");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._Coupon = data.TryGetValueSafe<string>("coupon");
+			    this._AdapterData = data.TryGetValueSafe<string>("adapterData");
+		}
 		#endregion
 
 		#region Methods

@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetFilePpv(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetFileId = data.TryGetValueSafe<long>("assetFileId");
+			    this._PpvModuleId = data.TryGetValueSafe<long>("ppvModuleId");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+		}
 		#endregion
 
 		#region Methods

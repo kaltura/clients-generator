@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ParentalRuleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), data.TryGetValueSafe<string>("entityReferenceEqual"));
+			    this._OrderBy = (ParentalRuleOrderBy)StringEnum.Parse(typeof(ParentalRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

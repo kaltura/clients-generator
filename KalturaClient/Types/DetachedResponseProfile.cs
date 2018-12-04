@@ -104,6 +104,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DetachedResponseProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Filter = ObjectFactory.Create<RelatedObjectFilter>(data.TryGetValueSafe<IDictionary<string,object>>("filter"));
+			    this._RelatedProfiles = new List<DetachedResponseProfile>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("relatedProfiles", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

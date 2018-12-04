@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LicensedUrlBaseRequest(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<string>("assetId");
+		}
 		#endregion
 
 		#region Methods

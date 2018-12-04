@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public HouseholdPremiumService(XmlElement node) : base(node)
 		{
 		}
+
+		public HouseholdPremiumService(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

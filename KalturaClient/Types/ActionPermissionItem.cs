@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ActionPermissionItem(IDictionary<string,object> data) : base(data)
+		{
+			    this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), data.TryGetValueSafe<string>("network"));
+			    this._ActionPrivacy = (SocialActionPrivacy)StringEnum.Parse(typeof(SocialActionPrivacy), data.TryGetValueSafe<string>("actionPrivacy"));
+			    this._Privacy = (SocialPrivacy)StringEnum.Parse(typeof(SocialPrivacy), data.TryGetValueSafe<string>("privacy"));
+			    this._Action = data.TryGetValueSafe<string>("action");
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public IpRangeCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._FromIP = data.TryGetValueSafe<string>("fromIP");
+			    this._ToIP = data.TryGetValueSafe<string>("toIP");
+		}
 		#endregion
 
 		#region Methods

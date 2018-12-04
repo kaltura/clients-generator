@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetFieldGroupBy(IDictionary<string,object> data) : base(data)
+		{
+			    this._Value = (GroupByField)StringEnum.Parse(typeof(GroupByField), data.TryGetValueSafe<string>("value"));
+		}
 		#endregion
 
 		#region Methods

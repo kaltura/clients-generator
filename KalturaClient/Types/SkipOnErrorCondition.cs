@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SkipOnErrorCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Condition = (SkipOptions)StringEnum.Parse(typeof(SkipOptions), data.TryGetValueSafe<string>("condition"));
+		}
 		#endregion
 
 		#region Methods

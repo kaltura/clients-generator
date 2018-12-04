@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialActionRate(IDictionary<string,object> data) : base(data)
+		{
+			    this._Rate = data.TryGetValueSafe<int>("rate");
+		}
 		#endregion
 
 		#region Methods

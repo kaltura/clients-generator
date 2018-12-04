@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ContentSource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Field = data.TryGetValueSafe<string>("field");
+		}
 		#endregion
 
 		#region Methods

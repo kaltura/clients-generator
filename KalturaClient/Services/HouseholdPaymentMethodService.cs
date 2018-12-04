@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<HouseholdPaymentMethod>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HouseholdPaymentMethod>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdPaymentMethodForceRemoveRequestBuilder : RequestBuilder<bool>
@@ -130,6 +134,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class HouseholdPaymentMethodListRequestBuilder : RequestBuilder<ListResponse<HouseholdPaymentMethod>>
@@ -158,6 +169,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<HouseholdPaymentMethod>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<HouseholdPaymentMethod>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -213,6 +228,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class HouseholdPaymentMethodSetAsDefaultRequestBuilder : RequestBuilder<bool>
@@ -264,6 +286,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}

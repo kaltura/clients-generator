@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public SkipCondition(XmlElement node) : base(node)
 		{
 		}
+
+		public SkipCondition(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

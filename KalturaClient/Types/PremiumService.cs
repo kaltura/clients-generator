@@ -81,6 +81,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PremiumService(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+		}
 		#endregion
 
 		#region Methods

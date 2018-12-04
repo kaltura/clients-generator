@@ -210,6 +210,27 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Meta(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._DataType = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), data.TryGetValueSafe<string>("dataType"));
+			    this._MultipleValue = data.TryGetValueSafe<bool>("multipleValue");
+			    this._IsProtected = data.TryGetValueSafe<bool>("isProtected");
+			    this._HelpText = data.TryGetValueSafe<string>("helpText");
+			    this._Features = data.TryGetValueSafe<string>("features");
+			    this._ParentId = data.TryGetValueSafe<string>("parentId");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

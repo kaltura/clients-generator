@@ -132,6 +132,20 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Region(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._LinearChannels = new List<RegionalChannel>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("linearChannels", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._LinearChannels.Add(ObjectFactory.Create<RegionalChannel>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

@@ -274,6 +274,31 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public OTTUser(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdId = data.TryGetValueSafe<int>("householdId");
+			    this._Email = data.TryGetValueSafe<string>("email");
+			    this._Address = data.TryGetValueSafe<string>("address");
+			    this._City = data.TryGetValueSafe<string>("city");
+			    this._CountryId = data.TryGetValueSafe<int>("countryId");
+			    this._Zip = data.TryGetValueSafe<string>("zip");
+			    this._Phone = data.TryGetValueSafe<string>("phone");
+			    this._AffiliateCode = data.TryGetValueSafe<string>("affiliateCode");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._UserType = ObjectFactory.Create<OTTUserType>(data.TryGetValueSafe<IDictionary<string,object>>("userType"));
+			    this._DynamicData = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("dynamicData", new Dictionary<string, object>()))
+			    {
+			        this._DynamicData[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._IsHouseholdMaster = data.TryGetValueSafe<bool>("isHouseholdMaster");
+			    this._SuspensionState = (HouseholdSuspensionState)StringEnum.Parse(typeof(HouseholdSuspensionState), data.TryGetValueSafe<string>("suspensionState"));
+			    this._UserState = (UserState)StringEnum.Parse(typeof(UserState), data.TryGetValueSafe<string>("userState"));
+			    this._RoleIds = data.TryGetValueSafe<string>("roleIds");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

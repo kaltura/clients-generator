@@ -85,6 +85,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdQuota(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdId = data.TryGetValueSafe<long>("householdId");
+			    this._TotalQuota = data.TryGetValueSafe<int>("totalQuota");
+			    this._AvailableQuota = data.TryGetValueSafe<int>("availableQuota");
+		}
 		#endregion
 
 		#region Methods

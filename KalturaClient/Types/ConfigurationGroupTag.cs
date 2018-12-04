@@ -95,6 +95,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConfigurationGroupTag(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._Tag = data.TryGetValueSafe<string>("tag");
+		}
 		#endregion
 
 		#region Methods

@@ -150,6 +150,26 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ContentScoreCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._MinScore = data.TryGetValueSafe<int>("minScore");
+			    this._MaxScore = data.TryGetValueSafe<int>("maxScore");
+			    this._Days = data.TryGetValueSafe<int>("days");
+			    this._Field = data.TryGetValueSafe<string>("field");
+			    this._Values = new List<StringValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("values", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Values.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<ContentActionCondition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<ContentActionCondition>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

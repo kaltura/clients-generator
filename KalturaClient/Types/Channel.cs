@@ -214,6 +214,32 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Channel(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._OldName = data.TryGetValueSafe<string>("oldName");
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._MultilingualDescription = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualDescription", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._OldDescription = data.TryGetValueSafe<string>("oldDescription");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._OrderBy = ObjectFactory.Create<ChannelOrder>(data.TryGetValueSafe<IDictionary<string,object>>("orderBy"));
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._SupportSegmentBasedOrdering = data.TryGetValueSafe<bool>("supportSegmentBasedOrdering");
+		}
 		#endregion
 
 		#region Methods

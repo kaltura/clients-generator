@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public BaseSegmentCondition(XmlElement node) : base(node)
 		{
 		}
+
+		public BaseSegmentCondition(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

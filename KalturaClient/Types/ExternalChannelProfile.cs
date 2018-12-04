@@ -155,6 +155,22 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ExternalChannelProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._FilterExpression = data.TryGetValueSafe<string>("filterExpression");
+			    this._RecommendationEngineId = data.TryGetValueSafe<int>("recommendationEngineId");
+			    this._Enrichments = new List<ChannelEnrichmentHolder>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("enrichments", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Enrichments.Add(ObjectFactory.Create<ChannelEnrichmentHolder>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

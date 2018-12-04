@@ -85,6 +85,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<Bulk>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Bulk>>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class BulkServeLogRequestBuilder : RequestBuilder<Bulk>
@@ -127,6 +131,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Bulk>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Bulk>((IDictionary<string,object>)result);
 		}
 	}
 

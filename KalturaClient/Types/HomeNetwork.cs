@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HomeNetwork(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+		}
 		#endregion
 
 		#region Methods

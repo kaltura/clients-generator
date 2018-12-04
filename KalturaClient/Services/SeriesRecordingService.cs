@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<SeriesRecording>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SeriesRecording>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SeriesRecordingCancelRequestBuilder : RequestBuilder<SeriesRecording>
@@ -118,6 +122,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<SeriesRecording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SeriesRecording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -171,6 +179,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<SeriesRecording>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SeriesRecording>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SeriesRecordingCancelBySeasonNumberRequestBuilder : RequestBuilder<SeriesRecording>
@@ -223,6 +235,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<SeriesRecording>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SeriesRecording>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SeriesRecordingDeleteRequestBuilder : RequestBuilder<SeriesRecording>
@@ -265,6 +281,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<SeriesRecording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SeriesRecording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -318,6 +338,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<SeriesRecording>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SeriesRecording>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SeriesRecordingListRequestBuilder : RequestBuilder<ListResponse<SeriesRecording>>
@@ -360,6 +384,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<SeriesRecording>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<SeriesRecording>>((IDictionary<string,object>)result);
 		}
 	}
 

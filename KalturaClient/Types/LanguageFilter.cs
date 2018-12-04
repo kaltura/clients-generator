@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LanguageFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._CodeIn = data.TryGetValueSafe<string>("codeIn");
+			    this._OrderBy = (LanguageOrderBy)StringEnum.Parse(typeof(LanguageOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

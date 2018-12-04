@@ -211,6 +211,22 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MediaFileType(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._Status = data.TryGetValueSafe<bool>("status");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._IsTrailer = data.TryGetValueSafe<bool>("isTrailer");
+			    this._StreamerType = (MediaFileStreamerType)StringEnum.Parse(typeof(MediaFileStreamerType), data.TryGetValueSafe<string>("streamerType"));
+			    this._DrmProfileId = data.TryGetValueSafe<int>("drmProfileId");
+			    this._Quality = (MediaFileTypeQuality)StringEnum.Parse(typeof(MediaFileTypeQuality), data.TryGetValueSafe<string>("quality"));
+			    this._VideoCodecs = data.TryGetValueSafe<string>("videoCodecs");
+			    this._AudioCodecs = data.TryGetValueSafe<string>("audioCodecs");
+		}
 		#endregion
 
 		#region Methods

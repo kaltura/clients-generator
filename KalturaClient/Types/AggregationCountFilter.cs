@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AggregationCountFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = (AggregationCountOrderBy)StringEnum.Parse(typeof(AggregationCountOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

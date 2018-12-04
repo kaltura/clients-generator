@@ -151,6 +151,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MediaImage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Ratio = data.TryGetValueSafe<string>("ratio");
+			    this._Width = data.TryGetValueSafe<int>("width");
+			    this._Height = data.TryGetValueSafe<int>("height");
+			    this._Url = data.TryGetValueSafe<string>("url");
+			    this._Version = data.TryGetValueSafe<int>("version");
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+		}
 		#endregion
 
 		#region Methods

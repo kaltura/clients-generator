@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public BaseResponseProfile(XmlElement node) : base(node)
 		{
 		}
+
+		public BaseResponseProfile(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

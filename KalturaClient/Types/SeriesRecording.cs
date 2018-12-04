@@ -168,6 +168,24 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SeriesRecording(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._EpgId = data.TryGetValueSafe<long>("epgId");
+			    this._ChannelId = data.TryGetValueSafe<long>("channelId");
+			    this._SeriesId = data.TryGetValueSafe<string>("seriesId");
+			    this._SeasonNumber = data.TryGetValueSafe<int>("seasonNumber");
+			    this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), data.TryGetValueSafe<string>("type"));
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._ExcludedSeasons = new List<IntegerValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("excludedSeasons", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ExcludedSeasons.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

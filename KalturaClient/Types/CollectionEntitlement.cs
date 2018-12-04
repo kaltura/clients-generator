@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public CollectionEntitlement(XmlElement node) : base(node)
 		{
 		}
+
+		public CollectionEntitlement(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

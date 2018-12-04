@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public EntitlementFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ProductTypeEqual = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("productTypeEqual"));
+			    this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), data.TryGetValueSafe<string>("entityReferenceEqual"));
+			    this._IsExpiredEqual = data.TryGetValueSafe<bool>("isExpiredEqual");
+			    this._OrderBy = (EntitlementOrderBy)StringEnum.Parse(typeof(EntitlementOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

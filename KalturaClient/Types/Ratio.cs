@@ -123,6 +123,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Ratio(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Height = data.TryGetValueSafe<int>("height");
+			    this._Width = data.TryGetValueSafe<int>("width");
+			    this._PrecisionPrecentage = data.TryGetValueSafe<int>("precisionPrecentage");
+		}
 		#endregion
 
 		#region Methods

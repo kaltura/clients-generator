@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LoginSession(IDictionary<string,object> data) : base(data)
+		{
+			    this._Ks = data.TryGetValueSafe<string>("ks");
+		}
 		#endregion
 
 		#region Methods

@@ -150,6 +150,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetStructMeta(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetStructId = data.TryGetValueSafe<long>("assetStructId");
+			    this._MetaId = data.TryGetValueSafe<long>("metaId");
+			    this._IngestReferencePath = data.TryGetValueSafe<string>("ingestReferencePath");
+			    this._ProtectFromIngest = data.TryGetValueSafe<bool>("protectFromIngest");
+			    this._DefaultIngestValue = data.TryGetValueSafe<string>("defaultIngestValue");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._IsInherited = data.TryGetValueSafe<bool>("isInherited");
+		}
 		#endregion
 
 		#region Methods

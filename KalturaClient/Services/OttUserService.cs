@@ -94,6 +94,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OTTUser>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserAddRoleRequestBuilder : RequestBuilder<bool>
@@ -136,6 +140,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -191,6 +202,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<LoginSession>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginSession>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserDeleteRequestBuilder : RequestBuilder<bool>
@@ -219,6 +234,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -251,6 +273,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OTTUser>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserGetEncryptedUserIdRequestBuilder : RequestBuilder<StringValue>
@@ -279,6 +305,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<StringValue>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<StringValue>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -322,6 +352,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<OTTUser>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<OTTUser>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -402,6 +436,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<LoginResponse>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginResponse>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserLoginWithPinRequestBuilder : RequestBuilder<LoginResponse>
@@ -472,6 +510,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<LoginResponse>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginResponse>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserLogoutRequestBuilder : RequestBuilder<bool>
@@ -500,6 +542,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -564,6 +613,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OTTUser>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserResendActivationTokenRequestBuilder : RequestBuilder<bool>
@@ -615,6 +668,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -681,6 +741,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class OttUserSetInitialPasswordRequestBuilder : RequestBuilder<OTTUser>
@@ -742,6 +809,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OTTUser>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserUpdateRequestBuilder : RequestBuilder<OTTUser>
@@ -794,6 +865,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<OTTUser>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class OttUserUpdateDynamicDataRequestBuilder : RequestBuilder<OTTUserDynamicData>
@@ -845,6 +920,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUserDynamicData>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUserDynamicData>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -909,6 +988,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class OttUserUpdatePasswordRequestBuilder : RequestBuilder<object>
@@ -958,6 +1044,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}

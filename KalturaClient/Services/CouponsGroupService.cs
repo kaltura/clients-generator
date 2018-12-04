@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<CouponsGroup>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class CouponsGroupDeleteRequestBuilder : RequestBuilder<bool>
@@ -118,6 +122,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -173,6 +184,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<StringValueArray>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<StringValueArray>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class CouponsGroupGetRequestBuilder : RequestBuilder<CouponsGroup>
@@ -216,6 +231,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<CouponsGroup>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class CouponsGroupListRequestBuilder : RequestBuilder<ListResponse<CouponsGroup>>
@@ -244,6 +263,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<CouponsGroup>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<CouponsGroup>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -296,6 +319,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<CouponsGroup>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)result);
 		}
 	}
 

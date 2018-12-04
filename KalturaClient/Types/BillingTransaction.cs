@@ -202,6 +202,26 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BillingTransaction(IDictionary<string,object> data) : base(data)
+		{
+			    this._RecieptCode = data.TryGetValueSafe<string>("recieptCode");
+			    this._PurchasedItemName = data.TryGetValueSafe<string>("purchasedItemName");
+			    this._PurchasedItemCode = data.TryGetValueSafe<string>("purchasedItemCode");
+			    this._ItemType = (BillingItemsType)StringEnum.Parse(typeof(BillingItemsType), data.TryGetValueSafe<string>("itemType"));
+			    this._BillingAction = (BillingAction)StringEnum.Parse(typeof(BillingAction), data.TryGetValueSafe<string>("billingAction"));
+			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._ActionDate = data.TryGetValueSafe<long>("actionDate");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), data.TryGetValueSafe<string>("paymentMethod"));
+			    this._PaymentMethodExtraDetails = data.TryGetValueSafe<string>("paymentMethodExtraDetails");
+			    this._IsRecurring = data.TryGetValueSafe<bool>("isRecurring");
+			    this._BillingProviderRef = data.TryGetValueSafe<int>("billingProviderRef");
+			    this._PurchaseId = data.TryGetValueSafe<int>("purchaseId");
+			    this._Remarks = data.TryGetValueSafe<string>("remarks");
+			    this._BillingPriceType = (BillingPriceType)StringEnum.Parse(typeof(BillingPriceType), data.TryGetValueSafe<string>("billingPriceType"));
+		}
 		#endregion
 
 		#region Methods

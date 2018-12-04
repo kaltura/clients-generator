@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public CurrencyFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._CodeIn = data.TryGetValueSafe<string>("codeIn");
+			    this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

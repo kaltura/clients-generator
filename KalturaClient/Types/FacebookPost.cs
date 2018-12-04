@@ -90,6 +90,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FacebookPost(IDictionary<string,object> data) : base(data)
+		{
+			    this._Comments = new List<SocialNetworkComment>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("comments", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Link = data.TryGetValueSafe<string>("link");
+		}
 		#endregion
 
 		#region Methods

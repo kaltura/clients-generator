@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Image>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Image>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class ImageDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class ImageListRequestBuilder : RequestBuilder<ListResponse<Image>>
@@ -163,6 +174,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Image>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Image>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -213,6 +228,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}

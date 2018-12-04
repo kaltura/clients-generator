@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ExternalReceipt(IDictionary<string,object> data) : base(data)
+		{
+			    this._ReceiptId = data.TryGetValueSafe<string>("receiptId");
+			    this._PaymentGatewayName = data.TryGetValueSafe<string>("paymentGatewayName");
+		}
 		#endregion
 
 		#region Methods

@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<AssetStruct>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetStruct>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class AssetStructDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class AssetStructListRequestBuilder : RequestBuilder<ListResponse<AssetStruct>>
@@ -163,6 +174,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetStruct>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<AssetStruct>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -215,6 +230,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AssetStruct>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetStruct>((IDictionary<string,object>)result);
 		}
 	}
 

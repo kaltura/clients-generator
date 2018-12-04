@@ -85,6 +85,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<RegistryResponse>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<RegistryResponse>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class NotificationSendPushRequestBuilder : RequestBuilder<bool>
@@ -139,6 +143,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class NotificationSendSmsRequestBuilder : RequestBuilder<bool>
@@ -184,6 +195,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class NotificationSetDevicePushTokenRequestBuilder : RequestBuilder<bool>
@@ -226,6 +244,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}

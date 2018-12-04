@@ -139,6 +139,27 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConfigurationGroup(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._Tags = new List<StringValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("tags", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Tags.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._NumberOfDevices = data.TryGetValueSafe<long>("numberOfDevices");
+			    this._ConfigurationIdentifiers = new List<ConfigurationIdentifier>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("configurationIdentifiers", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ConfigurationIdentifiers.Add(ObjectFactory.Create<ConfigurationIdentifier>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

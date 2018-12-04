@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Social>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Social>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SocialGetByTokenRequestBuilder : RequestBuilder<Social>
@@ -137,6 +141,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Social>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Social>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SocialGetConfigurationRequestBuilder : RequestBuilder<SocialConfig>
@@ -188,6 +196,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<SocialConfig>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SocialConfig>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -259,6 +271,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<LoginResponse>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginResponse>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SocialMergeRequestBuilder : RequestBuilder<Social>
@@ -310,6 +326,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Social>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Social>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -381,6 +401,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Social>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Social>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SocialUnmergeRequestBuilder : RequestBuilder<Social>
@@ -424,6 +448,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Social>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Social>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SocialUpdateConfigurationRequestBuilder : RequestBuilder<SocialConfig>
@@ -466,6 +494,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<SocialConfig>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SocialConfig>((IDictionary<string,object>)result);
 		}
 	}
 

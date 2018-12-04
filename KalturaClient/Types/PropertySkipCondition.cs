@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PropertySkipCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._PropertyPath = data.TryGetValueSafe<string>("propertyPath");
+			    this._Operator = (SkipOperators)StringEnum.Parse(typeof(SkipOperators), data.TryGetValueSafe<string>("operator"));
+			    this._Value = data.TryGetValueSafe<string>("value");
+		}
 		#endregion
 
 		#region Methods

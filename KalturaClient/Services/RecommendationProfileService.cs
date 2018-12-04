@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<RecommendationProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<RecommendationProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class RecommendationProfileDeleteRequestBuilder : RequestBuilder<bool>
@@ -118,6 +122,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -164,6 +175,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<RecommendationProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<RecommendationProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class RecommendationProfileListRequestBuilder : RequestBuilder<ListResponse<RecommendationProfile>>
@@ -192,6 +207,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<RecommendationProfile>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<RecommendationProfile>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -244,6 +263,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<RecommendationProfile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<RecommendationProfile>((IDictionary<string,object>)result);
 		}
 	}
 

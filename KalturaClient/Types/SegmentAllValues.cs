@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SegmentAllValues(IDictionary<string,object> data) : base(data)
+		{
+			    this._NameFormat = data.TryGetValueSafe<string>("nameFormat");
+		}
 		#endregion
 
 		#region Methods

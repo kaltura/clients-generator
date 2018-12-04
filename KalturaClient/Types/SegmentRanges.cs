@@ -90,6 +90,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SegmentRanges(IDictionary<string,object> data) : base(data)
+		{
+			    this._Source = ObjectFactory.Create<SegmentSource>(data.TryGetValueSafe<IDictionary<string,object>>("source"));
+			    this._Ranges = new List<SegmentRange>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("ranges", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Ranges.Add(ObjectFactory.Create<SegmentRange>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

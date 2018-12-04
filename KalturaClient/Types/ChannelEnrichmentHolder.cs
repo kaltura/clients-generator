@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ChannelEnrichmentHolder(IDictionary<string,object> data) : base(data)
+		{
+			    this._Type = (ChannelEnrichment)StringEnum.Parse(typeof(ChannelEnrichment), data.TryGetValueSafe<string>("type"));
+		}
 		#endregion
 
 		#region Methods

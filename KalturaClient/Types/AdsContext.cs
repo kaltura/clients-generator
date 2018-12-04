@@ -76,6 +76,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AdsContext(IDictionary<string,object> data) : base(data)
+		{
+			    this._Sources = new List<AdsSource>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("sources", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Sources.Add(ObjectFactory.Create<AdsSource>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

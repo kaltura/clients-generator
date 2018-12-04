@@ -94,6 +94,22 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Conditions = new List<Condition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<Condition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<AssetRuleAction>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<AssetRuleAction>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

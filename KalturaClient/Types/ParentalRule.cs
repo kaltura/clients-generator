@@ -251,6 +251,35 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ParentalRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._Order = data.TryGetValueSafe<int>("order");
+			    this._MediaTag = data.TryGetValueSafe<int>("mediaTag");
+			    this._EpgTag = data.TryGetValueSafe<int>("epgTag");
+			    this._BlockAnonymousAccess = data.TryGetValueSafe<bool>("blockAnonymousAccess");
+			    this._RuleType = (ParentalRuleType)StringEnum.Parse(typeof(ParentalRuleType), data.TryGetValueSafe<string>("ruleType"));
+			    this._MediaTagValues = new List<StringValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("mediaTagValues", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MediaTagValues.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._EpgTagValues = new List<StringValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("epgTagValues", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._EpgTagValues.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._Origin = (RuleLevel)StringEnum.Parse(typeof(RuleLevel), data.TryGetValueSafe<string>("origin"));
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

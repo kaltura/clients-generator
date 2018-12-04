@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BillingPartnerConfig(IDictionary<string,object> data) : base(data)
+		{
+			    this._Value = data.TryGetValueSafe<string>("value");
+			    this._Type = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), data.TryGetValueSafe<string>("type"));
+		}
 		#endregion
 
 		#region Methods

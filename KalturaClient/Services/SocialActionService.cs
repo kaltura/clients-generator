@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<UserSocialActionResponse>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<UserSocialActionResponse>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SocialActionDeleteRequestBuilder : RequestBuilder<IList<NetworkActionStatus>>
@@ -119,6 +123,15 @@ namespace Kaltura.Services
 		{
 			IList<NetworkActionStatus> list = new List<NetworkActionStatus>();
 			foreach(XmlElement node in result.ChildNodes)
+			{
+				list.Add(ObjectFactory.Create<NetworkActionStatus>(node));
+			}
+			return list;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var list = new List<NetworkActionStatus>();
+			foreach(var node in (IEnumerable<IDictionary<string,object>>)result)
 			{
 				list.Add(ObjectFactory.Create<NetworkActionStatus>(node));
 			}
@@ -175,6 +188,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<SocialAction>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<SocialAction>>((IDictionary<string,object>)result);
 		}
 	}
 

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PushParams(IDictionary<string,object> data) : base(data)
+		{
+			    this._Token = data.TryGetValueSafe<string>("token");
+			    this._ExternalToken = data.TryGetValueSafe<string>("externalToken");
+		}
 		#endregion
 
 		#region Methods

@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SearchExternalFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._Query = data.TryGetValueSafe<string>("query");
+			    this._UtcOffsetEqual = data.TryGetValueSafe<int>("utcOffsetEqual");
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+		}
 		#endregion
 
 		#region Methods

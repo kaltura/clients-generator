@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BuzzScore(IDictionary<string,object> data) : base(data)
+		{
+			    this._NormalizedAvgScore = data.TryGetValueSafe<float>("normalizedAvgScore");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._AvgScore = data.TryGetValueSafe<float>("avgScore");
+		}
 		#endregion
 
 		#region Methods

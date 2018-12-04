@@ -230,6 +230,23 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Announcement(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._Enabled = data.TryGetValueSafe<bool>("enabled");
+			    this._StartTime = data.TryGetValueSafe<long>("startTime");
+			    this._Timezone = data.TryGetValueSafe<string>("timezone");
+			    this._Status = (AnnouncementStatus)StringEnum.Parse(typeof(AnnouncementStatus), data.TryGetValueSafe<string>("status"));
+			    this._Recipients = (AnnouncementRecipientsType)StringEnum.Parse(typeof(AnnouncementRecipientsType), data.TryGetValueSafe<string>("recipients"));
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._ImageUrl = data.TryGetValueSafe<string>("imageUrl");
+			    this._IncludeMail = data.TryGetValueSafe<bool>("includeMail");
+			    this._MailTemplate = data.TryGetValueSafe<string>("mailTemplate");
+			    this._MailSubject = data.TryGetValueSafe<string>("mailSubject");
+			    this._IncludeSms = data.TryGetValueSafe<bool>("includeSms");
+		}
 		#endregion
 
 		#region Methods

@@ -139,6 +139,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UsageModule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MaxViewsNumber = data.TryGetValueSafe<int>("maxViewsNumber");
+			    this._ViewLifeCycle = data.TryGetValueSafe<int>("viewLifeCycle");
+			    this._FullLifeCycle = data.TryGetValueSafe<int>("fullLifeCycle");
+			    this._CouponId = data.TryGetValueSafe<int>("couponId");
+			    this._WaiverPeriod = data.TryGetValueSafe<int>("waiverPeriod");
+			    this._IsWaiverEnabled = data.TryGetValueSafe<bool>("isWaiverEnabled");
+			    this._IsOfflinePlayback = data.TryGetValueSafe<bool>("isOfflinePlayback");
+		}
 		#endregion
 
 		#region Methods

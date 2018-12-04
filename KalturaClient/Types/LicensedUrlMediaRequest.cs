@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LicensedUrlMediaRequest(IDictionary<string,object> data) : base(data)
+		{
+			    this._ContentId = data.TryGetValueSafe<int>("contentId");
+			    this._BaseUrl = data.TryGetValueSafe<string>("baseUrl");
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PersonalListFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PartnerListTypeIn = data.TryGetValueSafe<string>("partnerListTypeIn");
+			    this._OrderBy = (PersonalListOrderBy)StringEnum.Parse(typeof(PersonalListOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

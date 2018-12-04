@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetStructMetaFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetStructIdEqual = data.TryGetValueSafe<long>("assetStructIdEqual");
+			    this._MetaIdEqual = data.TryGetValueSafe<long>("metaIdEqual");
+			    this._OrderBy = (AssetStructMetaOrderBy)StringEnum.Parse(typeof(AssetStructMetaOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

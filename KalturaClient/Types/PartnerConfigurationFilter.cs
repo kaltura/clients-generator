@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PartnerConfigurationFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), data.TryGetValueSafe<string>("partnerConfigurationTypeEqual"));
+			    this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

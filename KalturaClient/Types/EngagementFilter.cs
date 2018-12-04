@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public EngagementFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._SendTimeGreaterThanOrEqual = data.TryGetValueSafe<long>("sendTimeGreaterThanOrEqual");
+			    this._OrderBy = (EngagementOrderBy)StringEnum.Parse(typeof(EngagementOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

@@ -342,6 +342,31 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MediaFile(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<int>("assetId");
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Type = data.TryGetValueSafe<string>("type");
+			    this._TypeId = data.TryGetValueSafe<int>("typeId");
+			    this._Duration = data.TryGetValueSafe<long>("duration");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._AltExternalId = data.TryGetValueSafe<string>("altExternalId");
+			    this._FileSize = data.TryGetValueSafe<long>("fileSize");
+			    this._AdditionalData = data.TryGetValueSafe<string>("additionalData");
+			    this._AltStreamingCode = data.TryGetValueSafe<string>("altStreamingCode");
+			    this._AlternativeCdnAdapaterProfileId = data.TryGetValueSafe<long>("alternativeCdnAdapaterProfileId");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._ExternalStoreId = data.TryGetValueSafe<string>("externalStoreId");
+			    this._IsDefaultLanguage = data.TryGetValueSafe<bool>("isDefaultLanguage");
+			    this._Language = data.TryGetValueSafe<string>("language");
+			    this._OrderNum = data.TryGetValueSafe<int>("orderNum");
+			    this._OutputProtecationLevel = data.TryGetValueSafe<string>("outputProtecationLevel");
+			    this._CdnAdapaterProfileId = data.TryGetValueSafe<long>("cdnAdapaterProfileId");
+			    this._Status = data.TryGetValueSafe<bool>("status");
+			    this._CatalogEndDate = data.TryGetValueSafe<long>("catalogEndDate");
+		}
 		#endregion
 
 		#region Methods

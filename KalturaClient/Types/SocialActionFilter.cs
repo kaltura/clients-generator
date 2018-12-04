@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialActionFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._ActionTypeIn = data.TryGetValueSafe<string>("actionTypeIn");
+			    this._OrderBy = (SocialActionOrderBy)StringEnum.Parse(typeof(SocialActionOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

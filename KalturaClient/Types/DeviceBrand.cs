@@ -90,6 +90,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DeviceBrand(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._DeviceFamilyid = data.TryGetValueSafe<long>("deviceFamilyid");
+		}
 		#endregion
 
 		#region Methods

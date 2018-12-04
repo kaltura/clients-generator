@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<MediaFile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<MediaFile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class MediaFileDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class MediaFileListRequestBuilder : RequestBuilder<ListResponse<MediaFile>>
@@ -163,6 +174,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<MediaFile>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<MediaFile>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -215,6 +230,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<MediaFile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<MediaFile>((IDictionary<string,object>)result);
 		}
 	}
 

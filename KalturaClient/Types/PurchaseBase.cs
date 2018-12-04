@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PurchaseBase(IDictionary<string,object> data) : base(data)
+		{
+			    this._ProductId = data.TryGetValueSafe<int>("productId");
+			    this._ContentId = data.TryGetValueSafe<int>("contentId");
+			    this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("productType"));
+		}
 		#endregion
 
 		#region Methods

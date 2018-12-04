@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Recording>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class RecordingCancelRequestBuilder : RequestBuilder<Recording>
@@ -118,6 +122,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -162,6 +170,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Recording>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class RecordingGetRequestBuilder : RequestBuilder<Recording>
@@ -204,6 +216,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -257,6 +273,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<Recording>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Recording>>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class RecordingProtectRequestBuilder : RequestBuilder<Recording>
@@ -299,6 +319,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 

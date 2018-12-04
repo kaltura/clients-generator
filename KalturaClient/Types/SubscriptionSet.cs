@@ -104,6 +104,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SubscriptionSet(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Type = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), data.TryGetValueSafe<string>("type"));
+			    this._SubscriptionIds = data.TryGetValueSafe<string>("subscriptionIds");
+		}
 		#endregion
 
 		#region Methods

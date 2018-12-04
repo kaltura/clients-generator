@@ -94,6 +94,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Bulk(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Status = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), data.TryGetValueSafe<string>("status"));
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

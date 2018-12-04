@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DeviceReportFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._LastAccessDateGreaterThanOrEqual = data.TryGetValueSafe<long>("lastAccessDateGreaterThanOrEqual");
+		}
 		#endregion
 
 		#region Methods

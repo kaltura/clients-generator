@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetComment(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._AssetId = data.TryGetValueSafe<int>("assetId");
+			    this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetType"));
+			    this._SubHeader = data.TryGetValueSafe<string>("subHeader");
+		}
 		#endregion
 
 		#region Methods

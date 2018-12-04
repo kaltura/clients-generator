@@ -165,6 +165,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SegmentRange(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._SystematicName = data.TryGetValueSafe<string>("systematicName");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Gte = data.TryGetValueSafe<float>("gte");
+			    this._Gt = data.TryGetValueSafe<float>("gt");
+			    this._Lte = data.TryGetValueSafe<float>("lte");
+			    this._Lt = data.TryGetValueSafe<float>("lt");
+			    this._Equals = data.TryGetValueSafe<float>("equals");
+		}
 		#endregion
 
 		#region Methods

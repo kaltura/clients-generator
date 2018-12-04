@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<PersonalList>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PersonalList>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PersonalListDeleteRequestBuilder : RequestBuilder<object>
@@ -116,6 +120,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -170,6 +178,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<PersonalList>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<PersonalList>>((IDictionary<string,object>)result);
 		}
 	}
 

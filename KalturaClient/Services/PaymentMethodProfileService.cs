@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<PaymentMethodProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentMethodProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PaymentMethodProfileDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class PaymentMethodProfileListRequestBuilder : RequestBuilder<ListResponse<PaymentMethodProfile>>
@@ -163,6 +174,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<PaymentMethodProfile>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<PaymentMethodProfile>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -215,6 +230,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<PaymentMethodProfile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentMethodProfile>((IDictionary<string,object>)result);
 		}
 	}
 

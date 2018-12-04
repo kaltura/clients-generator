@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public CouponGenerationOptions(XmlElement node) : base(node)
 		{
 		}
+
+		public CouponGenerationOptions(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

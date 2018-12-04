@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public FacebookSocial(XmlElement node) : base(node)
 		{
 		}
+
+		public FacebookSocial(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

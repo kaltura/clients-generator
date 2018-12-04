@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public AssetGroupBy(XmlElement node) : base(node)
 		{
 		}
+
+		public AssetGroupBy(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

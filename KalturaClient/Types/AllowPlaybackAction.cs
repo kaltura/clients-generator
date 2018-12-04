@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public AllowPlaybackAction(XmlElement node) : base(node)
 		{
 		}
+
+		public AllowPlaybackAction(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

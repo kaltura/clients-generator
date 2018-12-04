@@ -76,6 +76,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PpvEntitlement(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaFileId = data.TryGetValueSafe<int>("mediaFileId");
+			    this._MediaId = data.TryGetValueSafe<int>("mediaId");
+		}
 		#endregion
 
 		#region Methods

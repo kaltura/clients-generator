@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UploadedFileTokenResource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Token = data.TryGetValueSafe<string>("token");
+		}
 		#endregion
 
 		#region Methods

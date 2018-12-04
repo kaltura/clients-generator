@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialComment(IDictionary<string,object> data) : base(data)
+		{
+			    this._Header = data.TryGetValueSafe<string>("header");
+			    this._Text = data.TryGetValueSafe<string>("text");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._Writer = data.TryGetValueSafe<string>("writer");
+		}
 		#endregion
 
 		#region Methods

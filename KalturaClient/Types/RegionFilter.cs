@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RegionFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalIdIn = data.TryGetValueSafe<string>("externalIdIn");
+			    this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

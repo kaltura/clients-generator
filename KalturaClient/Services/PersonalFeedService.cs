@@ -85,6 +85,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<PersonalFeed>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<PersonalFeed>>((IDictionary<string,object>)result);
+		}
 	}
 
 

@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BaseOTTUser(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Username = data.TryGetValueSafe<string>("username");
+			    this._FirstName = data.TryGetValueSafe<string>("firstName");
+			    this._LastName = data.TryGetValueSafe<string>("lastName");
+		}
 		#endregion
 
 		#region Methods

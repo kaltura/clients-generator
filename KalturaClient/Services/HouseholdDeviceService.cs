@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<HouseholdDevice>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HouseholdDevice>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdDeviceAddByPinRequestBuilder : RequestBuilder<HouseholdDevice>
@@ -128,6 +132,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<HouseholdDevice>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HouseholdDevice>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdDeviceDeleteRequestBuilder : RequestBuilder<bool>
@@ -170,6 +178,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -225,6 +240,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<DevicePin>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<DevicePin>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdDeviceGetRequestBuilder : RequestBuilder<HouseholdDevice>
@@ -253,6 +272,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<HouseholdDevice>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HouseholdDevice>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -296,6 +319,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<HouseholdDevice>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<HouseholdDevice>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -358,6 +385,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<LoginResponse>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginResponse>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdDeviceUpdateRequestBuilder : RequestBuilder<HouseholdDevice>
@@ -410,6 +441,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<HouseholdDevice>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HouseholdDevice>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdDeviceUpdateStatusRequestBuilder : RequestBuilder<bool>
@@ -461,6 +496,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}

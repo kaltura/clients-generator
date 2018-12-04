@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MediaConcurrencyRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), data.TryGetValueSafe<string>("concurrencyLimitationType"));
+			    this._Limitation = data.TryGetValueSafe<int>("limitation");
+		}
 		#endregion
 
 		#region Methods

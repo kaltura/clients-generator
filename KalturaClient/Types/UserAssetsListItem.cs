@@ -123,6 +123,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserAssetsListItem(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._OrderIndex = data.TryGetValueSafe<int>("orderIndex");
+			    this._Type = (UserAssetsListItemType)StringEnum.Parse(typeof(UserAssetsListItemType), data.TryGetValueSafe<string>("type"));
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._ListType = (UserAssetsListType)StringEnum.Parse(typeof(UserAssetsListType), data.TryGetValueSafe<string>("listType"));
+		}
 		#endregion
 
 		#region Methods

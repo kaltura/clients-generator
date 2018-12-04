@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<MessageTemplate>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<MessageTemplate>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class MessageTemplateUpdateRequestBuilder : RequestBuilder<MessageTemplate>
@@ -127,6 +131,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<MessageTemplate>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<MessageTemplate>((IDictionary<string,object>)result);
 		}
 	}
 

@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PersonalFeedFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = (PersonalFeedOrderBy)StringEnum.Parse(typeof(PersonalFeedOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

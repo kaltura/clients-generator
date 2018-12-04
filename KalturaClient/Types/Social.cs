@@ -183,6 +183,20 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Social(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._FirstName = data.TryGetValueSafe<string>("firstName");
+			    this._LastName = data.TryGetValueSafe<string>("lastName");
+			    this._Email = data.TryGetValueSafe<string>("email");
+			    this._Gender = data.TryGetValueSafe<string>("gender");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._Birthday = data.TryGetValueSafe<string>("birthday");
+			    this._Status = data.TryGetValueSafe<string>("status");
+			    this._PictureUrl = data.TryGetValueSafe<string>("pictureUrl");
+		}
 		#endregion
 
 		#region Methods

@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public GroupPermission(IDictionary<string,object> data) : base(data)
+		{
+			    this._Group = data.TryGetValueSafe<string>("group");
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FilterPager(IDictionary<string,object> data) : base(data)
+		{
+			    this._PageSize = data.TryGetValueSafe<int>("pageSize");
+			    this._PageIndex = data.TryGetValueSafe<int>("pageIndex");
+		}
 		#endregion
 
 		#region Methods

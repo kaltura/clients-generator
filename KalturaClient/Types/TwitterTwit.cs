@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public TwitterTwit(XmlElement node) : base(node)
 		{
 		}
+
+		public TwitterTwit(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

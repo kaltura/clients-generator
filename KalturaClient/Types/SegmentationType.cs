@@ -145,6 +145,22 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SegmentationType(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._Conditions = new List<BaseSegmentCondition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<BaseSegmentCondition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Value = ObjectFactory.Create<BaseSegmentValue>(data.TryGetValueSafe<IDictionary<string,object>>("value"));
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._Version = data.TryGetValueSafe<long>("version");
+		}
 		#endregion
 
 		#region Methods

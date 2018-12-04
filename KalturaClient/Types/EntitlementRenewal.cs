@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public EntitlementRenewal(IDictionary<string,object> data) : base(data)
+		{
+			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._Date = data.TryGetValueSafe<long>("date");
+			    this._PurchaseId = data.TryGetValueSafe<long>("purchaseId");
+			    this._SubscriptionId = data.TryGetValueSafe<long>("subscriptionId");
+			    this._UserId = data.TryGetValueSafe<long>("userId");
+		}
 		#endregion
 
 		#region Methods

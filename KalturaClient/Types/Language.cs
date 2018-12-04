@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Language(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._Code = data.TryGetValueSafe<string>("code");
+			    this._Direction = data.TryGetValueSafe<string>("direction");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+		}
 		#endregion
 
 		#region Methods

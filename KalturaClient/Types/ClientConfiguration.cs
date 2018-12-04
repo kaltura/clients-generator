@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ClientConfiguration(IDictionary<string,object> data) : base(data)
+		{
+			    this._ClientTag = data.TryGetValueSafe<string>("clientTag");
+			    this._ApiVersion = data.TryGetValueSafe<string>("apiVersion");
+		}
 		#endregion
 
 		#region Methods

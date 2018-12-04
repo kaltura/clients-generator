@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PaymentMethodProfileFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PaymentGatewayIdEqual = data.TryGetValueSafe<int>("paymentGatewayIdEqual");
+			    this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

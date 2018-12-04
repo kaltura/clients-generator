@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Filter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = data.TryGetValueSafe<string>("orderBy");
+		}
 		#endregion
 
 		#region Methods

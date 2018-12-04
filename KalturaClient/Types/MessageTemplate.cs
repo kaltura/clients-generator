@@ -184,6 +184,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MessageTemplate(IDictionary<string,object> data) : base(data)
+		{
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._DateFormat = data.TryGetValueSafe<string>("dateFormat");
+			    this._MessageType = (MessageTemplateType)StringEnum.Parse(typeof(MessageTemplateType), data.TryGetValueSafe<string>("messageType"));
+			    this._Sound = data.TryGetValueSafe<string>("sound");
+			    this._Action = data.TryGetValueSafe<string>("action");
+			    this._Url = data.TryGetValueSafe<string>("url");
+			    this._MailTemplate = data.TryGetValueSafe<string>("mailTemplate");
+			    this._MailSubject = data.TryGetValueSafe<string>("mailSubject");
+			    this._RatioId = data.TryGetValueSafe<string>("ratioId");
+		}
 		#endregion
 
 		#region Methods

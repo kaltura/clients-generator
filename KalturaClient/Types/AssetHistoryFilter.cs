@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetHistoryFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._StatusEqual = (WatchStatus)StringEnum.Parse(typeof(WatchStatus), data.TryGetValueSafe<string>("statusEqual"));
+			    this._DaysLessThanOrEqual = data.TryGetValueSafe<int>("daysLessThanOrEqual");
+			    this._OrderBy = (AssetHistoryOrderBy)StringEnum.Parse(typeof(AssetHistoryOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BookmarkPlayerData(IDictionary<string,object> data) : base(data)
+		{
+			    this._Action = (BookmarkActionType)StringEnum.Parse(typeof(BookmarkActionType), data.TryGetValueSafe<string>("action"));
+			    this._AverageBitrate = data.TryGetValueSafe<int>("averageBitrate");
+			    this._TotalBitrate = data.TryGetValueSafe<int>("totalBitrate");
+			    this._CurrentBitrate = data.TryGetValueSafe<int>("currentBitrate");
+			    this._FileId = data.TryGetValueSafe<long>("fileId");
+		}
 		#endregion
 
 		#region Methods

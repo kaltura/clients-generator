@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<LicensedUrl>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LicensedUrl>((IDictionary<string,object>)result);
+		}
 	}
 
 

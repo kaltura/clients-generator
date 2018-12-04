@@ -118,6 +118,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PersonalList(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._Ksql = data.TryGetValueSafe<string>("ksql");
+			    this._PartnerListType = data.TryGetValueSafe<int>("partnerListType");
+		}
 		#endregion
 
 		#region Methods

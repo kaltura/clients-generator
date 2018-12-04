@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ImageTypeFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._RatioIdIn = data.TryGetValueSafe<string>("ratioIdIn");
+			    this._OrderBy = (ImageTypeOrderBy)StringEnum.Parse(typeof(ImageTypeOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

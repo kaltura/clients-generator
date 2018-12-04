@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public Report(XmlElement node) : base(node)
 		{
 		}
+
+		public Report(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

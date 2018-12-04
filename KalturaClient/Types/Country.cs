@@ -179,6 +179,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Country(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Code = data.TryGetValueSafe<string>("code");
+			    this._MainLanguageCode = data.TryGetValueSafe<string>("mainLanguageCode");
+			    this._LanguagesCode = data.TryGetValueSafe<string>("languagesCode");
+			    this._Currency = data.TryGetValueSafe<string>("currency");
+			    this._CurrencySign = data.TryGetValueSafe<string>("currencySign");
+			    this._VatPercent = data.TryGetValueSafe<float>("vatPercent");
+			    this._TimeZoneId = data.TryGetValueSafe<string>("timeZoneId");
+		}
 		#endregion
 
 		#region Methods

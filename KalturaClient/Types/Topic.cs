@@ -123,6 +123,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Topic(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._SubscribersAmount = data.TryGetValueSafe<string>("subscribersAmount");
+			    this._AutomaticIssueNotification = (TopicAutomaticIssueNotification)StringEnum.Parse(typeof(TopicAutomaticIssueNotification), data.TryGetValueSafe<string>("automaticIssueNotification"));
+			    this._LastMessageSentDateSec = data.TryGetValueSafe<long>("lastMessageSentDateSec");
+		}
 		#endregion
 
 		#region Methods

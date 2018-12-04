@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public SubscriptionSwitchSet(XmlElement node) : base(node)
 		{
 		}
+
+		public SubscriptionSwitchSet(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PushMessage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._Sound = data.TryGetValueSafe<string>("sound");
+			    this._Action = data.TryGetValueSafe<string>("action");
+			    this._Url = data.TryGetValueSafe<string>("url");
+		}
 		#endregion
 
 		#region Methods

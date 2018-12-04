@@ -78,6 +78,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class HouseholdPaymentGatewayEnableRequestBuilder : RequestBuilder<bool>
@@ -123,6 +130,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class HouseholdPaymentGatewayGetChargeIDRequestBuilder : RequestBuilder<string>
@@ -165,6 +179,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return result.InnerText;
+		}
+		public override object DeserializeObject(object result)
+		{
+			return (string)result;
 		}
 	}
 
@@ -227,6 +245,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<PaymentGatewayConfiguration>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PaymentGatewayConfiguration>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HouseholdPaymentGatewayListRequestBuilder : RequestBuilder<ListResponse<HouseholdPaymentGateway>>
@@ -255,6 +277,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<HouseholdPaymentGateway>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<HouseholdPaymentGateway>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -296,6 +322,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -353,6 +383,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class HouseholdPaymentGatewaySuspendRequestBuilder : RequestBuilder<object>
@@ -393,6 +430,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}

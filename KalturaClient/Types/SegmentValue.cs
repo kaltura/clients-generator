@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SegmentValue(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._SystematicName = data.TryGetValueSafe<string>("systematicName");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Value = data.TryGetValueSafe<string>("value");
+		}
 		#endregion
 
 		#region Methods

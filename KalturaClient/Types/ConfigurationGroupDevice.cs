@@ -95,6 +95,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConfigurationGroupDevice(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._Udid = data.TryGetValueSafe<string>("udid");
+		}
 		#endregion
 
 		#region Methods

@@ -154,6 +154,21 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RecommendationProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._RecommendationEngineSettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("recommendationEngineSettings", new Dictionary<string, object>()))
+			    {
+			        this._RecommendationEngineSettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+		}
 		#endregion
 
 		#region Methods

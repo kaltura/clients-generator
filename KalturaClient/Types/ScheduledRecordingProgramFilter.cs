@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ScheduledRecordingProgramFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._RecordingTypeEqual = (ScheduledRecordingAssetType)StringEnum.Parse(typeof(ScheduledRecordingAssetType), data.TryGetValueSafe<string>("recordingTypeEqual"));
+			    this._ChannelsIn = data.TryGetValueSafe<string>("channelsIn");
+			    this._StartDateGreaterThanOrNull = data.TryGetValueSafe<long>("startDateGreaterThanOrNull");
+			    this._EndDateLessThanOrNull = data.TryGetValueSafe<long>("endDateLessThanOrNull");
+		}
 		#endregion
 
 		#region Methods

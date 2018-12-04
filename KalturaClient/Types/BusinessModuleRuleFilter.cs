@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BusinessModuleRuleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._BusinessModuleTypeApplied = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("businessModuleTypeApplied"));
+			    this._BusinessModuleIdApplied = data.TryGetValueSafe<long>("businessModuleIdApplied");
+			    this._SegmentIdsApplied = data.TryGetValueSafe<string>("segmentIdsApplied");
+		}
 		#endregion
 
 		#region Methods

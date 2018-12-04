@@ -149,6 +149,31 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public OTTCategory(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._ParentCategoryId = data.TryGetValueSafe<long>("parentCategoryId");
+			    this._ChildCategories = new List<OTTCategory>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("childCategories", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ChildCategories.Add(ObjectFactory.Create<OTTCategory>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Channels = new List<Channel>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("channels", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Channels.Add(ObjectFactory.Create<Channel>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Images = new List<MediaImage>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("images", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Images.Add(ObjectFactory.Create<MediaImage>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

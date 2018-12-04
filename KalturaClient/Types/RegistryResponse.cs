@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RegistryResponse(IDictionary<string,object> data) : base(data)
+		{
+			    this._AnnouncementId = data.TryGetValueSafe<long>("announcementId");
+			    this._Key = data.TryGetValueSafe<string>("key");
+			    this._Url = data.TryGetValueSafe<string>("url");
+		}
 		#endregion
 
 		#region Methods

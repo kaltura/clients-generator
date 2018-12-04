@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserDataCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Field = data.TryGetValueSafe<string>("field");
+			    this._Value = data.TryGetValueSafe<string>("value");
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public TranslationToken(IDictionary<string,object> data) : base(data)
+		{
+			    this._Language = data.TryGetValueSafe<string>("language");
+			    this._Value = data.TryGetValueSafe<string>("value");
+		}
 		#endregion
 
 		#region Methods

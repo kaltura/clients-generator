@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ExternalChannelProfile>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ExternalChannelProfile>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class ExternalChannelProfileDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class ExternalChannelProfileListRequestBuilder : RequestBuilder<ListResponse<ExternalChannelProfile>>
@@ -149,6 +160,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<ExternalChannelProfile>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<ExternalChannelProfile>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -201,6 +216,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ExternalChannelProfile>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ExternalChannelProfile>((IDictionary<string,object>)result);
 		}
 	}
 

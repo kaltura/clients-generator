@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MetaFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._AssetStructIdEqual = data.TryGetValueSafe<long>("assetStructIdEqual");
+			    this._DataTypeEqual = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), data.TryGetValueSafe<string>("dataTypeEqual"));
+			    this._MultipleValueEqual = data.TryGetValueSafe<bool>("multipleValueEqual");
+			    this._OrderBy = (MetaOrderBy)StringEnum.Parse(typeof(MetaOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public InboxMessageFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._CreatedAtGreaterThanOrEqual = data.TryGetValueSafe<long>("createdAtGreaterThanOrEqual");
+			    this._CreatedAtLessThanOrEqual = data.TryGetValueSafe<long>("createdAtLessThanOrEqual");
+			    this._OrderBy = (InboxMessageOrderBy)StringEnum.Parse(typeof(InboxMessageOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

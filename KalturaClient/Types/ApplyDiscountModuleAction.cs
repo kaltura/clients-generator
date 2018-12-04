@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ApplyDiscountModuleAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._DiscountModuleId = data.TryGetValueSafe<long>("discountModuleId");
+		}
 		#endregion
 
 		#region Methods

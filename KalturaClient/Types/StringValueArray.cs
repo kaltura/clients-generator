@@ -76,6 +76,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public StringValueArray(IDictionary<string,object> data) : base(data)
+		{
+			    this._Objects = new List<StringValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("objects", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Objects.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

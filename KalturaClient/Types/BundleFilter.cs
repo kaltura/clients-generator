@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BundleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._BundleTypeEqual = (BundleType)StringEnum.Parse(typeof(BundleType), data.TryGetValueSafe<string>("bundleTypeEqual"));
+		}
 		#endregion
 
 		#region Methods

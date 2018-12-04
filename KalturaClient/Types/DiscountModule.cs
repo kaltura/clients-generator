@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DiscountModule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Percent = data.TryGetValueSafe<float>("percent");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+		}
 		#endregion
 
 		#region Methods

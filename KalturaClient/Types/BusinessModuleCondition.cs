@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BusinessModuleCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._BusinessModuleType = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("businessModuleType"));
+			    this._BusinessModuleId = data.TryGetValueSafe<long>("businessModuleId");
+		}
 		#endregion
 
 		#region Methods

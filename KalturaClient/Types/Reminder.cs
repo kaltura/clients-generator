@@ -90,6 +90,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Reminder(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Type = (ReminderType)StringEnum.Parse(typeof(ReminderType), data.TryGetValueSafe<string>("type"));
+		}
 		#endregion
 
 		#region Methods

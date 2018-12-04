@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Pin(IDictionary<string,object> data) : base(data)
+		{
+			    this._Pin = data.TryGetValueSafe<string>("pin");
+			    this._Origin = (RuleLevel)StringEnum.Parse(typeof(RuleLevel), data.TryGetValueSafe<string>("origin"));
+			    this._Type = (PinType)StringEnum.Parse(typeof(PinType), data.TryGetValueSafe<string>("type"));
+		}
 		#endregion
 
 		#region Methods

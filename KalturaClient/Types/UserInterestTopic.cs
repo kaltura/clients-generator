@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserInterestTopic(IDictionary<string,object> data) : base(data)
+		{
+			    this._MetaId = data.TryGetValueSafe<string>("metaId");
+			    this._Value = data.TryGetValueSafe<string>("value");
+			    this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(data.TryGetValueSafe<IDictionary<string,object>>("parentTopic"));
+		}
 		#endregion
 
 		#region Methods

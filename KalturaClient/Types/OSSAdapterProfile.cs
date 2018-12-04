@@ -131,6 +131,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public OSSAdapterProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._OssAdapterSettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("ossAdapterSettings", new Dictionary<string, object>()))
+			    {
+			        this._OssAdapterSettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+		}
 		#endregion
 
 		#region Methods

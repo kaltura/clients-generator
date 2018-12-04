@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetUserRuleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AttachedUserIdEqualCurrent = data.TryGetValueSafe<bool>("attachedUserIdEqualCurrent");
+			    this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

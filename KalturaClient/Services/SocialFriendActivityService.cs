@@ -85,6 +85,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<SocialFriendActivity>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<SocialFriendActivity>>((IDictionary<string,object>)result);
+		}
 	}
 
 

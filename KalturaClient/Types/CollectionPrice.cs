@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public CollectionPrice(XmlElement node) : base(node)
 		{
 		}
+
+		public CollectionPrice(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

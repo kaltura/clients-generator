@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FairPlayPlaybackPluginData(IDictionary<string,object> data) : base(data)
+		{
+			    this._Certificate = data.TryGetValueSafe<string>("certificate");
+		}
 		#endregion
 
 		#region Methods

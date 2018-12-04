@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UrlResource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Url = data.TryGetValueSafe<string>("url");
+		}
 		#endregion
 
 		#region Methods

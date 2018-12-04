@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AggregatedPropertySkipCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._AggregationType = (AggregationType)StringEnum.Parse(typeof(AggregationType), data.TryGetValueSafe<string>("aggregationType"));
+		}
 		#endregion
 
 		#region Methods

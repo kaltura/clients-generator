@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public StartDateOffsetRuleAction(XmlElement node) : base(node)
 		{
 		}
+
+		public StartDateOffsetRuleAction(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

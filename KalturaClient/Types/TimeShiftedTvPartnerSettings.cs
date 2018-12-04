@@ -352,6 +352,31 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public TimeShiftedTvPartnerSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._CatchUpEnabled = data.TryGetValueSafe<bool>("catchUpEnabled");
+			    this._CdvrEnabled = data.TryGetValueSafe<bool>("cdvrEnabled");
+			    this._StartOverEnabled = data.TryGetValueSafe<bool>("startOverEnabled");
+			    this._TrickPlayEnabled = data.TryGetValueSafe<bool>("trickPlayEnabled");
+			    this._RecordingScheduleWindowEnabled = data.TryGetValueSafe<bool>("recordingScheduleWindowEnabled");
+			    this._ProtectionEnabled = data.TryGetValueSafe<bool>("protectionEnabled");
+			    this._CatchUpBufferLength = data.TryGetValueSafe<long>("catchUpBufferLength");
+			    this._TrickPlayBufferLength = data.TryGetValueSafe<long>("trickPlayBufferLength");
+			    this._RecordingScheduleWindow = data.TryGetValueSafe<long>("recordingScheduleWindow");
+			    this._PaddingBeforeProgramStarts = data.TryGetValueSafe<long>("paddingBeforeProgramStarts");
+			    this._PaddingAfterProgramEnds = data.TryGetValueSafe<long>("paddingAfterProgramEnds");
+			    this._ProtectionPeriod = data.TryGetValueSafe<int>("protectionPeriod");
+			    this._ProtectionQuotaPercentage = data.TryGetValueSafe<int>("protectionQuotaPercentage");
+			    this._RecordingLifetimePeriod = data.TryGetValueSafe<int>("recordingLifetimePeriod");
+			    this._CleanupNoticePeriod = data.TryGetValueSafe<int>("cleanupNoticePeriod");
+			    this._SeriesRecordingEnabled = data.TryGetValueSafe<bool>("seriesRecordingEnabled");
+			    this._NonEntitledChannelPlaybackEnabled = data.TryGetValueSafe<bool>("nonEntitledChannelPlaybackEnabled");
+			    this._NonExistingChannelPlaybackEnabled = data.TryGetValueSafe<bool>("nonExistingChannelPlaybackEnabled");
+			    this._QuotaOveragePolicy = (QuotaOveragePolicy)StringEnum.Parse(typeof(QuotaOveragePolicy), data.TryGetValueSafe<string>("quotaOveragePolicy"));
+			    this._ProtectionPolicy = (ProtectionPolicy)StringEnum.Parse(typeof(ProtectionPolicy), data.TryGetValueSafe<string>("protectionPolicy"));
+			    this._RecoveryGracePeriod = data.TryGetValueSafe<int>("recoveryGracePeriod");
+		}
 		#endregion
 
 		#region Methods

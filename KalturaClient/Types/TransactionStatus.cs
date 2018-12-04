@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public TransactionStatus(IDictionary<string,object> data) : base(data)
+		{
+			    this._AdapterTransactionStatus = (TransactionAdapterStatus)StringEnum.Parse(typeof(TransactionAdapterStatus), data.TryGetValueSafe<string>("adapterTransactionStatus"));
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._ExternalStatus = data.TryGetValueSafe<string>("externalStatus");
+			    this._ExternalMessage = data.TryGetValueSafe<string>("externalMessage");
+			    this._FailReason = data.TryGetValueSafe<int>("failReason");
+		}
 		#endregion
 
 		#region Methods

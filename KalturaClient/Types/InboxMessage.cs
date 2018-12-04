@@ -127,6 +127,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public InboxMessage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._Status = (InboxMessageStatus)StringEnum.Parse(typeof(InboxMessageStatus), data.TryGetValueSafe<string>("status"));
+			    this._Type = (InboxMessageType)StringEnum.Parse(typeof(InboxMessageType), data.TryGetValueSafe<string>("type"));
+			    this._CreatedAt = data.TryGetValueSafe<long>("createdAt");
+			    this._Url = data.TryGetValueSafe<string>("url");
+		}
 		#endregion
 
 		#region Methods

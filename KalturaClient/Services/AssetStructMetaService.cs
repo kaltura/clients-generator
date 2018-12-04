@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<AssetStructMeta>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<AssetStructMeta>>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class AssetStructMetaUpdateRequestBuilder : RequestBuilder<AssetStructMeta>
@@ -136,6 +140,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AssetStructMeta>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetStructMeta>((IDictionary<string,object>)result);
 		}
 	}
 

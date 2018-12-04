@@ -103,6 +103,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UploadToken(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Status = (UploadTokenStatus)StringEnum.Parse(typeof(UploadTokenStatus), data.TryGetValueSafe<string>("status"));
+			    this._FileSize = data.TryGetValueSafe<float>("fileSize");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public PersonalFeed(XmlElement node) : base(node)
 		{
 		}
+
+		public PersonalFeed(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

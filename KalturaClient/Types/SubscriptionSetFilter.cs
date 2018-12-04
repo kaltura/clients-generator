@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SubscriptionSetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._SubscriptionIdContains = data.TryGetValueSafe<string>("subscriptionIdContains");
+			    this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), data.TryGetValueSafe<string>("typeEqual"));
+			    this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

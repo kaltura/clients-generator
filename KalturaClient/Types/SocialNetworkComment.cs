@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialNetworkComment(IDictionary<string,object> data) : base(data)
+		{
+			    this._LikeCounter = data.TryGetValueSafe<string>("likeCounter");
+			    this._AuthorImageUrl = data.TryGetValueSafe<string>("authorImageUrl");
+		}
 		#endregion
 
 		#region Methods

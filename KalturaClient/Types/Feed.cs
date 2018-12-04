@@ -67,6 +67,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Feed(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+		}
 		#endregion
 
 		#region Methods

@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Ksql = data.TryGetValueSafe<string>("ksql");
+		}
 		#endregion
 
 		#region Methods

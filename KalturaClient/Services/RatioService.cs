@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<Ratio>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Ratio>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class RatioListRequestBuilder : RequestBuilder<ListResponse<Ratio>>
@@ -104,6 +108,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Ratio>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Ratio>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -156,6 +164,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Ratio>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Ratio>((IDictionary<string,object>)result);
 		}
 	}
 

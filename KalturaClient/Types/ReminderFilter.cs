@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public ReminderFilter(XmlElement node) : base(node)
 		{
 		}
+
+		public ReminderFilter(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

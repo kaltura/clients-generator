@@ -76,6 +76,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PaymentGatewayConfiguration(IDictionary<string,object> data) : base(data)
+		{
+			    this._PaymentGatewayConfiguration = new List<KeyValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("paymentGatewayConfiguration", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._PaymentGatewayConfiguration.Add(ObjectFactory.Create<KeyValue>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

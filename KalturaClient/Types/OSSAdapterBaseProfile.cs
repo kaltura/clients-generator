@@ -81,6 +81,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public OSSAdapterBaseProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+		}
 		#endregion
 
 		#region Methods

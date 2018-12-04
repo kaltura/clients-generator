@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConfigurationGroupTagFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupIdEqual = data.TryGetValueSafe<string>("configurationGroupIdEqual");
+			    this._OrderBy = (ConfigurationGroupTagOrderBy)StringEnum.Parse(typeof(ConfigurationGroupTagOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

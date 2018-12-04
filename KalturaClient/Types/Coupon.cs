@@ -94,6 +94,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Coupon(IDictionary<string,object> data) : base(data)
+		{
+			    this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(data.TryGetValueSafe<IDictionary<string,object>>("couponsGroup"));
+			    this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), data.TryGetValueSafe<string>("status"));
+			    this._TotalUses = data.TryGetValueSafe<int>("totalUses");
+			    this._LeftUses = data.TryGetValueSafe<int>("leftUses");
+		}
 		#endregion
 
 		#region Methods

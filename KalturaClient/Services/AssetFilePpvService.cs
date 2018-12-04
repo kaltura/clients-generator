@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<AssetFilePpv>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetFilePpv>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class AssetFilePpvDeleteRequestBuilder : RequestBuilder<bool>
@@ -130,6 +134,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class AssetFilePpvListRequestBuilder : RequestBuilder<ListResponse<AssetFilePpv>>
@@ -172,6 +183,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetFilePpv>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<AssetFilePpv>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -233,6 +248,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AssetFilePpv>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetFilePpv>((IDictionary<string,object>)result);
 		}
 	}
 

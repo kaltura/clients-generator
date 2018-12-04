@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RandomCouponGenerationOptions(IDictionary<string,object> data) : base(data)
+		{
+			    this._NumberOfCoupons = data.TryGetValueSafe<int>("numberOfCoupons");
+			    this._UseLetters = data.TryGetValueSafe<bool>("useLetters");
+			    this._UseNumbers = data.TryGetValueSafe<bool>("useNumbers");
+			    this._UseSpecialCharacters = data.TryGetValueSafe<bool>("useSpecialCharacters");
+		}
 		#endregion
 
 		#region Methods

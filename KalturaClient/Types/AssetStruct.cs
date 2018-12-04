@@ -224,6 +224,28 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetStruct(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._IsProtected = data.TryGetValueSafe<bool>("isProtected");
+			    this._MetaIds = data.TryGetValueSafe<string>("metaIds");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._Features = data.TryGetValueSafe<string>("features");
+			    this._PluralName = data.TryGetValueSafe<string>("pluralName");
+			    this._ParentId = data.TryGetValueSafe<long>("parentId");
+			    this._ConnectingMetaId = data.TryGetValueSafe<long>("connectingMetaId");
+			    this._ConnectedParentMetaId = data.TryGetValueSafe<long>("connectedParentMetaId");
+		}
 		#endregion
 
 		#region Methods

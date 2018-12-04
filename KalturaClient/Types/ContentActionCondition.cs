@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ContentActionCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Action = (ContentAction)StringEnum.Parse(typeof(ContentAction), data.TryGetValueSafe<string>("action"));
+			    this._Length = data.TryGetValueSafe<int>("length");
+			    this._LengthType = (ContentActionConditionLengthType)StringEnum.Parse(typeof(ContentActionConditionLengthType), data.TryGetValueSafe<string>("lengthType"));
+			    this._Multiplier = data.TryGetValueSafe<int>("multiplier");
+		}
 		#endregion
 
 		#region Methods

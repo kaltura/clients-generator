@@ -131,6 +131,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public EngagementAdapter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._ProviderUrl = data.TryGetValueSafe<string>("providerUrl");
+			    this._EngagementAdapterSettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("engagementAdapterSettings", new Dictionary<string, object>()))
+			    {
+			        this._EngagementAdapterSettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+		}
 		#endregion
 
 		#region Methods

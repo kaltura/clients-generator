@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserSegmentFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._UserIdEqual = data.TryGetValueSafe<string>("userIdEqual");
+		}
 		#endregion
 
 		#region Methods

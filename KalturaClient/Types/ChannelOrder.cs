@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ChannelOrder(IDictionary<string,object> data) : base(data)
+		{
+			    this._DynamicOrderBy = ObjectFactory.Create<DynamicOrderBy>(data.TryGetValueSafe<IDictionary<string,object>>("dynamicOrderBy"));
+			    this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			    this._Period = data.TryGetValueSafe<int>("period");
+		}
 		#endregion
 
 		#region Methods

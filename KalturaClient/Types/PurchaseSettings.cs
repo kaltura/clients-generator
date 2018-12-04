@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PurchaseSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._Permission = (PurchaseSettingsType)StringEnum.Parse(typeof(PurchaseSettingsType), data.TryGetValueSafe<string>("permission"));
+		}
 		#endregion
 
 		#region Methods

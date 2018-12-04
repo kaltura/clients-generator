@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PurchaseSession(IDictionary<string,object> data) : base(data)
+		{
+			    this._PreviewModuleId = data.TryGetValueSafe<int>("previewModuleId");
+		}
 		#endregion
 
 		#region Methods

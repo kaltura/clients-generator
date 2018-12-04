@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ConfigurationGroupTag>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ConfigurationGroupTag>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class ConfigurationGroupTagDeleteRequestBuilder : RequestBuilder<bool>
@@ -118,6 +122,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -164,6 +175,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ConfigurationGroupTag>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ConfigurationGroupTag>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class ConfigurationGroupTagListRequestBuilder : RequestBuilder<ListResponse<ConfigurationGroupTag>>
@@ -206,6 +221,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<ConfigurationGroupTag>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<ConfigurationGroupTag>>((IDictionary<string,object>)result);
 		}
 	}
 

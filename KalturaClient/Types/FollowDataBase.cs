@@ -103,6 +103,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public FollowDataBase(IDictionary<string,object> data) : base(data)
+		{
+			    this._AnnouncementId = data.TryGetValueSafe<long>("announcementId");
+			    this._Status = data.TryGetValueSafe<int>("status");
+			    this._Title = data.TryGetValueSafe<string>("title");
+			    this._Timestamp = data.TryGetValueSafe<long>("timestamp");
+			    this._FollowPhrase = data.TryGetValueSafe<string>("followPhrase");
+		}
 		#endregion
 
 		#region Methods

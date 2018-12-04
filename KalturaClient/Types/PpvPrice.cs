@@ -304,6 +304,37 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PpvPrice(IDictionary<string,object> data) : base(data)
+		{
+			    this._FileId = data.TryGetValueSafe<int>("fileId");
+			    this._PpvModuleId = data.TryGetValueSafe<string>("ppvModuleId");
+			    this._IsSubscriptionOnly = data.TryGetValueSafe<bool>("isSubscriptionOnly");
+			    this._FullPrice = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("fullPrice"));
+			    this._SubscriptionId = data.TryGetValueSafe<string>("subscriptionId");
+			    this._CollectionId = data.TryGetValueSafe<string>("collectionId");
+			    this._PrePaidId = data.TryGetValueSafe<string>("prePaidId");
+			    this._PpvDescriptions = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("ppvDescriptions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._PpvDescriptions.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._PurchaseUserId = data.TryGetValueSafe<string>("purchaseUserId");
+			    this._PurchasedMediaFileId = data.TryGetValueSafe<int>("purchasedMediaFileId");
+			    this._RelatedMediaFileIds = new List<IntegerValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("relatedMediaFileIds", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._RelatedMediaFileIds.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._DiscountEndDate = data.TryGetValueSafe<long>("discountEndDate");
+			    this._FirstDeviceName = data.TryGetValueSafe<string>("firstDeviceName");
+			    this._IsInCancelationPeriod = data.TryGetValueSafe<bool>("isInCancelationPeriod");
+			    this._PpvProductCode = data.TryGetValueSafe<string>("ppvProductCode");
+		}
 		#endregion
 
 		#region Methods

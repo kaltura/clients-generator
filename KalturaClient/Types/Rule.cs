@@ -95,6 +95,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Rule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+		}
 		#endregion
 
 		#region Methods

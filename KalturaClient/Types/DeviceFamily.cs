@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public DeviceFamily(XmlElement node) : base(node)
 		{
 		}
+
+		public DeviceFamily(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

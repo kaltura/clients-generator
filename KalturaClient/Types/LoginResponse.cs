@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LoginResponse(IDictionary<string,object> data) : base(data)
+		{
+			    this._User = ObjectFactory.Create<OTTUser>(data.TryGetValueSafe<IDictionary<string,object>>("user"));
+			    this._LoginSession = ObjectFactory.Create<LoginSession>(data.TryGetValueSafe<IDictionary<string,object>>("loginSession"));
+		}
 		#endregion
 
 		#region Methods

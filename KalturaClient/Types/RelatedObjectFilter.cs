@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public RelatedObjectFilter(XmlElement node) : base(node)
 		{
 		}
+
+		public RelatedObjectFilter(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

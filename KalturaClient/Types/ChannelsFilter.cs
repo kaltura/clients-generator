@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ChannelsFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._MediaIdEqual = data.TryGetValueSafe<long>("mediaIdEqual");
+			    this._NameEqual = data.TryGetValueSafe<string>("nameEqual");
+			    this._NameStartsWith = data.TryGetValueSafe<string>("nameStartsWith");
+			    this._OrderBy = (ChannelsOrderBy)StringEnum.Parse(typeof(ChannelsOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

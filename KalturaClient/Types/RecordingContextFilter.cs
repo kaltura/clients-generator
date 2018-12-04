@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RecordingContextFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._OrderBy = (RecordingContextOrderBy)StringEnum.Parse(typeof(RecordingContextOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

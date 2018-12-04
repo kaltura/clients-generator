@@ -146,6 +146,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public DrmProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._Settings = data.TryGetValueSafe<string>("settings");
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+		}
 		#endregion
 
 		#region Methods

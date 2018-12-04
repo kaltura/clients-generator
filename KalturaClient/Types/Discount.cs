@@ -67,6 +67,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Discount(IDictionary<string,object> data) : base(data)
+		{
+			    this._Percentage = data.TryGetValueSafe<int>("percentage");
+		}
 		#endregion
 
 		#region Methods

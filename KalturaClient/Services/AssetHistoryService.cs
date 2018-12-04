@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return null;
 		}
+		public override object DeserializeObject(object result)
+		{
+			return null;
+		}
 	}
 
 	public class AssetHistoryListRequestBuilder : RequestBuilder<ListResponse<AssetHistory>>
@@ -127,6 +131,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetHistory>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<AssetHistory>>((IDictionary<string,object>)result);
 		}
 	}
 

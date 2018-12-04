@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdDeviceFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdIdEqual = data.TryGetValueSafe<int>("householdIdEqual");
+			    this._DeviceFamilyIdIn = data.TryGetValueSafe<string>("deviceFamilyIdIn");
+			    this._OrderBy = (HouseholdDeviceOrderBy)StringEnum.Parse(typeof(HouseholdDeviceOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

@@ -99,6 +99,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PricePlan(IDictionary<string,object> data) : base(data)
+		{
+			    this._IsRenewable = data.TryGetValueSafe<bool>("isRenewable");
+			    this._RenewalsNumber = data.TryGetValueSafe<int>("renewalsNumber");
+			    this._DiscountId = data.TryGetValueSafe<long>("discountId");
+			    this._PriceDetailsId = data.TryGetValueSafe<long>("priceDetailsId");
+		}
 		#endregion
 
 		#region Methods

@@ -81,6 +81,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public OTTUserType(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Description = data.TryGetValueSafe<string>("description");
+		}
 		#endregion
 
 		#region Methods

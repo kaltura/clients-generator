@@ -142,6 +142,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Transaction(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._PaymentGatewayReferenceId = data.TryGetValueSafe<string>("paymentGatewayReferenceId");
+			    this._PaymentGatewayResponseId = data.TryGetValueSafe<string>("paymentGatewayResponseId");
+			    this._State = data.TryGetValueSafe<string>("state");
+			    this._FailReasonCode = data.TryGetValueSafe<int>("failReasonCode");
+			    this._CreatedAt = data.TryGetValueSafe<int>("createdAt");
+		}
 		#endregion
 
 		#region Methods

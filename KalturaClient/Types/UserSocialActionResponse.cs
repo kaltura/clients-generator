@@ -90,6 +90,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserSocialActionResponse(IDictionary<string,object> data) : base(data)
+		{
+			    this._SocialAction = ObjectFactory.Create<SocialAction>(data.TryGetValueSafe<IDictionary<string,object>>("socialAction"));
+			    this._FailStatus = new List<NetworkActionStatus>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("failStatus", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._FailStatus.Add(ObjectFactory.Create<NetworkActionStatus>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

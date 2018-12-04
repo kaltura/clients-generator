@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public RegionalChannel(IDictionary<string,object> data) : base(data)
+		{
+			    this._LinearChannelId = data.TryGetValueSafe<int>("linearChannelId");
+			    this._ChannelNumber = data.TryGetValueSafe<int>("channelNumber");
+		}
 		#endregion
 
 		#region Methods

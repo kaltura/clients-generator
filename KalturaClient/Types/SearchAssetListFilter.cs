@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SearchAssetListFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExcludeWatched = data.TryGetValueSafe<bool>("excludeWatched");
+		}
 		#endregion
 
 		#region Methods

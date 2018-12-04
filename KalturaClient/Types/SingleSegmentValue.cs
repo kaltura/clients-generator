@@ -67,6 +67,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SingleSegmentValue(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+		}
 		#endregion
 
 		#region Methods

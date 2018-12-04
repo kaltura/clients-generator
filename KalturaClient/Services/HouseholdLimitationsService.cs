@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<HouseholdLimitations>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HouseholdLimitations>((IDictionary<string,object>)result);
+		}
 	}
 
 

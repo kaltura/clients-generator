@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetStatisticsQuery(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._StartDateGreaterThanOrEqual = data.TryGetValueSafe<long>("startDateGreaterThanOrEqual");
+			    this._EndDateGreaterThanOrEqual = data.TryGetValueSafe<long>("endDateGreaterThanOrEqual");
+		}
 		#endregion
 
 		#region Methods

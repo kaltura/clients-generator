@@ -95,6 +95,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Favorite(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+			    this._ExtraData = data.TryGetValueSafe<string>("extraData");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+		}
 		#endregion
 
 		#region Methods

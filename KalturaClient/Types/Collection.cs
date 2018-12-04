@@ -264,6 +264,49 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Collection(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Channels = new List<BaseChannel>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("channels", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Channels.Add(ObjectFactory.Create<BaseChannel>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._DiscountModule = ObjectFactory.Create<DiscountModule>(data.TryGetValueSafe<IDictionary<string,object>>("discountModule"));
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._MultilingualDescription = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualDescription", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._UsageModule = ObjectFactory.Create<UsageModule>(data.TryGetValueSafe<IDictionary<string,object>>("usageModule"));
+			    this._CouponsGroups = new List<CouponsGroup>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("couponsGroups", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._ProductCodes = new List<ProductCode>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("productCodes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ProductCodes.Add(ObjectFactory.Create<ProductCode>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._PriceDetailsId = data.TryGetValueSafe<long>("priceDetailsId");
+		}
 		#endregion
 
 		#region Methods

@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<PurchaseSettings>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PurchaseSettings>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PurchaseSettingsUpdateRequestBuilder : RequestBuilder<PurchaseSettings>
@@ -127,6 +131,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<PurchaseSettings>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PurchaseSettings>((IDictionary<string,object>)result);
 		}
 	}
 

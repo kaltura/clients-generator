@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserAssetRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._RuleType = (RuleType)StringEnum.Parse(typeof(RuleType), data.TryGetValueSafe<string>("ruleType"));
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+		}
 		#endregion
 
 		#region Methods

@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<HomeNetwork>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HomeNetwork>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class HomeNetworkDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class HomeNetworkListRequestBuilder : RequestBuilder<ListResponse<HomeNetwork>>
@@ -149,6 +160,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<HomeNetwork>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<HomeNetwork>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -201,6 +216,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<HomeNetwork>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<HomeNetwork>((IDictionary<string,object>)result);
 		}
 	}
 

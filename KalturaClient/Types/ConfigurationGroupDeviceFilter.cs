@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConfigurationGroupDeviceFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupIdEqual = data.TryGetValueSafe<string>("configurationGroupIdEqual");
+			    this._OrderBy = (ConfigurationGroupDeviceOrderBy)StringEnum.Parse(typeof(ConfigurationGroupDeviceOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

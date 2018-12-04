@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Price(IDictionary<string,object> data) : base(data)
+		{
+			    this._Amount = data.TryGetValueSafe<float>("amount");
+			    this._Currency = data.TryGetValueSafe<string>("currency");
+			    this._CurrencySign = data.TryGetValueSafe<string>("currencySign");
+			    this._CountryId = data.TryGetValueSafe<long>("countryId");
+		}
 		#endregion
 
 		#region Methods

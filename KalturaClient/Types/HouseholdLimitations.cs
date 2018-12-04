@@ -161,6 +161,26 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public HouseholdLimitations(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._ConcurrentLimit = data.TryGetValueSafe<int>("concurrentLimit");
+			    this._DeviceLimit = data.TryGetValueSafe<int>("deviceLimit");
+			    this._DeviceFrequency = data.TryGetValueSafe<int>("deviceFrequency");
+			    this._DeviceFrequencyDescription = data.TryGetValueSafe<string>("deviceFrequencyDescription");
+			    this._UserFrequency = data.TryGetValueSafe<int>("userFrequency");
+			    this._UserFrequencyDescription = data.TryGetValueSafe<string>("userFrequencyDescription");
+			    this._NpvrQuotaInSeconds = data.TryGetValueSafe<int>("npvrQuotaInSeconds");
+			    this._UsersLimit = data.TryGetValueSafe<int>("usersLimit");
+			    this._DeviceFamiliesLimitations = new List<HouseholdDeviceFamilyLimitations>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("deviceFamiliesLimitations", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._DeviceFamiliesLimitations.Add(ObjectFactory.Create<HouseholdDeviceFamilyLimitations>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods

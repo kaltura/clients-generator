@@ -248,6 +248,27 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PaymentGatewayProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._IsActive = data.TryGetValueSafe<int>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._TransactUrl = data.TryGetValueSafe<string>("transactUrl");
+			    this._StatusUrl = data.TryGetValueSafe<string>("statusUrl");
+			    this._RenewUrl = data.TryGetValueSafe<string>("renewUrl");
+			    this._PaymentGatewaySettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("paymentGatewaySettings", new Dictionary<string, object>()))
+			    {
+			        this._PaymentGatewaySettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._PendingInterval = data.TryGetValueSafe<int>("pendingInterval");
+			    this._PendingRetries = data.TryGetValueSafe<int>("pendingRetries");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+			    this._RenewIntervalMinutes = data.TryGetValueSafe<int>("renewIntervalMinutes");
+			    this._RenewStartMinutes = data.TryGetValueSafe<int>("renewStartMinutes");
+			    this._ExternalVerification = data.TryGetValueSafe<bool>("externalVerification");
+		}
 		#endregion
 
 		#region Methods

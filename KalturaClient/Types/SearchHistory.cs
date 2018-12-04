@@ -130,6 +130,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SearchHistory(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Filter = data.TryGetValueSafe<string>("filter");
+			    this._Language = data.TryGetValueSafe<string>("language");
+			    this._CreatedAt = data.TryGetValueSafe<long>("createdAt");
+			    this._Service = data.TryGetValueSafe<string>("service");
+			    this._Action = data.TryGetValueSafe<string>("action");
+			    this._DeviceId = data.TryGetValueSafe<string>("deviceId");
+		}
 		#endregion
 
 		#region Methods

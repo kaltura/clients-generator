@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public SessionInfo(XmlElement node) : base(node)
 		{
 		}
+
+		public SessionInfo(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

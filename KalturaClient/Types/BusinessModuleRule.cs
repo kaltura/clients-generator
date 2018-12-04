@@ -112,6 +112,24 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public BusinessModuleRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Conditions = new List<Condition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<Condition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<ApplyDiscountModuleAction>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

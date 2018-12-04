@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<PricePlan>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<PricePlan>>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class PricePlanUpdateRequestBuilder : RequestBuilder<PricePlan>
@@ -127,6 +131,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<PricePlan>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<PricePlan>((IDictionary<string,object>)result);
 		}
 	}
 

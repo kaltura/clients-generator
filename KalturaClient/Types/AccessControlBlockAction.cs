@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public AccessControlBlockAction(XmlElement node) : base(node)
 		{
 		}
+
+		public AccessControlBlockAction(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

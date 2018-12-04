@@ -179,6 +179,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public CouponsGroup(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._MaxUsesNumber = data.TryGetValueSafe<int>("maxUsesNumber");
+			    this._MaxUsesNumberOnRenewableSub = data.TryGetValueSafe<int>("maxUsesNumberOnRenewableSub");
+			    this._CouponGroupType = (CouponGroupType)StringEnum.Parse(typeof(CouponGroupType), data.TryGetValueSafe<string>("couponGroupType"));
+			    this._MaxHouseholdUses = data.TryGetValueSafe<int>("maxHouseholdUses");
+			    this._DiscountId = data.TryGetValueSafe<long>("discountId");
+		}
 		#endregion
 
 		#region Methods

@@ -114,6 +114,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public TransactionHistoryFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), data.TryGetValueSafe<string>("entityReferenceEqual"));
+			    this._StartDateGreaterThanOrEqual = data.TryGetValueSafe<int>("startDateGreaterThanOrEqual");
+			    this._EndDateLessThanOrEqual = data.TryGetValueSafe<int>("endDateLessThanOrEqual");
+			    this._OrderBy = (TransactionHistoryOrderBy)StringEnum.Parse(typeof(TransactionHistoryOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ConcurrencyCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Limit = data.TryGetValueSafe<int>("limit");
+			    this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), data.TryGetValueSafe<string>("concurrencyLimitationType"));
+		}
 		#endregion
 
 		#region Methods

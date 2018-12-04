@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PaymentMethodProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._AllowMultiInstance = data.TryGetValueSafe<bool>("allowMultiInstance");
+		}
 		#endregion
 
 		#region Methods

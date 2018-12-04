@@ -67,6 +67,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public NpvrPremiumService(IDictionary<string,object> data) : base(data)
+		{
+			    this._QuotaInMinutes = data.TryGetValueSafe<long>("quotaInMinutes");
+		}
 		#endregion
 
 		#region Methods

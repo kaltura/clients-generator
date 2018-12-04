@@ -174,6 +174,19 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ProgramAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._EpgChannelId = data.TryGetValueSafe<long>("epgChannelId");
+			    this._EpgId = data.TryGetValueSafe<string>("epgId");
+			    this._RelatedMediaId = data.TryGetValueSafe<long>("relatedMediaId");
+			    this._Crid = data.TryGetValueSafe<string>("crid");
+			    this._LinearAssetId = data.TryGetValueSafe<long>("linearAssetId");
+			    this._EnableCdvr = data.TryGetValueSafe<bool>("enableCdvr");
+			    this._EnableCatchUp = data.TryGetValueSafe<bool>("enableCatchUp");
+			    this._EnableStartOver = data.TryGetValueSafe<bool>("enableStartOver");
+			    this._EnableTrickPlay = data.TryGetValueSafe<bool>("enableTrickPlay");
+		}
 		#endregion
 
 		#region Methods

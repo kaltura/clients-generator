@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LicensedUrl(IDictionary<string,object> data) : base(data)
+		{
+			    this._MainUrl = data.TryGetValueSafe<string>("mainUrl");
+			    this._AltUrl = data.TryGetValueSafe<string>("altUrl");
+		}
 		#endregion
 
 		#region Methods

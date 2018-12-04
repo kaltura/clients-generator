@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public MonetizationSource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), data.TryGetValueSafe<string>("type"));
+			    this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), data.TryGetValueSafe<string>("operator"));
+			    this._Days = data.TryGetValueSafe<int>("days");
+		}
 		#endregion
 
 		#region Methods

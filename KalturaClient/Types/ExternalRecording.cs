@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ExternalRecording(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+		}
 		#endregion
 
 		#region Methods

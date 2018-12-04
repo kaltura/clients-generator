@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ManualChannel(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaIds = data.TryGetValueSafe<string>("mediaIds");
+		}
 		#endregion
 
 		#region Methods

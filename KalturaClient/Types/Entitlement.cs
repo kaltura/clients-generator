@@ -184,6 +184,24 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Entitlement(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._ProductId = data.TryGetValueSafe<string>("productId");
+			    this._CurrentUses = data.TryGetValueSafe<int>("currentUses");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._CurrentDate = data.TryGetValueSafe<long>("currentDate");
+			    this._LastViewDate = data.TryGetValueSafe<long>("lastViewDate");
+			    this._PurchaseDate = data.TryGetValueSafe<long>("purchaseDate");
+			    this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), data.TryGetValueSafe<string>("paymentMethod"));
+			    this._DeviceUdid = data.TryGetValueSafe<string>("deviceUdid");
+			    this._DeviceName = data.TryGetValueSafe<string>("deviceName");
+			    this._IsCancelationWindowEnabled = data.TryGetValueSafe<bool>("isCancelationWindowEnabled");
+			    this._MaxUses = data.TryGetValueSafe<int>("maxUses");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._HouseholdId = data.TryGetValueSafe<long>("householdId");
+		}
 		#endregion
 
 		#region Methods

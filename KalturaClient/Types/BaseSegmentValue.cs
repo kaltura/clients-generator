@@ -52,6 +52,10 @@ namespace Kaltura.Types
 		public BaseSegmentValue(XmlElement node) : base(node)
 		{
 		}
+
+		public BaseSegmentValue(IDictionary<string,object> data) : base(data)
+		{
+		}
 		#endregion
 
 		#region Methods

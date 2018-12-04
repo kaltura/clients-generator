@@ -128,6 +128,15 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public PlaybackContextOptions(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaProtocol = data.TryGetValueSafe<string>("mediaProtocol");
+			    this._StreamerType = data.TryGetValueSafe<string>("streamerType");
+			    this._AssetFileIds = data.TryGetValueSafe<string>("assetFileIds");
+			    this._Context = (PlaybackContextType)StringEnum.Parse(typeof(PlaybackContextType), data.TryGetValueSafe<string>("context"));
+			    this._UrlType = (UrlType)StringEnum.Parse(typeof(UrlType), data.TryGetValueSafe<string>("urlType"));
+		}
 		#endregion
 
 		#region Methods

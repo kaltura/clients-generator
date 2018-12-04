@@ -132,6 +132,20 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UnifiedPaymentRenewal(IDictionary<string,object> data) : base(data)
+		{
+			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._Date = data.TryGetValueSafe<long>("date");
+			    this._UnifiedPaymentId = data.TryGetValueSafe<long>("unifiedPaymentId");
+			    this._Entitlements = new List<EntitlementRenewalBase>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("entitlements", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Entitlements.Add(ObjectFactory.Create<EntitlementRenewalBase>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._UserId = data.TryGetValueSafe<long>("userId");
+		}
 		#endregion
 
 		#region Methods

@@ -145,6 +145,18 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Recording(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Status = (RecordingStatus)StringEnum.Parse(typeof(RecordingStatus), data.TryGetValueSafe<string>("status"));
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+			    this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), data.TryGetValueSafe<string>("type"));
+			    this._ViewableUntilDate = data.TryGetValueSafe<long>("viewableUntilDate");
+			    this._IsProtected = data.TryGetValueSafe<bool>("isProtected");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+		}
 		#endregion
 
 		#region Methods

@@ -85,6 +85,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<ListResponse<Subscription>>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Subscription>>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class SubscriptionValidateCouponRequestBuilder : RequestBuilder<Coupon>
@@ -136,6 +140,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Coupon>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Coupon>((IDictionary<string,object>)result);
 		}
 	}
 

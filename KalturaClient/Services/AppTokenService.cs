@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<AppToken>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AppToken>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class AppTokenDeleteRequestBuilder : RequestBuilder<bool>
@@ -121,6 +125,13 @@ namespace Kaltura.Services
 				return true;
 			return false;
 		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
 	}
 
 	public class AppTokenGetRequestBuilder : RequestBuilder<AppToken>
@@ -163,6 +174,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AppToken>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AppToken>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -242,6 +257,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<SessionInfo>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<SessionInfo>((IDictionary<string,object>)result);
 		}
 	}
 

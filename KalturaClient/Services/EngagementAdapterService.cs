@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<EngagementAdapter>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<EngagementAdapter>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class EngagementAdapterDeleteRequestBuilder : RequestBuilder<bool>
@@ -118,6 +122,13 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -164,6 +175,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<EngagementAdapter>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<EngagementAdapter>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class EngagementAdapterGetRequestBuilder : RequestBuilder<EngagementAdapter>
@@ -207,6 +222,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<EngagementAdapter>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<EngagementAdapter>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class EngagementAdapterListRequestBuilder : RequestBuilder<ListResponse<EngagementAdapter>>
@@ -235,6 +254,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<EngagementAdapter>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<EngagementAdapter>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -287,6 +310,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<EngagementAdapter>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<EngagementAdapter>((IDictionary<string,object>)result);
 		}
 	}
 

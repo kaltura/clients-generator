@@ -109,6 +109,14 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserRole(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._PermissionNames = data.TryGetValueSafe<string>("permissionNames");
+			    this._ExcludedPermissionNames = data.TryGetValueSafe<string>("excludedPermissionNames");
+		}
 		#endregion
 
 		#region Methods

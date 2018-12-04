@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public SocialFacebookConfig(IDictionary<string,object> data) : base(data)
+		{
+			    this._AppId = data.TryGetValueSafe<string>("appId");
+			    this._Permissions = data.TryGetValueSafe<string>("permissions");
+		}
 		#endregion
 
 		#region Methods

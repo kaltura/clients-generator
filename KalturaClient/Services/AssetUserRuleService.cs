@@ -76,6 +76,10 @@ namespace Kaltura.Services
 		{
 			return ObjectFactory.Create<AssetUserRule>(result);
 		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetUserRule>((IDictionary<string,object>)result);
+		}
 	}
 
 	public class AssetUserRuleAttachUserRequestBuilder : RequestBuilder<object>
@@ -116,6 +120,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -162,6 +170,10 @@ namespace Kaltura.Services
 		{
 			return null;
 		}
+		public override object DeserializeObject(object result)
+		{
+			return null;
+		}
 	}
 
 	public class AssetUserRuleDetachUserRequestBuilder : RequestBuilder<object>
@@ -202,6 +214,10 @@ namespace Kaltura.Services
 		}
 
 		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -247,6 +263,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetUserRule>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<AssetUserRule>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -299,6 +319,10 @@ namespace Kaltura.Services
 		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<AssetUserRule>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<AssetUserRule>((IDictionary<string,object>)result);
 		}
 	}
 

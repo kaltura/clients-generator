@@ -72,6 +72,11 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LicensedUrlRecordingRequest(IDictionary<string,object> data) : base(data)
+		{
+			    this._FileType = data.TryGetValueSafe<string>("fileType");
+		}
 		#endregion
 
 		#region Methods

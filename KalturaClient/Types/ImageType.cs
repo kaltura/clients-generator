@@ -137,6 +137,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ImageType(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._RatioId = data.TryGetValueSafe<long>("ratioId");
+			    this._HelpText = data.TryGetValueSafe<string>("helpText");
+			    this._DefaultImageId = data.TryGetValueSafe<long>("defaultImageId");
+		}
 		#endregion
 
 		#region Methods

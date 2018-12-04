@@ -86,6 +86,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public LicensedUrlEpgRequest(IDictionary<string,object> data) : base(data)
+		{
+			    this._StreamType = (StreamType)StringEnum.Parse(typeof(StreamType), data.TryGetValueSafe<string>("streamType"));
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+		}
 		#endregion
 
 		#region Methods

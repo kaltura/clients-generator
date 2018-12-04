@@ -95,6 +95,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public OTTUserDynamicData(IDictionary<string,object> data) : base(data)
+		{
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._Key = data.TryGetValueSafe<string>("key");
+			    this._Value = ObjectFactory.Create<StringValue>(data.TryGetValueSafe<IDictionary<string,object>>("value"));
+		}
 		#endregion
 
 		#region Methods

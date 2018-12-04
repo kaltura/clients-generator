@@ -100,6 +100,13 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public CollectionFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._CollectionIdIn = data.TryGetValueSafe<string>("collectionIdIn");
+			    this._MediaFileIdEqual = data.TryGetValueSafe<int>("mediaFileIdEqual");
+			    this._OrderBy = (CollectionOrderBy)StringEnum.Parse(typeof(CollectionOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

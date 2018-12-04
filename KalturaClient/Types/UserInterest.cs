@@ -81,6 +81,12 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public UserInterest(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Topic = ObjectFactory.Create<UserInterestTopic>(data.TryGetValueSafe<IDictionary<string,object>>("topic"));
+		}
 		#endregion
 
 		#region Methods

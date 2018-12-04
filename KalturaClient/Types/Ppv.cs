@@ -220,6 +220,31 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public Ppv(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Price = ObjectFactory.Create<PriceDetails>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._FileTypes = new List<IntegerValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("fileTypes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._FileTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._DiscountModule = ObjectFactory.Create<DiscountModule>(data.TryGetValueSafe<IDictionary<string,object>>("discountModule"));
+			    this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(data.TryGetValueSafe<IDictionary<string,object>>("couponsGroup"));
+			    this._Descriptions = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("descriptions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Descriptions.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._ProductCode = data.TryGetValueSafe<string>("productCode");
+			    this._IsSubscriptionOnly = data.TryGetValueSafe<bool>("isSubscriptionOnly");
+			    this._FirstDeviceLimitation = data.TryGetValueSafe<bool>("firstDeviceLimitation");
+			    this._UsageModule = ObjectFactory.Create<UsageModule>(data.TryGetValueSafe<IDictionary<string,object>>("usageModule"));
+		}
 		#endregion
 
 		#region Methods

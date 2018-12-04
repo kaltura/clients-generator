@@ -142,6 +142,16 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public ProductPriceFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._SubscriptionIdIn = data.TryGetValueSafe<string>("subscriptionIdIn");
+			    this._FileIdIn = data.TryGetValueSafe<string>("fileIdIn");
+			    this._CollectionIdIn = data.TryGetValueSafe<string>("collectionIdIn");
+			    this._IsLowest = data.TryGetValueSafe<bool>("isLowest");
+			    this._CouponCodeEqual = data.TryGetValueSafe<string>("couponCodeEqual");
+			    this._OrderBy = (ProductPriceOrderBy)StringEnum.Parse(typeof(ProductPriceOrderBy), data.TryGetValueSafe<string>("orderBy"));
+		}
 		#endregion
 
 		#region Methods

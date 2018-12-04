@@ -90,6 +90,17 @@ namespace Kaltura.Types
 				}
 			}
 		}
+
+		public AssetsCount(IDictionary<string,object> data) : base(data)
+		{
+			    this._Field = data.TryGetValueSafe<string>("field");
+			    this._Objects = new List<AssetCount>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("objects", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Objects.Add(ObjectFactory.Create<AssetCount>((IDictionary<string,object>)dataDictionary));
+			    }
+		}
 		#endregion
 
 		#region Methods
