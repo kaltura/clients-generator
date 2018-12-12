@@ -33,58 +33,64 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class OrCondition : NotCondition
+	public class HeaderCondition : NotCondition
 	{
 		#region Constants
-		public const string CONDITIONS = "conditions";
+		public const string KEY = "key";
+		public const string VALUE = "value";
 		#endregion
 
 		#region Private Fields
-		private IList<Condition> _Conditions;
+		private string _Key = null;
+		private string _Value = null;
 		#endregion
 
 		#region Properties
-		public IList<Condition> Conditions
+		public string Key
 		{
-			get { return _Conditions; }
+			get { return _Key; }
 			set 
 			{ 
-				_Conditions = value;
-				OnPropertyChanged("Conditions");
+				_Key = value;
+				OnPropertyChanged("Key");
+			}
+		}
+		public string Value
+		{
+			get { return _Value; }
+			set 
+			{ 
+				_Value = value;
+				OnPropertyChanged("Value");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public OrCondition()
+		public HeaderCondition()
 		{
 		}
 
-		public OrCondition(XmlElement node) : base(node)
+		public HeaderCondition(XmlElement node) : base(node)
 		{
 			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
 				switch (propertyNode.Name)
 				{
-					case "conditions":
-						this._Conditions = new List<Condition>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
-						}
+					case "key":
+						this._Key = propertyNode.InnerText;
+						continue;
+					case "value":
+						this._Value = propertyNode.InnerText;
 						continue;
 				}
 			}
 		}
 
-		public OrCondition(IDictionary<string,object> data) : base(data)
+		public HeaderCondition(IDictionary<string,object> data) : base(data)
 		{
-			    this._Conditions = new List<Condition>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Conditions.Add(ObjectFactory.Create<Condition>((IDictionary<string,object>)dataDictionary));
-			    }
+			    this._Key = data.TryGetValueSafe<string>("key");
+			    this._Value = data.TryGetValueSafe<string>("value");
 		}
 		#endregion
 
@@ -93,16 +99,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaOrCondition");
-			kparams.AddIfNotNull("conditions", this._Conditions);
+				kparams.AddReplace("objectType", "KalturaHeaderCondition");
+			kparams.AddIfNotNull("key", this._Key);
+			kparams.AddIfNotNull("value", this._Value);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case CONDITIONS:
-					return "Conditions";
+				case KEY:
+					return "Key";
+				case VALUE:
+					return "Value";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -37,6 +37,7 @@ namespace Kaltura.Enums
 		public static readonly RuleConditionType SEGMENTS = new RuleConditionType("SEGMENTS");
 		public static readonly RuleConditionType DATE = new RuleConditionType("DATE");
 		public static readonly RuleConditionType OR = new RuleConditionType("OR");
+		public static readonly RuleConditionType HEADER = new RuleConditionType("HEADER");
 
 		private RuleConditionType(string name) : base(name) { }
 	}

@@ -34,6 +34,7 @@ namespace Kaltura.Enums
 		public static readonly RuleType USER_TYPE = new RuleType("user_type");
 		public static readonly RuleType DEVICE = new RuleType("device");
 		public static readonly RuleType ASSETUSER = new RuleType("assetUser");
+		public static readonly RuleType NETWORK = new RuleType("network");
 
 		private RuleType(string name) : base(name) { }
 	}
