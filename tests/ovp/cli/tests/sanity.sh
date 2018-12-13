@@ -42,7 +42,7 @@ report "uploadtoken->upload()" $?
 ENTRY_ID=`kalcli -x baseentry addFromUploadedFile uploadTokenId=$TOKEN partnerId=$PARTNER_ID ks=$KS entry:objectType=KalturaBaseEntry |awk '$1 == "id" {print $2}'`
 report "baseentry->addFromUploadedFile()" $?
 TEST_CAT_NAM='testme'+$RANDOM
-kalcli -x category add category:objectType=KalturaCategory category:name=$TEST_CAT_NAM  ks=$KS
+CAT_ID=`kalcli -x category add category:objectType=KalturaCategory category:name=$TEST_CAT_NAM  ks=$KS|awk '$1 == "id" {print $2}'`
 report "category->add()" $?
 if [ $RC -eq 0 ];then
     TOTALC=`kalcli -x category list filter:objectType=KalturaCategoryFilter filter:fullNameEqual=$TEST_CAT_NAM ks=$KS|awk '$1 == "totalCount" {print $2}'`
@@ -51,7 +51,6 @@ if [ $RC -eq 0 ];then
     else
 	report "category->list()" 1
     fi
-    CAT_ID=`kalcli -x category list filter:objectType=KalturaCategoryFilter filter:fullNameEqual=$TEST_CAT_NAM ks=$KS|awk '$1 == "id" {print $2}'`
     kalcli -x category delete  id=$CAT_ID ks=$KS
     report "category->delete()" $?
 fi
