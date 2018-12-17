@@ -11,6 +11,7 @@ tests/ott/node2/config.json
 tests/ott/zend/tests/config.ini
 tests/ott/swift/Example/Tests/TestConfig.plist
 tests/ott/java2/src/test/java/resources/ott.test.properties
+tests/ovp/typescript/src/tests/tests-config.ts
 tests/config.ini
 
 # IDE
