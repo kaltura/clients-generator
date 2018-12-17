@@ -541,7 +541,7 @@ describe("Kaltura server API request", () => {
 
     test("parse number response property while provided value is boolean", (done) => {
       expect.assertions(2);
-      kalturaClient.request(new PartnerGetAction({id: 1931861})).subscribe(
+      kalturaClient.request(new PartnerGetAction({id: @YOUR_PARTNER_ID@})).subscribe(
         (response) => {
           asyncAssert(() => {
             expect(response).toBeDefined();
@@ -599,7 +599,7 @@ describe("Kaltura server API request", () => {
 
     test("parse string response property while provided value is of type number", (done) => {
       expect.assertions(2);
-      kalturaClient.request(new PartnerGetAction({id: 1931861})).subscribe(
+      kalturaClient.request(new PartnerGetAction({id: @YOUR_PARTNER_ID@})).subscribe(
         (response) => {
           asyncAssert(() => {
             expect(response).toBeDefined();
@@ -647,7 +647,7 @@ describe("Kaltura server API request", () => {
 
     test("parse boolean response property while provided value is valid number as string", (done) => {
       expect.assertions(2);
-      kalturaClient.request(new PartnerGetAction({id: 1931861})).subscribe(
+      kalturaClient.request(new PartnerGetAction({id: @YOUR_PARTNER_ID@})).subscribe(
         (response) => {
           asyncAssert(() => {
             expect(response).toBeDefined();
@@ -759,7 +759,7 @@ describe("Kaltura server API request", () => {
             expect(kalturaPlaylist).toBeDefined();
 
             // verify array inner item properties are exposed correctly
-            expect(kalturaMediaEntry.dataUrl).toMatch(new RegExp(`^${escapeRegExp("http(s)?://cdnapi(sec)?.kaltura.com/p/1931861/sp/193186100/playManifest/entryId/1_2vp1gp7u/format/url/protocol/http")}(s)?$`)); // simple value
+            expect(kalturaMediaEntry.dataUrl).toMatch(new RegExp(`^${escapeRegExp("http(s)?://cdnapi(sec)?.kaltura.com/p/@YOUR_PARTNER_ID@/sp/@YOUR_PARTNER_ID@00/playManifest/entryId/1_2vp1gp7u/format/url/protocol/http")}(s)?$`)); // simple value
             expect(kalturaMediaEntry.id).toBe("1_2vp1gp7u"); // simple value OF BASE
 
 
