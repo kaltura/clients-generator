@@ -192,6 +192,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
     @Override
     public void enableLogs(boolean enable) {
         this.enableLogs = enable;
+        if (enable) {
+            logger = Logger.getLogger(TAG);
+        } else {
+            logger = new LoggerNull(TAG);
+        }
     }
 
     @SuppressWarnings("rawtypes")

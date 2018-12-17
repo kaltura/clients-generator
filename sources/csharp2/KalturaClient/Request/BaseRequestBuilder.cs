@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
 using Kaltura.Types;
-using String = System.String;
 
 namespace Kaltura.Request
 {
     public delegate void OnCompletedHandler<T>(T response, Exception error);
     public delegate void OnErrorHandler(Exception error);
 
-    public abstract class BaseRequestBuilder<T> : RequestConfiguration, IBaseRequestBuilder
+    public abstract class BaseRequestBuilder<T> : BaseRequest, IBaseRequestBuilder
     {
         private string service;
         private OnCompletedHandler<T> onCompletion;
@@ -41,7 +40,6 @@ namespace Kaltura.Request
         }
 
         abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
-        abstract public object Deserialize(XmlElement xmlElement);
 
         private void Log(string msg)
         {
@@ -100,6 +98,7 @@ namespace Kaltura.Request
         {
             if (onCompletion != null)
             {
+                response = response == null? default(T):response;
                 onCompletion((T)response, error);
             }
             if (onError != null && error != null)
@@ -167,22 +166,7 @@ namespace Kaltura.Request
                     this.Log(string.Format("result : {0}", responseString));
                     this.Log(string.Format("result headers : {0}", headersStr));
 
-                    var xml = new XmlDocument();
-                    xml.LoadXml(responseString);
-
-                    ValidateXmlResult(xml);
-                    var resultXml = xml["xml"]["result"];
-
-                    // Check if response is error and throw
-                    var apiError = GetAPIError(resultXml);
-                    if (apiError != null)
-                    {
-                        throw apiError;
-                    }
-
-                    // this cast should always work because the code is generated for every type and it returns its own object
-                    // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
-                    responseObject = (T) Deserialize(resultXml);
+                    responseObject = base.ParseResponseString<T>(responseString);
                 }
             }
             catch (WebException wex)
@@ -229,7 +213,7 @@ namespace Kaltura.Request
 
             request.Headers = getHeaders();
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Accept = "application/xml";
+            request.Accept = "application/json";
             request.ContentType = getContentType();
             request.Proxy = CreateProxy();
             return request;
@@ -250,7 +234,7 @@ namespace Kaltura.Request
             var requestBody = "";
             var parameters = getParameters(false);
             parameters.Add(client.ClientConfiguration.ToParams(false));
-            parameters.Add("format", EServiceFormat.RESPONSE_TYPE_XML.GetHashCode());
+            parameters.Add("format", EServiceFormat.RESPONSE_TYPE_JSON.GetHashCode());
             parameters.Add("kalsig", Signature(parameters));
 
             var json = parameters.ToJson();

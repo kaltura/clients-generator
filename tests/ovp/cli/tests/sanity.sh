@@ -14,46 +14,45 @@ shopt -s expand_aliases
 . $PREFIX/kalcliAliases.sh
 PASSED=0
 FAILED=0
-inc_counter()
+report()
 {
-    VAL=$1
-    if [ $VAL -eq 0 ];then
+    TEST_NAME=$1
+    RC=$2
+    if [ $RC -eq 0 ];then
 	PASSED=`expr $PASSED + 1`
+	echo -e "${BRIGHT_GREEN}${TEST_NAME} PASSED${NORMAL}"
     else
 	FAILED=`expr $FAILED + 1`
+	echo -e "${BRIGHT_RED}${TEST_NAME} FAILED${NORMAL}"
     fi
 }
 TEST_FLV="$PREFIX/tests/DemoVideo.flv"
 echo -e "${BRIGHT_BLUE}######### Running tests ###########${NORMAL}"
 KS=`genks -b $PARTNER_ID`
 kalcli -x media list ks=$KS
-inc_counter $?
+report "media->list()" $?
 SOME_ENTRY_ID=`kalcli -x baseentry list pager:objectType=KalturaFilterPager pager:pageSize=1 filter:objectType=KalturaBaseEntryFilter   filter:typeEqual=1 ks=$KS|awk '$1 == "id" {print $2}'`
-inc_counter $?
+report "baseentry->list()" $?
 kalcli -x baseentry updateThumbnailFromSourceEntry  entryId=$SOME_ENTRY_ID sourceEntryId=$SOME_ENTRY_ID ks=$KS  timeOffset=3
-inc_counter $?
-kalcli -x  partner register partner:objectType=KalturaPartner partner:name=apartner partner:adminName=apartner partner:adminEmail=partner@example.com partner:description=someone cmsPassword=partner012
-inc_counter $?
+report "baseentry->updateThumbnailFromSourceEntry()" $? 
 TOKEN=`kalcli -x uploadtoken add uploadToken:objectType=KalturaUploadToken uploadToken:fileName=$TEST_FLV  ks=$KS|awk '$1 == "id" {print $2}'`
-inc_counter $?
+report "uploadtoken->add()" $?
 kalcli -x uploadtoken upload fileData=@$TEST_FLV uploadTokenId=$TOKEN ks=$KS
-inc_counter $?
+report "uploadtoken->upload()" $?
 ENTRY_ID=`kalcli -x baseentry addFromUploadedFile uploadTokenId=$TOKEN partnerId=$PARTNER_ID ks=$KS entry:objectType=KalturaBaseEntry |awk '$1 == "id" {print $2}'`
-inc_counter $?
+report "baseentry->addFromUploadedFile()" $?
 TEST_CAT_NAM='testme'+$RANDOM
-kalcli -x category add category:objectType=KalturaCategory category:name=$TEST_CAT_NAM  ks=$KS
-RC=$?
-inc_counter $RC
+CAT_ID=`kalcli -x category add category:objectType=KalturaCategory category:name=$TEST_CAT_NAM  ks=$KS|awk '$1 == "id" {print $2}'`
+report "category->add()" $?
 if [ $RC -eq 0 ];then
     TOTALC=`kalcli -x category list filter:objectType=KalturaCategoryFilter filter:fullNameEqual=$TEST_CAT_NAM ks=$KS|awk '$1 == "totalCount" {print $2}'`
     if [ $TOTALC -eq 1 ];then
-	inc_counter 0
+	report "category->list()" 0
     else
-	inc_counter 1
+	report "category->list()" 1
     fi
-    CAT_ID=`kalcli -x category list filter:objectType=KalturaCategoryFilter filter:fullNameEqual=$TEST_CAT_NAM ks=$KS|awk '$1 == "id" {print $2}'`
     kalcli -x category delete  id=$CAT_ID ks=$KS
-    inc_counter $?
+    report "category->delete()" $?
 fi
 echo -e "${BRIGHT_GREEN}PASSED tests: $PASSED ${NORMAL}, ${BRIGHT_RED}FAILED tests: $FAILED ${NORMAL}"
 if [ "$FAILED" -gt 0 ];then

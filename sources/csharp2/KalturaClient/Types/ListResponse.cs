@@ -84,6 +84,16 @@ namespace Kaltura.Types
 			}
 		}
 
+        public ListResponse(IDictionary<string, object> data) : base(data)
+        {
+            this._TotalCount = (int)data["totalCount"];
+            this._Objects = new List<T>();
+            foreach (var arrayData in (IEnumerable<object>)data["objects"])
+            {
+                this._Objects.Add(ObjectFactory.Create<T>((Dictionary<string,object>)arrayData));
+            }
+        }
+
 		#endregion
 	}
 }
