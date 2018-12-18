@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Request
 {
     public interface IBaseRequestBuilder
     {
-        object Deserialize(XmlElement results);
-        object DeserializeObject(object results);
+        object Deserialize(JToken results);
     }
 }
