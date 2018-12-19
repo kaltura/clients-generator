@@ -39,12 +39,14 @@ namespace Kaltura.Types
 		public const string FORMAT = "format";
 		public const string PROTOCOLS = "protocols";
 		public const string DRM = "drm";
+		public const string IS_TOKENIZED = "isTokenized";
 		#endregion
 
 		#region Private Fields
 		private string _Format = null;
 		private string _Protocols = null;
 		private IList<DrmPlaybackPluginData> _Drm;
+		private bool? _IsTokenized = null;
 		#endregion
 
 		#region Properties
@@ -75,6 +77,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("Drm");
 			}
 		}
+		public bool? IsTokenized
+		{
+			get { return _IsTokenized; }
+			set 
+			{ 
+				_IsTokenized = value;
+				OnPropertyChanged("IsTokenized");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -101,6 +112,9 @@ namespace Kaltura.Types
 							this._Drm.Add(ObjectFactory.Create<DrmPlaybackPluginData>(arrayNode));
 						}
 						continue;
+					case "isTokenized":
+						this._IsTokenized = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
 		}
@@ -115,6 +129,7 @@ namespace Kaltura.Types
 			        if (dataDictionary == null) { continue; }
 			        this._Drm.Add(ObjectFactory.Create<DrmPlaybackPluginData>((IDictionary<string,object>)dataDictionary));
 			    }
+			    this._IsTokenized = data.TryGetValueSafe<bool>("isTokenized");
 		}
 		#endregion
 
@@ -127,6 +142,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("format", this._Format);
 			kparams.AddIfNotNull("protocols", this._Protocols);
 			kparams.AddIfNotNull("drm", this._Drm);
+			kparams.AddIfNotNull("isTokenized", this._IsTokenized);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -139,6 +155,8 @@ namespace Kaltura.Types
 					return "Protocols";
 				case DRM:
 					return "Drm";
+				case IS_TOKENIZED:
+					return "IsTokenized";
 				default:
 					return base.getPropertyName(apiName);
 			}
