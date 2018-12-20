@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,10 +62,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -73,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public string Code
 		{
 			get { return _Code; }
@@ -82,6 +92,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Code");
 			}
 		}
+		[JsonProperty]
 		public string MainLanguageCode
 		{
 			get { return _MainLanguageCode; }
@@ -91,6 +102,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MainLanguageCode");
 			}
 		}
+		[JsonProperty]
 		public string LanguagesCode
 		{
 			get { return _LanguagesCode; }
@@ -100,6 +112,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("LanguagesCode");
 			}
 		}
+		[JsonProperty]
 		public string Currency
 		{
 			get { return _Currency; }
@@ -109,6 +122,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Currency");
 			}
 		}
+		[JsonProperty]
 		public string CurrencySign
 		{
 			get { return _CurrencySign; }
@@ -118,6 +132,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CurrencySign");
 			}
 		}
+		[JsonProperty]
 		public float VatPercent
 		{
 			get { return _VatPercent; }
@@ -127,6 +142,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("VatPercent");
 			}
 		}
+		[JsonProperty]
 		public string TimeZoneId
 		{
 			get { return _TimeZoneId; }
@@ -143,54 +159,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Country(XmlElement node) : base(node)
+		public Country(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "code":
-						this._Code = propertyNode.InnerText;
-						continue;
-					case "mainLanguageCode":
-						this._MainLanguageCode = propertyNode.InnerText;
-						continue;
-					case "languagesCode":
-						this._LanguagesCode = propertyNode.InnerText;
-						continue;
-					case "currency":
-						this._Currency = propertyNode.InnerText;
-						continue;
-					case "currencySign":
-						this._CurrencySign = propertyNode.InnerText;
-						continue;
-					case "vatPercent":
-						this._VatPercent = ParseFloat(propertyNode.InnerText);
-						continue;
-					case "timeZoneId":
-						this._TimeZoneId = propertyNode.InnerText;
-						continue;
-				}
+				this._Id = ParseInt(node["id"].Value<string>());
 			}
-		}
-
-		public Country(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Code = data.TryGetValueSafe<string>("code");
-			    this._MainLanguageCode = data.TryGetValueSafe<string>("mainLanguageCode");
-			    this._LanguagesCode = data.TryGetValueSafe<string>("languagesCode");
-			    this._Currency = data.TryGetValueSafe<string>("currency");
-			    this._CurrencySign = data.TryGetValueSafe<string>("currencySign");
-			    this._VatPercent = data.TryGetValueSafe<float>("vatPercent");
-			    this._TimeZoneId = data.TryGetValueSafe<string>("timeZoneId");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["code"] != null)
+			{
+				this._Code = node["code"].Value<string>();
+			}
+			if(node["mainLanguageCode"] != null)
+			{
+				this._MainLanguageCode = node["mainLanguageCode"].Value<string>();
+			}
+			if(node["languagesCode"] != null)
+			{
+				this._LanguagesCode = node["languagesCode"].Value<string>();
+			}
+			if(node["currency"] != null)
+			{
+				this._Currency = node["currency"].Value<string>();
+			}
+			if(node["currencySign"] != null)
+			{
+				this._CurrencySign = node["currencySign"].Value<string>();
+			}
+			if(node["vatPercent"] != null)
+			{
+				this._VatPercent = ParseFloat(node["vatPercent"].Value<string>());
+			}
+			if(node["timeZoneId"] != null)
+			{
+				this._TimeZoneId = node["timeZoneId"].Value<string>();
+			}
 		}
 		#endregion
 

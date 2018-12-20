@@ -32,6 +32,7 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -81,13 +82,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<AssetFileContext>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<AssetFileContext>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -100,6 +97,7 @@ namespace Kaltura.Services
 		public const string ASSET_FILE_ID = "assetFileId";
 		public const string CONTEXT_TYPE = "contextType";
 		public new const string KS = "ks";
+		public const string TOKENIZED_URL = "tokenizedUrl";
 		#endregion
 
 		public new int PartnerId
@@ -132,13 +130,18 @@ namespace Kaltura.Services
 			set;
 			get;
 		}
+		public string TokenizedUrl
+		{
+			set;
+			get;
+		}
 
 		public AssetFilePlayManifestRequestBuilder()
 			: base("assetfile", "playManifest")
 		{
 		}
 
-		public AssetFilePlayManifestRequestBuilder(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks)
+		public AssetFilePlayManifestRequestBuilder(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks, string tokenizedUrl)
 			: this()
 		{
 			this.PartnerId = partnerId;
@@ -147,6 +150,7 @@ namespace Kaltura.Services
 			this.AssetFileId = assetFileId;
 			this.ContextType = contextType;
 			this.Ks = ks;
+			this.TokenizedUrl = tokenizedUrl;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -164,6 +168,8 @@ namespace Kaltura.Services
 				kparams.AddIfNotNull("contextType", ContextType);
 			if (!isMapped("ks"))
 				kparams.AddIfNotNull("ks", Ks);
+			if (!isMapped("tokenizedUrl"))
+				kparams.AddIfNotNull("tokenizedUrl", TokenizedUrl);
 			return kparams;
 		}
 
@@ -173,13 +179,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<AssetFile>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<AssetFile>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -195,9 +197,9 @@ namespace Kaltura.Services
 			return new AssetFileGetContextRequestBuilder(id, contextType);
 		}
 
-		public static AssetFilePlayManifestRequestBuilder PlayManifest(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks = null)
+		public static AssetFilePlayManifestRequestBuilder PlayManifest(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks = null, string tokenizedUrl = null)
 		{
-			return new AssetFilePlayManifestRequestBuilder(partnerId, assetId, assetType, assetFileId, contextType, ks);
+			return new AssetFilePlayManifestRequestBuilder(partnerId, assetId, assetType, assetFileId, contextType, ks, tokenizedUrl);
 		}
 	}
 }

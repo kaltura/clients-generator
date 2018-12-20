@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public float Amount
 		{
 			get { return _Amount; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Amount");
 			}
 		}
+		[JsonProperty]
 		public string Currency
 		{
 			get { return _Currency; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Currency");
 			}
 		}
+		[JsonProperty]
 		public string CurrencySign
 		{
 			get { return _CurrencySign; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CurrencySign");
 			}
 		}
+		[JsonProperty]
 		public long CountryId
 		{
 			get { return _CountryId; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Price(XmlElement node) : base(node)
+		public Price(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["amount"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "amount":
-						this._Amount = ParseFloat(propertyNode.InnerText);
-						continue;
-					case "currency":
-						this._Currency = propertyNode.InnerText;
-						continue;
-					case "currencySign":
-						this._CurrencySign = propertyNode.InnerText;
-						continue;
-					case "countryId":
-						this._CountryId = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._Amount = ParseFloat(node["amount"].Value<string>());
 			}
-		}
-
-		public Price(IDictionary<string,object> data) : base(data)
-		{
-			    this._Amount = data.TryGetValueSafe<float>("amount");
-			    this._Currency = data.TryGetValueSafe<string>("currency");
-			    this._CurrencySign = data.TryGetValueSafe<string>("currencySign");
-			    this._CountryId = data.TryGetValueSafe<long>("countryId");
+			if(node["currency"] != null)
+			{
+				this._Currency = node["currency"].Value<string>();
+			}
+			if(node["currencySign"] != null)
+			{
+				this._CurrencySign = node["currencySign"].Value<string>();
+			}
+			if(node["countryId"] != null)
+			{
+				this._CountryId = ParseLong(node["countryId"].Value<string>());
+			}
 		}
 		#endregion
 

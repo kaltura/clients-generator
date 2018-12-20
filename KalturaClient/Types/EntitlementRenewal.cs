@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,6 +54,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public Price Price
 		{
 			get { return _Price; }
@@ -61,6 +64,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Price");
 			}
 		}
+		[JsonProperty]
 		public long Date
 		{
 			get { return _Date; }
@@ -70,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Date");
 			}
 		}
+		[JsonProperty]
 		public long PurchaseId
 		{
 			get { return _PurchaseId; }
@@ -79,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PurchaseId");
 			}
 		}
+		[JsonProperty]
 		public long SubscriptionId
 		{
 			get { return _SubscriptionId; }
@@ -88,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionId");
 			}
 		}
+		[JsonProperty]
 		public long UserId
 		{
 			get { return _UserId; }
@@ -104,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public EntitlementRenewal(XmlElement node) : base(node)
+		public EntitlementRenewal(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["price"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "price":
-						this._Price = ObjectFactory.Create<Price>(propertyNode);
-						continue;
-					case "date":
-						this._Date = ParseLong(propertyNode.InnerText);
-						continue;
-					case "purchaseId":
-						this._PurchaseId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "subscriptionId":
-						this._SubscriptionId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "userId":
-						this._UserId = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._Price = ObjectFactory.Create<Price>(node["price"]);
 			}
-		}
-
-		public EntitlementRenewal(IDictionary<string,object> data) : base(data)
-		{
-			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
-			    this._Date = data.TryGetValueSafe<long>("date");
-			    this._PurchaseId = data.TryGetValueSafe<long>("purchaseId");
-			    this._SubscriptionId = data.TryGetValueSafe<long>("subscriptionId");
-			    this._UserId = data.TryGetValueSafe<long>("userId");
+			if(node["date"] != null)
+			{
+				this._Date = ParseLong(node["date"].Value<string>());
+			}
+			if(node["purchaseId"] != null)
+			{
+				this._PurchaseId = ParseLong(node["purchaseId"].Value<string>());
+			}
+			if(node["subscriptionId"] != null)
+			{
+				this._SubscriptionId = ParseLong(node["subscriptionId"].Value<string>());
+			}
+			if(node["userId"] != null)
+			{
+				this._UserId = ParseLong(node["userId"].Value<string>());
+			}
 		}
 		#endregion
 

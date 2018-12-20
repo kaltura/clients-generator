@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string ClientTag
 		{
 			get { return _ClientTag; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ClientTag");
 			}
 		}
+		[JsonProperty]
 		public string ApiVersion
 		{
 			get { return _ApiVersion; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ClientConfiguration(XmlElement node) : base(node)
+		public ClientConfiguration(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["clientTag"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "clientTag":
-						this._ClientTag = propertyNode.InnerText;
-						continue;
-					case "apiVersion":
-						this._ApiVersion = propertyNode.InnerText;
-						continue;
-				}
+				this._ClientTag = node["clientTag"].Value<string>();
 			}
-		}
-
-		public ClientConfiguration(IDictionary<string,object> data) : base(data)
-		{
-			    this._ClientTag = data.TryGetValueSafe<string>("clientTag");
-			    this._ApiVersion = data.TryGetValueSafe<string>("apiVersion");
+			if(node["apiVersion"] != null)
+			{
+				this._ApiVersion = node["apiVersion"].Value<string>();
+			}
 		}
 		#endregion
 

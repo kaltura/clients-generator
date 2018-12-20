@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -76,6 +78,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public bool? PushNotificationEnabled
 		{
 			get { return _PushNotificationEnabled; }
@@ -85,6 +88,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushNotificationEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? PushSystemAnnouncementsEnabled
 		{
 			get { return _PushSystemAnnouncementsEnabled; }
@@ -94,6 +98,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushSystemAnnouncementsEnabled");
 			}
 		}
+		[JsonProperty]
 		public int PushStartHour
 		{
 			get { return _PushStartHour; }
@@ -103,6 +108,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushStartHour");
 			}
 		}
+		[JsonProperty]
 		public int PushEndHour
 		{
 			get { return _PushEndHour; }
@@ -112,6 +118,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushEndHour");
 			}
 		}
+		[JsonProperty]
 		public bool? InboxEnabled
 		{
 			get { return _InboxEnabled; }
@@ -121,6 +128,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("InboxEnabled");
 			}
 		}
+		[JsonProperty]
 		public int MessageTTLDays
 		{
 			get { return _MessageTTLDays; }
@@ -130,6 +138,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MessageTTLDays");
 			}
 		}
+		[JsonProperty]
 		public bool? AutomaticIssueFollowNotification
 		{
 			get { return _AutomaticIssueFollowNotification; }
@@ -139,6 +148,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AutomaticIssueFollowNotification");
 			}
 		}
+		[JsonProperty]
 		public int TopicExpirationDurationDays
 		{
 			get { return _TopicExpirationDurationDays; }
@@ -148,6 +158,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TopicExpirationDurationDays");
 			}
 		}
+		[JsonProperty]
 		public bool? ReminderEnabled
 		{
 			get { return _ReminderEnabled; }
@@ -157,6 +168,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ReminderEnabled");
 			}
 		}
+		[JsonProperty]
 		public int ReminderOffsetSec
 		{
 			get { return _ReminderOffsetSec; }
@@ -166,6 +178,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ReminderOffsetSec");
 			}
 		}
+		[JsonProperty]
 		public string PushAdapterUrl
 		{
 			get { return _PushAdapterUrl; }
@@ -175,6 +188,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushAdapterUrl");
 			}
 		}
+		[JsonProperty]
 		public string ChurnMailTemplateName
 		{
 			get { return _ChurnMailTemplateName; }
@@ -184,6 +198,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ChurnMailTemplateName");
 			}
 		}
+		[JsonProperty]
 		public string ChurnMailSubject
 		{
 			get { return _ChurnMailSubject; }
@@ -193,6 +208,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ChurnMailSubject");
 			}
 		}
+		[JsonProperty]
 		public string SenderEmail
 		{
 			get { return _SenderEmail; }
@@ -202,6 +218,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SenderEmail");
 			}
 		}
+		[JsonProperty]
 		public string MailSenderName
 		{
 			get { return _MailSenderName; }
@@ -211,6 +228,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailSenderName");
 			}
 		}
+		[JsonProperty]
 		public long MailNotificationAdapterId
 		{
 			get { return _MailNotificationAdapterId; }
@@ -220,6 +238,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailNotificationAdapterId");
 			}
 		}
+		[JsonProperty]
 		public bool? SmsEnabled
 		{
 			get { return _SmsEnabled; }
@@ -236,86 +255,76 @@ namespace Kaltura.Types
 		{
 		}
 
-		public NotificationsPartnerSettings(XmlElement node) : base(node)
+		public NotificationsPartnerSettings(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["pushNotificationEnabled"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "pushNotificationEnabled":
-						this._PushNotificationEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "pushSystemAnnouncementsEnabled":
-						this._PushSystemAnnouncementsEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "pushStartHour":
-						this._PushStartHour = ParseInt(propertyNode.InnerText);
-						continue;
-					case "pushEndHour":
-						this._PushEndHour = ParseInt(propertyNode.InnerText);
-						continue;
-					case "inboxEnabled":
-						this._InboxEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "messageTTLDays":
-						this._MessageTTLDays = ParseInt(propertyNode.InnerText);
-						continue;
-					case "automaticIssueFollowNotification":
-						this._AutomaticIssueFollowNotification = ParseBool(propertyNode.InnerText);
-						continue;
-					case "topicExpirationDurationDays":
-						this._TopicExpirationDurationDays = ParseInt(propertyNode.InnerText);
-						continue;
-					case "reminderEnabled":
-						this._ReminderEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "reminderOffsetSec":
-						this._ReminderOffsetSec = ParseInt(propertyNode.InnerText);
-						continue;
-					case "pushAdapterUrl":
-						this._PushAdapterUrl = propertyNode.InnerText;
-						continue;
-					case "churnMailTemplateName":
-						this._ChurnMailTemplateName = propertyNode.InnerText;
-						continue;
-					case "churnMailSubject":
-						this._ChurnMailSubject = propertyNode.InnerText;
-						continue;
-					case "senderEmail":
-						this._SenderEmail = propertyNode.InnerText;
-						continue;
-					case "mailSenderName":
-						this._MailSenderName = propertyNode.InnerText;
-						continue;
-					case "mailNotificationAdapterId":
-						this._MailNotificationAdapterId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "smsEnabled":
-						this._SmsEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._PushNotificationEnabled = ParseBool(node["pushNotificationEnabled"].Value<string>());
 			}
-		}
-
-		public NotificationsPartnerSettings(IDictionary<string,object> data) : base(data)
-		{
-			    this._PushNotificationEnabled = data.TryGetValueSafe<bool>("pushNotificationEnabled");
-			    this._PushSystemAnnouncementsEnabled = data.TryGetValueSafe<bool>("pushSystemAnnouncementsEnabled");
-			    this._PushStartHour = data.TryGetValueSafe<int>("pushStartHour");
-			    this._PushEndHour = data.TryGetValueSafe<int>("pushEndHour");
-			    this._InboxEnabled = data.TryGetValueSafe<bool>("inboxEnabled");
-			    this._MessageTTLDays = data.TryGetValueSafe<int>("messageTTLDays");
-			    this._AutomaticIssueFollowNotification = data.TryGetValueSafe<bool>("automaticIssueFollowNotification");
-			    this._TopicExpirationDurationDays = data.TryGetValueSafe<int>("topicExpirationDurationDays");
-			    this._ReminderEnabled = data.TryGetValueSafe<bool>("reminderEnabled");
-			    this._ReminderOffsetSec = data.TryGetValueSafe<int>("reminderOffsetSec");
-			    this._PushAdapterUrl = data.TryGetValueSafe<string>("pushAdapterUrl");
-			    this._ChurnMailTemplateName = data.TryGetValueSafe<string>("churnMailTemplateName");
-			    this._ChurnMailSubject = data.TryGetValueSafe<string>("churnMailSubject");
-			    this._SenderEmail = data.TryGetValueSafe<string>("senderEmail");
-			    this._MailSenderName = data.TryGetValueSafe<string>("mailSenderName");
-			    this._MailNotificationAdapterId = data.TryGetValueSafe<long>("mailNotificationAdapterId");
-			    this._SmsEnabled = data.TryGetValueSafe<bool>("smsEnabled");
+			if(node["pushSystemAnnouncementsEnabled"] != null)
+			{
+				this._PushSystemAnnouncementsEnabled = ParseBool(node["pushSystemAnnouncementsEnabled"].Value<string>());
+			}
+			if(node["pushStartHour"] != null)
+			{
+				this._PushStartHour = ParseInt(node["pushStartHour"].Value<string>());
+			}
+			if(node["pushEndHour"] != null)
+			{
+				this._PushEndHour = ParseInt(node["pushEndHour"].Value<string>());
+			}
+			if(node["inboxEnabled"] != null)
+			{
+				this._InboxEnabled = ParseBool(node["inboxEnabled"].Value<string>());
+			}
+			if(node["messageTTLDays"] != null)
+			{
+				this._MessageTTLDays = ParseInt(node["messageTTLDays"].Value<string>());
+			}
+			if(node["automaticIssueFollowNotification"] != null)
+			{
+				this._AutomaticIssueFollowNotification = ParseBool(node["automaticIssueFollowNotification"].Value<string>());
+			}
+			if(node["topicExpirationDurationDays"] != null)
+			{
+				this._TopicExpirationDurationDays = ParseInt(node["topicExpirationDurationDays"].Value<string>());
+			}
+			if(node["reminderEnabled"] != null)
+			{
+				this._ReminderEnabled = ParseBool(node["reminderEnabled"].Value<string>());
+			}
+			if(node["reminderOffsetSec"] != null)
+			{
+				this._ReminderOffsetSec = ParseInt(node["reminderOffsetSec"].Value<string>());
+			}
+			if(node["pushAdapterUrl"] != null)
+			{
+				this._PushAdapterUrl = node["pushAdapterUrl"].Value<string>();
+			}
+			if(node["churnMailTemplateName"] != null)
+			{
+				this._ChurnMailTemplateName = node["churnMailTemplateName"].Value<string>();
+			}
+			if(node["churnMailSubject"] != null)
+			{
+				this._ChurnMailSubject = node["churnMailSubject"].Value<string>();
+			}
+			if(node["senderEmail"] != null)
+			{
+				this._SenderEmail = node["senderEmail"].Value<string>();
+			}
+			if(node["mailSenderName"] != null)
+			{
+				this._MailSenderName = node["mailSenderName"].Value<string>();
+			}
+			if(node["mailNotificationAdapterId"] != null)
+			{
+				this._MailNotificationAdapterId = ParseLong(node["mailNotificationAdapterId"].Value<string>());
+			}
+			if(node["smsEnabled"] != null)
+			{
+				this._SmsEnabled = ParseBool(node["smsEnabled"].Value<string>());
+			}
 		}
 		#endregion
 

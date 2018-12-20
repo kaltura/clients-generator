@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Certificate
 		{
 			get { return _Certificate; }
@@ -60,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FairPlayPlaybackPluginData(XmlElement node) : base(node)
+		public FairPlayPlaybackPluginData(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["certificate"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "certificate":
-						this._Certificate = propertyNode.InnerText;
-						continue;
-				}
+				this._Certificate = node["certificate"].Value<string>();
 			}
-		}
-
-		public FairPlayPlaybackPluginData(IDictionary<string,object> data) : base(data)
-		{
-			    this._Certificate = data.TryGetValueSafe<string>("certificate");
 		}
 		#endregion
 

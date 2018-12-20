@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,29 +56,65 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long AssetId
 		{
 			get { return _AssetId; }
+			private set 
+			{ 
+				_AssetId = value;
+				OnPropertyChanged("AssetId");
+			}
 		}
+		[JsonProperty]
 		public AssetType AssetType
 		{
 			get { return _AssetType; }
+			private set 
+			{ 
+				_AssetType = value;
+				OnPropertyChanged("AssetType");
+			}
 		}
+		[JsonProperty]
 		public int Position
 		{
 			get { return _Position; }
+			private set 
+			{ 
+				_Position = value;
+				OnPropertyChanged("Position");
+			}
 		}
+		[JsonProperty]
 		public int Duration
 		{
 			get { return _Duration; }
+			private set 
+			{ 
+				_Duration = value;
+				OnPropertyChanged("Duration");
+			}
 		}
+		[JsonProperty]
 		public long WatchedDate
 		{
 			get { return _WatchedDate; }
+			private set 
+			{ 
+				_WatchedDate = value;
+				OnPropertyChanged("WatchedDate");
+			}
 		}
+		[JsonProperty]
 		public bool? FinishedWatching
 		{
 			get { return _FinishedWatching; }
+			private set 
+			{ 
+				_FinishedWatching = value;
+				OnPropertyChanged("FinishedWatching");
+			}
 		}
 		#endregion
 
@@ -85,42 +123,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetHistory(XmlElement node) : base(node)
+		public AssetHistory(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetId":
-						this._AssetId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "assetType":
-						this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
-						continue;
-					case "position":
-						this._Position = ParseInt(propertyNode.InnerText);
-						continue;
-					case "duration":
-						this._Duration = ParseInt(propertyNode.InnerText);
-						continue;
-					case "watchedDate":
-						this._WatchedDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "finishedWatching":
-						this._FinishedWatching = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._AssetId = ParseLong(node["assetId"].Value<string>());
 			}
-		}
-
-		public AssetHistory(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetId = data.TryGetValueSafe<long>("assetId");
-			    this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetType"));
-			    this._Position = data.TryGetValueSafe<int>("position");
-			    this._Duration = data.TryGetValueSafe<int>("duration");
-			    this._WatchedDate = data.TryGetValueSafe<long>("watchedDate");
-			    this._FinishedWatching = data.TryGetValueSafe<bool>("finishedWatching");
+			if(node["assetType"] != null)
+			{
+				this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetType"].Value<string>());
+			}
+			if(node["position"] != null)
+			{
+				this._Position = ParseInt(node["position"].Value<string>());
+			}
+			if(node["duration"] != null)
+			{
+				this._Duration = ParseInt(node["duration"].Value<string>());
+			}
+			if(node["watchedDate"] != null)
+			{
+				this._WatchedDate = ParseLong(node["watchedDate"].Value<string>());
+			}
+			if(node["finishedWatching"] != null)
+			{
+				this._FinishedWatching = ParseBool(node["finishedWatching"].Value<string>());
+			}
 		}
 		#endregion
 

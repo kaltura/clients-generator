@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Token
 		{
 			get { return _Token; }
@@ -60,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UploadedFileTokenResource(XmlElement node) : base(node)
+		public UploadedFileTokenResource(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["token"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "token":
-						this._Token = propertyNode.InnerText;
-						continue;
-				}
+				this._Token = node["token"].Value<string>();
 			}
-		}
-
-		public UploadedFileTokenResource(IDictionary<string,object> data) : base(data)
-		{
-			    this._Token = data.TryGetValueSafe<string>("token");
 		}
 		#endregion
 

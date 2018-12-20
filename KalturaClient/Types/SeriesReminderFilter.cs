@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string SeriesIdIn
 		{
 			get { return _SeriesIdIn; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeriesIdIn");
 			}
 		}
+		[JsonProperty]
 		public long EpgChannelIdEqual
 		{
 			get { return _EpgChannelIdEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("EpgChannelIdEqual");
 			}
 		}
+		[JsonProperty]
 		public new SeriesReminderOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SeriesReminderFilter(XmlElement node) : base(node)
+		public SeriesReminderFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["seriesIdIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "seriesIdIn":
-						this._SeriesIdIn = propertyNode.InnerText;
-						continue;
-					case "epgChannelIdEqual":
-						this._EpgChannelIdEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (SeriesReminderOrderBy)StringEnum.Parse(typeof(SeriesReminderOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._SeriesIdIn = node["seriesIdIn"].Value<string>();
 			}
-		}
-
-		public SeriesReminderFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._SeriesIdIn = data.TryGetValueSafe<string>("seriesIdIn");
-			    this._EpgChannelIdEqual = data.TryGetValueSafe<long>("epgChannelIdEqual");
-			    this._OrderBy = (SeriesReminderOrderBy)StringEnum.Parse(typeof(SeriesReminderOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["epgChannelIdEqual"] != null)
+			{
+				this._EpgChannelIdEqual = ParseLong(node["epgChannelIdEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (SeriesReminderOrderBy)StringEnum.Parse(typeof(SeriesReminderOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

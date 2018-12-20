@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,25 +54,55 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public UploadTokenStatus Status
 		{
 			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
+			}
 		}
+		[JsonProperty]
 		public float FileSize
 		{
 			get { return _FileSize; }
+			private set 
+			{ 
+				_FileSize = value;
+				OnPropertyChanged("FileSize");
+			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
 		}
 		#endregion
 
@@ -79,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UploadToken(XmlElement node) : base(node)
+		public UploadToken(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "status":
-						this._Status = (UploadTokenStatus)StringEnum.Parse(typeof(UploadTokenStatus), propertyNode.InnerText);
-						continue;
-					case "fileSize":
-						this._FileSize = ParseFloat(propertyNode.InnerText);
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public UploadToken(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Status = (UploadTokenStatus)StringEnum.Parse(typeof(UploadTokenStatus), data.TryGetValueSafe<string>("status"));
-			    this._FileSize = data.TryGetValueSafe<float>("fileSize");
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			if(node["status"] != null)
+			{
+				this._Status = (UploadTokenStatus)StringEnum.Parse(typeof(UploadTokenStatus), node["status"].Value<string>());
+			}
+			if(node["fileSize"] != null)
+			{
+				this._FileSize = ParseFloat(node["fileSize"].Value<string>());
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
 		}
 		#endregion
 

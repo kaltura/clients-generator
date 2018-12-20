@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
+		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DateCondition(XmlElement node) : base(node)
+		public DateCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["startDate"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "startDate":
-						this._StartDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "endDate":
-						this._EndDate = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._StartDate = ParseLong(node["startDate"].Value<string>());
 			}
-		}
-
-		public DateCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._StartDate = data.TryGetValueSafe<long>("startDate");
-			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			if(node["endDate"] != null)
+			{
+				this._EndDate = ParseLong(node["endDate"].Value<string>());
+			}
 		}
 		#endregion
 

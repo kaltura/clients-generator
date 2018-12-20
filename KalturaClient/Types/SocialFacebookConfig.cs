@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string AppId
 		{
 			get { return _AppId; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AppId");
 			}
 		}
+		[JsonProperty]
 		public string Permissions
 		{
 			get { return _Permissions; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialFacebookConfig(XmlElement node) : base(node)
+		public SocialFacebookConfig(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["appId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "appId":
-						this._AppId = propertyNode.InnerText;
-						continue;
-					case "permissions":
-						this._Permissions = propertyNode.InnerText;
-						continue;
-				}
+				this._AppId = node["appId"].Value<string>();
 			}
-		}
-
-		public SocialFacebookConfig(IDictionary<string,object> data) : base(data)
-		{
-			    this._AppId = data.TryGetValueSafe<string>("appId");
-			    this._Permissions = data.TryGetValueSafe<string>("permissions");
+			if(node["permissions"] != null)
+			{
+				this._Permissions = node["permissions"].Value<string>();
+			}
 		}
 		#endregion
 

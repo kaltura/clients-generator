@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,10 +58,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -69,6 +78,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -78,6 +88,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsActive");
 			}
 		}
+		[JsonProperty]
 		public string ExternalIdentifier
 		{
 			get { return _ExternalIdentifier; }
@@ -87,6 +98,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdentifier");
 			}
 		}
+		[JsonProperty]
 		public string FilterExpression
 		{
 			get { return _FilterExpression; }
@@ -96,6 +108,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FilterExpression");
 			}
 		}
+		[JsonProperty]
 		public int RecommendationEngineId
 		{
 			get { return _RecommendationEngineId; }
@@ -105,6 +118,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecommendationEngineId");
 			}
 		}
+		[JsonProperty]
 		public IList<ChannelEnrichmentHolder> Enrichments
 		{
 			get { return _Enrichments; }
@@ -121,55 +135,40 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ExternalChannelProfile(XmlElement node) : base(node)
+		public ExternalChannelProfile(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseInt(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["isActive"] != null)
+			{
+				this._IsActive = ParseBool(node["isActive"].Value<string>());
+			}
+			if(node["externalIdentifier"] != null)
+			{
+				this._ExternalIdentifier = node["externalIdentifier"].Value<string>();
+			}
+			if(node["filterExpression"] != null)
+			{
+				this._FilterExpression = node["filterExpression"].Value<string>();
+			}
+			if(node["recommendationEngineId"] != null)
+			{
+				this._RecommendationEngineId = ParseInt(node["recommendationEngineId"].Value<string>());
+			}
+			if(node["enrichments"] != null)
+			{
+				this._Enrichments = new List<ChannelEnrichmentHolder>();
+				foreach(var arrayNode in node["enrichments"].Children())
 				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "isActive":
-						this._IsActive = ParseBool(propertyNode.InnerText);
-						continue;
-					case "externalIdentifier":
-						this._ExternalIdentifier = propertyNode.InnerText;
-						continue;
-					case "filterExpression":
-						this._FilterExpression = propertyNode.InnerText;
-						continue;
-					case "recommendationEngineId":
-						this._RecommendationEngineId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "enrichments":
-						this._Enrichments = new List<ChannelEnrichmentHolder>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Enrichments.Add(ObjectFactory.Create<ChannelEnrichmentHolder>(arrayNode));
-						}
-						continue;
+					this._Enrichments.Add(ObjectFactory.Create<ChannelEnrichmentHolder>(arrayNode));
 				}
 			}
-		}
-
-		public ExternalChannelProfile(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
-			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
-			    this._FilterExpression = data.TryGetValueSafe<string>("filterExpression");
-			    this._RecommendationEngineId = data.TryGetValueSafe<int>("recommendationEngineId");
-			    this._Enrichments = new List<ChannelEnrichmentHolder>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("enrichments", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Enrichments.Add(ObjectFactory.Create<ChannelEnrichmentHolder>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

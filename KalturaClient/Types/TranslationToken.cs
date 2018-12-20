@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Language
 		{
 			get { return _Language; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Language");
 			}
 		}
+		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public TranslationToken(XmlElement node) : base(node)
+		public TranslationToken(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["language"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "language":
-						this._Language = propertyNode.InnerText;
-						continue;
-					case "value":
-						this._Value = propertyNode.InnerText;
-						continue;
-				}
+				this._Language = node["language"].Value<string>();
 			}
-		}
-
-		public TranslationToken(IDictionary<string,object> data) : base(data)
-		{
-			    this._Language = data.TryGetValueSafe<string>("language");
-			    this._Value = data.TryGetValueSafe<string>("value");
+			if(node["value"] != null)
+			{
+				this._Value = node["value"].Value<string>();
+			}
 		}
 		#endregion
 

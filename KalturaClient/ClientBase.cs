@@ -37,7 +37,6 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Runtime.Serialization;
 using System.Threading;
-using System.Web.Script.Serialization;
 using Kaltura.Types;
 using Kaltura.Enums;
 
@@ -46,12 +45,15 @@ namespace Kaltura
     public class ClientBase : ClientUtils
     {
         internal static int REQUEST_COUNTER = 0;
-        internal static JavaScriptSerializer serializer = new JavaScriptSerializer();
 
         protected ClientConfiguration clientConfiguration = new ClientConfiguration();
         protected RequestConfiguration requestConfiguration = new RequestConfiguration();
-
-        public Configuration Configuration { get; set; }
+        
+        public Configuration Configuration
+        {
+            get;
+            set;
+        }
 
         public ClientConfiguration ClientConfiguration
         {
@@ -61,11 +63,6 @@ namespace Kaltura
         public RequestConfiguration RequestConfiguration
         {
             get { return requestConfiguration; }
-        }
-
-        static ClientBase()
-        {
-            serializer.MaxJsonLength = int.MaxValue;
         }
 
         public ClientBase(Configuration config)

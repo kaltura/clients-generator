@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,6 +54,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
@@ -61,6 +64,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -70,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -79,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
+		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
@@ -88,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsDefault");
 			}
 		}
+		[JsonProperty]
 		public IList<RegionalChannel> LinearChannels
 		{
 			get { return _LinearChannels; }
@@ -104,47 +111,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Region(XmlElement node) : base(node)
+		public Region(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseInt(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["externalId"] != null)
+			{
+				this._ExternalId = node["externalId"].Value<string>();
+			}
+			if(node["isDefault"] != null)
+			{
+				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
+			}
+			if(node["linearChannels"] != null)
+			{
+				this._LinearChannels = new List<RegionalChannel>();
+				foreach(var arrayNode in node["linearChannels"].Children())
 				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "externalId":
-						this._ExternalId = propertyNode.InnerText;
-						continue;
-					case "isDefault":
-						this._IsDefault = ParseBool(propertyNode.InnerText);
-						continue;
-					case "linearChannels":
-						this._LinearChannels = new List<RegionalChannel>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._LinearChannels.Add(ObjectFactory.Create<RegionalChannel>(arrayNode));
-						}
-						continue;
+					this._LinearChannels.Add(ObjectFactory.Create<RegionalChannel>(arrayNode));
 				}
 			}
-		}
-
-		public Region(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
-			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
-			    this._LinearChannels = new List<RegionalChannel>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("linearChannels", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._LinearChannels.Add(ObjectFactory.Create<RegionalChannel>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public EntityReferenceBy EntityReferenceEqual
 		{
 			get { return _EntityReferenceEqual; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("EntityReferenceEqual");
 			}
 		}
+		[JsonProperty]
 		public new ParentalRuleOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ParentalRuleFilter(XmlElement node) : base(node)
+		public ParentalRuleFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["entityReferenceEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "entityReferenceEqual":
-						this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (ParentalRuleOrderBy)StringEnum.Parse(typeof(ParentalRuleOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), node["entityReferenceEqual"].Value<string>());
 			}
-		}
-
-		public ParentalRuleFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), data.TryGetValueSafe<string>("entityReferenceEqual"));
-			    this._OrderBy = (ParentalRuleOrderBy)StringEnum.Parse(typeof(ParentalRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ParentalRuleOrderBy)StringEnum.Parse(typeof(ParentalRuleOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

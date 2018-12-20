@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Data
 		{
 			get { return _Data; }
@@ -60,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CustomDrmPlaybackPluginData(XmlElement node) : base(node)
+		public CustomDrmPlaybackPluginData(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["data"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "data":
-						this._Data = propertyNode.InnerText;
-						continue;
-				}
+				this._Data = node["data"].Value<string>();
 			}
-		}
-
-		public CustomDrmPlaybackPluginData(IDictionary<string,object> data) : base(data)
-		{
-			    this._Data = data.TryGetValueSafe<string>("data");
 		}
 		#endregion
 

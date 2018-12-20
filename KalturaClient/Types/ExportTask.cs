@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -62,10 +64,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Alias
 		{
 			get { return _Alias; }
@@ -75,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Alias");
 			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -84,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public ExportDataType DataType
 		{
 			get { return _DataType; }
@@ -93,6 +104,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DataType");
 			}
 		}
+		[JsonProperty]
 		public string Filter
 		{
 			get { return _Filter; }
@@ -102,6 +114,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Filter");
 			}
 		}
+		[JsonProperty]
 		public ExportType ExportType
 		{
 			get { return _ExportType; }
@@ -111,6 +124,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExportType");
 			}
 		}
+		[JsonProperty]
 		public long Frequency
 		{
 			get { return _Frequency; }
@@ -120,6 +134,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Frequency");
 			}
 		}
+		[JsonProperty]
 		public string NotificationUrl
 		{
 			get { return _NotificationUrl; }
@@ -129,6 +144,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NotificationUrl");
 			}
 		}
+		[JsonProperty]
 		public IList<IntegerValue> VodTypes
 		{
 			get { return _VodTypes; }
@@ -138,6 +154,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("VodTypes");
 			}
 		}
+		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -154,67 +171,52 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ExportTask(XmlElement node) : base(node)
+		public ExportTask(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseLong(node["id"].Value<string>());
+			}
+			if(node["alias"] != null)
+			{
+				this._Alias = node["alias"].Value<string>();
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["dataType"] != null)
+			{
+				this._DataType = (ExportDataType)StringEnum.Parse(typeof(ExportDataType), node["dataType"].Value<string>());
+			}
+			if(node["filter"] != null)
+			{
+				this._Filter = node["filter"].Value<string>();
+			}
+			if(node["exportType"] != null)
+			{
+				this._ExportType = (ExportType)StringEnum.Parse(typeof(ExportType), node["exportType"].Value<string>());
+			}
+			if(node["frequency"] != null)
+			{
+				this._Frequency = ParseLong(node["frequency"].Value<string>());
+			}
+			if(node["notificationUrl"] != null)
+			{
+				this._NotificationUrl = node["notificationUrl"].Value<string>();
+			}
+			if(node["vodTypes"] != null)
+			{
+				this._VodTypes = new List<IntegerValue>();
+				foreach(var arrayNode in node["vodTypes"].Children())
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "alias":
-						this._Alias = propertyNode.InnerText;
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "dataType":
-						this._DataType = (ExportDataType)StringEnum.Parse(typeof(ExportDataType), propertyNode.InnerText);
-						continue;
-					case "filter":
-						this._Filter = propertyNode.InnerText;
-						continue;
-					case "exportType":
-						this._ExportType = (ExportType)StringEnum.Parse(typeof(ExportType), propertyNode.InnerText);
-						continue;
-					case "frequency":
-						this._Frequency = ParseLong(propertyNode.InnerText);
-						continue;
-					case "notificationUrl":
-						this._NotificationUrl = propertyNode.InnerText;
-						continue;
-					case "vodTypes":
-						this._VodTypes = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._VodTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
-					case "isActive":
-						this._IsActive = ParseBool(propertyNode.InnerText);
-						continue;
+					this._VodTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
 				}
 			}
-		}
-
-		public ExportTask(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Alias = data.TryGetValueSafe<string>("alias");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._DataType = (ExportDataType)StringEnum.Parse(typeof(ExportDataType), data.TryGetValueSafe<string>("dataType"));
-			    this._Filter = data.TryGetValueSafe<string>("filter");
-			    this._ExportType = (ExportType)StringEnum.Parse(typeof(ExportType), data.TryGetValueSafe<string>("exportType"));
-			    this._Frequency = data.TryGetValueSafe<long>("frequency");
-			    this._NotificationUrl = data.TryGetValueSafe<string>("notificationUrl");
-			    this._VodTypes = new List<IntegerValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("vodTypes", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._VodTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			if(node["isActive"] != null)
+			{
+				this._IsActive = ParseBool(node["isActive"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,10 +56,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -67,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public long ParentCategoryId
 		{
 			get { return _ParentCategoryId; }
@@ -76,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ParentCategoryId");
 			}
 		}
+		[JsonProperty]
 		public IList<OTTCategory> ChildCategories
 		{
 			get { return _ChildCategories; }
@@ -85,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ChildCategories");
 			}
 		}
+		[JsonProperty]
 		public IList<Channel> Channels
 		{
 			get { return _Channels; }
@@ -94,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Channels");
 			}
 		}
+		[JsonProperty]
 		public IList<MediaImage> Images
 		{
 			get { return _Images; }
@@ -110,69 +123,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public OTTCategory(XmlElement node) : base(node)
+		public OTTCategory(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseLong(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["parentCategoryId"] != null)
+			{
+				this._ParentCategoryId = ParseLong(node["parentCategoryId"].Value<string>());
+			}
+			if(node["childCategories"] != null)
+			{
+				this._ChildCategories = new List<OTTCategory>();
+				foreach(var arrayNode in node["childCategories"].Children())
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "parentCategoryId":
-						this._ParentCategoryId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "childCategories":
-						this._ChildCategories = new List<OTTCategory>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._ChildCategories.Add(ObjectFactory.Create<OTTCategory>(arrayNode));
-						}
-						continue;
-					case "channels":
-						this._Channels = new List<Channel>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Channels.Add(ObjectFactory.Create<Channel>(arrayNode));
-						}
-						continue;
-					case "images":
-						this._Images = new List<MediaImage>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Images.Add(ObjectFactory.Create<MediaImage>(arrayNode));
-						}
-						continue;
+					this._ChildCategories.Add(ObjectFactory.Create<OTTCategory>(arrayNode));
 				}
 			}
-		}
-
-		public OTTCategory(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._ParentCategoryId = data.TryGetValueSafe<long>("parentCategoryId");
-			    this._ChildCategories = new List<OTTCategory>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("childCategories", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._ChildCategories.Add(ObjectFactory.Create<OTTCategory>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Channels = new List<Channel>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("channels", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Channels.Add(ObjectFactory.Create<Channel>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Images = new List<MediaImage>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("images", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Images.Add(ObjectFactory.Create<MediaImage>((IDictionary<string,object>)dataDictionary));
-			    }
+			if(node["channels"] != null)
+			{
+				this._Channels = new List<Channel>();
+				foreach(var arrayNode in node["channels"].Children())
+				{
+					this._Channels.Add(ObjectFactory.Create<Channel>(arrayNode));
+				}
+			}
+			if(node["images"] != null)
+			{
+				this._Images = new List<MediaImage>();
+				foreach(var arrayNode in node["images"].Children())
+				{
+					this._Images.Add(ObjectFactory.Create<MediaImage>(arrayNode));
+				}
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public SocialStatus Status
 		{
 			get { return _Status; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Status");
 			}
 		}
+		[JsonProperty]
 		public SocialNetwork Network
 		{
 			get { return _Network; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public NetworkActionStatus(XmlElement node) : base(node)
+		public NetworkActionStatus(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["status"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "status":
-						this._Status = (SocialStatus)StringEnum.Parse(typeof(SocialStatus), propertyNode.InnerText);
-						continue;
-					case "network":
-						this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), propertyNode.InnerText);
-						continue;
-				}
+				this._Status = (SocialStatus)StringEnum.Parse(typeof(SocialStatus), node["status"].Value<string>());
 			}
-		}
-
-		public NetworkActionStatus(IDictionary<string,object> data) : base(data)
-		{
-			    this._Status = (SocialStatus)StringEnum.Parse(typeof(SocialStatus), data.TryGetValueSafe<string>("status"));
-			    this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), data.TryGetValueSafe<string>("network"));
+			if(node["network"] != null)
+			{
+				this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), node["network"].Value<string>());
+			}
 		}
 		#endregion
 

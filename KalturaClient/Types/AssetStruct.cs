@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -68,14 +70,27 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
+			private set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> MultilingualName
 		{
 			get { return _MultilingualName; }
@@ -85,6 +100,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualName");
 			}
 		}
+		[JsonProperty]
 		public string SystemName
 		{
 			get { return _SystemName; }
@@ -94,6 +110,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SystemName");
 			}
 		}
+		[JsonProperty]
 		public bool? IsProtected
 		{
 			get { return _IsProtected; }
@@ -103,6 +120,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsProtected");
 			}
 		}
+		[JsonProperty]
 		public string MetaIds
 		{
 			get { return _MetaIds; }
@@ -112,14 +130,27 @@ namespace Kaltura.Types
 				OnPropertyChanged("MetaIds");
 			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
 		}
+		[JsonProperty]
 		public string Features
 		{
 			get { return _Features; }
@@ -129,6 +160,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Features");
 			}
 		}
+		[JsonProperty]
 		public string PluralName
 		{
 			get { return _PluralName; }
@@ -138,6 +170,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PluralName");
 			}
 		}
+		[JsonProperty]
 		public long ParentId
 		{
 			get { return _ParentId; }
@@ -147,6 +180,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ParentId");
 			}
 		}
+		[JsonProperty]
 		public long ConnectingMetaId
 		{
 			get { return _ConnectingMetaId; }
@@ -156,6 +190,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConnectingMetaId");
 			}
 		}
+		[JsonProperty]
 		public long ConnectedParentMetaId
 		{
 			get { return _ConnectedParentMetaId; }
@@ -172,79 +207,64 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStruct(XmlElement node) : base(node)
+		public AssetStruct(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseLong(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["multilingualName"] != null)
+			{
+				this._MultilingualName = new List<TranslationToken>();
+				foreach(var arrayNode in node["multilingualName"].Children())
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "multilingualName":
-						this._MultilingualName = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
-					case "systemName":
-						this._SystemName = propertyNode.InnerText;
-						continue;
-					case "isProtected":
-						this._IsProtected = ParseBool(propertyNode.InnerText);
-						continue;
-					case "metaIds":
-						this._MetaIds = propertyNode.InnerText;
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "features":
-						this._Features = propertyNode.InnerText;
-						continue;
-					case "pluralName":
-						this._PluralName = propertyNode.InnerText;
-						continue;
-					case "parentId":
-						this._ParentId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "connectingMetaId":
-						this._ConnectingMetaId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "connectedParentMetaId":
-						this._ConnectedParentMetaId = ParseLong(propertyNode.InnerText);
-						continue;
+					this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 				}
 			}
-		}
-
-		public AssetStruct(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._MultilingualName = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._SystemName = data.TryGetValueSafe<string>("systemName");
-			    this._IsProtected = data.TryGetValueSafe<bool>("isProtected");
-			    this._MetaIds = data.TryGetValueSafe<string>("metaIds");
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
-			    this._Features = data.TryGetValueSafe<string>("features");
-			    this._PluralName = data.TryGetValueSafe<string>("pluralName");
-			    this._ParentId = data.TryGetValueSafe<long>("parentId");
-			    this._ConnectingMetaId = data.TryGetValueSafe<long>("connectingMetaId");
-			    this._ConnectedParentMetaId = data.TryGetValueSafe<long>("connectedParentMetaId");
+			if(node["systemName"] != null)
+			{
+				this._SystemName = node["systemName"].Value<string>();
+			}
+			if(node["isProtected"] != null)
+			{
+				this._IsProtected = ParseBool(node["isProtected"].Value<string>());
+			}
+			if(node["metaIds"] != null)
+			{
+				this._MetaIds = node["metaIds"].Value<string>();
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
+			if(node["features"] != null)
+			{
+				this._Features = node["features"].Value<string>();
+			}
+			if(node["pluralName"] != null)
+			{
+				this._PluralName = node["pluralName"].Value<string>();
+			}
+			if(node["parentId"] != null)
+			{
+				this._ParentId = ParseLong(node["parentId"].Value<string>());
+			}
+			if(node["connectingMetaId"] != null)
+			{
+				this._ConnectingMetaId = ParseLong(node["connectingMetaId"].Value<string>());
+			}
+			if(node["connectedParentMetaId"] != null)
+			{
+				this._ConnectedParentMetaId = ParseLong(node["connectedParentMetaId"].Value<string>());
+			}
 		}
 		#endregion
 

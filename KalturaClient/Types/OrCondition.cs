@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public IList<Condition> Conditions
 		{
 			get { return _Conditions; }
@@ -60,31 +63,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public OrCondition(XmlElement node) : base(node)
+		public OrCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["conditions"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Conditions = new List<Condition>();
+				foreach(var arrayNode in node["conditions"].Children())
 				{
-					case "conditions":
-						this._Conditions = new List<Condition>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
-						}
-						continue;
+					this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
 				}
 			}
-		}
-
-		public OrCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._Conditions = new List<Condition>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Conditions.Add(ObjectFactory.Create<Condition>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

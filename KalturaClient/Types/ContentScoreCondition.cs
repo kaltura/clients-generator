@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,6 +56,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int MinScore
 		{
 			get { return _MinScore; }
@@ -63,6 +66,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MinScore");
 			}
 		}
+		[JsonProperty]
 		public int MaxScore
 		{
 			get { return _MaxScore; }
@@ -72,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxScore");
 			}
 		}
+		[JsonProperty]
 		public int Days
 		{
 			get { return _Days; }
@@ -81,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Days");
 			}
 		}
+		[JsonProperty]
 		public string Field
 		{
 			get { return _Field; }
@@ -90,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Field");
 			}
 		}
+		[JsonProperty]
 		public IList<StringValue> Values
 		{
 			get { return _Values; }
@@ -99,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Values");
 			}
 		}
+		[JsonProperty]
 		public IList<ContentActionCondition> Actions
 		{
 			get { return _Actions; }
@@ -115,60 +123,40 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ContentScoreCondition(XmlElement node) : base(node)
+		public ContentScoreCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["minScore"] != null)
 			{
-				switch (propertyNode.Name)
+				this._MinScore = ParseInt(node["minScore"].Value<string>());
+			}
+			if(node["maxScore"] != null)
+			{
+				this._MaxScore = ParseInt(node["maxScore"].Value<string>());
+			}
+			if(node["days"] != null)
+			{
+				this._Days = ParseInt(node["days"].Value<string>());
+			}
+			if(node["field"] != null)
+			{
+				this._Field = node["field"].Value<string>();
+			}
+			if(node["values"] != null)
+			{
+				this._Values = new List<StringValue>();
+				foreach(var arrayNode in node["values"].Children())
 				{
-					case "minScore":
-						this._MinScore = ParseInt(propertyNode.InnerText);
-						continue;
-					case "maxScore":
-						this._MaxScore = ParseInt(propertyNode.InnerText);
-						continue;
-					case "days":
-						this._Days = ParseInt(propertyNode.InnerText);
-						continue;
-					case "field":
-						this._Field = propertyNode.InnerText;
-						continue;
-					case "values":
-						this._Values = new List<StringValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Values.Add(ObjectFactory.Create<StringValue>(arrayNode));
-						}
-						continue;
-					case "actions":
-						this._Actions = new List<ContentActionCondition>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Actions.Add(ObjectFactory.Create<ContentActionCondition>(arrayNode));
-						}
-						continue;
+					this._Values.Add(ObjectFactory.Create<StringValue>(arrayNode));
 				}
 			}
-		}
-
-		public ContentScoreCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._MinScore = data.TryGetValueSafe<int>("minScore");
-			    this._MaxScore = data.TryGetValueSafe<int>("maxScore");
-			    this._Days = data.TryGetValueSafe<int>("days");
-			    this._Field = data.TryGetValueSafe<string>("field");
-			    this._Values = new List<StringValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("values", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Values.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Actions = new List<ContentActionCondition>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Actions.Add(ObjectFactory.Create<ContentActionCondition>((IDictionary<string,object>)dataDictionary));
-			    }
+			if(node["actions"] != null)
+			{
+				this._Actions = new List<ContentActionCondition>();
+				foreach(var arrayNode in node["actions"].Children())
+				{
+					this._Actions.Add(ObjectFactory.Create<ContentActionCondition>(arrayNode));
+				}
+			}
 		}
 		#endregion
 

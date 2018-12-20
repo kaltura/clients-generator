@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		[JsonProperty]
 		public string IpEqual
 		{
 			get { return _IpEqual; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IpEqual");
 			}
 		}
+		[JsonProperty]
 		public bool? IpEqualCurrent
 		{
 			get { return _IpEqualCurrent; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IpEqualCurrent");
 			}
 		}
+		[JsonProperty]
 		public new CountryOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CountryFilter(XmlElement node) : base(node)
+		public CountryFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
-					case "ipEqual":
-						this._IpEqual = propertyNode.InnerText;
-						continue;
-					case "ipEqualCurrent":
-						this._IpEqualCurrent = ParseBool(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdIn = node["idIn"].Value<string>();
 			}
-		}
-
-		public CountryFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdIn = data.TryGetValueSafe<string>("idIn");
-			    this._IpEqual = data.TryGetValueSafe<string>("ipEqual");
-			    this._IpEqualCurrent = data.TryGetValueSafe<bool>("ipEqualCurrent");
-			    this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["ipEqual"] != null)
+			{
+				this._IpEqual = node["ipEqual"].Value<string>();
+			}
+			if(node["ipEqualCurrent"] != null)
+			{
+				this._IpEqualCurrent = ParseBool(node["ipEqualCurrent"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

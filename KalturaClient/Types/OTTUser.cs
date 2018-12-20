@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -76,10 +78,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int HouseholdId
 		{
 			get { return _HouseholdId; }
+			private set 
+			{ 
+				_HouseholdId = value;
+				OnPropertyChanged("HouseholdId");
+			}
 		}
+		[JsonProperty]
 		public string Email
 		{
 			get { return _Email; }
@@ -89,6 +98,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Email");
 			}
 		}
+		[JsonProperty]
 		public string Address
 		{
 			get { return _Address; }
@@ -98,6 +108,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Address");
 			}
 		}
+		[JsonProperty]
 		public string City
 		{
 			get { return _City; }
@@ -107,6 +118,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("City");
 			}
 		}
+		[JsonProperty]
 		public int CountryId
 		{
 			get { return _CountryId; }
@@ -116,6 +128,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CountryId");
 			}
 		}
+		[JsonProperty]
 		public string Zip
 		{
 			get { return _Zip; }
@@ -125,6 +138,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Zip");
 			}
 		}
+		[JsonProperty]
 		public string Phone
 		{
 			get { return _Phone; }
@@ -134,6 +148,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Phone");
 			}
 		}
+		[JsonProperty]
 		public string AffiliateCode
 		{
 			get { return _AffiliateCode; }
@@ -143,6 +158,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AffiliateCode");
 			}
 		}
+		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -152,6 +168,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
+		[JsonProperty]
 		public OTTUserType UserType
 		{
 			get { return _UserType; }
@@ -161,6 +178,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserType");
 			}
 		}
+		[JsonProperty]
 		public IDictionary<string, StringValue> DynamicData
 		{
 			get { return _DynamicData; }
@@ -170,18 +188,37 @@ namespace Kaltura.Types
 				OnPropertyChanged("DynamicData");
 			}
 		}
+		[JsonProperty]
 		public bool? IsHouseholdMaster
 		{
 			get { return _IsHouseholdMaster; }
+			private set 
+			{ 
+				_IsHouseholdMaster = value;
+				OnPropertyChanged("IsHouseholdMaster");
+			}
 		}
+		[JsonProperty]
 		public HouseholdSuspensionState SuspensionState
 		{
 			get { return _SuspensionState; }
+			private set 
+			{ 
+				_SuspensionState = value;
+				OnPropertyChanged("SuspensionState");
+			}
 		}
+		[JsonProperty]
 		public UserState UserState
 		{
 			get { return _UserState; }
+			private set 
+			{ 
+				_UserState = value;
+				OnPropertyChanged("UserState");
+			}
 		}
+		[JsonProperty]
 		public string RoleIds
 		{
 			get { return _RoleIds; }
@@ -191,13 +228,25 @@ namespace Kaltura.Types
 				OnPropertyChanged("RoleIds");
 			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
 		}
 		#endregion
 
@@ -206,98 +255,84 @@ namespace Kaltura.Types
 		{
 		}
 
-		public OTTUser(XmlElement node) : base(node)
+		public OTTUser(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["householdId"] != null)
 			{
-				switch (propertyNode.Name)
+				this._HouseholdId = ParseInt(node["householdId"].Value<string>());
+			}
+			if(node["email"] != null)
+			{
+				this._Email = node["email"].Value<string>();
+			}
+			if(node["address"] != null)
+			{
+				this._Address = node["address"].Value<string>();
+			}
+			if(node["city"] != null)
+			{
+				this._City = node["city"].Value<string>();
+			}
+			if(node["countryId"] != null)
+			{
+				this._CountryId = ParseInt(node["countryId"].Value<string>());
+			}
+			if(node["zip"] != null)
+			{
+				this._Zip = node["zip"].Value<string>();
+			}
+			if(node["phone"] != null)
+			{
+				this._Phone = node["phone"].Value<string>();
+			}
+			if(node["affiliateCode"] != null)
+			{
+				this._AffiliateCode = node["affiliateCode"].Value<string>();
+			}
+			if(node["externalId"] != null)
+			{
+				this._ExternalId = node["externalId"].Value<string>();
+			}
+			if(node["userType"] != null)
+			{
+				this._UserType = ObjectFactory.Create<OTTUserType>(node["userType"]);
+			}
+			if(node["dynamicData"] != null)
+			{
 				{
-					case "householdId":
-						this._HouseholdId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "email":
-						this._Email = propertyNode.InnerText;
-						continue;
-					case "address":
-						this._Address = propertyNode.InnerText;
-						continue;
-					case "city":
-						this._City = propertyNode.InnerText;
-						continue;
-					case "countryId":
-						this._CountryId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "zip":
-						this._Zip = propertyNode.InnerText;
-						continue;
-					case "phone":
-						this._Phone = propertyNode.InnerText;
-						continue;
-					case "affiliateCode":
-						this._AffiliateCode = propertyNode.InnerText;
-						continue;
-					case "externalId":
-						this._ExternalId = propertyNode.InnerText;
-						continue;
-					case "userType":
-						this._UserType = ObjectFactory.Create<OTTUserType>(propertyNode);
-						continue;
-					case "dynamicData":
-						{
-							string key;
-							this._DynamicData = new Dictionary<string, StringValue>();
-							foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-							{
-								key = arrayNode["itemKey"].InnerText;;
-								this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode);
-							}
-						}
-						continue;
-					case "isHouseholdMaster":
-						this._IsHouseholdMaster = ParseBool(propertyNode.InnerText);
-						continue;
-					case "suspensionState":
-						this._SuspensionState = (HouseholdSuspensionState)StringEnum.Parse(typeof(HouseholdSuspensionState), propertyNode.InnerText);
-						continue;
-					case "userState":
-						this._UserState = (UserState)StringEnum.Parse(typeof(UserState), propertyNode.InnerText);
-						continue;
-					case "roleIds":
-						this._RoleIds = propertyNode.InnerText;
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
+					string key;
+					this._DynamicData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
 				}
 			}
-		}
-
-		public OTTUser(IDictionary<string,object> data) : base(data)
-		{
-			    this._HouseholdId = data.TryGetValueSafe<int>("householdId");
-			    this._Email = data.TryGetValueSafe<string>("email");
-			    this._Address = data.TryGetValueSafe<string>("address");
-			    this._City = data.TryGetValueSafe<string>("city");
-			    this._CountryId = data.TryGetValueSafe<int>("countryId");
-			    this._Zip = data.TryGetValueSafe<string>("zip");
-			    this._Phone = data.TryGetValueSafe<string>("phone");
-			    this._AffiliateCode = data.TryGetValueSafe<string>("affiliateCode");
-			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
-			    this._UserType = ObjectFactory.Create<OTTUserType>(data.TryGetValueSafe<IDictionary<string,object>>("userType"));
-			    this._DynamicData = new Dictionary<string, StringValue>();
-			    foreach(var keyValuePair in data.TryGetValueSafe("dynamicData", new Dictionary<string, object>()))
-			    {
-			        this._DynamicData[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
-				}
-			    this._IsHouseholdMaster = data.TryGetValueSafe<bool>("isHouseholdMaster");
-			    this._SuspensionState = (HouseholdSuspensionState)StringEnum.Parse(typeof(HouseholdSuspensionState), data.TryGetValueSafe<string>("suspensionState"));
-			    this._UserState = (UserState)StringEnum.Parse(typeof(UserState), data.TryGetValueSafe<string>("userState"));
-			    this._RoleIds = data.TryGetValueSafe<string>("roleIds");
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			if(node["isHouseholdMaster"] != null)
+			{
+				this._IsHouseholdMaster = ParseBool(node["isHouseholdMaster"].Value<string>());
+			}
+			if(node["suspensionState"] != null)
+			{
+				this._SuspensionState = (HouseholdSuspensionState)StringEnum.Parse(typeof(HouseholdSuspensionState), node["suspensionState"].Value<string>());
+			}
+			if(node["userState"] != null)
+			{
+				this._UserState = (UserState)StringEnum.Parse(typeof(UserState), node["userState"].Value<string>());
+			}
+			if(node["roleIds"] != null)
+			{
+				this._RoleIds = node["roleIds"].Value<string>();
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
 		}
 		#endregion
 
