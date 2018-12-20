@@ -37,12 +37,17 @@ namespace Kaltura.Request
         protected APIException GetAPIError(JToken result)
         {
             // If the token is not an object this might be an array or primitive type so there is no error 
-            if (result.Type != JTokenType.Object) {return null;}
+            if (result.Type != JTokenType.Object) { return null; }
 
-            var error = result["error"];
-            if (error != null && error["code"] != null && error["message"] != null)
+            var objectType = result["objectType"];
+            if (objectType != null)
             {
-                return new APIException(error["code"].Value<string>(), error["message"].Value<string>());
+                var isError = objectType.Value<string>() == "KalturaAPIException";
+
+                if (isError && result["code"] != null && result["message"] != null)
+                {
+                    return new APIException(result["code"].Value<string>(), result["message"].Value<string>());
+                }
             }
 
             return null;
