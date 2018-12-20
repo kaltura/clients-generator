@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2011  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -26,36 +26,39 @@
 // @ignore
 // ===================================================================================================
 using System;
-using System.Text;
-using System.Xml;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Xml;
+using Kaltura.Types;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura
 {
-	public static class ObjectFactory
-	{
-        private static Regex regex = new Regex("^Kaltura");
+    public static class ObjectFactory
+    {
+        private static Regex prefixRegex = new Regex("^Kaltura");
 
-		public static object Create(XmlElement xmlElement, string fallbackClass)
-		{
-			if (xmlElement["objectType"] == null)
-			{
-				return null;
-			}
-			string className = xmlElement["objectType"].InnerText;
-            className = regex.Replace(className, "");
+        public static T Create<T>(JToken jToken)where T : ObjectBase
+        {
+            if (jToken["objectType"] == null)
+            {
+                return null;
+            }
 
-			Type type = Type.GetType("Kaltura.Types." + className);
-			if (type == null)
-			{
-				if (fallbackClass != null)
-                    type = Type.GetType("Kaltura.Types." + fallbackClass);
-			}
-			
-			if(type == null)
-				throw new SerializationException("Invalid object type");
-			return System.Activator.CreateInstance(type, xmlElement);
-		}
-	}
+            string className = jToken["objectType"].Value<string>();
+            className = prefixRegex.Replace(className, "");
+
+            Type type = Type.GetType("Kaltura.Types." + className);
+            if (type == null)
+            {
+                type = typeof(T);
+            }
+
+            if (type == null)
+                throw new SerializationException("Invalid object type");
+
+            return (T)System.Activator.CreateInstance(type, jToken);
+        }
+
+    }
 }
