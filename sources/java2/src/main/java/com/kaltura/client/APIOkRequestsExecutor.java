@@ -10,6 +10,7 @@ import com.kaltura.client.utils.response.base.ResponseElement;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,14 @@ import okio.Buffer;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.LoggerContextAccessor;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.impl.Log4jContextFactory;
+import org.apache.logging.log4j.spi.LoggerContextFactory;
 
 /**
  * @hide
@@ -128,7 +137,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
-    private static ILogger logger = Logger.getLogger(TAG);
+//    private static ILogger logger = Logger.getLogger(TAG);
+    private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(TAG);
 
     protected static APIOkRequestsExecutor self;
 
@@ -193,9 +203,18 @@ public class APIOkRequestsExecutor implements RequestQueue {
     public void enableLogs(boolean enable) {
         this.enableLogs = enable;
         if (enable) {
-            logger = Logger.getLogger(TAG);
+//            logger = Logger.getLogger(TAG);
+            logger = LogManager.getLogger(TAG);
         } else {
-            logger = new LoggerNull(TAG);
+//            logger = new LoggerNull(TAG);
+
+            LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+            Configuration config = ctx.getConfiguration();
+
+            LoggerConfig loggerConfig = config.getRootLogger();
+            loggerConfig.setLevel(Level.OFF);
+
+            ctx.updateLoggers();  // This causes all Loggers to refetch information from their LoggerConfig.
         }
     }
 

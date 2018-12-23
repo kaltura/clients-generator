@@ -6,6 +6,7 @@ import com.kaltura.client.types.APIException;
 import com.kaltura.client.utils.GsonParser;
 import com.kaltura.client.utils.response.OnCompletion;
 import com.kaltura.client.utils.response.base.Response;
+import org.apache.logging.log4j.LogManager;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -170,7 +171,7 @@ public class MultiRequestBuilder extends BaseRequestBuilder<List<Object>, MultiR
             return link(getRequestAt(sourceRequestIdx), getRequestAt(destRequestIdx), sourceKey, destKey);
 
         } catch (NullPointerException | IndexOutOfBoundsException e) {
-            Logger.getLogger(TAG).error("failed to link requests. ", e);
+            LogManager.getLogger(TAG).error("failed to link requests. ", e);
         }
         return this;
     }
