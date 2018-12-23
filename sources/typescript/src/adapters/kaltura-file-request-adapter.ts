@@ -1,6 +1,6 @@
 import { KalturaFileRequest } from '../api/kaltura-file-request';
 import { KalturaRequestOptions, KalturaRequestOptionsArgs } from '../api/kaltura-request-options';
-import { buildQuerystring, createClientTag, createEndpoint, prepareParameters } from './utils';
+import { buildUrl, createClientTag, createEndpoint, prepareParameters } from './utils';
 import { KalturaClientOptions } from '../kaltura-client-options';
 import { CancelableAction } from '../cancelable-action';
 
@@ -13,6 +13,6 @@ export class KalturaFileRequestAdapter {
         delete parameters['service'];
         delete parameters['action'];
 
-        return CancelableAction.resolve({url: `${endpointUrl}?${buildQuerystring(parameters)}`});
+        return CancelableAction.resolve({url: buildUrl(endpointUrl, parameters)});
     }
 }
