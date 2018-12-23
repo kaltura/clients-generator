@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		[JsonProperty]
 		public string SubscriptionIdContains
 		{
 			get { return _SubscriptionIdContains; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionIdContains");
 			}
 		}
+		[JsonProperty]
 		public SubscriptionSetType TypeEqual
 		{
 			get { return _TypeEqual; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeEqual");
 			}
 		}
+		[JsonProperty]
 		public new SubscriptionSetOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionSetFilter(XmlElement node) : base(node)
+		public SubscriptionSetFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
-					case "subscriptionIdContains":
-						this._SubscriptionIdContains = propertyNode.InnerText;
-						continue;
-					case "typeEqual":
-						this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdIn = node["idIn"].Value<string>();
 			}
-		}
-
-		public SubscriptionSetFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdIn = data.TryGetValueSafe<string>("idIn");
-			    this._SubscriptionIdContains = data.TryGetValueSafe<string>("subscriptionIdContains");
-			    this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), data.TryGetValueSafe<string>("typeEqual"));
-			    this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["subscriptionIdContains"] != null)
+			{
+				this._SubscriptionIdContains = node["subscriptionIdContains"].Value<string>();
+			}
+			if(node["typeEqual"] != null)
+			{
+				this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), node["typeEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

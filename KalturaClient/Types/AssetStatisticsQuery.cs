@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string AssetIdIn
 		{
 			get { return _AssetIdIn; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdIn");
 			}
 		}
+		[JsonProperty]
 		public AssetType AssetTypeEqual
 		{
 			get { return _AssetTypeEqual; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public long StartDateGreaterThanOrEqual
 		{
 			get { return _StartDateGreaterThanOrEqual; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDateGreaterThanOrEqual");
 			}
 		}
+		[JsonProperty]
 		public long EndDateGreaterThanOrEqual
 		{
 			get { return _EndDateGreaterThanOrEqual; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStatisticsQuery(XmlElement node) : base(node)
+		public AssetStatisticsQuery(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetIdIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetIdIn":
-						this._AssetIdIn = propertyNode.InnerText;
-						continue;
-					case "assetTypeEqual":
-						this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
-						continue;
-					case "startDateGreaterThanOrEqual":
-						this._StartDateGreaterThanOrEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "endDateGreaterThanOrEqual":
-						this._EndDateGreaterThanOrEqual = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._AssetIdIn = node["assetIdIn"].Value<string>();
 			}
-		}
-
-		public AssetStatisticsQuery(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
-			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
-			    this._StartDateGreaterThanOrEqual = data.TryGetValueSafe<long>("startDateGreaterThanOrEqual");
-			    this._EndDateGreaterThanOrEqual = data.TryGetValueSafe<long>("endDateGreaterThanOrEqual");
+			if(node["assetTypeEqual"] != null)
+			{
+				this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetTypeEqual"].Value<string>());
+			}
+			if(node["startDateGreaterThanOrEqual"] != null)
+			{
+				this._StartDateGreaterThanOrEqual = ParseLong(node["startDateGreaterThanOrEqual"].Value<string>());
+			}
+			if(node["endDateGreaterThanOrEqual"] != null)
+			{
+				this._EndDateGreaterThanOrEqual = ParseLong(node["endDateGreaterThanOrEqual"].Value<string>());
+			}
 		}
 		#endregion
 

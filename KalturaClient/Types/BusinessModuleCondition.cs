@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public TransactionType BusinessModuleType
 		{
 			get { return _BusinessModuleType; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("BusinessModuleType");
 			}
 		}
+		[JsonProperty]
 		public long BusinessModuleId
 		{
 			get { return _BusinessModuleId; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BusinessModuleCondition(XmlElement node) : base(node)
+		public BusinessModuleCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["businessModuleType"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "businessModuleType":
-						this._BusinessModuleType = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
-						continue;
-					case "businessModuleId":
-						this._BusinessModuleId = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._BusinessModuleType = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["businessModuleType"].Value<string>());
 			}
-		}
-
-		public BusinessModuleCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._BusinessModuleType = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("businessModuleType"));
-			    this._BusinessModuleId = data.TryGetValueSafe<long>("businessModuleId");
+			if(node["businessModuleId"] != null)
+			{
+				this._BusinessModuleId = ParseLong(node["businessModuleId"].Value<string>());
+			}
 		}
 		#endregion
 

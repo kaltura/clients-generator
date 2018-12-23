@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string ProductId
 		{
 			get { return _ProductId; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductId");
 			}
 		}
+		[JsonProperty]
 		public TransactionType ProductType
 		{
 			get { return _ProductType; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductType");
 			}
 		}
+		[JsonProperty]
 		public Price Price
 		{
 			get { return _Price; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Price");
 			}
 		}
+		[JsonProperty]
 		public PurchaseStatus PurchaseStatus
 		{
 			get { return _PurchaseStatus; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ProductPrice(XmlElement node) : base(node)
+		public ProductPrice(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["productId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "productId":
-						this._ProductId = propertyNode.InnerText;
-						continue;
-					case "productType":
-						this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
-						continue;
-					case "price":
-						this._Price = ObjectFactory.Create<Price>(propertyNode);
-						continue;
-					case "purchaseStatus":
-						this._PurchaseStatus = (PurchaseStatus)StringEnum.Parse(typeof(PurchaseStatus), propertyNode.InnerText);
-						continue;
-				}
+				this._ProductId = node["productId"].Value<string>();
 			}
-		}
-
-		public ProductPrice(IDictionary<string,object> data) : base(data)
-		{
-			    this._ProductId = data.TryGetValueSafe<string>("productId");
-			    this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("productType"));
-			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
-			    this._PurchaseStatus = (PurchaseStatus)StringEnum.Parse(typeof(PurchaseStatus), data.TryGetValueSafe<string>("purchaseStatus"));
+			if(node["productType"] != null)
+			{
+				this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["productType"].Value<string>());
+			}
+			if(node["price"] != null)
+			{
+				this._Price = ObjectFactory.Create<Price>(node["price"]);
+			}
+			if(node["purchaseStatus"] != null)
+			{
+				this._PurchaseStatus = (PurchaseStatus)StringEnum.Parse(typeof(PurchaseStatus), node["purchaseStatus"].Value<string>());
+			}
 		}
 		#endregion
 

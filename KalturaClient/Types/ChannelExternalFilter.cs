@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
+		[JsonProperty]
 		public float UtcOffsetEqual
 		{
 			get { return _UtcOffsetEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UtcOffsetEqual");
 			}
 		}
+		[JsonProperty]
 		public string FreeText
 		{
 			get { return _FreeText; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ChannelExternalFilter(XmlElement node) : base(node)
+		public ChannelExternalFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idEqual":
-						this._IdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "utcOffsetEqual":
-						this._UtcOffsetEqual = ParseFloat(propertyNode.InnerText);
-						continue;
-					case "freeText":
-						this._FreeText = propertyNode.InnerText;
-						continue;
-				}
+				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
 			}
-		}
-
-		public ChannelExternalFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
-			    this._UtcOffsetEqual = data.TryGetValueSafe<float>("utcOffsetEqual");
-			    this._FreeText = data.TryGetValueSafe<string>("freeText");
+			if(node["utcOffsetEqual"] != null)
+			{
+				this._UtcOffsetEqual = ParseFloat(node["utcOffsetEqual"].Value<string>());
+			}
+			if(node["freeText"] != null)
+			{
+				this._FreeText = node["freeText"].Value<string>();
+			}
 		}
 		#endregion
 

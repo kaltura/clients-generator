@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
+		[JsonProperty]
 		public long SendTimeGreaterThanOrEqual
 		{
 			get { return _SendTimeGreaterThanOrEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SendTimeGreaterThanOrEqual");
 			}
 		}
+		[JsonProperty]
 		public new EngagementOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public EngagementFilter(XmlElement node) : base(node)
+		public EngagementFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["typeIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "typeIn":
-						this._TypeIn = propertyNode.InnerText;
-						continue;
-					case "sendTimeGreaterThanOrEqual":
-						this._SendTimeGreaterThanOrEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (EngagementOrderBy)StringEnum.Parse(typeof(EngagementOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._TypeIn = node["typeIn"].Value<string>();
 			}
-		}
-
-		public EngagementFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
-			    this._SendTimeGreaterThanOrEqual = data.TryGetValueSafe<long>("sendTimeGreaterThanOrEqual");
-			    this._OrderBy = (EngagementOrderBy)StringEnum.Parse(typeof(EngagementOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["sendTimeGreaterThanOrEqual"] != null)
+			{
+				this._SendTimeGreaterThanOrEqual = ParseLong(node["sendTimeGreaterThanOrEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (EngagementOrderBy)StringEnum.Parse(typeof(EngagementOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

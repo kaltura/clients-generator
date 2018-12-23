@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,14 +60,27 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public RecordingStatus Status
 		{
 			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
+			}
 		}
+		[JsonProperty]
 		public long AssetId
 		{
 			get { return _AssetId; }
@@ -75,6 +90,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetId");
 			}
 		}
+		[JsonProperty]
 		public RecordingType Type
 		{
 			get { return _Type; }
@@ -84,10 +100,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
 		public long ViewableUntilDate
 		{
 			get { return _ViewableUntilDate; }
+			private set 
+			{ 
+				_ViewableUntilDate = value;
+				OnPropertyChanged("ViewableUntilDate");
+			}
 		}
+		[JsonProperty]
 		public bool? IsProtected
 		{
 			get { return _IsProtected; }
@@ -97,13 +120,25 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsProtected");
 			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
 		}
 		#endregion
 
@@ -112,50 +147,40 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Recording(XmlElement node) : base(node)
+		public Recording(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "status":
-						this._Status = (RecordingStatus)StringEnum.Parse(typeof(RecordingStatus), propertyNode.InnerText);
-						continue;
-					case "assetId":
-						this._AssetId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "type":
-						this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), propertyNode.InnerText);
-						continue;
-					case "viewableUntilDate":
-						this._ViewableUntilDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "isProtected":
-						this._IsProtected = ParseBool(propertyNode.InnerText);
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
-		}
-
-		public Recording(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Status = (RecordingStatus)StringEnum.Parse(typeof(RecordingStatus), data.TryGetValueSafe<string>("status"));
-			    this._AssetId = data.TryGetValueSafe<long>("assetId");
-			    this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), data.TryGetValueSafe<string>("type"));
-			    this._ViewableUntilDate = data.TryGetValueSafe<long>("viewableUntilDate");
-			    this._IsProtected = data.TryGetValueSafe<bool>("isProtected");
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			if(node["status"] != null)
+			{
+				this._Status = (RecordingStatus)StringEnum.Parse(typeof(RecordingStatus), node["status"].Value<string>());
+			}
+			if(node["assetId"] != null)
+			{
+				this._AssetId = ParseLong(node["assetId"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), node["type"].Value<string>());
+			}
+			if(node["viewableUntilDate"] != null)
+			{
+				this._ViewableUntilDate = ParseLong(node["viewableUntilDate"].Value<string>());
+			}
+			if(node["isProtected"] != null)
+			{
+				this._IsProtected = ParseBool(node["isProtected"].Value<string>());
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
 		}
 		#endregion
 

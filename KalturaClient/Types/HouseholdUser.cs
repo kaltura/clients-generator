@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,6 +56,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int HouseholdId
 		{
 			get { return _HouseholdId; }
@@ -63,6 +66,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdId");
 			}
 		}
+		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
@@ -72,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserId");
 			}
 		}
+		[JsonProperty]
 		public bool? IsMaster
 		{
 			get { return _IsMaster; }
@@ -81,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsMaster");
 			}
 		}
+		[JsonProperty]
 		public string HouseholdMasterUsername
 		{
 			get { return _HouseholdMasterUsername; }
@@ -90,13 +96,25 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdMasterUsername");
 			}
 		}
+		[JsonProperty]
 		public HouseholdUserStatus Status
 		{
 			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
+			}
 		}
+		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
+			private set 
+			{ 
+				_IsDefault = value;
+				OnPropertyChanged("IsDefault");
+			}
 		}
 		#endregion
 
@@ -105,42 +123,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdUser(XmlElement node) : base(node)
+		public HouseholdUser(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["householdId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "householdId":
-						this._HouseholdId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "userId":
-						this._UserId = propertyNode.InnerText;
-						continue;
-					case "isMaster":
-						this._IsMaster = ParseBool(propertyNode.InnerText);
-						continue;
-					case "householdMasterUsername":
-						this._HouseholdMasterUsername = propertyNode.InnerText;
-						continue;
-					case "status":
-						this._Status = (HouseholdUserStatus)StringEnum.Parse(typeof(HouseholdUserStatus), propertyNode.InnerText);
-						continue;
-					case "isDefault":
-						this._IsDefault = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._HouseholdId = ParseInt(node["householdId"].Value<string>());
 			}
-		}
-
-		public HouseholdUser(IDictionary<string,object> data) : base(data)
-		{
-			    this._HouseholdId = data.TryGetValueSafe<int>("householdId");
-			    this._UserId = data.TryGetValueSafe<string>("userId");
-			    this._IsMaster = data.TryGetValueSafe<bool>("isMaster");
-			    this._HouseholdMasterUsername = data.TryGetValueSafe<string>("householdMasterUsername");
-			    this._Status = (HouseholdUserStatus)StringEnum.Parse(typeof(HouseholdUserStatus), data.TryGetValueSafe<string>("status"));
-			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			if(node["userId"] != null)
+			{
+				this._UserId = node["userId"].Value<string>();
+			}
+			if(node["isMaster"] != null)
+			{
+				this._IsMaster = ParseBool(node["isMaster"].Value<string>());
+			}
+			if(node["householdMasterUsername"] != null)
+			{
+				this._HouseholdMasterUsername = node["householdMasterUsername"].Value<string>();
+			}
+			if(node["status"] != null)
+			{
+				this._Status = (HouseholdUserStatus)StringEnum.Parse(typeof(HouseholdUserStatus), node["status"].Value<string>());
+			}
+			if(node["isDefault"] != null)
+			{
+				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
+			}
 		}
 		#endregion
 

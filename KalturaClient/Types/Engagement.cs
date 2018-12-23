@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,14 +62,27 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public int TotalNumberOfRecipients
 		{
 			get { return _TotalNumberOfRecipients; }
+			private set 
+			{ 
+				_TotalNumberOfRecipients = value;
+				OnPropertyChanged("TotalNumberOfRecipients");
+			}
 		}
+		[JsonProperty]
 		public EngagementType Type
 		{
 			get { return _Type; }
@@ -77,6 +92,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
 		public int AdapterId
 		{
 			get { return _AdapterId; }
@@ -86,6 +102,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterId");
 			}
 		}
+		[JsonProperty]
 		public string AdapterDynamicData
 		{
 			get { return _AdapterDynamicData; }
@@ -95,6 +112,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterDynamicData");
 			}
 		}
+		[JsonProperty]
 		public int IntervalSeconds
 		{
 			get { return _IntervalSeconds; }
@@ -104,6 +122,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IntervalSeconds");
 			}
 		}
+		[JsonProperty]
 		public string UserList
 		{
 			get { return _UserList; }
@@ -113,6 +132,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserList");
 			}
 		}
+		[JsonProperty]
 		public long SendTimeInSeconds
 		{
 			get { return _SendTimeInSeconds; }
@@ -122,6 +142,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SendTimeInSeconds");
 			}
 		}
+		[JsonProperty]
 		public int CouponGroupId
 		{
 			get { return _CouponGroupId; }
@@ -138,54 +159,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Engagement(XmlElement node) : base(node)
+		public Engagement(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "totalNumberOfRecipients":
-						this._TotalNumberOfRecipients = ParseInt(propertyNode.InnerText);
-						continue;
-					case "type":
-						this._Type = (EngagementType)StringEnum.Parse(typeof(EngagementType), propertyNode.InnerText);
-						continue;
-					case "adapterId":
-						this._AdapterId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "adapterDynamicData":
-						this._AdapterDynamicData = propertyNode.InnerText;
-						continue;
-					case "intervalSeconds":
-						this._IntervalSeconds = ParseInt(propertyNode.InnerText);
-						continue;
-					case "userList":
-						this._UserList = propertyNode.InnerText;
-						continue;
-					case "sendTimeInSeconds":
-						this._SendTimeInSeconds = ParseLong(propertyNode.InnerText);
-						continue;
-					case "couponGroupId":
-						this._CouponGroupId = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = ParseInt(node["id"].Value<string>());
 			}
-		}
-
-		public Engagement(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._TotalNumberOfRecipients = data.TryGetValueSafe<int>("totalNumberOfRecipients");
-			    this._Type = (EngagementType)StringEnum.Parse(typeof(EngagementType), data.TryGetValueSafe<string>("type"));
-			    this._AdapterId = data.TryGetValueSafe<int>("adapterId");
-			    this._AdapterDynamicData = data.TryGetValueSafe<string>("adapterDynamicData");
-			    this._IntervalSeconds = data.TryGetValueSafe<int>("intervalSeconds");
-			    this._UserList = data.TryGetValueSafe<string>("userList");
-			    this._SendTimeInSeconds = data.TryGetValueSafe<long>("sendTimeInSeconds");
-			    this._CouponGroupId = data.TryGetValueSafe<int>("couponGroupId");
+			if(node["totalNumberOfRecipients"] != null)
+			{
+				this._TotalNumberOfRecipients = ParseInt(node["totalNumberOfRecipients"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (EngagementType)StringEnum.Parse(typeof(EngagementType), node["type"].Value<string>());
+			}
+			if(node["adapterId"] != null)
+			{
+				this._AdapterId = ParseInt(node["adapterId"].Value<string>());
+			}
+			if(node["adapterDynamicData"] != null)
+			{
+				this._AdapterDynamicData = node["adapterDynamicData"].Value<string>();
+			}
+			if(node["intervalSeconds"] != null)
+			{
+				this._IntervalSeconds = ParseInt(node["intervalSeconds"].Value<string>());
+			}
+			if(node["userList"] != null)
+			{
+				this._UserList = node["userList"].Value<string>();
+			}
+			if(node["sendTimeInSeconds"] != null)
+			{
+				this._SendTimeInSeconds = ParseLong(node["sendTimeInSeconds"].Value<string>());
+			}
+			if(node["couponGroupId"] != null)
+			{
+				this._CouponGroupId = ParseInt(node["couponGroupId"].Value<string>());
+			}
 		}
 		#endregion
 

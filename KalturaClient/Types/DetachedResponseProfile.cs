@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public RelatedObjectFilter Filter
 		{
 			get { return _Filter; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Filter");
 			}
 		}
+		[JsonProperty]
 		public IList<DetachedResponseProfile> RelatedProfiles
 		{
 			get { return _RelatedProfiles; }
@@ -82,39 +87,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DetachedResponseProfile(XmlElement node) : base(node)
+		public DetachedResponseProfile(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["name"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["filter"] != null)
+			{
+				this._Filter = ObjectFactory.Create<RelatedObjectFilter>(node["filter"]);
+			}
+			if(node["relatedProfiles"] != null)
+			{
+				this._RelatedProfiles = new List<DetachedResponseProfile>();
+				foreach(var arrayNode in node["relatedProfiles"].Children())
 				{
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "filter":
-						this._Filter = ObjectFactory.Create<RelatedObjectFilter>(propertyNode);
-						continue;
-					case "relatedProfiles":
-						this._RelatedProfiles = new List<DetachedResponseProfile>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>(arrayNode));
-						}
-						continue;
+					this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>(arrayNode));
 				}
 			}
-		}
-
-		public DetachedResponseProfile(IDictionary<string,object> data) : base(data)
-		{
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Filter = ObjectFactory.Create<RelatedObjectFilter>(data.TryGetValueSafe<IDictionary<string,object>>("filter"));
-			    this._RelatedProfiles = new List<DetachedResponseProfile>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("relatedProfiles", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

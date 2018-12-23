@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,10 +48,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
+			private set 
+			{ 
+				_Value = value;
+				OnPropertyChanged("Value");
+			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> MultilingualValue
 		{
 			get { return _MultilingualValue; }
@@ -66,35 +75,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MultilingualStringValue(XmlElement node) : base(node)
+		public MultilingualStringValue(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["value"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Value = node["value"].Value<string>();
+			}
+			if(node["multilingualValue"] != null)
+			{
+				this._MultilingualValue = new List<TranslationToken>();
+				foreach(var arrayNode in node["multilingualValue"].Children())
 				{
-					case "value":
-						this._Value = propertyNode.InnerText;
-						continue;
-					case "multilingualValue":
-						this._MultilingualValue = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
+					this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 				}
 			}
-		}
-
-		public MultilingualStringValue(IDictionary<string,object> data) : base(data)
-		{
-			    this._Value = data.TryGetValueSafe<string>("value");
-			    this._MultilingualValue = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualValue", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -76,6 +78,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int FileId
 		{
 			get { return _FileId; }
@@ -85,6 +88,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FileId");
 			}
 		}
+		[JsonProperty]
 		public string PpvModuleId
 		{
 			get { return _PpvModuleId; }
@@ -94,6 +98,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PpvModuleId");
 			}
 		}
+		[JsonProperty]
 		public bool? IsSubscriptionOnly
 		{
 			get { return _IsSubscriptionOnly; }
@@ -103,6 +108,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsSubscriptionOnly");
 			}
 		}
+		[JsonProperty]
 		public Price FullPrice
 		{
 			get { return _FullPrice; }
@@ -112,6 +118,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FullPrice");
 			}
 		}
+		[JsonProperty]
 		public string SubscriptionId
 		{
 			get { return _SubscriptionId; }
@@ -121,6 +128,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionId");
 			}
 		}
+		[JsonProperty]
 		public string CollectionId
 		{
 			get { return _CollectionId; }
@@ -130,6 +138,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CollectionId");
 			}
 		}
+		[JsonProperty]
 		public string PrePaidId
 		{
 			get { return _PrePaidId; }
@@ -139,6 +148,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PrePaidId");
 			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> PpvDescriptions
 		{
 			get { return _PpvDescriptions; }
@@ -148,6 +158,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PpvDescriptions");
 			}
 		}
+		[JsonProperty]
 		public string PurchaseUserId
 		{
 			get { return _PurchaseUserId; }
@@ -157,6 +168,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PurchaseUserId");
 			}
 		}
+		[JsonProperty]
 		public int PurchasedMediaFileId
 		{
 			get { return _PurchasedMediaFileId; }
@@ -166,6 +178,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PurchasedMediaFileId");
 			}
 		}
+		[JsonProperty]
 		public IList<IntegerValue> RelatedMediaFileIds
 		{
 			get { return _RelatedMediaFileIds; }
@@ -175,6 +188,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RelatedMediaFileIds");
 			}
 		}
+		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -184,6 +198,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
+		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -193,6 +208,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDate");
 			}
 		}
+		[JsonProperty]
 		public long DiscountEndDate
 		{
 			get { return _DiscountEndDate; }
@@ -202,6 +218,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DiscountEndDate");
 			}
 		}
+		[JsonProperty]
 		public string FirstDeviceName
 		{
 			get { return _FirstDeviceName; }
@@ -211,6 +228,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FirstDeviceName");
 			}
 		}
+		[JsonProperty]
 		public bool? IsInCancelationPeriod
 		{
 			get { return _IsInCancelationPeriod; }
@@ -220,6 +238,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsInCancelationPeriod");
 			}
 		}
+		[JsonProperty]
 		public string PpvProductCode
 		{
 			get { return _PpvProductCode; }
@@ -236,104 +255,84 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PpvPrice(XmlElement node) : base(node)
+		public PpvPrice(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["fileId"] != null)
 			{
-				switch (propertyNode.Name)
+				this._FileId = ParseInt(node["fileId"].Value<string>());
+			}
+			if(node["ppvModuleId"] != null)
+			{
+				this._PpvModuleId = node["ppvModuleId"].Value<string>();
+			}
+			if(node["isSubscriptionOnly"] != null)
+			{
+				this._IsSubscriptionOnly = ParseBool(node["isSubscriptionOnly"].Value<string>());
+			}
+			if(node["fullPrice"] != null)
+			{
+				this._FullPrice = ObjectFactory.Create<Price>(node["fullPrice"]);
+			}
+			if(node["subscriptionId"] != null)
+			{
+				this._SubscriptionId = node["subscriptionId"].Value<string>();
+			}
+			if(node["collectionId"] != null)
+			{
+				this._CollectionId = node["collectionId"].Value<string>();
+			}
+			if(node["prePaidId"] != null)
+			{
+				this._PrePaidId = node["prePaidId"].Value<string>();
+			}
+			if(node["ppvDescriptions"] != null)
+			{
+				this._PpvDescriptions = new List<TranslationToken>();
+				foreach(var arrayNode in node["ppvDescriptions"].Children())
 				{
-					case "fileId":
-						this._FileId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "ppvModuleId":
-						this._PpvModuleId = propertyNode.InnerText;
-						continue;
-					case "isSubscriptionOnly":
-						this._IsSubscriptionOnly = ParseBool(propertyNode.InnerText);
-						continue;
-					case "fullPrice":
-						this._FullPrice = ObjectFactory.Create<Price>(propertyNode);
-						continue;
-					case "subscriptionId":
-						this._SubscriptionId = propertyNode.InnerText;
-						continue;
-					case "collectionId":
-						this._CollectionId = propertyNode.InnerText;
-						continue;
-					case "prePaidId":
-						this._PrePaidId = propertyNode.InnerText;
-						continue;
-					case "ppvDescriptions":
-						this._PpvDescriptions = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._PpvDescriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
-					case "purchaseUserId":
-						this._PurchaseUserId = propertyNode.InnerText;
-						continue;
-					case "purchasedMediaFileId":
-						this._PurchasedMediaFileId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "relatedMediaFileIds":
-						this._RelatedMediaFileIds = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._RelatedMediaFileIds.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
-					case "startDate":
-						this._StartDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "endDate":
-						this._EndDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "discountEndDate":
-						this._DiscountEndDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "firstDeviceName":
-						this._FirstDeviceName = propertyNode.InnerText;
-						continue;
-					case "isInCancelationPeriod":
-						this._IsInCancelationPeriod = ParseBool(propertyNode.InnerText);
-						continue;
-					case "ppvProductCode":
-						this._PpvProductCode = propertyNode.InnerText;
-						continue;
+					this._PpvDescriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 				}
 			}
-		}
-
-		public PpvPrice(IDictionary<string,object> data) : base(data)
-		{
-			    this._FileId = data.TryGetValueSafe<int>("fileId");
-			    this._PpvModuleId = data.TryGetValueSafe<string>("ppvModuleId");
-			    this._IsSubscriptionOnly = data.TryGetValueSafe<bool>("isSubscriptionOnly");
-			    this._FullPrice = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("fullPrice"));
-			    this._SubscriptionId = data.TryGetValueSafe<string>("subscriptionId");
-			    this._CollectionId = data.TryGetValueSafe<string>("collectionId");
-			    this._PrePaidId = data.TryGetValueSafe<string>("prePaidId");
-			    this._PpvDescriptions = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("ppvDescriptions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._PpvDescriptions.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._PurchaseUserId = data.TryGetValueSafe<string>("purchaseUserId");
-			    this._PurchasedMediaFileId = data.TryGetValueSafe<int>("purchasedMediaFileId");
-			    this._RelatedMediaFileIds = new List<IntegerValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("relatedMediaFileIds", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._RelatedMediaFileIds.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._StartDate = data.TryGetValueSafe<long>("startDate");
-			    this._EndDate = data.TryGetValueSafe<long>("endDate");
-			    this._DiscountEndDate = data.TryGetValueSafe<long>("discountEndDate");
-			    this._FirstDeviceName = data.TryGetValueSafe<string>("firstDeviceName");
-			    this._IsInCancelationPeriod = data.TryGetValueSafe<bool>("isInCancelationPeriod");
-			    this._PpvProductCode = data.TryGetValueSafe<string>("ppvProductCode");
+			if(node["purchaseUserId"] != null)
+			{
+				this._PurchaseUserId = node["purchaseUserId"].Value<string>();
+			}
+			if(node["purchasedMediaFileId"] != null)
+			{
+				this._PurchasedMediaFileId = ParseInt(node["purchasedMediaFileId"].Value<string>());
+			}
+			if(node["relatedMediaFileIds"] != null)
+			{
+				this._RelatedMediaFileIds = new List<IntegerValue>();
+				foreach(var arrayNode in node["relatedMediaFileIds"].Children())
+				{
+					this._RelatedMediaFileIds.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
+				}
+			}
+			if(node["startDate"] != null)
+			{
+				this._StartDate = ParseLong(node["startDate"].Value<string>());
+			}
+			if(node["endDate"] != null)
+			{
+				this._EndDate = ParseLong(node["endDate"].Value<string>());
+			}
+			if(node["discountEndDate"] != null)
+			{
+				this._DiscountEndDate = ParseLong(node["discountEndDate"].Value<string>());
+			}
+			if(node["firstDeviceName"] != null)
+			{
+				this._FirstDeviceName = node["firstDeviceName"].Value<string>();
+			}
+			if(node["isInCancelationPeriod"] != null)
+			{
+				this._IsInCancelationPeriod = ParseBool(node["isInCancelationPeriod"].Value<string>());
+			}
+			if(node["ppvProductCode"] != null)
+			{
+				this._PpvProductCode = node["ppvProductCode"].Value<string>();
+			}
 		}
 		#endregion
 

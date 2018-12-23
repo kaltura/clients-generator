@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,6 +56,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
@@ -63,6 +66,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
+		[JsonProperty]
 		public string PaymentGatewayReferenceId
 		{
 			get { return _PaymentGatewayReferenceId; }
@@ -72,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayReferenceId");
 			}
 		}
+		[JsonProperty]
 		public string PaymentGatewayResponseId
 		{
 			get { return _PaymentGatewayResponseId; }
@@ -81,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayResponseId");
 			}
 		}
+		[JsonProperty]
 		public string State
 		{
 			get { return _State; }
@@ -90,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("State");
 			}
 		}
+		[JsonProperty]
 		public int FailReasonCode
 		{
 			get { return _FailReasonCode; }
@@ -99,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FailReasonCode");
 			}
 		}
+		[JsonProperty]
 		public int CreatedAt
 		{
 			get { return _CreatedAt; }
@@ -115,42 +123,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Transaction(XmlElement node) : base(node)
+		public Transaction(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "paymentGatewayReferenceId":
-						this._PaymentGatewayReferenceId = propertyNode.InnerText;
-						continue;
-					case "paymentGatewayResponseId":
-						this._PaymentGatewayResponseId = propertyNode.InnerText;
-						continue;
-					case "state":
-						this._State = propertyNode.InnerText;
-						continue;
-					case "failReasonCode":
-						this._FailReasonCode = ParseInt(propertyNode.InnerText);
-						continue;
-					case "createdAt":
-						this._CreatedAt = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public Transaction(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._PaymentGatewayReferenceId = data.TryGetValueSafe<string>("paymentGatewayReferenceId");
-			    this._PaymentGatewayResponseId = data.TryGetValueSafe<string>("paymentGatewayResponseId");
-			    this._State = data.TryGetValueSafe<string>("state");
-			    this._FailReasonCode = data.TryGetValueSafe<int>("failReasonCode");
-			    this._CreatedAt = data.TryGetValueSafe<int>("createdAt");
+			if(node["paymentGatewayReferenceId"] != null)
+			{
+				this._PaymentGatewayReferenceId = node["paymentGatewayReferenceId"].Value<string>();
+			}
+			if(node["paymentGatewayResponseId"] != null)
+			{
+				this._PaymentGatewayResponseId = node["paymentGatewayResponseId"].Value<string>();
+			}
+			if(node["state"] != null)
+			{
+				this._State = node["state"].Value<string>();
+			}
+			if(node["failReasonCode"] != null)
+			{
+				this._FailReasonCode = ParseInt(node["failReasonCode"].Value<string>());
+			}
+			if(node["createdAt"] != null)
+			{
+				this._CreatedAt = ParseInt(node["createdAt"].Value<string>());
+			}
 		}
 		#endregion
 
