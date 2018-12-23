@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ConfigurationGroupIdEqual
 		{
 			get { return _ConfigurationGroupIdEqual; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConfigurationGroupIdEqual");
 			}
 		}
-		[JsonProperty]
 		public new ConfigurationGroupDeviceOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConfigurationGroupDeviceFilter(JToken node) : base(node)
+		public ConfigurationGroupDeviceFilter(XmlElement node) : base(node)
 		{
-			if(node["configurationGroupIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ConfigurationGroupIdEqual = node["configurationGroupIdEqual"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "configurationGroupIdEqual":
+						this._ConfigurationGroupIdEqual = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (ConfigurationGroupDeviceOrderBy)StringEnum.Parse(typeof(ConfigurationGroupDeviceOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ConfigurationGroupDeviceOrderBy)StringEnum.Parse(typeof(ConfigurationGroupDeviceOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public ConfigurationGroupDeviceFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupIdEqual = data.TryGetValueSafe<string>("configurationGroupIdEqual");
+			    this._OrderBy = (ConfigurationGroupDeviceOrderBy)StringEnum.Parse(typeof(ConfigurationGroupDeviceOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

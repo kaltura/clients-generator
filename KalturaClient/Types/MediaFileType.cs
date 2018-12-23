@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -68,17 +66,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -88,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
@@ -98,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
-		[JsonProperty]
 		public bool? Status
 		{
 			get { return _Status; }
@@ -108,27 +97,14 @@ namespace Kaltura.Types
 				OnPropertyChanged("Status");
 			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
-		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
-			private set 
-			{ 
-				_UpdateDate = value;
-				OnPropertyChanged("UpdateDate");
-			}
 		}
-		[JsonProperty]
 		public bool? IsTrailer
 		{
 			get { return _IsTrailer; }
@@ -138,7 +114,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsTrailer");
 			}
 		}
-		[JsonProperty]
 		public MediaFileStreamerType StreamerType
 		{
 			get { return _StreamerType; }
@@ -148,7 +123,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StreamerType");
 			}
 		}
-		[JsonProperty]
 		public int DrmProfileId
 		{
 			get { return _DrmProfileId; }
@@ -158,7 +132,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DrmProfileId");
 			}
 		}
-		[JsonProperty]
 		public MediaFileTypeQuality Quality
 		{
 			get { return _Quality; }
@@ -168,7 +141,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Quality");
 			}
 		}
-		[JsonProperty]
 		public string VideoCodecs
 		{
 			get { return _VideoCodecs; }
@@ -178,7 +150,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("VideoCodecs");
 			}
 		}
-		[JsonProperty]
 		public string AudioCodecs
 		{
 			get { return _AudioCodecs; }
@@ -195,56 +166,66 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MediaFileType(JToken node) : base(node)
+		public MediaFileType(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "description":
+						this._Description = propertyNode.InnerText;
+						continue;
+					case "status":
+						this._Status = ParseBool(propertyNode.InnerText);
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "isTrailer":
+						this._IsTrailer = ParseBool(propertyNode.InnerText);
+						continue;
+					case "streamerType":
+						this._StreamerType = (MediaFileStreamerType)StringEnum.Parse(typeof(MediaFileStreamerType), propertyNode.InnerText);
+						continue;
+					case "drmProfileId":
+						this._DrmProfileId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "quality":
+						this._Quality = (MediaFileTypeQuality)StringEnum.Parse(typeof(MediaFileTypeQuality), propertyNode.InnerText);
+						continue;
+					case "videoCodecs":
+						this._VideoCodecs = propertyNode.InnerText;
+						continue;
+					case "audioCodecs":
+						this._AudioCodecs = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["description"] != null)
-			{
-				this._Description = node["description"].Value<string>();
-			}
-			if(node["status"] != null)
-			{
-				this._Status = ParseBool(node["status"].Value<string>());
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["updateDate"] != null)
-			{
-				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
-			}
-			if(node["isTrailer"] != null)
-			{
-				this._IsTrailer = ParseBool(node["isTrailer"].Value<string>());
-			}
-			if(node["streamerType"] != null)
-			{
-				this._StreamerType = (MediaFileStreamerType)StringEnum.Parse(typeof(MediaFileStreamerType), node["streamerType"].Value<string>());
-			}
-			if(node["drmProfileId"] != null)
-			{
-				this._DrmProfileId = ParseInt(node["drmProfileId"].Value<string>());
-			}
-			if(node["quality"] != null)
-			{
-				this._Quality = (MediaFileTypeQuality)StringEnum.Parse(typeof(MediaFileTypeQuality), node["quality"].Value<string>());
-			}
-			if(node["videoCodecs"] != null)
-			{
-				this._VideoCodecs = node["videoCodecs"].Value<string>();
-			}
-			if(node["audioCodecs"] != null)
-			{
-				this._AudioCodecs = node["audioCodecs"].Value<string>();
-			}
+		}
+
+		public MediaFileType(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._Status = data.TryGetValueSafe<bool>("status");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
+			    this._IsTrailer = data.TryGetValueSafe<bool>("isTrailer");
+			    this._StreamerType = (MediaFileStreamerType)StringEnum.Parse(typeof(MediaFileStreamerType), data.TryGetValueSafe<string>("streamerType"));
+			    this._DrmProfileId = data.TryGetValueSafe<int>("drmProfileId");
+			    this._Quality = (MediaFileTypeQuality)StringEnum.Parse(typeof(MediaFileTypeQuality), data.TryGetValueSafe<string>("quality"));
+			    this._VideoCodecs = data.TryGetValueSafe<string>("videoCodecs");
+			    this._AudioCodecs = data.TryGetValueSafe<string>("audioCodecs");
 		}
 		#endregion
 

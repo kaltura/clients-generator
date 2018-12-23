@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string KSql
 		{
 			get { return _KSql; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("KSql");
 			}
 		}
-		[JsonProperty]
 		public IList<AssetGroupBy> GroupBy
 		{
 			get { return _GroupBy; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("GroupBy");
 			}
 		}
-		[JsonProperty]
 		public GroupByOrder GroupOrderBy
 		{
 			get { return _GroupOrderBy; }
@@ -87,24 +82,39 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BaseSearchAssetFilter(JToken node) : base(node)
+		public BaseSearchAssetFilter(XmlElement node) : base(node)
 		{
-			if(node["kSql"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._KSql = node["kSql"].Value<string>();
-			}
-			if(node["groupBy"] != null)
-			{
-				this._GroupBy = new List<AssetGroupBy>();
-				foreach(var arrayNode in node["groupBy"].Children())
+				switch (propertyNode.Name)
 				{
-					this._GroupBy.Add(ObjectFactory.Create<AssetGroupBy>(arrayNode));
+					case "kSql":
+						this._KSql = propertyNode.InnerText;
+						continue;
+					case "groupBy":
+						this._GroupBy = new List<AssetGroupBy>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._GroupBy.Add(ObjectFactory.Create<AssetGroupBy>(arrayNode));
+						}
+						continue;
+					case "groupOrderBy":
+						this._GroupOrderBy = (GroupByOrder)StringEnum.Parse(typeof(GroupByOrder), propertyNode.InnerText);
+						continue;
 				}
 			}
-			if(node["groupOrderBy"] != null)
-			{
-				this._GroupOrderBy = (GroupByOrder)StringEnum.Parse(typeof(GroupByOrder), node["groupOrderBy"].Value<string>());
-			}
+		}
+
+		public BaseSearchAssetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._KSql = data.TryGetValueSafe<string>("kSql");
+			    this._GroupBy = new List<AssetGroupBy>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("groupBy", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._GroupBy.Add(ObjectFactory.Create<AssetGroupBy>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._GroupOrderBy = (GroupByOrder)StringEnum.Parse(typeof(GroupByOrder), data.TryGetValueSafe<string>("groupOrderBy"));
 		}
 		#endregion
 

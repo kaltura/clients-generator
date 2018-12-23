@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AdapterId
 		{
 			get { return _AdapterId; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ApplyPlaybackAdapterAction(JToken node) : base(node)
+		public ApplyPlaybackAdapterAction(XmlElement node) : base(node)
 		{
-			if(node["adapterId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AdapterId = ParseLong(node["adapterId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "adapterId":
+						this._AdapterId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public ApplyPlaybackAdapterAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._AdapterId = data.TryGetValueSafe<long>("adapterId");
 		}
 		#endregion
 

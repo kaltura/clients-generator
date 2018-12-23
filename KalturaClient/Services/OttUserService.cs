@@ -32,7 +32,6 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -91,9 +90,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUser>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -134,9 +137,16 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -188,9 +198,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<LoginSession>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginSession>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -217,9 +231,16 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -248,9 +269,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUser>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -277,9 +302,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<StringValue>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<StringValue>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -320,9 +349,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<OTTUser>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<OTTUser>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -399,9 +432,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<LoginResponse>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginResponse>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -469,9 +506,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<LoginResponse>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<LoginResponse>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -498,9 +539,16 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -561,9 +609,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUser>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -613,9 +665,16 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -676,9 +735,16 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -739,9 +805,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUser>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -791,9 +861,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUser>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUser>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -843,9 +917,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<OTTUserDynamicData>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<OTTUserDynamicData>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -904,15 +982,22 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
 	}
 
-	public class OttUserUpdatePasswordRequestBuilder : RequestBuilder<VoidResponse>
+	public class OttUserUpdatePasswordRequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public new const string USER_ID = "userId";
@@ -958,7 +1043,11 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}

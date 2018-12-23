@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,45 +50,21 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public CouponsGroup CouponsGroup
 		{
 			get { return _CouponsGroup; }
-			private set 
-			{ 
-				_CouponsGroup = value;
-				OnPropertyChanged("CouponsGroup");
-			}
 		}
-		[JsonProperty]
 		public CouponStatus Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public int TotalUses
 		{
 			get { return _TotalUses; }
-			private set 
-			{ 
-				_TotalUses = value;
-				OnPropertyChanged("TotalUses");
-			}
 		}
-		[JsonProperty]
 		public int LeftUses
 		{
 			get { return _LeftUses; }
-			private set 
-			{ 
-				_LeftUses = value;
-				OnPropertyChanged("LeftUses");
-			}
 		}
 		#endregion
 
@@ -99,24 +73,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Coupon(JToken node) : base(node)
+		public Coupon(XmlElement node) : base(node)
 		{
-			if(node["couponsGroup"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(node["couponsGroup"]);
+				switch (propertyNode.Name)
+				{
+					case "couponsGroup":
+						this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(propertyNode);
+						continue;
+					case "status":
+						this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), propertyNode.InnerText);
+						continue;
+					case "totalUses":
+						this._TotalUses = ParseInt(propertyNode.InnerText);
+						continue;
+					case "leftUses":
+						this._LeftUses = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["status"] != null)
-			{
-				this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), node["status"].Value<string>());
-			}
-			if(node["totalUses"] != null)
-			{
-				this._TotalUses = ParseInt(node["totalUses"].Value<string>());
-			}
-			if(node["leftUses"] != null)
-			{
-				this._LeftUses = ParseInt(node["leftUses"].Value<string>());
-			}
+		}
+
+		public Coupon(IDictionary<string,object> data) : base(data)
+		{
+			    this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(data.TryGetValueSafe<IDictionary<string,object>>("couponsGroup"));
+			    this._Status = (CouponStatus)StringEnum.Parse(typeof(CouponStatus), data.TryGetValueSafe<string>("status"));
+			    this._TotalUses = data.TryGetValueSafe<int>("totalUses");
+			    this._LeftUses = data.TryGetValueSafe<int>("leftUses");
 		}
 		#endregion
 

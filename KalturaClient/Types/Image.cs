@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -62,27 +60,14 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Version
 		{
 			get { return _Version; }
-			private set 
-			{ 
-				_Version = value;
-				OnPropertyChanged("Version");
-			}
 		}
-		[JsonProperty]
 		public long ImageTypeId
 		{
 			get { return _ImageTypeId; }
@@ -92,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageTypeId");
 			}
 		}
-		[JsonProperty]
 		public long ImageObjectId
 		{
 			get { return _ImageObjectId; }
@@ -102,7 +86,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageObjectId");
 			}
 		}
-		[JsonProperty]
 		public ImageObjectType ImageObjectType
 		{
 			get { return _ImageObjectType; }
@@ -112,45 +95,21 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageObjectType");
 			}
 		}
-		[JsonProperty]
 		public ImageStatus Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
-			private set 
-			{ 
-				_Url = value;
-				OnPropertyChanged("Url");
-			}
 		}
-		[JsonProperty]
 		public string ContentId
 		{
 			get { return _ContentId; }
-			private set 
-			{ 
-				_ContentId = value;
-				OnPropertyChanged("ContentId");
-			}
 		}
-		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
-			private set 
-			{ 
-				_IsDefault = value;
-				OnPropertyChanged("IsDefault");
-			}
 		}
 		#endregion
 
@@ -159,44 +118,54 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Image(JToken node) : base(node)
+		public Image(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "version":
+						this._Version = propertyNode.InnerText;
+						continue;
+					case "imageTypeId":
+						this._ImageTypeId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "imageObjectId":
+						this._ImageObjectId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "imageObjectType":
+						this._ImageObjectType = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), propertyNode.InnerText);
+						continue;
+					case "status":
+						this._Status = (ImageStatus)StringEnum.Parse(typeof(ImageStatus), propertyNode.InnerText);
+						continue;
+					case "url":
+						this._Url = propertyNode.InnerText;
+						continue;
+					case "contentId":
+						this._ContentId = propertyNode.InnerText;
+						continue;
+					case "isDefault":
+						this._IsDefault = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["version"] != null)
-			{
-				this._Version = node["version"].Value<string>();
-			}
-			if(node["imageTypeId"] != null)
-			{
-				this._ImageTypeId = ParseLong(node["imageTypeId"].Value<string>());
-			}
-			if(node["imageObjectId"] != null)
-			{
-				this._ImageObjectId = ParseLong(node["imageObjectId"].Value<string>());
-			}
-			if(node["imageObjectType"] != null)
-			{
-				this._ImageObjectType = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), node["imageObjectType"].Value<string>());
-			}
-			if(node["status"] != null)
-			{
-				this._Status = (ImageStatus)StringEnum.Parse(typeof(ImageStatus), node["status"].Value<string>());
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
-			if(node["contentId"] != null)
-			{
-				this._ContentId = node["contentId"].Value<string>();
-			}
-			if(node["isDefault"] != null)
-			{
-				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
-			}
+		}
+
+		public Image(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Version = data.TryGetValueSafe<string>("version");
+			    this._ImageTypeId = data.TryGetValueSafe<long>("imageTypeId");
+			    this._ImageObjectId = data.TryGetValueSafe<long>("imageObjectId");
+			    this._ImageObjectType = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), data.TryGetValueSafe<string>("imageObjectType"));
+			    this._Status = (ImageStatus)StringEnum.Parse(typeof(ImageStatus), data.TryGetValueSafe<string>("status"));
+			    this._Url = data.TryGetValueSafe<string>("url");
+			    this._ContentId = data.TryGetValueSafe<string>("contentId");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
 		}
 		#endregion
 

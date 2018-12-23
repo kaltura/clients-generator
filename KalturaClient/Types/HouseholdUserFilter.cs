@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int HouseholdIdEqual
 		{
 			get { return _HouseholdIdEqual; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdIdEqual");
 			}
 		}
-		[JsonProperty]
 		public new HouseholdUserOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdUserFilter(JToken node) : base(node)
+		public HouseholdUserFilter(XmlElement node) : base(node)
 		{
-			if(node["householdIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._HouseholdIdEqual = ParseInt(node["householdIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "householdIdEqual":
+						this._HouseholdIdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (HouseholdUserOrderBy)StringEnum.Parse(typeof(HouseholdUserOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (HouseholdUserOrderBy)StringEnum.Parse(typeof(HouseholdUserOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public HouseholdUserFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdIdEqual = data.TryGetValueSafe<int>("householdIdEqual");
+			    this._OrderBy = (HouseholdUserOrderBy)StringEnum.Parse(typeof(HouseholdUserOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

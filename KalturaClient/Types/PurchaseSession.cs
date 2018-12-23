@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int PreviewModuleId
 		{
 			get { return _PreviewModuleId; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PurchaseSession(JToken node) : base(node)
+		public PurchaseSession(XmlElement node) : base(node)
 		{
-			if(node["previewModuleId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._PreviewModuleId = ParseInt(node["previewModuleId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "previewModuleId":
+						this._PreviewModuleId = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public PurchaseSession(IDictionary<string,object> data) : base(data)
+		{
+			    this._PreviewModuleId = data.TryGetValueSafe<int>("previewModuleId");
 		}
 		#endregion
 

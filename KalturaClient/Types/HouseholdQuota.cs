@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,35 +48,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long HouseholdId
 		{
 			get { return _HouseholdId; }
-			private set 
-			{ 
-				_HouseholdId = value;
-				OnPropertyChanged("HouseholdId");
-			}
 		}
-		[JsonProperty]
 		public int TotalQuota
 		{
 			get { return _TotalQuota; }
-			private set 
-			{ 
-				_TotalQuota = value;
-				OnPropertyChanged("TotalQuota");
-			}
 		}
-		[JsonProperty]
 		public int AvailableQuota
 		{
 			get { return _AvailableQuota; }
-			private set 
-			{ 
-				_AvailableQuota = value;
-				OnPropertyChanged("AvailableQuota");
-			}
 		}
 		#endregion
 
@@ -87,20 +67,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdQuota(JToken node) : base(node)
+		public HouseholdQuota(XmlElement node) : base(node)
 		{
-			if(node["householdId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._HouseholdId = ParseLong(node["householdId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "householdId":
+						this._HouseholdId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "totalQuota":
+						this._TotalQuota = ParseInt(propertyNode.InnerText);
+						continue;
+					case "availableQuota":
+						this._AvailableQuota = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["totalQuota"] != null)
-			{
-				this._TotalQuota = ParseInt(node["totalQuota"].Value<string>());
-			}
-			if(node["availableQuota"] != null)
-			{
-				this._AvailableQuota = ParseInt(node["availableQuota"].Value<string>());
-			}
+		}
+
+		public HouseholdQuota(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdId = data.TryGetValueSafe<long>("householdId");
+			    this._TotalQuota = data.TryGetValueSafe<int>("totalQuota");
+			    this._AvailableQuota = data.TryGetValueSafe<int>("availableQuota");
 		}
 		#endregion
 

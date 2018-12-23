@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long PlaybackProfileEqual
 		{
 			get { return _PlaybackProfileEqual; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PlaybackProfileEqual");
 			}
 		}
-		[JsonProperty]
 		public new PlaybackProfileOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PlaybackProfileFilter(JToken node) : base(node)
+		public PlaybackProfileFilter(XmlElement node) : base(node)
 		{
-			if(node["playbackProfileEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._PlaybackProfileEqual = ParseLong(node["playbackProfileEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "playbackProfileEqual":
+						this._PlaybackProfileEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (PlaybackProfileOrderBy)StringEnum.Parse(typeof(PlaybackProfileOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (PlaybackProfileOrderBy)StringEnum.Parse(typeof(PlaybackProfileOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public PlaybackProfileFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PlaybackProfileEqual = data.TryGetValueSafe<long>("playbackProfileEqual");
+			    this._OrderBy = (PlaybackProfileOrderBy)StringEnum.Parse(typeof(PlaybackProfileOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

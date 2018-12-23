@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,17 +54,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Message
 		{
 			get { return _Message; }
@@ -76,17 +67,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Message");
 			}
 		}
-		[JsonProperty]
 		public InboxMessageStatus Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public InboxMessageType Type
 		{
 			get { return _Type; }
@@ -96,17 +80,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
-		[JsonProperty]
 		public long CreatedAt
 		{
 			get { return _CreatedAt; }
-			private set 
-			{ 
-				_CreatedAt = value;
-				OnPropertyChanged("CreatedAt");
-			}
 		}
-		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
@@ -123,32 +100,42 @@ namespace Kaltura.Types
 		{
 		}
 
-		public InboxMessage(JToken node) : base(node)
+		public InboxMessage(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "message":
+						this._Message = propertyNode.InnerText;
+						continue;
+					case "status":
+						this._Status = (InboxMessageStatus)StringEnum.Parse(typeof(InboxMessageStatus), propertyNode.InnerText);
+						continue;
+					case "type":
+						this._Type = (InboxMessageType)StringEnum.Parse(typeof(InboxMessageType), propertyNode.InnerText);
+						continue;
+					case "createdAt":
+						this._CreatedAt = ParseLong(propertyNode.InnerText);
+						continue;
+					case "url":
+						this._Url = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["message"] != null)
-			{
-				this._Message = node["message"].Value<string>();
-			}
-			if(node["status"] != null)
-			{
-				this._Status = (InboxMessageStatus)StringEnum.Parse(typeof(InboxMessageStatus), node["status"].Value<string>());
-			}
-			if(node["type"] != null)
-			{
-				this._Type = (InboxMessageType)StringEnum.Parse(typeof(InboxMessageType), node["type"].Value<string>());
-			}
-			if(node["createdAt"] != null)
-			{
-				this._CreatedAt = ParseLong(node["createdAt"].Value<string>());
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
+		}
+
+		public InboxMessage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._Status = (InboxMessageStatus)StringEnum.Parse(typeof(InboxMessageStatus), data.TryGetValueSafe<string>("status"));
+			    this._Type = (InboxMessageType)StringEnum.Parse(typeof(InboxMessageType), data.TryGetValueSafe<string>("type"));
+			    this._CreatedAt = data.TryGetValueSafe<long>("createdAt");
+			    this._Url = data.TryGetValueSafe<string>("url");
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string DeviceFamilyIds
 		{
 			get { return _DeviceFamilyIds; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DeviceFamilyIds");
 			}
 		}
-		[JsonProperty]
 		public EvictionPolicyType EvictionPolicy
 		{
 			get { return _EvictionPolicy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConcurrencyPartnerConfig(JToken node) : base(node)
+		public ConcurrencyPartnerConfig(XmlElement node) : base(node)
 		{
-			if(node["deviceFamilyIds"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._DeviceFamilyIds = node["deviceFamilyIds"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "deviceFamilyIds":
+						this._DeviceFamilyIds = propertyNode.InnerText;
+						continue;
+					case "evictionPolicy":
+						this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["evictionPolicy"] != null)
-			{
-				this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), node["evictionPolicy"].Value<string>());
-			}
+		}
+
+		public ConcurrencyPartnerConfig(IDictionary<string,object> data) : base(data)
+		{
+			    this._DeviceFamilyIds = data.TryGetValueSafe<string>("deviceFamilyIds");
+			    this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), data.TryGetValueSafe<string>("evictionPolicy"));
 		}
 		#endregion
 

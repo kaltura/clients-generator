@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -68,27 +66,14 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
-			private set 
-			{ 
-				_Name = value;
-				OnPropertyChanged("Name");
-			}
 		}
-		[JsonProperty]
 		public IList<TranslationToken> MultilingualName
 		{
 			get { return _MultilingualName; }
@@ -98,7 +83,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualName");
 			}
 		}
-		[JsonProperty]
 		public string SystemName
 		{
 			get { return _SystemName; }
@@ -108,7 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SystemName");
 			}
 		}
-		[JsonProperty]
 		public MetaDataType DataType
 		{
 			get { return _DataType; }
@@ -118,7 +101,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DataType");
 			}
 		}
-		[JsonProperty]
 		public bool? MultipleValue
 		{
 			get { return _MultipleValue; }
@@ -128,7 +110,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultipleValue");
 			}
 		}
-		[JsonProperty]
 		public bool? IsProtected
 		{
 			get { return _IsProtected; }
@@ -138,7 +119,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsProtected");
 			}
 		}
-		[JsonProperty]
 		public string HelpText
 		{
 			get { return _HelpText; }
@@ -148,7 +128,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("HelpText");
 			}
 		}
-		[JsonProperty]
 		public string Features
 		{
 			get { return _Features; }
@@ -158,7 +137,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Features");
 			}
 		}
-		[JsonProperty]
 		public string ParentId
 		{
 			get { return _ParentId; }
@@ -168,25 +146,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("ParentId");
 			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
-		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
-			private set 
-			{ 
-				_UpdateDate = value;
-				OnPropertyChanged("UpdateDate");
-			}
 		}
 		#endregion
 
@@ -195,60 +161,75 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Meta(JToken node) : base(node)
+		public Meta(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["multilingualName"] != null)
-			{
-				this._MultilingualName = new List<TranslationToken>();
-				foreach(var arrayNode in node["multilingualName"].Children())
+				switch (propertyNode.Name)
 				{
-					this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "multilingualName":
+						this._MultilingualName = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
+						continue;
+					case "systemName":
+						this._SystemName = propertyNode.InnerText;
+						continue;
+					case "dataType":
+						this._DataType = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), propertyNode.InnerText);
+						continue;
+					case "multipleValue":
+						this._MultipleValue = ParseBool(propertyNode.InnerText);
+						continue;
+					case "isProtected":
+						this._IsProtected = ParseBool(propertyNode.InnerText);
+						continue;
+					case "helpText":
+						this._HelpText = propertyNode.InnerText;
+						continue;
+					case "features":
+						this._Features = propertyNode.InnerText;
+						continue;
+					case "parentId":
+						this._ParentId = propertyNode.InnerText;
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
-			if(node["systemName"] != null)
-			{
-				this._SystemName = node["systemName"].Value<string>();
-			}
-			if(node["dataType"] != null)
-			{
-				this._DataType = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), node["dataType"].Value<string>());
-			}
-			if(node["multipleValue"] != null)
-			{
-				this._MultipleValue = ParseBool(node["multipleValue"].Value<string>());
-			}
-			if(node["isProtected"] != null)
-			{
-				this._IsProtected = ParseBool(node["isProtected"].Value<string>());
-			}
-			if(node["helpText"] != null)
-			{
-				this._HelpText = node["helpText"].Value<string>();
-			}
-			if(node["features"] != null)
-			{
-				this._Features = node["features"].Value<string>();
-			}
-			if(node["parentId"] != null)
-			{
-				this._ParentId = node["parentId"].Value<string>();
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["updateDate"] != null)
-			{
-				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
-			}
+		}
+
+		public Meta(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._DataType = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), data.TryGetValueSafe<string>("dataType"));
+			    this._MultipleValue = data.TryGetValueSafe<bool>("multipleValue");
+			    this._IsProtected = data.TryGetValueSafe<bool>("isProtected");
+			    this._HelpText = data.TryGetValueSafe<string>("helpText");
+			    this._Features = data.TryGetValueSafe<string>("features");
+			    this._ParentId = data.TryGetValueSafe<string>("parentId");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
 		}
 		#endregion
 

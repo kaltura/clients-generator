@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public IList<SocialNetworkComment> Comments
 		{
 			get { return _Comments; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Comments");
 			}
 		}
-		[JsonProperty]
 		public string Link
 		{
 			get { return _Link; }
@@ -75,20 +71,35 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FacebookPost(JToken node) : base(node)
+		public FacebookPost(XmlElement node) : base(node)
 		{
-			if(node["comments"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Comments = new List<SocialNetworkComment>();
-				foreach(var arrayNode in node["comments"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>(arrayNode));
+					case "comments":
+						this._Comments = new List<SocialNetworkComment>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>(arrayNode));
+						}
+						continue;
+					case "link":
+						this._Link = propertyNode.InnerText;
+						continue;
 				}
 			}
-			if(node["link"] != null)
-			{
-				this._Link = node["link"].Value<string>();
-			}
+		}
+
+		public FacebookPost(IDictionary<string,object> data) : base(data)
+		{
+			    this._Comments = new List<SocialNetworkComment>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("comments", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Link = data.TryGetValueSafe<string>("link");
 		}
 		#endregion
 

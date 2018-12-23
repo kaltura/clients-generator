@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string SegmentsIds
 		{
 			get { return _SegmentsIds; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SegmentsCondition(JToken node) : base(node)
+		public SegmentsCondition(XmlElement node) : base(node)
 		{
-			if(node["segmentsIds"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._SegmentsIds = node["segmentsIds"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "segmentsIds":
+						this._SegmentsIds = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public SegmentsCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._SegmentsIds = data.TryGetValueSafe<string>("segmentsIds");
 		}
 		#endregion
 

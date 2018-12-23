@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
-		[JsonProperty]
 		public string KSql
 		{
 			get { return _KSql; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("KSql");
 			}
 		}
-		[JsonProperty]
 		public bool? ExcludeWatched
 		{
 			get { return _ExcludeWatched; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExcludeWatched");
 			}
 		}
-		[JsonProperty]
 		public new ChannelOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ChannelFilter(JToken node) : base(node)
+		public ChannelFilter(XmlElement node) : base(node)
 		{
-			if(node["idEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "idEqual":
+						this._IdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "kSql":
+						this._KSql = propertyNode.InnerText;
+						continue;
+					case "excludeWatched":
+						this._ExcludeWatched = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["kSql"] != null)
-			{
-				this._KSql = node["kSql"].Value<string>();
-			}
-			if(node["excludeWatched"] != null)
-			{
-				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public ChannelFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._KSql = data.TryGetValueSafe<string>("kSql");
+			    this._ExcludeWatched = data.TryGetValueSafe<bool>("excludeWatched");
+			    this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

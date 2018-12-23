@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,17 +52,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -74,7 +65,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public int Height
 		{
 			get { return _Height; }
@@ -84,7 +74,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Height");
 			}
 		}
-		[JsonProperty]
 		public int Width
 		{
 			get { return _Width; }
@@ -94,7 +83,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Width");
 			}
 		}
-		[JsonProperty]
 		public int PrecisionPrecentage
 		{
 			get { return _PrecisionPrecentage; }
@@ -111,28 +99,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Ratio(JToken node) : base(node)
+		public Ratio(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "height":
+						this._Height = ParseInt(propertyNode.InnerText);
+						continue;
+					case "width":
+						this._Width = ParseInt(propertyNode.InnerText);
+						continue;
+					case "precisionPrecentage":
+						this._PrecisionPrecentage = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["height"] != null)
-			{
-				this._Height = ParseInt(node["height"].Value<string>());
-			}
-			if(node["width"] != null)
-			{
-				this._Width = ParseInt(node["width"].Value<string>());
-			}
-			if(node["precisionPrecentage"] != null)
-			{
-				this._PrecisionPrecentage = ParseInt(node["precisionPrecentage"].Value<string>());
-			}
+		}
+
+		public Ratio(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Height = data.TryGetValueSafe<int>("height");
+			    this._Width = data.TryGetValueSafe<int>("width");
+			    this._PrecisionPrecentage = data.TryGetValueSafe<int>("precisionPrecentage");
 		}
 		#endregion
 

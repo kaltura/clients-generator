@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Rate
 		{
 			get { return _Rate; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialActionRate(JToken node) : base(node)
+		public SocialActionRate(XmlElement node) : base(node)
 		{
-			if(node["rate"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Rate = ParseInt(node["rate"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "rate":
+						this._Rate = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public SocialActionRate(IDictionary<string,object> data) : base(data)
+		{
+			    this._Rate = data.TryGetValueSafe<int>("rate");
 		}
 		#endregion
 

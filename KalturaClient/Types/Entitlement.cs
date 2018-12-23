@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -72,145 +70,61 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string ProductId
 		{
 			get { return _ProductId; }
-			private set 
-			{ 
-				_ProductId = value;
-				OnPropertyChanged("ProductId");
-			}
 		}
-		[JsonProperty]
 		public int CurrentUses
 		{
 			get { return _CurrentUses; }
-			private set 
-			{ 
-				_CurrentUses = value;
-				OnPropertyChanged("CurrentUses");
-			}
 		}
-		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
-			private set 
-			{ 
-				_EndDate = value;
-				OnPropertyChanged("EndDate");
-			}
 		}
-		[JsonProperty]
 		public long CurrentDate
 		{
 			get { return _CurrentDate; }
-			private set 
-			{ 
-				_CurrentDate = value;
-				OnPropertyChanged("CurrentDate");
-			}
 		}
-		[JsonProperty]
 		public long LastViewDate
 		{
 			get { return _LastViewDate; }
-			private set 
-			{ 
-				_LastViewDate = value;
-				OnPropertyChanged("LastViewDate");
-			}
 		}
-		[JsonProperty]
 		public long PurchaseDate
 		{
 			get { return _PurchaseDate; }
-			private set 
-			{ 
-				_PurchaseDate = value;
-				OnPropertyChanged("PurchaseDate");
-			}
 		}
-		[JsonProperty]
 		public PaymentMethodType PaymentMethod
 		{
 			get { return _PaymentMethod; }
-			private set 
-			{ 
-				_PaymentMethod = value;
-				OnPropertyChanged("PaymentMethod");
-			}
 		}
-		[JsonProperty]
 		public string DeviceUdid
 		{
 			get { return _DeviceUdid; }
-			private set 
-			{ 
-				_DeviceUdid = value;
-				OnPropertyChanged("DeviceUdid");
-			}
 		}
-		[JsonProperty]
 		public string DeviceName
 		{
 			get { return _DeviceName; }
-			private set 
-			{ 
-				_DeviceName = value;
-				OnPropertyChanged("DeviceName");
-			}
 		}
-		[JsonProperty]
 		public bool? IsCancelationWindowEnabled
 		{
 			get { return _IsCancelationWindowEnabled; }
-			private set 
-			{ 
-				_IsCancelationWindowEnabled = value;
-				OnPropertyChanged("IsCancelationWindowEnabled");
-			}
 		}
-		[JsonProperty]
 		public int MaxUses
 		{
 			get { return _MaxUses; }
-			private set 
-			{ 
-				_MaxUses = value;
-				OnPropertyChanged("MaxUses");
-			}
 		}
-		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
-			private set 
-			{ 
-				_UserId = value;
-				OnPropertyChanged("UserId");
-			}
 		}
-		[JsonProperty]
 		public long HouseholdId
 		{
 			get { return _HouseholdId; }
-			private set 
-			{ 
-				_HouseholdId = value;
-				OnPropertyChanged("HouseholdId");
-			}
 		}
 		#endregion
 
@@ -219,64 +133,74 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Entitlement(JToken node) : base(node)
+		public Entitlement(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "productId":
+						this._ProductId = propertyNode.InnerText;
+						continue;
+					case "currentUses":
+						this._CurrentUses = ParseInt(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "currentDate":
+						this._CurrentDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "lastViewDate":
+						this._LastViewDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "purchaseDate":
+						this._PurchaseDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "paymentMethod":
+						this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), propertyNode.InnerText);
+						continue;
+					case "deviceUdid":
+						this._DeviceUdid = propertyNode.InnerText;
+						continue;
+					case "deviceName":
+						this._DeviceName = propertyNode.InnerText;
+						continue;
+					case "isCancelationWindowEnabled":
+						this._IsCancelationWindowEnabled = ParseBool(propertyNode.InnerText);
+						continue;
+					case "maxUses":
+						this._MaxUses = ParseInt(propertyNode.InnerText);
+						continue;
+					case "userId":
+						this._UserId = propertyNode.InnerText;
+						continue;
+					case "householdId":
+						this._HouseholdId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["productId"] != null)
-			{
-				this._ProductId = node["productId"].Value<string>();
-			}
-			if(node["currentUses"] != null)
-			{
-				this._CurrentUses = ParseInt(node["currentUses"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
-			if(node["currentDate"] != null)
-			{
-				this._CurrentDate = ParseLong(node["currentDate"].Value<string>());
-			}
-			if(node["lastViewDate"] != null)
-			{
-				this._LastViewDate = ParseLong(node["lastViewDate"].Value<string>());
-			}
-			if(node["purchaseDate"] != null)
-			{
-				this._PurchaseDate = ParseLong(node["purchaseDate"].Value<string>());
-			}
-			if(node["paymentMethod"] != null)
-			{
-				this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), node["paymentMethod"].Value<string>());
-			}
-			if(node["deviceUdid"] != null)
-			{
-				this._DeviceUdid = node["deviceUdid"].Value<string>();
-			}
-			if(node["deviceName"] != null)
-			{
-				this._DeviceName = node["deviceName"].Value<string>();
-			}
-			if(node["isCancelationWindowEnabled"] != null)
-			{
-				this._IsCancelationWindowEnabled = ParseBool(node["isCancelationWindowEnabled"].Value<string>());
-			}
-			if(node["maxUses"] != null)
-			{
-				this._MaxUses = ParseInt(node["maxUses"].Value<string>());
-			}
-			if(node["userId"] != null)
-			{
-				this._UserId = node["userId"].Value<string>();
-			}
-			if(node["householdId"] != null)
-			{
-				this._HouseholdId = ParseLong(node["householdId"].Value<string>());
-			}
+		}
+
+		public Entitlement(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._ProductId = data.TryGetValueSafe<string>("productId");
+			    this._CurrentUses = data.TryGetValueSafe<int>("currentUses");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._CurrentDate = data.TryGetValueSafe<long>("currentDate");
+			    this._LastViewDate = data.TryGetValueSafe<long>("lastViewDate");
+			    this._PurchaseDate = data.TryGetValueSafe<long>("purchaseDate");
+			    this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), data.TryGetValueSafe<string>("paymentMethod"));
+			    this._DeviceUdid = data.TryGetValueSafe<string>("deviceUdid");
+			    this._DeviceName = data.TryGetValueSafe<string>("deviceName");
+			    this._IsCancelationWindowEnabled = data.TryGetValueSafe<bool>("isCancelationWindowEnabled");
+			    this._MaxUses = data.TryGetValueSafe<int>("maxUses");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._HouseholdId = data.TryGetValueSafe<long>("householdId");
 		}
 		#endregion
 
