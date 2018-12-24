@@ -43,13 +43,13 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private long _PlaybackProfileEqual = long.MinValue;
+		private int _PlaybackProfileEqual = Int32.MinValue;
 		private PlaybackProfileOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long PlaybackProfileEqual
+		public int PlaybackProfileEqual
 		{
 			get { return _PlaybackProfileEqual; }
 			set 
@@ -79,7 +79,7 @@ namespace Kaltura.Types
 		{
 			if(node["playbackProfileEqual"] != null)
 			{
-				this._PlaybackProfileEqual = ParseLong(node["playbackProfileEqual"].Value<string>());
+				this._PlaybackProfileEqual = ParseInt(node["playbackProfileEqual"].Value<string>());
 			}
 			if(node["orderBy"] != null)
 			{

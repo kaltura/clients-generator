@@ -42,12 +42,12 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private long _AdapterId = long.MinValue;
+		private int _AdapterId = Int32.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long AdapterId
+		public int AdapterId
 		{
 			get { return _AdapterId; }
 			set 
@@ -67,7 +67,7 @@ namespace Kaltura.Types
 		{
 			if(node["adapterId"] != null)
 			{
-				this._AdapterId = ParseLong(node["adapterId"].Value<string>());
+				this._AdapterId = ParseInt(node["adapterId"].Value<string>());
 			}
 		}
 		#endregion
