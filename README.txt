@@ -1,2 +1,2 @@
 Kaltura C# OTT API Client Library.
-Compatible with Kaltura OTT server version 5.1.87.42800 and above.
+Compatible with Kaltura OTT server version 5.1.98.30364 and above.

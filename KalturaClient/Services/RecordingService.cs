@@ -260,10 +260,11 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class RecordingProtectRequestBuilder : RequestBuilder<Recording>
+	public class RecordingUpdateRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
 		public const string ID = "id";
+		public const string RECORDING = "recording";
 		#endregion
 
 		public long Id
@@ -271,16 +272,22 @@ namespace Kaltura.Services
 			set;
 			get;
 		}
+		public Recording Recording
+		{
+			set;
+			get;
+		}
 
-		public RecordingProtectRequestBuilder()
-			: base("recording", "protect")
+		public RecordingUpdateRequestBuilder()
+			: base("recording", "update")
 		{
 		}
 
-		public RecordingProtectRequestBuilder(long id)
+		public RecordingUpdateRequestBuilder(long id, Recording recording)
 			: this()
 		{
 			this.Id = id;
+			this.Recording = recording;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -288,6 +295,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("id"))
 				kparams.AddIfNotNull("id", Id);
+			if (!isMapped("recording"))
+				kparams.AddIfNotNull("recording", Recording);
 			return kparams;
 		}
 
@@ -335,9 +344,9 @@ namespace Kaltura.Services
 			return new RecordingListRequestBuilder(filter, pager);
 		}
 
-		public static RecordingProtectRequestBuilder Protect(long id)
+		public static RecordingUpdateRequestBuilder Update(long id, Recording recording)
 		{
-			return new RecordingProtectRequestBuilder(id);
+			return new RecordingUpdateRequestBuilder(id, recording);
 		}
 	}
 }
