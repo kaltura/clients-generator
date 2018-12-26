@@ -128,7 +128,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
-    private static ILogger logger = Logger.getLogger(TAG);
+    protected static ILogger logger = Logger.getLogger(TAG);
 
     protected static APIOkRequestsExecutor self;
 
