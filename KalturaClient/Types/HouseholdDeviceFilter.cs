@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int HouseholdIdEqual
 		{
 			get { return _HouseholdIdEqual; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdIdEqual");
 			}
 		}
-		[JsonProperty]
 		public string DeviceFamilyIdIn
 		{
 			get { return _DeviceFamilyIdIn; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DeviceFamilyIdIn");
 			}
 		}
-		[JsonProperty]
 		public new HouseholdDeviceOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdDeviceFilter(JToken node) : base(node)
+		public HouseholdDeviceFilter(XmlElement node) : base(node)
 		{
-			if(node["householdIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._HouseholdIdEqual = ParseInt(node["householdIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "householdIdEqual":
+						this._HouseholdIdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "deviceFamilyIdIn":
+						this._DeviceFamilyIdIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (HouseholdDeviceOrderBy)StringEnum.Parse(typeof(HouseholdDeviceOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["deviceFamilyIdIn"] != null)
-			{
-				this._DeviceFamilyIdIn = node["deviceFamilyIdIn"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (HouseholdDeviceOrderBy)StringEnum.Parse(typeof(HouseholdDeviceOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public HouseholdDeviceFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdIdEqual = data.TryGetValueSafe<int>("householdIdEqual");
+			    this._DeviceFamilyIdIn = data.TryGetValueSafe<string>("deviceFamilyIdIn");
+			    this._OrderBy = (HouseholdDeviceOrderBy)StringEnum.Parse(typeof(HouseholdDeviceOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string CodeIn
 		{
 			get { return _CodeIn; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CodeIn");
 			}
 		}
-		[JsonProperty]
 		public new CurrencyOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CurrencyFilter(JToken node) : base(node)
+		public CurrencyFilter(XmlElement node) : base(node)
 		{
-			if(node["codeIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._CodeIn = node["codeIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "codeIn":
+						this._CodeIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public CurrencyFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._CodeIn = data.TryGetValueSafe<string>("codeIn");
+			    this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

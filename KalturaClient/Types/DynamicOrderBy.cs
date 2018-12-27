@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public MetaTagOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DynamicOrderBy(JToken node) : base(node)
+		public DynamicOrderBy(XmlElement node) : base(node)
 		{
-			if(node["name"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Name = node["name"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (MetaTagOrderBy)StringEnum.Parse(typeof(MetaTagOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (MetaTagOrderBy)StringEnum.Parse(typeof(MetaTagOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public DynamicOrderBy(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._OrderBy = (MetaTagOrderBy)StringEnum.Parse(typeof(MetaTagOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

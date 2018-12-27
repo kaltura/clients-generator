@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,17 +50,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string SystematicName
 		{
 			get { return _SystematicName; }
@@ -72,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SystematicName");
 			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -82,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
@@ -99,24 +88,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SegmentValue(JToken node) : base(node)
+		public SegmentValue(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "systematicName":
+						this._SystematicName = propertyNode.InnerText;
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "value":
+						this._Value = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["systematicName"] != null)
-			{
-				this._SystematicName = node["systematicName"].Value<string>();
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["value"] != null)
-			{
-				this._Value = node["value"].Value<string>();
-			}
+		}
+
+		public SegmentValue(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._SystematicName = data.TryGetValueSafe<string>("systematicName");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Value = data.TryGetValueSafe<string>("value");
 		}
 		#endregion
 

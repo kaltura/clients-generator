@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public bool? CurrentUserPermissionsContains
 		{
 			get { return _CurrentUserPermissionsContains; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CurrentUserPermissionsContains");
 			}
 		}
-		[JsonProperty]
 		public new PermissionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PermissionFilter(JToken node) : base(node)
+		public PermissionFilter(XmlElement node) : base(node)
 		{
-			if(node["currentUserPermissionsContains"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._CurrentUserPermissionsContains = ParseBool(node["currentUserPermissionsContains"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "currentUserPermissionsContains":
+						this._CurrentUserPermissionsContains = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (PermissionOrderBy)StringEnum.Parse(typeof(PermissionOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (PermissionOrderBy)StringEnum.Parse(typeof(PermissionOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public PermissionFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._CurrentUserPermissionsContains = data.TryGetValueSafe<bool>("currentUserPermissionsContains");
+			    this._OrderBy = (PermissionOrderBy)StringEnum.Parse(typeof(PermissionOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

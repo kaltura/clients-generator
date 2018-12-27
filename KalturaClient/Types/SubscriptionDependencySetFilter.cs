@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string BaseSubscriptionIdIn
 		{
 			get { return _BaseSubscriptionIdIn; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionDependencySetFilter(JToken node) : base(node)
+		public SubscriptionDependencySetFilter(XmlElement node) : base(node)
 		{
-			if(node["baseSubscriptionIdIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._BaseSubscriptionIdIn = node["baseSubscriptionIdIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "baseSubscriptionIdIn":
+						this._BaseSubscriptionIdIn = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public SubscriptionDependencySetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._BaseSubscriptionIdIn = data.TryGetValueSafe<string>("baseSubscriptionIdIn");
 		}
 		#endregion
 

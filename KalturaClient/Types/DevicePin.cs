@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Pin
 		{
 			get { return _Pin; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DevicePin(JToken node) : base(node)
+		public DevicePin(XmlElement node) : base(node)
 		{
-			if(node["pin"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Pin = node["pin"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "pin":
+						this._Pin = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public DevicePin(IDictionary<string,object> data) : base(data)
+		{
+			    this._Pin = data.TryGetValueSafe<string>("pin");
 		}
 		#endregion
 

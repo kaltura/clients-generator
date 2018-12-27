@@ -32,7 +32,6 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -73,9 +72,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -116,9 +119,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -159,9 +166,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -202,9 +213,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -254,9 +269,60 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Recording>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Recording>>((IDictionary<string,object>)result);
+		}
+	}
+
+	public class RecordingProtectRequestBuilder : RequestBuilder<Recording>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public RecordingProtectRequestBuilder()
+			: base("recording", "protect")
+		{
+		}
+
+		public RecordingProtectRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(XmlElement result)
+		{
+			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -306,9 +372,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Recording>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Recording>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -342,6 +412,11 @@ namespace Kaltura.Services
 		public static RecordingListRequestBuilder List(RecordingFilter filter = null, FilterPager pager = null)
 		{
 			return new RecordingListRequestBuilder(filter, pager);
+		}
+
+		public static RecordingProtectRequestBuilder Protect(long id)
+		{
+			return new RecordingProtectRequestBuilder(id);
 		}
 
 		public static RecordingUpdateRequestBuilder Update(long id, Recording recording)

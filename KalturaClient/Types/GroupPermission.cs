@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Group
 		{
 			get { return _Group; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public GroupPermission(JToken node) : base(node)
+		public GroupPermission(XmlElement node) : base(node)
 		{
-			if(node["group"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Group = node["group"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "group":
+						this._Group = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public GroupPermission(IDictionary<string,object> data) : base(data)
+		{
+			    this._Group = data.TryGetValueSafe<string>("group");
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
-		[JsonProperty]
 		public string AssetIdIn
 		{
 			get { return _AssetIdIn; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdIn");
 			}
 		}
-		[JsonProperty]
 		public WatchStatus StatusEqual
 		{
 			get { return _StatusEqual; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StatusEqual");
 			}
 		}
-		[JsonProperty]
 		public int DaysLessThanOrEqual
 		{
 			get { return _DaysLessThanOrEqual; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DaysLessThanOrEqual");
 			}
 		}
-		[JsonProperty]
 		public new AssetHistoryOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetHistoryFilter(JToken node) : base(node)
+		public AssetHistoryFilter(XmlElement node) : base(node)
 		{
-			if(node["typeIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._TypeIn = node["typeIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "typeIn":
+						this._TypeIn = propertyNode.InnerText;
+						continue;
+					case "assetIdIn":
+						this._AssetIdIn = propertyNode.InnerText;
+						continue;
+					case "statusEqual":
+						this._StatusEqual = (WatchStatus)StringEnum.Parse(typeof(WatchStatus), propertyNode.InnerText);
+						continue;
+					case "daysLessThanOrEqual":
+						this._DaysLessThanOrEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (AssetHistoryOrderBy)StringEnum.Parse(typeof(AssetHistoryOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["assetIdIn"] != null)
-			{
-				this._AssetIdIn = node["assetIdIn"].Value<string>();
-			}
-			if(node["statusEqual"] != null)
-			{
-				this._StatusEqual = (WatchStatus)StringEnum.Parse(typeof(WatchStatus), node["statusEqual"].Value<string>());
-			}
-			if(node["daysLessThanOrEqual"] != null)
-			{
-				this._DaysLessThanOrEqual = ParseInt(node["daysLessThanOrEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetHistoryOrderBy)StringEnum.Parse(typeof(AssetHistoryOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public AssetHistoryFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._StatusEqual = (WatchStatus)StringEnum.Parse(typeof(WatchStatus), data.TryGetValueSafe<string>("statusEqual"));
+			    this._DaysLessThanOrEqual = data.TryGetValueSafe<int>("daysLessThanOrEqual");
+			    this._OrderBy = (AssetHistoryOrderBy)StringEnum.Parse(typeof(AssetHistoryOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

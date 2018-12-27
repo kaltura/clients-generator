@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ExternalRecording(JToken node) : base(node)
+		public ExternalRecording(XmlElement node) : base(node)
 		{
-			if(node["externalId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ExternalId = node["externalId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "externalId":
+						this._ExternalId = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public ExternalRecording(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
 		}
 		#endregion
 

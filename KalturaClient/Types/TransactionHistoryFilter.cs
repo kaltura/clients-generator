@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public EntityReferenceBy EntityReferenceEqual
 		{
 			get { return _EntityReferenceEqual; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EntityReferenceEqual");
 			}
 		}
-		[JsonProperty]
 		public int StartDateGreaterThanOrEqual
 		{
 			get { return _StartDateGreaterThanOrEqual; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDateGreaterThanOrEqual");
 			}
 		}
-		[JsonProperty]
 		public int EndDateLessThanOrEqual
 		{
 			get { return _EndDateLessThanOrEqual; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDateLessThanOrEqual");
 			}
 		}
-		[JsonProperty]
 		public new TransactionHistoryOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public TransactionHistoryFilter(JToken node) : base(node)
+		public TransactionHistoryFilter(XmlElement node) : base(node)
 		{
-			if(node["entityReferenceEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), node["entityReferenceEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "entityReferenceEqual":
+						this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), propertyNode.InnerText);
+						continue;
+					case "startDateGreaterThanOrEqual":
+						this._StartDateGreaterThanOrEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "endDateLessThanOrEqual":
+						this._EndDateLessThanOrEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (TransactionHistoryOrderBy)StringEnum.Parse(typeof(TransactionHistoryOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["startDateGreaterThanOrEqual"] != null)
-			{
-				this._StartDateGreaterThanOrEqual = ParseInt(node["startDateGreaterThanOrEqual"].Value<string>());
-			}
-			if(node["endDateLessThanOrEqual"] != null)
-			{
-				this._EndDateLessThanOrEqual = ParseInt(node["endDateLessThanOrEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (TransactionHistoryOrderBy)StringEnum.Parse(typeof(TransactionHistoryOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public TransactionHistoryFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), data.TryGetValueSafe<string>("entityReferenceEqual"));
+			    this._StartDateGreaterThanOrEqual = data.TryGetValueSafe<int>("startDateGreaterThanOrEqual");
+			    this._EndDateLessThanOrEqual = data.TryGetValueSafe<int>("endDateLessThanOrEqual");
+			    this._OrderBy = (TransactionHistoryOrderBy)StringEnum.Parse(typeof(TransactionHistoryOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

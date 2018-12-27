@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public BatchJobStatus StatusEqual
 		{
 			get { return _StatusEqual; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StatusEqual");
 			}
 		}
-		[JsonProperty]
 		public new BulkOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BulkFilter(JToken node) : base(node)
+		public BulkFilter(XmlElement node) : base(node)
 		{
-			if(node["statusEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._StatusEqual = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), node["statusEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "statusEqual":
+						this._StatusEqual = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (BulkOrderBy)StringEnum.Parse(typeof(BulkOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (BulkOrderBy)StringEnum.Parse(typeof(BulkOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public BulkFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._StatusEqual = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), data.TryGetValueSafe<string>("statusEqual"));
+			    this._OrderBy = (BulkOrderBy)StringEnum.Parse(typeof(BulkOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

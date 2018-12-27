@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,17 +46,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public UserInterestTopic Topic
 		{
 			get { return _Topic; }
@@ -75,16 +66,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserInterest(JToken node) : base(node)
+		public UserInterest(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "topic":
+						this._Topic = ObjectFactory.Create<UserInterestTopic>(propertyNode);
+						continue;
+				}
 			}
-			if(node["topic"] != null)
-			{
-				this._Topic = ObjectFactory.Create<UserInterestTopic>(node["topic"]);
-			}
+		}
+
+		public UserInterest(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Topic = ObjectFactory.Create<UserInterestTopic>(data.TryGetValueSafe<IDictionary<string,object>>("topic"));
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int NumberOfCoupons
 		{
 			get { return _NumberOfCoupons; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("NumberOfCoupons");
 			}
 		}
-		[JsonProperty]
 		public bool? UseLetters
 		{
 			get { return _UseLetters; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UseLetters");
 			}
 		}
-		[JsonProperty]
 		public bool? UseNumbers
 		{
 			get { return _UseNumbers; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UseNumbers");
 			}
 		}
-		[JsonProperty]
 		public bool? UseSpecialCharacters
 		{
 			get { return _UseSpecialCharacters; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RandomCouponGenerationOptions(JToken node) : base(node)
+		public RandomCouponGenerationOptions(XmlElement node) : base(node)
 		{
-			if(node["numberOfCoupons"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._NumberOfCoupons = ParseInt(node["numberOfCoupons"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "numberOfCoupons":
+						this._NumberOfCoupons = ParseInt(propertyNode.InnerText);
+						continue;
+					case "useLetters":
+						this._UseLetters = ParseBool(propertyNode.InnerText);
+						continue;
+					case "useNumbers":
+						this._UseNumbers = ParseBool(propertyNode.InnerText);
+						continue;
+					case "useSpecialCharacters":
+						this._UseSpecialCharacters = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["useLetters"] != null)
-			{
-				this._UseLetters = ParseBool(node["useLetters"].Value<string>());
-			}
-			if(node["useNumbers"] != null)
-			{
-				this._UseNumbers = ParseBool(node["useNumbers"].Value<string>());
-			}
-			if(node["useSpecialCharacters"] != null)
-			{
-				this._UseSpecialCharacters = ParseBool(node["useSpecialCharacters"].Value<string>());
-			}
+		}
+
+		public RandomCouponGenerationOptions(IDictionary<string,object> data) : base(data)
+		{
+			    this._NumberOfCoupons = data.TryGetValueSafe<int>("numberOfCoupons");
+			    this._UseLetters = data.TryGetValueSafe<bool>("useLetters");
+			    this._UseNumbers = data.TryGetValueSafe<bool>("useNumbers");
+			    this._UseSpecialCharacters = data.TryGetValueSafe<bool>("useSpecialCharacters");
 		}
 		#endregion
 

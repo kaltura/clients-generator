@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SearchAssetFilter(JToken node) : base(node)
+		public SearchAssetFilter(XmlElement node) : base(node)
 		{
-			if(node["typeIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._TypeIn = node["typeIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "typeIn":
+						this._TypeIn = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public SearchAssetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
 		}
 		#endregion
 

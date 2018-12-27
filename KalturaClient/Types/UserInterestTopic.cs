@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string MetaId
 		{
 			get { return _MetaId; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MetaId");
 			}
 		}
-		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Value");
 			}
 		}
-		[JsonProperty]
 		public UserInterestTopic ParentTopic
 		{
 			get { return _ParentTopic; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserInterestTopic(JToken node) : base(node)
+		public UserInterestTopic(XmlElement node) : base(node)
 		{
-			if(node["metaId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._MetaId = node["metaId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "metaId":
+						this._MetaId = propertyNode.InnerText;
+						continue;
+					case "value":
+						this._Value = propertyNode.InnerText;
+						continue;
+					case "parentTopic":
+						this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(propertyNode);
+						continue;
+				}
 			}
-			if(node["value"] != null)
-			{
-				this._Value = node["value"].Value<string>();
-			}
-			if(node["parentTopic"] != null)
-			{
-				this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(node["parentTopic"]);
-			}
+		}
+
+		public UserInterestTopic(IDictionary<string,object> data) : base(data)
+		{
+			    this._MetaId = data.TryGetValueSafe<string>("metaId");
+			    this._Value = data.TryGetValueSafe<string>("value");
+			    this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(data.TryGetValueSafe<IDictionary<string,object>>("parentTopic"));
 		}
 		#endregion
 

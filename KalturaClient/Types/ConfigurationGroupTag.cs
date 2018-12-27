@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ConfigurationGroupId
 		{
 			get { return _ConfigurationGroupId; }
@@ -60,17 +57,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConfigurationGroupId");
 			}
 		}
-		[JsonProperty]
 		public int PartnerId
 		{
 			get { return _PartnerId; }
-			private set 
-			{ 
-				_PartnerId = value;
-				OnPropertyChanged("PartnerId");
-			}
 		}
-		[JsonProperty]
 		public string Tag
 		{
 			get { return _Tag; }
@@ -87,20 +77,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConfigurationGroupTag(JToken node) : base(node)
+		public ConfigurationGroupTag(XmlElement node) : base(node)
 		{
-			if(node["configurationGroupId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ConfigurationGroupId = node["configurationGroupId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "configurationGroupId":
+						this._ConfigurationGroupId = propertyNode.InnerText;
+						continue;
+					case "partnerId":
+						this._PartnerId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "tag":
+						this._Tag = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["partnerId"] != null)
-			{
-				this._PartnerId = ParseInt(node["partnerId"].Value<string>());
-			}
-			if(node["tag"] != null)
-			{
-				this._Tag = node["tag"].Value<string>();
-			}
+		}
+
+		public ConfigurationGroupTag(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._Tag = data.TryGetValueSafe<string>("tag");
 		}
 		#endregion
 

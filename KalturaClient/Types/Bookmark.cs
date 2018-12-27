@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,17 +56,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
-			private set 
-			{ 
-				_UserId = value;
-				OnPropertyChanged("UserId");
-			}
 		}
-		[JsonProperty]
 		public int Position
 		{
 			get { return _Position; }
@@ -78,27 +69,14 @@ namespace Kaltura.Types
 				OnPropertyChanged("Position");
 			}
 		}
-		[JsonProperty]
 		public PositionOwner PositionOwner
 		{
 			get { return _PositionOwner; }
-			private set 
-			{ 
-				_PositionOwner = value;
-				OnPropertyChanged("PositionOwner");
-			}
 		}
-		[JsonProperty]
 		public bool? FinishedWatching
 		{
 			get { return _FinishedWatching; }
-			private set 
-			{ 
-				_FinishedWatching = value;
-				OnPropertyChanged("FinishedWatching");
-			}
 		}
-		[JsonProperty]
 		public BookmarkPlayerData PlayerData
 		{
 			get { return _PlayerData; }
@@ -108,7 +86,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PlayerData");
 			}
 		}
-		[JsonProperty]
 		public long ProgramId
 		{
 			get { return _ProgramId; }
@@ -118,7 +95,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProgramId");
 			}
 		}
-		[JsonProperty]
 		public bool? IsReportingMode
 		{
 			get { return _IsReportingMode; }
@@ -135,36 +111,46 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Bookmark(JToken node) : base(node)
+		public Bookmark(XmlElement node) : base(node)
 		{
-			if(node["userId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._UserId = node["userId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "userId":
+						this._UserId = propertyNode.InnerText;
+						continue;
+					case "position":
+						this._Position = ParseInt(propertyNode.InnerText);
+						continue;
+					case "positionOwner":
+						this._PositionOwner = (PositionOwner)StringEnum.Parse(typeof(PositionOwner), propertyNode.InnerText);
+						continue;
+					case "finishedWatching":
+						this._FinishedWatching = ParseBool(propertyNode.InnerText);
+						continue;
+					case "playerData":
+						this._PlayerData = ObjectFactory.Create<BookmarkPlayerData>(propertyNode);
+						continue;
+					case "programId":
+						this._ProgramId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "isReportingMode":
+						this._IsReportingMode = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["position"] != null)
-			{
-				this._Position = ParseInt(node["position"].Value<string>());
-			}
-			if(node["positionOwner"] != null)
-			{
-				this._PositionOwner = (PositionOwner)StringEnum.Parse(typeof(PositionOwner), node["positionOwner"].Value<string>());
-			}
-			if(node["finishedWatching"] != null)
-			{
-				this._FinishedWatching = ParseBool(node["finishedWatching"].Value<string>());
-			}
-			if(node["playerData"] != null)
-			{
-				this._PlayerData = ObjectFactory.Create<BookmarkPlayerData>(node["playerData"]);
-			}
-			if(node["programId"] != null)
-			{
-				this._ProgramId = ParseLong(node["programId"].Value<string>());
-			}
-			if(node["isReportingMode"] != null)
-			{
-				this._IsReportingMode = ParseBool(node["isReportingMode"].Value<string>());
-			}
+		}
+
+		public Bookmark(IDictionary<string,object> data) : base(data)
+		{
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._Position = data.TryGetValueSafe<int>("position");
+			    this._PositionOwner = (PositionOwner)StringEnum.Parse(typeof(PositionOwner), data.TryGetValueSafe<string>("positionOwner"));
+			    this._FinishedWatching = data.TryGetValueSafe<bool>("finishedWatching");
+			    this._PlayerData = ObjectFactory.Create<BookmarkPlayerData>(data.TryGetValueSafe<IDictionary<string,object>>("playerData"));
+			    this._ProgramId = data.TryGetValueSafe<long>("programId");
+			    this._IsReportingMode = data.TryGetValueSafe<bool>("isReportingMode");
 		}
 		#endregion
 

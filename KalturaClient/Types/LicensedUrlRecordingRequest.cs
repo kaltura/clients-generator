@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string FileType
 		{
 			get { return _FileType; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LicensedUrlRecordingRequest(JToken node) : base(node)
+		public LicensedUrlRecordingRequest(XmlElement node) : base(node)
 		{
-			if(node["fileType"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._FileType = node["fileType"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "fileType":
+						this._FileType = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public LicensedUrlRecordingRequest(IDictionary<string,object> data) : base(data)
+		{
+			    this._FileType = data.TryGetValueSafe<string>("fileType");
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public TransactionAdapterStatus AdapterTransactionStatus
 		{
 			get { return _AdapterTransactionStatus; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterTransactionStatus");
 			}
 		}
-		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		[JsonProperty]
 		public string ExternalStatus
 		{
 			get { return _ExternalStatus; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalStatus");
 			}
 		}
-		[JsonProperty]
 		public string ExternalMessage
 		{
 			get { return _ExternalMessage; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalMessage");
 			}
 		}
-		[JsonProperty]
 		public int FailReason
 		{
 			get { return _FailReason; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public TransactionStatus(JToken node) : base(node)
+		public TransactionStatus(XmlElement node) : base(node)
 		{
-			if(node["adapterTransactionStatus"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AdapterTransactionStatus = (TransactionAdapterStatus)StringEnum.Parse(typeof(TransactionAdapterStatus), node["adapterTransactionStatus"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "adapterTransactionStatus":
+						this._AdapterTransactionStatus = (TransactionAdapterStatus)StringEnum.Parse(typeof(TransactionAdapterStatus), propertyNode.InnerText);
+						continue;
+					case "externalId":
+						this._ExternalId = propertyNode.InnerText;
+						continue;
+					case "externalStatus":
+						this._ExternalStatus = propertyNode.InnerText;
+						continue;
+					case "externalMessage":
+						this._ExternalMessage = propertyNode.InnerText;
+						continue;
+					case "failReason":
+						this._FailReason = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["externalId"] != null)
-			{
-				this._ExternalId = node["externalId"].Value<string>();
-			}
-			if(node["externalStatus"] != null)
-			{
-				this._ExternalStatus = node["externalStatus"].Value<string>();
-			}
-			if(node["externalMessage"] != null)
-			{
-				this._ExternalMessage = node["externalMessage"].Value<string>();
-			}
-			if(node["failReason"] != null)
-			{
-				this._FailReason = ParseInt(node["failReason"].Value<string>());
-			}
+		}
+
+		public TransactionStatus(IDictionary<string,object> data) : base(data)
+		{
+			    this._AdapterTransactionStatus = (TransactionAdapterStatus)StringEnum.Parse(typeof(TransactionAdapterStatus), data.TryGetValueSafe<string>("adapterTransactionStatus"));
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._ExternalStatus = data.TryGetValueSafe<string>("externalStatus");
+			    this._ExternalMessage = data.TryGetValueSafe<string>("externalMessage");
+			    this._FailReason = data.TryGetValueSafe<int>("failReason");
 		}
 		#endregion
 

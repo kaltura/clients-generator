@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -70,7 +68,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int IsActive
 		{
 			get { return _IsActive; }
@@ -80,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsActive");
 			}
 		}
-		[JsonProperty]
 		public string AdapterUrl
 		{
 			get { return _AdapterUrl; }
@@ -90,7 +86,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterUrl");
 			}
 		}
-		[JsonProperty]
 		public string TransactUrl
 		{
 			get { return _TransactUrl; }
@@ -100,7 +95,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TransactUrl");
 			}
 		}
-		[JsonProperty]
 		public string StatusUrl
 		{
 			get { return _StatusUrl; }
@@ -110,7 +104,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StatusUrl");
 			}
 		}
-		[JsonProperty]
 		public string RenewUrl
 		{
 			get { return _RenewUrl; }
@@ -120,7 +113,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("RenewUrl");
 			}
 		}
-		[JsonProperty]
 		public IDictionary<string, StringValue> PaymentGatewaySettings
 		{
 			get { return _PaymentGatewaySettings; }
@@ -130,7 +122,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewaySettings");
 			}
 		}
-		[JsonProperty]
 		public string ExternalIdentifier
 		{
 			get { return _ExternalIdentifier; }
@@ -140,7 +131,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdentifier");
 			}
 		}
-		[JsonProperty]
 		public int PendingInterval
 		{
 			get { return _PendingInterval; }
@@ -150,7 +140,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PendingInterval");
 			}
 		}
-		[JsonProperty]
 		public int PendingRetries
 		{
 			get { return _PendingRetries; }
@@ -160,7 +149,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PendingRetries");
 			}
 		}
-		[JsonProperty]
 		public string SharedSecret
 		{
 			get { return _SharedSecret; }
@@ -170,7 +158,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SharedSecret");
 			}
 		}
-		[JsonProperty]
 		public int RenewIntervalMinutes
 		{
 			get { return _RenewIntervalMinutes; }
@@ -180,7 +167,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("RenewIntervalMinutes");
 			}
 		}
-		[JsonProperty]
 		public int RenewStartMinutes
 		{
 			get { return _RenewStartMinutes; }
@@ -190,7 +176,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("RenewStartMinutes");
 			}
 		}
-		[JsonProperty]
 		public bool? ExternalVerification
 		{
 			get { return _ExternalVerification; }
@@ -207,68 +192,82 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PaymentGatewayProfile(JToken node) : base(node)
+		public PaymentGatewayProfile(XmlElement node) : base(node)
 		{
-			if(node["isActive"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IsActive = ParseInt(node["isActive"].Value<string>());
-			}
-			if(node["adapterUrl"] != null)
-			{
-				this._AdapterUrl = node["adapterUrl"].Value<string>();
-			}
-			if(node["transactUrl"] != null)
-			{
-				this._TransactUrl = node["transactUrl"].Value<string>();
-			}
-			if(node["statusUrl"] != null)
-			{
-				this._StatusUrl = node["statusUrl"].Value<string>();
-			}
-			if(node["renewUrl"] != null)
-			{
-				this._RenewUrl = node["renewUrl"].Value<string>();
-			}
-			if(node["paymentGatewaySettings"] != null)
-			{
+				switch (propertyNode.Name)
 				{
-					string key;
-					this._PaymentGatewaySettings = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["paymentGatewaySettings"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._PaymentGatewaySettings[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
+					case "isActive":
+						this._IsActive = ParseInt(propertyNode.InnerText);
+						continue;
+					case "adapterUrl":
+						this._AdapterUrl = propertyNode.InnerText;
+						continue;
+					case "transactUrl":
+						this._TransactUrl = propertyNode.InnerText;
+						continue;
+					case "statusUrl":
+						this._StatusUrl = propertyNode.InnerText;
+						continue;
+					case "renewUrl":
+						this._RenewUrl = propertyNode.InnerText;
+						continue;
+					case "paymentGatewaySettings":
+						{
+							string key;
+							this._PaymentGatewaySettings = new Dictionary<string, StringValue>();
+							foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+							{
+								key = arrayNode["itemKey"].InnerText;;
+								this._PaymentGatewaySettings[key] = ObjectFactory.Create<StringValue>(arrayNode);
+							}
+						}
+						continue;
+					case "externalIdentifier":
+						this._ExternalIdentifier = propertyNode.InnerText;
+						continue;
+					case "pendingInterval":
+						this._PendingInterval = ParseInt(propertyNode.InnerText);
+						continue;
+					case "pendingRetries":
+						this._PendingRetries = ParseInt(propertyNode.InnerText);
+						continue;
+					case "sharedSecret":
+						this._SharedSecret = propertyNode.InnerText;
+						continue;
+					case "renewIntervalMinutes":
+						this._RenewIntervalMinutes = ParseInt(propertyNode.InnerText);
+						continue;
+					case "renewStartMinutes":
+						this._RenewStartMinutes = ParseInt(propertyNode.InnerText);
+						continue;
+					case "externalVerification":
+						this._ExternalVerification = ParseBool(propertyNode.InnerText);
+						continue;
 				}
 			}
-			if(node["externalIdentifier"] != null)
-			{
-				this._ExternalIdentifier = node["externalIdentifier"].Value<string>();
-			}
-			if(node["pendingInterval"] != null)
-			{
-				this._PendingInterval = ParseInt(node["pendingInterval"].Value<string>());
-			}
-			if(node["pendingRetries"] != null)
-			{
-				this._PendingRetries = ParseInt(node["pendingRetries"].Value<string>());
-			}
-			if(node["sharedSecret"] != null)
-			{
-				this._SharedSecret = node["sharedSecret"].Value<string>();
-			}
-			if(node["renewIntervalMinutes"] != null)
-			{
-				this._RenewIntervalMinutes = ParseInt(node["renewIntervalMinutes"].Value<string>());
-			}
-			if(node["renewStartMinutes"] != null)
-			{
-				this._RenewStartMinutes = ParseInt(node["renewStartMinutes"].Value<string>());
-			}
-			if(node["externalVerification"] != null)
-			{
-				this._ExternalVerification = ParseBool(node["externalVerification"].Value<string>());
-			}
+		}
+
+		public PaymentGatewayProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._IsActive = data.TryGetValueSafe<int>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._TransactUrl = data.TryGetValueSafe<string>("transactUrl");
+			    this._StatusUrl = data.TryGetValueSafe<string>("statusUrl");
+			    this._RenewUrl = data.TryGetValueSafe<string>("renewUrl");
+			    this._PaymentGatewaySettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("paymentGatewaySettings", new Dictionary<string, object>()))
+			    {
+			        this._PaymentGatewaySettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._PendingInterval = data.TryGetValueSafe<int>("pendingInterval");
+			    this._PendingRetries = data.TryGetValueSafe<int>("pendingRetries");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
+			    this._RenewIntervalMinutes = data.TryGetValueSafe<int>("renewIntervalMinutes");
+			    this._RenewStartMinutes = data.TryGetValueSafe<int>("renewStartMinutes");
+			    this._ExternalVerification = data.TryGetValueSafe<bool>("externalVerification");
 		}
 		#endregion
 

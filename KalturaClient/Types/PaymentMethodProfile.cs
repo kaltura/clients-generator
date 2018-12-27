@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,17 +50,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public int PaymentGatewayId
 		{
 			get { return _PaymentGatewayId; }
@@ -72,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayId");
 			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -82,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public bool? AllowMultiInstance
 		{
 			get { return _AllowMultiInstance; }
@@ -99,24 +88,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PaymentMethodProfile(JToken node) : base(node)
+		public PaymentMethodProfile(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "paymentGatewayId":
+						this._PaymentGatewayId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "allowMultiInstance":
+						this._AllowMultiInstance = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["paymentGatewayId"] != null)
-			{
-				this._PaymentGatewayId = ParseInt(node["paymentGatewayId"].Value<string>());
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["allowMultiInstance"] != null)
-			{
-				this._AllowMultiInstance = ParseBool(node["allowMultiInstance"].Value<string>());
-			}
+		}
+
+		public PaymentMethodProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._AllowMultiInstance = data.TryGetValueSafe<bool>("allowMultiInstance");
 		}
 		#endregion
 

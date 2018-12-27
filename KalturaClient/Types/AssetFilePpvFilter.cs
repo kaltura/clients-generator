@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AssetIdEqual
 		{
 			get { return _AssetIdEqual; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdEqual");
 			}
 		}
-		[JsonProperty]
 		public long AssetFileIdEqual
 		{
 			get { return _AssetFileIdEqual; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetFileIdEqual");
 			}
 		}
-		[JsonProperty]
 		public new AssetFilePpvOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetFilePpvFilter(JToken node) : base(node)
+		public AssetFilePpvFilter(XmlElement node) : base(node)
 		{
-			if(node["assetIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetIdEqual = ParseLong(node["assetIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetIdEqual":
+						this._AssetIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "assetFileIdEqual":
+						this._AssetFileIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (AssetFilePpvOrderBy)StringEnum.Parse(typeof(AssetFilePpvOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["assetFileIdEqual"] != null)
-			{
-				this._AssetFileIdEqual = ParseLong(node["assetFileIdEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetFilePpvOrderBy)StringEnum.Parse(typeof(AssetFilePpvOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public AssetFilePpvFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
+			    this._AssetFileIdEqual = data.TryGetValueSafe<long>("assetFileIdEqual");
+			    this._OrderBy = (AssetFilePpvOrderBy)StringEnum.Parse(typeof(AssetFilePpvOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,7 +54,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int AssetId
 		{
 			get { return _AssetId; }
@@ -66,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetId");
 			}
 		}
-		[JsonProperty]
 		public int Likes
 		{
 			get { return _Likes; }
@@ -76,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Likes");
 			}
 		}
-		[JsonProperty]
 		public int Views
 		{
 			get { return _Views; }
@@ -86,7 +81,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Views");
 			}
 		}
-		[JsonProperty]
 		public int RatingCount
 		{
 			get { return _RatingCount; }
@@ -96,7 +90,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("RatingCount");
 			}
 		}
-		[JsonProperty]
 		public float Rating
 		{
 			get { return _Rating; }
@@ -106,7 +99,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Rating");
 			}
 		}
-		[JsonProperty]
 		public BuzzScore BuzzScore
 		{
 			get { return _BuzzScore; }
@@ -123,32 +115,42 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStatistics(JToken node) : base(node)
+		public AssetStatistics(XmlElement node) : base(node)
 		{
-			if(node["assetId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetId = ParseInt(node["assetId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetId":
+						this._AssetId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "likes":
+						this._Likes = ParseInt(propertyNode.InnerText);
+						continue;
+					case "views":
+						this._Views = ParseInt(propertyNode.InnerText);
+						continue;
+					case "ratingCount":
+						this._RatingCount = ParseInt(propertyNode.InnerText);
+						continue;
+					case "rating":
+						this._Rating = ParseFloat(propertyNode.InnerText);
+						continue;
+					case "buzzScore":
+						this._BuzzScore = ObjectFactory.Create<BuzzScore>(propertyNode);
+						continue;
+				}
 			}
-			if(node["likes"] != null)
-			{
-				this._Likes = ParseInt(node["likes"].Value<string>());
-			}
-			if(node["views"] != null)
-			{
-				this._Views = ParseInt(node["views"].Value<string>());
-			}
-			if(node["ratingCount"] != null)
-			{
-				this._RatingCount = ParseInt(node["ratingCount"].Value<string>());
-			}
-			if(node["rating"] != null)
-			{
-				this._Rating = ParseFloat(node["rating"].Value<string>());
-			}
-			if(node["buzzScore"] != null)
-			{
-				this._BuzzScore = ObjectFactory.Create<BuzzScore>(node["buzzScore"]);
-			}
+		}
+
+		public AssetStatistics(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<int>("assetId");
+			    this._Likes = data.TryGetValueSafe<int>("likes");
+			    this._Views = data.TryGetValueSafe<int>("views");
+			    this._RatingCount = data.TryGetValueSafe<int>("ratingCount");
+			    this._Rating = data.TryGetValueSafe<float>("rating");
+			    this._BuzzScore = ObjectFactory.Create<BuzzScore>(data.TryGetValueSafe<IDictionary<string,object>>("buzzScore"));
 		}
 		#endregion
 

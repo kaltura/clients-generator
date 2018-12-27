@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,55 +52,25 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AnnouncementId
 		{
 			get { return _AnnouncementId; }
-			private set 
-			{ 
-				_AnnouncementId = value;
-				OnPropertyChanged("AnnouncementId");
-			}
 		}
-		[JsonProperty]
 		public int Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public string Title
 		{
 			get { return _Title; }
-			private set 
-			{ 
-				_Title = value;
-				OnPropertyChanged("Title");
-			}
 		}
-		[JsonProperty]
 		public long Timestamp
 		{
 			get { return _Timestamp; }
-			private set 
-			{ 
-				_Timestamp = value;
-				OnPropertyChanged("Timestamp");
-			}
 		}
-		[JsonProperty]
 		public string FollowPhrase
 		{
 			get { return _FollowPhrase; }
-			private set 
-			{ 
-				_FollowPhrase = value;
-				OnPropertyChanged("FollowPhrase");
-			}
 		}
 		#endregion
 
@@ -111,28 +79,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FollowDataBase(JToken node) : base(node)
+		public FollowDataBase(XmlElement node) : base(node)
 		{
-			if(node["announcementId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AnnouncementId = ParseLong(node["announcementId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "announcementId":
+						this._AnnouncementId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "status":
+						this._Status = ParseInt(propertyNode.InnerText);
+						continue;
+					case "title":
+						this._Title = propertyNode.InnerText;
+						continue;
+					case "timestamp":
+						this._Timestamp = ParseLong(propertyNode.InnerText);
+						continue;
+					case "followPhrase":
+						this._FollowPhrase = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["status"] != null)
-			{
-				this._Status = ParseInt(node["status"].Value<string>());
-			}
-			if(node["title"] != null)
-			{
-				this._Title = node["title"].Value<string>();
-			}
-			if(node["timestamp"] != null)
-			{
-				this._Timestamp = ParseLong(node["timestamp"].Value<string>());
-			}
-			if(node["followPhrase"] != null)
-			{
-				this._FollowPhrase = node["followPhrase"].Value<string>();
-			}
+		}
+
+		public FollowDataBase(IDictionary<string,object> data) : base(data)
+		{
+			    this._AnnouncementId = data.TryGetValueSafe<long>("announcementId");
+			    this._Status = data.TryGetValueSafe<int>("status");
+			    this._Title = data.TryGetValueSafe<string>("title");
+			    this._Timestamp = data.TryGetValueSafe<long>("timestamp");
+			    this._FollowPhrase = data.TryGetValueSafe<string>("followPhrase");
 		}
 		#endregion
 

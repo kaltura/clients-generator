@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AssetStructIdEqual
 		{
 			get { return _AssetStructIdEqual; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetStructIdEqual");
 			}
 		}
-		[JsonProperty]
 		public long MetaIdEqual
 		{
 			get { return _MetaIdEqual; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MetaIdEqual");
 			}
 		}
-		[JsonProperty]
 		public new AssetStructMetaOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStructMetaFilter(JToken node) : base(node)
+		public AssetStructMetaFilter(XmlElement node) : base(node)
 		{
-			if(node["assetStructIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetStructIdEqual = ParseLong(node["assetStructIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetStructIdEqual":
+						this._AssetStructIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "metaIdEqual":
+						this._MetaIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (AssetStructMetaOrderBy)StringEnum.Parse(typeof(AssetStructMetaOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["metaIdEqual"] != null)
-			{
-				this._MetaIdEqual = ParseLong(node["metaIdEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetStructMetaOrderBy)StringEnum.Parse(typeof(AssetStructMetaOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public AssetStructMetaFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetStructIdEqual = data.TryGetValueSafe<long>("assetStructIdEqual");
+			    this._MetaIdEqual = data.TryGetValueSafe<long>("metaIdEqual");
+			    this._OrderBy = (AssetStructMetaOrderBy)StringEnum.Parse(typeof(AssetStructMetaOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

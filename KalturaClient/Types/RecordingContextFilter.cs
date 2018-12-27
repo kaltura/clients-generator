@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string AssetIdIn
 		{
 			get { return _AssetIdIn; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdIn");
 			}
 		}
-		[JsonProperty]
 		public new RecordingContextOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RecordingContextFilter(JToken node) : base(node)
+		public RecordingContextFilter(XmlElement node) : base(node)
 		{
-			if(node["assetIdIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetIdIn = node["assetIdIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "assetIdIn":
+						this._AssetIdIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (RecordingContextOrderBy)StringEnum.Parse(typeof(RecordingContextOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (RecordingContextOrderBy)StringEnum.Parse(typeof(RecordingContextOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public RecordingContextFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._OrderBy = (RecordingContextOrderBy)StringEnum.Parse(typeof(RecordingContextOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

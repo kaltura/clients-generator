@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,35 +48,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ViewLifeCycle
 		{
 			get { return _ViewLifeCycle; }
-			private set 
-			{ 
-				_ViewLifeCycle = value;
-				OnPropertyChanged("ViewLifeCycle");
-			}
 		}
-		[JsonProperty]
 		public string FullLifeCycle
 		{
 			get { return _FullLifeCycle; }
-			private set 
-			{ 
-				_FullLifeCycle = value;
-				OnPropertyChanged("FullLifeCycle");
-			}
 		}
-		[JsonProperty]
 		public bool? IsOfflinePlayBack
 		{
 			get { return _IsOfflinePlayBack; }
-			private set 
-			{ 
-				_IsOfflinePlayBack = value;
-				OnPropertyChanged("IsOfflinePlayBack");
-			}
 		}
 		#endregion
 
@@ -87,20 +67,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetFileContext(JToken node) : base(node)
+		public AssetFileContext(XmlElement node) : base(node)
 		{
-			if(node["viewLifeCycle"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ViewLifeCycle = node["viewLifeCycle"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "viewLifeCycle":
+						this._ViewLifeCycle = propertyNode.InnerText;
+						continue;
+					case "fullLifeCycle":
+						this._FullLifeCycle = propertyNode.InnerText;
+						continue;
+					case "isOfflinePlayBack":
+						this._IsOfflinePlayBack = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["fullLifeCycle"] != null)
-			{
-				this._FullLifeCycle = node["fullLifeCycle"].Value<string>();
-			}
-			if(node["isOfflinePlayBack"] != null)
-			{
-				this._IsOfflinePlayBack = ParseBool(node["isOfflinePlayBack"].Value<string>());
-			}
+		}
+
+		public AssetFileContext(IDictionary<string,object> data) : base(data)
+		{
+			    this._ViewLifeCycle = data.TryGetValueSafe<string>("viewLifeCycle");
+			    this._FullLifeCycle = data.TryGetValueSafe<string>("fullLifeCycle");
+			    this._IsOfflinePlayBack = data.TryGetValueSafe<bool>("isOfflinePlayBack");
 		}
 		#endregion
 

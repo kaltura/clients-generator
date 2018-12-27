@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int LinearChannelId
 		{
 			get { return _LinearChannelId; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("LinearChannelId");
 			}
 		}
-		[JsonProperty]
 		public int ChannelNumber
 		{
 			get { return _ChannelNumber; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RegionalChannel(JToken node) : base(node)
+		public RegionalChannel(XmlElement node) : base(node)
 		{
-			if(node["linearChannelId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._LinearChannelId = ParseInt(node["linearChannelId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "linearChannelId":
+						this._LinearChannelId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "channelNumber":
+						this._ChannelNumber = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["channelNumber"] != null)
-			{
-				this._ChannelNumber = ParseInt(node["channelNumber"].Value<string>());
-			}
+		}
+
+		public RegionalChannel(IDictionary<string,object> data) : base(data)
+		{
+			    this._LinearChannelId = data.TryGetValueSafe<int>("linearChannelId");
+			    this._ChannelNumber = data.TryGetValueSafe<int>("channelNumber");
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public new PricePlanOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PricePlanFilter(JToken node) : base(node)
+		public PricePlanFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (PricePlanOrderBy)StringEnum.Parse(typeof(PricePlanOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (PricePlanOrderBy)StringEnum.Parse(typeof(PricePlanOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public PricePlanFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._OrderBy = (PricePlanOrderBy)StringEnum.Parse(typeof(PricePlanOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

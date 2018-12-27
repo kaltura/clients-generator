@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string SubscriptionIdIn
 		{
 			get { return _SubscriptionIdIn; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionIdIn");
 			}
 		}
-		[JsonProperty]
 		public int MediaFileIdEqual
 		{
 			get { return _MediaFileIdEqual; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaFileIdEqual");
 			}
 		}
-		[JsonProperty]
 		public string ExternalIdIn
 		{
 			get { return _ExternalIdIn; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdIn");
 			}
 		}
-		[JsonProperty]
 		public new SubscriptionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionFilter(JToken node) : base(node)
+		public SubscriptionFilter(XmlElement node) : base(node)
 		{
-			if(node["subscriptionIdIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._SubscriptionIdIn = node["subscriptionIdIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "subscriptionIdIn":
+						this._SubscriptionIdIn = propertyNode.InnerText;
+						continue;
+					case "mediaFileIdEqual":
+						this._MediaFileIdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "externalIdIn":
+						this._ExternalIdIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (SubscriptionOrderBy)StringEnum.Parse(typeof(SubscriptionOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["mediaFileIdEqual"] != null)
-			{
-				this._MediaFileIdEqual = ParseInt(node["mediaFileIdEqual"].Value<string>());
-			}
-			if(node["externalIdIn"] != null)
-			{
-				this._ExternalIdIn = node["externalIdIn"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (SubscriptionOrderBy)StringEnum.Parse(typeof(SubscriptionOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public SubscriptionFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._SubscriptionIdIn = data.TryGetValueSafe<string>("subscriptionIdIn");
+			    this._MediaFileIdEqual = data.TryGetValueSafe<int>("mediaFileIdEqual");
+			    this._ExternalIdIn = data.TryGetValueSafe<string>("externalIdIn");
+			    this._OrderBy = (SubscriptionOrderBy)StringEnum.Parse(typeof(SubscriptionOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

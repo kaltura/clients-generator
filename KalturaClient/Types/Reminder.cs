@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,27 +48,14 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
-			private set 
-			{ 
-				_Name = value;
-				OnPropertyChanged("Name");
-			}
 		}
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public ReminderType Type
 		{
 			get { return _Type; }
@@ -87,20 +72,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Reminder(JToken node) : base(node)
+		public Reminder(XmlElement node) : base(node)
 		{
-			if(node["name"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Name = node["name"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "type":
+						this._Type = (ReminderType)StringEnum.Parse(typeof(ReminderType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["id"] != null)
-			{
-				this._Id = ParseInt(node["id"].Value<string>());
-			}
-			if(node["type"] != null)
-			{
-				this._Type = (ReminderType)StringEnum.Parse(typeof(ReminderType), node["type"].Value<string>());
-			}
+		}
+
+		public Reminder(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Type = (ReminderType)StringEnum.Parse(typeof(ReminderType), data.TryGetValueSafe<string>("type"));
 		}
 		#endregion
 

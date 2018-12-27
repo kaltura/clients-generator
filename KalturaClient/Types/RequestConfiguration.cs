@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,7 +58,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int PartnerId
 		{
 			get { return _PartnerId; }
@@ -70,7 +67,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PartnerId");
 			}
 		}
-		[JsonProperty]
 		public int UserId
 		{
 			get { return _UserId; }
@@ -80,7 +76,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserId");
 			}
 		}
-		[JsonProperty]
 		public string Language
 		{
 			get { return _Language; }
@@ -90,7 +85,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Language");
 			}
 		}
-		[JsonProperty]
 		public string Currency
 		{
 			get { return _Currency; }
@@ -100,7 +94,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Currency");
 			}
 		}
-		[JsonProperty]
 		public string Ks
 		{
 			get { return _Ks; }
@@ -110,7 +103,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Ks");
 			}
 		}
-		[JsonProperty]
 		public BaseResponseProfile ResponseProfile
 		{
 			get { return _ResponseProfile; }
@@ -120,7 +112,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ResponseProfile");
 			}
 		}
-		[JsonProperty]
 		public bool? AbortAllOnError
 		{
 			get { return _AbortAllOnError; }
@@ -130,7 +121,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AbortAllOnError");
 			}
 		}
-		[JsonProperty]
 		public SkipCondition SkipCondition
 		{
 			get { return _SkipCondition; }
@@ -147,40 +137,50 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RequestConfiguration(JToken node) : base(node)
+		public RequestConfiguration(XmlElement node) : base(node)
 		{
-			if(node["partnerId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._PartnerId = ParseInt(node["partnerId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "partnerId":
+						this._PartnerId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "userId":
+						this._UserId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "language":
+						this._Language = propertyNode.InnerText;
+						continue;
+					case "currency":
+						this._Currency = propertyNode.InnerText;
+						continue;
+					case "ks":
+						this._Ks = propertyNode.InnerText;
+						continue;
+					case "responseProfile":
+						this._ResponseProfile = ObjectFactory.Create<BaseResponseProfile>(propertyNode);
+						continue;
+					case "abortAllOnError":
+						this._AbortAllOnError = ParseBool(propertyNode.InnerText);
+						continue;
+					case "skipCondition":
+						this._SkipCondition = ObjectFactory.Create<SkipCondition>(propertyNode);
+						continue;
+				}
 			}
-			if(node["userId"] != null)
-			{
-				this._UserId = ParseInt(node["userId"].Value<string>());
-			}
-			if(node["language"] != null)
-			{
-				this._Language = node["language"].Value<string>();
-			}
-			if(node["currency"] != null)
-			{
-				this._Currency = node["currency"].Value<string>();
-			}
-			if(node["ks"] != null)
-			{
-				this._Ks = node["ks"].Value<string>();
-			}
-			if(node["responseProfile"] != null)
-			{
-				this._ResponseProfile = ObjectFactory.Create<BaseResponseProfile>(node["responseProfile"]);
-			}
-			if(node["abortAllOnError"] != null)
-			{
-				this._AbortAllOnError = ParseBool(node["abortAllOnError"].Value<string>());
-			}
-			if(node["skipCondition"] != null)
-			{
-				this._SkipCondition = ObjectFactory.Create<SkipCondition>(node["skipCondition"]);
-			}
+		}
+
+		public RequestConfiguration(IDictionary<string,object> data) : base(data)
+		{
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._UserId = data.TryGetValueSafe<int>("userId");
+			    this._Language = data.TryGetValueSafe<string>("language");
+			    this._Currency = data.TryGetValueSafe<string>("currency");
+			    this._Ks = data.TryGetValueSafe<string>("ks");
+			    this._ResponseProfile = ObjectFactory.Create<BaseResponseProfile>(data.TryGetValueSafe<IDictionary<string,object>>("responseProfile"));
+			    this._AbortAllOnError = data.TryGetValueSafe<bool>("abortAllOnError");
+			    this._SkipCondition = ObjectFactory.Create<SkipCondition>(data.TryGetValueSafe<IDictionary<string,object>>("skipCondition"));
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public ChannelEnrichment Type
 		{
 			get { return _Type; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ChannelEnrichmentHolder(JToken node) : base(node)
+		public ChannelEnrichmentHolder(XmlElement node) : base(node)
 		{
-			if(node["type"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Type = (ChannelEnrichment)StringEnum.Parse(typeof(ChannelEnrichment), node["type"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "type":
+						this._Type = (ChannelEnrichment)StringEnum.Parse(typeof(ChannelEnrichment), propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public ChannelEnrichmentHolder(IDictionary<string,object> data) : base(data)
+		{
+			    this._Type = (ChannelEnrichment)StringEnum.Parse(typeof(ChannelEnrichment), data.TryGetValueSafe<string>("type"));
 		}
 		#endregion
 

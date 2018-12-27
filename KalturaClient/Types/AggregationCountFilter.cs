@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public new AggregationCountOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AggregationCountFilter(JToken node) : base(node)
+		public AggregationCountFilter(XmlElement node) : base(node)
 		{
-			if(node["orderBy"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._OrderBy = (AggregationCountOrderBy)StringEnum.Parse(typeof(AggregationCountOrderBy), node["orderBy"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "orderBy":
+						this._OrderBy = (AggregationCountOrderBy)StringEnum.Parse(typeof(AggregationCountOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public AggregationCountFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = (AggregationCountOrderBy)StringEnum.Parse(typeof(AggregationCountOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

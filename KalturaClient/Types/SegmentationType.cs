@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,17 +56,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -78,7 +69,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
@@ -88,7 +78,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
-		[JsonProperty]
 		public IList<BaseSegmentCondition> Conditions
 		{
 			get { return _Conditions; }
@@ -98,7 +87,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Conditions");
 			}
 		}
-		[JsonProperty]
 		public BaseSegmentValue Value
 		{
 			get { return _Value; }
@@ -108,25 +96,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("Value");
 			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
-		[JsonProperty]
 		public long Version
 		{
 			get { return _Version; }
-			private set 
-			{ 
-				_Version = value;
-				OnPropertyChanged("Version");
-			}
 		}
 		#endregion
 
@@ -135,40 +111,55 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SegmentationType(JToken node) : base(node)
+		public SegmentationType(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["description"] != null)
-			{
-				this._Description = node["description"].Value<string>();
-			}
-			if(node["conditions"] != null)
-			{
-				this._Conditions = new List<BaseSegmentCondition>();
-				foreach(var arrayNode in node["conditions"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Conditions.Add(ObjectFactory.Create<BaseSegmentCondition>(arrayNode));
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "description":
+						this._Description = propertyNode.InnerText;
+						continue;
+					case "conditions":
+						this._Conditions = new List<BaseSegmentCondition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<BaseSegmentCondition>(arrayNode));
+						}
+						continue;
+					case "value":
+						this._Value = ObjectFactory.Create<BaseSegmentValue>(propertyNode);
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "version":
+						this._Version = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
-			if(node["value"] != null)
-			{
-				this._Value = ObjectFactory.Create<BaseSegmentValue>(node["value"]);
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["version"] != null)
-			{
-				this._Version = ParseLong(node["version"].Value<string>());
-			}
+		}
+
+		public SegmentationType(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._Conditions = new List<BaseSegmentCondition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<BaseSegmentCondition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Value = ObjectFactory.Create<BaseSegmentValue>(data.TryGetValueSafe<IDictionary<string,object>>("value"));
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._Version = data.TryGetValueSafe<long>("version");
 		}
 		#endregion
 
