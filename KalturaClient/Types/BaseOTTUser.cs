@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,10 +52,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Username
 		{
 			get { return _Username; }
@@ -63,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Username");
 			}
 		}
+		[JsonProperty]
 		public string FirstName
 		{
 			get { return _FirstName; }
@@ -72,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FirstName");
 			}
 		}
+		[JsonProperty]
 		public string LastName
 		{
 			get { return _LastName; }
@@ -88,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BaseOTTUser(XmlElement node) : base(node)
+		public BaseOTTUser(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "username":
-						this._Username = propertyNode.InnerText;
-						continue;
-					case "firstName":
-						this._FirstName = propertyNode.InnerText;
-						continue;
-					case "lastName":
-						this._LastName = propertyNode.InnerText;
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public BaseOTTUser(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Username = data.TryGetValueSafe<string>("username");
-			    this._FirstName = data.TryGetValueSafe<string>("firstName");
-			    this._LastName = data.TryGetValueSafe<string>("lastName");
+			if(node["username"] != null)
+			{
+				this._Username = node["username"].Value<string>();
+			}
+			if(node["firstName"] != null)
+			{
+				this._FirstName = node["firstName"].Value<string>();
+			}
+			if(node["lastName"] != null)
+			{
+				this._LastName = node["lastName"].Value<string>();
+			}
 		}
 		#endregion
 

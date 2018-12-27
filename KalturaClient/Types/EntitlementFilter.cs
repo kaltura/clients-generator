@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public TransactionType ProductTypeEqual
 		{
 			get { return _ProductTypeEqual; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public EntityReferenceBy EntityReferenceEqual
 		{
 			get { return _EntityReferenceEqual; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("EntityReferenceEqual");
 			}
 		}
+		[JsonProperty]
 		public bool? IsExpiredEqual
 		{
 			get { return _IsExpiredEqual; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsExpiredEqual");
 			}
 		}
+		[JsonProperty]
 		public new EntitlementOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public EntitlementFilter(XmlElement node) : base(node)
+		public EntitlementFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["productTypeEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "productTypeEqual":
-						this._ProductTypeEqual = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
-						continue;
-					case "entityReferenceEqual":
-						this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), propertyNode.InnerText);
-						continue;
-					case "isExpiredEqual":
-						this._IsExpiredEqual = ParseBool(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (EntitlementOrderBy)StringEnum.Parse(typeof(EntitlementOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._ProductTypeEqual = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["productTypeEqual"].Value<string>());
 			}
-		}
-
-		public EntitlementFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._ProductTypeEqual = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("productTypeEqual"));
-			    this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), data.TryGetValueSafe<string>("entityReferenceEqual"));
-			    this._IsExpiredEqual = data.TryGetValueSafe<bool>("isExpiredEqual");
-			    this._OrderBy = (EntitlementOrderBy)StringEnum.Parse(typeof(EntitlementOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["entityReferenceEqual"] != null)
+			{
+				this._EntityReferenceEqual = (EntityReferenceBy)StringEnum.Parse(typeof(EntityReferenceBy), node["entityReferenceEqual"].Value<string>());
+			}
+			if(node["isExpiredEqual"] != null)
+			{
+				this._IsExpiredEqual = ParseBool(node["isExpiredEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (EntitlementOrderBy)StringEnum.Parse(typeof(EntitlementOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

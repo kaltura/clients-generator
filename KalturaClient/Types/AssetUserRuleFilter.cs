@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public bool? AttachedUserIdEqualCurrent
 		{
 			get { return _AttachedUserIdEqualCurrent; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AttachedUserIdEqualCurrent");
 			}
 		}
+		[JsonProperty]
 		public new AssetUserRuleOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetUserRuleFilter(XmlElement node) : base(node)
+		public AssetUserRuleFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["attachedUserIdEqualCurrent"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "attachedUserIdEqualCurrent":
-						this._AttachedUserIdEqualCurrent = ParseBool(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._AttachedUserIdEqualCurrent = ParseBool(node["attachedUserIdEqualCurrent"].Value<string>());
 			}
-		}
-
-		public AssetUserRuleFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._AttachedUserIdEqualCurrent = data.TryGetValueSafe<bool>("attachedUserIdEqualCurrent");
-			    this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

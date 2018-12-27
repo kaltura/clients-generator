@@ -32,6 +32,7 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -72,13 +73,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<UserSocialActionResponse>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<UserSocialActionResponse>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -119,20 +116,12 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			IList<NetworkActionStatus> list = new List<NetworkActionStatus>();
-			foreach(XmlElement node in result.ChildNodes)
+			foreach(var node in result.Children())
 			{
-				list.Add(ObjectFactory.Create<NetworkActionStatus>(node));
-			}
-			return list;
-		}
-		public override object DeserializeObject(object result)
-		{
-			var list = new List<NetworkActionStatus>();
-			foreach(var node in (IEnumerable<IDictionary<string,object>>)result)
-			{
+				//TODO: Deserilize Array;
 				list.Add(ObjectFactory.Create<NetworkActionStatus>(node));
 			}
 			return list;
@@ -185,13 +174,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<ListResponse<SocialAction>>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<ListResponse<SocialAction>>((IDictionary<string,object>)result);
 		}
 	}
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string CodeIn
 		{
 			get { return _CodeIn; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CodeIn");
 			}
 		}
+		[JsonProperty]
 		public new LanguageOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LanguageFilter(XmlElement node) : base(node)
+		public LanguageFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["codeIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "codeIn":
-						this._CodeIn = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (LanguageOrderBy)StringEnum.Parse(typeof(LanguageOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._CodeIn = node["codeIn"].Value<string>();
 			}
-		}
-
-		public LanguageFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._CodeIn = data.TryGetValueSafe<string>("codeIn");
-			    this._OrderBy = (LanguageOrderBy)StringEnum.Parse(typeof(LanguageOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (LanguageOrderBy)StringEnum.Parse(typeof(LanguageOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

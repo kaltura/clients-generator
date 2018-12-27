@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int AssetIdEqual
 		{
 			get { return _AssetIdEqual; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdEqual");
 			}
 		}
+		[JsonProperty]
 		public AssetType AssetTypeEqual
 		{
 			get { return _AssetTypeEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public new AssetCommentOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetCommentFilter(XmlElement node) : base(node)
+		public AssetCommentFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetIdEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetIdEqual":
-						this._AssetIdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "assetTypeEqual":
-						this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (AssetCommentOrderBy)StringEnum.Parse(typeof(AssetCommentOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._AssetIdEqual = ParseInt(node["assetIdEqual"].Value<string>());
 			}
-		}
-
-		public AssetCommentFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetIdEqual = data.TryGetValueSafe<int>("assetIdEqual");
-			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
-			    this._OrderBy = (AssetCommentOrderBy)StringEnum.Parse(typeof(AssetCommentOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["assetTypeEqual"] != null)
+			{
+				this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetTypeEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (AssetCommentOrderBy)StringEnum.Parse(typeof(AssetCommentOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

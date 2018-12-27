@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,10 +54,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -65,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public IList<Discount> MultiCurrencyDiscount
 		{
 			get { return _MultiCurrencyDiscount; }
@@ -74,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultiCurrencyDiscount");
 			}
 		}
+		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -83,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
+		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -99,47 +111,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DiscountDetails(XmlElement node) : base(node)
+		public DiscountDetails(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseInt(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["multiCurrencyDiscount"] != null)
+			{
+				this._MultiCurrencyDiscount = new List<Discount>();
+				foreach(var arrayNode in node["multiCurrencyDiscount"].Children())
 				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "multiCurrencyDiscount":
-						this._MultiCurrencyDiscount = new List<Discount>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultiCurrencyDiscount.Add(ObjectFactory.Create<Discount>(arrayNode));
-						}
-						continue;
-					case "startDate":
-						this._StartDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "endDate":
-						this._EndDate = ParseLong(propertyNode.InnerText);
-						continue;
+					this._MultiCurrencyDiscount.Add(ObjectFactory.Create<Discount>(arrayNode));
 				}
 			}
-		}
-
-		public DiscountDetails(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._MultiCurrencyDiscount = new List<Discount>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multiCurrencyDiscount", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultiCurrencyDiscount.Add(ObjectFactory.Create<Discount>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._StartDate = data.TryGetValueSafe<long>("startDate");
-			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			if(node["startDate"] != null)
+			{
+				this._StartDate = ParseLong(node["startDate"].Value<string>());
+			}
+			if(node["endDate"] != null)
+			{
+				this._EndDate = ParseLong(node["endDate"].Value<string>());
+			}
 		}
 		#endregion
 

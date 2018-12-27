@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public DrmSchemeName Scheme
 		{
 			get { return _Scheme; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Scheme");
 			}
 		}
+		[JsonProperty]
 		public string LicenseURL
 		{
 			get { return _LicenseURL; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DrmPlaybackPluginData(XmlElement node) : base(node)
+		public DrmPlaybackPluginData(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["scheme"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "scheme":
-						this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), propertyNode.InnerText);
-						continue;
-					case "licenseURL":
-						this._LicenseURL = propertyNode.InnerText;
-						continue;
-				}
+				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
 			}
-		}
-
-		public DrmPlaybackPluginData(IDictionary<string,object> data) : base(data)
-		{
-			    this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), data.TryGetValueSafe<string>("scheme"));
-			    this._LicenseURL = data.TryGetValueSafe<string>("licenseURL");
+			if(node["licenseURL"] != null)
+			{
+				this._LicenseURL = node["licenseURL"].Value<string>();
+			}
 		}
 		#endregion
 

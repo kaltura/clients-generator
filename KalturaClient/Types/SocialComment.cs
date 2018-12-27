@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Header
 		{
 			get { return _Header; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Header");
 			}
 		}
+		[JsonProperty]
 		public string Text
 		{
 			get { return _Text; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Text");
 			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CreateDate");
 			}
 		}
+		[JsonProperty]
 		public string Writer
 		{
 			get { return _Writer; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialComment(XmlElement node) : base(node)
+		public SocialComment(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["header"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "header":
-						this._Header = propertyNode.InnerText;
-						continue;
-					case "text":
-						this._Text = propertyNode.InnerText;
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "writer":
-						this._Writer = propertyNode.InnerText;
-						continue;
-				}
+				this._Header = node["header"].Value<string>();
 			}
-		}
-
-		public SocialComment(IDictionary<string,object> data) : base(data)
-		{
-			    this._Header = data.TryGetValueSafe<string>("header");
-			    this._Text = data.TryGetValueSafe<string>("text");
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._Writer = data.TryGetValueSafe<string>("writer");
+			if(node["text"] != null)
+			{
+				this._Text = node["text"].Value<string>();
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["writer"] != null)
+			{
+				this._Writer = node["writer"].Value<string>();
+			}
 		}
 		#endregion
 

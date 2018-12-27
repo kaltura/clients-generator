@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string PartnerListTypeIn
 		{
 			get { return _PartnerListTypeIn; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PartnerListTypeIn");
 			}
 		}
+		[JsonProperty]
 		public new PersonalListOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PersonalListFilter(XmlElement node) : base(node)
+		public PersonalListFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["partnerListTypeIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "partnerListTypeIn":
-						this._PartnerListTypeIn = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (PersonalListOrderBy)StringEnum.Parse(typeof(PersonalListOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._PartnerListTypeIn = node["partnerListTypeIn"].Value<string>();
 			}
-		}
-
-		public PersonalListFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._PartnerListTypeIn = data.TryGetValueSafe<string>("partnerListTypeIn");
-			    this._OrderBy = (PersonalListOrderBy)StringEnum.Parse(typeof(PersonalListOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (PersonalListOrderBy)StringEnum.Parse(typeof(PersonalListOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

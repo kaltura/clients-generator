@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,10 +48,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public RuleActionType Type
 		{
 			get { return _Type; }
+			private set 
+			{ 
+				_Type = value;
+				OnPropertyChanged("Type");
+			}
 		}
+		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
@@ -66,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RuleAction(XmlElement node) : base(node)
+		public RuleAction(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["type"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "type":
-						this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), propertyNode.InnerText);
-						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
-						continue;
-				}
+				this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), node["type"].Value<string>());
 			}
-		}
-
-		public RuleAction(IDictionary<string,object> data) : base(data)
-		{
-			    this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), data.TryGetValueSafe<string>("type"));
-			    this._Description = data.TryGetValueSafe<string>("description");
+			if(node["description"] != null)
+			{
+				this._Description = node["description"].Value<string>();
+			}
 		}
 		#endregion
 

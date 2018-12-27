@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public float NormalizedAvgScore
 		{
 			get { return _NormalizedAvgScore; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NormalizedAvgScore");
 			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UpdateDate");
 			}
 		}
+		[JsonProperty]
 		public float AvgScore
 		{
 			get { return _AvgScore; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BuzzScore(XmlElement node) : base(node)
+		public BuzzScore(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["normalizedAvgScore"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "normalizedAvgScore":
-						this._NormalizedAvgScore = ParseFloat(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "avgScore":
-						this._AvgScore = ParseFloat(propertyNode.InnerText);
-						continue;
-				}
+				this._NormalizedAvgScore = ParseFloat(node["normalizedAvgScore"].Value<string>());
 			}
-		}
-
-		public BuzzScore(IDictionary<string,object> data) : base(data)
-		{
-			    this._NormalizedAvgScore = data.TryGetValueSafe<float>("normalizedAvgScore");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
-			    this._AvgScore = data.TryGetValueSafe<float>("avgScore");
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
+			if(node["avgScore"] != null)
+			{
+				this._AvgScore = ParseFloat(node["avgScore"].Value<string>());
+			}
 		}
 		#endregion
 

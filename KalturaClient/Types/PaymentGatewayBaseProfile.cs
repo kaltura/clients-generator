@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,10 +52,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -63,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
@@ -72,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsDefault");
 			}
 		}
+		[JsonProperty]
 		public HouseholdPaymentGatewaySelectedBy SelectedBy
 		{
 			get { return _SelectedBy; }
@@ -88,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PaymentGatewayBaseProfile(XmlElement node) : base(node)
+		public PaymentGatewayBaseProfile(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "isDefault":
-						this._IsDefault = ParseBool(propertyNode.InnerText);
-						continue;
-					case "selectedBy":
-						this._SelectedBy = (HouseholdPaymentGatewaySelectedBy)StringEnum.Parse(typeof(HouseholdPaymentGatewaySelectedBy), propertyNode.InnerText);
-						continue;
-				}
+				this._Id = ParseInt(node["id"].Value<string>());
 			}
-		}
-
-		public PaymentGatewayBaseProfile(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
-			    this._SelectedBy = (HouseholdPaymentGatewaySelectedBy)StringEnum.Parse(typeof(HouseholdPaymentGatewaySelectedBy), data.TryGetValueSafe<string>("selectedBy"));
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["isDefault"] != null)
+			{
+				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
+			}
+			if(node["selectedBy"] != null)
+			{
+				this._SelectedBy = (HouseholdPaymentGatewaySelectedBy)StringEnum.Parse(typeof(HouseholdPaymentGatewaySelectedBy), node["selectedBy"].Value<string>());
+			}
 		}
 		#endregion
 

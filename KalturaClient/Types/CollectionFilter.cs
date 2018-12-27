@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string CollectionIdIn
 		{
 			get { return _CollectionIdIn; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CollectionIdIn");
 			}
 		}
+		[JsonProperty]
 		public int MediaFileIdEqual
 		{
 			get { return _MediaFileIdEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaFileIdEqual");
 			}
 		}
+		[JsonProperty]
 		public new CollectionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CollectionFilter(XmlElement node) : base(node)
+		public CollectionFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["collectionIdIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "collectionIdIn":
-						this._CollectionIdIn = propertyNode.InnerText;
-						continue;
-					case "mediaFileIdEqual":
-						this._MediaFileIdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (CollectionOrderBy)StringEnum.Parse(typeof(CollectionOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._CollectionIdIn = node["collectionIdIn"].Value<string>();
 			}
-		}
-
-		public CollectionFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._CollectionIdIn = data.TryGetValueSafe<string>("collectionIdIn");
-			    this._MediaFileIdEqual = data.TryGetValueSafe<int>("mediaFileIdEqual");
-			    this._OrderBy = (CollectionOrderBy)StringEnum.Parse(typeof(CollectionOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["mediaFileIdEqual"] != null)
+			{
+				this._MediaFileIdEqual = ParseInt(node["mediaFileIdEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (CollectionOrderBy)StringEnum.Parse(typeof(CollectionOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

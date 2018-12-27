@@ -32,6 +32,7 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -72,17 +73,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<AssetUserRule>(result);
 		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<AssetUserRule>((IDictionary<string,object>)result);
-		}
 	}
 
-	public class AssetUserRuleAttachUserRequestBuilder : RequestBuilder<object>
+	public class AssetUserRuleAttachUserRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
 		public const string RULE_ID = "ruleId";
@@ -119,17 +116,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
-		{
-			return null;
-		}
-		public override object DeserializeObject(object result)
+		public override object Deserialize(JToken result)
 		{
 			return null;
 		}
 	}
 
-	public class AssetUserRuleDeleteRequestBuilder : RequestBuilder<object>
+	public class AssetUserRuleDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
 		public const string ID = "id";
@@ -166,17 +159,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
-		{
-			return null;
-		}
-		public override object DeserializeObject(object result)
+		public override object Deserialize(JToken result)
 		{
 			return null;
 		}
 	}
 
-	public class AssetUserRuleDetachUserRequestBuilder : RequestBuilder<object>
+	public class AssetUserRuleDetachUserRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
 		public const string RULE_ID = "ruleId";
@@ -213,11 +202,7 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
-		{
-			return null;
-		}
-		public override object DeserializeObject(object result)
+		public override object Deserialize(JToken result)
 		{
 			return null;
 		}
@@ -260,13 +245,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<ListResponse<AssetUserRule>>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<ListResponse<AssetUserRule>>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -316,13 +297,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<AssetUserRule>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<AssetUserRule>((IDictionary<string,object>)result);
 		}
 	}
 

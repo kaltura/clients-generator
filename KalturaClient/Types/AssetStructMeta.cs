@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,14 +60,27 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long AssetStructId
 		{
 			get { return _AssetStructId; }
+			private set 
+			{ 
+				_AssetStructId = value;
+				OnPropertyChanged("AssetStructId");
+			}
 		}
+		[JsonProperty]
 		public long MetaId
 		{
 			get { return _MetaId; }
+			private set 
+			{ 
+				_MetaId = value;
+				OnPropertyChanged("MetaId");
+			}
 		}
+		[JsonProperty]
 		public string IngestReferencePath
 		{
 			get { return _IngestReferencePath; }
@@ -75,6 +90,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IngestReferencePath");
 			}
 		}
+		[JsonProperty]
 		public bool? ProtectFromIngest
 		{
 			get { return _ProtectFromIngest; }
@@ -84,6 +100,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProtectFromIngest");
 			}
 		}
+		[JsonProperty]
 		public string DefaultIngestValue
 		{
 			get { return _DefaultIngestValue; }
@@ -93,14 +110,27 @@ namespace Kaltura.Types
 				OnPropertyChanged("DefaultIngestValue");
 			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
 		}
+		[JsonProperty]
 		public bool? IsInherited
 		{
 			get { return _IsInherited; }
@@ -117,50 +147,40 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStructMeta(XmlElement node) : base(node)
+		public AssetStructMeta(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetStructId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetStructId":
-						this._AssetStructId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "metaId":
-						this._MetaId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "ingestReferencePath":
-						this._IngestReferencePath = propertyNode.InnerText;
-						continue;
-					case "protectFromIngest":
-						this._ProtectFromIngest = ParseBool(propertyNode.InnerText);
-						continue;
-					case "defaultIngestValue":
-						this._DefaultIngestValue = propertyNode.InnerText;
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "isInherited":
-						this._IsInherited = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._AssetStructId = ParseLong(node["assetStructId"].Value<string>());
 			}
-		}
-
-		public AssetStructMeta(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetStructId = data.TryGetValueSafe<long>("assetStructId");
-			    this._MetaId = data.TryGetValueSafe<long>("metaId");
-			    this._IngestReferencePath = data.TryGetValueSafe<string>("ingestReferencePath");
-			    this._ProtectFromIngest = data.TryGetValueSafe<bool>("protectFromIngest");
-			    this._DefaultIngestValue = data.TryGetValueSafe<string>("defaultIngestValue");
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
-			    this._IsInherited = data.TryGetValueSafe<bool>("isInherited");
+			if(node["metaId"] != null)
+			{
+				this._MetaId = ParseLong(node["metaId"].Value<string>());
+			}
+			if(node["ingestReferencePath"] != null)
+			{
+				this._IngestReferencePath = node["ingestReferencePath"].Value<string>();
+			}
+			if(node["protectFromIngest"] != null)
+			{
+				this._ProtectFromIngest = ParseBool(node["protectFromIngest"].Value<string>());
+			}
+			if(node["defaultIngestValue"] != null)
+			{
+				this._DefaultIngestValue = node["defaultIngestValue"].Value<string>();
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
+			if(node["isInherited"] != null)
+			{
+				this._IsInherited = ParseBool(node["isInherited"].Value<string>());
+			}
 		}
 		#endregion
 

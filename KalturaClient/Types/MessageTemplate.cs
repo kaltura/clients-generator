@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,6 +62,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Message
 		{
 			get { return _Message; }
@@ -69,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Message");
 			}
 		}
+		[JsonProperty]
 		public string DateFormat
 		{
 			get { return _DateFormat; }
@@ -78,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DateFormat");
 			}
 		}
+		[JsonProperty]
 		public MessageTemplateType MessageType
 		{
 			get { return _MessageType; }
@@ -87,6 +92,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MessageType");
 			}
 		}
+		[JsonProperty]
 		public string Sound
 		{
 			get { return _Sound; }
@@ -96,6 +102,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Sound");
 			}
 		}
+		[JsonProperty]
 		public string Action
 		{
 			get { return _Action; }
@@ -105,6 +112,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Action");
 			}
 		}
+		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
@@ -114,6 +122,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Url");
 			}
 		}
+		[JsonProperty]
 		public string MailTemplate
 		{
 			get { return _MailTemplate; }
@@ -123,6 +132,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailTemplate");
 			}
 		}
+		[JsonProperty]
 		public string MailSubject
 		{
 			get { return _MailSubject; }
@@ -132,6 +142,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailSubject");
 			}
 		}
+		[JsonProperty]
 		public string RatioId
 		{
 			get { return _RatioId; }
@@ -148,54 +159,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MessageTemplate(XmlElement node) : base(node)
+		public MessageTemplate(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["message"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "message":
-						this._Message = propertyNode.InnerText;
-						continue;
-					case "dateFormat":
-						this._DateFormat = propertyNode.InnerText;
-						continue;
-					case "messageType":
-						this._MessageType = (MessageTemplateType)StringEnum.Parse(typeof(MessageTemplateType), propertyNode.InnerText);
-						continue;
-					case "sound":
-						this._Sound = propertyNode.InnerText;
-						continue;
-					case "action":
-						this._Action = propertyNode.InnerText;
-						continue;
-					case "url":
-						this._Url = propertyNode.InnerText;
-						continue;
-					case "mailTemplate":
-						this._MailTemplate = propertyNode.InnerText;
-						continue;
-					case "mailSubject":
-						this._MailSubject = propertyNode.InnerText;
-						continue;
-					case "ratioId":
-						this._RatioId = propertyNode.InnerText;
-						continue;
-				}
+				this._Message = node["message"].Value<string>();
 			}
-		}
-
-		public MessageTemplate(IDictionary<string,object> data) : base(data)
-		{
-			    this._Message = data.TryGetValueSafe<string>("message");
-			    this._DateFormat = data.TryGetValueSafe<string>("dateFormat");
-			    this._MessageType = (MessageTemplateType)StringEnum.Parse(typeof(MessageTemplateType), data.TryGetValueSafe<string>("messageType"));
-			    this._Sound = data.TryGetValueSafe<string>("sound");
-			    this._Action = data.TryGetValueSafe<string>("action");
-			    this._Url = data.TryGetValueSafe<string>("url");
-			    this._MailTemplate = data.TryGetValueSafe<string>("mailTemplate");
-			    this._MailSubject = data.TryGetValueSafe<string>("mailSubject");
-			    this._RatioId = data.TryGetValueSafe<string>("ratioId");
+			if(node["dateFormat"] != null)
+			{
+				this._DateFormat = node["dateFormat"].Value<string>();
+			}
+			if(node["messageType"] != null)
+			{
+				this._MessageType = (MessageTemplateType)StringEnum.Parse(typeof(MessageTemplateType), node["messageType"].Value<string>());
+			}
+			if(node["sound"] != null)
+			{
+				this._Sound = node["sound"].Value<string>();
+			}
+			if(node["action"] != null)
+			{
+				this._Action = node["action"].Value<string>();
+			}
+			if(node["url"] != null)
+			{
+				this._Url = node["url"].Value<string>();
+			}
+			if(node["mailTemplate"] != null)
+			{
+				this._MailTemplate = node["mailTemplate"].Value<string>();
+			}
+			if(node["mailSubject"] != null)
+			{
+				this._MailSubject = node["mailSubject"].Value<string>();
+			}
+			if(node["ratioId"] != null)
+			{
+				this._RatioId = node["ratioId"].Value<string>();
+			}
 		}
 		#endregion
 

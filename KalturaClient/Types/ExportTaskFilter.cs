@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		[JsonProperty]
 		public new ExportTaskOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ExportTaskFilter(XmlElement node) : base(node)
+		public ExportTaskFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdIn = node["idIn"].Value<string>();
 			}
-		}
-
-		public ExportTaskFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdIn = data.TryGetValueSafe<string>("idIn");
-			    this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

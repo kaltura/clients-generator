@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public AggregationType AggregationType
 		{
 			get { return _AggregationType; }
@@ -60,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AggregatedPropertySkipCondition(XmlElement node) : base(node)
+		public AggregatedPropertySkipCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["aggregationType"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "aggregationType":
-						this._AggregationType = (AggregationType)StringEnum.Parse(typeof(AggregationType), propertyNode.InnerText);
-						continue;
-				}
+				this._AggregationType = (AggregationType)StringEnum.Parse(typeof(AggregationType), node["aggregationType"].Value<string>());
 			}
-		}
-
-		public AggregatedPropertySkipCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._AggregationType = (AggregationType)StringEnum.Parse(typeof(AggregationType), data.TryGetValueSafe<string>("aggregationType"));
 		}
 		#endregion
 

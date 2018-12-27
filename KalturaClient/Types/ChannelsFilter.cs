@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,6 +54,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -61,6 +64,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
+		[JsonProperty]
 		public long MediaIdEqual
 		{
 			get { return _MediaIdEqual; }
@@ -70,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaIdEqual");
 			}
 		}
+		[JsonProperty]
 		public string NameEqual
 		{
 			get { return _NameEqual; }
@@ -79,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NameEqual");
 			}
 		}
+		[JsonProperty]
 		public string NameStartsWith
 		{
 			get { return _NameStartsWith; }
@@ -88,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NameStartsWith");
 			}
 		}
+		[JsonProperty]
 		public new ChannelsOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -104,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ChannelsFilter(XmlElement node) : base(node)
+		public ChannelsFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idEqual":
-						this._IdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "mediaIdEqual":
-						this._MediaIdEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "nameEqual":
-						this._NameEqual = propertyNode.InnerText;
-						continue;
-					case "nameStartsWith":
-						this._NameStartsWith = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (ChannelsOrderBy)StringEnum.Parse(typeof(ChannelsOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
 			}
-		}
-
-		public ChannelsFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
-			    this._MediaIdEqual = data.TryGetValueSafe<long>("mediaIdEqual");
-			    this._NameEqual = data.TryGetValueSafe<string>("nameEqual");
-			    this._NameStartsWith = data.TryGetValueSafe<string>("nameStartsWith");
-			    this._OrderBy = (ChannelsOrderBy)StringEnum.Parse(typeof(ChannelsOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["mediaIdEqual"] != null)
+			{
+				this._MediaIdEqual = ParseLong(node["mediaIdEqual"].Value<string>());
+			}
+			if(node["nameEqual"] != null)
+			{
+				this._NameEqual = node["nameEqual"].Value<string>();
+			}
+			if(node["nameStartsWith"] != null)
+			{
+				this._NameStartsWith = node["nameStartsWith"].Value<string>();
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ChannelsOrderBy)StringEnum.Parse(typeof(ChannelsOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

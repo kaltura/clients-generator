@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
+		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
+		[JsonProperty]
 		public bool? ExcludeWatched
 		{
 			get { return _ExcludeWatched; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RelatedFilter(XmlElement node) : base(node)
+		public RelatedFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idEqual":
-						this._IdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "typeIn":
-						this._TypeIn = propertyNode.InnerText;
-						continue;
-					case "excludeWatched":
-						this._ExcludeWatched = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
 			}
-		}
-
-		public RelatedFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
-			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
-			    this._ExcludeWatched = data.TryGetValueSafe<bool>("excludeWatched");
+			if(node["typeIn"] != null)
+			{
+				this._TypeIn = node["typeIn"].Value<string>();
+			}
+			if(node["excludeWatched"] != null)
+			{
+				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
+			}
 		}
 		#endregion
 

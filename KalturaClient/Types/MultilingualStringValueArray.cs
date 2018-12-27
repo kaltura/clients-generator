@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public IList<MultilingualStringValue> Objects
 		{
 			get { return _Objects; }
@@ -60,31 +63,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MultilingualStringValueArray(XmlElement node) : base(node)
+		public MultilingualStringValueArray(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["objects"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Objects = new List<MultilingualStringValue>();
+				foreach(var arrayNode in node["objects"].Children())
 				{
-					case "objects":
-						this._Objects = new List<MultilingualStringValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Objects.Add(ObjectFactory.Create<MultilingualStringValue>(arrayNode));
-						}
-						continue;
+					this._Objects.Add(ObjectFactory.Create<MultilingualStringValue>(arrayNode));
 				}
 			}
-		}
-
-		public MultilingualStringValueArray(IDictionary<string,object> data) : base(data)
-		{
-			    this._Objects = new List<MultilingualStringValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("objects", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Objects.Add(ObjectFactory.Create<MultilingualStringValue>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 
