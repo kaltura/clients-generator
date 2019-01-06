@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,10 +62,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public long EpgId
 		{
 			get { return _EpgId; }
@@ -73,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("EpgId");
 			}
 		}
+		[JsonProperty]
 		public long ChannelId
 		{
 			get { return _ChannelId; }
@@ -82,6 +92,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ChannelId");
 			}
 		}
+		[JsonProperty]
 		public string SeriesId
 		{
 			get { return _SeriesId; }
@@ -91,6 +102,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeriesId");
 			}
 		}
+		[JsonProperty]
 		public int SeasonNumber
 		{
 			get { return _SeasonNumber; }
@@ -100,6 +112,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeasonNumber");
 			}
 		}
+		[JsonProperty]
 		public RecordingType Type
 		{
 			get { return _Type; }
@@ -109,17 +122,35 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
 		}
+		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
 		}
+		[JsonProperty]
 		public IList<IntegerValue> ExcludedSeasons
 		{
 			get { return _ExcludedSeasons; }
+			private set 
+			{ 
+				_ExcludedSeasons = value;
+				OnPropertyChanged("ExcludedSeasons");
+			}
 		}
 		#endregion
 
@@ -128,63 +159,48 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SeriesRecording(XmlElement node) : base(node)
+		public SeriesRecording(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseLong(node["id"].Value<string>());
+			}
+			if(node["epgId"] != null)
+			{
+				this._EpgId = ParseLong(node["epgId"].Value<string>());
+			}
+			if(node["channelId"] != null)
+			{
+				this._ChannelId = ParseLong(node["channelId"].Value<string>());
+			}
+			if(node["seriesId"] != null)
+			{
+				this._SeriesId = node["seriesId"].Value<string>();
+			}
+			if(node["seasonNumber"] != null)
+			{
+				this._SeasonNumber = ParseInt(node["seasonNumber"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), node["type"].Value<string>());
+			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
+			if(node["excludedSeasons"] != null)
+			{
+				this._ExcludedSeasons = new List<IntegerValue>();
+				foreach(var arrayNode in node["excludedSeasons"].Children())
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "epgId":
-						this._EpgId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "channelId":
-						this._ChannelId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "seriesId":
-						this._SeriesId = propertyNode.InnerText;
-						continue;
-					case "seasonNumber":
-						this._SeasonNumber = ParseInt(propertyNode.InnerText);
-						continue;
-					case "type":
-						this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), propertyNode.InnerText);
-						continue;
-					case "createDate":
-						this._CreateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "updateDate":
-						this._UpdateDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "excludedSeasons":
-						this._ExcludedSeasons = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._ExcludedSeasons.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
+					this._ExcludedSeasons.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
 				}
 			}
-		}
-
-		public SeriesRecording(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._EpgId = data.TryGetValueSafe<long>("epgId");
-			    this._ChannelId = data.TryGetValueSafe<long>("channelId");
-			    this._SeriesId = data.TryGetValueSafe<string>("seriesId");
-			    this._SeasonNumber = data.TryGetValueSafe<int>("seasonNumber");
-			    this._Type = (RecordingType)StringEnum.Parse(typeof(RecordingType), data.TryGetValueSafe<string>("type"));
-			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
-			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
-			    this._ExcludedSeasons = new List<IntegerValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("excludedSeasons", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._ExcludedSeasons.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

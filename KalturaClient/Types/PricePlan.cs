@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,18 +52,37 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public bool? IsRenewable
 		{
 			get { return _IsRenewable; }
+			private set 
+			{ 
+				_IsRenewable = value;
+				OnPropertyChanged("IsRenewable");
+			}
 		}
+		[JsonProperty]
 		public int RenewalsNumber
 		{
 			get { return _RenewalsNumber; }
+			private set 
+			{ 
+				_RenewalsNumber = value;
+				OnPropertyChanged("RenewalsNumber");
+			}
 		}
+		[JsonProperty]
 		public long DiscountId
 		{
 			get { return _DiscountId; }
+			private set 
+			{ 
+				_DiscountId = value;
+				OnPropertyChanged("DiscountId");
+			}
 		}
+		[JsonProperty]
 		public long PriceDetailsId
 		{
 			get { return _PriceDetailsId; }
@@ -78,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PricePlan(XmlElement node) : base(node)
+		public PricePlan(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["isRenewable"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "isRenewable":
-						this._IsRenewable = ParseBool(propertyNode.InnerText);
-						continue;
-					case "renewalsNumber":
-						this._RenewalsNumber = ParseInt(propertyNode.InnerText);
-						continue;
-					case "discountId":
-						this._DiscountId = ParseLong(propertyNode.InnerText);
-						continue;
-					case "priceDetailsId":
-						this._PriceDetailsId = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._IsRenewable = ParseBool(node["isRenewable"].Value<string>());
 			}
-		}
-
-		public PricePlan(IDictionary<string,object> data) : base(data)
-		{
-			    this._IsRenewable = data.TryGetValueSafe<bool>("isRenewable");
-			    this._RenewalsNumber = data.TryGetValueSafe<int>("renewalsNumber");
-			    this._DiscountId = data.TryGetValueSafe<long>("discountId");
-			    this._PriceDetailsId = data.TryGetValueSafe<long>("priceDetailsId");
+			if(node["renewalsNumber"] != null)
+			{
+				this._RenewalsNumber = ParseInt(node["renewalsNumber"].Value<string>());
+			}
+			if(node["discountId"] != null)
+			{
+				this._DiscountId = ParseLong(node["discountId"].Value<string>());
+			}
+			if(node["priceDetailsId"] != null)
+			{
+				this._PriceDetailsId = ParseLong(node["priceDetailsId"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public TransactionType BusinessModuleTypeApplied
 		{
 			get { return _BusinessModuleTypeApplied; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("BusinessModuleTypeApplied");
 			}
 		}
+		[JsonProperty]
 		public long BusinessModuleIdApplied
 		{
 			get { return _BusinessModuleIdApplied; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("BusinessModuleIdApplied");
 			}
 		}
+		[JsonProperty]
 		public string SegmentIdsApplied
 		{
 			get { return _SegmentIdsApplied; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BusinessModuleRuleFilter(XmlElement node) : base(node)
+		public BusinessModuleRuleFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["businessModuleTypeApplied"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "businessModuleTypeApplied":
-						this._BusinessModuleTypeApplied = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
-						continue;
-					case "businessModuleIdApplied":
-						this._BusinessModuleIdApplied = ParseLong(propertyNode.InnerText);
-						continue;
-					case "segmentIdsApplied":
-						this._SegmentIdsApplied = propertyNode.InnerText;
-						continue;
-				}
+				this._BusinessModuleTypeApplied = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["businessModuleTypeApplied"].Value<string>());
 			}
-		}
-
-		public BusinessModuleRuleFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._BusinessModuleTypeApplied = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("businessModuleTypeApplied"));
-			    this._BusinessModuleIdApplied = data.TryGetValueSafe<long>("businessModuleIdApplied");
-			    this._SegmentIdsApplied = data.TryGetValueSafe<string>("segmentIdsApplied");
+			if(node["businessModuleIdApplied"] != null)
+			{
+				this._BusinessModuleIdApplied = ParseLong(node["businessModuleIdApplied"].Value<string>());
+			}
+			if(node["segmentIdsApplied"] != null)
+			{
+				this._SegmentIdsApplied = node["segmentIdsApplied"].Value<string>();
+			}
 		}
 		#endregion
 

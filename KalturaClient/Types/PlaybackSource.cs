@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Format
 		{
 			get { return _Format; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Format");
 			}
 		}
+		[JsonProperty]
 		public string Protocols
 		{
 			get { return _Protocols; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Protocols");
 			}
 		}
+		[JsonProperty]
 		public IList<DrmPlaybackPluginData> Drm
 		{
 			get { return _Drm; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Drm");
 			}
 		}
+		[JsonProperty]
 		public bool? IsTokenized
 		{
 			get { return _IsTokenized; }
@@ -93,43 +99,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PlaybackSource(XmlElement node) : base(node)
+		public PlaybackSource(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["format"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Format = node["format"].Value<string>();
+			}
+			if(node["protocols"] != null)
+			{
+				this._Protocols = node["protocols"].Value<string>();
+			}
+			if(node["drm"] != null)
+			{
+				this._Drm = new List<DrmPlaybackPluginData>();
+				foreach(var arrayNode in node["drm"].Children())
 				{
-					case "format":
-						this._Format = propertyNode.InnerText;
-						continue;
-					case "protocols":
-						this._Protocols = propertyNode.InnerText;
-						continue;
-					case "drm":
-						this._Drm = new List<DrmPlaybackPluginData>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Drm.Add(ObjectFactory.Create<DrmPlaybackPluginData>(arrayNode));
-						}
-						continue;
-					case "isTokenized":
-						this._IsTokenized = ParseBool(propertyNode.InnerText);
-						continue;
+					this._Drm.Add(ObjectFactory.Create<DrmPlaybackPluginData>(arrayNode));
 				}
 			}
-		}
-
-		public PlaybackSource(IDictionary<string,object> data) : base(data)
-		{
-			    this._Format = data.TryGetValueSafe<string>("format");
-			    this._Protocols = data.TryGetValueSafe<string>("protocols");
-			    this._Drm = new List<DrmPlaybackPluginData>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("drm", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Drm.Add(ObjectFactory.Create<DrmPlaybackPluginData>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._IsTokenized = data.TryGetValueSafe<bool>("isTokenized");
+			if(node["isTokenized"] != null)
+			{
+				this._IsTokenized = ParseBool(node["isTokenized"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Token
 		{
 			get { return _Token; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Token");
 			}
 		}
+		[JsonProperty]
 		public string ExternalToken
 		{
 			get { return _ExternalToken; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PushParams(XmlElement node) : base(node)
+		public PushParams(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["token"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "token":
-						this._Token = propertyNode.InnerText;
-						continue;
-					case "externalToken":
-						this._ExternalToken = propertyNode.InnerText;
-						continue;
-				}
+				this._Token = node["token"].Value<string>();
 			}
-		}
-
-		public PushParams(IDictionary<string,object> data) : base(data)
-		{
-			    this._Token = data.TryGetValueSafe<string>("token");
-			    this._ExternalToken = data.TryGetValueSafe<string>("externalToken");
+			if(node["externalToken"] != null)
+			{
+				this._ExternalToken = node["externalToken"].Value<string>();
+			}
 		}
 		#endregion
 

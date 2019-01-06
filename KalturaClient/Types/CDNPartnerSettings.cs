@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int DefaultAdapterId
 		{
 			get { return _DefaultAdapterId; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DefaultAdapterId");
 			}
 		}
+		[JsonProperty]
 		public int DefaultRecordingAdapterId
 		{
 			get { return _DefaultRecordingAdapterId; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CDNPartnerSettings(XmlElement node) : base(node)
+		public CDNPartnerSettings(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["defaultAdapterId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "defaultAdapterId":
-						this._DefaultAdapterId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "defaultRecordingAdapterId":
-						this._DefaultRecordingAdapterId = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._DefaultAdapterId = ParseInt(node["defaultAdapterId"].Value<string>());
 			}
-		}
-
-		public CDNPartnerSettings(IDictionary<string,object> data) : base(data)
-		{
-			    this._DefaultAdapterId = data.TryGetValueSafe<int>("defaultAdapterId");
-			    this._DefaultRecordingAdapterId = data.TryGetValueSafe<int>("defaultRecordingAdapterId");
+			if(node["defaultRecordingAdapterId"] != null)
+			{
+				this._DefaultRecordingAdapterId = ParseInt(node["defaultRecordingAdapterId"].Value<string>());
+			}
 		}
 		#endregion
 

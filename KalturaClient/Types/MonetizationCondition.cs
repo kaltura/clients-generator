@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,6 +54,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int MinValue
 		{
 			get { return _MinValue; }
@@ -61,6 +64,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MinValue");
 			}
 		}
+		[JsonProperty]
 		public int MaxValue
 		{
 			get { return _MaxValue; }
@@ -70,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxValue");
 			}
 		}
+		[JsonProperty]
 		public int Days
 		{
 			get { return _Days; }
@@ -79,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Days");
 			}
 		}
+		[JsonProperty]
 		public MonetizationType Type
 		{
 			get { return _Type; }
@@ -88,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
 		public MathemticalOperatorType Operator
 		{
 			get { return _Operator; }
@@ -104,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MonetizationCondition(XmlElement node) : base(node)
+		public MonetizationCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["minValue"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "minValue":
-						this._MinValue = ParseInt(propertyNode.InnerText);
-						continue;
-					case "maxValue":
-						this._MaxValue = ParseInt(propertyNode.InnerText);
-						continue;
-					case "days":
-						this._Days = ParseInt(propertyNode.InnerText);
-						continue;
-					case "type":
-						this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), propertyNode.InnerText);
-						continue;
-					case "operator":
-						this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), propertyNode.InnerText);
-						continue;
-				}
+				this._MinValue = ParseInt(node["minValue"].Value<string>());
 			}
-		}
-
-		public MonetizationCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._MinValue = data.TryGetValueSafe<int>("minValue");
-			    this._MaxValue = data.TryGetValueSafe<int>("maxValue");
-			    this._Days = data.TryGetValueSafe<int>("days");
-			    this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), data.TryGetValueSafe<string>("type"));
-			    this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), data.TryGetValueSafe<string>("operator"));
+			if(node["maxValue"] != null)
+			{
+				this._MaxValue = ParseInt(node["maxValue"].Value<string>());
+			}
+			if(node["days"] != null)
+			{
+				this._Days = ParseInt(node["days"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), node["type"].Value<string>());
+			}
+			if(node["operator"] != null)
+			{
+				this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), node["operator"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,9 +46,15 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Percentage
 		{
 			get { return _Percentage; }
+			private set 
+			{ 
+				_Percentage = value;
+				OnPropertyChanged("Percentage");
+			}
 		}
 		#endregion
 
@@ -55,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Discount(XmlElement node) : base(node)
+		public Discount(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["percentage"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "percentage":
-						this._Percentage = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._Percentage = ParseInt(node["percentage"].Value<string>());
 			}
-		}
-
-		public Discount(IDictionary<string,object> data) : base(data)
-		{
-			    this._Percentage = data.TryGetValueSafe<int>("percentage");
 		}
 		#endregion
 

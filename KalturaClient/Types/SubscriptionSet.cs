@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,10 +52,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -63,10 +72,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public SubscriptionSetType Type
 		{
 			get { return _Type; }
+			private set 
+			{ 
+				_Type = value;
+				OnPropertyChanged("Type");
+			}
 		}
+		[JsonProperty]
 		public string SubscriptionIds
 		{
 			get { return _SubscriptionIds; }
@@ -83,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionSet(XmlElement node) : base(node)
+		public SubscriptionSet(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "type":
-						this._Type = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), propertyNode.InnerText);
-						continue;
-					case "subscriptionIds":
-						this._SubscriptionIds = propertyNode.InnerText;
-						continue;
-				}
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
-		}
-
-		public SubscriptionSet(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Type = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), data.TryGetValueSafe<string>("type"));
-			    this._SubscriptionIds = data.TryGetValueSafe<string>("subscriptionIds");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), node["type"].Value<string>());
+			}
+			if(node["subscriptionIds"] != null)
+			{
+				this._SubscriptionIds = node["subscriptionIds"].Value<string>();
+			}
 		}
 		#endregion
 

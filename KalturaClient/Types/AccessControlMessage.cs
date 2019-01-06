@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Message
 		{
 			get { return _Message; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Message");
 			}
 		}
+		[JsonProperty]
 		public string Code
 		{
 			get { return _Code; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AccessControlMessage(XmlElement node) : base(node)
+		public AccessControlMessage(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["message"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "message":
-						this._Message = propertyNode.InnerText;
-						continue;
-					case "code":
-						this._Code = propertyNode.InnerText;
-						continue;
-				}
+				this._Message = node["message"].Value<string>();
 			}
-		}
-
-		public AccessControlMessage(IDictionary<string,object> data) : base(data)
-		{
-			    this._Message = data.TryGetValueSafe<string>("message");
-			    this._Code = data.TryGetValueSafe<string>("code");
+			if(node["code"] != null)
+			{
+				this._Code = node["code"].Value<string>();
+			}
 		}
 		#endregion
 

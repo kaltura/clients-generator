@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public PartnerConfigurationType PartnerConfigurationTypeEqual
 		{
 			get { return _PartnerConfigurationTypeEqual; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PartnerConfigurationTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public new PartnerConfigurationOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PartnerConfigurationFilter(XmlElement node) : base(node)
+		public PartnerConfigurationFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["partnerConfigurationTypeEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "partnerConfigurationTypeEqual":
-						this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), node["partnerConfigurationTypeEqual"].Value<string>());
 			}
-		}
-
-		public PartnerConfigurationFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), data.TryGetValueSafe<string>("partnerConfigurationTypeEqual"));
-			    this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
+		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HomeNetwork(XmlElement node) : base(node)
+		public HomeNetwork(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["externalId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "externalId":
-						this._ExternalId = propertyNode.InnerText;
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
-						continue;
-					case "isActive":
-						this._IsActive = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._ExternalId = node["externalId"].Value<string>();
 			}
-		}
-
-		public HomeNetwork(IDictionary<string,object> data) : base(data)
-		{
-			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Description = data.TryGetValueSafe<string>("description");
-			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["description"] != null)
+			{
+				this._Description = node["description"].Value<string>();
+			}
+			if(node["isActive"] != null)
+			{
+				this._IsActive = ParseBool(node["isActive"].Value<string>());
+			}
 		}
 		#endregion
 

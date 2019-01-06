@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,14 +62,27 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public int PartnerId
 		{
 			get { return _PartnerId; }
+			private set 
+			{ 
+				_PartnerId = value;
+				OnPropertyChanged("PartnerId");
+			}
 		}
+		[JsonProperty]
 		public string ConfigurationGroupId
 		{
 			get { return _ConfigurationGroupId; }
@@ -77,6 +92,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConfigurationGroupId");
 			}
 		}
+		[JsonProperty]
 		public string AppName
 		{
 			get { return _AppName; }
@@ -86,6 +102,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AppName");
 			}
 		}
+		[JsonProperty]
 		public string ClientVersion
 		{
 			get { return _ClientVersion; }
@@ -95,6 +112,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ClientVersion");
 			}
 		}
+		[JsonProperty]
 		public Platform Platform
 		{
 			get { return _Platform; }
@@ -104,6 +122,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Platform");
 			}
 		}
+		[JsonProperty]
 		public string ExternalPushId
 		{
 			get { return _ExternalPushId; }
@@ -113,6 +132,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalPushId");
 			}
 		}
+		[JsonProperty]
 		public bool? IsForceUpdate
 		{
 			get { return _IsForceUpdate; }
@@ -122,6 +142,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsForceUpdate");
 			}
 		}
+		[JsonProperty]
 		public string Content
 		{
 			get { return _Content; }
@@ -138,54 +159,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Configurations(XmlElement node) : base(node)
+		public Configurations(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "partnerId":
-						this._PartnerId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "configurationGroupId":
-						this._ConfigurationGroupId = propertyNode.InnerText;
-						continue;
-					case "appName":
-						this._AppName = propertyNode.InnerText;
-						continue;
-					case "clientVersion":
-						this._ClientVersion = propertyNode.InnerText;
-						continue;
-					case "platform":
-						this._Platform = (Platform)StringEnum.Parse(typeof(Platform), propertyNode.InnerText);
-						continue;
-					case "externalPushId":
-						this._ExternalPushId = propertyNode.InnerText;
-						continue;
-					case "isForceUpdate":
-						this._IsForceUpdate = ParseBool(propertyNode.InnerText);
-						continue;
-					case "content":
-						this._Content = propertyNode.InnerText;
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public Configurations(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
-			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
-			    this._AppName = data.TryGetValueSafe<string>("appName");
-			    this._ClientVersion = data.TryGetValueSafe<string>("clientVersion");
-			    this._Platform = (Platform)StringEnum.Parse(typeof(Platform), data.TryGetValueSafe<string>("platform"));
-			    this._ExternalPushId = data.TryGetValueSafe<string>("externalPushId");
-			    this._IsForceUpdate = data.TryGetValueSafe<bool>("isForceUpdate");
-			    this._Content = data.TryGetValueSafe<string>("content");
+			if(node["partnerId"] != null)
+			{
+				this._PartnerId = ParseInt(node["partnerId"].Value<string>());
+			}
+			if(node["configurationGroupId"] != null)
+			{
+				this._ConfigurationGroupId = node["configurationGroupId"].Value<string>();
+			}
+			if(node["appName"] != null)
+			{
+				this._AppName = node["appName"].Value<string>();
+			}
+			if(node["clientVersion"] != null)
+			{
+				this._ClientVersion = node["clientVersion"].Value<string>();
+			}
+			if(node["platform"] != null)
+			{
+				this._Platform = (Platform)StringEnum.Parse(typeof(Platform), node["platform"].Value<string>());
+			}
+			if(node["externalPushId"] != null)
+			{
+				this._ExternalPushId = node["externalPushId"].Value<string>();
+			}
+			if(node["isForceUpdate"] != null)
+			{
+				this._IsForceUpdate = ParseBool(node["isForceUpdate"].Value<string>());
+			}
+			if(node["content"] != null)
+			{
+				this._Content = node["content"].Value<string>();
+			}
 		}
 		#endregion
 

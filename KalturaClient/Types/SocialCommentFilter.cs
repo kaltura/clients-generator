@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,6 +54,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long AssetIdEqual
 		{
 			get { return _AssetIdEqual; }
@@ -61,6 +64,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdEqual");
 			}
 		}
+		[JsonProperty]
 		public AssetType AssetTypeEqual
 		{
 			get { return _AssetTypeEqual; }
@@ -70,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public SocialPlatform SocialPlatformEqual
 		{
 			get { return _SocialPlatformEqual; }
@@ -79,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SocialPlatformEqual");
 			}
 		}
+		[JsonProperty]
 		public long CreateDateGreaterThan
 		{
 			get { return _CreateDateGreaterThan; }
@@ -88,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CreateDateGreaterThan");
 			}
 		}
+		[JsonProperty]
 		public new SocialCommentOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -104,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialCommentFilter(XmlElement node) : base(node)
+		public SocialCommentFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetIdEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetIdEqual":
-						this._AssetIdEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "assetTypeEqual":
-						this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
-						continue;
-					case "socialPlatformEqual":
-						this._SocialPlatformEqual = (SocialPlatform)StringEnum.Parse(typeof(SocialPlatform), propertyNode.InnerText);
-						continue;
-					case "createDateGreaterThan":
-						this._CreateDateGreaterThan = ParseLong(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (SocialCommentOrderBy)StringEnum.Parse(typeof(SocialCommentOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._AssetIdEqual = ParseLong(node["assetIdEqual"].Value<string>());
 			}
-		}
-
-		public SocialCommentFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
-			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
-			    this._SocialPlatformEqual = (SocialPlatform)StringEnum.Parse(typeof(SocialPlatform), data.TryGetValueSafe<string>("socialPlatformEqual"));
-			    this._CreateDateGreaterThan = data.TryGetValueSafe<long>("createDateGreaterThan");
-			    this._OrderBy = (SocialCommentOrderBy)StringEnum.Parse(typeof(SocialCommentOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["assetTypeEqual"] != null)
+			{
+				this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetTypeEqual"].Value<string>());
+			}
+			if(node["socialPlatformEqual"] != null)
+			{
+				this._SocialPlatformEqual = (SocialPlatform)StringEnum.Parse(typeof(SocialPlatform), node["socialPlatformEqual"].Value<string>());
+			}
+			if(node["createDateGreaterThan"] != null)
+			{
+				this._CreateDateGreaterThan = ParseLong(node["createDateGreaterThan"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (SocialCommentOrderBy)StringEnum.Parse(typeof(SocialCommentOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -60,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionPrice(XmlElement node) : base(node)
+		public SubscriptionPrice(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["endDate"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "endDate":
-						this._EndDate = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._EndDate = ParseLong(node["endDate"].Value<string>());
 			}
-		}
-
-		public SubscriptionPrice(IDictionary<string,object> data) : base(data)
-		{
-			    this._EndDate = data.TryGetValueSafe<long>("endDate");
 		}
 		#endregion
 

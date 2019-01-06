@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public StreamType StreamType
 		{
 			get { return _StreamType; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StreamType");
 			}
 		}
+		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LicensedUrlEpgRequest(XmlElement node) : base(node)
+		public LicensedUrlEpgRequest(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["streamType"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "streamType":
-						this._StreamType = (StreamType)StringEnum.Parse(typeof(StreamType), propertyNode.InnerText);
-						continue;
-					case "startDate":
-						this._StartDate = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._StreamType = (StreamType)StringEnum.Parse(typeof(StreamType), node["streamType"].Value<string>());
 			}
-		}
-
-		public LicensedUrlEpgRequest(IDictionary<string,object> data) : base(data)
-		{
-			    this._StreamType = (StreamType)StringEnum.Parse(typeof(StreamType), data.TryGetValueSafe<string>("streamType"));
-			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			if(node["startDate"] != null)
+			{
+				this._StartDate = ParseLong(node["startDate"].Value<string>());
+			}
 		}
 		#endregion
 

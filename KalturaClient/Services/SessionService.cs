@@ -32,6 +32,7 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -72,13 +73,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<Session>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<Session>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -105,16 +102,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
-			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
-				return true;
-			return false;
-		}
-		public override object DeserializeObject(object result)
-		{
-			var resultStr = (string)result;
-			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
 				return true;
 			return false;
 		}
@@ -157,13 +147,9 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(XmlElement result)
+		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<LoginSession>(result);
-		}
-		public override object DeserializeObject(object result)
-		{
-			return ObjectFactory.Create<LoginSession>((IDictionary<string,object>)result);
 		}
 	}
 
