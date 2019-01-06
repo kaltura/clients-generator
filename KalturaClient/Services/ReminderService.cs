@@ -32,7 +32,6 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -73,9 +72,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Reminder>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Reminder>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -125,15 +128,22 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
 	}
 
-	public class ReminderDeleteWithTokenRequestBuilder : RequestBuilder<VoidResponse>
+	public class ReminderDeleteWithTokenRequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public const string ID = "id";
@@ -197,7 +207,11 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -249,9 +263,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Reminder>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Reminder>>((IDictionary<string,object>)result);
 		}
 	}
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ReceiptId
 		{
 			get { return _ReceiptId; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ReceiptId");
 			}
 		}
-		[JsonProperty]
 		public string PaymentGatewayName
 		{
 			get { return _PaymentGatewayName; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ExternalReceipt(JToken node) : base(node)
+		public ExternalReceipt(XmlElement node) : base(node)
 		{
-			if(node["receiptId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ReceiptId = node["receiptId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "receiptId":
+						this._ReceiptId = propertyNode.InnerText;
+						continue;
+					case "paymentGatewayName":
+						this._PaymentGatewayName = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["paymentGatewayName"] != null)
-			{
-				this._PaymentGatewayName = node["paymentGatewayName"].Value<string>();
-			}
+		}
+
+		public ExternalReceipt(IDictionary<string,object> data) : base(data)
+		{
+			    this._ReceiptId = data.TryGetValueSafe<string>("receiptId");
+			    this._PaymentGatewayName = data.TryGetValueSafe<string>("paymentGatewayName");
 		}
 		#endregion
 

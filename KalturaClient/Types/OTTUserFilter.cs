@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string UsernameEqual
 		{
 			get { return _UsernameEqual; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UsernameEqual");
 			}
 		}
-		[JsonProperty]
 		public string ExternalIdEqual
 		{
 			get { return _ExternalIdEqual; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdEqual");
 			}
 		}
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public string RoleIdsIn
 		{
 			get { return _RoleIdsIn; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("RoleIdsIn");
 			}
 		}
-		[JsonProperty]
 		public new OTTUserOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public OTTUserFilter(JToken node) : base(node)
+		public OTTUserFilter(XmlElement node) : base(node)
 		{
-			if(node["usernameEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._UsernameEqual = node["usernameEqual"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "usernameEqual":
+						this._UsernameEqual = propertyNode.InnerText;
+						continue;
+					case "externalIdEqual":
+						this._ExternalIdEqual = propertyNode.InnerText;
+						continue;
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "roleIdsIn":
+						this._RoleIdsIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (OTTUserOrderBy)StringEnum.Parse(typeof(OTTUserOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["externalIdEqual"] != null)
-			{
-				this._ExternalIdEqual = node["externalIdEqual"].Value<string>();
-			}
-			if(node["idIn"] != null)
-			{
-				this._IdIn = node["idIn"].Value<string>();
-			}
-			if(node["roleIdsIn"] != null)
-			{
-				this._RoleIdsIn = node["roleIdsIn"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (OTTUserOrderBy)StringEnum.Parse(typeof(OTTUserOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public OTTUserFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._UsernameEqual = data.TryGetValueSafe<string>("usernameEqual");
+			    this._ExternalIdEqual = data.TryGetValueSafe<string>("externalIdEqual");
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._RoleIdsIn = data.TryGetValueSafe<string>("roleIdsIn");
+			    this._OrderBy = (OTTUserOrderBy)StringEnum.Parse(typeof(OTTUserOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

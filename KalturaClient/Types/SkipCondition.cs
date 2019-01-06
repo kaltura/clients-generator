@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -51,7 +49,11 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SkipCondition(JToken node) : base(node)
+		public SkipCondition(XmlElement node) : base(node)
+		{
+		}
+
+		public SkipCondition(IDictionary<string,object> data) : base(data)
 		{
 		}
 		#endregion

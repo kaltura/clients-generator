@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string NameFormat
 		{
 			get { return _NameFormat; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SegmentAllValues(JToken node) : base(node)
+		public SegmentAllValues(XmlElement node) : base(node)
 		{
-			if(node["nameFormat"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._NameFormat = node["nameFormat"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "nameFormat":
+						this._NameFormat = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public SegmentAllValues(IDictionary<string,object> data) : base(data)
+		{
+			    this._NameFormat = data.TryGetValueSafe<string>("nameFormat");
 		}
 		#endregion
 

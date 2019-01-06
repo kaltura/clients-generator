@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
-		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
-		[JsonProperty]
 		public int UtcOffsetEqual
 		{
 			get { return _UtcOffsetEqual; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UtcOffsetEqual");
 			}
 		}
-		[JsonProperty]
 		public string FreeText
 		{
 			get { return _FreeText; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RelatedExternalFilter(JToken node) : base(node)
+		public RelatedExternalFilter(XmlElement node) : base(node)
 		{
-			if(node["idEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "idEqual":
+						this._IdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "typeIn":
+						this._TypeIn = propertyNode.InnerText;
+						continue;
+					case "utcOffsetEqual":
+						this._UtcOffsetEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "freeText":
+						this._FreeText = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["typeIn"] != null)
-			{
-				this._TypeIn = node["typeIn"].Value<string>();
-			}
-			if(node["utcOffsetEqual"] != null)
-			{
-				this._UtcOffsetEqual = ParseInt(node["utcOffsetEqual"].Value<string>());
-			}
-			if(node["freeText"] != null)
-			{
-				this._FreeText = node["freeText"].Value<string>();
-			}
+		}
+
+		public RelatedExternalFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._UtcOffsetEqual = data.TryGetValueSafe<int>("utcOffsetEqual");
+			    this._FreeText = data.TryGetValueSafe<string>("freeText");
 		}
 		#endregion
 

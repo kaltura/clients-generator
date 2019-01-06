@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,17 +50,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Type
 		{
 			get { return _Type; }
@@ -72,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
-		[JsonProperty]
 		public AdsPolicy AdsPolicy
 		{
 			get { return _AdsPolicy; }
@@ -82,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdsPolicy");
 			}
 		}
-		[JsonProperty]
 		public string AdsParam
 		{
 			get { return _AdsParam; }
@@ -99,24 +88,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AdsSource(JToken node) : base(node)
+		public AdsSource(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "type":
+						this._Type = propertyNode.InnerText;
+						continue;
+					case "adsPolicy":
+						this._AdsPolicy = (AdsPolicy)StringEnum.Parse(typeof(AdsPolicy), propertyNode.InnerText);
+						continue;
+					case "adsParam":
+						this._AdsParam = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["type"] != null)
-			{
-				this._Type = node["type"].Value<string>();
-			}
-			if(node["adsPolicy"] != null)
-			{
-				this._AdsPolicy = (AdsPolicy)StringEnum.Parse(typeof(AdsPolicy), node["adsPolicy"].Value<string>());
-			}
-			if(node["adsParam"] != null)
-			{
-				this._AdsParam = node["adsParam"].Value<string>();
-			}
+		}
+
+		public AdsSource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Type = data.TryGetValueSafe<string>("type");
+			    this._AdsPolicy = (AdsPolicy)StringEnum.Parse(typeof(AdsPolicy), data.TryGetValueSafe<string>("adsPolicy"));
+			    this._AdsParam = data.TryGetValueSafe<string>("adsParam");
 		}
 		#endregion
 

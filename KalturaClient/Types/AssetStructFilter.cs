@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public long MetaIdEqual
 		{
 			get { return _MetaIdEqual; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MetaIdEqual");
 			}
 		}
-		[JsonProperty]
 		public bool? IsProtectedEqual
 		{
 			get { return _IsProtectedEqual; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsProtectedEqual");
 			}
 		}
-		[JsonProperty]
 		public new AssetStructOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStructFilter(JToken node) : base(node)
+		public AssetStructFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "metaIdEqual":
+						this._MetaIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "isProtectedEqual":
+						this._IsProtectedEqual = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["metaIdEqual"] != null)
-			{
-				this._MetaIdEqual = ParseLong(node["metaIdEqual"].Value<string>());
-			}
-			if(node["isProtectedEqual"] != null)
-			{
-				this._IsProtectedEqual = ParseBool(node["isProtectedEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public AssetStructFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._MetaIdEqual = data.TryGetValueSafe<long>("metaIdEqual");
+			    this._IsProtectedEqual = data.TryGetValueSafe<bool>("isProtectedEqual");
+			    this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

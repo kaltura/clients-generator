@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string TagEqual
 		{
 			get { return _TagEqual; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TagEqual");
 			}
 		}
-		[JsonProperty]
 		public string TagStartsWith
 		{
 			get { return _TagStartsWith; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TagStartsWith");
 			}
 		}
-		[JsonProperty]
 		public int TypeEqual
 		{
 			get { return _TypeEqual; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeEqual");
 			}
 		}
-		[JsonProperty]
 		public string LanguageEqual
 		{
 			get { return _LanguageEqual; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("LanguageEqual");
 			}
 		}
-		[JsonProperty]
 		public new TagOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public TagFilter(JToken node) : base(node)
+		public TagFilter(XmlElement node) : base(node)
 		{
-			if(node["tagEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._TagEqual = node["tagEqual"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "tagEqual":
+						this._TagEqual = propertyNode.InnerText;
+						continue;
+					case "tagStartsWith":
+						this._TagStartsWith = propertyNode.InnerText;
+						continue;
+					case "typeEqual":
+						this._TypeEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "languageEqual":
+						this._LanguageEqual = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (TagOrderBy)StringEnum.Parse(typeof(TagOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["tagStartsWith"] != null)
-			{
-				this._TagStartsWith = node["tagStartsWith"].Value<string>();
-			}
-			if(node["typeEqual"] != null)
-			{
-				this._TypeEqual = ParseInt(node["typeEqual"].Value<string>());
-			}
-			if(node["languageEqual"] != null)
-			{
-				this._LanguageEqual = node["languageEqual"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (TagOrderBy)StringEnum.Parse(typeof(TagOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public TagFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TagEqual = data.TryGetValueSafe<string>("tagEqual");
+			    this._TagStartsWith = data.TryGetValueSafe<string>("tagStartsWith");
+			    this._TypeEqual = data.TryGetValueSafe<int>("typeEqual");
+			    this._LanguageEqual = data.TryGetValueSafe<string>("languageEqual");
+			    this._OrderBy = (TagOrderBy)StringEnum.Parse(typeof(TagOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

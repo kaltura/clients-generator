@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public IList<AdsSource> Sources
 		{
 			get { return _Sources; }
@@ -63,16 +60,31 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AdsContext(JToken node) : base(node)
+		public AdsContext(XmlElement node) : base(node)
 		{
-			if(node["sources"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Sources = new List<AdsSource>();
-				foreach(var arrayNode in node["sources"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Sources.Add(ObjectFactory.Create<AdsSource>(arrayNode));
+					case "sources":
+						this._Sources = new List<AdsSource>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Sources.Add(ObjectFactory.Create<AdsSource>(arrayNode));
+						}
+						continue;
 				}
 			}
+		}
+
+		public AdsContext(IDictionary<string,object> data) : base(data)
+		{
+			    this._Sources = new List<AdsSource>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("sources", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Sources.Add(ObjectFactory.Create<AdsSource>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

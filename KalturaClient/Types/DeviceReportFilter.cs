@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long LastAccessDateGreaterThanOrEqual
 		{
 			get { return _LastAccessDateGreaterThanOrEqual; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DeviceReportFilter(JToken node) : base(node)
+		public DeviceReportFilter(XmlElement node) : base(node)
 		{
-			if(node["lastAccessDateGreaterThanOrEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._LastAccessDateGreaterThanOrEqual = ParseLong(node["lastAccessDateGreaterThanOrEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "lastAccessDateGreaterThanOrEqual":
+						this._LastAccessDateGreaterThanOrEqual = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public DeviceReportFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._LastAccessDateGreaterThanOrEqual = data.TryGetValueSafe<long>("lastAccessDateGreaterThanOrEqual");
 		}
 		#endregion
 

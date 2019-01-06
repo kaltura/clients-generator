@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public bool? ExcludeWatched
 		{
 			get { return _ExcludeWatched; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SearchAssetListFilter(JToken node) : base(node)
+		public SearchAssetListFilter(XmlElement node) : base(node)
 		{
-			if(node["excludeWatched"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "excludeWatched":
+						this._ExcludeWatched = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public SearchAssetListFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExcludeWatched = data.TryGetValueSafe<bool>("excludeWatched");
 		}
 		#endregion
 

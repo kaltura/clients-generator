@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long DiscountModuleId
 		{
 			get { return _DiscountModuleId; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ApplyDiscountModuleAction(JToken node) : base(node)
+		public ApplyDiscountModuleAction(XmlElement node) : base(node)
 		{
-			if(node["discountModuleId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._DiscountModuleId = ParseLong(node["discountModuleId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "discountModuleId":
+						this._DiscountModuleId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public ApplyDiscountModuleAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._DiscountModuleId = data.TryGetValueSafe<long>("discountModuleId");
 		}
 		#endregion
 

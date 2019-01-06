@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,7 +54,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string SubscriptionIdIn
 		{
 			get { return _SubscriptionIdIn; }
@@ -66,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionIdIn");
 			}
 		}
-		[JsonProperty]
 		public string FileIdIn
 		{
 			get { return _FileIdIn; }
@@ -76,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("FileIdIn");
 			}
 		}
-		[JsonProperty]
 		public string CollectionIdIn
 		{
 			get { return _CollectionIdIn; }
@@ -86,7 +81,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CollectionIdIn");
 			}
 		}
-		[JsonProperty]
 		public bool? IsLowest
 		{
 			get { return _IsLowest; }
@@ -96,7 +90,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsLowest");
 			}
 		}
-		[JsonProperty]
 		public string CouponCodeEqual
 		{
 			get { return _CouponCodeEqual; }
@@ -106,7 +99,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CouponCodeEqual");
 			}
 		}
-		[JsonProperty]
 		public new ProductPriceOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -123,32 +115,42 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ProductPriceFilter(JToken node) : base(node)
+		public ProductPriceFilter(XmlElement node) : base(node)
 		{
-			if(node["subscriptionIdIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._SubscriptionIdIn = node["subscriptionIdIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "subscriptionIdIn":
+						this._SubscriptionIdIn = propertyNode.InnerText;
+						continue;
+					case "fileIdIn":
+						this._FileIdIn = propertyNode.InnerText;
+						continue;
+					case "collectionIdIn":
+						this._CollectionIdIn = propertyNode.InnerText;
+						continue;
+					case "isLowest":
+						this._IsLowest = ParseBool(propertyNode.InnerText);
+						continue;
+					case "couponCodeEqual":
+						this._CouponCodeEqual = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (ProductPriceOrderBy)StringEnum.Parse(typeof(ProductPriceOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["fileIdIn"] != null)
-			{
-				this._FileIdIn = node["fileIdIn"].Value<string>();
-			}
-			if(node["collectionIdIn"] != null)
-			{
-				this._CollectionIdIn = node["collectionIdIn"].Value<string>();
-			}
-			if(node["isLowest"] != null)
-			{
-				this._IsLowest = ParseBool(node["isLowest"].Value<string>());
-			}
-			if(node["couponCodeEqual"] != null)
-			{
-				this._CouponCodeEqual = node["couponCodeEqual"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ProductPriceOrderBy)StringEnum.Parse(typeof(ProductPriceOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public ProductPriceFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._SubscriptionIdIn = data.TryGetValueSafe<string>("subscriptionIdIn");
+			    this._FileIdIn = data.TryGetValueSafe<string>("fileIdIn");
+			    this._CollectionIdIn = data.TryGetValueSafe<string>("collectionIdIn");
+			    this._IsLowest = data.TryGetValueSafe<bool>("isLowest");
+			    this._CouponCodeEqual = data.TryGetValueSafe<string>("couponCodeEqual");
+			    this._OrderBy = (ProductPriceOrderBy)StringEnum.Parse(typeof(ProductPriceOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

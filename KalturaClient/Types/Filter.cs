@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string OrderBy
 		{
 			get { return _OrderBy; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Filter(JToken node) : base(node)
+		public Filter(XmlElement node) : base(node)
 		{
-			if(node["orderBy"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._OrderBy = node["orderBy"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "orderBy":
+						this._OrderBy = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public Filter(IDictionary<string,object> data) : base(data)
+		{
+			    this._OrderBy = data.TryGetValueSafe<string>("orderBy");
 		}
 		#endregion
 

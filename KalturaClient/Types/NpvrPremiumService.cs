@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,15 +44,9 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long QuotaInMinutes
 		{
 			get { return _QuotaInMinutes; }
-			private set 
-			{ 
-				_QuotaInMinutes = value;
-				OnPropertyChanged("QuotaInMinutes");
-			}
 		}
 		#endregion
 
@@ -63,12 +55,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public NpvrPremiumService(JToken node) : base(node)
+		public NpvrPremiumService(XmlElement node) : base(node)
 		{
-			if(node["quotaInMinutes"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._QuotaInMinutes = ParseLong(node["quotaInMinutes"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "quotaInMinutes":
+						this._QuotaInMinutes = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public NpvrPremiumService(IDictionary<string,object> data) : base(data)
+		{
+			    this._QuotaInMinutes = data.TryGetValueSafe<long>("quotaInMinutes");
 		}
 		#endregion
 

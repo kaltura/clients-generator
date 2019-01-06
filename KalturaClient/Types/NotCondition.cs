@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public bool? Not
 		{
 			get { return _Not; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public NotCondition(JToken node) : base(node)
+		public NotCondition(XmlElement node) : base(node)
 		{
-			if(node["not"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Not = ParseBool(node["not"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "not":
+						this._Not = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public NotCondition(IDictionary<string,object> data) : base(data)
+		{
+			    this._Not = data.TryGetValueSafe<bool>("not");
 		}
 		#endregion
 

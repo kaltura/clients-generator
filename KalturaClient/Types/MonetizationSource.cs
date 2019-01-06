@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public MonetizationType Type
 		{
 			get { return _Type; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
-		[JsonProperty]
 		public MathemticalOperatorType Operator
 		{
 			get { return _Operator; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Operator");
 			}
 		}
-		[JsonProperty]
 		public int Days
 		{
 			get { return _Days; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MonetizationSource(JToken node) : base(node)
+		public MonetizationSource(XmlElement node) : base(node)
 		{
-			if(node["type"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), node["type"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "type":
+						this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), propertyNode.InnerText);
+						continue;
+					case "operator":
+						this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), propertyNode.InnerText);
+						continue;
+					case "days":
+						this._Days = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["operator"] != null)
-			{
-				this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), node["operator"].Value<string>());
-			}
-			if(node["days"] != null)
-			{
-				this._Days = ParseInt(node["days"].Value<string>());
-			}
+		}
+
+		public MonetizationSource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Type = (MonetizationType)StringEnum.Parse(typeof(MonetizationType), data.TryGetValueSafe<string>("type"));
+			    this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), data.TryGetValueSafe<string>("operator"));
+			    this._Days = data.TryGetValueSafe<int>("days");
 		}
 		#endregion
 

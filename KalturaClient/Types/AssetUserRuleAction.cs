@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -51,7 +49,11 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetUserRuleAction(JToken node) : base(node)
+		public AssetUserRuleAction(XmlElement node) : base(node)
+		{
+		}
+
+		public AssetUserRuleAction(IDictionary<string,object> data) : base(data)
 		{
 		}
 		#endregion

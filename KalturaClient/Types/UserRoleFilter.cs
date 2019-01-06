@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public bool? CurrentUserRoleIdsContains
 		{
 			get { return _CurrentUserRoleIdsContains; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CurrentUserRoleIdsContains");
 			}
 		}
-		[JsonProperty]
 		public new UserRoleOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserRoleFilter(JToken node) : base(node)
+		public UserRoleFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "currentUserRoleIdsContains":
+						this._CurrentUserRoleIdsContains = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (UserRoleOrderBy)StringEnum.Parse(typeof(UserRoleOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["currentUserRoleIdsContains"] != null)
-			{
-				this._CurrentUserRoleIdsContains = ParseBool(node["currentUserRoleIdsContains"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (UserRoleOrderBy)StringEnum.Parse(typeof(UserRoleOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public UserRoleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._CurrentUserRoleIdsContains = data.TryGetValueSafe<bool>("currentUserRoleIdsContains");
+			    this._OrderBy = (UserRoleOrderBy)StringEnum.Parse(typeof(UserRoleOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,7 +56,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Ratio
 		{
 			get { return _Ratio; }
@@ -68,7 +65,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Ratio");
 			}
 		}
-		[JsonProperty]
 		public int Width
 		{
 			get { return _Width; }
@@ -78,7 +74,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Width");
 			}
 		}
-		[JsonProperty]
 		public int Height
 		{
 			get { return _Height; }
@@ -88,7 +83,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Height");
 			}
 		}
-		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
@@ -98,7 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Url");
 			}
 		}
-		[JsonProperty]
 		public int Version
 		{
 			get { return _Version; }
@@ -108,17 +101,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Version");
 			}
 		}
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
@@ -135,36 +121,46 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MediaImage(JToken node) : base(node)
+		public MediaImage(XmlElement node) : base(node)
 		{
-			if(node["ratio"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Ratio = node["ratio"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "ratio":
+						this._Ratio = propertyNode.InnerText;
+						continue;
+					case "width":
+						this._Width = ParseInt(propertyNode.InnerText);
+						continue;
+					case "height":
+						this._Height = ParseInt(propertyNode.InnerText);
+						continue;
+					case "url":
+						this._Url = propertyNode.InnerText;
+						continue;
+					case "version":
+						this._Version = ParseInt(propertyNode.InnerText);
+						continue;
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "isDefault":
+						this._IsDefault = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["width"] != null)
-			{
-				this._Width = ParseInt(node["width"].Value<string>());
-			}
-			if(node["height"] != null)
-			{
-				this._Height = ParseInt(node["height"].Value<string>());
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
-			if(node["version"] != null)
-			{
-				this._Version = ParseInt(node["version"].Value<string>());
-			}
-			if(node["id"] != null)
-			{
-				this._Id = node["id"].Value<string>();
-			}
-			if(node["isDefault"] != null)
-			{
-				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
-			}
+		}
+
+		public MediaImage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Ratio = data.TryGetValueSafe<string>("ratio");
+			    this._Width = data.TryGetValueSafe<int>("width");
+			    this._Height = data.TryGetValueSafe<int>("height");
+			    this._Url = data.TryGetValueSafe<string>("url");
+			    this._Version = data.TryGetValueSafe<int>("version");
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
 		}
 		#endregion
 

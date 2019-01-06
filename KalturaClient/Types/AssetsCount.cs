@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Field
 		{
 			get { return _Field; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Field");
 			}
 		}
-		[JsonProperty]
 		public IList<AssetCount> Objects
 		{
 			get { return _Objects; }
@@ -75,20 +71,35 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetsCount(JToken node) : base(node)
+		public AssetsCount(XmlElement node) : base(node)
 		{
-			if(node["field"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Field = node["field"].Value<string>();
-			}
-			if(node["objects"] != null)
-			{
-				this._Objects = new List<AssetCount>();
-				foreach(var arrayNode in node["objects"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Objects.Add(ObjectFactory.Create<AssetCount>(arrayNode));
+					case "field":
+						this._Field = propertyNode.InnerText;
+						continue;
+					case "objects":
+						this._Objects = new List<AssetCount>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Objects.Add(ObjectFactory.Create<AssetCount>(arrayNode));
+						}
+						continue;
 				}
 			}
+		}
+
+		public AssetsCount(IDictionary<string,object> data) : base(data)
+		{
+			    this._Field = data.TryGetValueSafe<string>("field");
+			    this._Objects = new List<AssetCount>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("objects", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Objects.Add(ObjectFactory.Create<AssetCount>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

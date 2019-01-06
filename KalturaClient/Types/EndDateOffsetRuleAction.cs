@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -51,7 +49,11 @@ namespace Kaltura.Types
 		{
 		}
 
-		public EndDateOffsetRuleAction(JToken node) : base(node)
+		public EndDateOffsetRuleAction(XmlElement node) : base(node)
+		{
+		}
+
+		public EndDateOffsetRuleAction(IDictionary<string,object> data) : base(data)
 		{
 		}
 		#endregion

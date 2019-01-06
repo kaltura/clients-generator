@@ -32,7 +32,6 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -73,9 +72,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<Language>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<Language>>((IDictionary<string,object>)result);
 		}
 	}
 

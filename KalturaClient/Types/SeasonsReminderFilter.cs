@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string SeriesIdEqual
 		{
 			get { return _SeriesIdEqual; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeriesIdEqual");
 			}
 		}
-		[JsonProperty]
 		public string SeasonNumberIn
 		{
 			get { return _SeasonNumberIn; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeasonNumberIn");
 			}
 		}
-		[JsonProperty]
 		public long EpgChannelIdEqual
 		{
 			get { return _EpgChannelIdEqual; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SeasonsReminderFilter(JToken node) : base(node)
+		public SeasonsReminderFilter(XmlElement node) : base(node)
 		{
-			if(node["seriesIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._SeriesIdEqual = node["seriesIdEqual"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "seriesIdEqual":
+						this._SeriesIdEqual = propertyNode.InnerText;
+						continue;
+					case "seasonNumberIn":
+						this._SeasonNumberIn = propertyNode.InnerText;
+						continue;
+					case "epgChannelIdEqual":
+						this._EpgChannelIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["seasonNumberIn"] != null)
-			{
-				this._SeasonNumberIn = node["seasonNumberIn"].Value<string>();
-			}
-			if(node["epgChannelIdEqual"] != null)
-			{
-				this._EpgChannelIdEqual = ParseLong(node["epgChannelIdEqual"].Value<string>());
-			}
+		}
+
+		public SeasonsReminderFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._SeriesIdEqual = data.TryGetValueSafe<string>("seriesIdEqual");
+			    this._SeasonNumberIn = data.TryGetValueSafe<string>("seasonNumberIn");
+			    this._EpgChannelIdEqual = data.TryGetValueSafe<long>("epgChannelIdEqual");
 		}
 		#endregion
 

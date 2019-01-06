@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int PageSize
 		{
 			get { return _PageSize; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PageSize");
 			}
 		}
-		[JsonProperty]
 		public int PageIndex
 		{
 			get { return _PageIndex; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FilterPager(JToken node) : base(node)
+		public FilterPager(XmlElement node) : base(node)
 		{
-			if(node["pageSize"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._PageSize = ParseInt(node["pageSize"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "pageSize":
+						this._PageSize = ParseInt(propertyNode.InnerText);
+						continue;
+					case "pageIndex":
+						this._PageIndex = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["pageIndex"] != null)
-			{
-				this._PageIndex = ParseInt(node["pageIndex"].Value<string>());
-			}
+		}
+
+		public FilterPager(IDictionary<string,object> data) : base(data)
+		{
+			    this._PageSize = data.TryGetValueSafe<int>("pageSize");
+			    this._PageIndex = data.TryGetValueSafe<int>("pageIndex");
 		}
 		#endregion
 

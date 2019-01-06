@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AssetIdEqual
 		{
 			get { return _AssetIdEqual; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdEqual");
 			}
 		}
-		[JsonProperty]
 		public AssetType AssetTypeEqual
 		{
 			get { return _AssetTypeEqual; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypeEqual");
 			}
 		}
-		[JsonProperty]
 		public string ActionTypeIn
 		{
 			get { return _ActionTypeIn; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ActionTypeIn");
 			}
 		}
-		[JsonProperty]
 		public new SocialFriendActivityOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialFriendActivityFilter(JToken node) : base(node)
+		public SocialFriendActivityFilter(XmlElement node) : base(node)
 		{
-			if(node["assetIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetIdEqual = ParseLong(node["assetIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetIdEqual":
+						this._AssetIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "assetTypeEqual":
+						this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
+						continue;
+					case "actionTypeIn":
+						this._ActionTypeIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (SocialFriendActivityOrderBy)StringEnum.Parse(typeof(SocialFriendActivityOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["assetTypeEqual"] != null)
-			{
-				this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetTypeEqual"].Value<string>());
-			}
-			if(node["actionTypeIn"] != null)
-			{
-				this._ActionTypeIn = node["actionTypeIn"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (SocialFriendActivityOrderBy)StringEnum.Parse(typeof(SocialFriendActivityOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public SocialFriendActivityFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._ActionTypeIn = data.TryGetValueSafe<string>("actionTypeIn");
+			    this._OrderBy = (SocialFriendActivityOrderBy)StringEnum.Parse(typeof(SocialFriendActivityOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

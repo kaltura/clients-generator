@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public PurchaseSettingsType Permission
 		{
 			get { return _Permission; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PurchaseSettings(JToken node) : base(node)
+		public PurchaseSettings(XmlElement node) : base(node)
 		{
-			if(node["permission"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Permission = (PurchaseSettingsType)StringEnum.Parse(typeof(PurchaseSettingsType), node["permission"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "permission":
+						this._Permission = (PurchaseSettingsType)StringEnum.Parse(typeof(PurchaseSettingsType), propertyNode.InnerText);
+						continue;
+				}
 			}
+		}
+
+		public PurchaseSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._Permission = (PurchaseSettingsType)StringEnum.Parse(typeof(PurchaseSettingsType), data.TryGetValueSafe<string>("permission"));
 		}
 		#endregion
 

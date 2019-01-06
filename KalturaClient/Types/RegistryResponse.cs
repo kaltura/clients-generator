@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AnnouncementId
 		{
 			get { return _AnnouncementId; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AnnouncementId");
 			}
 		}
-		[JsonProperty]
 		public string Key
 		{
 			get { return _Key; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Key");
 			}
 		}
-		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RegistryResponse(JToken node) : base(node)
+		public RegistryResponse(XmlElement node) : base(node)
 		{
-			if(node["announcementId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AnnouncementId = ParseLong(node["announcementId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "announcementId":
+						this._AnnouncementId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "key":
+						this._Key = propertyNode.InnerText;
+						continue;
+					case "url":
+						this._Url = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["key"] != null)
-			{
-				this._Key = node["key"].Value<string>();
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
+		}
+
+		public RegistryResponse(IDictionary<string,object> data) : base(data)
+		{
+			    this._AnnouncementId = data.TryGetValueSafe<long>("announcementId");
+			    this._Key = data.TryGetValueSafe<string>("key");
+			    this._Url = data.TryGetValueSafe<string>("url");
 		}
 		#endregion
 

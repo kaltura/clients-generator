@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int PaymentGatewayIdEqual
 		{
 			get { return _PaymentGatewayIdEqual; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayIdEqual");
 			}
 		}
-		[JsonProperty]
 		public new PaymentMethodProfileOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PaymentMethodProfileFilter(JToken node) : base(node)
+		public PaymentMethodProfileFilter(XmlElement node) : base(node)
 		{
-			if(node["paymentGatewayIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._PaymentGatewayIdEqual = ParseInt(node["paymentGatewayIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "paymentGatewayIdEqual":
+						this._PaymentGatewayIdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public PaymentMethodProfileFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PaymentGatewayIdEqual = data.TryGetValueSafe<int>("paymentGatewayIdEqual");
+			    this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

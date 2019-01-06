@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ExternalIdIn
 		{
 			get { return _ExternalIdIn; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdIn");
 			}
 		}
-		[JsonProperty]
 		public new RegionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RegionFilter(JToken node) : base(node)
+		public RegionFilter(XmlElement node) : base(node)
 		{
-			if(node["externalIdIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ExternalIdIn = node["externalIdIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "externalIdIn":
+						this._ExternalIdIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public RegionFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalIdIn = data.TryGetValueSafe<string>("externalIdIn");
+			    this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

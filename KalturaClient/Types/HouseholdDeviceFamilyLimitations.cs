@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Frequency
 		{
 			get { return _Frequency; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Frequency");
 			}
 		}
-		[JsonProperty]
 		public int DeviceLimit
 		{
 			get { return _DeviceLimit; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DeviceLimit");
 			}
 		}
-		[JsonProperty]
 		public int ConcurrentLimit
 		{
 			get { return _ConcurrentLimit; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdDeviceFamilyLimitations(JToken node) : base(node)
+		public HouseholdDeviceFamilyLimitations(XmlElement node) : base(node)
 		{
-			if(node["frequency"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Frequency = ParseInt(node["frequency"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "frequency":
+						this._Frequency = ParseInt(propertyNode.InnerText);
+						continue;
+					case "deviceLimit":
+						this._DeviceLimit = ParseInt(propertyNode.InnerText);
+						continue;
+					case "concurrentLimit":
+						this._ConcurrentLimit = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["deviceLimit"] != null)
-			{
-				this._DeviceLimit = ParseInt(node["deviceLimit"].Value<string>());
-			}
-			if(node["concurrentLimit"] != null)
-			{
-				this._ConcurrentLimit = ParseInt(node["concurrentLimit"].Value<string>());
-			}
+		}
+
+		public HouseholdDeviceFamilyLimitations(IDictionary<string,object> data) : base(data)
+		{
+			    this._Frequency = data.TryGetValueSafe<int>("frequency");
+			    this._DeviceLimit = data.TryGetValueSafe<int>("deviceLimit");
+			    this._ConcurrentLimit = data.TryGetValueSafe<int>("concurrentLimit");
 		}
 		#endregion
 

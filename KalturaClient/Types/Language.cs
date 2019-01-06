@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string SystemName
 		{
 			get { return _SystemName; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SystemName");
 			}
 		}
-		[JsonProperty]
 		public string Code
 		{
 			get { return _Code; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Code");
 			}
 		}
-		[JsonProperty]
 		public string Direction
 		{
 			get { return _Direction; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Direction");
 			}
 		}
-		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Language(JToken node) : base(node)
+		public Language(XmlElement node) : base(node)
 		{
-			if(node["name"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Name = node["name"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "systemName":
+						this._SystemName = propertyNode.InnerText;
+						continue;
+					case "code":
+						this._Code = propertyNode.InnerText;
+						continue;
+					case "direction":
+						this._Direction = propertyNode.InnerText;
+						continue;
+					case "isDefault":
+						this._IsDefault = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["systemName"] != null)
-			{
-				this._SystemName = node["systemName"].Value<string>();
-			}
-			if(node["code"] != null)
-			{
-				this._Code = node["code"].Value<string>();
-			}
-			if(node["direction"] != null)
-			{
-				this._Direction = node["direction"].Value<string>();
-			}
-			if(node["isDefault"] != null)
-			{
-				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
-			}
+		}
+
+		public Language(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._Code = data.TryGetValueSafe<string>("code");
+			    this._Direction = data.TryGetValueSafe<string>("direction");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
 		}
 		#endregion
 

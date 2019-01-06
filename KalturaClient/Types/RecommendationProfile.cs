@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,17 +56,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -78,7 +69,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -88,7 +78,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsActive");
 			}
 		}
-		[JsonProperty]
 		public string AdapterUrl
 		{
 			get { return _AdapterUrl; }
@@ -98,7 +87,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterUrl");
 			}
 		}
-		[JsonProperty]
 		public IDictionary<string, StringValue> RecommendationEngineSettings
 		{
 			get { return _RecommendationEngineSettings; }
@@ -108,7 +96,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecommendationEngineSettings");
 			}
 		}
-		[JsonProperty]
 		public string ExternalIdentifier
 		{
 			get { return _ExternalIdentifier; }
@@ -118,15 +105,9 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdentifier");
 			}
 		}
-		[JsonProperty]
 		public string SharedSecret
 		{
 			get { return _SharedSecret; }
-			private set 
-			{ 
-				_SharedSecret = value;
-				OnPropertyChanged("SharedSecret");
-			}
 		}
 		#endregion
 
@@ -135,44 +116,58 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RecommendationProfile(JToken node) : base(node)
+		public RecommendationProfile(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["isActive"] != null)
-			{
-				this._IsActive = ParseBool(node["isActive"].Value<string>());
-			}
-			if(node["adapterUrl"] != null)
-			{
-				this._AdapterUrl = node["adapterUrl"].Value<string>();
-			}
-			if(node["recommendationEngineSettings"] != null)
-			{
+				switch (propertyNode.Name)
 				{
-					string key;
-					this._RecommendationEngineSettings = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["recommendationEngineSettings"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._RecommendationEngineSettings[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "isActive":
+						this._IsActive = ParseBool(propertyNode.InnerText);
+						continue;
+					case "adapterUrl":
+						this._AdapterUrl = propertyNode.InnerText;
+						continue;
+					case "recommendationEngineSettings":
+						{
+							string key;
+							this._RecommendationEngineSettings = new Dictionary<string, StringValue>();
+							foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+							{
+								key = arrayNode["itemKey"].InnerText;;
+								this._RecommendationEngineSettings[key] = ObjectFactory.Create<StringValue>(arrayNode);
+							}
+						}
+						continue;
+					case "externalIdentifier":
+						this._ExternalIdentifier = propertyNode.InnerText;
+						continue;
+					case "sharedSecret":
+						this._SharedSecret = propertyNode.InnerText;
+						continue;
 				}
 			}
-			if(node["externalIdentifier"] != null)
-			{
-				this._ExternalIdentifier = node["externalIdentifier"].Value<string>();
-			}
-			if(node["sharedSecret"] != null)
-			{
-				this._SharedSecret = node["sharedSecret"].Value<string>();
-			}
+		}
+
+		public RecommendationProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._RecommendationEngineSettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("recommendationEngineSettings", new Dictionary<string, object>()))
+			    {
+			        this._RecommendationEngineSettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
 		}
 		#endregion
 

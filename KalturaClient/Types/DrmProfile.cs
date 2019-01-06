@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,17 +56,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -78,7 +69,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -88,7 +78,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsActive");
 			}
 		}
-		[JsonProperty]
 		public string AdapterUrl
 		{
 			get { return _AdapterUrl; }
@@ -98,7 +87,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterUrl");
 			}
 		}
-		[JsonProperty]
 		public string Settings
 		{
 			get { return _Settings; }
@@ -108,7 +96,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Settings");
 			}
 		}
-		[JsonProperty]
 		public string SystemName
 		{
 			get { return _SystemName; }
@@ -118,15 +105,9 @@ namespace Kaltura.Types
 				OnPropertyChanged("SystemName");
 			}
 		}
-		[JsonProperty]
 		public string SharedSecret
 		{
 			get { return _SharedSecret; }
-			private set 
-			{ 
-				_SharedSecret = value;
-				OnPropertyChanged("SharedSecret");
-			}
 		}
 		#endregion
 
@@ -135,36 +116,46 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DrmProfile(JToken node) : base(node)
+		public DrmProfile(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "isActive":
+						this._IsActive = ParseBool(propertyNode.InnerText);
+						continue;
+					case "adapterUrl":
+						this._AdapterUrl = propertyNode.InnerText;
+						continue;
+					case "settings":
+						this._Settings = propertyNode.InnerText;
+						continue;
+					case "systemName":
+						this._SystemName = propertyNode.InnerText;
+						continue;
+					case "sharedSecret":
+						this._SharedSecret = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["isActive"] != null)
-			{
-				this._IsActive = ParseBool(node["isActive"].Value<string>());
-			}
-			if(node["adapterUrl"] != null)
-			{
-				this._AdapterUrl = node["adapterUrl"].Value<string>();
-			}
-			if(node["settings"] != null)
-			{
-				this._Settings = node["settings"].Value<string>();
-			}
-			if(node["systemName"] != null)
-			{
-				this._SystemName = node["systemName"].Value<string>();
-			}
-			if(node["sharedSecret"] != null)
-			{
-				this._SharedSecret = node["sharedSecret"].Value<string>();
-			}
+		}
+
+		public DrmProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._Settings = data.TryGetValueSafe<string>("settings");
+			    this._SystemName = data.TryGetValueSafe<string>("systemName");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
 		}
 		#endregion
 

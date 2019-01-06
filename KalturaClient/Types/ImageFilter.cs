@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public long ImageObjectIdEqual
 		{
 			get { return _ImageObjectIdEqual; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageObjectIdEqual");
 			}
 		}
-		[JsonProperty]
 		public ImageObjectType ImageObjectTypeEqual
 		{
 			get { return _ImageObjectTypeEqual; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageObjectTypeEqual");
 			}
 		}
-		[JsonProperty]
 		public bool? IsDefaultEqual
 		{
 			get { return _IsDefaultEqual; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsDefaultEqual");
 			}
 		}
-		[JsonProperty]
 		public new ImageOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ImageFilter(JToken node) : base(node)
+		public ImageFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "imageObjectIdEqual":
+						this._ImageObjectIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "imageObjectTypeEqual":
+						this._ImageObjectTypeEqual = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), propertyNode.InnerText);
+						continue;
+					case "isDefaultEqual":
+						this._IsDefaultEqual = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (ImageOrderBy)StringEnum.Parse(typeof(ImageOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["imageObjectIdEqual"] != null)
-			{
-				this._ImageObjectIdEqual = ParseLong(node["imageObjectIdEqual"].Value<string>());
-			}
-			if(node["imageObjectTypeEqual"] != null)
-			{
-				this._ImageObjectTypeEqual = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), node["imageObjectTypeEqual"].Value<string>());
-			}
-			if(node["isDefaultEqual"] != null)
-			{
-				this._IsDefaultEqual = ParseBool(node["isDefaultEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ImageOrderBy)StringEnum.Parse(typeof(ImageOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public ImageFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._ImageObjectIdEqual = data.TryGetValueSafe<long>("imageObjectIdEqual");
+			    this._ImageObjectTypeEqual = (ImageObjectType)StringEnum.Parse(typeof(ImageObjectType), data.TryGetValueSafe<string>("imageObjectTypeEqual"));
+			    this._IsDefaultEqual = data.TryGetValueSafe<bool>("isDefaultEqual");
+			    this._OrderBy = (ImageOrderBy)StringEnum.Parse(typeof(ImageOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

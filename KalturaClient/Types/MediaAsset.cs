@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,7 +54,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ExternalIds
 		{
 			get { return _ExternalIds; }
@@ -66,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIds");
 			}
 		}
-		[JsonProperty]
 		public string EntryId
 		{
 			get { return _EntryId; }
@@ -76,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EntryId");
 			}
 		}
-		[JsonProperty]
 		public int DeviceRuleId
 		{
 			get { return _DeviceRuleId; }
@@ -86,7 +81,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DeviceRuleId");
 			}
 		}
-		[JsonProperty]
 		public int GeoBlockRuleId
 		{
 			get { return _GeoBlockRuleId; }
@@ -96,7 +90,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("GeoBlockRuleId");
 			}
 		}
-		[JsonProperty]
 		public bool? Status
 		{
 			get { return _Status; }
@@ -106,7 +99,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Status");
 			}
 		}
-		[JsonProperty]
 		public AssetInheritancePolicy InheritancePolicy
 		{
 			get { return _InheritancePolicy; }
@@ -123,32 +115,42 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MediaAsset(JToken node) : base(node)
+		public MediaAsset(XmlElement node) : base(node)
 		{
-			if(node["externalIds"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ExternalIds = node["externalIds"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "externalIds":
+						this._ExternalIds = propertyNode.InnerText;
+						continue;
+					case "entryId":
+						this._EntryId = propertyNode.InnerText;
+						continue;
+					case "deviceRuleId":
+						this._DeviceRuleId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "geoBlockRuleId":
+						this._GeoBlockRuleId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "status":
+						this._Status = ParseBool(propertyNode.InnerText);
+						continue;
+					case "inheritancePolicy":
+						this._InheritancePolicy = (AssetInheritancePolicy)StringEnum.Parse(typeof(AssetInheritancePolicy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["entryId"] != null)
-			{
-				this._EntryId = node["entryId"].Value<string>();
-			}
-			if(node["deviceRuleId"] != null)
-			{
-				this._DeviceRuleId = ParseInt(node["deviceRuleId"].Value<string>());
-			}
-			if(node["geoBlockRuleId"] != null)
-			{
-				this._GeoBlockRuleId = ParseInt(node["geoBlockRuleId"].Value<string>());
-			}
-			if(node["status"] != null)
-			{
-				this._Status = ParseBool(node["status"].Value<string>());
-			}
-			if(node["inheritancePolicy"] != null)
-			{
-				this._InheritancePolicy = (AssetInheritancePolicy)StringEnum.Parse(typeof(AssetInheritancePolicy), node["inheritancePolicy"].Value<string>());
-			}
+		}
+
+		public MediaAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._ExternalIds = data.TryGetValueSafe<string>("externalIds");
+			    this._EntryId = data.TryGetValueSafe<string>("entryId");
+			    this._DeviceRuleId = data.TryGetValueSafe<int>("deviceRuleId");
+			    this._GeoBlockRuleId = data.TryGetValueSafe<int>("geoBlockRuleId");
+			    this._Status = data.TryGetValueSafe<bool>("status");
+			    this._InheritancePolicy = (AssetInheritancePolicy)StringEnum.Parse(typeof(AssetInheritancePolicy), data.TryGetValueSafe<string>("inheritancePolicy"));
 		}
 		#endregion
 

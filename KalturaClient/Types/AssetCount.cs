@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Value");
 			}
 		}
-		[JsonProperty]
 		public int Count
 		{
 			get { return _Count; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Count");
 			}
 		}
-		[JsonProperty]
 		public IList<AssetsCount> Subs
 		{
 			get { return _Subs; }
@@ -87,24 +82,39 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetCount(JToken node) : base(node)
+		public AssetCount(XmlElement node) : base(node)
 		{
-			if(node["value"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Value = node["value"].Value<string>();
-			}
-			if(node["count"] != null)
-			{
-				this._Count = ParseInt(node["count"].Value<string>());
-			}
-			if(node["subs"] != null)
-			{
-				this._Subs = new List<AssetsCount>();
-				foreach(var arrayNode in node["subs"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Subs.Add(ObjectFactory.Create<AssetsCount>(arrayNode));
+					case "value":
+						this._Value = propertyNode.InnerText;
+						continue;
+					case "count":
+						this._Count = ParseInt(propertyNode.InnerText);
+						continue;
+					case "subs":
+						this._Subs = new List<AssetsCount>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Subs.Add(ObjectFactory.Create<AssetsCount>(arrayNode));
+						}
+						continue;
 				}
 			}
+		}
+
+		public AssetCount(IDictionary<string,object> data) : base(data)
+		{
+			    this._Value = data.TryGetValueSafe<string>("value");
+			    this._Count = data.TryGetValueSafe<int>("count");
+			    this._Subs = new List<AssetsCount>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("subs", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Subs.Add(ObjectFactory.Create<AssetsCount>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public IList<Condition> Conditions
 		{
 			get { return _Conditions; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Conditions");
 			}
 		}
-		[JsonProperty]
 		public IList<AssetRuleAction> Actions
 		{
 			get { return _Actions; }
@@ -75,24 +71,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetRule(JToken node) : base(node)
+		public AssetRule(XmlElement node) : base(node)
 		{
-			if(node["conditions"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Conditions = new List<Condition>();
-				foreach(var arrayNode in node["conditions"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+					case "conditions":
+						this._Conditions = new List<Condition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+						}
+						continue;
+					case "actions":
+						this._Actions = new List<AssetRuleAction>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Actions.Add(ObjectFactory.Create<AssetRuleAction>(arrayNode));
+						}
+						continue;
 				}
 			}
-			if(node["actions"] != null)
-			{
-				this._Actions = new List<AssetRuleAction>();
-				foreach(var arrayNode in node["actions"].Children())
-				{
-					this._Actions.Add(ObjectFactory.Create<AssetRuleAction>(arrayNode));
-				}
-			}
+		}
+
+		public AssetRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Conditions = new List<Condition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<Condition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<AssetRuleAction>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<AssetRuleAction>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 
