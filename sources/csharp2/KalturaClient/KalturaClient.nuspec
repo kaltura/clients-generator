@@ -9,7 +9,7 @@
     <iconUrl>https://avatars2.githubusercontent.com/u/319096?s=200&amp;v=4</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Kaltura API Client Library</description>
-    <copyright>Copyright (C) 2006-2018  Kaltura Inc.</copyright>
+    <copyright>Copyright (C) 2006-2019  Kaltura Inc.</copyright>
     <tags>kaltura ott rest api client</tags>
     <repository type="git" url="https://github.com/kaltura/KalturaGeneratedAPIClientsCsharp.git" />
   </metadata>

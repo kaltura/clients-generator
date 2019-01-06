@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Kaltura")]
 [assembly: AssemblyProduct("KalturaClient")]
-[assembly: AssemblyCopyright("Copyright (C) 2006-2018  Kaltura Inc.")]
+[assembly: AssemblyCopyright("Copyright (C) 2006-2019  Kaltura Inc.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
