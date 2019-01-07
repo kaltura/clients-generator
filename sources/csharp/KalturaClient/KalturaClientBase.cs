@@ -513,7 +513,7 @@ namespace Kaltura
             byte[] buffer;
             buffer = System.Text.Encoding.UTF8.GetBytes(json);
             request.ContentType = "application/json";
-            request.ContentLength = json.Length;
+            request.ContentLength = System.Text.Encoding.UTF8.GetBytes(json).Length;
             Stream requestStream = request.GetRequestStream();
             requestStream.Write(buffer, 0, buffer.Length);
             requestStream.Close();
