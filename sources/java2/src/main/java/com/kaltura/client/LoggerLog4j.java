@@ -27,40 +27,79 @@
 // ===================================================================================================
 package com.kaltura.client;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
 
-public class LoggerLog4j extends Logger implements ILogger
+public class LoggerLog4j implements ILogger
 {
-	protected Logger logger;
-	static protected LoggerFactory loggerFactory = new KalturaLoggerFactory();
-	
-	static class KalturaLoggerFactory implements LoggerFactory {
-		@Override
-		public Logger makeNewLoggerInstance(String name) {
-			return new LoggerLog4j(name);
-		}
-	}
-	
-	// Creation & retrieval methods:
-	public static ILogger get(String name)
-	{
-		Logger logger = LogManager.getLogger(name, loggerFactory);
-		if(logger instanceof Logger){
-			return (LoggerLog4j) logger;
-		}
+	private org.apache.logging.log4j.Logger logger;
 		
-		return null;
-	}
-	
-	protected LoggerLog4j(String name)
+	public LoggerLog4j(String name)
 	{
-		super(name);
+		logger = LogManager.getLogger(name);
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return this.isInfoEnabled();
+		return logger.isInfoEnabled();
+	}
+
+	@Override
+	public void trace(Object message) {
+		logger.trace(message);
+	}
+
+	@Override
+	public void debug(Object message) {
+		logger.debug(message);		
+	}
+
+	@Override
+	public void info(Object message) {
+		logger.info(message);
+	}
+
+	@Override
+	public void warn(Object message) {
+		logger.warn(message);
+	}
+
+	@Override
+	public void error(Object message) {
+		logger.error(message);
+	}
+
+	@Override
+	public void fatal(Object message) {
+		logger.fatal(message);
+	}
+
+	@Override
+	public void trace(Object message, Throwable t) {
+		logger.trace(message, t);
+	}
+
+	@Override
+	public void debug(Object message, Throwable t) {
+		logger.debug(message, t);
+	}
+
+	@Override
+	public void info(Object message, Throwable t) {
+		logger.info(message, t);
+	}
+
+	@Override
+	public void warn(Object message, Throwable t) {
+		logger.warn(message, t);
+	}
+
+	@Override
+	public void error(Object message, Throwable t) {
+		logger.error(message, t);
+	}
+
+	@Override
+	public void fatal(Object message, Throwable t) {
+		logger.fatal(message, t);
 	}
 }

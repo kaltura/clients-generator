@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using Kaltura.Types;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Request
 {
@@ -14,31 +16,46 @@ namespace Kaltura.Request
     {
         protected virtual T ParseResponseString<T>(string response)
         {
-            var responseObj = ClientBase.serializer.DeserializeObject(response);
-            var ex = TryGetAPIError(responseObj);
-            if (ex != null) { throw ex; }
+            T responseObject = default(T);
+            var jResult = JToken.Parse(response);
 
-            var retVal = (T) DeserializeObject(responseObj);
-            return retVal;
+            // Validate 
+            if (jResult.Type == JTokenType.Object)
+            {
+                var apiError = GetAPIError(jResult);
+                if (apiError != null)
+                {
+                    throw apiError;
+                }
+            }
+
+            // this cast should always work because the code is generated for every type and it returns its own object
+            // instead of boxing and unboxing we should consider to use T as resposne and change the genrator code
+            return (T)Deserialize(jResult);
         }
 
-        private static APIException TryGetAPIError(object response)
+        protected APIException GetAPIError(JToken result)
         {
-            var objectDictionary = response as Dictionary<string,object>;
-            var objectType = objectDictionary.TryGetValueSafe<string>("objectType");
-            
-            if (objectType != null && objectType.ToString().Equals("KalturaAPIException",StringComparison.OrdinalIgnoreCase)) 
-            {  
-                return new APIException(objectDictionary["code"].ToString(), objectDictionary["message"].ToString());
-            } 
+            // If the token is not an object this might be an array or primitive type so there is no error 
+            if (result.Type != JTokenType.Object) { return null; }
+
+            var objectType = result["objectType"];
+            if (objectType != null)
+            {
+                var isError = objectType.Value<string>() == "KalturaAPIException";
+
+                if (isError && result["code"] != null && result["message"] != null)
+                {
+                    return new APIException(result["code"].Value<string>(), result["message"].Value<string>());
+                }
+            }
 
             return null;
         }
 
-        abstract public object Deserialize(XmlElement xmlElement);
-        abstract public object DeserializeObject(object obj);
-        
-    }
+        abstract public MultiRequestBuilder Add(IRequestBuilder requestBuilder);
+        abstract public object Deserialize(JToken xmlElement);
 
+    }
 
 }

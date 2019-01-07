@@ -272,7 +272,7 @@ foreach($config as $name => $item)
 		$instance->setGenerateDocs($item->get("generateDocs"));
 
 	if($item->get("package"))
-		$instance->setPackage($item->get("package"));
+		$instance->setPackage(trim($item->get("package")));
 
 	if($item->get("subpackage"))
 		$instance->setSubpackage($item->get("subpackage"));
