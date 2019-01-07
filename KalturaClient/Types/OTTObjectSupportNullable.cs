@@ -35,56 +35,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CurrencyFilter : Filter
+	public class OTTObjectSupportNullable : ObjectBase
 	{
 		#region Constants
-		public const string CODE_IN = "codeIn";
-		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _CodeIn = null;
-		private CurrencyOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string CodeIn
-		{
-			get { return _CodeIn; }
-			set 
-			{ 
-				_CodeIn = value;
-				OnPropertyChanged("CodeIn");
-			}
-		}
-		[JsonProperty]
-		public new CurrencyOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public CurrencyFilter()
+		public OTTObjectSupportNullable()
 		{
 		}
 
-		public CurrencyFilter(JToken node) : base(node)
+		public OTTObjectSupportNullable(JToken node) : base(node)
 		{
-			if(node["codeIn"] != null)
-			{
-				this._CodeIn = node["codeIn"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), node["orderBy"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -93,19 +61,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCurrencyFilter");
-			kparams.AddIfNotNull("codeIn", this._CodeIn);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaOTTObjectSupportNullable");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case CODE_IN:
-					return "CodeIn";
-				case ORDER_BY:
-					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}
