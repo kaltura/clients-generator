@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public OTTUser User
 		{
 			get { return _User; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("User");
 			}
 		}
+		[JsonProperty]
 		public LoginSession LoginSession
 		{
 			get { return _LoginSession; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LoginResponse(XmlElement node) : base(node)
+		public LoginResponse(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["user"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "user":
-						this._User = ObjectFactory.Create<OTTUser>(propertyNode);
-						continue;
-					case "loginSession":
-						this._LoginSession = ObjectFactory.Create<LoginSession>(propertyNode);
-						continue;
-				}
+				this._User = ObjectFactory.Create<OTTUser>(node["user"]);
 			}
-		}
-
-		public LoginResponse(IDictionary<string,object> data) : base(data)
-		{
-			    this._User = ObjectFactory.Create<OTTUser>(data.TryGetValueSafe<IDictionary<string,object>>("user"));
-			    this._LoginSession = ObjectFactory.Create<LoginSession>(data.TryGetValueSafe<IDictionary<string,object>>("loginSession"));
+			if(node["loginSession"] != null)
+			{
+				this._LoginSession = ObjectFactory.Create<LoginSession>(node["loginSession"]);
+			}
 		}
 		#endregion
 

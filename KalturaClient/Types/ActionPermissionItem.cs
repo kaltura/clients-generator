@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public SocialNetwork Network
 		{
 			get { return _Network; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Network");
 			}
 		}
+		[JsonProperty]
 		public SocialActionPrivacy ActionPrivacy
 		{
 			get { return _ActionPrivacy; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ActionPrivacy");
 			}
 		}
+		[JsonProperty]
 		public SocialPrivacy Privacy
 		{
 			get { return _Privacy; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Privacy");
 			}
 		}
+		[JsonProperty]
 		public string Action
 		{
 			get { return _Action; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ActionPermissionItem(XmlElement node) : base(node)
+		public ActionPermissionItem(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["network"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "network":
-						this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), propertyNode.InnerText);
-						continue;
-					case "actionPrivacy":
-						this._ActionPrivacy = (SocialActionPrivacy)StringEnum.Parse(typeof(SocialActionPrivacy), propertyNode.InnerText);
-						continue;
-					case "privacy":
-						this._Privacy = (SocialPrivacy)StringEnum.Parse(typeof(SocialPrivacy), propertyNode.InnerText);
-						continue;
-					case "action":
-						this._Action = propertyNode.InnerText;
-						continue;
-				}
+				this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), node["network"].Value<string>());
 			}
-		}
-
-		public ActionPermissionItem(IDictionary<string,object> data) : base(data)
-		{
-			    this._Network = (SocialNetwork)StringEnum.Parse(typeof(SocialNetwork), data.TryGetValueSafe<string>("network"));
-			    this._ActionPrivacy = (SocialActionPrivacy)StringEnum.Parse(typeof(SocialActionPrivacy), data.TryGetValueSafe<string>("actionPrivacy"));
-			    this._Privacy = (SocialPrivacy)StringEnum.Parse(typeof(SocialPrivacy), data.TryGetValueSafe<string>("privacy"));
-			    this._Action = data.TryGetValueSafe<string>("action");
+			if(node["actionPrivacy"] != null)
+			{
+				this._ActionPrivacy = (SocialActionPrivacy)StringEnum.Parse(typeof(SocialActionPrivacy), node["actionPrivacy"].Value<string>());
+			}
+			if(node["privacy"] != null)
+			{
+				this._Privacy = (SocialPrivacy)StringEnum.Parse(typeof(SocialPrivacy), node["privacy"].Value<string>());
+			}
+			if(node["action"] != null)
+			{
+				this._Action = node["action"].Value<string>();
+			}
 		}
 		#endregion
 

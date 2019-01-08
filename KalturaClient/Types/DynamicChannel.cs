@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string KSql
 		{
 			get { return _KSql; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("KSql");
 			}
 		}
+		[JsonProperty]
 		public IList<IntegerValue> AssetTypes
 		{
 			get { return _AssetTypes; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypes");
 			}
 		}
+		[JsonProperty]
 		public AssetGroupBy GroupBy
 		{
 			get { return _GroupBy; }
@@ -82,39 +87,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DynamicChannel(XmlElement node) : base(node)
+		public DynamicChannel(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["kSql"] != null)
 			{
-				switch (propertyNode.Name)
+				this._KSql = node["kSql"].Value<string>();
+			}
+			if(node["assetTypes"] != null)
+			{
+				this._AssetTypes = new List<IntegerValue>();
+				foreach(var arrayNode in node["assetTypes"].Children())
 				{
-					case "kSql":
-						this._KSql = propertyNode.InnerText;
-						continue;
-					case "assetTypes":
-						this._AssetTypes = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._AssetTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
-					case "groupBy":
-						this._GroupBy = ObjectFactory.Create<AssetGroupBy>(propertyNode);
-						continue;
+					this._AssetTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
 				}
 			}
-		}
-
-		public DynamicChannel(IDictionary<string,object> data) : base(data)
-		{
-			    this._KSql = data.TryGetValueSafe<string>("kSql");
-			    this._AssetTypes = new List<IntegerValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("assetTypes", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._AssetTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._GroupBy = ObjectFactory.Create<AssetGroupBy>(data.TryGetValueSafe<IDictionary<string,object>>("groupBy"));
+			if(node["groupBy"] != null)
+			{
+				this._GroupBy = ObjectFactory.Create<AssetGroupBy>(node["groupBy"]);
+			}
 		}
 		#endregion
 

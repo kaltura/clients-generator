@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,6 +54,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public BookmarkActionType Action
 		{
 			get { return _Action; }
@@ -61,6 +64,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Action");
 			}
 		}
+		[JsonProperty]
 		public int AverageBitrate
 		{
 			get { return _AverageBitrate; }
@@ -70,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AverageBitrate");
 			}
 		}
+		[JsonProperty]
 		public int TotalBitrate
 		{
 			get { return _TotalBitrate; }
@@ -79,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TotalBitrate");
 			}
 		}
+		[JsonProperty]
 		public int CurrentBitrate
 		{
 			get { return _CurrentBitrate; }
@@ -88,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CurrentBitrate");
 			}
 		}
+		[JsonProperty]
 		public long FileId
 		{
 			get { return _FileId; }
@@ -104,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BookmarkPlayerData(XmlElement node) : base(node)
+		public BookmarkPlayerData(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["action"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "action":
-						this._Action = (BookmarkActionType)StringEnum.Parse(typeof(BookmarkActionType), propertyNode.InnerText);
-						continue;
-					case "averageBitrate":
-						this._AverageBitrate = ParseInt(propertyNode.InnerText);
-						continue;
-					case "totalBitrate":
-						this._TotalBitrate = ParseInt(propertyNode.InnerText);
-						continue;
-					case "currentBitrate":
-						this._CurrentBitrate = ParseInt(propertyNode.InnerText);
-						continue;
-					case "fileId":
-						this._FileId = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._Action = (BookmarkActionType)StringEnum.Parse(typeof(BookmarkActionType), node["action"].Value<string>());
 			}
-		}
-
-		public BookmarkPlayerData(IDictionary<string,object> data) : base(data)
-		{
-			    this._Action = (BookmarkActionType)StringEnum.Parse(typeof(BookmarkActionType), data.TryGetValueSafe<string>("action"));
-			    this._AverageBitrate = data.TryGetValueSafe<int>("averageBitrate");
-			    this._TotalBitrate = data.TryGetValueSafe<int>("totalBitrate");
-			    this._CurrentBitrate = data.TryGetValueSafe<int>("currentBitrate");
-			    this._FileId = data.TryGetValueSafe<long>("fileId");
+			if(node["averageBitrate"] != null)
+			{
+				this._AverageBitrate = ParseInt(node["averageBitrate"].Value<string>());
+			}
+			if(node["totalBitrate"] != null)
+			{
+				this._TotalBitrate = ParseInt(node["totalBitrate"].Value<string>());
+			}
+			if(node["currentBitrate"] != null)
+			{
+				this._CurrentBitrate = ParseInt(node["currentBitrate"].Value<string>());
+			}
+			if(node["fileId"] != null)
+			{
+				this._FileId = ParseLong(node["fileId"].Value<string>());
+			}
 		}
 		#endregion
 

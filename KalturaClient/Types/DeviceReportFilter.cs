@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long LastAccessDateGreaterThanOrEqual
 		{
 			get { return _LastAccessDateGreaterThanOrEqual; }
@@ -60,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DeviceReportFilter(XmlElement node) : base(node)
+		public DeviceReportFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["lastAccessDateGreaterThanOrEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "lastAccessDateGreaterThanOrEqual":
-						this._LastAccessDateGreaterThanOrEqual = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._LastAccessDateGreaterThanOrEqual = ParseLong(node["lastAccessDateGreaterThanOrEqual"].Value<string>());
 			}
-		}
-
-		public DeviceReportFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._LastAccessDateGreaterThanOrEqual = data.TryGetValueSafe<long>("lastAccessDateGreaterThanOrEqual");
 		}
 		#endregion
 

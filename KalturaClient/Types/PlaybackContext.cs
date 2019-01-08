@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public IList<PlaybackSource> Sources
 		{
 			get { return _Sources; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Sources");
 			}
 		}
+		[JsonProperty]
 		public IList<RuleAction> Actions
 		{
 			get { return _Actions; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Actions");
 			}
 		}
+		[JsonProperty]
 		public IList<AccessControlMessage> Messages
 		{
 			get { return _Messages; }
@@ -82,57 +87,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PlaybackContext(XmlElement node) : base(node)
+		public PlaybackContext(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["sources"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Sources = new List<PlaybackSource>();
+				foreach(var arrayNode in node["sources"].Children())
 				{
-					case "sources":
-						this._Sources = new List<PlaybackSource>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Sources.Add(ObjectFactory.Create<PlaybackSource>(arrayNode));
-						}
-						continue;
-					case "actions":
-						this._Actions = new List<RuleAction>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Actions.Add(ObjectFactory.Create<RuleAction>(arrayNode));
-						}
-						continue;
-					case "messages":
-						this._Messages = new List<AccessControlMessage>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Messages.Add(ObjectFactory.Create<AccessControlMessage>(arrayNode));
-						}
-						continue;
+					this._Sources.Add(ObjectFactory.Create<PlaybackSource>(arrayNode));
 				}
 			}
-		}
-
-		public PlaybackContext(IDictionary<string,object> data) : base(data)
-		{
-			    this._Sources = new List<PlaybackSource>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("sources", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Sources.Add(ObjectFactory.Create<PlaybackSource>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Actions = new List<RuleAction>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Actions.Add(ObjectFactory.Create<RuleAction>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Messages = new List<AccessControlMessage>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("messages", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Messages.Add(ObjectFactory.Create<AccessControlMessage>((IDictionary<string,object>)dataDictionary));
-			    }
+			if(node["actions"] != null)
+			{
+				this._Actions = new List<RuleAction>();
+				foreach(var arrayNode in node["actions"].Children())
+				{
+					this._Actions.Add(ObjectFactory.Create<RuleAction>(arrayNode));
+				}
+			}
+			if(node["messages"] != null)
+			{
+				this._Messages = new List<AccessControlMessage>();
+				foreach(var arrayNode in node["messages"].Children())
+				{
+					this._Messages.Add(ObjectFactory.Create<AccessControlMessage>(arrayNode));
+				}
+			}
 		}
 		#endregion
 

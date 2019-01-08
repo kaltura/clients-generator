@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public SegmentSource Source
 		{
 			get { return _Source; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Source");
 			}
 		}
+		[JsonProperty]
 		public IList<SegmentRange> Ranges
 		{
 			get { return _Ranges; }
@@ -71,35 +75,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SegmentRanges(XmlElement node) : base(node)
+		public SegmentRanges(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["source"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Source = ObjectFactory.Create<SegmentSource>(node["source"]);
+			}
+			if(node["ranges"] != null)
+			{
+				this._Ranges = new List<SegmentRange>();
+				foreach(var arrayNode in node["ranges"].Children())
 				{
-					case "source":
-						this._Source = ObjectFactory.Create<SegmentSource>(propertyNode);
-						continue;
-					case "ranges":
-						this._Ranges = new List<SegmentRange>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Ranges.Add(ObjectFactory.Create<SegmentRange>(arrayNode));
-						}
-						continue;
+					this._Ranges.Add(ObjectFactory.Create<SegmentRange>(arrayNode));
 				}
 			}
-		}
-
-		public SegmentRanges(IDictionary<string,object> data) : base(data)
-		{
-			    this._Source = ObjectFactory.Create<SegmentSource>(data.TryGetValueSafe<IDictionary<string,object>>("source"));
-			    this._Ranges = new List<SegmentRange>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("ranges", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Ranges.Add(ObjectFactory.Create<SegmentRange>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

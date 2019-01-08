@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public ConcurrencyLimitationType ConcurrencyLimitationType
 		{
 			get { return _ConcurrencyLimitationType; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConcurrencyLimitationType");
 			}
 		}
+		[JsonProperty]
 		public int Limitation
 		{
 			get { return _Limitation; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MediaConcurrencyRule(XmlElement node) : base(node)
+		public MediaConcurrencyRule(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "concurrencyLimitationType":
-						this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), propertyNode.InnerText);
-						continue;
-					case "limitation":
-						this._Limitation = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public MediaConcurrencyRule(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), data.TryGetValueSafe<string>("concurrencyLimitationType"));
-			    this._Limitation = data.TryGetValueSafe<int>("limitation");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["concurrencyLimitationType"] != null)
+			{
+				this._ConcurrencyLimitationType = (ConcurrencyLimitationType)StringEnum.Parse(typeof(ConcurrencyLimitationType), node["concurrencyLimitationType"].Value<string>());
+			}
+			if(node["limitation"] != null)
+			{
+				this._Limitation = ParseInt(node["limitation"].Value<string>());
+			}
 		}
 		#endregion
 

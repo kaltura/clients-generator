@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,10 +54,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -65,10 +74,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public Price Price
 		{
 			get { return _Price; }
+			private set 
+			{ 
+				_Price = value;
+				OnPropertyChanged("Price");
+			}
 		}
+		[JsonProperty]
 		public IList<Price> MultiCurrencyPrice
 		{
 			get { return _MultiCurrencyPrice; }
@@ -78,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultiCurrencyPrice");
 			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> Descriptions
 		{
 			get { return _Descriptions; }
@@ -94,56 +111,36 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PriceDetails(XmlElement node) : base(node)
+		public PriceDetails(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseInt(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["price"] != null)
+			{
+				this._Price = ObjectFactory.Create<Price>(node["price"]);
+			}
+			if(node["multiCurrencyPrice"] != null)
+			{
+				this._MultiCurrencyPrice = new List<Price>();
+				foreach(var arrayNode in node["multiCurrencyPrice"].Children())
 				{
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "price":
-						this._Price = ObjectFactory.Create<Price>(propertyNode);
-						continue;
-					case "multiCurrencyPrice":
-						this._MultiCurrencyPrice = new List<Price>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultiCurrencyPrice.Add(ObjectFactory.Create<Price>(arrayNode));
-						}
-						continue;
-					case "descriptions":
-						this._Descriptions = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Descriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
+					this._MultiCurrencyPrice.Add(ObjectFactory.Create<Price>(arrayNode));
 				}
 			}
-		}
-
-		public PriceDetails(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
-			    this._MultiCurrencyPrice = new List<Price>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multiCurrencyPrice", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultiCurrencyPrice.Add(ObjectFactory.Create<Price>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Descriptions = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("descriptions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Descriptions.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
+			if(node["descriptions"] != null)
+			{
+				this._Descriptions = new List<TranslationToken>();
+				foreach(var arrayNode in node["descriptions"].Children())
+				{
+					this._Descriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+				}
+			}
 		}
 		#endregion
 

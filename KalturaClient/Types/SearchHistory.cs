@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,37 +60,85 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
+			private set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
 		}
+		[JsonProperty]
 		public string Filter
 		{
 			get { return _Filter; }
+			private set 
+			{ 
+				_Filter = value;
+				OnPropertyChanged("Filter");
+			}
 		}
+		[JsonProperty]
 		public string Language
 		{
 			get { return _Language; }
+			private set 
+			{ 
+				_Language = value;
+				OnPropertyChanged("Language");
+			}
 		}
+		[JsonProperty]
 		public long CreatedAt
 		{
 			get { return _CreatedAt; }
+			private set 
+			{ 
+				_CreatedAt = value;
+				OnPropertyChanged("CreatedAt");
+			}
 		}
+		[JsonProperty]
 		public string Service
 		{
 			get { return _Service; }
+			private set 
+			{ 
+				_Service = value;
+				OnPropertyChanged("Service");
+			}
 		}
+		[JsonProperty]
 		public string Action
 		{
 			get { return _Action; }
+			private set 
+			{ 
+				_Action = value;
+				OnPropertyChanged("Action");
+			}
 		}
+		[JsonProperty]
 		public string DeviceId
 		{
 			get { return _DeviceId; }
+			private set 
+			{ 
+				_DeviceId = value;
+				OnPropertyChanged("DeviceId");
+			}
 		}
 		#endregion
 
@@ -97,50 +147,40 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SearchHistory(XmlElement node) : base(node)
+		public SearchHistory(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "filter":
-						this._Filter = propertyNode.InnerText;
-						continue;
-					case "language":
-						this._Language = propertyNode.InnerText;
-						continue;
-					case "createdAt":
-						this._CreatedAt = ParseLong(propertyNode.InnerText);
-						continue;
-					case "service":
-						this._Service = propertyNode.InnerText;
-						continue;
-					case "action":
-						this._Action = propertyNode.InnerText;
-						continue;
-					case "deviceId":
-						this._DeviceId = propertyNode.InnerText;
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public SearchHistory(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Filter = data.TryGetValueSafe<string>("filter");
-			    this._Language = data.TryGetValueSafe<string>("language");
-			    this._CreatedAt = data.TryGetValueSafe<long>("createdAt");
-			    this._Service = data.TryGetValueSafe<string>("service");
-			    this._Action = data.TryGetValueSafe<string>("action");
-			    this._DeviceId = data.TryGetValueSafe<string>("deviceId");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["filter"] != null)
+			{
+				this._Filter = node["filter"].Value<string>();
+			}
+			if(node["language"] != null)
+			{
+				this._Language = node["language"].Value<string>();
+			}
+			if(node["createdAt"] != null)
+			{
+				this._CreatedAt = ParseLong(node["createdAt"].Value<string>());
+			}
+			if(node["service"] != null)
+			{
+				this._Service = node["service"].Value<string>();
+			}
+			if(node["action"] != null)
+			{
+				this._Action = node["action"].Value<string>();
+			}
+			if(node["deviceId"] != null)
+			{
+				this._DeviceId = node["deviceId"].Value<string>();
+			}
 		}
 		#endregion
 

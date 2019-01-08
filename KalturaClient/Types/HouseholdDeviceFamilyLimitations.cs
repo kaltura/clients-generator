@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Frequency
 		{
 			get { return _Frequency; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Frequency");
 			}
 		}
+		[JsonProperty]
 		public int DeviceLimit
 		{
 			get { return _DeviceLimit; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DeviceLimit");
 			}
 		}
+		[JsonProperty]
 		public int ConcurrentLimit
 		{
 			get { return _ConcurrentLimit; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdDeviceFamilyLimitations(XmlElement node) : base(node)
+		public HouseholdDeviceFamilyLimitations(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["frequency"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "frequency":
-						this._Frequency = ParseInt(propertyNode.InnerText);
-						continue;
-					case "deviceLimit":
-						this._DeviceLimit = ParseInt(propertyNode.InnerText);
-						continue;
-					case "concurrentLimit":
-						this._ConcurrentLimit = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._Frequency = ParseInt(node["frequency"].Value<string>());
 			}
-		}
-
-		public HouseholdDeviceFamilyLimitations(IDictionary<string,object> data) : base(data)
-		{
-			    this._Frequency = data.TryGetValueSafe<int>("frequency");
-			    this._DeviceLimit = data.TryGetValueSafe<int>("deviceLimit");
-			    this._ConcurrentLimit = data.TryGetValueSafe<int>("concurrentLimit");
+			if(node["deviceLimit"] != null)
+			{
+				this._DeviceLimit = ParseInt(node["deviceLimit"].Value<string>());
+			}
+			if(node["concurrentLimit"] != null)
+			{
+				this._ConcurrentLimit = ParseInt(node["concurrentLimit"].Value<string>());
+			}
 		}
 		#endregion
 

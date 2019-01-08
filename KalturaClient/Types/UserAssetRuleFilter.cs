@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long AssetIdEqual
 		{
 			get { return _AssetIdEqual; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdEqual");
 			}
 		}
+		[JsonProperty]
 		public int AssetTypeEqual
 		{
 			get { return _AssetTypeEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public new UserAssetRuleOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserAssetRuleFilter(XmlElement node) : base(node)
+		public UserAssetRuleFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetIdEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetIdEqual":
-						this._AssetIdEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "assetTypeEqual":
-						this._AssetTypeEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (UserAssetRuleOrderBy)StringEnum.Parse(typeof(UserAssetRuleOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._AssetIdEqual = ParseLong(node["assetIdEqual"].Value<string>());
 			}
-		}
-
-		public UserAssetRuleFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
-			    this._AssetTypeEqual = data.TryGetValueSafe<int>("assetTypeEqual");
-			    this._OrderBy = (UserAssetRuleOrderBy)StringEnum.Parse(typeof(UserAssetRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["assetTypeEqual"] != null)
+			{
+				this._AssetTypeEqual = ParseInt(node["assetTypeEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (UserAssetRuleOrderBy)StringEnum.Parse(typeof(UserAssetRuleOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 
