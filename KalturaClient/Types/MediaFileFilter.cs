@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AssetIdEqual
 		{
 			get { return _AssetIdEqual; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdEqual");
 			}
 		}
-		[JsonProperty]
 		public long IdEqual
 		{
 			get { return _IdEqual; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
-		[JsonProperty]
 		public new MediaFileOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MediaFileFilter(JToken node) : base(node)
+		public MediaFileFilter(XmlElement node) : base(node)
 		{
-			if(node["assetIdEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetIdEqual = ParseLong(node["assetIdEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetIdEqual":
+						this._AssetIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "idEqual":
+						this._IdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (MediaFileOrderBy)StringEnum.Parse(typeof(MediaFileOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["idEqual"] != null)
-			{
-				this._IdEqual = ParseLong(node["idEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (MediaFileOrderBy)StringEnum.Parse(typeof(MediaFileOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public MediaFileFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdEqual = data.TryGetValueSafe<long>("assetIdEqual");
+			    this._IdEqual = data.TryGetValueSafe<long>("idEqual");
+			    this._OrderBy = (MediaFileOrderBy)StringEnum.Parse(typeof(MediaFileOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

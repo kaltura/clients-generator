@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,17 +54,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -76,7 +67,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		[JsonProperty]
 		public int PaymentGatewayId
 		{
 			get { return _PaymentGatewayId; }
@@ -86,7 +76,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayId");
 			}
 		}
-		[JsonProperty]
 		public string Details
 		{
 			get { return _Details; }
@@ -96,17 +85,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Details");
 			}
 		}
-		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
-			private set 
-			{ 
-				_IsDefault = value;
-				OnPropertyChanged("IsDefault");
-			}
 		}
-		[JsonProperty]
 		public int PaymentMethodProfileId
 		{
 			get { return _PaymentMethodProfileId; }
@@ -123,32 +105,42 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdPaymentMethod(JToken node) : base(node)
+		public HouseholdPaymentMethod(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "externalId":
+						this._ExternalId = propertyNode.InnerText;
+						continue;
+					case "paymentGatewayId":
+						this._PaymentGatewayId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "details":
+						this._Details = propertyNode.InnerText;
+						continue;
+					case "isDefault":
+						this._IsDefault = ParseBool(propertyNode.InnerText);
+						continue;
+					case "paymentMethodProfileId":
+						this._PaymentMethodProfileId = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["externalId"] != null)
-			{
-				this._ExternalId = node["externalId"].Value<string>();
-			}
-			if(node["paymentGatewayId"] != null)
-			{
-				this._PaymentGatewayId = ParseInt(node["paymentGatewayId"].Value<string>());
-			}
-			if(node["details"] != null)
-			{
-				this._Details = node["details"].Value<string>();
-			}
-			if(node["isDefault"] != null)
-			{
-				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
-			}
-			if(node["paymentMethodProfileId"] != null)
-			{
-				this._PaymentMethodProfileId = ParseInt(node["paymentMethodProfileId"].Value<string>());
-			}
+		}
+
+		public HouseholdPaymentMethod(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._Details = data.TryGetValueSafe<string>("details");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._PaymentMethodProfileId = data.TryGetValueSafe<int>("paymentMethodProfileId");
 		}
 		#endregion
 

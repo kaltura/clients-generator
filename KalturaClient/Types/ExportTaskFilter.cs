@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public new ExportTaskOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ExportTaskFilter(JToken node) : base(node)
+		public ExportTaskFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public ExportTaskFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._OrderBy = (ExportTaskOrderBy)StringEnum.Parse(typeof(ExportTaskOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

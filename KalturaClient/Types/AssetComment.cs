@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
-		[JsonProperty]
 		public int AssetId
 		{
 			get { return _AssetId; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetId");
 			}
 		}
-		[JsonProperty]
 		public AssetType AssetType
 		{
 			get { return _AssetType; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetType");
 			}
 		}
-		[JsonProperty]
 		public string SubHeader
 		{
 			get { return _SubHeader; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetComment(JToken node) : base(node)
+		public AssetComment(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseInt(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseInt(propertyNode.InnerText);
+						continue;
+					case "assetId":
+						this._AssetId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "assetType":
+						this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
+						continue;
+					case "subHeader":
+						this._SubHeader = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["assetId"] != null)
-			{
-				this._AssetId = ParseInt(node["assetId"].Value<string>());
-			}
-			if(node["assetType"] != null)
-			{
-				this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetType"].Value<string>());
-			}
-			if(node["subHeader"] != null)
-			{
-				this._SubHeader = node["subHeader"].Value<string>();
-			}
+		}
+
+		public AssetComment(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<int>("id");
+			    this._AssetId = data.TryGetValueSafe<int>("assetId");
+			    this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetType"));
+			    this._SubHeader = data.TryGetValueSafe<string>("subHeader");
 		}
 		#endregion
 

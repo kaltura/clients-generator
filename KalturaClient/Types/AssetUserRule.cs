@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public IList<AssetCondition> Conditions
 		{
 			get { return _Conditions; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Conditions");
 			}
 		}
-		[JsonProperty]
 		public IList<AssetUserRuleAction> Actions
 		{
 			get { return _Actions; }
@@ -75,24 +71,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetUserRule(JToken node) : base(node)
+		public AssetUserRule(XmlElement node) : base(node)
 		{
-			if(node["conditions"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Conditions = new List<AssetCondition>();
-				foreach(var arrayNode in node["conditions"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Conditions.Add(ObjectFactory.Create<AssetCondition>(arrayNode));
+					case "conditions":
+						this._Conditions = new List<AssetCondition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<AssetCondition>(arrayNode));
+						}
+						continue;
+					case "actions":
+						this._Actions = new List<AssetUserRuleAction>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Actions.Add(ObjectFactory.Create<AssetUserRuleAction>(arrayNode));
+						}
+						continue;
 				}
 			}
-			if(node["actions"] != null)
-			{
-				this._Actions = new List<AssetUserRuleAction>();
-				foreach(var arrayNode in node["actions"].Children())
-				{
-					this._Actions.Add(ObjectFactory.Create<AssetUserRuleAction>(arrayNode));
-				}
-			}
+		}
+
+		public AssetUserRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Conditions = new List<AssetCondition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<AssetCondition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<AssetUserRuleAction>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<AssetUserRuleAction>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AssetId
 		{
 			get { return _AssetId; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetId");
 			}
 		}
-		[JsonProperty]
 		public string ExtraData
 		{
 			get { return _ExtraData; }
@@ -70,15 +66,9 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExtraData");
 			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
 		#endregion
 
@@ -87,20 +77,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Favorite(JToken node) : base(node)
+		public Favorite(XmlElement node) : base(node)
 		{
-			if(node["assetId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetId = ParseLong(node["assetId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetId":
+						this._AssetId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "extraData":
+						this._ExtraData = propertyNode.InnerText;
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["extraData"] != null)
-			{
-				this._ExtraData = node["extraData"].Value<string>();
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
+		}
+
+		public Favorite(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+			    this._ExtraData = data.TryGetValueSafe<string>("extraData");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
 		}
 		#endregion
 

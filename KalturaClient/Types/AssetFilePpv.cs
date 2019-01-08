@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long AssetFileId
 		{
 			get { return _AssetFileId; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetFileId");
 			}
 		}
-		[JsonProperty]
 		public long PpvModuleId
 		{
 			get { return _PpvModuleId; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PpvModuleId");
 			}
 		}
-		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
-		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetFilePpv(JToken node) : base(node)
+		public AssetFilePpv(XmlElement node) : base(node)
 		{
-			if(node["assetFileId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetFileId = ParseLong(node["assetFileId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "assetFileId":
+						this._AssetFileId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "ppvModuleId":
+						this._PpvModuleId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["ppvModuleId"] != null)
-			{
-				this._PpvModuleId = ParseLong(node["ppvModuleId"].Value<string>());
-			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
+		}
+
+		public AssetFilePpv(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetFileId = data.TryGetValueSafe<long>("assetFileId");
+			    this._PpvModuleId = data.TryGetValueSafe<long>("ppvModuleId");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
 		}
 		#endregion
 

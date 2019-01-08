@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string SeriesId
 		{
 			get { return _SeriesId; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeriesId");
 			}
 		}
-		[JsonProperty]
 		public long SeasonNumber
 		{
 			get { return _SeasonNumber; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeasonNumber");
 			}
 		}
-		[JsonProperty]
 		public long EpgChannelId
 		{
 			get { return _EpgChannelId; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SeriesReminder(JToken node) : base(node)
+		public SeriesReminder(XmlElement node) : base(node)
 		{
-			if(node["seriesId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._SeriesId = node["seriesId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "seriesId":
+						this._SeriesId = propertyNode.InnerText;
+						continue;
+					case "seasonNumber":
+						this._SeasonNumber = ParseLong(propertyNode.InnerText);
+						continue;
+					case "epgChannelId":
+						this._EpgChannelId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["seasonNumber"] != null)
-			{
-				this._SeasonNumber = ParseLong(node["seasonNumber"].Value<string>());
-			}
-			if(node["epgChannelId"] != null)
-			{
-				this._EpgChannelId = ParseLong(node["epgChannelId"].Value<string>());
-			}
+		}
+
+		public SeriesReminder(IDictionary<string,object> data) : base(data)
+		{
+			    this._SeriesId = data.TryGetValueSafe<string>("seriesId");
+			    this._SeasonNumber = data.TryGetValueSafe<long>("seasonNumber");
+			    this._EpgChannelId = data.TryGetValueSafe<long>("epgChannelId");
 		}
 		#endregion
 

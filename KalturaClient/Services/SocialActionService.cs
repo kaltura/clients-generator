@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -32,7 +32,6 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
@@ -73,9 +72,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<UserSocialActionResponse>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<UserSocialActionResponse>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -116,12 +119,20 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			IList<NetworkActionStatus> list = new List<NetworkActionStatus>();
-			foreach(var node in result.Children())
+			foreach(XmlElement node in result.ChildNodes)
 			{
-				//TODO: Deserilize Array;
+				list.Add(ObjectFactory.Create<NetworkActionStatus>(node));
+			}
+			return list;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var list = new List<NetworkActionStatus>();
+			foreach(var node in (IEnumerable<IDictionary<string,object>>)result)
+			{
 				list.Add(ObjectFactory.Create<NetworkActionStatus>(node));
 			}
 			return list;
@@ -174,9 +185,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<ListResponse<SocialAction>>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<ListResponse<SocialAction>>((IDictionary<string,object>)result);
 		}
 	}
 

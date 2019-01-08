@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -96,6 +96,8 @@ namespace Kaltura
 		public static string ItemNotFound = "2032";
 		public static string ExternalIdAlreadyExists = "2054";
 		public static string ExternalError = "500063";
+		public static string ParentIdShouldNotPointToItself = "2041";
+		public static string ParentIdNotExist = "2059";
 		public static string InvalidPurchase = "3000";
 		public static string CancelationWindowPeriodExpired = "3001";
 		public static string SubscriptionNotRenewable = "3002";
@@ -219,6 +221,7 @@ namespace Kaltura
 		public static string ChannelDoesNotExist = "4064";
 		public static string ChannelMetaOrderByIsInvalid = "4061";
 		public static string AccountIsNotOpcSupported = "4074";
+		public static string CanNotDeleteParentAssetStruct = "4072";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -244,6 +247,8 @@ namespace Kaltura
 		public static string TimeShiftedTvPartnerSettingsNotSent = "5023";
 		public static string TimeShiftedTvPartnerSettingsNegativeBufferSent = "5024";
 		public static string CDNPartnerSettingsNotFound = "5025";
+		public static string PermissionNameNotExists = "5028";
+		public static string RoleDoesNotExists = "5038";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
