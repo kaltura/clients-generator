@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Message
 		{
 			get { return _Message; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Message");
 			}
 		}
-		[JsonProperty]
 		public string Sound
 		{
 			get { return _Sound; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Sound");
 			}
 		}
-		[JsonProperty]
 		public string Action
 		{
 			get { return _Action; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Action");
 			}
 		}
-		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PushMessage(JToken node) : base(node)
+		public PushMessage(XmlElement node) : base(node)
 		{
-			if(node["message"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Message = node["message"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "message":
+						this._Message = propertyNode.InnerText;
+						continue;
+					case "sound":
+						this._Sound = propertyNode.InnerText;
+						continue;
+					case "action":
+						this._Action = propertyNode.InnerText;
+						continue;
+					case "url":
+						this._Url = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["sound"] != null)
-			{
-				this._Sound = node["sound"].Value<string>();
-			}
-			if(node["action"] != null)
-			{
-				this._Action = node["action"].Value<string>();
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
+		}
+
+		public PushMessage(IDictionary<string,object> data) : base(data)
+		{
+			    this._Message = data.TryGetValueSafe<string>("message");
+			    this._Sound = data.TryGetValueSafe<string>("sound");
+			    this._Action = data.TryGetValueSafe<string>("action");
+			    this._Url = data.TryGetValueSafe<string>("url");
 		}
 		#endregion
 

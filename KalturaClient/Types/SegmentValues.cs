@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public SegmentSource Source
 		{
 			get { return _Source; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Source");
 			}
 		}
-		[JsonProperty]
 		public IList<SegmentValue> Values
 		{
 			get { return _Values; }
@@ -75,20 +71,35 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SegmentValues(JToken node) : base(node)
+		public SegmentValues(XmlElement node) : base(node)
 		{
-			if(node["source"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Source = ObjectFactory.Create<SegmentSource>(node["source"]);
-			}
-			if(node["values"] != null)
-			{
-				this._Values = new List<SegmentValue>();
-				foreach(var arrayNode in node["values"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Values.Add(ObjectFactory.Create<SegmentValue>(arrayNode));
+					case "source":
+						this._Source = ObjectFactory.Create<SegmentSource>(propertyNode);
+						continue;
+					case "values":
+						this._Values = new List<SegmentValue>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Values.Add(ObjectFactory.Create<SegmentValue>(arrayNode));
+						}
+						continue;
 				}
 			}
+		}
+
+		public SegmentValues(IDictionary<string,object> data) : base(data)
+		{
+			    this._Source = ObjectFactory.Create<SegmentSource>(data.TryGetValueSafe<IDictionary<string,object>>("source"));
+			    this._Values = new List<SegmentValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("values", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Values.Add(ObjectFactory.Create<SegmentValue>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

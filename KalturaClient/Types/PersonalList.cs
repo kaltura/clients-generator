@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,17 +52,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -74,17 +65,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
-		[JsonProperty]
 		public string Ksql
 		{
 			get { return _Ksql; }
@@ -94,7 +78,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Ksql");
 			}
 		}
-		[JsonProperty]
 		public int PartnerListType
 		{
 			get { return _PartnerListType; }
@@ -111,28 +94,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PersonalList(JToken node) : base(node)
+		public PersonalList(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "ksql":
+						this._Ksql = propertyNode.InnerText;
+						continue;
+					case "partnerListType":
+						this._PartnerListType = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["ksql"] != null)
-			{
-				this._Ksql = node["ksql"].Value<string>();
-			}
-			if(node["partnerListType"] != null)
-			{
-				this._PartnerListType = ParseInt(node["partnerListType"].Value<string>());
-			}
+		}
+
+		public PersonalList(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._Ksql = data.TryGetValueSafe<string>("ksql");
+			    this._PartnerListType = data.TryGetValueSafe<int>("partnerListType");
 		}
 		#endregion
 

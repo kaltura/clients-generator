@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
-		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
-		[JsonProperty]
 		public BundleType BundleTypeEqual
 		{
 			get { return _BundleTypeEqual; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BundleFilter(JToken node) : base(node)
+		public BundleFilter(XmlElement node) : base(node)
 		{
-			if(node["idEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "idEqual":
+						this._IdEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "typeIn":
+						this._TypeIn = propertyNode.InnerText;
+						continue;
+					case "bundleTypeEqual":
+						this._BundleTypeEqual = (BundleType)StringEnum.Parse(typeof(BundleType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["typeIn"] != null)
-			{
-				this._TypeIn = node["typeIn"].Value<string>();
-			}
-			if(node["bundleTypeEqual"] != null)
-			{
-				this._BundleTypeEqual = (BundleType)StringEnum.Parse(typeof(BundleType), node["bundleTypeEqual"].Value<string>());
-			}
+		}
+
+		public BundleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._BundleTypeEqual = (BundleType)StringEnum.Parse(typeof(BundleType), data.TryGetValueSafe<string>("bundleTypeEqual"));
 		}
 		#endregion
 

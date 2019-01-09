@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
-		[JsonProperty]
 		public long CreatedAtGreaterThanOrEqual
 		{
 			get { return _CreatedAtGreaterThanOrEqual; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CreatedAtGreaterThanOrEqual");
 			}
 		}
-		[JsonProperty]
 		public long CreatedAtLessThanOrEqual
 		{
 			get { return _CreatedAtLessThanOrEqual; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CreatedAtLessThanOrEqual");
 			}
 		}
-		[JsonProperty]
 		public new InboxMessageOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public InboxMessageFilter(JToken node) : base(node)
+		public InboxMessageFilter(XmlElement node) : base(node)
 		{
-			if(node["typeIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._TypeIn = node["typeIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "typeIn":
+						this._TypeIn = propertyNode.InnerText;
+						continue;
+					case "createdAtGreaterThanOrEqual":
+						this._CreatedAtGreaterThanOrEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "createdAtLessThanOrEqual":
+						this._CreatedAtLessThanOrEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (InboxMessageOrderBy)StringEnum.Parse(typeof(InboxMessageOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["createdAtGreaterThanOrEqual"] != null)
-			{
-				this._CreatedAtGreaterThanOrEqual = ParseLong(node["createdAtGreaterThanOrEqual"].Value<string>());
-			}
-			if(node["createdAtLessThanOrEqual"] != null)
-			{
-				this._CreatedAtLessThanOrEqual = ParseLong(node["createdAtLessThanOrEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (InboxMessageOrderBy)StringEnum.Parse(typeof(InboxMessageOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public InboxMessageFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			    this._CreatedAtGreaterThanOrEqual = data.TryGetValueSafe<long>("createdAtGreaterThanOrEqual");
+			    this._CreatedAtLessThanOrEqual = data.TryGetValueSafe<long>("createdAtLessThanOrEqual");
+			    this._OrderBy = (InboxMessageOrderBy)StringEnum.Parse(typeof(InboxMessageOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

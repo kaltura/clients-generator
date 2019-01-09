@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string MediaProtocol
 		{
 			get { return _MediaProtocol; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaProtocol");
 			}
 		}
-		[JsonProperty]
 		public string StreamerType
 		{
 			get { return _StreamerType; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StreamerType");
 			}
 		}
-		[JsonProperty]
 		public string AssetFileIds
 		{
 			get { return _AssetFileIds; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetFileIds");
 			}
 		}
-		[JsonProperty]
 		public PlaybackContextType Context
 		{
 			get { return _Context; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Context");
 			}
 		}
-		[JsonProperty]
 		public UrlType UrlType
 		{
 			get { return _UrlType; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PlaybackContextOptions(JToken node) : base(node)
+		public PlaybackContextOptions(XmlElement node) : base(node)
 		{
-			if(node["mediaProtocol"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._MediaProtocol = node["mediaProtocol"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "mediaProtocol":
+						this._MediaProtocol = propertyNode.InnerText;
+						continue;
+					case "streamerType":
+						this._StreamerType = propertyNode.InnerText;
+						continue;
+					case "assetFileIds":
+						this._AssetFileIds = propertyNode.InnerText;
+						continue;
+					case "context":
+						this._Context = (PlaybackContextType)StringEnum.Parse(typeof(PlaybackContextType), propertyNode.InnerText);
+						continue;
+					case "urlType":
+						this._UrlType = (UrlType)StringEnum.Parse(typeof(UrlType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["streamerType"] != null)
-			{
-				this._StreamerType = node["streamerType"].Value<string>();
-			}
-			if(node["assetFileIds"] != null)
-			{
-				this._AssetFileIds = node["assetFileIds"].Value<string>();
-			}
-			if(node["context"] != null)
-			{
-				this._Context = (PlaybackContextType)StringEnum.Parse(typeof(PlaybackContextType), node["context"].Value<string>());
-			}
-			if(node["urlType"] != null)
-			{
-				this._UrlType = (UrlType)StringEnum.Parse(typeof(UrlType), node["urlType"].Value<string>());
-			}
+		}
+
+		public PlaybackContextOptions(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaProtocol = data.TryGetValueSafe<string>("mediaProtocol");
+			    this._StreamerType = data.TryGetValueSafe<string>("streamerType");
+			    this._AssetFileIds = data.TryGetValueSafe<string>("assetFileIds");
+			    this._Context = (PlaybackContextType)StringEnum.Parse(typeof(PlaybackContextType), data.TryGetValueSafe<string>("context"));
+			    this._UrlType = (UrlType)StringEnum.Parse(typeof(UrlType), data.TryGetValueSafe<string>("urlType"));
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,27 +56,14 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public long SubscriptionId
 		{
 			get { return _SubscriptionId; }
-			private set 
-			{ 
-				_SubscriptionId = value;
-				OnPropertyChanged("SubscriptionId");
-			}
 		}
-		[JsonProperty]
 		public CompensationType CompensationType
 		{
 			get { return _CompensationType; }
@@ -88,7 +73,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CompensationType");
 			}
 		}
-		[JsonProperty]
 		public float Amount
 		{
 			get { return _Amount; }
@@ -98,7 +82,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Amount");
 			}
 		}
-		[JsonProperty]
 		public int TotalRenewalIterations
 		{
 			get { return _TotalRenewalIterations; }
@@ -108,17 +91,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("TotalRenewalIterations");
 			}
 		}
-		[JsonProperty]
 		public int AppliedRenewalIterations
 		{
 			get { return _AppliedRenewalIterations; }
-			private set 
-			{ 
-				_AppliedRenewalIterations = value;
-				OnPropertyChanged("AppliedRenewalIterations");
-			}
 		}
-		[JsonProperty]
 		public int PurchaseId
 		{
 			get { return _PurchaseId; }
@@ -135,36 +111,46 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Compensation(JToken node) : base(node)
+		public Compensation(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "subscriptionId":
+						this._SubscriptionId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "compensationType":
+						this._CompensationType = (CompensationType)StringEnum.Parse(typeof(CompensationType), propertyNode.InnerText);
+						continue;
+					case "amount":
+						this._Amount = ParseFloat(propertyNode.InnerText);
+						continue;
+					case "totalRenewalIterations":
+						this._TotalRenewalIterations = ParseInt(propertyNode.InnerText);
+						continue;
+					case "appliedRenewalIterations":
+						this._AppliedRenewalIterations = ParseInt(propertyNode.InnerText);
+						continue;
+					case "purchaseId":
+						this._PurchaseId = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["subscriptionId"] != null)
-			{
-				this._SubscriptionId = ParseLong(node["subscriptionId"].Value<string>());
-			}
-			if(node["compensationType"] != null)
-			{
-				this._CompensationType = (CompensationType)StringEnum.Parse(typeof(CompensationType), node["compensationType"].Value<string>());
-			}
-			if(node["amount"] != null)
-			{
-				this._Amount = ParseFloat(node["amount"].Value<string>());
-			}
-			if(node["totalRenewalIterations"] != null)
-			{
-				this._TotalRenewalIterations = ParseInt(node["totalRenewalIterations"].Value<string>());
-			}
-			if(node["appliedRenewalIterations"] != null)
-			{
-				this._AppliedRenewalIterations = ParseInt(node["appliedRenewalIterations"].Value<string>());
-			}
-			if(node["purchaseId"] != null)
-			{
-				this._PurchaseId = ParseInt(node["purchaseId"].Value<string>());
-			}
+		}
+
+		public Compensation(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._SubscriptionId = data.TryGetValueSafe<long>("subscriptionId");
+			    this._CompensationType = (CompensationType)StringEnum.Parse(typeof(CompensationType), data.TryGetValueSafe<string>("compensationType"));
+			    this._Amount = data.TryGetValueSafe<float>("amount");
+			    this._TotalRenewalIterations = data.TryGetValueSafe<int>("totalRenewalIterations");
+			    this._AppliedRenewalIterations = data.TryGetValueSafe<int>("appliedRenewalIterations");
+			    this._PurchaseId = data.TryGetValueSafe<int>("purchaseId");
 		}
 		#endregion
 

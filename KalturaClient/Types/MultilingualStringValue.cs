@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,17 +46,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
-			private set 
-			{ 
-				_Value = value;
-				OnPropertyChanged("Value");
-			}
 		}
-		[JsonProperty]
 		public IList<TranslationToken> MultilingualValue
 		{
 			get { return _MultilingualValue; }
@@ -75,20 +66,35 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MultilingualStringValue(JToken node) : base(node)
+		public MultilingualStringValue(XmlElement node) : base(node)
 		{
-			if(node["value"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Value = node["value"].Value<string>();
-			}
-			if(node["multilingualValue"] != null)
-			{
-				this._MultilingualValue = new List<TranslationToken>();
-				foreach(var arrayNode in node["multilingualValue"].Children())
+				switch (propertyNode.Name)
 				{
-					this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+					case "value":
+						this._Value = propertyNode.InnerText;
+						continue;
+					case "multilingualValue":
+						this._MultilingualValue = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
+						continue;
 				}
 			}
+		}
+
+		public MultilingualStringValue(IDictionary<string,object> data) : base(data)
+		{
+			    this._Value = data.TryGetValueSafe<string>("value");
+			    this._MultilingualValue = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualValue", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualValue.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

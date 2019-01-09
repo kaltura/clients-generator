@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsActive");
 			}
 		}
-		[JsonProperty]
 		public string AdapterUrl
 		{
 			get { return _AdapterUrl; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AdapterUrl");
 			}
 		}
-		[JsonProperty]
 		public IDictionary<string, StringValue> OssAdapterSettings
 		{
 			get { return _OssAdapterSettings; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("OssAdapterSettings");
 			}
 		}
-		[JsonProperty]
 		public string ExternalIdentifier
 		{
 			get { return _ExternalIdentifier; }
@@ -94,15 +88,9 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalIdentifier");
 			}
 		}
-		[JsonProperty]
 		public string SharedSecret
 		{
 			get { return _SharedSecret; }
-			private set 
-			{ 
-				_SharedSecret = value;
-				OnPropertyChanged("SharedSecret");
-			}
 		}
 		#endregion
 
@@ -111,36 +99,50 @@ namespace Kaltura.Types
 		{
 		}
 
-		public OSSAdapterProfile(JToken node) : base(node)
+		public OSSAdapterProfile(XmlElement node) : base(node)
 		{
-			if(node["isActive"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IsActive = ParseBool(node["isActive"].Value<string>());
-			}
-			if(node["adapterUrl"] != null)
-			{
-				this._AdapterUrl = node["adapterUrl"].Value<string>();
-			}
-			if(node["ossAdapterSettings"] != null)
-			{
+				switch (propertyNode.Name)
 				{
-					string key;
-					this._OssAdapterSettings = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["ossAdapterSettings"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._OssAdapterSettings[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
+					case "isActive":
+						this._IsActive = ParseBool(propertyNode.InnerText);
+						continue;
+					case "adapterUrl":
+						this._AdapterUrl = propertyNode.InnerText;
+						continue;
+					case "ossAdapterSettings":
+						{
+							string key;
+							this._OssAdapterSettings = new Dictionary<string, StringValue>();
+							foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+							{
+								key = arrayNode["itemKey"].InnerText;;
+								this._OssAdapterSettings[key] = ObjectFactory.Create<StringValue>(arrayNode);
+							}
+						}
+						continue;
+					case "externalIdentifier":
+						this._ExternalIdentifier = propertyNode.InnerText;
+						continue;
+					case "sharedSecret":
+						this._SharedSecret = propertyNode.InnerText;
+						continue;
 				}
 			}
-			if(node["externalIdentifier"] != null)
-			{
-				this._ExternalIdentifier = node["externalIdentifier"].Value<string>();
-			}
-			if(node["sharedSecret"] != null)
-			{
-				this._SharedSecret = node["sharedSecret"].Value<string>();
-			}
+		}
+
+		public OSSAdapterProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._IsActive = data.TryGetValueSafe<bool>("isActive");
+			    this._AdapterUrl = data.TryGetValueSafe<string>("adapterUrl");
+			    this._OssAdapterSettings = new Dictionary<string, StringValue>();
+			    foreach(var keyValuePair in data.TryGetValueSafe("ossAdapterSettings", new Dictionary<string, object>()))
+			    {
+			        this._OssAdapterSettings[keyValuePair.Key] = ObjectFactory.Create<StringValue>((IDictionary<string,object>)keyValuePair.Value);
+				}
+			    this._ExternalIdentifier = data.TryGetValueSafe<string>("externalIdentifier");
+			    this._SharedSecret = data.TryGetValueSafe<string>("sharedSecret");
 		}
 		#endregion
 
