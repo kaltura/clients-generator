@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,10 +52,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public int Type
 		{
 			get { return _Type; }
@@ -63,10 +72,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
 		public string TagValue
 		{
 			get { return _Tag; }
+			private set 
+			{ 
+				_Tag = value;
+				OnPropertyChanged("Tag");
+			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> MultilingualTag
 		{
 			get { return _MultilingualTag; }
@@ -83,43 +99,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Tag(XmlElement node) : base(node)
+		public Tag(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = ParseLong(node["id"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = ParseInt(node["type"].Value<string>());
+			}
+			if(node["tag"] != null)
+			{
+				this._Tag = node["tag"].Value<string>();
+			}
+			if(node["multilingualTag"] != null)
+			{
+				this._MultilingualTag = new List<TranslationToken>();
+				foreach(var arrayNode in node["multilingualTag"].Children())
 				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "type":
-						this._Type = ParseInt(propertyNode.InnerText);
-						continue;
-					case "tag":
-						this._Tag = propertyNode.InnerText;
-						continue;
-					case "multilingualTag":
-						this._MultilingualTag = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualTag.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
+					this._MultilingualTag.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
 				}
 			}
-		}
-
-		public Tag(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Type = data.TryGetValueSafe<int>("type");
-			    this._Tag = data.TryGetValueSafe<string>("tag");
-			    this._MultilingualTag = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualTag", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultilingualTag.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

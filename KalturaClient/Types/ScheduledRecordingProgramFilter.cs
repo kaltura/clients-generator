@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public ScheduledRecordingAssetType RecordingTypeEqual
 		{
 			get { return _RecordingTypeEqual; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecordingTypeEqual");
 			}
 		}
+		[JsonProperty]
 		public string ChannelsIn
 		{
 			get { return _ChannelsIn; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ChannelsIn");
 			}
 		}
+		[JsonProperty]
 		public long StartDateGreaterThanOrNull
 		{
 			get { return _StartDateGreaterThanOrNull; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDateGreaterThanOrNull");
 			}
 		}
+		[JsonProperty]
 		public long EndDateLessThanOrNull
 		{
 			get { return _EndDateLessThanOrNull; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ScheduledRecordingProgramFilter(XmlElement node) : base(node)
+		public ScheduledRecordingProgramFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["recordingTypeEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "recordingTypeEqual":
-						this._RecordingTypeEqual = (ScheduledRecordingAssetType)StringEnum.Parse(typeof(ScheduledRecordingAssetType), propertyNode.InnerText);
-						continue;
-					case "channelsIn":
-						this._ChannelsIn = propertyNode.InnerText;
-						continue;
-					case "startDateGreaterThanOrNull":
-						this._StartDateGreaterThanOrNull = ParseLong(propertyNode.InnerText);
-						continue;
-					case "endDateLessThanOrNull":
-						this._EndDateLessThanOrNull = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._RecordingTypeEqual = (ScheduledRecordingAssetType)StringEnum.Parse(typeof(ScheduledRecordingAssetType), node["recordingTypeEqual"].Value<string>());
 			}
-		}
-
-		public ScheduledRecordingProgramFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._RecordingTypeEqual = (ScheduledRecordingAssetType)StringEnum.Parse(typeof(ScheduledRecordingAssetType), data.TryGetValueSafe<string>("recordingTypeEqual"));
-			    this._ChannelsIn = data.TryGetValueSafe<string>("channelsIn");
-			    this._StartDateGreaterThanOrNull = data.TryGetValueSafe<long>("startDateGreaterThanOrNull");
-			    this._EndDateLessThanOrNull = data.TryGetValueSafe<long>("endDateLessThanOrNull");
+			if(node["channelsIn"] != null)
+			{
+				this._ChannelsIn = node["channelsIn"].Value<string>();
+			}
+			if(node["startDateGreaterThanOrNull"] != null)
+			{
+				this._StartDateGreaterThanOrNull = ParseLong(node["startDateGreaterThanOrNull"].Value<string>());
+			}
+			if(node["endDateLessThanOrNull"] != null)
+			{
+				this._EndDateLessThanOrNull = ParseLong(node["endDateLessThanOrNull"].Value<string>());
+			}
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string PinCode
 		{
 			get { return _PinCode; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PinCode");
 			}
 		}
+		[JsonProperty]
 		public long ExpirationTime
 		{
 			get { return _ExpirationTime; }
@@ -66,9 +70,15 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExpirationTime");
 			}
 		}
+		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
+			private set 
+			{ 
+				_UserId = value;
+				OnPropertyChanged("UserId");
+			}
 		}
 		#endregion
 
@@ -77,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserLoginPin(XmlElement node) : base(node)
+		public UserLoginPin(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["pinCode"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "pinCode":
-						this._PinCode = propertyNode.InnerText;
-						continue;
-					case "expirationTime":
-						this._ExpirationTime = ParseLong(propertyNode.InnerText);
-						continue;
-					case "userId":
-						this._UserId = propertyNode.InnerText;
-						continue;
-				}
+				this._PinCode = node["pinCode"].Value<string>();
 			}
-		}
-
-		public UserLoginPin(IDictionary<string,object> data) : base(data)
-		{
-			    this._PinCode = data.TryGetValueSafe<string>("pinCode");
-			    this._ExpirationTime = data.TryGetValueSafe<long>("expirationTime");
-			    this._UserId = data.TryGetValueSafe<string>("userId");
+			if(node["expirationTime"] != null)
+			{
+				this._ExpirationTime = ParseLong(node["expirationTime"].Value<string>());
+			}
+			if(node["userId"] != null)
+			{
+				this._UserId = node["userId"].Value<string>();
+			}
 		}
 		#endregion
 

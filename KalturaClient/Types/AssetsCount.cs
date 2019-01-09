@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Field
 		{
 			get { return _Field; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Field");
 			}
 		}
+		[JsonProperty]
 		public IList<AssetCount> Objects
 		{
 			get { return _Objects; }
@@ -71,35 +75,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetsCount(XmlElement node) : base(node)
+		public AssetsCount(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["field"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Field = node["field"].Value<string>();
+			}
+			if(node["objects"] != null)
+			{
+				this._Objects = new List<AssetCount>();
+				foreach(var arrayNode in node["objects"].Children())
 				{
-					case "field":
-						this._Field = propertyNode.InnerText;
-						continue;
-					case "objects":
-						this._Objects = new List<AssetCount>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Objects.Add(ObjectFactory.Create<AssetCount>(arrayNode));
-						}
-						continue;
+					this._Objects.Add(ObjectFactory.Create<AssetCount>(arrayNode));
 				}
 			}
-		}
-
-		public AssetsCount(IDictionary<string,object> data) : base(data)
-		{
-			    this._Field = data.TryGetValueSafe<string>("field");
-			    this._Objects = new List<AssetCount>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("objects", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Objects.Add(ObjectFactory.Create<AssetCount>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

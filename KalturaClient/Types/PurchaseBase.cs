@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int ProductId
 		{
 			get { return _ProductId; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductId");
 			}
 		}
+		[JsonProperty]
 		public int ContentId
 		{
 			get { return _ContentId; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ContentId");
 			}
 		}
+		[JsonProperty]
 		public TransactionType ProductType
 		{
 			get { return _ProductType; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PurchaseBase(XmlElement node) : base(node)
+		public PurchaseBase(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["productId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "productId":
-						this._ProductId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "contentId":
-						this._ContentId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "productType":
-						this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), propertyNode.InnerText);
-						continue;
-				}
+				this._ProductId = ParseInt(node["productId"].Value<string>());
 			}
-		}
-
-		public PurchaseBase(IDictionary<string,object> data) : base(data)
-		{
-			    this._ProductId = data.TryGetValueSafe<int>("productId");
-			    this._ContentId = data.TryGetValueSafe<int>("contentId");
-			    this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), data.TryGetValueSafe<string>("productType"));
+			if(node["contentId"] != null)
+			{
+				this._ContentId = ParseInt(node["contentId"].Value<string>());
+			}
+			if(node["productType"] != null)
+			{
+				this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["productType"].Value<string>());
+			}
 		}
 		#endregion
 

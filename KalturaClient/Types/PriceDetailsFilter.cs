@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		[JsonProperty]
 		public new PriceDetailsOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PriceDetailsFilter(XmlElement node) : base(node)
+		public PriceDetailsFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (PriceDetailsOrderBy)StringEnum.Parse(typeof(PriceDetailsOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdIn = node["idIn"].Value<string>();
 			}
-		}
-
-		public PriceDetailsFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdIn = data.TryGetValueSafe<string>("idIn");
-			    this._OrderBy = (PriceDetailsOrderBy)StringEnum.Parse(typeof(PriceDetailsOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (PriceDetailsOrderBy)StringEnum.Parse(typeof(PriceDetailsOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

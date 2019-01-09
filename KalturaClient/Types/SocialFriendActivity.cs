@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string UserFullName
 		{
 			get { return _UserFullName; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserFullName");
 			}
 		}
+		[JsonProperty]
 		public string UserPictureUrl
 		{
 			get { return _UserPictureUrl; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserPictureUrl");
 			}
 		}
+		[JsonProperty]
 		public SocialAction SocialAction
 		{
 			get { return _SocialAction; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialFriendActivity(XmlElement node) : base(node)
+		public SocialFriendActivity(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["userFullName"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "userFullName":
-						this._UserFullName = propertyNode.InnerText;
-						continue;
-					case "userPictureUrl":
-						this._UserPictureUrl = propertyNode.InnerText;
-						continue;
-					case "socialAction":
-						this._SocialAction = ObjectFactory.Create<SocialAction>(propertyNode);
-						continue;
-				}
+				this._UserFullName = node["userFullName"].Value<string>();
 			}
-		}
-
-		public SocialFriendActivity(IDictionary<string,object> data) : base(data)
-		{
-			    this._UserFullName = data.TryGetValueSafe<string>("userFullName");
-			    this._UserPictureUrl = data.TryGetValueSafe<string>("userPictureUrl");
-			    this._SocialAction = ObjectFactory.Create<SocialAction>(data.TryGetValueSafe<IDictionary<string,object>>("socialAction"));
+			if(node["userPictureUrl"] != null)
+			{
+				this._UserPictureUrl = node["userPictureUrl"].Value<string>();
+			}
+			if(node["socialAction"] != null)
+			{
+				this._SocialAction = ObjectFactory.Create<SocialAction>(node["socialAction"]);
+			}
 		}
 		#endregion
 

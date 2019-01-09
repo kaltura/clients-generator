@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int IdEqual
 		{
 			get { return _IdEqual; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdEqual");
 			}
 		}
+		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeIn");
 			}
 		}
+		[JsonProperty]
 		public int UtcOffsetEqual
 		{
 			get { return _UtcOffsetEqual; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UtcOffsetEqual");
 			}
 		}
+		[JsonProperty]
 		public string FreeText
 		{
 			get { return _FreeText; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RelatedExternalFilter(XmlElement node) : base(node)
+		public RelatedExternalFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idEqual":
-						this._IdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "typeIn":
-						this._TypeIn = propertyNode.InnerText;
-						continue;
-					case "utcOffsetEqual":
-						this._UtcOffsetEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "freeText":
-						this._FreeText = propertyNode.InnerText;
-						continue;
-				}
+				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
 			}
-		}
-
-		public RelatedExternalFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdEqual = data.TryGetValueSafe<int>("idEqual");
-			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
-			    this._UtcOffsetEqual = data.TryGetValueSafe<int>("utcOffsetEqual");
-			    this._FreeText = data.TryGetValueSafe<string>("freeText");
+			if(node["typeIn"] != null)
+			{
+				this._TypeIn = node["typeIn"].Value<string>();
+			}
+			if(node["utcOffsetEqual"] != null)
+			{
+				this._UtcOffsetEqual = ParseInt(node["utcOffsetEqual"].Value<string>());
+			}
+			if(node["freeText"] != null)
+			{
+				this._FreeText = node["freeText"].Value<string>();
+			}
 		}
 		#endregion
 

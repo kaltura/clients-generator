@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public bool? PushNotificationEnabled
 		{
 			get { return _PushNotificationEnabled; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushNotificationEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? PushFollowEnabled
 		{
 			get { return _PushFollowEnabled; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushFollowEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? MailEnabled
 		{
 			get { return _MailEnabled; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? SmsEnabled
 		{
 			get { return _SmsEnabled; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public NotificationsSettings(XmlElement node) : base(node)
+		public NotificationsSettings(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["pushNotificationEnabled"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "pushNotificationEnabled":
-						this._PushNotificationEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "pushFollowEnabled":
-						this._PushFollowEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "mailEnabled":
-						this._MailEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "smsEnabled":
-						this._SmsEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._PushNotificationEnabled = ParseBool(node["pushNotificationEnabled"].Value<string>());
 			}
-		}
-
-		public NotificationsSettings(IDictionary<string,object> data) : base(data)
-		{
-			    this._PushNotificationEnabled = data.TryGetValueSafe<bool>("pushNotificationEnabled");
-			    this._PushFollowEnabled = data.TryGetValueSafe<bool>("pushFollowEnabled");
-			    this._MailEnabled = data.TryGetValueSafe<bool>("mailEnabled");
-			    this._SmsEnabled = data.TryGetValueSafe<bool>("smsEnabled");
+			if(node["pushFollowEnabled"] != null)
+			{
+				this._PushFollowEnabled = ParseBool(node["pushFollowEnabled"].Value<string>());
+			}
+			if(node["mailEnabled"] != null)
+			{
+				this._MailEnabled = ParseBool(node["mailEnabled"].Value<string>());
+			}
+			if(node["smsEnabled"] != null)
+			{
+				this._SmsEnabled = ParseBool(node["smsEnabled"].Value<string>());
+			}
 		}
 		#endregion
 

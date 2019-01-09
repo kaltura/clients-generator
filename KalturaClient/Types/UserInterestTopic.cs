@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string MetaId
 		{
 			get { return _MetaId; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MetaId");
 			}
 		}
+		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Value");
 			}
 		}
+		[JsonProperty]
 		public UserInterestTopic ParentTopic
 		{
 			get { return _ParentTopic; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserInterestTopic(XmlElement node) : base(node)
+		public UserInterestTopic(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["metaId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "metaId":
-						this._MetaId = propertyNode.InnerText;
-						continue;
-					case "value":
-						this._Value = propertyNode.InnerText;
-						continue;
-					case "parentTopic":
-						this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(propertyNode);
-						continue;
-				}
+				this._MetaId = node["metaId"].Value<string>();
 			}
-		}
-
-		public UserInterestTopic(IDictionary<string,object> data) : base(data)
-		{
-			    this._MetaId = data.TryGetValueSafe<string>("metaId");
-			    this._Value = data.TryGetValueSafe<string>("value");
-			    this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(data.TryGetValueSafe<IDictionary<string,object>>("parentTopic"));
+			if(node["value"] != null)
+			{
+				this._Value = node["value"].Value<string>();
+			}
+			if(node["parentTopic"] != null)
+			{
+				this._ParentTopic = ObjectFactory.Create<UserInterestTopic>(node["parentTopic"]);
+			}
 		}
 		#endregion
 

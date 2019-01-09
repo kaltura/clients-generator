@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string LikeCounter
 		{
 			get { return _LikeCounter; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("LikeCounter");
 			}
 		}
+		[JsonProperty]
 		public string AuthorImageUrl
 		{
 			get { return _AuthorImageUrl; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialNetworkComment(XmlElement node) : base(node)
+		public SocialNetworkComment(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["likeCounter"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "likeCounter":
-						this._LikeCounter = propertyNode.InnerText;
-						continue;
-					case "authorImageUrl":
-						this._AuthorImageUrl = propertyNode.InnerText;
-						continue;
-				}
+				this._LikeCounter = node["likeCounter"].Value<string>();
 			}
-		}
-
-		public SocialNetworkComment(IDictionary<string,object> data) : base(data)
-		{
-			    this._LikeCounter = data.TryGetValueSafe<string>("likeCounter");
-			    this._AuthorImageUrl = data.TryGetValueSafe<string>("authorImageUrl");
+			if(node["authorImageUrl"] != null)
+			{
+				this._AuthorImageUrl = node["authorImageUrl"].Value<string>();
+			}
 		}
 		#endregion
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Kaltura.Types;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Request
 {
@@ -29,7 +31,7 @@ namespace Kaltura.Request
         public MultiRequestBuilder(params IRequestBuilder[] requestBuilders)
             : this()
         {
-            foreach(IRequestBuilder requestBuilder in requestBuilders)
+            foreach (IRequestBuilder requestBuilder in requestBuilders)
             {
                 Add(requestBuilder);
             }
@@ -38,7 +40,7 @@ namespace Kaltura.Request
         public override BaseRequestBuilder<List<object>> Build(Client client)
         {
             base.Build(client);
-            foreach(IRequestBuilder request in requests)
+            foreach (IRequestBuilder request in requests)
             {
                 request.Boundary = this.Boundary;
             }
@@ -59,7 +61,7 @@ namespace Kaltura.Request
             {
                 if (responses[i] is APIException)
                 {
-                    requests[i].OnComplete(null, (APIException) responses[i]);
+                    requests[i].OnComplete(null, (APIException)responses[i]);
                 }
                 else
                 {
@@ -99,11 +101,12 @@ namespace Kaltura.Request
             return kfiles;
         }
 
-        public override object Deserialize(XmlElement results)
+        public override object Deserialize(JToken results)
         {
             List<object> responses = new List<object>();
-
-            foreach (XmlElement result in results.ChildNodes)
+            var multiRequestResults = results as JArray;
+            if (multiRequestResults == null) { throw new Exception("Expected results of multi request as array but it wasn't."); }
+            foreach (var result in multiRequestResults)
             {
                 object response = GetAPIError(result);
                 if (response == null)
@@ -111,22 +114,6 @@ namespace Kaltura.Request
                     IRequestBuilder request = requests[responses.Count];
                     response = request.Deserialize(result);
                 }
-
-                responses.Add(response);
-            }
-
-            return responses;
-        }
-
-        public override object DeserializeObject(object results)
-        {
-            List<object> responses = new List<object>();
-
-            foreach (var result in (List<Dictionary<string,object>>)results)
-            {
-                //TODO: see if error and return
-                var request = requests[responses.Count];
-                var response = request.DeserializeObject(result);
 
                 responses.Add(response);
             }

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Query
 		{
 			get { return _Query; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Query");
 			}
 		}
+		[JsonProperty]
 		public int UtcOffsetEqual
 		{
 			get { return _UtcOffsetEqual; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UtcOffsetEqual");
 			}
 		}
+		[JsonProperty]
 		public string TypeIn
 		{
 			get { return _TypeIn; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SearchExternalFilter(XmlElement node) : base(node)
+		public SearchExternalFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["query"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "query":
-						this._Query = propertyNode.InnerText;
-						continue;
-					case "utcOffsetEqual":
-						this._UtcOffsetEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "typeIn":
-						this._TypeIn = propertyNode.InnerText;
-						continue;
-				}
+				this._Query = node["query"].Value<string>();
 			}
-		}
-
-		public SearchExternalFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._Query = data.TryGetValueSafe<string>("query");
-			    this._UtcOffsetEqual = data.TryGetValueSafe<int>("utcOffsetEqual");
-			    this._TypeIn = data.TryGetValueSafe<string>("typeIn");
+			if(node["utcOffsetEqual"] != null)
+			{
+				this._UtcOffsetEqual = ParseInt(node["utcOffsetEqual"].Value<string>());
+			}
+			if(node["typeIn"] != null)
+			{
+				this._TypeIn = node["typeIn"].Value<string>();
+			}
 		}
 		#endregion
 
