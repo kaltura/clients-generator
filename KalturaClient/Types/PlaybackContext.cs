@@ -40,7 +40,7 @@ namespace Kaltura.Types
 		public const string ACTIONS = "actions";
 		public const string MESSAGES = "messages";
 		public const string PLAYBACK_CAPTIONS = "playbackCaptions";
-		public const string PLAYBACK_BUMPERS = "playbackBumpers";
+		public const string PLUGINS = "plugins";
 		#endregion
 
 		#region Private Fields
@@ -48,7 +48,7 @@ namespace Kaltura.Types
 		private IList<RuleAction> _Actions;
 		private IList<AccessControlMessage> _Messages;
 		private IList<CaptionPlaybackPluginData> _PlaybackCaptions;
-		private IList<BumpersPlaybackPluginData> _PlaybackBumpers;
+		private IList<PlaybackPluginData> _Plugins;
 		#endregion
 
 		#region Properties
@@ -88,13 +88,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("PlaybackCaptions");
 			}
 		}
-		public IList<BumpersPlaybackPluginData> PlaybackBumpers
+		public IList<PlaybackPluginData> Plugins
 		{
-			get { return _PlaybackBumpers; }
+			get { return _Plugins; }
 			set 
 			{ 
-				_PlaybackBumpers = value;
-				OnPropertyChanged("PlaybackBumpers");
+				_Plugins = value;
+				OnPropertyChanged("Plugins");
 			}
 		}
 		#endregion
@@ -138,11 +138,11 @@ namespace Kaltura.Types
 							this._PlaybackCaptions.Add(ObjectFactory.Create<CaptionPlaybackPluginData>(arrayNode));
 						}
 						continue;
-					case "playbackBumpers":
-						this._PlaybackBumpers = new List<BumpersPlaybackPluginData>();
+					case "plugins":
+						this._Plugins = new List<PlaybackPluginData>();
 						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
 						{
-							this._PlaybackBumpers.Add(ObjectFactory.Create<BumpersPlaybackPluginData>(arrayNode));
+							this._Plugins.Add(ObjectFactory.Create<PlaybackPluginData>(arrayNode));
 						}
 						continue;
 				}
@@ -175,11 +175,11 @@ namespace Kaltura.Types
 			        if (dataDictionary == null) { continue; }
 			        this._PlaybackCaptions.Add(ObjectFactory.Create<CaptionPlaybackPluginData>((IDictionary<string,object>)dataDictionary));
 			    }
-			    this._PlaybackBumpers = new List<BumpersPlaybackPluginData>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("playbackBumpers", new List<object>()))
+			    this._Plugins = new List<PlaybackPluginData>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("plugins", new List<object>()))
 			    {
 			        if (dataDictionary == null) { continue; }
-			        this._PlaybackBumpers.Add(ObjectFactory.Create<BumpersPlaybackPluginData>((IDictionary<string,object>)dataDictionary));
+			        this._Plugins.Add(ObjectFactory.Create<PlaybackPluginData>((IDictionary<string,object>)dataDictionary));
 			    }
 		}
 		#endregion
@@ -194,7 +194,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("actions", this._Actions);
 			kparams.AddIfNotNull("messages", this._Messages);
 			kparams.AddIfNotNull("playbackCaptions", this._PlaybackCaptions);
-			kparams.AddIfNotNull("playbackBumpers", this._PlaybackBumpers);
+			kparams.AddIfNotNull("plugins", this._Plugins);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -209,8 +209,8 @@ namespace Kaltura.Types
 					return "Messages";
 				case PLAYBACK_CAPTIONS:
 					return "PlaybackCaptions";
-				case PLAYBACK_BUMPERS:
-					return "PlaybackBumpers";
+				case PLUGINS:
+					return "Plugins";
 				default:
 					return base.getPropertyName(apiName);
 			}

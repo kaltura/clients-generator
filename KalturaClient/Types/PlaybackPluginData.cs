@@ -33,64 +33,28 @@ using Kaltura.Request;
 
 namespace Kaltura.Types
 {
-	public class BumpersPlaybackPluginData : PlaybackPluginData
+	public class PlaybackPluginData : ObjectBase
 	{
 		#region Constants
-		public const string URL = "url";
-		public const string STREAMERTYPE = "streamertype";
 		#endregion
 
 		#region Private Fields
-		private string _Url = null;
-		private string _Streamertype = null;
 		#endregion
 
 		#region Properties
-		public string Url
-		{
-			get { return _Url; }
-			set 
-			{ 
-				_Url = value;
-				OnPropertyChanged("Url");
-			}
-		}
-		public string Streamertype
-		{
-			get { return _Streamertype; }
-			set 
-			{ 
-				_Streamertype = value;
-				OnPropertyChanged("Streamertype");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public BumpersPlaybackPluginData()
+		public PlaybackPluginData()
 		{
 		}
 
-		public BumpersPlaybackPluginData(XmlElement node) : base(node)
+		public PlaybackPluginData(XmlElement node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
-			{
-				switch (propertyNode.Name)
-				{
-					case "url":
-						this._Url = propertyNode.InnerText;
-						continue;
-					case "streamertype":
-						this._Streamertype = propertyNode.InnerText;
-						continue;
-				}
-			}
 		}
 
-		public BumpersPlaybackPluginData(IDictionary<string,object> data) : base(data)
+		public PlaybackPluginData(IDictionary<string,object> data) : base(data)
 		{
-			    this._Url = data.TryGetValueSafe<string>("url");
-			    this._Streamertype = data.TryGetValueSafe<string>("streamertype");
 		}
 		#endregion
 
@@ -99,19 +63,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBumpersPlaybackPluginData");
-			kparams.AddIfNotNull("url", this._Url);
-			kparams.AddIfNotNull("streamertype", this._Streamertype);
+				kparams.AddReplace("objectType", "KalturaPlaybackPluginData");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case URL:
-					return "Url";
-				case STREAMERTYPE:
-					return "Streamertype";
 				default:
 					return base.getPropertyName(apiName);
 			}
