@@ -46,7 +46,6 @@ namespace Kaltura.Types
 		public const string EXPORT_TYPE = "exportType";
 		public const string FREQUENCY = "frequency";
 		public const string NOTIFICATION_URL = "notificationUrl";
-		public const string VOD_TYPES = "vodTypes";
 		public const string IS_ACTIVE = "isActive";
 		#endregion
 
@@ -59,7 +58,6 @@ namespace Kaltura.Types
 		private ExportType _ExportType = null;
 		private long _Frequency = long.MinValue;
 		private string _NotificationUrl = null;
-		private IList<IntegerValue> _VodTypes;
 		private bool? _IsActive = null;
 		#endregion
 
@@ -145,16 +143,6 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public IList<IntegerValue> VodTypes
-		{
-			get { return _VodTypes; }
-			set 
-			{ 
-				_VodTypes = value;
-				OnPropertyChanged("VodTypes");
-			}
-		}
-		[JsonProperty]
 		public bool? IsActive
 		{
 			get { return _IsActive; }
@@ -205,14 +193,6 @@ namespace Kaltura.Types
 			{
 				this._NotificationUrl = node["notificationUrl"].Value<string>();
 			}
-			if(node["vodTypes"] != null)
-			{
-				this._VodTypes = new List<IntegerValue>();
-				foreach(var arrayNode in node["vodTypes"].Children())
-				{
-					this._VodTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-				}
-			}
 			if(node["isActive"] != null)
 			{
 				this._IsActive = ParseBool(node["isActive"].Value<string>());
@@ -234,7 +214,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("exportType", this._ExportType);
 			kparams.AddIfNotNull("frequency", this._Frequency);
 			kparams.AddIfNotNull("notificationUrl", this._NotificationUrl);
-			kparams.AddIfNotNull("vodTypes", this._VodTypes);
 			kparams.AddIfNotNull("isActive", this._IsActive);
 			return kparams;
 		}
@@ -258,8 +237,6 @@ namespace Kaltura.Types
 					return "Frequency";
 				case NOTIFICATION_URL:
 					return "NotificationUrl";
-				case VOD_TYPES:
-					return "VodTypes";
 				case IS_ACTIVE:
 					return "IsActive";
 				default:
