@@ -1252,6 +1252,11 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			case 'bigint':
 				$type = 'long';
 				$null = 'long.MinValue';
+                break;
+                
+            case 'bool':
+                $type = 'bool?';
+                $null = 'null';
 				break;
 
 			default:
