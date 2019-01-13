@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string PropertyPath
 		{
 			get { return _PropertyPath; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PropertyPath");
 			}
 		}
+		[JsonProperty]
 		public SkipOperators Operator
 		{
 			get { return _Operator; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Operator");
 			}
 		}
+		[JsonProperty]
 		public string Value
 		{
 			get { return _Value; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PropertySkipCondition(XmlElement node) : base(node)
+		public PropertySkipCondition(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["propertyPath"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "propertyPath":
-						this._PropertyPath = propertyNode.InnerText;
-						continue;
-					case "operator":
-						this._Operator = (SkipOperators)StringEnum.Parse(typeof(SkipOperators), propertyNode.InnerText);
-						continue;
-					case "value":
-						this._Value = propertyNode.InnerText;
-						continue;
-				}
+				this._PropertyPath = node["propertyPath"].Value<string>();
 			}
-		}
-
-		public PropertySkipCondition(IDictionary<string,object> data) : base(data)
-		{
-			    this._PropertyPath = data.TryGetValueSafe<string>("propertyPath");
-			    this._Operator = (SkipOperators)StringEnum.Parse(typeof(SkipOperators), data.TryGetValueSafe<string>("operator"));
-			    this._Value = data.TryGetValueSafe<string>("value");
+			if(node["operator"] != null)
+			{
+				this._Operator = (SkipOperators)StringEnum.Parse(typeof(SkipOperators), node["operator"].Value<string>());
+			}
+			if(node["value"] != null)
+			{
+				this._Value = node["value"].Value<string>();
+			}
 		}
 		#endregion
 

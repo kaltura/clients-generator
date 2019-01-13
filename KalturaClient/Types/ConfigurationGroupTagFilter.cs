@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string ConfigurationGroupIdEqual
 		{
 			get { return _ConfigurationGroupIdEqual; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConfigurationGroupIdEqual");
 			}
 		}
+		[JsonProperty]
 		public new ConfigurationGroupTagOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConfigurationGroupTagFilter(XmlElement node) : base(node)
+		public ConfigurationGroupTagFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["configurationGroupIdEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "configurationGroupIdEqual":
-						this._ConfigurationGroupIdEqual = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (ConfigurationGroupTagOrderBy)StringEnum.Parse(typeof(ConfigurationGroupTagOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._ConfigurationGroupIdEqual = node["configurationGroupIdEqual"].Value<string>();
 			}
-		}
-
-		public ConfigurationGroupTagFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._ConfigurationGroupIdEqual = data.TryGetValueSafe<string>("configurationGroupIdEqual");
-			    this._OrderBy = (ConfigurationGroupTagOrderBy)StringEnum.Parse(typeof(ConfigurationGroupTagOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ConfigurationGroupTagOrderBy)StringEnum.Parse(typeof(ConfigurationGroupTagOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

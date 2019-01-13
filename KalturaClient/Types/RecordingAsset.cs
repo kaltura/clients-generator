@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string RecordingId
 		{
 			get { return _RecordingId; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecordingId");
 			}
 		}
+		[JsonProperty]
 		public RecordingType RecordingType
 		{
 			get { return _RecordingType; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RecordingAsset(XmlElement node) : base(node)
+		public RecordingAsset(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["recordingId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "recordingId":
-						this._RecordingId = propertyNode.InnerText;
-						continue;
-					case "recordingType":
-						this._RecordingType = (RecordingType)StringEnum.Parse(typeof(RecordingType), propertyNode.InnerText);
-						continue;
-				}
+				this._RecordingId = node["recordingId"].Value<string>();
 			}
-		}
-
-		public RecordingAsset(IDictionary<string,object> data) : base(data)
-		{
-			    this._RecordingId = data.TryGetValueSafe<string>("recordingId");
-			    this._RecordingType = (RecordingType)StringEnum.Parse(typeof(RecordingType), data.TryGetValueSafe<string>("recordingType"));
+			if(node["recordingType"] != null)
+			{
+				this._RecordingType = (RecordingType)StringEnum.Parse(typeof(RecordingType), node["recordingType"].Value<string>());
+			}
 		}
 		#endregion
 

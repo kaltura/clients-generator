@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -84,6 +86,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public bool? CatchUpEnabled
 		{
 			get { return _CatchUpEnabled; }
@@ -93,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CatchUpEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? CdvrEnabled
 		{
 			get { return _CdvrEnabled; }
@@ -102,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CdvrEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? StartOverEnabled
 		{
 			get { return _StartOverEnabled; }
@@ -111,6 +116,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartOverEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? TrickPlayEnabled
 		{
 			get { return _TrickPlayEnabled; }
@@ -120,6 +126,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TrickPlayEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? RecordingScheduleWindowEnabled
 		{
 			get { return _RecordingScheduleWindowEnabled; }
@@ -129,6 +136,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecordingScheduleWindowEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? ProtectionEnabled
 		{
 			get { return _ProtectionEnabled; }
@@ -138,6 +146,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProtectionEnabled");
 			}
 		}
+		[JsonProperty]
 		public long CatchUpBufferLength
 		{
 			get { return _CatchUpBufferLength; }
@@ -147,6 +156,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CatchUpBufferLength");
 			}
 		}
+		[JsonProperty]
 		public long TrickPlayBufferLength
 		{
 			get { return _TrickPlayBufferLength; }
@@ -156,6 +166,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TrickPlayBufferLength");
 			}
 		}
+		[JsonProperty]
 		public long RecordingScheduleWindow
 		{
 			get { return _RecordingScheduleWindow; }
@@ -165,6 +176,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecordingScheduleWindow");
 			}
 		}
+		[JsonProperty]
 		public long PaddingBeforeProgramStarts
 		{
 			get { return _PaddingBeforeProgramStarts; }
@@ -174,6 +186,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaddingBeforeProgramStarts");
 			}
 		}
+		[JsonProperty]
 		public long PaddingAfterProgramEnds
 		{
 			get { return _PaddingAfterProgramEnds; }
@@ -183,6 +196,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaddingAfterProgramEnds");
 			}
 		}
+		[JsonProperty]
 		public int ProtectionPeriod
 		{
 			get { return _ProtectionPeriod; }
@@ -192,6 +206,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProtectionPeriod");
 			}
 		}
+		[JsonProperty]
 		public int ProtectionQuotaPercentage
 		{
 			get { return _ProtectionQuotaPercentage; }
@@ -201,6 +216,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProtectionQuotaPercentage");
 			}
 		}
+		[JsonProperty]
 		public int RecordingLifetimePeriod
 		{
 			get { return _RecordingLifetimePeriod; }
@@ -210,6 +226,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecordingLifetimePeriod");
 			}
 		}
+		[JsonProperty]
 		public int CleanupNoticePeriod
 		{
 			get { return _CleanupNoticePeriod; }
@@ -219,6 +236,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CleanupNoticePeriod");
 			}
 		}
+		[JsonProperty]
 		public bool? SeriesRecordingEnabled
 		{
 			get { return _SeriesRecordingEnabled; }
@@ -228,6 +246,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SeriesRecordingEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? NonEntitledChannelPlaybackEnabled
 		{
 			get { return _NonEntitledChannelPlaybackEnabled; }
@@ -237,6 +256,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NonEntitledChannelPlaybackEnabled");
 			}
 		}
+		[JsonProperty]
 		public bool? NonExistingChannelPlaybackEnabled
 		{
 			get { return _NonExistingChannelPlaybackEnabled; }
@@ -246,6 +266,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NonExistingChannelPlaybackEnabled");
 			}
 		}
+		[JsonProperty]
 		public QuotaOveragePolicy QuotaOveragePolicy
 		{
 			get { return _QuotaOveragePolicy; }
@@ -255,6 +276,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("QuotaOveragePolicy");
 			}
 		}
+		[JsonProperty]
 		public ProtectionPolicy ProtectionPolicy
 		{
 			get { return _ProtectionPolicy; }
@@ -264,6 +286,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProtectionPolicy");
 			}
 		}
+		[JsonProperty]
 		public int RecoveryGracePeriod
 		{
 			get { return _RecoveryGracePeriod; }
@@ -280,102 +303,92 @@ namespace Kaltura.Types
 		{
 		}
 
-		public TimeShiftedTvPartnerSettings(XmlElement node) : base(node)
+		public TimeShiftedTvPartnerSettings(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["catchUpEnabled"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "catchUpEnabled":
-						this._CatchUpEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "cdvrEnabled":
-						this._CdvrEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "startOverEnabled":
-						this._StartOverEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "trickPlayEnabled":
-						this._TrickPlayEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "recordingScheduleWindowEnabled":
-						this._RecordingScheduleWindowEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "protectionEnabled":
-						this._ProtectionEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "catchUpBufferLength":
-						this._CatchUpBufferLength = ParseLong(propertyNode.InnerText);
-						continue;
-					case "trickPlayBufferLength":
-						this._TrickPlayBufferLength = ParseLong(propertyNode.InnerText);
-						continue;
-					case "recordingScheduleWindow":
-						this._RecordingScheduleWindow = ParseLong(propertyNode.InnerText);
-						continue;
-					case "paddingBeforeProgramStarts":
-						this._PaddingBeforeProgramStarts = ParseLong(propertyNode.InnerText);
-						continue;
-					case "paddingAfterProgramEnds":
-						this._PaddingAfterProgramEnds = ParseLong(propertyNode.InnerText);
-						continue;
-					case "protectionPeriod":
-						this._ProtectionPeriod = ParseInt(propertyNode.InnerText);
-						continue;
-					case "protectionQuotaPercentage":
-						this._ProtectionQuotaPercentage = ParseInt(propertyNode.InnerText);
-						continue;
-					case "recordingLifetimePeriod":
-						this._RecordingLifetimePeriod = ParseInt(propertyNode.InnerText);
-						continue;
-					case "cleanupNoticePeriod":
-						this._CleanupNoticePeriod = ParseInt(propertyNode.InnerText);
-						continue;
-					case "seriesRecordingEnabled":
-						this._SeriesRecordingEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "nonEntitledChannelPlaybackEnabled":
-						this._NonEntitledChannelPlaybackEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "nonExistingChannelPlaybackEnabled":
-						this._NonExistingChannelPlaybackEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "quotaOveragePolicy":
-						this._QuotaOveragePolicy = (QuotaOveragePolicy)StringEnum.Parse(typeof(QuotaOveragePolicy), propertyNode.InnerText);
-						continue;
-					case "protectionPolicy":
-						this._ProtectionPolicy = (ProtectionPolicy)StringEnum.Parse(typeof(ProtectionPolicy), propertyNode.InnerText);
-						continue;
-					case "recoveryGracePeriod":
-						this._RecoveryGracePeriod = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._CatchUpEnabled = ParseBool(node["catchUpEnabled"].Value<string>());
 			}
-		}
-
-		public TimeShiftedTvPartnerSettings(IDictionary<string,object> data) : base(data)
-		{
-			    this._CatchUpEnabled = data.TryGetValueSafe<bool>("catchUpEnabled");
-			    this._CdvrEnabled = data.TryGetValueSafe<bool>("cdvrEnabled");
-			    this._StartOverEnabled = data.TryGetValueSafe<bool>("startOverEnabled");
-			    this._TrickPlayEnabled = data.TryGetValueSafe<bool>("trickPlayEnabled");
-			    this._RecordingScheduleWindowEnabled = data.TryGetValueSafe<bool>("recordingScheduleWindowEnabled");
-			    this._ProtectionEnabled = data.TryGetValueSafe<bool>("protectionEnabled");
-			    this._CatchUpBufferLength = data.TryGetValueSafe<long>("catchUpBufferLength");
-			    this._TrickPlayBufferLength = data.TryGetValueSafe<long>("trickPlayBufferLength");
-			    this._RecordingScheduleWindow = data.TryGetValueSafe<long>("recordingScheduleWindow");
-			    this._PaddingBeforeProgramStarts = data.TryGetValueSafe<long>("paddingBeforeProgramStarts");
-			    this._PaddingAfterProgramEnds = data.TryGetValueSafe<long>("paddingAfterProgramEnds");
-			    this._ProtectionPeriod = data.TryGetValueSafe<int>("protectionPeriod");
-			    this._ProtectionQuotaPercentage = data.TryGetValueSafe<int>("protectionQuotaPercentage");
-			    this._RecordingLifetimePeriod = data.TryGetValueSafe<int>("recordingLifetimePeriod");
-			    this._CleanupNoticePeriod = data.TryGetValueSafe<int>("cleanupNoticePeriod");
-			    this._SeriesRecordingEnabled = data.TryGetValueSafe<bool>("seriesRecordingEnabled");
-			    this._NonEntitledChannelPlaybackEnabled = data.TryGetValueSafe<bool>("nonEntitledChannelPlaybackEnabled");
-			    this._NonExistingChannelPlaybackEnabled = data.TryGetValueSafe<bool>("nonExistingChannelPlaybackEnabled");
-			    this._QuotaOveragePolicy = (QuotaOveragePolicy)StringEnum.Parse(typeof(QuotaOveragePolicy), data.TryGetValueSafe<string>("quotaOveragePolicy"));
-			    this._ProtectionPolicy = (ProtectionPolicy)StringEnum.Parse(typeof(ProtectionPolicy), data.TryGetValueSafe<string>("protectionPolicy"));
-			    this._RecoveryGracePeriod = data.TryGetValueSafe<int>("recoveryGracePeriod");
+			if(node["cdvrEnabled"] != null)
+			{
+				this._CdvrEnabled = ParseBool(node["cdvrEnabled"].Value<string>());
+			}
+			if(node["startOverEnabled"] != null)
+			{
+				this._StartOverEnabled = ParseBool(node["startOverEnabled"].Value<string>());
+			}
+			if(node["trickPlayEnabled"] != null)
+			{
+				this._TrickPlayEnabled = ParseBool(node["trickPlayEnabled"].Value<string>());
+			}
+			if(node["recordingScheduleWindowEnabled"] != null)
+			{
+				this._RecordingScheduleWindowEnabled = ParseBool(node["recordingScheduleWindowEnabled"].Value<string>());
+			}
+			if(node["protectionEnabled"] != null)
+			{
+				this._ProtectionEnabled = ParseBool(node["protectionEnabled"].Value<string>());
+			}
+			if(node["catchUpBufferLength"] != null)
+			{
+				this._CatchUpBufferLength = ParseLong(node["catchUpBufferLength"].Value<string>());
+			}
+			if(node["trickPlayBufferLength"] != null)
+			{
+				this._TrickPlayBufferLength = ParseLong(node["trickPlayBufferLength"].Value<string>());
+			}
+			if(node["recordingScheduleWindow"] != null)
+			{
+				this._RecordingScheduleWindow = ParseLong(node["recordingScheduleWindow"].Value<string>());
+			}
+			if(node["paddingBeforeProgramStarts"] != null)
+			{
+				this._PaddingBeforeProgramStarts = ParseLong(node["paddingBeforeProgramStarts"].Value<string>());
+			}
+			if(node["paddingAfterProgramEnds"] != null)
+			{
+				this._PaddingAfterProgramEnds = ParseLong(node["paddingAfterProgramEnds"].Value<string>());
+			}
+			if(node["protectionPeriod"] != null)
+			{
+				this._ProtectionPeriod = ParseInt(node["protectionPeriod"].Value<string>());
+			}
+			if(node["protectionQuotaPercentage"] != null)
+			{
+				this._ProtectionQuotaPercentage = ParseInt(node["protectionQuotaPercentage"].Value<string>());
+			}
+			if(node["recordingLifetimePeriod"] != null)
+			{
+				this._RecordingLifetimePeriod = ParseInt(node["recordingLifetimePeriod"].Value<string>());
+			}
+			if(node["cleanupNoticePeriod"] != null)
+			{
+				this._CleanupNoticePeriod = ParseInt(node["cleanupNoticePeriod"].Value<string>());
+			}
+			if(node["seriesRecordingEnabled"] != null)
+			{
+				this._SeriesRecordingEnabled = ParseBool(node["seriesRecordingEnabled"].Value<string>());
+			}
+			if(node["nonEntitledChannelPlaybackEnabled"] != null)
+			{
+				this._NonEntitledChannelPlaybackEnabled = ParseBool(node["nonEntitledChannelPlaybackEnabled"].Value<string>());
+			}
+			if(node["nonExistingChannelPlaybackEnabled"] != null)
+			{
+				this._NonExistingChannelPlaybackEnabled = ParseBool(node["nonExistingChannelPlaybackEnabled"].Value<string>());
+			}
+			if(node["quotaOveragePolicy"] != null)
+			{
+				this._QuotaOveragePolicy = (QuotaOveragePolicy)StringEnum.Parse(typeof(QuotaOveragePolicy), node["quotaOveragePolicy"].Value<string>());
+			}
+			if(node["protectionPolicy"] != null)
+			{
+				this._ProtectionPolicy = (ProtectionPolicy)StringEnum.Parse(typeof(ProtectionPolicy), node["protectionPolicy"].Value<string>());
+			}
+			if(node["recoveryGracePeriod"] != null)
+			{
+				this._RecoveryGracePeriod = ParseInt(node["recoveryGracePeriod"].Value<string>());
+			}
 		}
 		#endregion
 

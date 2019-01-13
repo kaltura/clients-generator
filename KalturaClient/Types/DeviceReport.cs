@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -64,6 +66,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int PartnerId
 		{
 			get { return _PartnerId; }
@@ -73,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PartnerId");
 			}
 		}
+		[JsonProperty]
 		public string ConfigurationGroupId
 		{
 			get { return _ConfigurationGroupId; }
@@ -82,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConfigurationGroupId");
 			}
 		}
+		[JsonProperty]
 		public string Udid
 		{
 			get { return _Udid; }
@@ -91,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Udid");
 			}
 		}
+		[JsonProperty]
 		public PushParams PushParameters
 		{
 			get { return _PushParameters; }
@@ -100,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PushParameters");
 			}
 		}
+		[JsonProperty]
 		public string VersionNumber
 		{
 			get { return _VersionNumber; }
@@ -109,6 +116,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("VersionNumber");
 			}
 		}
+		[JsonProperty]
 		public Platform VersionPlatform
 		{
 			get { return _VersionPlatform; }
@@ -118,6 +126,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("VersionPlatform");
 			}
 		}
+		[JsonProperty]
 		public string VersionAppName
 		{
 			get { return _VersionAppName; }
@@ -127,6 +136,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("VersionAppName");
 			}
 		}
+		[JsonProperty]
 		public string LastAccessIP
 		{
 			get { return _LastAccessIP; }
@@ -136,6 +146,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("LastAccessIP");
 			}
 		}
+		[JsonProperty]
 		public long LastAccessDate
 		{
 			get { return _LastAccessDate; }
@@ -145,6 +156,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("LastAccessDate");
 			}
 		}
+		[JsonProperty]
 		public string UserAgent
 		{
 			get { return _UserAgent; }
@@ -154,6 +166,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserAgent");
 			}
 		}
+		[JsonProperty]
 		public string OperationSystem
 		{
 			get { return _OperationSystem; }
@@ -170,62 +183,52 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DeviceReport(XmlElement node) : base(node)
+		public DeviceReport(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["partnerId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "partnerId":
-						this._PartnerId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "configurationGroupId":
-						this._ConfigurationGroupId = propertyNode.InnerText;
-						continue;
-					case "udid":
-						this._Udid = propertyNode.InnerText;
-						continue;
-					case "pushParameters":
-						this._PushParameters = ObjectFactory.Create<PushParams>(propertyNode);
-						continue;
-					case "versionNumber":
-						this._VersionNumber = propertyNode.InnerText;
-						continue;
-					case "versionPlatform":
-						this._VersionPlatform = (Platform)StringEnum.Parse(typeof(Platform), propertyNode.InnerText);
-						continue;
-					case "versionAppName":
-						this._VersionAppName = propertyNode.InnerText;
-						continue;
-					case "lastAccessIP":
-						this._LastAccessIP = propertyNode.InnerText;
-						continue;
-					case "lastAccessDate":
-						this._LastAccessDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "userAgent":
-						this._UserAgent = propertyNode.InnerText;
-						continue;
-					case "operationSystem":
-						this._OperationSystem = propertyNode.InnerText;
-						continue;
-				}
+				this._PartnerId = ParseInt(node["partnerId"].Value<string>());
 			}
-		}
-
-		public DeviceReport(IDictionary<string,object> data) : base(data)
-		{
-			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
-			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
-			    this._Udid = data.TryGetValueSafe<string>("udid");
-			    this._PushParameters = ObjectFactory.Create<PushParams>(data.TryGetValueSafe<IDictionary<string,object>>("pushParameters"));
-			    this._VersionNumber = data.TryGetValueSafe<string>("versionNumber");
-			    this._VersionPlatform = (Platform)StringEnum.Parse(typeof(Platform), data.TryGetValueSafe<string>("versionPlatform"));
-			    this._VersionAppName = data.TryGetValueSafe<string>("versionAppName");
-			    this._LastAccessIP = data.TryGetValueSafe<string>("lastAccessIP");
-			    this._LastAccessDate = data.TryGetValueSafe<long>("lastAccessDate");
-			    this._UserAgent = data.TryGetValueSafe<string>("userAgent");
-			    this._OperationSystem = data.TryGetValueSafe<string>("operationSystem");
+			if(node["configurationGroupId"] != null)
+			{
+				this._ConfigurationGroupId = node["configurationGroupId"].Value<string>();
+			}
+			if(node["udid"] != null)
+			{
+				this._Udid = node["udid"].Value<string>();
+			}
+			if(node["pushParameters"] != null)
+			{
+				this._PushParameters = ObjectFactory.Create<PushParams>(node["pushParameters"]);
+			}
+			if(node["versionNumber"] != null)
+			{
+				this._VersionNumber = node["versionNumber"].Value<string>();
+			}
+			if(node["versionPlatform"] != null)
+			{
+				this._VersionPlatform = (Platform)StringEnum.Parse(typeof(Platform), node["versionPlatform"].Value<string>());
+			}
+			if(node["versionAppName"] != null)
+			{
+				this._VersionAppName = node["versionAppName"].Value<string>();
+			}
+			if(node["lastAccessIP"] != null)
+			{
+				this._LastAccessIP = node["lastAccessIP"].Value<string>();
+			}
+			if(node["lastAccessDate"] != null)
+			{
+				this._LastAccessDate = ParseLong(node["lastAccessDate"].Value<string>());
+			}
+			if(node["userAgent"] != null)
+			{
+				this._UserAgent = node["userAgent"].Value<string>();
+			}
+			if(node["operationSystem"] != null)
+			{
+				this._OperationSystem = node["operationSystem"].Value<string>();
+			}
 		}
 		#endregion
 

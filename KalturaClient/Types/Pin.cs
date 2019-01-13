@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string PinValue
 		{
 			get { return _Pin; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Pin");
 			}
 		}
+		[JsonProperty]
 		public RuleLevel Origin
 		{
 			get { return _Origin; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Origin");
 			}
 		}
+		[JsonProperty]
 		public PinType Type
 		{
 			get { return _Type; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Pin(XmlElement node) : base(node)
+		public Pin(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["pin"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "pin":
-						this._Pin = propertyNode.InnerText;
-						continue;
-					case "origin":
-						this._Origin = (RuleLevel)StringEnum.Parse(typeof(RuleLevel), propertyNode.InnerText);
-						continue;
-					case "type":
-						this._Type = (PinType)StringEnum.Parse(typeof(PinType), propertyNode.InnerText);
-						continue;
-				}
+				this._Pin = node["pin"].Value<string>();
 			}
-		}
-
-		public Pin(IDictionary<string,object> data) : base(data)
-		{
-			    this._Pin = data.TryGetValueSafe<string>("pin");
-			    this._Origin = (RuleLevel)StringEnum.Parse(typeof(RuleLevel), data.TryGetValueSafe<string>("origin"));
-			    this._Type = (PinType)StringEnum.Parse(typeof(PinType), data.TryGetValueSafe<string>("type"));
+			if(node["origin"] != null)
+			{
+				this._Origin = (RuleLevel)StringEnum.Parse(typeof(RuleLevel), node["origin"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (PinType)StringEnum.Parse(typeof(PinType), node["type"].Value<string>());
+			}
 		}
 		#endregion
 

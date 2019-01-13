@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string CodeIn
 		{
 			get { return _CodeIn; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CodeIn");
 			}
 		}
+		[JsonProperty]
 		public new CurrencyOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CurrencyFilter(XmlElement node) : base(node)
+		public CurrencyFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["codeIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "codeIn":
-						this._CodeIn = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._CodeIn = node["codeIn"].Value<string>();
 			}
-		}
-
-		public CurrencyFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._CodeIn = data.TryGetValueSafe<string>("codeIn");
-			    this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (CurrencyOrderBy)StringEnum.Parse(typeof(CurrencyOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 
