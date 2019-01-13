@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public DynamicOrderBy DynamicOrderBy
 		{
 			get { return _DynamicOrderBy; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DynamicOrderBy");
 			}
 		}
-		[JsonProperty]
 		public new AssetOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetFilter(JToken node) : base(node)
+		public AssetFilter(XmlElement node) : base(node)
 		{
-			if(node["dynamicOrderBy"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._DynamicOrderBy = ObjectFactory.Create<DynamicOrderBy>(node["dynamicOrderBy"]);
+				switch (propertyNode.Name)
+				{
+					case "dynamicOrderBy":
+						this._DynamicOrderBy = ObjectFactory.Create<DynamicOrderBy>(propertyNode);
+						continue;
+					case "orderBy":
+						this._OrderBy = (AssetOrderBy)StringEnum.Parse(typeof(AssetOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetOrderBy)StringEnum.Parse(typeof(AssetOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public AssetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._DynamicOrderBy = ObjectFactory.Create<DynamicOrderBy>(data.TryGetValueSafe<IDictionary<string,object>>("dynamicOrderBy"));
+			    this._OrderBy = (AssetOrderBy)StringEnum.Parse(typeof(AssetOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

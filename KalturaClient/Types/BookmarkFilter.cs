@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string AssetIdIn
 		{
 			get { return _AssetIdIn; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetIdIn");
 			}
 		}
-		[JsonProperty]
 		public AssetType AssetTypeEqual
 		{
 			get { return _AssetTypeEqual; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetTypeEqual");
 			}
 		}
-		[JsonProperty]
 		public new BookmarkOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BookmarkFilter(JToken node) : base(node)
+		public BookmarkFilter(XmlElement node) : base(node)
 		{
-			if(node["assetIdIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AssetIdIn = node["assetIdIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "assetIdIn":
+						this._AssetIdIn = propertyNode.InnerText;
+						continue;
+					case "assetTypeEqual":
+						this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (BookmarkOrderBy)StringEnum.Parse(typeof(BookmarkOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["assetTypeEqual"] != null)
-			{
-				this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetTypeEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (BookmarkOrderBy)StringEnum.Parse(typeof(BookmarkOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public BookmarkFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AssetIdIn = data.TryGetValueSafe<string>("assetIdIn");
+			    this._AssetTypeEqual = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetTypeEqual"));
+			    this._OrderBy = (BookmarkOrderBy)StringEnum.Parse(typeof(BookmarkOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

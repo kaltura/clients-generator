@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -62,17 +60,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -82,7 +73,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -92,7 +82,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
-		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -102,7 +91,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDate");
 			}
 		}
-		[JsonProperty]
 		public int MaxUsesNumber
 		{
 			get { return _MaxUsesNumber; }
@@ -112,7 +100,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxUsesNumber");
 			}
 		}
-		[JsonProperty]
 		public int MaxUsesNumberOnRenewableSub
 		{
 			get { return _MaxUsesNumberOnRenewableSub; }
@@ -122,7 +109,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxUsesNumberOnRenewableSub");
 			}
 		}
-		[JsonProperty]
 		public CouponGroupType CouponGroupType
 		{
 			get { return _CouponGroupType; }
@@ -132,7 +118,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CouponGroupType");
 			}
 		}
-		[JsonProperty]
 		public int MaxHouseholdUses
 		{
 			get { return _MaxHouseholdUses; }
@@ -142,7 +127,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxHouseholdUses");
 			}
 		}
-		[JsonProperty]
 		public long DiscountId
 		{
 			get { return _DiscountId; }
@@ -159,44 +143,54 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CouponsGroup(JToken node) : base(node)
+		public CouponsGroup(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "maxUsesNumber":
+						this._MaxUsesNumber = ParseInt(propertyNode.InnerText);
+						continue;
+					case "maxUsesNumberOnRenewableSub":
+						this._MaxUsesNumberOnRenewableSub = ParseInt(propertyNode.InnerText);
+						continue;
+					case "couponGroupType":
+						this._CouponGroupType = (CouponGroupType)StringEnum.Parse(typeof(CouponGroupType), propertyNode.InnerText);
+						continue;
+					case "maxHouseholdUses":
+						this._MaxHouseholdUses = ParseInt(propertyNode.InnerText);
+						continue;
+					case "discountId":
+						this._DiscountId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
-			if(node["maxUsesNumber"] != null)
-			{
-				this._MaxUsesNumber = ParseInt(node["maxUsesNumber"].Value<string>());
-			}
-			if(node["maxUsesNumberOnRenewableSub"] != null)
-			{
-				this._MaxUsesNumberOnRenewableSub = ParseInt(node["maxUsesNumberOnRenewableSub"].Value<string>());
-			}
-			if(node["couponGroupType"] != null)
-			{
-				this._CouponGroupType = (CouponGroupType)StringEnum.Parse(typeof(CouponGroupType), node["couponGroupType"].Value<string>());
-			}
-			if(node["maxHouseholdUses"] != null)
-			{
-				this._MaxHouseholdUses = ParseInt(node["maxHouseholdUses"].Value<string>());
-			}
-			if(node["discountId"] != null)
-			{
-				this._DiscountId = ParseLong(node["discountId"].Value<string>());
-			}
+		}
+
+		public CouponsGroup(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._MaxUsesNumber = data.TryGetValueSafe<int>("maxUsesNumber");
+			    this._MaxUsesNumberOnRenewableSub = data.TryGetValueSafe<int>("maxUsesNumberOnRenewableSub");
+			    this._CouponGroupType = (CouponGroupType)StringEnum.Parse(typeof(CouponGroupType), data.TryGetValueSafe<string>("couponGroupType"));
+			    this._MaxHouseholdUses = data.TryGetValueSafe<int>("maxHouseholdUses");
+			    this._DiscountId = data.TryGetValueSafe<long>("discountId");
 		}
 		#endregion
 

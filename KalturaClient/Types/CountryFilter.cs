@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public string IpEqual
 		{
 			get { return _IpEqual; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IpEqual");
 			}
 		}
-		[JsonProperty]
 		public bool? IpEqualCurrent
 		{
 			get { return _IpEqualCurrent; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IpEqualCurrent");
 			}
 		}
-		[JsonProperty]
 		public new CountryOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CountryFilter(JToken node) : base(node)
+		public CountryFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "ipEqual":
+						this._IpEqual = propertyNode.InnerText;
+						continue;
+					case "ipEqualCurrent":
+						this._IpEqualCurrent = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["ipEqual"] != null)
-			{
-				this._IpEqual = node["ipEqual"].Value<string>();
-			}
-			if(node["ipEqualCurrent"] != null)
-			{
-				this._IpEqualCurrent = ParseBool(node["ipEqualCurrent"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public CountryFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._IpEqual = data.TryGetValueSafe<string>("ipEqual");
+			    this._IpEqualCurrent = data.TryGetValueSafe<bool>("ipEqualCurrent");
+			    this._OrderBy = (CountryOrderBy)StringEnum.Parse(typeof(CountryOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

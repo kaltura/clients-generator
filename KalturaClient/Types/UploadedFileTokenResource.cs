@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Token
 		{
 			get { return _Token; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UploadedFileTokenResource(JToken node) : base(node)
+		public UploadedFileTokenResource(XmlElement node) : base(node)
 		{
-			if(node["token"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Token = node["token"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "token":
+						this._Token = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public UploadedFileTokenResource(IDictionary<string,object> data) : base(data)
+		{
+			    this._Token = data.TryGetValueSafe<string>("token");
 		}
 		#endregion
 

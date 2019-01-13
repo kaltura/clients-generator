@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -72,7 +70,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
@@ -82,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
-		[JsonProperty]
 		public IList<BaseChannel> Channels
 		{
 			get { return _Channels; }
@@ -92,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Channels");
 			}
 		}
-		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -102,7 +97,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
-		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -112,7 +106,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDate");
 			}
 		}
-		[JsonProperty]
 		public DiscountModule DiscountModule
 		{
 			get { return _DiscountModule; }
@@ -122,17 +115,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("DiscountModule");
 			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
-			private set 
-			{ 
-				_Name = value;
-				OnPropertyChanged("Name");
-			}
 		}
-		[JsonProperty]
 		public IList<TranslationToken> MultilingualName
 		{
 			get { return _MultilingualName; }
@@ -142,17 +128,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualName");
 			}
 		}
-		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
-			private set 
-			{ 
-				_Description = value;
-				OnPropertyChanged("Description");
-			}
 		}
-		[JsonProperty]
 		public IList<TranslationToken> MultilingualDescription
 		{
 			get { return _MultilingualDescription; }
@@ -162,7 +141,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualDescription");
 			}
 		}
-		[JsonProperty]
 		public UsageModule UsageModule
 		{
 			get { return _UsageModule; }
@@ -172,7 +150,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UsageModule");
 			}
 		}
-		[JsonProperty]
 		public IList<CouponsGroup> CouponsGroups
 		{
 			get { return _CouponsGroups; }
@@ -182,7 +159,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CouponsGroups");
 			}
 		}
-		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -192,7 +168,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		[JsonProperty]
 		public IList<ProductCode> ProductCodes
 		{
 			get { return _ProductCodes; }
@@ -202,7 +177,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductCodes");
 			}
 		}
-		[JsonProperty]
 		public long PriceDetailsId
 		{
 			get { return _PriceDetailsId; }
@@ -219,84 +193,119 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Collection(JToken node) : base(node)
+		public Collection(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
-			}
-			if(node["channels"] != null)
-			{
-				this._Channels = new List<BaseChannel>();
-				foreach(var arrayNode in node["channels"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Channels.Add(ObjectFactory.Create<BaseChannel>(arrayNode));
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "channels":
+						this._Channels = new List<BaseChannel>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Channels.Add(ObjectFactory.Create<BaseChannel>(arrayNode));
+						}
+						continue;
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "discountModule":
+						this._DiscountModule = ObjectFactory.Create<DiscountModule>(propertyNode);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "multilingualName":
+						this._MultilingualName = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
+						continue;
+					case "description":
+						this._Description = propertyNode.InnerText;
+						continue;
+					case "multilingualDescription":
+						this._MultilingualDescription = new List<TranslationToken>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+						}
+						continue;
+					case "usageModule":
+						this._UsageModule = ObjectFactory.Create<UsageModule>(propertyNode);
+						continue;
+					case "couponsGroups":
+						this._CouponsGroups = new List<CouponsGroup>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>(arrayNode));
+						}
+						continue;
+					case "externalId":
+						this._ExternalId = propertyNode.InnerText;
+						continue;
+					case "productCodes":
+						this._ProductCodes = new List<ProductCode>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._ProductCodes.Add(ObjectFactory.Create<ProductCode>(arrayNode));
+						}
+						continue;
+					case "priceDetailsId":
+						this._PriceDetailsId = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
-			if(node["discountModule"] != null)
-			{
-				this._DiscountModule = ObjectFactory.Create<DiscountModule>(node["discountModule"]);
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["multilingualName"] != null)
-			{
-				this._MultilingualName = new List<TranslationToken>();
-				foreach(var arrayNode in node["multilingualName"].Children())
-				{
-					this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-				}
-			}
-			if(node["description"] != null)
-			{
-				this._Description = node["description"].Value<string>();
-			}
-			if(node["multilingualDescription"] != null)
-			{
-				this._MultilingualDescription = new List<TranslationToken>();
-				foreach(var arrayNode in node["multilingualDescription"].Children())
-				{
-					this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-				}
-			}
-			if(node["usageModule"] != null)
-			{
-				this._UsageModule = ObjectFactory.Create<UsageModule>(node["usageModule"]);
-			}
-			if(node["couponsGroups"] != null)
-			{
-				this._CouponsGroups = new List<CouponsGroup>();
-				foreach(var arrayNode in node["couponsGroups"].Children())
-				{
-					this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>(arrayNode));
-				}
-			}
-			if(node["externalId"] != null)
-			{
-				this._ExternalId = node["externalId"].Value<string>();
-			}
-			if(node["productCodes"] != null)
-			{
-				this._ProductCodes = new List<ProductCode>();
-				foreach(var arrayNode in node["productCodes"].Children())
-				{
-					this._ProductCodes.Add(ObjectFactory.Create<ProductCode>(arrayNode));
-				}
-			}
-			if(node["priceDetailsId"] != null)
-			{
-				this._PriceDetailsId = ParseLong(node["priceDetailsId"].Value<string>());
-			}
+		}
+
+		public Collection(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Channels = new List<BaseChannel>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("channels", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Channels.Add(ObjectFactory.Create<BaseChannel>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._DiscountModule = ObjectFactory.Create<DiscountModule>(data.TryGetValueSafe<IDictionary<string,object>>("discountModule"));
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._MultilingualName = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._MultilingualDescription = new List<TranslationToken>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualDescription", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._UsageModule = ObjectFactory.Create<UsageModule>(data.TryGetValueSafe<IDictionary<string,object>>("usageModule"));
+			    this._CouponsGroups = new List<CouponsGroup>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("couponsGroups", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._ProductCodes = new List<ProductCode>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("productCodes", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ProductCodes.Add(ObjectFactory.Create<ProductCode>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._PriceDetailsId = data.TryGetValueSafe<long>("priceDetailsId");
 		}
 		#endregion
 
