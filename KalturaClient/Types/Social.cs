@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -64,17 +62,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -84,7 +75,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string FirstName
 		{
 			get { return _FirstName; }
@@ -94,7 +84,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("FirstName");
 			}
 		}
-		[JsonProperty]
 		public string LastName
 		{
 			get { return _LastName; }
@@ -104,7 +93,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("LastName");
 			}
 		}
-		[JsonProperty]
 		public string Email
 		{
 			get { return _Email; }
@@ -114,7 +102,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Email");
 			}
 		}
-		[JsonProperty]
 		public string Gender
 		{
 			get { return _Gender; }
@@ -124,17 +111,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Gender");
 			}
 		}
-		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
-			private set 
-			{ 
-				_UserId = value;
-				OnPropertyChanged("UserId");
-			}
 		}
-		[JsonProperty]
 		public string Birthday
 		{
 			get { return _Birthday; }
@@ -144,17 +124,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Birthday");
 			}
 		}
-		[JsonProperty]
 		public string Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public string PictureUrl
 		{
 			get { return _PictureUrl; }
@@ -171,48 +144,58 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Social(JToken node) : base(node)
+		public Social(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "firstName":
+						this._FirstName = propertyNode.InnerText;
+						continue;
+					case "lastName":
+						this._LastName = propertyNode.InnerText;
+						continue;
+					case "email":
+						this._Email = propertyNode.InnerText;
+						continue;
+					case "gender":
+						this._Gender = propertyNode.InnerText;
+						continue;
+					case "userId":
+						this._UserId = propertyNode.InnerText;
+						continue;
+					case "birthday":
+						this._Birthday = propertyNode.InnerText;
+						continue;
+					case "status":
+						this._Status = propertyNode.InnerText;
+						continue;
+					case "pictureUrl":
+						this._PictureUrl = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["firstName"] != null)
-			{
-				this._FirstName = node["firstName"].Value<string>();
-			}
-			if(node["lastName"] != null)
-			{
-				this._LastName = node["lastName"].Value<string>();
-			}
-			if(node["email"] != null)
-			{
-				this._Email = node["email"].Value<string>();
-			}
-			if(node["gender"] != null)
-			{
-				this._Gender = node["gender"].Value<string>();
-			}
-			if(node["userId"] != null)
-			{
-				this._UserId = node["userId"].Value<string>();
-			}
-			if(node["birthday"] != null)
-			{
-				this._Birthday = node["birthday"].Value<string>();
-			}
-			if(node["status"] != null)
-			{
-				this._Status = node["status"].Value<string>();
-			}
-			if(node["pictureUrl"] != null)
-			{
-				this._PictureUrl = node["pictureUrl"].Value<string>();
-			}
+		}
+
+		public Social(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._FirstName = data.TryGetValueSafe<string>("firstName");
+			    this._LastName = data.TryGetValueSafe<string>("lastName");
+			    this._Email = data.TryGetValueSafe<string>("email");
+			    this._Gender = data.TryGetValueSafe<string>("gender");
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._Birthday = data.TryGetValueSafe<string>("birthday");
+			    this._Status = data.TryGetValueSafe<string>("status");
+			    this._PictureUrl = data.TryGetValueSafe<string>("pictureUrl");
 		}
 		#endregion
 

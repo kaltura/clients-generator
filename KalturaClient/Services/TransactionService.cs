@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -32,11 +32,10 @@ using System.IO;
 using Kaltura.Request;
 using Kaltura.Types;
 using Kaltura.Enums;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-	public class TransactionDowngradeRequestBuilder : RequestBuilder<VoidResponse>
+	public class TransactionDowngradeRequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public const string PURCHASE = "purchase";
@@ -73,7 +72,11 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -116,9 +119,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			return result.Value<long>();
+			return long.Parse(result.InnerText);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return (long)result;
 		}
 	}
 
@@ -159,9 +166,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Transaction>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Transaction>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -211,15 +222,22 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+			if (result.InnerText.Equals("1") || result.InnerText.ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+		public override object DeserializeObject(object result)
+		{
+			var resultStr = (string)result;
+			if (resultStr.Equals("1") || resultStr.ToLower().Equals("true"))
 				return true;
 			return false;
 		}
 	}
 
-	public class TransactionUpdateStatusRequestBuilder : RequestBuilder<VoidResponse>
+	public class TransactionUpdateStatusRequestBuilder : RequestBuilder<object>
 	{
 		#region Constants
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
@@ -283,7 +301,11 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
+		{
+			return null;
+		}
+		public override object DeserializeObject(object result)
 		{
 			return null;
 		}
@@ -326,9 +348,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Transaction>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Transaction>((IDictionary<string,object>)result);
 		}
 	}
 
@@ -369,9 +395,13 @@ namespace Kaltura.Services
 			return kfiles;
 		}
 
-		public override object Deserialize(JToken result)
+		public override object Deserialize(XmlElement result)
 		{
 			return ObjectFactory.Create<Transaction>(result);
+		}
+		public override object DeserializeObject(object result)
+		{
+			return ObjectFactory.Create<Transaction>((IDictionary<string,object>)result);
 		}
 	}
 

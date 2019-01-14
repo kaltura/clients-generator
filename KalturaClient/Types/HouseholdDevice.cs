@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,7 +58,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int HouseholdId
 		{
 			get { return _HouseholdId; }
@@ -70,7 +67,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdId");
 			}
 		}
-		[JsonProperty]
 		public string Udid
 		{
 			get { return _Udid; }
@@ -80,7 +76,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Udid");
 			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -90,7 +85,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public int BrandId
 		{
 			get { return _BrandId; }
@@ -100,7 +94,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("BrandId");
 			}
 		}
-		[JsonProperty]
 		public long ActivatedOn
 		{
 			get { return _ActivatedOn; }
@@ -110,35 +103,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("ActivatedOn");
 			}
 		}
-		[JsonProperty]
 		public DeviceStatus Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public long DeviceFamilyId
 		{
 			get { return _DeviceFamilyId; }
-			private set 
-			{ 
-				_DeviceFamilyId = value;
-				OnPropertyChanged("DeviceFamilyId");
-			}
 		}
-		[JsonProperty]
 		public CustomDrmPlaybackPluginData Drm
 		{
 			get { return _Drm; }
-			private set 
-			{ 
-				_Drm = value;
-				OnPropertyChanged("Drm");
-			}
 		}
 		#endregion
 
@@ -147,40 +122,50 @@ namespace Kaltura.Types
 		{
 		}
 
-		public HouseholdDevice(JToken node) : base(node)
+		public HouseholdDevice(XmlElement node) : base(node)
 		{
-			if(node["householdId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._HouseholdId = ParseInt(node["householdId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "householdId":
+						this._HouseholdId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "udid":
+						this._Udid = propertyNode.InnerText;
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "brandId":
+						this._BrandId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "activatedOn":
+						this._ActivatedOn = ParseLong(propertyNode.InnerText);
+						continue;
+					case "status":
+						this._Status = (DeviceStatus)StringEnum.Parse(typeof(DeviceStatus), propertyNode.InnerText);
+						continue;
+					case "deviceFamilyId":
+						this._DeviceFamilyId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "drm":
+						this._Drm = ObjectFactory.Create<CustomDrmPlaybackPluginData>(propertyNode);
+						continue;
+				}
 			}
-			if(node["udid"] != null)
-			{
-				this._Udid = node["udid"].Value<string>();
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["brandId"] != null)
-			{
-				this._BrandId = ParseInt(node["brandId"].Value<string>());
-			}
-			if(node["activatedOn"] != null)
-			{
-				this._ActivatedOn = ParseLong(node["activatedOn"].Value<string>());
-			}
-			if(node["status"] != null)
-			{
-				this._Status = (DeviceStatus)StringEnum.Parse(typeof(DeviceStatus), node["status"].Value<string>());
-			}
-			if(node["deviceFamilyId"] != null)
-			{
-				this._DeviceFamilyId = ParseLong(node["deviceFamilyId"].Value<string>());
-			}
-			if(node["drm"] != null)
-			{
-				this._Drm = ObjectFactory.Create<CustomDrmPlaybackPluginData>(node["drm"]);
-			}
+		}
+
+		public HouseholdDevice(IDictionary<string,object> data) : base(data)
+		{
+			    this._HouseholdId = data.TryGetValueSafe<int>("householdId");
+			    this._Udid = data.TryGetValueSafe<string>("udid");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._BrandId = data.TryGetValueSafe<int>("brandId");
+			    this._ActivatedOn = data.TryGetValueSafe<long>("activatedOn");
+			    this._Status = (DeviceStatus)StringEnum.Parse(typeof(DeviceStatus), data.TryGetValueSafe<string>("status"));
+			    this._DeviceFamilyId = data.TryGetValueSafe<long>("deviceFamilyId");
+			    this._Drm = ObjectFactory.Create<CustomDrmPlaybackPluginData>(data.TryGetValueSafe<IDictionary<string,object>>("drm"));
 		}
 		#endregion
 

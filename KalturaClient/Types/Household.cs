@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -74,17 +72,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -94,7 +85,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
@@ -104,7 +94,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
-		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -114,115 +103,49 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		[JsonProperty]
 		public int HouseholdLimitationsId
 		{
 			get { return _HouseholdLimitationsId; }
-			private set 
-			{ 
-				_HouseholdLimitationsId = value;
-				OnPropertyChanged("HouseholdLimitationsId");
-			}
 		}
-		[JsonProperty]
 		public int DevicesLimit
 		{
 			get { return _DevicesLimit; }
-			private set 
-			{ 
-				_DevicesLimit = value;
-				OnPropertyChanged("DevicesLimit");
-			}
 		}
-		[JsonProperty]
 		public int UsersLimit
 		{
 			get { return _UsersLimit; }
-			private set 
-			{ 
-				_UsersLimit = value;
-				OnPropertyChanged("UsersLimit");
-			}
 		}
-		[JsonProperty]
 		public int ConcurrentLimit
 		{
 			get { return _ConcurrentLimit; }
-			private set 
-			{ 
-				_ConcurrentLimit = value;
-				OnPropertyChanged("ConcurrentLimit");
-			}
 		}
-		[JsonProperty]
 		public int RegionId
 		{
 			get { return _RegionId; }
-			private set 
-			{ 
-				_RegionId = value;
-				OnPropertyChanged("RegionId");
-			}
 		}
-		[JsonProperty]
 		public HouseholdState State
 		{
 			get { return _State; }
-			private set 
-			{ 
-				_State = value;
-				OnPropertyChanged("State");
-			}
 		}
-		[JsonProperty]
 		public bool? IsFrequencyEnabled
 		{
 			get { return _IsFrequencyEnabled; }
-			private set 
-			{ 
-				_IsFrequencyEnabled = value;
-				OnPropertyChanged("IsFrequencyEnabled");
-			}
 		}
-		[JsonProperty]
 		public long FrequencyNextDeviceAction
 		{
 			get { return _FrequencyNextDeviceAction; }
-			private set 
-			{ 
-				_FrequencyNextDeviceAction = value;
-				OnPropertyChanged("FrequencyNextDeviceAction");
-			}
 		}
-		[JsonProperty]
 		public long FrequencyNextUserAction
 		{
 			get { return _FrequencyNextUserAction; }
-			private set 
-			{ 
-				_FrequencyNextUserAction = value;
-				OnPropertyChanged("FrequencyNextUserAction");
-			}
 		}
-		[JsonProperty]
 		public HouseholdRestriction Restriction
 		{
 			get { return _Restriction; }
-			private set 
-			{ 
-				_Restriction = value;
-				OnPropertyChanged("Restriction");
-			}
 		}
-		[JsonProperty]
 		public int RoleId
 		{
 			get { return _RoleId; }
-			private set 
-			{ 
-				_RoleId = value;
-				OnPropertyChanged("RoleId");
-			}
 		}
 		#endregion
 
@@ -231,68 +154,78 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Household(JToken node) : base(node)
+		public Household(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "description":
+						this._Description = propertyNode.InnerText;
+						continue;
+					case "externalId":
+						this._ExternalId = propertyNode.InnerText;
+						continue;
+					case "householdLimitationsId":
+						this._HouseholdLimitationsId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "devicesLimit":
+						this._DevicesLimit = ParseInt(propertyNode.InnerText);
+						continue;
+					case "usersLimit":
+						this._UsersLimit = ParseInt(propertyNode.InnerText);
+						continue;
+					case "concurrentLimit":
+						this._ConcurrentLimit = ParseInt(propertyNode.InnerText);
+						continue;
+					case "regionId":
+						this._RegionId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "state":
+						this._State = (HouseholdState)StringEnum.Parse(typeof(HouseholdState), propertyNode.InnerText);
+						continue;
+					case "isFrequencyEnabled":
+						this._IsFrequencyEnabled = ParseBool(propertyNode.InnerText);
+						continue;
+					case "frequencyNextDeviceAction":
+						this._FrequencyNextDeviceAction = ParseLong(propertyNode.InnerText);
+						continue;
+					case "frequencyNextUserAction":
+						this._FrequencyNextUserAction = ParseLong(propertyNode.InnerText);
+						continue;
+					case "restriction":
+						this._Restriction = (HouseholdRestriction)StringEnum.Parse(typeof(HouseholdRestriction), propertyNode.InnerText);
+						continue;
+					case "roleId":
+						this._RoleId = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["description"] != null)
-			{
-				this._Description = node["description"].Value<string>();
-			}
-			if(node["externalId"] != null)
-			{
-				this._ExternalId = node["externalId"].Value<string>();
-			}
-			if(node["householdLimitationsId"] != null)
-			{
-				this._HouseholdLimitationsId = ParseInt(node["householdLimitationsId"].Value<string>());
-			}
-			if(node["devicesLimit"] != null)
-			{
-				this._DevicesLimit = ParseInt(node["devicesLimit"].Value<string>());
-			}
-			if(node["usersLimit"] != null)
-			{
-				this._UsersLimit = ParseInt(node["usersLimit"].Value<string>());
-			}
-			if(node["concurrentLimit"] != null)
-			{
-				this._ConcurrentLimit = ParseInt(node["concurrentLimit"].Value<string>());
-			}
-			if(node["regionId"] != null)
-			{
-				this._RegionId = ParseInt(node["regionId"].Value<string>());
-			}
-			if(node["state"] != null)
-			{
-				this._State = (HouseholdState)StringEnum.Parse(typeof(HouseholdState), node["state"].Value<string>());
-			}
-			if(node["isFrequencyEnabled"] != null)
-			{
-				this._IsFrequencyEnabled = ParseBool(node["isFrequencyEnabled"].Value<string>());
-			}
-			if(node["frequencyNextDeviceAction"] != null)
-			{
-				this._FrequencyNextDeviceAction = ParseLong(node["frequencyNextDeviceAction"].Value<string>());
-			}
-			if(node["frequencyNextUserAction"] != null)
-			{
-				this._FrequencyNextUserAction = ParseLong(node["frequencyNextUserAction"].Value<string>());
-			}
-			if(node["restriction"] != null)
-			{
-				this._Restriction = (HouseholdRestriction)StringEnum.Parse(typeof(HouseholdRestriction), node["restriction"].Value<string>());
-			}
-			if(node["roleId"] != null)
-			{
-				this._RoleId = ParseInt(node["roleId"].Value<string>());
-			}
+		}
+
+		public Household(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Description = data.TryGetValueSafe<string>("description");
+			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
+			    this._HouseholdLimitationsId = data.TryGetValueSafe<int>("householdLimitationsId");
+			    this._DevicesLimit = data.TryGetValueSafe<int>("devicesLimit");
+			    this._UsersLimit = data.TryGetValueSafe<int>("usersLimit");
+			    this._ConcurrentLimit = data.TryGetValueSafe<int>("concurrentLimit");
+			    this._RegionId = data.TryGetValueSafe<int>("regionId");
+			    this._State = (HouseholdState)StringEnum.Parse(typeof(HouseholdState), data.TryGetValueSafe<string>("state"));
+			    this._IsFrequencyEnabled = data.TryGetValueSafe<bool>("isFrequencyEnabled");
+			    this._FrequencyNextDeviceAction = data.TryGetValueSafe<long>("frequencyNextDeviceAction");
+			    this._FrequencyNextUserAction = data.TryGetValueSafe<long>("frequencyNextUserAction");
+			    this._Restriction = (HouseholdRestriction)StringEnum.Parse(typeof(HouseholdRestriction), data.TryGetValueSafe<string>("restriction"));
+			    this._RoleId = data.TryGetValueSafe<int>("roleId");
 		}
 		#endregion
 

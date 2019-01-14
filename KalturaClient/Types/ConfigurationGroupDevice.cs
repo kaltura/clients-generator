@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string ConfigurationGroupId
 		{
 			get { return _ConfigurationGroupId; }
@@ -60,17 +57,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConfigurationGroupId");
 			}
 		}
-		[JsonProperty]
 		public int PartnerId
 		{
 			get { return _PartnerId; }
-			private set 
-			{ 
-				_PartnerId = value;
-				OnPropertyChanged("PartnerId");
-			}
 		}
-		[JsonProperty]
 		public string Udid
 		{
 			get { return _Udid; }
@@ -87,20 +77,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConfigurationGroupDevice(JToken node) : base(node)
+		public ConfigurationGroupDevice(XmlElement node) : base(node)
 		{
-			if(node["configurationGroupId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ConfigurationGroupId = node["configurationGroupId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "configurationGroupId":
+						this._ConfigurationGroupId = propertyNode.InnerText;
+						continue;
+					case "partnerId":
+						this._PartnerId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "udid":
+						this._Udid = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["partnerId"] != null)
-			{
-				this._PartnerId = ParseInt(node["partnerId"].Value<string>());
-			}
-			if(node["udid"] != null)
-			{
-				this._Udid = node["udid"].Value<string>();
-			}
+		}
+
+		public ConfigurationGroupDevice(IDictionary<string,object> data) : base(data)
+		{
+			    this._ConfigurationGroupId = data.TryGetValueSafe<string>("configurationGroupId");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._Udid = data.TryGetValueSafe<string>("udid");
 		}
 		#endregion
 

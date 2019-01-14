@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,45 +50,21 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public BatchJobStatus Status
 		{
 			get { return _Status; }
-			private set 
-			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
-		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
-			private set 
-			{ 
-				_UpdateDate = value;
-				OnPropertyChanged("UpdateDate");
-			}
 		}
 		#endregion
 
@@ -99,24 +73,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Bulk(JToken node) : base(node)
+		public Bulk(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "status":
+						this._Status = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), propertyNode.InnerText);
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["status"] != null)
-			{
-				this._Status = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), node["status"].Value<string>());
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["updateDate"] != null)
-			{
-				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
-			}
+		}
+
+		public Bulk(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Status = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), data.TryGetValueSafe<string>("status"));
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,17 +46,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public RuleActionType Type
 		{
 			get { return _Type; }
-			private set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
 		}
-		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
@@ -75,16 +66,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RuleAction(JToken node) : base(node)
+		public RuleAction(XmlElement node) : base(node)
 		{
-			if(node["type"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), node["type"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "type":
+						this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), propertyNode.InnerText);
+						continue;
+					case "description":
+						this._Description = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["description"] != null)
-			{
-				this._Description = node["description"].Value<string>();
-			}
+		}
+
+		public RuleAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._Type = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), data.TryGetValueSafe<string>("type"));
+			    this._Description = data.TryGetValueSafe<string>("description");
 		}
 		#endregion
 

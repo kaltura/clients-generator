@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public float Percent
 		{
 			get { return _Percent; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Percent");
 			}
 		}
-		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
-		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DiscountModule(JToken node) : base(node)
+		public DiscountModule(XmlElement node) : base(node)
 		{
-			if(node["percent"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Percent = ParseFloat(node["percent"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "percent":
+						this._Percent = ParseFloat(propertyNode.InnerText);
+						continue;
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
+		}
+
+		public DiscountModule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Percent = data.TryGetValueSafe<float>("percent");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
 		}
 		#endregion
 

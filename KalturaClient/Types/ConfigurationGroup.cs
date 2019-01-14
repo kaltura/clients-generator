@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -58,17 +56,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -78,17 +69,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public int PartnerId
 		{
 			get { return _PartnerId; }
-			private set 
-			{ 
-				_PartnerId = value;
-				OnPropertyChanged("PartnerId");
-			}
 		}
-		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
@@ -98,35 +82,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsDefault");
 			}
 		}
-		[JsonProperty]
 		public IList<StringValue> Tags
 		{
 			get { return _Tags; }
-			private set 
-			{ 
-				_Tags = value;
-				OnPropertyChanged("Tags");
-			}
 		}
-		[JsonProperty]
 		public long NumberOfDevices
 		{
 			get { return _NumberOfDevices; }
-			private set 
-			{ 
-				_NumberOfDevices = value;
-				OnPropertyChanged("NumberOfDevices");
-			}
 		}
-		[JsonProperty]
 		public IList<ConfigurationIdentifier> ConfigurationIdentifiers
 		{
 			get { return _ConfigurationIdentifiers; }
-			private set 
-			{ 
-				_ConfigurationIdentifiers = value;
-				OnPropertyChanged("ConfigurationIdentifiers");
-			}
 		}
 		#endregion
 
@@ -135,44 +101,64 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConfigurationGroup(JToken node) : base(node)
+		public ConfigurationGroup(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
-			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["partnerId"] != null)
-			{
-				this._PartnerId = ParseInt(node["partnerId"].Value<string>());
-			}
-			if(node["isDefault"] != null)
-			{
-				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
-			}
-			if(node["tags"] != null)
-			{
-				this._Tags = new List<StringValue>();
-				foreach(var arrayNode in node["tags"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Tags.Add(ObjectFactory.Create<StringValue>(arrayNode));
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "partnerId":
+						this._PartnerId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "isDefault":
+						this._IsDefault = ParseBool(propertyNode.InnerText);
+						continue;
+					case "tags":
+						this._Tags = new List<StringValue>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Tags.Add(ObjectFactory.Create<StringValue>(arrayNode));
+						}
+						continue;
+					case "numberOfDevices":
+						this._NumberOfDevices = ParseLong(propertyNode.InnerText);
+						continue;
+					case "configurationIdentifiers":
+						this._ConfigurationIdentifiers = new List<ConfigurationIdentifier>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._ConfigurationIdentifiers.Add(ObjectFactory.Create<ConfigurationIdentifier>(arrayNode));
+						}
+						continue;
 				}
 			}
-			if(node["numberOfDevices"] != null)
-			{
-				this._NumberOfDevices = ParseLong(node["numberOfDevices"].Value<string>());
-			}
-			if(node["configurationIdentifiers"] != null)
-			{
-				this._ConfigurationIdentifiers = new List<ConfigurationIdentifier>();
-				foreach(var arrayNode in node["configurationIdentifiers"].Children())
-				{
-					this._ConfigurationIdentifiers.Add(ObjectFactory.Create<ConfigurationIdentifier>(arrayNode));
-				}
-			}
+		}
+
+		public ConfigurationGroup(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._PartnerId = data.TryGetValueSafe<int>("partnerId");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
+			    this._Tags = new List<StringValue>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("tags", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Tags.Add(ObjectFactory.Create<StringValue>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._NumberOfDevices = data.TryGetValueSafe<long>("numberOfDevices");
+			    this._ConfigurationIdentifiers = new List<ConfigurationIdentifier>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("configurationIdentifiers", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._ConfigurationIdentifiers.Add(ObjectFactory.Create<ConfigurationIdentifier>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public bool? AttachedUserIdEqualCurrent
 		{
 			get { return _AttachedUserIdEqualCurrent; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AttachedUserIdEqualCurrent");
 			}
 		}
-		[JsonProperty]
 		public new AssetUserRuleOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetUserRuleFilter(JToken node) : base(node)
+		public AssetUserRuleFilter(XmlElement node) : base(node)
 		{
-			if(node["attachedUserIdEqualCurrent"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._AttachedUserIdEqualCurrent = ParseBool(node["attachedUserIdEqualCurrent"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "attachedUserIdEqualCurrent":
+						this._AttachedUserIdEqualCurrent = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public AssetUserRuleFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._AttachedUserIdEqualCurrent = data.TryGetValueSafe<bool>("attachedUserIdEqualCurrent");
+			    this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -26,6 +26,7 @@
 // @ignore
 // ===================================================================================================
 using System;
+using System.Collections.Generic;
 using Kaltura.Types;
 using Kaltura.Enums;
 
@@ -96,6 +97,26 @@ namespace Kaltura.Request
 		{
 			requestBuilder.SkipCondition = value;
 			return requestBuilder;
+		}
+
+		public static T TryGetValueSafe<T>(this IDictionary<string,object> sourceDictionary, string key, T defaultReturnValue = default(T))
+		{
+		    if (sourceDictionary == null) { return defaultReturnValue; }
+		    
+		    object returnVal = defaultReturnValue;
+		    object objValue;
+		    sourceDictionary.TryGetValue(key, out objValue);
+		    if (objValue != null)
+		    {
+		        if      (typeof(T) == typeof(int)) { returnVal = int.Parse(objValue.ToString()); }
+		        else if (typeof(T) == typeof(long)) { returnVal = long.Parse(objValue.ToString()); }
+		        else if (typeof(T) == typeof(float)) { returnVal = float.Parse(objValue.ToString()); }
+		        else if (typeof(T) == typeof(double)) { returnVal = double.Parse(objValue.ToString()); }
+		        else if (typeof(T) == typeof(decimal)) { returnVal = decimal.Parse(objValue.ToString()); }
+		        else { returnVal = (T)objValue; }
+		    }
+		    
+		    return (T)returnVal;
 		}
 	}
 }

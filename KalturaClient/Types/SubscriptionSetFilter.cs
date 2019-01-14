@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public string SubscriptionIdContains
 		{
 			get { return _SubscriptionIdContains; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscriptionIdContains");
 			}
 		}
-		[JsonProperty]
 		public SubscriptionSetType TypeEqual
 		{
 			get { return _TypeEqual; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("TypeEqual");
 			}
 		}
-		[JsonProperty]
 		public new SubscriptionSetOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionSetFilter(JToken node) : base(node)
+		public SubscriptionSetFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "subscriptionIdContains":
+						this._SubscriptionIdContains = propertyNode.InnerText;
+						continue;
+					case "typeEqual":
+						this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["subscriptionIdContains"] != null)
-			{
-				this._SubscriptionIdContains = node["subscriptionIdContains"].Value<string>();
-			}
-			if(node["typeEqual"] != null)
-			{
-				this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), node["typeEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public SubscriptionSetFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._SubscriptionIdContains = data.TryGetValueSafe<string>("subscriptionIdContains");
+			    this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), data.TryGetValueSafe<string>("typeEqual"));
+			    this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 
