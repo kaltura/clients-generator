@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int PageSize
 		{
 			get { return _PageSize; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PageSize");
 			}
 		}
+		[JsonProperty]
 		public int PageIndex
 		{
 			get { return _PageIndex; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FilterPager(XmlElement node) : base(node)
+		public FilterPager(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["pageSize"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "pageSize":
-						this._PageSize = ParseInt(propertyNode.InnerText);
-						continue;
-					case "pageIndex":
-						this._PageIndex = ParseInt(propertyNode.InnerText);
-						continue;
-				}
+				this._PageSize = ParseInt(node["pageSize"].Value<string>());
 			}
-		}
-
-		public FilterPager(IDictionary<string,object> data) : base(data)
-		{
-			    this._PageSize = data.TryGetValueSafe<int>("pageSize");
-			    this._PageIndex = data.TryGetValueSafe<int>("pageIndex");
+			if(node["pageIndex"] != null)
+			{
+				this._PageIndex = ParseInt(node["pageIndex"].Value<string>());
+			}
 		}
 		#endregion
 

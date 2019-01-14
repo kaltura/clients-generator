@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string DeviceFamilyIds
 		{
 			get { return _DeviceFamilyIds; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DeviceFamilyIds");
 			}
 		}
+		[JsonProperty]
 		public EvictionPolicyType EvictionPolicy
 		{
 			get { return _EvictionPolicy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ConcurrencyPartnerConfig(XmlElement node) : base(node)
+		public ConcurrencyPartnerConfig(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["deviceFamilyIds"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "deviceFamilyIds":
-						this._DeviceFamilyIds = propertyNode.InnerText;
-						continue;
-					case "evictionPolicy":
-						this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), propertyNode.InnerText);
-						continue;
-				}
+				this._DeviceFamilyIds = node["deviceFamilyIds"].Value<string>();
 			}
-		}
-
-		public ConcurrencyPartnerConfig(IDictionary<string,object> data) : base(data)
-		{
-			    this._DeviceFamilyIds = data.TryGetValueSafe<string>("deviceFamilyIds");
-			    this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), data.TryGetValueSafe<string>("evictionPolicy"));
+			if(node["evictionPolicy"] != null)
+			{
+				this._EvictionPolicy = (EvictionPolicyType)StringEnum.Parse(typeof(EvictionPolicyType), node["evictionPolicy"].Value<string>());
+			}
 		}
 		#endregion
 

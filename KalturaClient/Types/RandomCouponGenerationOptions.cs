@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int NumberOfCoupons
 		{
 			get { return _NumberOfCoupons; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("NumberOfCoupons");
 			}
 		}
+		[JsonProperty]
 		public bool? UseLetters
 		{
 			get { return _UseLetters; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UseLetters");
 			}
 		}
+		[JsonProperty]
 		public bool? UseNumbers
 		{
 			get { return _UseNumbers; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UseNumbers");
 			}
 		}
+		[JsonProperty]
 		public bool? UseSpecialCharacters
 		{
 			get { return _UseSpecialCharacters; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RandomCouponGenerationOptions(XmlElement node) : base(node)
+		public RandomCouponGenerationOptions(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["numberOfCoupons"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "numberOfCoupons":
-						this._NumberOfCoupons = ParseInt(propertyNode.InnerText);
-						continue;
-					case "useLetters":
-						this._UseLetters = ParseBool(propertyNode.InnerText);
-						continue;
-					case "useNumbers":
-						this._UseNumbers = ParseBool(propertyNode.InnerText);
-						continue;
-					case "useSpecialCharacters":
-						this._UseSpecialCharacters = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._NumberOfCoupons = ParseInt(node["numberOfCoupons"].Value<string>());
 			}
-		}
-
-		public RandomCouponGenerationOptions(IDictionary<string,object> data) : base(data)
-		{
-			    this._NumberOfCoupons = data.TryGetValueSafe<int>("numberOfCoupons");
-			    this._UseLetters = data.TryGetValueSafe<bool>("useLetters");
-			    this._UseNumbers = data.TryGetValueSafe<bool>("useNumbers");
-			    this._UseSpecialCharacters = data.TryGetValueSafe<bool>("useSpecialCharacters");
+			if(node["useLetters"] != null)
+			{
+				this._UseLetters = ParseBool(node["useLetters"].Value<string>());
+			}
+			if(node["useNumbers"] != null)
+			{
+				this._UseNumbers = ParseBool(node["useNumbers"].Value<string>());
+			}
+			if(node["useSpecialCharacters"] != null)
+			{
+				this._UseSpecialCharacters = ParseBool(node["useSpecialCharacters"].Value<string>());
+			}
 		}
 		#endregion
 

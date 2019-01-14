@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -104,6 +106,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
@@ -113,6 +116,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
+		[JsonProperty]
 		public IList<BaseChannel> Channels
 		{
 			get { return _Channels; }
@@ -122,6 +126,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Channels");
 			}
 		}
+		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
@@ -131,6 +136,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartDate");
 			}
 		}
+		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
@@ -140,6 +146,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDate");
 			}
 		}
+		[JsonProperty]
 		public IList<IntegerValue> FileTypes
 		{
 			get { return _FileTypes; }
@@ -149,6 +156,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FileTypes");
 			}
 		}
+		[JsonProperty]
 		public bool? IsRenewable
 		{
 			get { return _IsRenewable; }
@@ -158,6 +166,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsRenewable");
 			}
 		}
+		[JsonProperty]
 		public int RenewalsNumber
 		{
 			get { return _RenewalsNumber; }
@@ -167,6 +176,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RenewalsNumber");
 			}
 		}
+		[JsonProperty]
 		public bool? IsInfiniteRenewal
 		{
 			get { return _IsInfiniteRenewal; }
@@ -176,6 +186,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsInfiniteRenewal");
 			}
 		}
+		[JsonProperty]
 		public PriceDetails Price
 		{
 			get { return _Price; }
@@ -185,6 +196,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Price");
 			}
 		}
+		[JsonProperty]
 		public DiscountModule DiscountModule
 		{
 			get { return _DiscountModule; }
@@ -194,10 +206,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("DiscountModule");
 			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
+			private set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> MultilingualName
 		{
 			get { return _MultilingualName; }
@@ -207,10 +226,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualName");
 			}
 		}
+		[JsonProperty]
 		public string Description
 		{
 			get { return _Description; }
+			private set 
+			{ 
+				_Description = value;
+				OnPropertyChanged("Description");
+			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> MultilingualDescription
 		{
 			get { return _MultilingualDescription; }
@@ -220,6 +246,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultilingualDescription");
 			}
 		}
+		[JsonProperty]
 		public int MediaId
 		{
 			get { return _MediaId; }
@@ -229,6 +256,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaId");
 			}
 		}
+		[JsonProperty]
 		public long ProrityInOrder
 		{
 			get { return _ProrityInOrder; }
@@ -238,6 +266,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProrityInOrder");
 			}
 		}
+		[JsonProperty]
 		public string PricePlanIds
 		{
 			get { return _PricePlanIds; }
@@ -247,6 +276,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PricePlanIds");
 			}
 		}
+		[JsonProperty]
 		public PreviewModule PreviewModule
 		{
 			get { return _PreviewModule; }
@@ -256,6 +286,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PreviewModule");
 			}
 		}
+		[JsonProperty]
 		public int HouseholdLimitationsId
 		{
 			get { return _HouseholdLimitationsId; }
@@ -265,6 +296,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdLimitationsId");
 			}
 		}
+		[JsonProperty]
 		public int GracePeriodMinutes
 		{
 			get { return _GracePeriodMinutes; }
@@ -274,6 +306,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("GracePeriodMinutes");
 			}
 		}
+		[JsonProperty]
 		public IList<PremiumService> PremiumServices
 		{
 			get { return _PremiumServices; }
@@ -283,6 +316,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PremiumServices");
 			}
 		}
+		[JsonProperty]
 		public int MaxViewsNumber
 		{
 			get { return _MaxViewsNumber; }
@@ -292,6 +326,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MaxViewsNumber");
 			}
 		}
+		[JsonProperty]
 		public int ViewLifeCycle
 		{
 			get { return _ViewLifeCycle; }
@@ -301,6 +336,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ViewLifeCycle");
 			}
 		}
+		[JsonProperty]
 		public int WaiverPeriod
 		{
 			get { return _WaiverPeriod; }
@@ -310,6 +346,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("WaiverPeriod");
 			}
 		}
+		[JsonProperty]
 		public bool? IsWaiverEnabled
 		{
 			get { return _IsWaiverEnabled; }
@@ -319,6 +356,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsWaiverEnabled");
 			}
 		}
+		[JsonProperty]
 		public IList<OTTUserType> UserTypes
 		{
 			get { return _UserTypes; }
@@ -328,6 +366,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("UserTypes");
 			}
 		}
+		[JsonProperty]
 		public IList<CouponsGroup> CouponsGroups
 		{
 			get { return _CouponsGroups; }
@@ -337,6 +376,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CouponsGroups");
 			}
 		}
+		[JsonProperty]
 		public IList<ProductCode> ProductCodes
 		{
 			get { return _ProductCodes; }
@@ -346,6 +386,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductCodes");
 			}
 		}
+		[JsonProperty]
 		public SubscriptionDependencyType DependencyType
 		{
 			get { return _DependencyType; }
@@ -355,6 +396,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DependencyType");
 			}
 		}
+		[JsonProperty]
 		public string ExternalId
 		{
 			get { return _ExternalId; }
@@ -364,6 +406,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
+		[JsonProperty]
 		public bool? IsCancellationBlocked
 		{
 			get { return _IsCancellationBlocked; }
@@ -380,214 +423,164 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Subscription(XmlElement node) : base(node)
+		public Subscription(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = node["id"].Value<string>();
+			}
+			if(node["channels"] != null)
+			{
+				this._Channels = new List<BaseChannel>();
+				foreach(var arrayNode in node["channels"].Children())
 				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "channels":
-						this._Channels = new List<BaseChannel>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Channels.Add(ObjectFactory.Create<BaseChannel>(arrayNode));
-						}
-						continue;
-					case "startDate":
-						this._StartDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "endDate":
-						this._EndDate = ParseLong(propertyNode.InnerText);
-						continue;
-					case "fileTypes":
-						this._FileTypes = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._FileTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
-					case "isRenewable":
-						this._IsRenewable = ParseBool(propertyNode.InnerText);
-						continue;
-					case "renewalsNumber":
-						this._RenewalsNumber = ParseInt(propertyNode.InnerText);
-						continue;
-					case "isInfiniteRenewal":
-						this._IsInfiniteRenewal = ParseBool(propertyNode.InnerText);
-						continue;
-					case "price":
-						this._Price = ObjectFactory.Create<PriceDetails>(propertyNode);
-						continue;
-					case "discountModule":
-						this._DiscountModule = ObjectFactory.Create<DiscountModule>(propertyNode);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "multilingualName":
-						this._MultilingualName = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
-					case "description":
-						this._Description = propertyNode.InnerText;
-						continue;
-					case "multilingualDescription":
-						this._MultilingualDescription = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
-					case "mediaId":
-						this._MediaId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "prorityInOrder":
-						this._ProrityInOrder = ParseLong(propertyNode.InnerText);
-						continue;
-					case "pricePlanIds":
-						this._PricePlanIds = propertyNode.InnerText;
-						continue;
-					case "previewModule":
-						this._PreviewModule = ObjectFactory.Create<PreviewModule>(propertyNode);
-						continue;
-					case "householdLimitationsId":
-						this._HouseholdLimitationsId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "gracePeriodMinutes":
-						this._GracePeriodMinutes = ParseInt(propertyNode.InnerText);
-						continue;
-					case "premiumServices":
-						this._PremiumServices = new List<PremiumService>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._PremiumServices.Add(ObjectFactory.Create<PremiumService>(arrayNode));
-						}
-						continue;
-					case "maxViewsNumber":
-						this._MaxViewsNumber = ParseInt(propertyNode.InnerText);
-						continue;
-					case "viewLifeCycle":
-						this._ViewLifeCycle = ParseInt(propertyNode.InnerText);
-						continue;
-					case "waiverPeriod":
-						this._WaiverPeriod = ParseInt(propertyNode.InnerText);
-						continue;
-					case "isWaiverEnabled":
-						this._IsWaiverEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "userTypes":
-						this._UserTypes = new List<OTTUserType>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._UserTypes.Add(ObjectFactory.Create<OTTUserType>(arrayNode));
-						}
-						continue;
-					case "couponsGroups":
-						this._CouponsGroups = new List<CouponsGroup>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>(arrayNode));
-						}
-						continue;
-					case "productCodes":
-						this._ProductCodes = new List<ProductCode>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._ProductCodes.Add(ObjectFactory.Create<ProductCode>(arrayNode));
-						}
-						continue;
-					case "dependencyType":
-						this._DependencyType = (SubscriptionDependencyType)StringEnum.Parse(typeof(SubscriptionDependencyType), propertyNode.InnerText);
-						continue;
-					case "externalId":
-						this._ExternalId = propertyNode.InnerText;
-						continue;
-					case "isCancellationBlocked":
-						this._IsCancellationBlocked = ParseBool(propertyNode.InnerText);
-						continue;
+					this._Channels.Add(ObjectFactory.Create<BaseChannel>(arrayNode));
 				}
 			}
-		}
-
-		public Subscription(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Channels = new List<BaseChannel>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("channels", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Channels.Add(ObjectFactory.Create<BaseChannel>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._StartDate = data.TryGetValueSafe<long>("startDate");
-			    this._EndDate = data.TryGetValueSafe<long>("endDate");
-			    this._FileTypes = new List<IntegerValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("fileTypes", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._FileTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._IsRenewable = data.TryGetValueSafe<bool>("isRenewable");
-			    this._RenewalsNumber = data.TryGetValueSafe<int>("renewalsNumber");
-			    this._IsInfiniteRenewal = data.TryGetValueSafe<bool>("isInfiniteRenewal");
-			    this._Price = ObjectFactory.Create<PriceDetails>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
-			    this._DiscountModule = ObjectFactory.Create<DiscountModule>(data.TryGetValueSafe<IDictionary<string,object>>("discountModule"));
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._MultilingualName = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualName", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Description = data.TryGetValueSafe<string>("description");
-			    this._MultilingualDescription = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("multilingualDescription", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._MediaId = data.TryGetValueSafe<int>("mediaId");
-			    this._ProrityInOrder = data.TryGetValueSafe<long>("prorityInOrder");
-			    this._PricePlanIds = data.TryGetValueSafe<string>("pricePlanIds");
-			    this._PreviewModule = ObjectFactory.Create<PreviewModule>(data.TryGetValueSafe<IDictionary<string,object>>("previewModule"));
-			    this._HouseholdLimitationsId = data.TryGetValueSafe<int>("householdLimitationsId");
-			    this._GracePeriodMinutes = data.TryGetValueSafe<int>("gracePeriodMinutes");
-			    this._PremiumServices = new List<PremiumService>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("premiumServices", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._PremiumServices.Add(ObjectFactory.Create<PremiumService>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._MaxViewsNumber = data.TryGetValueSafe<int>("maxViewsNumber");
-			    this._ViewLifeCycle = data.TryGetValueSafe<int>("viewLifeCycle");
-			    this._WaiverPeriod = data.TryGetValueSafe<int>("waiverPeriod");
-			    this._IsWaiverEnabled = data.TryGetValueSafe<bool>("isWaiverEnabled");
-			    this._UserTypes = new List<OTTUserType>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("userTypes", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._UserTypes.Add(ObjectFactory.Create<OTTUserType>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._CouponsGroups = new List<CouponsGroup>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("couponsGroups", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._ProductCodes = new List<ProductCode>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("productCodes", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._ProductCodes.Add(ObjectFactory.Create<ProductCode>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._DependencyType = (SubscriptionDependencyType)StringEnum.Parse(typeof(SubscriptionDependencyType), data.TryGetValueSafe<string>("dependencyType"));
-			    this._ExternalId = data.TryGetValueSafe<string>("externalId");
-			    this._IsCancellationBlocked = data.TryGetValueSafe<bool>("isCancellationBlocked");
+			if(node["startDate"] != null)
+			{
+				this._StartDate = ParseLong(node["startDate"].Value<string>());
+			}
+			if(node["endDate"] != null)
+			{
+				this._EndDate = ParseLong(node["endDate"].Value<string>());
+			}
+			if(node["fileTypes"] != null)
+			{
+				this._FileTypes = new List<IntegerValue>();
+				foreach(var arrayNode in node["fileTypes"].Children())
+				{
+					this._FileTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
+				}
+			}
+			if(node["isRenewable"] != null)
+			{
+				this._IsRenewable = ParseBool(node["isRenewable"].Value<string>());
+			}
+			if(node["renewalsNumber"] != null)
+			{
+				this._RenewalsNumber = ParseInt(node["renewalsNumber"].Value<string>());
+			}
+			if(node["isInfiniteRenewal"] != null)
+			{
+				this._IsInfiniteRenewal = ParseBool(node["isInfiniteRenewal"].Value<string>());
+			}
+			if(node["price"] != null)
+			{
+				this._Price = ObjectFactory.Create<PriceDetails>(node["price"]);
+			}
+			if(node["discountModule"] != null)
+			{
+				this._DiscountModule = ObjectFactory.Create<DiscountModule>(node["discountModule"]);
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["multilingualName"] != null)
+			{
+				this._MultilingualName = new List<TranslationToken>();
+				foreach(var arrayNode in node["multilingualName"].Children())
+				{
+					this._MultilingualName.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+				}
+			}
+			if(node["description"] != null)
+			{
+				this._Description = node["description"].Value<string>();
+			}
+			if(node["multilingualDescription"] != null)
+			{
+				this._MultilingualDescription = new List<TranslationToken>();
+				foreach(var arrayNode in node["multilingualDescription"].Children())
+				{
+					this._MultilingualDescription.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+				}
+			}
+			if(node["mediaId"] != null)
+			{
+				this._MediaId = ParseInt(node["mediaId"].Value<string>());
+			}
+			if(node["prorityInOrder"] != null)
+			{
+				this._ProrityInOrder = ParseLong(node["prorityInOrder"].Value<string>());
+			}
+			if(node["pricePlanIds"] != null)
+			{
+				this._PricePlanIds = node["pricePlanIds"].Value<string>();
+			}
+			if(node["previewModule"] != null)
+			{
+				this._PreviewModule = ObjectFactory.Create<PreviewModule>(node["previewModule"]);
+			}
+			if(node["householdLimitationsId"] != null)
+			{
+				this._HouseholdLimitationsId = ParseInt(node["householdLimitationsId"].Value<string>());
+			}
+			if(node["gracePeriodMinutes"] != null)
+			{
+				this._GracePeriodMinutes = ParseInt(node["gracePeriodMinutes"].Value<string>());
+			}
+			if(node["premiumServices"] != null)
+			{
+				this._PremiumServices = new List<PremiumService>();
+				foreach(var arrayNode in node["premiumServices"].Children())
+				{
+					this._PremiumServices.Add(ObjectFactory.Create<PremiumService>(arrayNode));
+				}
+			}
+			if(node["maxViewsNumber"] != null)
+			{
+				this._MaxViewsNumber = ParseInt(node["maxViewsNumber"].Value<string>());
+			}
+			if(node["viewLifeCycle"] != null)
+			{
+				this._ViewLifeCycle = ParseInt(node["viewLifeCycle"].Value<string>());
+			}
+			if(node["waiverPeriod"] != null)
+			{
+				this._WaiverPeriod = ParseInt(node["waiverPeriod"].Value<string>());
+			}
+			if(node["isWaiverEnabled"] != null)
+			{
+				this._IsWaiverEnabled = ParseBool(node["isWaiverEnabled"].Value<string>());
+			}
+			if(node["userTypes"] != null)
+			{
+				this._UserTypes = new List<OTTUserType>();
+				foreach(var arrayNode in node["userTypes"].Children())
+				{
+					this._UserTypes.Add(ObjectFactory.Create<OTTUserType>(arrayNode));
+				}
+			}
+			if(node["couponsGroups"] != null)
+			{
+				this._CouponsGroups = new List<CouponsGroup>();
+				foreach(var arrayNode in node["couponsGroups"].Children())
+				{
+					this._CouponsGroups.Add(ObjectFactory.Create<CouponsGroup>(arrayNode));
+				}
+			}
+			if(node["productCodes"] != null)
+			{
+				this._ProductCodes = new List<ProductCode>();
+				foreach(var arrayNode in node["productCodes"].Children())
+				{
+					this._ProductCodes.Add(ObjectFactory.Create<ProductCode>(arrayNode));
+				}
+			}
+			if(node["dependencyType"] != null)
+			{
+				this._DependencyType = (SubscriptionDependencyType)StringEnum.Parse(typeof(SubscriptionDependencyType), node["dependencyType"].Value<string>());
+			}
+			if(node["externalId"] != null)
+			{
+				this._ExternalId = node["externalId"].Value<string>();
+			}
+			if(node["isCancellationBlocked"] != null)
+			{
+				this._IsCancellationBlocked = ParseBool(node["isCancellationBlocked"].Value<string>());
+			}
 		}
 		#endregion
 

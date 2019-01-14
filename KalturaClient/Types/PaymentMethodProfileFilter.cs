@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int PaymentGatewayIdEqual
 		{
 			get { return _PaymentGatewayIdEqual; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayIdEqual");
 			}
 		}
+		[JsonProperty]
 		public new PaymentMethodProfileOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PaymentMethodProfileFilter(XmlElement node) : base(node)
+		public PaymentMethodProfileFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["paymentGatewayIdEqual"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "paymentGatewayIdEqual":
-						this._PaymentGatewayIdEqual = ParseInt(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._PaymentGatewayIdEqual = ParseInt(node["paymentGatewayIdEqual"].Value<string>());
 			}
-		}
-
-		public PaymentMethodProfileFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._PaymentGatewayIdEqual = data.TryGetValueSafe<int>("paymentGatewayIdEqual");
-			    this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (PaymentMethodProfileOrderBy)StringEnum.Parse(typeof(PaymentMethodProfileOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

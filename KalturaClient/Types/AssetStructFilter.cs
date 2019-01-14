@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,6 +52,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -59,6 +62,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		[JsonProperty]
 		public long MetaIdEqual
 		{
 			get { return _MetaIdEqual; }
@@ -68,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MetaIdEqual");
 			}
 		}
+		[JsonProperty]
 		public bool? IsProtectedEqual
 		{
 			get { return _IsProtectedEqual; }
@@ -77,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsProtectedEqual");
 			}
 		}
+		[JsonProperty]
 		public new AssetStructOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -93,34 +99,24 @@ namespace Kaltura.Types
 		{
 		}
 
-		public AssetStructFilter(XmlElement node) : base(node)
+		public AssetStructFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
-					case "metaIdEqual":
-						this._MetaIdEqual = ParseLong(propertyNode.InnerText);
-						continue;
-					case "isProtectedEqual":
-						this._IsProtectedEqual = ParseBool(propertyNode.InnerText);
-						continue;
-					case "orderBy":
-						this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdIn = node["idIn"].Value<string>();
 			}
-		}
-
-		public AssetStructFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdIn = data.TryGetValueSafe<string>("idIn");
-			    this._MetaIdEqual = data.TryGetValueSafe<long>("metaIdEqual");
-			    this._IsProtectedEqual = data.TryGetValueSafe<bool>("isProtectedEqual");
-			    this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["metaIdEqual"] != null)
+			{
+				this._MetaIdEqual = ParseLong(node["metaIdEqual"].Value<string>());
+			}
+			if(node["isProtectedEqual"] != null)
+			{
+				this._IsProtectedEqual = ParseBool(node["isProtectedEqual"].Value<string>());
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (AssetStructOrderBy)StringEnum.Parse(typeof(AssetStructOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

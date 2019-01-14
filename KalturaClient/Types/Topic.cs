@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,10 +54,17 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -65,6 +74,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public string SubscribersAmount
 		{
 			get { return _SubscribersAmount; }
@@ -74,6 +84,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SubscribersAmount");
 			}
 		}
+		[JsonProperty]
 		public TopicAutomaticIssueNotification AutomaticIssueNotification
 		{
 			get { return _AutomaticIssueNotification; }
@@ -83,6 +94,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("AutomaticIssueNotification");
 			}
 		}
+		[JsonProperty]
 		public long LastMessageSentDateSec
 		{
 			get { return _LastMessageSentDateSec; }
@@ -99,38 +111,28 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Topic(XmlElement node) : base(node)
+		public Topic(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "subscribersAmount":
-						this._SubscribersAmount = propertyNode.InnerText;
-						continue;
-					case "automaticIssueNotification":
-						this._AutomaticIssueNotification = (TopicAutomaticIssueNotification)StringEnum.Parse(typeof(TopicAutomaticIssueNotification), propertyNode.InnerText);
-						continue;
-					case "lastMessageSentDateSec":
-						this._LastMessageSentDateSec = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = node["id"].Value<string>();
 			}
-		}
-
-		public Topic(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._SubscribersAmount = data.TryGetValueSafe<string>("subscribersAmount");
-			    this._AutomaticIssueNotification = (TopicAutomaticIssueNotification)StringEnum.Parse(typeof(TopicAutomaticIssueNotification), data.TryGetValueSafe<string>("automaticIssueNotification"));
-			    this._LastMessageSentDateSec = data.TryGetValueSafe<long>("lastMessageSentDateSec");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["subscribersAmount"] != null)
+			{
+				this._SubscribersAmount = node["subscribersAmount"].Value<string>();
+			}
+			if(node["automaticIssueNotification"] != null)
+			{
+				this._AutomaticIssueNotification = (TopicAutomaticIssueNotification)StringEnum.Parse(typeof(TopicAutomaticIssueNotification), node["automaticIssueNotification"].Value<string>());
+			}
+			if(node["lastMessageSentDateSec"] != null)
+			{
+				this._LastMessageSentDateSec = ParseLong(node["lastMessageSentDateSec"].Value<string>());
+			}
 		}
 		#endregion
 

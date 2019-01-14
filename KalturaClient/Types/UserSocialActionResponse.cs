@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public SocialAction SocialAction
 		{
 			get { return _SocialAction; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SocialAction");
 			}
 		}
+		[JsonProperty]
 		public IList<NetworkActionStatus> FailStatus
 		{
 			get { return _FailStatus; }
@@ -71,35 +75,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserSocialActionResponse(XmlElement node) : base(node)
+		public UserSocialActionResponse(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["socialAction"] != null)
 			{
-				switch (propertyNode.Name)
+				this._SocialAction = ObjectFactory.Create<SocialAction>(node["socialAction"]);
+			}
+			if(node["failStatus"] != null)
+			{
+				this._FailStatus = new List<NetworkActionStatus>();
+				foreach(var arrayNode in node["failStatus"].Children())
 				{
-					case "socialAction":
-						this._SocialAction = ObjectFactory.Create<SocialAction>(propertyNode);
-						continue;
-					case "failStatus":
-						this._FailStatus = new List<NetworkActionStatus>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._FailStatus.Add(ObjectFactory.Create<NetworkActionStatus>(arrayNode));
-						}
-						continue;
+					this._FailStatus.Add(ObjectFactory.Create<NetworkActionStatus>(arrayNode));
 				}
 			}
-		}
-
-		public UserSocialActionResponse(IDictionary<string,object> data) : base(data)
-		{
-			    this._SocialAction = ObjectFactory.Create<SocialAction>(data.TryGetValueSafe<IDictionary<string,object>>("socialAction"));
-			    this._FailStatus = new List<NetworkActionStatus>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("failStatus", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._FailStatus.Add(ObjectFactory.Create<NetworkActionStatus>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

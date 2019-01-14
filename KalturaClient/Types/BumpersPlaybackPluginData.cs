@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Url
 		{
 			get { return _Url; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Url");
 			}
 		}
+		[JsonProperty]
 		public string Streamertype
 		{
 			get { return _Streamertype; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BumpersPlaybackPluginData(XmlElement node) : base(node)
+		public BumpersPlaybackPluginData(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["url"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "url":
-						this._Url = propertyNode.InnerText;
-						continue;
-					case "streamertype":
-						this._Streamertype = propertyNode.InnerText;
-						continue;
-				}
+				this._Url = node["url"].Value<string>();
 			}
-		}
-
-		public BumpersPlaybackPluginData(IDictionary<string,object> data) : base(data)
-		{
-			    this._Url = data.TryGetValueSafe<string>("url");
-			    this._Streamertype = data.TryGetValueSafe<string>("streamertype");
+			if(node["streamertype"] != null)
+			{
+				this._Streamertype = node["streamertype"].Value<string>();
+			}
 		}
 		#endregion
 

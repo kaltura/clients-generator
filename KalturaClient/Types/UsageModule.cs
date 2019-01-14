@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,41 +62,95 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
+			private set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
 		}
+		[JsonProperty]
 		public int MaxViewsNumber
 		{
 			get { return _MaxViewsNumber; }
+			private set 
+			{ 
+				_MaxViewsNumber = value;
+				OnPropertyChanged("MaxViewsNumber");
+			}
 		}
+		[JsonProperty]
 		public int ViewLifeCycle
 		{
 			get { return _ViewLifeCycle; }
+			private set 
+			{ 
+				_ViewLifeCycle = value;
+				OnPropertyChanged("ViewLifeCycle");
+			}
 		}
+		[JsonProperty]
 		public int FullLifeCycle
 		{
 			get { return _FullLifeCycle; }
+			private set 
+			{ 
+				_FullLifeCycle = value;
+				OnPropertyChanged("FullLifeCycle");
+			}
 		}
+		[JsonProperty]
 		public int CouponId
 		{
 			get { return _CouponId; }
+			private set 
+			{ 
+				_CouponId = value;
+				OnPropertyChanged("CouponId");
+			}
 		}
+		[JsonProperty]
 		public int WaiverPeriod
 		{
 			get { return _WaiverPeriod; }
+			private set 
+			{ 
+				_WaiverPeriod = value;
+				OnPropertyChanged("WaiverPeriod");
+			}
 		}
+		[JsonProperty]
 		public bool? IsWaiverEnabled
 		{
 			get { return _IsWaiverEnabled; }
+			private set 
+			{ 
+				_IsWaiverEnabled = value;
+				OnPropertyChanged("IsWaiverEnabled");
+			}
 		}
+		[JsonProperty]
 		public bool? IsOfflinePlayback
 		{
 			get { return _IsOfflinePlayback; }
+			private set 
+			{ 
+				_IsOfflinePlayback = value;
+				OnPropertyChanged("IsOfflinePlayback");
+			}
 		}
 		#endregion
 
@@ -103,54 +159,44 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UsageModule(XmlElement node) : base(node)
+		public UsageModule(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "id":
-						this._Id = ParseLong(propertyNode.InnerText);
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "maxViewsNumber":
-						this._MaxViewsNumber = ParseInt(propertyNode.InnerText);
-						continue;
-					case "viewLifeCycle":
-						this._ViewLifeCycle = ParseInt(propertyNode.InnerText);
-						continue;
-					case "fullLifeCycle":
-						this._FullLifeCycle = ParseInt(propertyNode.InnerText);
-						continue;
-					case "couponId":
-						this._CouponId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "waiverPeriod":
-						this._WaiverPeriod = ParseInt(propertyNode.InnerText);
-						continue;
-					case "isWaiverEnabled":
-						this._IsWaiverEnabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "isOfflinePlayback":
-						this._IsOfflinePlayback = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
-		}
-
-		public UsageModule(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<long>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._MaxViewsNumber = data.TryGetValueSafe<int>("maxViewsNumber");
-			    this._ViewLifeCycle = data.TryGetValueSafe<int>("viewLifeCycle");
-			    this._FullLifeCycle = data.TryGetValueSafe<int>("fullLifeCycle");
-			    this._CouponId = data.TryGetValueSafe<int>("couponId");
-			    this._WaiverPeriod = data.TryGetValueSafe<int>("waiverPeriod");
-			    this._IsWaiverEnabled = data.TryGetValueSafe<bool>("isWaiverEnabled");
-			    this._IsOfflinePlayback = data.TryGetValueSafe<bool>("isOfflinePlayback");
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["maxViewsNumber"] != null)
+			{
+				this._MaxViewsNumber = ParseInt(node["maxViewsNumber"].Value<string>());
+			}
+			if(node["viewLifeCycle"] != null)
+			{
+				this._ViewLifeCycle = ParseInt(node["viewLifeCycle"].Value<string>());
+			}
+			if(node["fullLifeCycle"] != null)
+			{
+				this._FullLifeCycle = ParseInt(node["fullLifeCycle"].Value<string>());
+			}
+			if(node["couponId"] != null)
+			{
+				this._CouponId = ParseInt(node["couponId"].Value<string>());
+			}
+			if(node["waiverPeriod"] != null)
+			{
+				this._WaiverPeriod = ParseInt(node["waiverPeriod"].Value<string>());
+			}
+			if(node["isWaiverEnabled"] != null)
+			{
+				this._IsWaiverEnabled = ParseBool(node["isWaiverEnabled"].Value<string>());
+			}
+			if(node["isOfflinePlayback"] != null)
+			{
+				this._IsOfflinePlayback = ParseBool(node["isOfflinePlayback"].Value<string>());
+			}
 		}
 		#endregion
 
