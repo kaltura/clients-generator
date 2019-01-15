@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public IList<SocialNetworkComment> Comments
 		{
 			get { return _Comments; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Comments");
 			}
 		}
+		[JsonProperty]
 		public string Link
 		{
 			get { return _Link; }
@@ -71,35 +75,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FacebookPost(XmlElement node) : base(node)
+		public FacebookPost(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["comments"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Comments = new List<SocialNetworkComment>();
+				foreach(var arrayNode in node["comments"].Children())
 				{
-					case "comments":
-						this._Comments = new List<SocialNetworkComment>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>(arrayNode));
-						}
-						continue;
-					case "link":
-						this._Link = propertyNode.InnerText;
-						continue;
+					this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>(arrayNode));
 				}
 			}
-		}
-
-		public FacebookPost(IDictionary<string,object> data) : base(data)
-		{
-			    this._Comments = new List<SocialNetworkComment>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("comments", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Comments.Add(ObjectFactory.Create<SocialNetworkComment>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._Link = data.TryGetValueSafe<string>("link");
+			if(node["link"] != null)
+			{
+				this._Link = node["link"].Value<string>();
+			}
 		}
 		#endregion
 

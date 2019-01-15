@@ -30,6 +30,7 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -63,36 +64,21 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ListResponse(XmlElement node) : base(node)
+		public ListResponse(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
-			{
-				string txt = propertyNode.InnerText;
-				switch (propertyNode.Name)
-				{
-					case "totalCount":
-						this._TotalCount = ParseInt(txt);
-                        continue;
-                    case "objects":
-                        this._Objects = new List<T>();
-                        foreach (XmlElement arrayNode in propertyNode.ChildNodes)
-                        {
-                            this._Objects.Add(ObjectFactory.Create<T>(arrayNode));
-                        }
-                        continue;
-				}
-			}
+		    if (node["totalCount"] != null)
+		    {
+		        this._TotalCount = node["totalCount"].Value<int>();
+		    }
+		    if (node["objects"] != null)
+		    {
+		        this._Objects = new List<T>();
+		        foreach (var arrayNode in node["objects"].Children())
+		        {
+		            this._Objects.Add(ObjectFactory.Create<T>(arrayNode));
+		        }
+		    }
 		}
-
-        public ListResponse(IDictionary<string, object> data) : base(data)
-        {
-            this._TotalCount = (int)data["totalCount"];
-            this._Objects = new List<T>();
-            foreach (var arrayData in (IEnumerable<object>)data["objects"])
-            {
-                this._Objects.Add(ObjectFactory.Create<T>((Dictionary<string,object>)arrayData));
-            }
-        }
 
 		#endregion
 	}

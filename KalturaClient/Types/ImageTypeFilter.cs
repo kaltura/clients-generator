@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,6 +50,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -57,6 +60,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
+		[JsonProperty]
 		public string RatioIdIn
 		{
 			get { return _RatioIdIn; }
@@ -66,6 +70,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("RatioIdIn");
 			}
 		}
+		[JsonProperty]
 		public new ImageTypeOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -82,30 +87,20 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ImageTypeFilter(XmlElement node) : base(node)
+		public ImageTypeFilter(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["idIn"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "idIn":
-						this._IdIn = propertyNode.InnerText;
-						continue;
-					case "ratioIdIn":
-						this._RatioIdIn = propertyNode.InnerText;
-						continue;
-					case "orderBy":
-						this._OrderBy = (ImageTypeOrderBy)StringEnum.Parse(typeof(ImageTypeOrderBy), propertyNode.InnerText);
-						continue;
-				}
+				this._IdIn = node["idIn"].Value<string>();
 			}
-		}
-
-		public ImageTypeFilter(IDictionary<string,object> data) : base(data)
-		{
-			    this._IdIn = data.TryGetValueSafe<string>("idIn");
-			    this._RatioIdIn = data.TryGetValueSafe<string>("ratioIdIn");
-			    this._OrderBy = (ImageTypeOrderBy)StringEnum.Parse(typeof(ImageTypeOrderBy), data.TryGetValueSafe<string>("orderBy"));
+			if(node["ratioIdIn"] != null)
+			{
+				this._RatioIdIn = node["ratioIdIn"].Value<string>();
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ImageTypeOrderBy)StringEnum.Parse(typeof(ImageTypeOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 

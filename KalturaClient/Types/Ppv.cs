@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -64,6 +66,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
@@ -73,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -82,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public PriceDetails Price
 		{
 			get { return _Price; }
@@ -91,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Price");
 			}
 		}
+		[JsonProperty]
 		public IList<IntegerValue> FileTypes
 		{
 			get { return _FileTypes; }
@@ -100,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FileTypes");
 			}
 		}
+		[JsonProperty]
 		public DiscountModule DiscountModule
 		{
 			get { return _DiscountModule; }
@@ -109,6 +116,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("DiscountModule");
 			}
 		}
+		[JsonProperty]
 		public CouponsGroup CouponsGroup
 		{
 			get { return _CouponsGroup; }
@@ -118,6 +126,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("CouponsGroup");
 			}
 		}
+		[JsonProperty]
 		public IList<TranslationToken> Descriptions
 		{
 			get { return _Descriptions; }
@@ -127,6 +136,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Descriptions");
 			}
 		}
+		[JsonProperty]
 		public string ProductCode
 		{
 			get { return _ProductCode; }
@@ -136,6 +146,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductCode");
 			}
 		}
+		[JsonProperty]
 		public bool? IsSubscriptionOnly
 		{
 			get { return _IsSubscriptionOnly; }
@@ -145,6 +156,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsSubscriptionOnly");
 			}
 		}
+		[JsonProperty]
 		public bool? FirstDeviceLimitation
 		{
 			get { return _FirstDeviceLimitation; }
@@ -154,6 +166,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FirstDeviceLimitation");
 			}
 		}
+		[JsonProperty]
 		public UsageModule UsageModule
 		{
 			get { return _UsageModule; }
@@ -170,80 +183,60 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Ppv(XmlElement node) : base(node)
+		public Ppv(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["id"] != null)
 			{
-				switch (propertyNode.Name)
+				this._Id = node["id"].Value<string>();
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["price"] != null)
+			{
+				this._Price = ObjectFactory.Create<PriceDetails>(node["price"]);
+			}
+			if(node["fileTypes"] != null)
+			{
+				this._FileTypes = new List<IntegerValue>();
+				foreach(var arrayNode in node["fileTypes"].Children())
 				{
-					case "id":
-						this._Id = propertyNode.InnerText;
-						continue;
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "price":
-						this._Price = ObjectFactory.Create<PriceDetails>(propertyNode);
-						continue;
-					case "fileTypes":
-						this._FileTypes = new List<IntegerValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._FileTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-						}
-						continue;
-					case "discountModule":
-						this._DiscountModule = ObjectFactory.Create<DiscountModule>(propertyNode);
-						continue;
-					case "couponsGroup":
-						this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(propertyNode);
-						continue;
-					case "descriptions":
-						this._Descriptions = new List<TranslationToken>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._Descriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
-						}
-						continue;
-					case "productCode":
-						this._ProductCode = propertyNode.InnerText;
-						continue;
-					case "isSubscriptionOnly":
-						this._IsSubscriptionOnly = ParseBool(propertyNode.InnerText);
-						continue;
-					case "firstDeviceLimitation":
-						this._FirstDeviceLimitation = ParseBool(propertyNode.InnerText);
-						continue;
-					case "usageModule":
-						this._UsageModule = ObjectFactory.Create<UsageModule>(propertyNode);
-						continue;
+					this._FileTypes.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
 				}
 			}
-		}
-
-		public Ppv(IDictionary<string,object> data) : base(data)
-		{
-			    this._Id = data.TryGetValueSafe<string>("id");
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Price = ObjectFactory.Create<PriceDetails>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
-			    this._FileTypes = new List<IntegerValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("fileTypes", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._FileTypes.Add(ObjectFactory.Create<IntegerValue>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._DiscountModule = ObjectFactory.Create<DiscountModule>(data.TryGetValueSafe<IDictionary<string,object>>("discountModule"));
-			    this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(data.TryGetValueSafe<IDictionary<string,object>>("couponsGroup"));
-			    this._Descriptions = new List<TranslationToken>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("descriptions", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._Descriptions.Add(ObjectFactory.Create<TranslationToken>((IDictionary<string,object>)dataDictionary));
-			    }
-			    this._ProductCode = data.TryGetValueSafe<string>("productCode");
-			    this._IsSubscriptionOnly = data.TryGetValueSafe<bool>("isSubscriptionOnly");
-			    this._FirstDeviceLimitation = data.TryGetValueSafe<bool>("firstDeviceLimitation");
-			    this._UsageModule = ObjectFactory.Create<UsageModule>(data.TryGetValueSafe<IDictionary<string,object>>("usageModule"));
+			if(node["discountModule"] != null)
+			{
+				this._DiscountModule = ObjectFactory.Create<DiscountModule>(node["discountModule"]);
+			}
+			if(node["couponsGroup"] != null)
+			{
+				this._CouponsGroup = ObjectFactory.Create<CouponsGroup>(node["couponsGroup"]);
+			}
+			if(node["descriptions"] != null)
+			{
+				this._Descriptions = new List<TranslationToken>();
+				foreach(var arrayNode in node["descriptions"].Children())
+				{
+					this._Descriptions.Add(ObjectFactory.Create<TranslationToken>(arrayNode));
+				}
+			}
+			if(node["productCode"] != null)
+			{
+				this._ProductCode = node["productCode"].Value<string>();
+			}
+			if(node["isSubscriptionOnly"] != null)
+			{
+				this._IsSubscriptionOnly = ParseBool(node["isSubscriptionOnly"].Value<string>());
+			}
+			if(node["firstDeviceLimitation"] != null)
+			{
+				this._FirstDeviceLimitation = ParseBool(node["firstDeviceLimitation"].Value<string>());
+			}
+			if(node["usageModule"] != null)
+			{
+				this._UsageModule = ObjectFactory.Create<UsageModule>(node["usageModule"]);
+			}
 		}
 		#endregion
 

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public IList<ActionPermissionItem> ActionPermissionItems
 		{
 			get { return _ActionPermissionItems; }
@@ -60,31 +63,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialUserConfig(XmlElement node) : base(node)
+		public SocialUserConfig(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["actionPermissionItems"] != null)
 			{
-				switch (propertyNode.Name)
+				this._ActionPermissionItems = new List<ActionPermissionItem>();
+				foreach(var arrayNode in node["actionPermissionItems"].Children())
 				{
-					case "actionPermissionItems":
-						this._ActionPermissionItems = new List<ActionPermissionItem>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._ActionPermissionItems.Add(ObjectFactory.Create<ActionPermissionItem>(arrayNode));
-						}
-						continue;
+					this._ActionPermissionItems.Add(ObjectFactory.Create<ActionPermissionItem>(arrayNode));
 				}
 			}
-		}
-
-		public SocialUserConfig(IDictionary<string,object> data) : base(data)
-		{
-			    this._ActionPermissionItems = new List<ActionPermissionItem>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actionPermissionItems", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._ActionPermissionItems.Add(ObjectFactory.Create<ActionPermissionItem>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

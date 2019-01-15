@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -60,6 +62,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string TemplateName
 		{
 			get { return _TemplateName; }
@@ -69,6 +72,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("TemplateName");
 			}
 		}
+		[JsonProperty]
 		public string Subject
 		{
 			get { return _Subject; }
@@ -78,6 +82,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Subject");
 			}
 		}
+		[JsonProperty]
 		public string FirstName
 		{
 			get { return _FirstName; }
@@ -87,6 +92,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("FirstName");
 			}
 		}
+		[JsonProperty]
 		public string LastName
 		{
 			get { return _LastName; }
@@ -96,6 +102,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("LastName");
 			}
 		}
+		[JsonProperty]
 		public string SenderName
 		{
 			get { return _SenderName; }
@@ -105,6 +112,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SenderName");
 			}
 		}
+		[JsonProperty]
 		public string SenderFrom
 		{
 			get { return _SenderFrom; }
@@ -114,6 +122,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SenderFrom");
 			}
 		}
+		[JsonProperty]
 		public string SenderTo
 		{
 			get { return _SenderTo; }
@@ -123,6 +132,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("SenderTo");
 			}
 		}
+		[JsonProperty]
 		public string BccAddress
 		{
 			get { return _BccAddress; }
@@ -132,6 +142,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("BccAddress");
 			}
 		}
+		[JsonProperty]
 		public IList<KeyValue> ExtraParameters
 		{
 			get { return _ExtraParameters; }
@@ -148,63 +159,48 @@ namespace Kaltura.Types
 		{
 		}
 
-		public EmailMessage(XmlElement node) : base(node)
+		public EmailMessage(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["templateName"] != null)
 			{
-				switch (propertyNode.Name)
+				this._TemplateName = node["templateName"].Value<string>();
+			}
+			if(node["subject"] != null)
+			{
+				this._Subject = node["subject"].Value<string>();
+			}
+			if(node["firstName"] != null)
+			{
+				this._FirstName = node["firstName"].Value<string>();
+			}
+			if(node["lastName"] != null)
+			{
+				this._LastName = node["lastName"].Value<string>();
+			}
+			if(node["senderName"] != null)
+			{
+				this._SenderName = node["senderName"].Value<string>();
+			}
+			if(node["senderFrom"] != null)
+			{
+				this._SenderFrom = node["senderFrom"].Value<string>();
+			}
+			if(node["senderTo"] != null)
+			{
+				this._SenderTo = node["senderTo"].Value<string>();
+			}
+			if(node["bccAddress"] != null)
+			{
+				this._BccAddress = node["bccAddress"].Value<string>();
+			}
+			if(node["extraParameters"] != null)
+			{
+				this._ExtraParameters = new List<KeyValue>();
+				foreach(var arrayNode in node["extraParameters"].Children())
 				{
-					case "templateName":
-						this._TemplateName = propertyNode.InnerText;
-						continue;
-					case "subject":
-						this._Subject = propertyNode.InnerText;
-						continue;
-					case "firstName":
-						this._FirstName = propertyNode.InnerText;
-						continue;
-					case "lastName":
-						this._LastName = propertyNode.InnerText;
-						continue;
-					case "senderName":
-						this._SenderName = propertyNode.InnerText;
-						continue;
-					case "senderFrom":
-						this._SenderFrom = propertyNode.InnerText;
-						continue;
-					case "senderTo":
-						this._SenderTo = propertyNode.InnerText;
-						continue;
-					case "bccAddress":
-						this._BccAddress = propertyNode.InnerText;
-						continue;
-					case "extraParameters":
-						this._ExtraParameters = new List<KeyValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._ExtraParameters.Add(ObjectFactory.Create<KeyValue>(arrayNode));
-						}
-						continue;
+					this._ExtraParameters.Add(ObjectFactory.Create<KeyValue>(arrayNode));
 				}
 			}
-		}
-
-		public EmailMessage(IDictionary<string,object> data) : base(data)
-		{
-			    this._TemplateName = data.TryGetValueSafe<string>("templateName");
-			    this._Subject = data.TryGetValueSafe<string>("subject");
-			    this._FirstName = data.TryGetValueSafe<string>("firstName");
-			    this._LastName = data.TryGetValueSafe<string>("lastName");
-			    this._SenderName = data.TryGetValueSafe<string>("senderName");
-			    this._SenderFrom = data.TryGetValueSafe<string>("senderFrom");
-			    this._SenderTo = data.TryGetValueSafe<string>("senderTo");
-			    this._BccAddress = data.TryGetValueSafe<string>("bccAddress");
-			    this._ExtraParameters = new List<KeyValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("extraParameters", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._ExtraParameters.Add(ObjectFactory.Create<KeyValue>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

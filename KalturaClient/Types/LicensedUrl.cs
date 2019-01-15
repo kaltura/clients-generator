@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string MainUrl
 		{
 			get { return _MainUrl; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MainUrl");
 			}
 		}
+		[JsonProperty]
 		public string AltUrl
 		{
 			get { return _AltUrl; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LicensedUrl(XmlElement node) : base(node)
+		public LicensedUrl(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["mainUrl"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "mainUrl":
-						this._MainUrl = propertyNode.InnerText;
-						continue;
-					case "altUrl":
-						this._AltUrl = propertyNode.InnerText;
-						continue;
-				}
+				this._MainUrl = node["mainUrl"].Value<string>();
 			}
-		}
-
-		public LicensedUrl(IDictionary<string,object> data) : base(data)
-		{
-			    this._MainUrl = data.TryGetValueSafe<string>("mainUrl");
-			    this._AltUrl = data.TryGetValueSafe<string>("altUrl");
+			if(node["altUrl"] != null)
+			{
+				this._AltUrl = node["altUrl"].Value<string>();
+			}
 		}
 		#endregion
 
