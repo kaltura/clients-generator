@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
@@ -116,6 +119,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		public int getTypeFormat() {
 			return ServiceResponseTypeFormat.RESPONSE_TYPE_JSON.getValue();
 		}
+
+		@Override
+		public boolean getIgnoreSslDomainVerification() {
+			return false;
+		}
     };
 
     private IdFactory idFactory = new IdFactory() {
@@ -128,10 +136,17 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
+
     protected static ILogger logger = Logger.getLogger(TAG);
 
     protected static APIOkRequestsExecutor self;
 
+	protected static HostnameVerifier hostnameVerifier = new HostnameVerifier() {		
+		@Override
+		public boolean verify(String arg0, SSLSession arg1) {
+			return true;
+		}
+	};
 
     public static APIOkRequestsExecutor getExecutor() {
         if (self == null) {
@@ -179,6 +194,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(config.getMaxRetry(1) > 0);
+                
+        if(config.getIgnoreSslDomainVerification()) {
+        	builder.hostnameVerifier(hostnameVerifier);
+        }
 
         return builder;
     }
