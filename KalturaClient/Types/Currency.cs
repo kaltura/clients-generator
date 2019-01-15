@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string Code
 		{
 			get { return _Code; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Code");
 			}
 		}
-		[JsonProperty]
 		public string Sign
 		{
 			get { return _Sign; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Sign");
 			}
 		}
-		[JsonProperty]
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Currency(JToken node) : base(node)
+		public Currency(XmlElement node) : base(node)
 		{
-			if(node["name"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Name = node["name"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "code":
+						this._Code = propertyNode.InnerText;
+						continue;
+					case "sign":
+						this._Sign = propertyNode.InnerText;
+						continue;
+					case "isDefault":
+						this._IsDefault = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["code"] != null)
-			{
-				this._Code = node["code"].Value<string>();
-			}
-			if(node["sign"] != null)
-			{
-				this._Sign = node["sign"].Value<string>();
-			}
-			if(node["isDefault"] != null)
-			{
-				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
-			}
+		}
+
+		public Currency(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Code = data.TryGetValueSafe<string>("code");
+			    this._Sign = data.TryGetValueSafe<string>("sign");
+			    this._IsDefault = data.TryGetValueSafe<bool>("isDefault");
 		}
 		#endregion
 

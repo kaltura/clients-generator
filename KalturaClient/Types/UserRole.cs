@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,17 +50,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -72,7 +63,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public string PermissionNames
 		{
 			get { return _PermissionNames; }
@@ -82,7 +72,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PermissionNames");
 			}
 		}
-		[JsonProperty]
 		public string ExcludedPermissionNames
 		{
 			get { return _ExcludedPermissionNames; }
@@ -99,24 +88,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserRole(JToken node) : base(node)
+		public UserRole(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = ParseLong(propertyNode.InnerText);
+						continue;
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "permissionNames":
+						this._PermissionNames = propertyNode.InnerText;
+						continue;
+					case "excludedPermissionNames":
+						this._ExcludedPermissionNames = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["name"] != null)
-			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["permissionNames"] != null)
-			{
-				this._PermissionNames = node["permissionNames"].Value<string>();
-			}
-			if(node["excludedPermissionNames"] != null)
-			{
-				this._ExcludedPermissionNames = node["excludedPermissionNames"].Value<string>();
-			}
+		}
+
+		public UserRole(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<long>("id");
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._PermissionNames = data.TryGetValueSafe<string>("permissionNames");
+			    this._ExcludedPermissionNames = data.TryGetValueSafe<string>("excludedPermissionNames");
 		}
 		#endregion
 

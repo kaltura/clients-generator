@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public float Price
 		{
 			get { return _Price; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Price");
 			}
 		}
-		[JsonProperty]
 		public long PurchaseId
 		{
 			get { return _PurchaseId; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PurchaseId");
 			}
 		}
-		[JsonProperty]
 		public long SubscriptionId
 		{
 			get { return _SubscriptionId; }
@@ -87,20 +82,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public EntitlementRenewalBase(JToken node) : base(node)
+		public EntitlementRenewalBase(XmlElement node) : base(node)
 		{
-			if(node["price"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Price = ParseFloat(node["price"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "price":
+						this._Price = ParseFloat(propertyNode.InnerText);
+						continue;
+					case "purchaseId":
+						this._PurchaseId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "subscriptionId":
+						this._SubscriptionId = ParseLong(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["purchaseId"] != null)
-			{
-				this._PurchaseId = ParseLong(node["purchaseId"].Value<string>());
-			}
-			if(node["subscriptionId"] != null)
-			{
-				this._SubscriptionId = ParseLong(node["subscriptionId"].Value<string>());
-			}
+		}
+
+		public EntitlementRenewalBase(IDictionary<string,object> data) : base(data)
+		{
+			    this._Price = data.TryGetValueSafe<float>("price");
+			    this._PurchaseId = data.TryGetValueSafe<long>("purchaseId");
+			    this._SubscriptionId = data.TryGetValueSafe<long>("subscriptionId");
 		}
 		#endregion
 

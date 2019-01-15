@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string StatusIn
 		{
 			get { return _StatusIn; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("StatusIn");
 			}
 		}
-		[JsonProperty]
 		public string ExternalRecordingIdIn
 		{
 			get { return _ExternalRecordingIdIn; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalRecordingIdIn");
 			}
 		}
-		[JsonProperty]
 		public string KSql
 		{
 			get { return _KSql; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("KSql");
 			}
 		}
-		[JsonProperty]
 		public new RecordingOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public RecordingFilter(JToken node) : base(node)
+		public RecordingFilter(XmlElement node) : base(node)
 		{
-			if(node["statusIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._StatusIn = node["statusIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "statusIn":
+						this._StatusIn = propertyNode.InnerText;
+						continue;
+					case "externalRecordingIdIn":
+						this._ExternalRecordingIdIn = propertyNode.InnerText;
+						continue;
+					case "kSql":
+						this._KSql = propertyNode.InnerText;
+						continue;
+					case "orderBy":
+						this._OrderBy = (RecordingOrderBy)StringEnum.Parse(typeof(RecordingOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["externalRecordingIdIn"] != null)
-			{
-				this._ExternalRecordingIdIn = node["externalRecordingIdIn"].Value<string>();
-			}
-			if(node["kSql"] != null)
-			{
-				this._KSql = node["kSql"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (RecordingOrderBy)StringEnum.Parse(typeof(RecordingOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public RecordingFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._StatusIn = data.TryGetValueSafe<string>("statusIn");
+			    this._ExternalRecordingIdIn = data.TryGetValueSafe<string>("externalRecordingIdIn");
+			    this._KSql = data.TryGetValueSafe<string>("kSql");
+			    this._OrderBy = (RecordingOrderBy)StringEnum.Parse(typeof(RecordingOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

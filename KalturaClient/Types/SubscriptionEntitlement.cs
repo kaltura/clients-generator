@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -62,47 +60,22 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public long NextRenewalDate
 		{
 			get { return _NextRenewalDate; }
-			private set 
-			{ 
-				_NextRenewalDate = value;
-				OnPropertyChanged("NextRenewalDate");
-			}
 		}
-		[JsonProperty]
 		public bool? IsRenewableForPurchase
 		{
 			get { return _IsRenewableForPurchase; }
-			private set 
-			{ 
-				_IsRenewableForPurchase = value;
-				OnPropertyChanged("IsRenewableForPurchase");
-			}
 		}
-		[JsonProperty]
 		public bool? IsRenewable
 		{
 			get { return _IsRenewable; }
-			private set 
-			{ 
-				_IsRenewable = value;
-				OnPropertyChanged("IsRenewable");
-			}
 		}
-		[JsonProperty]
 		public bool? IsInGracePeriod
 		{
 			get { return _IsInGracePeriod; }
-			private set 
-			{ 
-				_IsInGracePeriod = value;
-				OnPropertyChanged("IsInGracePeriod");
-			}
 		}
-		[JsonProperty]
 		public int PaymentGatewayId
 		{
 			get { return _PaymentGatewayId; }
@@ -112,7 +85,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayId");
 			}
 		}
-		[JsonProperty]
 		public int PaymentMethodId
 		{
 			get { return _PaymentMethodId; }
@@ -122,35 +94,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentMethodId");
 			}
 		}
-		[JsonProperty]
 		public long ScheduledSubscriptionId
 		{
 			get { return _ScheduledSubscriptionId; }
-			private set 
-			{ 
-				_ScheduledSubscriptionId = value;
-				OnPropertyChanged("ScheduledSubscriptionId");
-			}
 		}
-		[JsonProperty]
 		public long UnifiedPaymentId
 		{
 			get { return _UnifiedPaymentId; }
-			private set 
-			{ 
-				_UnifiedPaymentId = value;
-				OnPropertyChanged("UnifiedPaymentId");
-			}
 		}
-		[JsonProperty]
 		public bool? IsSuspended
 		{
 			get { return _IsSuspended; }
-			private set 
-			{ 
-				_IsSuspended = value;
-				OnPropertyChanged("IsSuspended");
-			}
 		}
 		#endregion
 
@@ -159,44 +113,54 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SubscriptionEntitlement(JToken node) : base(node)
+		public SubscriptionEntitlement(XmlElement node) : base(node)
 		{
-			if(node["nextRenewalDate"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._NextRenewalDate = ParseLong(node["nextRenewalDate"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "nextRenewalDate":
+						this._NextRenewalDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "isRenewableForPurchase":
+						this._IsRenewableForPurchase = ParseBool(propertyNode.InnerText);
+						continue;
+					case "isRenewable":
+						this._IsRenewable = ParseBool(propertyNode.InnerText);
+						continue;
+					case "isInGracePeriod":
+						this._IsInGracePeriod = ParseBool(propertyNode.InnerText);
+						continue;
+					case "paymentGatewayId":
+						this._PaymentGatewayId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "paymentMethodId":
+						this._PaymentMethodId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "scheduledSubscriptionId":
+						this._ScheduledSubscriptionId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "unifiedPaymentId":
+						this._UnifiedPaymentId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "isSuspended":
+						this._IsSuspended = ParseBool(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["isRenewableForPurchase"] != null)
-			{
-				this._IsRenewableForPurchase = ParseBool(node["isRenewableForPurchase"].Value<string>());
-			}
-			if(node["isRenewable"] != null)
-			{
-				this._IsRenewable = ParseBool(node["isRenewable"].Value<string>());
-			}
-			if(node["isInGracePeriod"] != null)
-			{
-				this._IsInGracePeriod = ParseBool(node["isInGracePeriod"].Value<string>());
-			}
-			if(node["paymentGatewayId"] != null)
-			{
-				this._PaymentGatewayId = ParseInt(node["paymentGatewayId"].Value<string>());
-			}
-			if(node["paymentMethodId"] != null)
-			{
-				this._PaymentMethodId = ParseInt(node["paymentMethodId"].Value<string>());
-			}
-			if(node["scheduledSubscriptionId"] != null)
-			{
-				this._ScheduledSubscriptionId = ParseLong(node["scheduledSubscriptionId"].Value<string>());
-			}
-			if(node["unifiedPaymentId"] != null)
-			{
-				this._UnifiedPaymentId = ParseLong(node["unifiedPaymentId"].Value<string>());
-			}
-			if(node["isSuspended"] != null)
-			{
-				this._IsSuspended = ParseBool(node["isSuspended"].Value<string>());
-			}
+		}
+
+		public SubscriptionEntitlement(IDictionary<string,object> data) : base(data)
+		{
+			    this._NextRenewalDate = data.TryGetValueSafe<long>("nextRenewalDate");
+			    this._IsRenewableForPurchase = data.TryGetValueSafe<bool>("isRenewableForPurchase");
+			    this._IsRenewable = data.TryGetValueSafe<bool>("isRenewable");
+			    this._IsInGracePeriod = data.TryGetValueSafe<bool>("isInGracePeriod");
+			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
+			    this._PaymentMethodId = data.TryGetValueSafe<int>("paymentMethodId");
+			    this._ScheduledSubscriptionId = data.TryGetValueSafe<long>("scheduledSubscriptionId");
+			    this._UnifiedPaymentId = data.TryGetValueSafe<long>("unifiedPaymentId");
+			    this._IsSuspended = data.TryGetValueSafe<bool>("isSuspended");
 		}
 		#endregion
 

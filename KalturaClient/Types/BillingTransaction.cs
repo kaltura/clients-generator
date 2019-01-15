@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -76,165 +74,69 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string RecieptCode
 		{
 			get { return _RecieptCode; }
-			private set 
-			{ 
-				_RecieptCode = value;
-				OnPropertyChanged("RecieptCode");
-			}
 		}
-		[JsonProperty]
 		public string PurchasedItemName
 		{
 			get { return _PurchasedItemName; }
-			private set 
-			{ 
-				_PurchasedItemName = value;
-				OnPropertyChanged("PurchasedItemName");
-			}
 		}
-		[JsonProperty]
 		public string PurchasedItemCode
 		{
 			get { return _PurchasedItemCode; }
-			private set 
-			{ 
-				_PurchasedItemCode = value;
-				OnPropertyChanged("PurchasedItemCode");
-			}
 		}
-		[JsonProperty]
 		public BillingItemsType ItemType
 		{
 			get { return _ItemType; }
-			private set 
-			{ 
-				_ItemType = value;
-				OnPropertyChanged("ItemType");
-			}
 		}
-		[JsonProperty]
 		public BillingAction BillingAction
 		{
 			get { return _BillingAction; }
-			private set 
-			{ 
-				_BillingAction = value;
-				OnPropertyChanged("BillingAction");
-			}
 		}
-		[JsonProperty]
 		public Price Price
 		{
 			get { return _Price; }
-			private set 
-			{ 
-				_Price = value;
-				OnPropertyChanged("Price");
-			}
 		}
-		[JsonProperty]
 		public long ActionDate
 		{
 			get { return _ActionDate; }
-			private set 
-			{ 
-				_ActionDate = value;
-				OnPropertyChanged("ActionDate");
-			}
 		}
-		[JsonProperty]
 		public long StartDate
 		{
 			get { return _StartDate; }
-			private set 
-			{ 
-				_StartDate = value;
-				OnPropertyChanged("StartDate");
-			}
 		}
-		[JsonProperty]
 		public long EndDate
 		{
 			get { return _EndDate; }
-			private set 
-			{ 
-				_EndDate = value;
-				OnPropertyChanged("EndDate");
-			}
 		}
-		[JsonProperty]
 		public PaymentMethodType PaymentMethod
 		{
 			get { return _PaymentMethod; }
-			private set 
-			{ 
-				_PaymentMethod = value;
-				OnPropertyChanged("PaymentMethod");
-			}
 		}
-		[JsonProperty]
 		public string PaymentMethodExtraDetails
 		{
 			get { return _PaymentMethodExtraDetails; }
-			private set 
-			{ 
-				_PaymentMethodExtraDetails = value;
-				OnPropertyChanged("PaymentMethodExtraDetails");
-			}
 		}
-		[JsonProperty]
 		public bool? IsRecurring
 		{
 			get { return _IsRecurring; }
-			private set 
-			{ 
-				_IsRecurring = value;
-				OnPropertyChanged("IsRecurring");
-			}
 		}
-		[JsonProperty]
 		public int BillingProviderRef
 		{
 			get { return _BillingProviderRef; }
-			private set 
-			{ 
-				_BillingProviderRef = value;
-				OnPropertyChanged("BillingProviderRef");
-			}
 		}
-		[JsonProperty]
 		public int PurchaseId
 		{
 			get { return _PurchaseId; }
-			private set 
-			{ 
-				_PurchaseId = value;
-				OnPropertyChanged("PurchaseId");
-			}
 		}
-		[JsonProperty]
 		public string Remarks
 		{
 			get { return _Remarks; }
-			private set 
-			{ 
-				_Remarks = value;
-				OnPropertyChanged("Remarks");
-			}
 		}
-		[JsonProperty]
 		public BillingPriceType BillingPriceType
 		{
 			get { return _BillingPriceType; }
-			private set 
-			{ 
-				_BillingPriceType = value;
-				OnPropertyChanged("BillingPriceType");
-			}
 		}
 		#endregion
 
@@ -243,72 +145,82 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BillingTransaction(JToken node) : base(node)
+		public BillingTransaction(XmlElement node) : base(node)
 		{
-			if(node["recieptCode"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._RecieptCode = node["recieptCode"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "recieptCode":
+						this._RecieptCode = propertyNode.InnerText;
+						continue;
+					case "purchasedItemName":
+						this._PurchasedItemName = propertyNode.InnerText;
+						continue;
+					case "purchasedItemCode":
+						this._PurchasedItemCode = propertyNode.InnerText;
+						continue;
+					case "itemType":
+						this._ItemType = (BillingItemsType)StringEnum.Parse(typeof(BillingItemsType), propertyNode.InnerText);
+						continue;
+					case "billingAction":
+						this._BillingAction = (BillingAction)StringEnum.Parse(typeof(BillingAction), propertyNode.InnerText);
+						continue;
+					case "price":
+						this._Price = ObjectFactory.Create<Price>(propertyNode);
+						continue;
+					case "actionDate":
+						this._ActionDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "startDate":
+						this._StartDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "endDate":
+						this._EndDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "paymentMethod":
+						this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), propertyNode.InnerText);
+						continue;
+					case "paymentMethodExtraDetails":
+						this._PaymentMethodExtraDetails = propertyNode.InnerText;
+						continue;
+					case "isRecurring":
+						this._IsRecurring = ParseBool(propertyNode.InnerText);
+						continue;
+					case "billingProviderRef":
+						this._BillingProviderRef = ParseInt(propertyNode.InnerText);
+						continue;
+					case "purchaseId":
+						this._PurchaseId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "remarks":
+						this._Remarks = propertyNode.InnerText;
+						continue;
+					case "billingPriceType":
+						this._BillingPriceType = (BillingPriceType)StringEnum.Parse(typeof(BillingPriceType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["purchasedItemName"] != null)
-			{
-				this._PurchasedItemName = node["purchasedItemName"].Value<string>();
-			}
-			if(node["purchasedItemCode"] != null)
-			{
-				this._PurchasedItemCode = node["purchasedItemCode"].Value<string>();
-			}
-			if(node["itemType"] != null)
-			{
-				this._ItemType = (BillingItemsType)StringEnum.Parse(typeof(BillingItemsType), node["itemType"].Value<string>());
-			}
-			if(node["billingAction"] != null)
-			{
-				this._BillingAction = (BillingAction)StringEnum.Parse(typeof(BillingAction), node["billingAction"].Value<string>());
-			}
-			if(node["price"] != null)
-			{
-				this._Price = ObjectFactory.Create<Price>(node["price"]);
-			}
-			if(node["actionDate"] != null)
-			{
-				this._ActionDate = ParseLong(node["actionDate"].Value<string>());
-			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
-			if(node["paymentMethod"] != null)
-			{
-				this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), node["paymentMethod"].Value<string>());
-			}
-			if(node["paymentMethodExtraDetails"] != null)
-			{
-				this._PaymentMethodExtraDetails = node["paymentMethodExtraDetails"].Value<string>();
-			}
-			if(node["isRecurring"] != null)
-			{
-				this._IsRecurring = ParseBool(node["isRecurring"].Value<string>());
-			}
-			if(node["billingProviderRef"] != null)
-			{
-				this._BillingProviderRef = ParseInt(node["billingProviderRef"].Value<string>());
-			}
-			if(node["purchaseId"] != null)
-			{
-				this._PurchaseId = ParseInt(node["purchaseId"].Value<string>());
-			}
-			if(node["remarks"] != null)
-			{
-				this._Remarks = node["remarks"].Value<string>();
-			}
-			if(node["billingPriceType"] != null)
-			{
-				this._BillingPriceType = (BillingPriceType)StringEnum.Parse(typeof(BillingPriceType), node["billingPriceType"].Value<string>());
-			}
+		}
+
+		public BillingTransaction(IDictionary<string,object> data) : base(data)
+		{
+			    this._RecieptCode = data.TryGetValueSafe<string>("recieptCode");
+			    this._PurchasedItemName = data.TryGetValueSafe<string>("purchasedItemName");
+			    this._PurchasedItemCode = data.TryGetValueSafe<string>("purchasedItemCode");
+			    this._ItemType = (BillingItemsType)StringEnum.Parse(typeof(BillingItemsType), data.TryGetValueSafe<string>("itemType"));
+			    this._BillingAction = (BillingAction)StringEnum.Parse(typeof(BillingAction), data.TryGetValueSafe<string>("billingAction"));
+			    this._Price = ObjectFactory.Create<Price>(data.TryGetValueSafe<IDictionary<string,object>>("price"));
+			    this._ActionDate = data.TryGetValueSafe<long>("actionDate");
+			    this._StartDate = data.TryGetValueSafe<long>("startDate");
+			    this._EndDate = data.TryGetValueSafe<long>("endDate");
+			    this._PaymentMethod = (PaymentMethodType)StringEnum.Parse(typeof(PaymentMethodType), data.TryGetValueSafe<string>("paymentMethod"));
+			    this._PaymentMethodExtraDetails = data.TryGetValueSafe<string>("paymentMethodExtraDetails");
+			    this._IsRecurring = data.TryGetValueSafe<bool>("isRecurring");
+			    this._BillingProviderRef = data.TryGetValueSafe<int>("billingProviderRef");
+			    this._PurchaseId = data.TryGetValueSafe<int>("purchaseId");
+			    this._Remarks = data.TryGetValueSafe<string>("remarks");
+			    this._BillingPriceType = (BillingPriceType)StringEnum.Parse(typeof(BillingPriceType), data.TryGetValueSafe<string>("billingPriceType"));
 		}
 		#endregion
 

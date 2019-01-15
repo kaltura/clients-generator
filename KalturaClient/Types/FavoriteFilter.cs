@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int MediaTypeEqual
 		{
 			get { return _MediaTypeEqual; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaTypeEqual");
 			}
 		}
-		[JsonProperty]
 		public string MediaIdIn
 		{
 			get { return _MediaIdIn; }
@@ -72,7 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MediaIdIn");
 			}
 		}
-		[JsonProperty]
 		public bool? UdidEqualCurrent
 		{
 			get { return _UdidEqualCurrent; }
@@ -82,7 +77,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("UdidEqualCurrent");
 			}
 		}
-		[JsonProperty]
 		public new FavoriteOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -99,24 +93,34 @@ namespace Kaltura.Types
 		{
 		}
 
-		public FavoriteFilter(JToken node) : base(node)
+		public FavoriteFilter(XmlElement node) : base(node)
 		{
-			if(node["mediaTypeEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._MediaTypeEqual = ParseInt(node["mediaTypeEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "mediaTypeEqual":
+						this._MediaTypeEqual = ParseInt(propertyNode.InnerText);
+						continue;
+					case "mediaIdIn":
+						this._MediaIdIn = propertyNode.InnerText;
+						continue;
+					case "udidEqualCurrent":
+						this._UdidEqualCurrent = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (FavoriteOrderBy)StringEnum.Parse(typeof(FavoriteOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["mediaIdIn"] != null)
-			{
-				this._MediaIdIn = node["mediaIdIn"].Value<string>();
-			}
-			if(node["udidEqualCurrent"] != null)
-			{
-				this._UdidEqualCurrent = ParseBool(node["udidEqualCurrent"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (FavoriteOrderBy)StringEnum.Parse(typeof(FavoriteOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public FavoriteFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaTypeEqual = data.TryGetValueSafe<int>("mediaTypeEqual");
+			    this._MediaIdIn = data.TryGetValueSafe<string>("mediaIdIn");
+			    this._UdidEqualCurrent = data.TryGetValueSafe<bool>("udidEqualCurrent");
+			    this._OrderBy = (FavoriteOrderBy)StringEnum.Parse(typeof(FavoriteOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 
