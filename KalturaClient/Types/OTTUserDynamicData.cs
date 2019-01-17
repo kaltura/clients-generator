@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,17 +48,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
-			private set 
-			{ 
-				_UserId = value;
-				OnPropertyChanged("UserId");
-			}
 		}
-		[JsonProperty]
 		public string Key
 		{
 			get { return _Key; }
@@ -70,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Key");
 			}
 		}
-		[JsonProperty]
 		public StringValue Value
 		{
 			get { return _Value; }
@@ -87,20 +77,30 @@ namespace Kaltura.Types
 		{
 		}
 
-		public OTTUserDynamicData(JToken node) : base(node)
+		public OTTUserDynamicData(XmlElement node) : base(node)
 		{
-			if(node["userId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._UserId = node["userId"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "userId":
+						this._UserId = propertyNode.InnerText;
+						continue;
+					case "key":
+						this._Key = propertyNode.InnerText;
+						continue;
+					case "value":
+						this._Value = ObjectFactory.Create<StringValue>(propertyNode);
+						continue;
+				}
 			}
-			if(node["key"] != null)
-			{
-				this._Key = node["key"].Value<string>();
-			}
-			if(node["value"] != null)
-			{
-				this._Value = ObjectFactory.Create<StringValue>(node["value"]);
-			}
+		}
+
+		public OTTUserDynamicData(IDictionary<string,object> data) : base(data)
+		{
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._Key = data.TryGetValueSafe<string>("key");
+			    this._Value = ObjectFactory.Create<StringValue>(data.TryGetValueSafe<IDictionary<string,object>>("value"));
 		}
 		#endregion
 

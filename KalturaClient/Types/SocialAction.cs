@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -56,17 +54,10 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
-			private set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
 		}
-		[JsonProperty]
 		public SocialActionType ActionType
 		{
 			get { return _ActionType; }
@@ -76,7 +67,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ActionType");
 			}
 		}
-		[JsonProperty]
 		public long Time
 		{
 			get { return _Time; }
@@ -86,7 +76,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Time");
 			}
 		}
-		[JsonProperty]
 		public long AssetId
 		{
 			get { return _AssetId; }
@@ -96,7 +85,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetId");
 			}
 		}
-		[JsonProperty]
 		public AssetType AssetType
 		{
 			get { return _AssetType; }
@@ -106,7 +94,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetType");
 			}
 		}
-		[JsonProperty]
 		public string Url
 		{
 			set 
@@ -122,32 +109,42 @@ namespace Kaltura.Types
 		{
 		}
 
-		public SocialAction(JToken node) : base(node)
+		public SocialAction(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "actionType":
+						this._ActionType = (SocialActionType)StringEnum.Parse(typeof(SocialActionType), propertyNode.InnerText);
+						continue;
+					case "time":
+						this._Time = ParseLong(propertyNode.InnerText);
+						continue;
+					case "assetId":
+						this._AssetId = ParseLong(propertyNode.InnerText);
+						continue;
+					case "assetType":
+						this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), propertyNode.InnerText);
+						continue;
+					case "url":
+						this._Url = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["actionType"] != null)
-			{
-				this._ActionType = (SocialActionType)StringEnum.Parse(typeof(SocialActionType), node["actionType"].Value<string>());
-			}
-			if(node["time"] != null)
-			{
-				this._Time = ParseLong(node["time"].Value<string>());
-			}
-			if(node["assetId"] != null)
-			{
-				this._AssetId = ParseLong(node["assetId"].Value<string>());
-			}
-			if(node["assetType"] != null)
-			{
-				this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), node["assetType"].Value<string>());
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
+		}
+
+		public SocialAction(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._ActionType = (SocialActionType)StringEnum.Parse(typeof(SocialActionType), data.TryGetValueSafe<string>("actionType"));
+			    this._Time = data.TryGetValueSafe<long>("time");
+			    this._AssetId = data.TryGetValueSafe<long>("assetId");
+			    this._AssetType = (AssetType)StringEnum.Parse(typeof(AssetType), data.TryGetValueSafe<string>("assetType"));
+			    this._Url = data.TryGetValueSafe<string>("url");
 		}
 		#endregion
 

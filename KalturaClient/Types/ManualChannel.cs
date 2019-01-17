@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,7 +44,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string MediaIds
 		{
 			get { return _MediaIds; }
@@ -63,12 +60,22 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ManualChannel(JToken node) : base(node)
+		public ManualChannel(XmlElement node) : base(node)
 		{
-			if(node["mediaIds"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._MediaIds = node["mediaIds"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "mediaIds":
+						this._MediaIds = propertyNode.InnerText;
+						continue;
+				}
 			}
+		}
+
+		public ManualChannel(IDictionary<string,object> data) : base(data)
+		{
+			    this._MediaIds = data.TryGetValueSafe<string>("mediaIds");
 		}
 		#endregion
 

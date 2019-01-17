@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -78,7 +76,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public TimeShiftedTvState EnableCdvrState
 		{
 			get { return _EnableCdvrState; }
@@ -88,7 +85,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EnableCdvrState");
 			}
 		}
-		[JsonProperty]
 		public TimeShiftedTvState EnableCatchUpState
 		{
 			get { return _EnableCatchUpState; }
@@ -98,7 +94,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EnableCatchUpState");
 			}
 		}
-		[JsonProperty]
 		public TimeShiftedTvState EnableStartOverState
 		{
 			get { return _EnableStartOverState; }
@@ -108,7 +103,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EnableStartOverState");
 			}
 		}
-		[JsonProperty]
 		public long BufferCatchUpSetting
 		{
 			get { return _BufferCatchUpSetting; }
@@ -118,7 +112,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("BufferCatchUpSetting");
 			}
 		}
-		[JsonProperty]
 		public long BufferTrickPlaySetting
 		{
 			get { return _BufferTrickPlaySetting; }
@@ -128,7 +121,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("BufferTrickPlaySetting");
 			}
 		}
-		[JsonProperty]
 		public TimeShiftedTvState EnableRecordingPlaybackNonEntitledChannelState
 		{
 			get { return _EnableRecordingPlaybackNonEntitledChannelState; }
@@ -138,7 +130,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EnableRecordingPlaybackNonEntitledChannelState");
 			}
 		}
-		[JsonProperty]
 		public TimeShiftedTvState EnableTrickPlayState
 		{
 			get { return _EnableTrickPlayState; }
@@ -148,7 +139,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EnableTrickPlayState");
 			}
 		}
-		[JsonProperty]
 		public string ExternalEpgIngestId
 		{
 			get { return _ExternalEpgIngestId; }
@@ -158,7 +148,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalEpgIngestId");
 			}
 		}
-		[JsonProperty]
 		public string ExternalCdvrId
 		{
 			get { return _ExternalCdvrId; }
@@ -168,77 +157,34 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalCdvrId");
 			}
 		}
-		[JsonProperty]
 		public bool? EnableCdvr
 		{
 			get { return _EnableCdvr; }
-			private set 
-			{ 
-				_EnableCdvr = value;
-				OnPropertyChanged("EnableCdvr");
-			}
 		}
-		[JsonProperty]
 		public bool? EnableCatchUp
 		{
 			get { return _EnableCatchUp; }
-			private set 
-			{ 
-				_EnableCatchUp = value;
-				OnPropertyChanged("EnableCatchUp");
-			}
 		}
-		[JsonProperty]
 		public bool? EnableStartOver
 		{
 			get { return _EnableStartOver; }
-			private set 
-			{ 
-				_EnableStartOver = value;
-				OnPropertyChanged("EnableStartOver");
-			}
 		}
-		[JsonProperty]
 		public long CatchUpBuffer
 		{
 			get { return _CatchUpBuffer; }
-			private set 
-			{ 
-				_CatchUpBuffer = value;
-				OnPropertyChanged("CatchUpBuffer");
-			}
 		}
-		[JsonProperty]
 		public long TrickPlayBuffer
 		{
 			get { return _TrickPlayBuffer; }
-			private set 
-			{ 
-				_TrickPlayBuffer = value;
-				OnPropertyChanged("TrickPlayBuffer");
-			}
 		}
-		[JsonProperty]
 		public bool? EnableRecordingPlaybackNonEntitledChannel
 		{
 			get { return _EnableRecordingPlaybackNonEntitledChannel; }
-			private set 
-			{ 
-				_EnableRecordingPlaybackNonEntitledChannel = value;
-				OnPropertyChanged("EnableRecordingPlaybackNonEntitledChannel");
-			}
 		}
-		[JsonProperty]
 		public bool? EnableTrickPlay
 		{
 			get { return _EnableTrickPlay; }
-			private set 
-			{ 
-				_EnableTrickPlay = value;
-				OnPropertyChanged("EnableTrickPlay");
-			}
 		}
-		[JsonProperty]
 		public LinearChannelType ChannelType
 		{
 			get { return _ChannelType; }
@@ -255,76 +201,86 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LiveAsset(JToken node) : base(node)
+		public LiveAsset(XmlElement node) : base(node)
 		{
-			if(node["enableCdvrState"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._EnableCdvrState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), node["enableCdvrState"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "enableCdvrState":
+						this._EnableCdvrState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
+						continue;
+					case "enableCatchUpState":
+						this._EnableCatchUpState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
+						continue;
+					case "enableStartOverState":
+						this._EnableStartOverState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
+						continue;
+					case "bufferCatchUpSetting":
+						this._BufferCatchUpSetting = ParseLong(propertyNode.InnerText);
+						continue;
+					case "bufferTrickPlaySetting":
+						this._BufferTrickPlaySetting = ParseLong(propertyNode.InnerText);
+						continue;
+					case "enableRecordingPlaybackNonEntitledChannelState":
+						this._EnableRecordingPlaybackNonEntitledChannelState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
+						continue;
+					case "enableTrickPlayState":
+						this._EnableTrickPlayState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), propertyNode.InnerText);
+						continue;
+					case "externalEpgIngestId":
+						this._ExternalEpgIngestId = propertyNode.InnerText;
+						continue;
+					case "externalCdvrId":
+						this._ExternalCdvrId = propertyNode.InnerText;
+						continue;
+					case "enableCdvr":
+						this._EnableCdvr = ParseBool(propertyNode.InnerText);
+						continue;
+					case "enableCatchUp":
+						this._EnableCatchUp = ParseBool(propertyNode.InnerText);
+						continue;
+					case "enableStartOver":
+						this._EnableStartOver = ParseBool(propertyNode.InnerText);
+						continue;
+					case "catchUpBuffer":
+						this._CatchUpBuffer = ParseLong(propertyNode.InnerText);
+						continue;
+					case "trickPlayBuffer":
+						this._TrickPlayBuffer = ParseLong(propertyNode.InnerText);
+						continue;
+					case "enableRecordingPlaybackNonEntitledChannel":
+						this._EnableRecordingPlaybackNonEntitledChannel = ParseBool(propertyNode.InnerText);
+						continue;
+					case "enableTrickPlay":
+						this._EnableTrickPlay = ParseBool(propertyNode.InnerText);
+						continue;
+					case "channelType":
+						this._ChannelType = (LinearChannelType)StringEnum.Parse(typeof(LinearChannelType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["enableCatchUpState"] != null)
-			{
-				this._EnableCatchUpState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), node["enableCatchUpState"].Value<string>());
-			}
-			if(node["enableStartOverState"] != null)
-			{
-				this._EnableStartOverState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), node["enableStartOverState"].Value<string>());
-			}
-			if(node["bufferCatchUpSetting"] != null)
-			{
-				this._BufferCatchUpSetting = ParseLong(node["bufferCatchUpSetting"].Value<string>());
-			}
-			if(node["bufferTrickPlaySetting"] != null)
-			{
-				this._BufferTrickPlaySetting = ParseLong(node["bufferTrickPlaySetting"].Value<string>());
-			}
-			if(node["enableRecordingPlaybackNonEntitledChannelState"] != null)
-			{
-				this._EnableRecordingPlaybackNonEntitledChannelState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), node["enableRecordingPlaybackNonEntitledChannelState"].Value<string>());
-			}
-			if(node["enableTrickPlayState"] != null)
-			{
-				this._EnableTrickPlayState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), node["enableTrickPlayState"].Value<string>());
-			}
-			if(node["externalEpgIngestId"] != null)
-			{
-				this._ExternalEpgIngestId = node["externalEpgIngestId"].Value<string>();
-			}
-			if(node["externalCdvrId"] != null)
-			{
-				this._ExternalCdvrId = node["externalCdvrId"].Value<string>();
-			}
-			if(node["enableCdvr"] != null)
-			{
-				this._EnableCdvr = ParseBool(node["enableCdvr"].Value<string>());
-			}
-			if(node["enableCatchUp"] != null)
-			{
-				this._EnableCatchUp = ParseBool(node["enableCatchUp"].Value<string>());
-			}
-			if(node["enableStartOver"] != null)
-			{
-				this._EnableStartOver = ParseBool(node["enableStartOver"].Value<string>());
-			}
-			if(node["catchUpBuffer"] != null)
-			{
-				this._CatchUpBuffer = ParseLong(node["catchUpBuffer"].Value<string>());
-			}
-			if(node["trickPlayBuffer"] != null)
-			{
-				this._TrickPlayBuffer = ParseLong(node["trickPlayBuffer"].Value<string>());
-			}
-			if(node["enableRecordingPlaybackNonEntitledChannel"] != null)
-			{
-				this._EnableRecordingPlaybackNonEntitledChannel = ParseBool(node["enableRecordingPlaybackNonEntitledChannel"].Value<string>());
-			}
-			if(node["enableTrickPlay"] != null)
-			{
-				this._EnableTrickPlay = ParseBool(node["enableTrickPlay"].Value<string>());
-			}
-			if(node["channelType"] != null)
-			{
-				this._ChannelType = (LinearChannelType)StringEnum.Parse(typeof(LinearChannelType), node["channelType"].Value<string>());
-			}
+		}
+
+		public LiveAsset(IDictionary<string,object> data) : base(data)
+		{
+			    this._EnableCdvrState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableCdvrState"));
+			    this._EnableCatchUpState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableCatchUpState"));
+			    this._EnableStartOverState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableStartOverState"));
+			    this._BufferCatchUpSetting = data.TryGetValueSafe<long>("bufferCatchUpSetting");
+			    this._BufferTrickPlaySetting = data.TryGetValueSafe<long>("bufferTrickPlaySetting");
+			    this._EnableRecordingPlaybackNonEntitledChannelState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableRecordingPlaybackNonEntitledChannelState"));
+			    this._EnableTrickPlayState = (TimeShiftedTvState)StringEnum.Parse(typeof(TimeShiftedTvState), data.TryGetValueSafe<string>("enableTrickPlayState"));
+			    this._ExternalEpgIngestId = data.TryGetValueSafe<string>("externalEpgIngestId");
+			    this._ExternalCdvrId = data.TryGetValueSafe<string>("externalCdvrId");
+			    this._EnableCdvr = data.TryGetValueSafe<bool>("enableCdvr");
+			    this._EnableCatchUp = data.TryGetValueSafe<bool>("enableCatchUp");
+			    this._EnableStartOver = data.TryGetValueSafe<bool>("enableStartOver");
+			    this._CatchUpBuffer = data.TryGetValueSafe<long>("catchUpBuffer");
+			    this._TrickPlayBuffer = data.TryGetValueSafe<long>("trickPlayBuffer");
+			    this._EnableRecordingPlaybackNonEntitledChannel = data.TryGetValueSafe<bool>("enableRecordingPlaybackNonEntitledChannel");
+			    this._EnableTrickPlay = data.TryGetValueSafe<bool>("enableTrickPlay");
+			    this._ChannelType = (LinearChannelType)StringEnum.Parse(typeof(LinearChannelType), data.TryGetValueSafe<string>("channelType"));
 		}
 		#endregion
 

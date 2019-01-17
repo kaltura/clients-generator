@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -50,7 +48,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -60,7 +57,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
-		[JsonProperty]
 		public RelatedObjectFilter Filter
 		{
 			get { return _Filter; }
@@ -70,7 +66,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Filter");
 			}
 		}
-		[JsonProperty]
 		public IList<DetachedResponseProfile> RelatedProfiles
 		{
 			get { return _RelatedProfiles; }
@@ -87,24 +82,39 @@ namespace Kaltura.Types
 		{
 		}
 
-		public DetachedResponseProfile(JToken node) : base(node)
+		public DetachedResponseProfile(XmlElement node) : base(node)
 		{
-			if(node["name"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Name = node["name"].Value<string>();
-			}
-			if(node["filter"] != null)
-			{
-				this._Filter = ObjectFactory.Create<RelatedObjectFilter>(node["filter"]);
-			}
-			if(node["relatedProfiles"] != null)
-			{
-				this._RelatedProfiles = new List<DetachedResponseProfile>();
-				foreach(var arrayNode in node["relatedProfiles"].Children())
+				switch (propertyNode.Name)
 				{
-					this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>(arrayNode));
+					case "name":
+						this._Name = propertyNode.InnerText;
+						continue;
+					case "filter":
+						this._Filter = ObjectFactory.Create<RelatedObjectFilter>(propertyNode);
+						continue;
+					case "relatedProfiles":
+						this._RelatedProfiles = new List<DetachedResponseProfile>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>(arrayNode));
+						}
+						continue;
 				}
 			}
+		}
+
+		public DetachedResponseProfile(IDictionary<string,object> data) : base(data)
+		{
+			    this._Name = data.TryGetValueSafe<string>("name");
+			    this._Filter = ObjectFactory.Create<RelatedObjectFilter>(data.TryGetValueSafe<IDictionary<string,object>>("filter"));
+			    this._RelatedProfiles = new List<DetachedResponseProfile>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("relatedProfiles", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._RelatedProfiles.Add(ObjectFactory.Create<DetachedResponseProfile>((IDictionary<string,object>)dataDictionary));
+			    }
 		}
 		#endregion
 

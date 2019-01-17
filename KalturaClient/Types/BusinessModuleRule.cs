@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -52,7 +50,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public IList<Condition> Conditions
 		{
 			get { return _Conditions; }
@@ -62,7 +59,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Conditions");
 			}
 		}
-		[JsonProperty]
 		public IList<ApplyDiscountModuleAction> Actions
 		{
 			get { return _Actions; }
@@ -72,25 +68,13 @@ namespace Kaltura.Types
 				OnPropertyChanged("Actions");
 			}
 		}
-		[JsonProperty]
 		public long CreateDate
 		{
 			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
 		}
-		[JsonProperty]
 		public long UpdateDate
 		{
 			get { return _UpdateDate; }
-			private set 
-			{ 
-				_UpdateDate = value;
-				OnPropertyChanged("UpdateDate");
-			}
 		}
 		#endregion
 
@@ -99,32 +83,52 @@ namespace Kaltura.Types
 		{
 		}
 
-		public BusinessModuleRule(JToken node) : base(node)
+		public BusinessModuleRule(XmlElement node) : base(node)
 		{
-			if(node["conditions"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Conditions = new List<Condition>();
-				foreach(var arrayNode in node["conditions"].Children())
+				switch (propertyNode.Name)
 				{
-					this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+					case "conditions":
+						this._Conditions = new List<Condition>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
+						}
+						continue;
+					case "actions":
+						this._Actions = new List<ApplyDiscountModuleAction>();
+						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
+						{
+							this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>(arrayNode));
+						}
+						continue;
+					case "createDate":
+						this._CreateDate = ParseLong(propertyNode.InnerText);
+						continue;
+					case "updateDate":
+						this._UpdateDate = ParseLong(propertyNode.InnerText);
+						continue;
 				}
 			}
-			if(node["actions"] != null)
-			{
-				this._Actions = new List<ApplyDiscountModuleAction>();
-				foreach(var arrayNode in node["actions"].Children())
-				{
-					this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>(arrayNode));
-				}
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["updateDate"] != null)
-			{
-				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
-			}
+		}
+
+		public BusinessModuleRule(IDictionary<string,object> data) : base(data)
+		{
+			    this._Conditions = new List<Condition>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("conditions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Conditions.Add(ObjectFactory.Create<Condition>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._Actions = new List<ApplyDiscountModuleAction>();
+			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("actions", new List<object>()))
+			    {
+			        if (dataDictionary == null) { continue; }
+			        this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>((IDictionary<string,object>)dataDictionary));
+			    }
+			    this._CreateDate = data.TryGetValueSafe<long>("createDate");
+			    this._UpdateDate = data.TryGetValueSafe<long>("updateDate");
 		}
 		#endregion
 

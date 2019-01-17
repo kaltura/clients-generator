@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int DefaultAdapterId
 		{
 			get { return _DefaultAdapterId; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DefaultAdapterId");
 			}
 		}
-		[JsonProperty]
 		public int DefaultRecordingAdapterId
 		{
 			get { return _DefaultRecordingAdapterId; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public CDNPartnerSettings(JToken node) : base(node)
+		public CDNPartnerSettings(XmlElement node) : base(node)
 		{
-			if(node["defaultAdapterId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._DefaultAdapterId = ParseInt(node["defaultAdapterId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "defaultAdapterId":
+						this._DefaultAdapterId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "defaultRecordingAdapterId":
+						this._DefaultRecordingAdapterId = ParseInt(propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["defaultRecordingAdapterId"] != null)
-			{
-				this._DefaultRecordingAdapterId = ParseInt(node["defaultRecordingAdapterId"].Value<string>());
-			}
+		}
+
+		public CDNPartnerSettings(IDictionary<string,object> data) : base(data)
+		{
+			    this._DefaultAdapterId = data.TryGetValueSafe<int>("defaultAdapterId");
+			    this._DefaultRecordingAdapterId = data.TryGetValueSafe<int>("defaultRecordingAdapterId");
 		}
 		#endregion
 

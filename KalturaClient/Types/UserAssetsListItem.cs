@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string Id
 		{
 			get { return _Id; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
-		[JsonProperty]
 		public int OrderIndex
 		{
 			get { return _OrderIndex; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("OrderIndex");
 			}
 		}
-		[JsonProperty]
 		public UserAssetsListItemType Type
 		{
 			get { return _Type; }
@@ -84,17 +79,10 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
-		[JsonProperty]
 		public string UserId
 		{
 			get { return _UserId; }
-			private set 
-			{ 
-				_UserId = value;
-				OnPropertyChanged("UserId");
-			}
 		}
-		[JsonProperty]
 		public UserAssetsListType ListType
 		{
 			get { return _ListType; }
@@ -111,28 +99,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public UserAssetsListItem(JToken node) : base(node)
+		public UserAssetsListItem(XmlElement node) : base(node)
 		{
-			if(node["id"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._Id = node["id"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "id":
+						this._Id = propertyNode.InnerText;
+						continue;
+					case "orderIndex":
+						this._OrderIndex = ParseInt(propertyNode.InnerText);
+						continue;
+					case "type":
+						this._Type = (UserAssetsListItemType)StringEnum.Parse(typeof(UserAssetsListItemType), propertyNode.InnerText);
+						continue;
+					case "userId":
+						this._UserId = propertyNode.InnerText;
+						continue;
+					case "listType":
+						this._ListType = (UserAssetsListType)StringEnum.Parse(typeof(UserAssetsListType), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderIndex"] != null)
-			{
-				this._OrderIndex = ParseInt(node["orderIndex"].Value<string>());
-			}
-			if(node["type"] != null)
-			{
-				this._Type = (UserAssetsListItemType)StringEnum.Parse(typeof(UserAssetsListItemType), node["type"].Value<string>());
-			}
-			if(node["userId"] != null)
-			{
-				this._UserId = node["userId"].Value<string>();
-			}
-			if(node["listType"] != null)
-			{
-				this._ListType = (UserAssetsListType)StringEnum.Parse(typeof(UserAssetsListType), node["listType"].Value<string>());
-			}
+		}
+
+		public UserAssetsListItem(IDictionary<string,object> data) : base(data)
+		{
+			    this._Id = data.TryGetValueSafe<string>("id");
+			    this._OrderIndex = data.TryGetValueSafe<int>("orderIndex");
+			    this._Type = (UserAssetsListItemType)StringEnum.Parse(typeof(UserAssetsListItemType), data.TryGetValueSafe<string>("type"));
+			    this._UserId = data.TryGetValueSafe<string>("userId");
+			    this._ListType = (UserAssetsListType)StringEnum.Parse(typeof(UserAssetsListType), data.TryGetValueSafe<string>("listType"));
 		}
 		#endregion
 

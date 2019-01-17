@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public int ContentId
 		{
 			get { return _ContentId; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ContentId");
 			}
 		}
-		[JsonProperty]
 		public string BaseUrl
 		{
 			get { return _BaseUrl; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public LicensedUrlMediaRequest(JToken node) : base(node)
+		public LicensedUrlMediaRequest(XmlElement node) : base(node)
 		{
-			if(node["contentId"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._ContentId = ParseInt(node["contentId"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "contentId":
+						this._ContentId = ParseInt(propertyNode.InnerText);
+						continue;
+					case "baseUrl":
+						this._BaseUrl = propertyNode.InnerText;
+						continue;
+				}
 			}
-			if(node["baseUrl"] != null)
-			{
-				this._BaseUrl = node["baseUrl"].Value<string>();
-			}
+		}
+
+		public LicensedUrlMediaRequest(IDictionary<string,object> data) : base(data)
+		{
+			    this._ContentId = data.TryGetValueSafe<int>("contentId");
+			    this._BaseUrl = data.TryGetValueSafe<string>("baseUrl");
 		}
 		#endregion
 

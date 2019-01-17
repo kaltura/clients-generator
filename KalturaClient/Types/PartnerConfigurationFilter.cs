@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -48,7 +46,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public PartnerConfigurationType PartnerConfigurationTypeEqual
 		{
 			get { return _PartnerConfigurationTypeEqual; }
@@ -58,7 +55,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PartnerConfigurationTypeEqual");
 			}
 		}
-		[JsonProperty]
 		public new PartnerConfigurationOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -75,16 +71,26 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PartnerConfigurationFilter(JToken node) : base(node)
+		public PartnerConfigurationFilter(XmlElement node) : base(node)
 		{
-			if(node["partnerConfigurationTypeEqual"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), node["partnerConfigurationTypeEqual"].Value<string>());
+				switch (propertyNode.Name)
+				{
+					case "partnerConfigurationTypeEqual":
+						this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public PartnerConfigurationFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._PartnerConfigurationTypeEqual = (PartnerConfigurationType)StringEnum.Parse(typeof(PartnerConfigurationType), data.TryGetValueSafe<string>("partnerConfigurationTypeEqual"));
+			    this._OrderBy = (PartnerConfigurationOrderBy)StringEnum.Parse(typeof(PartnerConfigurationOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 

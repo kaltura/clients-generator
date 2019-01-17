@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2019  Kaltura Inc.
+// Copyright (C) 2006-2018  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,7 +52,6 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
-		[JsonProperty]
 		public string IdIn
 		{
 			get { return _IdIn; }
@@ -64,7 +61,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IdIn");
 			}
 		}
-		[JsonProperty]
 		public long AssetStructIdEqual
 		{
 			get { return _AssetStructIdEqual; }
@@ -74,7 +70,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetStructIdEqual");
 			}
 		}
-		[JsonProperty]
 		public MetaDataType DataTypeEqual
 		{
 			get { return _DataTypeEqual; }
@@ -84,7 +79,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DataTypeEqual");
 			}
 		}
-		[JsonProperty]
 		public bool? MultipleValueEqual
 		{
 			get { return _MultipleValueEqual; }
@@ -94,7 +88,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MultipleValueEqual");
 			}
 		}
-		[JsonProperty]
 		public new MetaOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -111,28 +104,38 @@ namespace Kaltura.Types
 		{
 		}
 
-		public MetaFilter(JToken node) : base(node)
+		public MetaFilter(XmlElement node) : base(node)
 		{
-			if(node["idIn"] != null)
+			foreach (XmlElement propertyNode in node.ChildNodes)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				switch (propertyNode.Name)
+				{
+					case "idIn":
+						this._IdIn = propertyNode.InnerText;
+						continue;
+					case "assetStructIdEqual":
+						this._AssetStructIdEqual = ParseLong(propertyNode.InnerText);
+						continue;
+					case "dataTypeEqual":
+						this._DataTypeEqual = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), propertyNode.InnerText);
+						continue;
+					case "multipleValueEqual":
+						this._MultipleValueEqual = ParseBool(propertyNode.InnerText);
+						continue;
+					case "orderBy":
+						this._OrderBy = (MetaOrderBy)StringEnum.Parse(typeof(MetaOrderBy), propertyNode.InnerText);
+						continue;
+				}
 			}
-			if(node["assetStructIdEqual"] != null)
-			{
-				this._AssetStructIdEqual = ParseLong(node["assetStructIdEqual"].Value<string>());
-			}
-			if(node["dataTypeEqual"] != null)
-			{
-				this._DataTypeEqual = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), node["dataTypeEqual"].Value<string>());
-			}
-			if(node["multipleValueEqual"] != null)
-			{
-				this._MultipleValueEqual = ParseBool(node["multipleValueEqual"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (MetaOrderBy)StringEnum.Parse(typeof(MetaOrderBy), node["orderBy"].Value<string>());
-			}
+		}
+
+		public MetaFilter(IDictionary<string,object> data) : base(data)
+		{
+			    this._IdIn = data.TryGetValueSafe<string>("idIn");
+			    this._AssetStructIdEqual = data.TryGetValueSafe<long>("assetStructIdEqual");
+			    this._DataTypeEqual = (MetaDataType)StringEnum.Parse(typeof(MetaDataType), data.TryGetValueSafe<string>("dataTypeEqual"));
+			    this._MultipleValueEqual = data.TryGetValueSafe<bool>("multipleValueEqual");
+			    this._OrderBy = (MetaOrderBy)StringEnum.Parse(typeof(MetaOrderBy), data.TryGetValueSafe<string>("orderBy"));
 		}
 		#endregion
 
