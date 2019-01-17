@@ -35,6 +35,7 @@ namespace Kaltura.Enums
 		public static readonly ImageObjectType CATEGORY = new ImageObjectType("CATEGORY");
 		public static readonly ImageObjectType PARTNER = new ImageObjectType("PARTNER");
 		public static readonly ImageObjectType IMAGE_TYPE = new ImageObjectType("IMAGE_TYPE");
+		public static readonly ImageObjectType PROGRAM_GROUP = new ImageObjectType("PROGRAM_GROUP");
 
 		private ImageObjectType(string name) : base(name) { }
 	}

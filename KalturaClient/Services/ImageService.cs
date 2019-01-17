@@ -254,7 +254,7 @@ namespace Kaltura.Services
 			return new ImageDeleteRequestBuilder(id);
 		}
 
-		public static ImageListRequestBuilder List(ImageFilter filter = null)
+		public static ImageListRequestBuilder List(ImageFilter filter)
 		{
 			return new ImageListRequestBuilder(filter);
 		}

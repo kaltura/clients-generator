@@ -88,7 +88,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
+		public long Id
 		{
 			set;
 			get;
@@ -99,7 +99,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public FavoriteDeleteRequestBuilder(int id)
+		public FavoriteDeleteRequestBuilder(long id)
 			: this()
 		{
 			this.Id = id;
@@ -193,7 +193,7 @@ namespace Kaltura.Services
 			return new FavoriteAddRequestBuilder(favorite);
 		}
 
-		public static FavoriteDeleteRequestBuilder Delete(int id)
+		public static FavoriteDeleteRequestBuilder Delete(long id)
 		{
 			return new FavoriteDeleteRequestBuilder(id);
 		}
