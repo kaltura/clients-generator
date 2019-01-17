@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,9 +46,15 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public long AssetId
 		{
 			get { return _AssetId; }
+			private set 
+			{ 
+				_AssetId = value;
+				OnPropertyChanged("AssetId");
+			}
 		}
 		#endregion
 
@@ -55,22 +63,12 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Feed(XmlElement node) : base(node)
+		public Feed(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["assetId"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "assetId":
-						this._AssetId = ParseLong(propertyNode.InnerText);
-						continue;
-				}
+				this._AssetId = ParseLong(node["assetId"].Value<string>());
 			}
-		}
-
-		public Feed(IDictionary<string,object> data) : base(data)
-		{
-			    this._AssetId = data.TryGetValueSafe<long>("assetId");
 		}
 		#endregion
 

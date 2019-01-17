@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -54,6 +56,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Currency
 		{
 			get { return _Currency; }
@@ -63,6 +66,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Currency");
 			}
 		}
+		[JsonProperty]
 		public float Price
 		{
 			get { return _Price; }
@@ -72,6 +76,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Price");
 			}
 		}
+		[JsonProperty]
 		public int PaymentMethodId
 		{
 			get { return _PaymentMethodId; }
@@ -81,6 +86,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentMethodId");
 			}
 		}
+		[JsonProperty]
 		public int PaymentGatewayId
 		{
 			get { return _PaymentGatewayId; }
@@ -90,6 +96,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayId");
 			}
 		}
+		[JsonProperty]
 		public string Coupon
 		{
 			get { return _Coupon; }
@@ -99,6 +106,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Coupon");
 			}
 		}
+		[JsonProperty]
 		public string AdapterData
 		{
 			get { return _AdapterData; }
@@ -115,42 +123,32 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Purchase(XmlElement node) : base(node)
+		public Purchase(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["currency"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "currency":
-						this._Currency = propertyNode.InnerText;
-						continue;
-					case "price":
-						this._Price = ParseFloat(propertyNode.InnerText);
-						continue;
-					case "paymentMethodId":
-						this._PaymentMethodId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "paymentGatewayId":
-						this._PaymentGatewayId = ParseInt(propertyNode.InnerText);
-						continue;
-					case "coupon":
-						this._Coupon = propertyNode.InnerText;
-						continue;
-					case "adapterData":
-						this._AdapterData = propertyNode.InnerText;
-						continue;
-				}
+				this._Currency = node["currency"].Value<string>();
 			}
-		}
-
-		public Purchase(IDictionary<string,object> data) : base(data)
-		{
-			    this._Currency = data.TryGetValueSafe<string>("currency");
-			    this._Price = data.TryGetValueSafe<float>("price");
-			    this._PaymentMethodId = data.TryGetValueSafe<int>("paymentMethodId");
-			    this._PaymentGatewayId = data.TryGetValueSafe<int>("paymentGatewayId");
-			    this._Coupon = data.TryGetValueSafe<string>("coupon");
-			    this._AdapterData = data.TryGetValueSafe<string>("adapterData");
+			if(node["price"] != null)
+			{
+				this._Price = ParseFloat(node["price"].Value<string>());
+			}
+			if(node["paymentMethodId"] != null)
+			{
+				this._PaymentMethodId = ParseInt(node["paymentMethodId"].Value<string>());
+			}
+			if(node["paymentGatewayId"] != null)
+			{
+				this._PaymentGatewayId = ParseInt(node["paymentGatewayId"].Value<string>());
+			}
+			if(node["coupon"] != null)
+			{
+				this._Coupon = node["coupon"].Value<string>();
+			}
+			if(node["adapterData"] != null)
+			{
+				this._AdapterData = node["adapterData"].Value<string>();
+			}
 		}
 		#endregion
 

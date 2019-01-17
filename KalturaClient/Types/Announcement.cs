@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -68,6 +70,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string Name
 		{
 			get { return _Name; }
@@ -77,6 +80,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Name");
 			}
 		}
+		[JsonProperty]
 		public string Message
 		{
 			get { return _Message; }
@@ -86,6 +90,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Message");
 			}
 		}
+		[JsonProperty]
 		public bool? Enabled
 		{
 			get { return _Enabled; }
@@ -95,6 +100,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Enabled");
 			}
 		}
+		[JsonProperty]
 		public long StartTime
 		{
 			get { return _StartTime; }
@@ -104,6 +110,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("StartTime");
 			}
 		}
+		[JsonProperty]
 		public string Timezone
 		{
 			get { return _Timezone; }
@@ -113,10 +120,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("Timezone");
 			}
 		}
+		[JsonProperty]
 		public AnnouncementStatus Status
 		{
 			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
+			}
 		}
+		[JsonProperty]
 		public AnnouncementRecipientsType Recipients
 		{
 			get { return _Recipients; }
@@ -126,10 +140,17 @@ namespace Kaltura.Types
 				OnPropertyChanged("Recipients");
 			}
 		}
+		[JsonProperty]
 		public int Id
 		{
 			get { return _Id; }
+			private set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
 		}
+		[JsonProperty]
 		public string ImageUrl
 		{
 			get { return _ImageUrl; }
@@ -139,6 +160,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("ImageUrl");
 			}
 		}
+		[JsonProperty]
 		public bool? IncludeMail
 		{
 			get { return _IncludeMail; }
@@ -148,6 +170,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("IncludeMail");
 			}
 		}
+		[JsonProperty]
 		public string MailTemplate
 		{
 			get { return _MailTemplate; }
@@ -157,6 +180,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailTemplate");
 			}
 		}
+		[JsonProperty]
 		public string MailSubject
 		{
 			get { return _MailSubject; }
@@ -166,6 +190,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("MailSubject");
 			}
 		}
+		[JsonProperty]
 		public bool? IncludeSms
 		{
 			get { return _IncludeSms; }
@@ -182,70 +207,60 @@ namespace Kaltura.Types
 		{
 		}
 
-		public Announcement(XmlElement node) : base(node)
+		public Announcement(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["name"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "name":
-						this._Name = propertyNode.InnerText;
-						continue;
-					case "message":
-						this._Message = propertyNode.InnerText;
-						continue;
-					case "enabled":
-						this._Enabled = ParseBool(propertyNode.InnerText);
-						continue;
-					case "startTime":
-						this._StartTime = ParseLong(propertyNode.InnerText);
-						continue;
-					case "timezone":
-						this._Timezone = propertyNode.InnerText;
-						continue;
-					case "status":
-						this._Status = (AnnouncementStatus)StringEnum.Parse(typeof(AnnouncementStatus), propertyNode.InnerText);
-						continue;
-					case "recipients":
-						this._Recipients = (AnnouncementRecipientsType)StringEnum.Parse(typeof(AnnouncementRecipientsType), propertyNode.InnerText);
-						continue;
-					case "id":
-						this._Id = ParseInt(propertyNode.InnerText);
-						continue;
-					case "imageUrl":
-						this._ImageUrl = propertyNode.InnerText;
-						continue;
-					case "includeMail":
-						this._IncludeMail = ParseBool(propertyNode.InnerText);
-						continue;
-					case "mailTemplate":
-						this._MailTemplate = propertyNode.InnerText;
-						continue;
-					case "mailSubject":
-						this._MailSubject = propertyNode.InnerText;
-						continue;
-					case "includeSms":
-						this._IncludeSms = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._Name = node["name"].Value<string>();
 			}
-		}
-
-		public Announcement(IDictionary<string,object> data) : base(data)
-		{
-			    this._Name = data.TryGetValueSafe<string>("name");
-			    this._Message = data.TryGetValueSafe<string>("message");
-			    this._Enabled = data.TryGetValueSafe<bool>("enabled");
-			    this._StartTime = data.TryGetValueSafe<long>("startTime");
-			    this._Timezone = data.TryGetValueSafe<string>("timezone");
-			    this._Status = (AnnouncementStatus)StringEnum.Parse(typeof(AnnouncementStatus), data.TryGetValueSafe<string>("status"));
-			    this._Recipients = (AnnouncementRecipientsType)StringEnum.Parse(typeof(AnnouncementRecipientsType), data.TryGetValueSafe<string>("recipients"));
-			    this._Id = data.TryGetValueSafe<int>("id");
-			    this._ImageUrl = data.TryGetValueSafe<string>("imageUrl");
-			    this._IncludeMail = data.TryGetValueSafe<bool>("includeMail");
-			    this._MailTemplate = data.TryGetValueSafe<string>("mailTemplate");
-			    this._MailSubject = data.TryGetValueSafe<string>("mailSubject");
-			    this._IncludeSms = data.TryGetValueSafe<bool>("includeSms");
+			if(node["message"] != null)
+			{
+				this._Message = node["message"].Value<string>();
+			}
+			if(node["enabled"] != null)
+			{
+				this._Enabled = ParseBool(node["enabled"].Value<string>());
+			}
+			if(node["startTime"] != null)
+			{
+				this._StartTime = ParseLong(node["startTime"].Value<string>());
+			}
+			if(node["timezone"] != null)
+			{
+				this._Timezone = node["timezone"].Value<string>();
+			}
+			if(node["status"] != null)
+			{
+				this._Status = (AnnouncementStatus)StringEnum.Parse(typeof(AnnouncementStatus), node["status"].Value<string>());
+			}
+			if(node["recipients"] != null)
+			{
+				this._Recipients = (AnnouncementRecipientsType)StringEnum.Parse(typeof(AnnouncementRecipientsType), node["recipients"].Value<string>());
+			}
+			if(node["id"] != null)
+			{
+				this._Id = ParseInt(node["id"].Value<string>());
+			}
+			if(node["imageUrl"] != null)
+			{
+				this._ImageUrl = node["imageUrl"].Value<string>();
+			}
+			if(node["includeMail"] != null)
+			{
+				this._IncludeMail = ParseBool(node["includeMail"].Value<string>());
+			}
+			if(node["mailTemplate"] != null)
+			{
+				this._MailTemplate = node["mailTemplate"].Value<string>();
+			}
+			if(node["mailSubject"] != null)
+			{
+				this._MailSubject = node["mailSubject"].Value<string>();
+			}
+			if(node["includeSms"] != null)
+			{
+				this._IncludeSms = ParseBool(node["includeSms"].Value<string>());
+			}
 		}
 		#endregion
 

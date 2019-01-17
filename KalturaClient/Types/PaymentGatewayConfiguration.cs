@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -44,6 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public IList<KeyValue> PaymentGatewayConfigurationValue
 		{
 			get { return _PaymentGatewayConfiguration; }
@@ -60,31 +63,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public PaymentGatewayConfiguration(XmlElement node) : base(node)
+		public PaymentGatewayConfiguration(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["paymentGatewayConfiguration"] != null)
 			{
-				switch (propertyNode.Name)
+				this._PaymentGatewayConfiguration = new List<KeyValue>();
+				foreach(var arrayNode in node["paymentGatewayConfiguration"].Children())
 				{
-					case "paymentGatewayConfiguration":
-						this._PaymentGatewayConfiguration = new List<KeyValue>();
-						foreach(XmlElement arrayNode in propertyNode.ChildNodes)
-						{
-							this._PaymentGatewayConfiguration.Add(ObjectFactory.Create<KeyValue>(arrayNode));
-						}
-						continue;
+					this._PaymentGatewayConfiguration.Add(ObjectFactory.Create<KeyValue>(arrayNode));
 				}
 			}
-		}
-
-		public PaymentGatewayConfiguration(IDictionary<string,object> data) : base(data)
-		{
-			    this._PaymentGatewayConfiguration = new List<KeyValue>();
-			    foreach(var dataDictionary in data.TryGetValueSafe<IEnumerable<object>>("paymentGatewayConfiguration", new List<object>()))
-			    {
-			        if (dataDictionary == null) { continue; }
-			        this._PaymentGatewayConfiguration.Add(ObjectFactory.Create<KeyValue>((IDictionary<string,object>)dataDictionary));
-			    }
 		}
 		#endregion
 

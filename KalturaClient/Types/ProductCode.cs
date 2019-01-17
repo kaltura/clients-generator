@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public string InappProvider
 		{
 			get { return _InappProvider; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("InappProvider");
 			}
 		}
+		[JsonProperty]
 		public string Code
 		{
 			get { return _Code; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public ProductCode(XmlElement node) : base(node)
+		public ProductCode(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["inappProvider"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "inappProvider":
-						this._InappProvider = propertyNode.InnerText;
-						continue;
-					case "code":
-						this._Code = propertyNode.InnerText;
-						continue;
-				}
+				this._InappProvider = node["inappProvider"].Value<string>();
 			}
-		}
-
-		public ProductCode(IDictionary<string,object> data) : base(data)
-		{
-			    this._InappProvider = data.TryGetValueSafe<string>("inappProvider");
-			    this._Code = data.TryGetValueSafe<string>("code");
+			if(node["code"] != null)
+			{
+				this._Code = node["code"].Value<string>();
+			}
 		}
 		#endregion
 

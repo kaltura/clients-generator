@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2018  Kaltura Inc.
+// Copyright (C) 2006-2019  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,6 +30,8 @@ using System.Xml;
 using System.Collections.Generic;
 using Kaltura.Enums;
 using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
@@ -46,6 +48,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
 		public int Offset
 		{
 			get { return _Offset; }
@@ -55,6 +58,7 @@ namespace Kaltura.Types
 				OnPropertyChanged("Offset");
 			}
 		}
+		[JsonProperty]
 		public bool? TimeZone
 		{
 			get { return _TimeZone; }
@@ -71,26 +75,16 @@ namespace Kaltura.Types
 		{
 		}
 
-		public TimeOffsetRuleAction(XmlElement node) : base(node)
+		public TimeOffsetRuleAction(JToken node) : base(node)
 		{
-			foreach (XmlElement propertyNode in node.ChildNodes)
+			if(node["offset"] != null)
 			{
-				switch (propertyNode.Name)
-				{
-					case "offset":
-						this._Offset = ParseInt(propertyNode.InnerText);
-						continue;
-					case "timeZone":
-						this._TimeZone = ParseBool(propertyNode.InnerText);
-						continue;
-				}
+				this._Offset = ParseInt(node["offset"].Value<string>());
 			}
-		}
-
-		public TimeOffsetRuleAction(IDictionary<string,object> data) : base(data)
-		{
-			    this._Offset = data.TryGetValueSafe<int>("offset");
-			    this._TimeZone = data.TryGetValueSafe<bool>("timeZone");
+			if(node["timeZone"] != null)
+			{
+				this._TimeZone = ParseBool(node["timeZone"].Value<string>());
+			}
 		}
 		#endregion
 
