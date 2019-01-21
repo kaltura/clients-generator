@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
@@ -357,30 +356,22 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @SuppressWarnings("rawtypes")
-	protected ResponseElement onGotResponse(Response response, RequestElement action) {
-        String requestId = getRequestId(response);
+	protected ResponseElement onGotResponse(final Response response, RequestElement action) {
+        final String requestId = getRequestId(response);
         
         if(this.enableLogHeaders.contains("*")) {
         	logger.debug("response [" + requestId + "] Response: " + response.code() + " " + response.message());
-        	response.headers().names().forEach(new Consumer<String>() {
-	
-				@Override
-				public void accept(String header) {
-			        logger.debug("response [" + requestId + "] " + header + ": " + response.headers().get(header));
-				}
-			});
+        	for(String header : response.headers().names()) {        		
+			    logger.debug("response [" + requestId + "] " + header + ": " + response.headers().get(header));
+			}
         }
         else {
-	        this.enableLogHeaders.forEach(new Consumer<String>() {
-	
-				@Override
-				public void accept(String header) {
-			        String value = response.headers().get(header);
-			        if (value != null) {
-			            logger.debug("response [" + requestId + "] " + header + ": " + value);
-			        }
-				}
-			});
+        	for(String header : this.enableLogHeaders) {
+		        String value = response.headers().get(header);
+		        if (value != null) {
+		            logger.debug("response [" + requestId + "] " + header + ": " + value);
+		        }
+			}
         }
         
         if (!response.isSuccessful()) { // in case response has failure status
