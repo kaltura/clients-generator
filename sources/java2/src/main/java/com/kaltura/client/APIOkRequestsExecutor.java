@@ -9,9 +9,15 @@ import com.kaltura.client.utils.response.base.ResponseElement;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -116,6 +122,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		public int getTypeFormat() {
 			return ServiceResponseTypeFormat.RESPONSE_TYPE_JSON.getValue();
 		}
+
+		@Override
+		public boolean getIgnoreSslDomainVerification() {
+			return false;
+		}
     };
 
     private IdFactory idFactory = new IdFactory() {
@@ -128,10 +139,18 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
     private OkHttpClient mOkClient;
     private boolean enableLogs = true;
+    private Set<String> enableLogHeaders = new HashSet<String>();
+
     protected static ILogger logger = Logger.getLogger(TAG);
 
     protected static APIOkRequestsExecutor self;
 
+	protected static HostnameVerifier hostnameVerifier = new HostnameVerifier() {		
+		@Override
+		public boolean verify(String arg0, SSLSession arg1) {
+			return true;
+		}
+	};
 
     public static APIOkRequestsExecutor getExecutor() {
         if (self == null) {
@@ -179,6 +198,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 .readTimeout(config.getReadTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(config.getWriteTimeout(), TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(config.getMaxRetry(1) > 0);
+                
+        if(config.getIgnoreSslDomainVerification()) {
+        	builder.hostnameVerifier(hostnameVerifier);
+        }
 
         return builder;
     }
@@ -197,6 +220,18 @@ public class APIOkRequestsExecutor implements RequestQueue {
         } else {
             logger = new LoggerNull(TAG);
         }
+    }
+
+    @Override
+    public void enableLogResponseHeader(String header, boolean log) {
+    	if(log) {
+    		if(!this.enableLogHeaders.contains(header)) {
+    			this.enableLogHeaders.add(header);
+    		}
+    	}
+    	else if(this.enableLogHeaders.contains(header)) {
+			this.enableLogHeaders.remove(header);
+		}
     }
 
     @SuppressWarnings("rawtypes")
@@ -324,7 +359,30 @@ public class APIOkRequestsExecutor implements RequestQueue {
     @SuppressWarnings("rawtypes")
 	protected ResponseElement onGotResponse(Response response, RequestElement action) {
         String requestId = getRequestId(response);
-
+        
+        if(this.enableLogHeaders.contains("*")) {
+        	logger.debug("response [" + requestId + "] Response: " + response.code() + " " + response.message());
+        	response.headers().names().forEach(new Consumer<String>() {
+	
+				@Override
+				public void accept(String header) {
+			        logger.debug("response [" + requestId + "] " + header + ": " + response.headers().get(header));
+				}
+			});
+        }
+        else {
+	        this.enableLogHeaders.forEach(new Consumer<String>() {
+	
+				@Override
+				public void accept(String header) {
+			        String value = response.headers().get(header);
+			        if (value != null) {
+			            logger.debug("response [" + requestId + "] " + header + ": " + value);
+			        }
+				}
+			});
+        }
+        
         if (!response.isSuccessful()) { // in case response has failure status
             return new ExecutedRequest().requestId(requestId).error(ErrorElement.fromCode(response.code(), response.message())).success(false);
 

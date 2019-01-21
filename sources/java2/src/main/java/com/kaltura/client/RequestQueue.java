@@ -21,4 +21,6 @@ public interface RequestQueue {
     boolean isEmpty();
 
     void enableLogs(boolean enable);
+
+    void enableLogResponseHeader(String header, boolean log);
 }

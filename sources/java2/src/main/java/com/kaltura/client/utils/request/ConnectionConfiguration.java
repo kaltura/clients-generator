@@ -17,4 +17,6 @@ public interface ConnectionConfiguration {
     String getEndpoint();
 
     int getTypeFormat(); //kalturaServiceResponseTypeFormat
+
+	boolean getIgnoreSslDomainVerification();
 }
