@@ -357,8 +357,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
     }
 
     @SuppressWarnings("rawtypes")
-	protected ResponseElement onGotResponse(Response response, RequestElement action) {
-        String requestId = getRequestId(response);
+	protected ResponseElement onGotResponse(final Response response, RequestElement action) {
+        final String requestId = getRequestId(response);
         
         if(this.enableLogHeaders.contains("*")) {
         	logger.debug("response [" + requestId + "] Response: " + response.code() + " " + response.message());
