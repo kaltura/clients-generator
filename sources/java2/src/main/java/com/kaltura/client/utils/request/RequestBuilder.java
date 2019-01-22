@@ -205,6 +205,16 @@ public abstract class RequestBuilder<ReturnedType, TokenizerType, SelfType> exte
     public String getTag() {
         return action;
     }
+
+    @Override
+    public String toString() {
+        return "RequestBuilder{" +
+                "service='" + service + '\'' +
+                ", action='" + action + '\'' +
+                ", type=" + type +
+                ", params=" + params +
+                '}';
+    }
 }
 
 
