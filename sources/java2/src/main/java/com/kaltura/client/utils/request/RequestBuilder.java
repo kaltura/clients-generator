@@ -1,5 +1,6 @@
 package com.kaltura.client.utils.request;
 
+import com.google.gson.Gson;
 import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.ListResponse;
@@ -208,12 +209,7 @@ public abstract class RequestBuilder<ReturnedType, TokenizerType, SelfType> exte
 
     @Override
     public String toString() {
-        return "RequestBuilder{" +
-                "service='" + service + '\'' +
-                ", action='" + action + '\'' +
-                ", type=" + type +
-                ", params=" + params +
-                '}';
+		return this.getBody();
     }
 }
 
