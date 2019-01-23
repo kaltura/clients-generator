@@ -43,7 +43,7 @@ import Log
     logger.error("Object was not initialized")
     
     When the default implementor is assigned the above line will print:
-    KalturaClient: [2017-07-30 10:51:37.284] ViewController.viewDidLoad():24 ERROR: Object was not initialized ❌
+    KalturaClient: [2017-07-30 10:51:37.284] ViewController.viewDidLoad():24 ERROR: Object was not initialized â�Œ
  */
 public let logger = KalturaLogger(logger: KalturaClientLogImplementor())
 
@@ -99,6 +99,13 @@ public class KalturaLogger {
         logger.log(.error, message: message, file: file, line: line, column: column, function: function)
     }
 
+    public func isLoggerEnabled(isEnabled:Bool){
+        logger.enabled = isEnabled
+    }
+
+    public func setloggerMinLevel(minLevel: LogLevel){
+        logger.minLevel = minLevel
+    }
 }
 
 /**
@@ -130,15 +137,15 @@ private class KalturaClientLogImplementor: KalturaClientLogProtocol {
         
         switch level {
         case .trace:
-            logger.trace(message, terminator:" ✉️ \n", file: file, line: line, column: column, function: function)
+            logger.trace(message, terminator:" âœ‰ï¸� \n", file: file, line: line, column: column, function: function)
         case .debug:
-            logger.debug(message, terminator:" 🛠 \n", file: file, line: line, column: column, function: function)
+            logger.debug(message, terminator:" ðŸ›  \n", file: file, line: line, column: column, function: function)
         case .info:
-            logger.info(message, terminator:" 💡 \n", file: file, line: line, column: column, function: function)
+            logger.info(message, terminator:" ðŸ’¡ \n", file: file, line: line, column: column, function: function)
         case .warning:
-            logger.warning(message, terminator:" 👆 \n", file: file, line: line, column: column, function: function)
+            logger.warning(message, terminator:" ðŸ‘† \n", file: file, line: line, column: column, function: function)
         case .error:
-            logger.error(message, terminator:" ❌ \n", file: file, line: line, column: column, function: function)
+            logger.error(message, terminator:" â�Œ \n", file: file, line: line, column: column, function: function)
         }
     }
     
