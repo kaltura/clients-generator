@@ -55,9 +55,9 @@ def getXmlNodeText(xmlNode):
 
 def getXmlNodeBool(xmlNode):
     text = getXmlNodeText(xmlNode)
-    if text == '0':
+    if text == '0' or text == 'false':
         return False
-    elif text == '1':
+    elif text == '1' or text == 'true':
         return True
     return None
 
