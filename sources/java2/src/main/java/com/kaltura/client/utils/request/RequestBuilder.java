@@ -207,10 +207,14 @@ public abstract class RequestBuilder<ReturnedType, TokenizerType, SelfType> exte
         return action;
     }
 
-    @Override
-    public String toString() {
-		return this.getBody();
-    }
+	@Override
+	public String toString() {
+		return String.format("{\"service\":\"%s\"," +
+						"\"action\":\"%s\"," +
+						"\"type\":\"%s\"," +
+						"\"params\":%s}",
+				service, action, type, params);
+	}
 }
 
 

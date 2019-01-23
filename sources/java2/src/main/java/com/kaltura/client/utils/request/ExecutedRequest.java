@@ -2,6 +2,7 @@ package com.kaltura.client.utils.request;
 
 import com.kaltura.client.utils.ErrorElement;
 import com.kaltura.client.utils.response.base.ResponseElement;
+import okhttp3.Headers;
 
 public class ExecutedRequest implements ResponseElement {
 
@@ -10,6 +11,7 @@ public class ExecutedRequest implements ResponseElement {
     String response = null;
     boolean isSuccess = false;
     ErrorElement error = null;
+    Headers headers = null;
 
     public ExecutedRequest requestId(String id) {
         this.requestId = id;
@@ -42,6 +44,11 @@ public class ExecutedRequest implements ResponseElement {
         return error(ErrorElement.fromException(exception));
     }
 
+    public ExecutedRequest headers(Headers headers) {
+        this.headers = headers;
+        return this;
+    }
+
     @Override
     public int getCode() {
         return code;
@@ -67,5 +74,9 @@ public class ExecutedRequest implements ResponseElement {
         return requestId;
     }
 
+    @Override
+    public Headers getHeaders() {
+        return headers;
+    }
 }
 
