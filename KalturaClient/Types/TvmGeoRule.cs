@@ -40,15 +40,19 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ONLY_OR_BUT = "onlyOrBut";
 		public const string COUNTRY_IDS = "countryIds";
-		public const string PROXY_RULE = "proxyRule";
-		public const string PROXY_LEVEL = "proxyLevel";
+		public const string PROXY_RULE_ID = "proxyRuleId";
+		public const string PROXY_RULE_NAME = "proxyRuleName";
+		public const string PROXY_LEVEL_ID = "proxyLevelId";
+		public const string PROXY_LEVEL_NAME = "proxyLevelName";
 		#endregion
 
 		#region Private Fields
 		private bool? _OnlyOrBut = null;
 		private string _CountryIds = null;
-		private int _ProxyRule = Int32.MinValue;
-		private int _ProxyLevel = Int32.MinValue;
+		private int _ProxyRuleId = Int32.MinValue;
+		private string _ProxyRuleName = null;
+		private int _ProxyLevelId = Int32.MinValue;
+		private string _ProxyLevelName = null;
 		#endregion
 
 		#region Properties
@@ -73,23 +77,43 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public int ProxyRule
+		public int ProxyRuleId
 		{
-			get { return _ProxyRule; }
+			get { return _ProxyRuleId; }
 			set 
 			{ 
-				_ProxyRule = value;
-				OnPropertyChanged("ProxyRule");
+				_ProxyRuleId = value;
+				OnPropertyChanged("ProxyRuleId");
 			}
 		}
 		[JsonProperty]
-		public int ProxyLevel
+		public string ProxyRuleName
 		{
-			get { return _ProxyLevel; }
+			get { return _ProxyRuleName; }
 			set 
 			{ 
-				_ProxyLevel = value;
-				OnPropertyChanged("ProxyLevel");
+				_ProxyRuleName = value;
+				OnPropertyChanged("ProxyRuleName");
+			}
+		}
+		[JsonProperty]
+		public int ProxyLevelId
+		{
+			get { return _ProxyLevelId; }
+			set 
+			{ 
+				_ProxyLevelId = value;
+				OnPropertyChanged("ProxyLevelId");
+			}
+		}
+		[JsonProperty]
+		public string ProxyLevelName
+		{
+			get { return _ProxyLevelName; }
+			set 
+			{ 
+				_ProxyLevelName = value;
+				OnPropertyChanged("ProxyLevelName");
 			}
 		}
 		#endregion
@@ -109,13 +133,21 @@ namespace Kaltura.Types
 			{
 				this._CountryIds = node["countryIds"].Value<string>();
 			}
-			if(node["proxyRule"] != null)
+			if(node["proxyRuleId"] != null)
 			{
-				this._ProxyRule = ParseInt(node["proxyRule"].Value<string>());
+				this._ProxyRuleId = ParseInt(node["proxyRuleId"].Value<string>());
 			}
-			if(node["proxyLevel"] != null)
+			if(node["proxyRuleName"] != null)
 			{
-				this._ProxyLevel = ParseInt(node["proxyLevel"].Value<string>());
+				this._ProxyRuleName = node["proxyRuleName"].Value<string>();
+			}
+			if(node["proxyLevelId"] != null)
+			{
+				this._ProxyLevelId = ParseInt(node["proxyLevelId"].Value<string>());
+			}
+			if(node["proxyLevelName"] != null)
+			{
+				this._ProxyLevelName = node["proxyLevelName"].Value<string>();
 			}
 		}
 		#endregion
@@ -128,8 +160,10 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaTvmGeoRule");
 			kparams.AddIfNotNull("onlyOrBut", this._OnlyOrBut);
 			kparams.AddIfNotNull("countryIds", this._CountryIds);
-			kparams.AddIfNotNull("proxyRule", this._ProxyRule);
-			kparams.AddIfNotNull("proxyLevel", this._ProxyLevel);
+			kparams.AddIfNotNull("proxyRuleId", this._ProxyRuleId);
+			kparams.AddIfNotNull("proxyRuleName", this._ProxyRuleName);
+			kparams.AddIfNotNull("proxyLevelId", this._ProxyLevelId);
+			kparams.AddIfNotNull("proxyLevelName", this._ProxyLevelName);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -140,10 +174,14 @@ namespace Kaltura.Types
 					return "OnlyOrBut";
 				case COUNTRY_IDS:
 					return "CountryIds";
-				case PROXY_RULE:
-					return "ProxyRule";
-				case PROXY_LEVEL:
-					return "ProxyLevel";
+				case PROXY_RULE_ID:
+					return "ProxyRuleId";
+				case PROXY_RULE_NAME:
+					return "ProxyRuleName";
+				case PROXY_LEVEL_ID:
+					return "ProxyLevelId";
+				case PROXY_LEVEL_NAME:
+					return "ProxyLevelName";
 				default:
 					return base.getPropertyName(apiName);
 			}
