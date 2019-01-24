@@ -3,6 +3,9 @@ package com.kaltura.client.utils.request;
 import com.kaltura.client.utils.ErrorElement;
 import com.kaltura.client.utils.response.base.ResponseElement;
 
+import java.util.List;
+import java.util.Map;
+
 public class ExecutedRequest implements ResponseElement {
 
     String requestId;
@@ -10,6 +13,7 @@ public class ExecutedRequest implements ResponseElement {
     String response = null;
     boolean isSuccess = false;
     ErrorElement error = null;
+    Map<String, List<String>> headers = null;
 
     public ExecutedRequest requestId(String id) {
         this.requestId = id;
@@ -42,6 +46,11 @@ public class ExecutedRequest implements ResponseElement {
         return error(ErrorElement.fromException(exception));
     }
 
+    public ExecutedRequest headers(Map<String, List<String>> headers) {
+        this.headers = headers;
+        return this;
+    }
+
     @Override
     public int getCode() {
         return code;
@@ -67,5 +76,9 @@ public class ExecutedRequest implements ResponseElement {
         return requestId;
     }
 
+    @Override
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
 }
 

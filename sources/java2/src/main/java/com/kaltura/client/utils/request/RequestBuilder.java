@@ -1,5 +1,6 @@
 package com.kaltura.client.utils.request;
 
+import com.google.gson.Gson;
 import com.kaltura.client.Params;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.ListResponse;
@@ -205,6 +206,15 @@ public abstract class RequestBuilder<ReturnedType, TokenizerType, SelfType> exte
     public String getTag() {
         return action;
     }
+
+	@Override
+	public String toString() {
+		return String.format("{\"service\":\"%s\"," +
+						"\"action\":\"%s\"," +
+						"\"type\":\"%s\"," +
+						"\"params\":%s}",
+				service, action, type, params);
+	}
 }
 
 
