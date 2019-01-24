@@ -202,6 +202,8 @@ namespace Kaltura
 					return new ListResponse<MediaFile>(jToken);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(jToken);
+				case "KalturaTvmRuleListResponse":
+					return new ListResponse<TvmRule>(jToken);
 				case "KalturaPlaybackProfileListResponse":
 					return new ListResponse<PlaybackProfile>(jToken);
 				case "KalturaBusinessModuleRuleListResponse":
