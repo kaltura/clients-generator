@@ -20,7 +20,7 @@ export interface KalturaObjectPropertyMetadata
 
 export interface KalturaObjectBaseArgs
 {
-	relatedObjects? : KalturaObjectBase[];
+	relatedObjects? : { [key: string] : KalturaObjectBase };
 }
 
 const logger = new KalturaLogger('KalturaObjectBase');
@@ -29,7 +29,7 @@ export abstract class KalturaObjectBase{
 
 	private _allowedEmptyArray: string[] = [];
 	private _dependentProperties : { [key : string] : DependentProperty} = {};
-	relatedObjects : KalturaObjectBase[]; // see developer notice in method '_getMetadata()'
+	relatedObjects : { [key: string] : KalturaObjectBase }; // see developer notice in method '_getMetadata()'
 
 
 	allowEmptyArray(... properties: string[]): this {
@@ -62,7 +62,7 @@ export abstract class KalturaObjectBase{
 			Object.assign(this, data);
 		}
 
-		if (typeof this.relatedObjects === 'undefined') this.relatedObjects = [];
+		if (typeof this.relatedObjects === 'undefined') this.relatedObjects = {};
 	}
 
 	public getTypeName() : string
@@ -76,7 +76,7 @@ export abstract class KalturaObjectBase{
 		// this is not an option as it created circle reference where KalturaListResponse > KalturaObjectBase > KalturaListResponse.
 		// Hence, we cannot set the type explicitly and we need to expose the default type 'KalturaObjectBase'
 		return { properties : {
-			relatedObjects: { type: 'a', readOnly: true, subTypeConstructor : null, subType : 'KalturaListResponse'},
+			relatedObjects: { type: 'm', readOnly: true, subTypeConstructor : null, subType : 'KalturaListResponse'},
 		}};
 	}
 
