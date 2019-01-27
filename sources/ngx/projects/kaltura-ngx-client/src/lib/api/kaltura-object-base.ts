@@ -51,7 +51,7 @@ export abstract class KalturaObjectBase {
 
   private _allowedEmptyArray: string[] = [];
   private _dependentProperties : { [key : string] : DependentProperty} = {};
-  relatedObjects : { [key: string] : KalturaObjectBase };; // see developer notice in method '_getMetadata()'
+  relatedObjects : { [key: string] : KalturaObjectBase }; // see developer notice in method '_getMetadata()'
 
 
   allowEmptyArray(... properties: string[]): this {
