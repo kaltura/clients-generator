@@ -50,14 +50,7 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	public final static String MaxRetry = "maxRetry";
 	public final static String AcceptGzipEncoding = "acceptGzipEncoding";
 	public final static String ResponseTypeFormat = "responseTypeFormat";
-
-	/*private String endpoint = "";
-	private int connectTimeout = 20000;
-	private int readTimeout = connectTimeout;
-	private int writeTimeout = 30000;
-	private int maxRequestRetry = 3;
-    private KalturaServiceResponseTypeFormat serviceFormat = KalturaServiceResponseTypeFormat.RESPONSE_TYPE_JSON;
-	private Map<String, String> params;*/
+	public final static String IgnoreSslDomainVerification = "ignoreSslDomainVerification";
 
 	private Map<String, Object> params;
 
@@ -82,6 +75,7 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(MaxRetry, config.getMaxRetry(2));
 		params.put(AcceptGzipEncoding, config.getAcceptGzipEncoding());
 		params.put(ResponseTypeFormat, config.getTypeFormat());
+		params.put(IgnoreSslDomainVerification, config.getIgnoreSslDomainVerification());
 		params.put(EndPoint, config.getEndpoint());
 	}
 
@@ -93,6 +87,7 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(MaxRetry, 3);
 		params.put(AcceptGzipEncoding, false);
 		params.put(ResponseTypeFormat, ServiceResponseTypeFormat.RESPONSE_TYPE_JSON.getValue());
+		params.put(IgnoreSslDomainVerification, false);
 		params.put(EndPoint, "http://www.kaltura.com/");
 	}
 
@@ -104,6 +99,11 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	@Override
 	public int getTypeFormat() {
 		return (int) params.get(ResponseTypeFormat);
+	}
+
+	@Override
+	public boolean getIgnoreSslDomainVerification() {
+		return (boolean) params.get(IgnoreSslDomainVerification);
 	}
 
 	public void setEndpoint(String endpoint) {
@@ -176,6 +176,10 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 
 	public void setServiceResponseTypeFormat(ServiceResponseTypeFormat format) {
 		params.put(ResponseTypeFormat, format.getValue());
+	}
+
+	public void setIgnoreSslDomainVerification(boolean ignore) {
+		params.put(IgnoreSslDomainVerification, ignore);
 	}
 
 	public ServiceResponseTypeFormat getServiceResponseTypeFormat() {
