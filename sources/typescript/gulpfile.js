@@ -86,13 +86,16 @@ function compileTS(opt) {
 gulp.task('extras', function () {
   var packageFileResult = gulp.src(['package.json'], {base: './'})
     .pipe(jeditor(function(json) {
-      var now = new Date();
-      json.version = json.version + '-v' + now.getFullYear() + formatTwoDigitsNumber(now.getMonth() + 1) + formatTwoDigitsNumber(now.getDate()) + '-' + formatTwoDigitsNumber(now.getHours()) + formatTwoDigitsNumber(now.getMinutes()) + formatTwoDigitsNumber(now.getSeconds());
+      if (!argv.public) {
+        var now = new Date();
+        json.version = json.version + '-v' + now.getFullYear() + formatTwoDigitsNumber(now.getMonth() + 1) + formatTwoDigitsNumber(now.getDate()) + '-' + formatTwoDigitsNumber(now.getHours()) + formatTwoDigitsNumber(now.getMinutes()) + formatTwoDigitsNumber(now.getSeconds());
+      } else {
+        json.private = false;
+      }
 
       json.peerDependencies = json.dependencies;
       json.dependencies = {};
       json.devDependencies = {};
-      json.private = false;
       json.scripts = {};
       return json; // must return JSON object.
     }))

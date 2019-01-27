@@ -16,7 +16,7 @@ To keep being update review the [changelog](CHANGELOG.md) frequently.
 
 You can install this client library using npm with:
 ```
-npm install kaltura-ott-typescript-client@@VERSION@
+npm install kaltura-ott-typescript-client@@VERSION_JS@
 ```
 
  **Found a bug?** create [kaltura/clients-generator issue](https://github.com/kaltura/clients-generator/issues)
