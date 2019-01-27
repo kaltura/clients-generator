@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## 7.0.0 (2019-01-24)
 
- ### Breaking Change
 
+ ### Breaking Change
+ 
+ * removed duplicated sources of adapters & types (removed duplicate folder `/types` of `api/types`). Affect only v5.0.3
  * change type of property `relatedObjects` from array to map
+
 
  before
 
