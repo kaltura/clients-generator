@@ -326,7 +326,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
         String requestId = getRequestId(response);
 
         if (!response.isSuccessful()) { // in case response has failure status
-            return new ExecutedRequest().requestId(requestId).headers(response.headers().toMultimap()).error(ErrorElement.fromCode(response.code(), response.message())).success(false);
+            return new ExecutedRequest().requestId(requestId).error(ErrorElement.fromCode(response.code(), response.message())).success(false);
 
         } else {
 
@@ -342,7 +342,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
             	logger.debug("response [" + requestId + "] body:\n" + responseString);
             }
             
-            return new ExecutedRequest().requestId(requestId).response(responseString).headers(response.headers().toMultimap()).code(response.code()).success(responseString != null);
+            return new ExecutedRequest().requestId(requestId).response(responseString).code(response.code()).success(responseString != null);
         }
     }
 
