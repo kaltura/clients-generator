@@ -1,5 +1,6 @@
 {
   "name": "kaltura-ott-typescript-client",
+  "private": true,
   "version": "@VERSION_JS@",
   "description": "Kaltura OTT Typescript client",
   "keywords": [
@@ -20,6 +21,7 @@
   "scripts": {
     "build": "gulp build",
     "build:prod": "gulp build --production",
+    "build:npm": "gulp build --public",
     "lint": "tslint src/**/*.ts",
     "watch": "gulp watch",
     "deploy": "rm -rf dist && npm run build && cd dist && npm pack && npm link",
