@@ -44,14 +44,14 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private RuleType _RuleTypeEqual = null;
+		private TvmRuleType _RuleTypeEqual = null;
 		private string _NameEqual = null;
 		private TvmRuleOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public RuleType RuleTypeEqual
+		public TvmRuleType RuleTypeEqual
 		{
 			get { return _RuleTypeEqual; }
 			set 
@@ -91,7 +91,7 @@ namespace Kaltura.Types
 		{
 			if(node["ruleTypeEqual"] != null)
 			{
-				this._RuleTypeEqual = (RuleType)StringEnum.Parse(typeof(RuleType), node["ruleTypeEqual"].Value<string>());
+				this._RuleTypeEqual = (TvmRuleType)StringEnum.Parse(typeof(TvmRuleType), node["ruleTypeEqual"].Value<string>());
 			}
 			if(node["nameEqual"] != null)
 			{

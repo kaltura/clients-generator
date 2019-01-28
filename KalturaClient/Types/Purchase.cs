@@ -43,7 +43,6 @@ namespace Kaltura.Types
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		public const string COUPON = "coupon";
-		public const string ADAPTER_DATA = "adapterData";
 		#endregion
 
 		#region Private Fields
@@ -52,7 +51,6 @@ namespace Kaltura.Types
 		private int _PaymentMethodId = Int32.MinValue;
 		private int _PaymentGatewayId = Int32.MinValue;
 		private string _Coupon = null;
-		private string _AdapterData = null;
 		#endregion
 
 		#region Properties
@@ -106,16 +104,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Coupon");
 			}
 		}
-		[JsonProperty]
-		public string AdapterData
-		{
-			get { return _AdapterData; }
-			set 
-			{ 
-				_AdapterData = value;
-				OnPropertyChanged("AdapterData");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -145,10 +133,6 @@ namespace Kaltura.Types
 			{
 				this._Coupon = node["coupon"].Value<string>();
 			}
-			if(node["adapterData"] != null)
-			{
-				this._AdapterData = node["adapterData"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -163,7 +147,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("paymentMethodId", this._PaymentMethodId);
 			kparams.AddIfNotNull("paymentGatewayId", this._PaymentGatewayId);
 			kparams.AddIfNotNull("coupon", this._Coupon);
-			kparams.AddIfNotNull("adapterData", this._AdapterData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -180,8 +163,6 @@ namespace Kaltura.Types
 					return "PaymentGatewayId";
 				case COUPON:
 					return "Coupon";
-				case ADAPTER_DATA:
-					return "AdapterData";
 				default:
 					return base.getPropertyName(apiName);
 			}

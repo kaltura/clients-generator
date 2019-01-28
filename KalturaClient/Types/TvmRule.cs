@@ -44,7 +44,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private long _CreateDate = long.MinValue;
-		private RuleType _RuleType = null;
+		private TvmRuleType _RuleType = null;
 		#endregion
 
 		#region Properties
@@ -59,7 +59,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public RuleType RuleType
+		public TvmRuleType RuleType
 		{
 			get { return _RuleType; }
 			private set 
@@ -83,7 +83,7 @@ namespace Kaltura.Types
 			}
 			if(node["ruleType"] != null)
 			{
-				this._RuleType = (RuleType)StringEnum.Parse(typeof(RuleType), node["ruleType"].Value<string>());
+				this._RuleType = (TvmRuleType)StringEnum.Parse(typeof(TvmRuleType), node["ruleType"].Value<string>());
 			}
 		}
 		#endregion

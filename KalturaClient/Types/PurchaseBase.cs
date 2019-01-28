@@ -41,12 +41,14 @@ namespace Kaltura.Types
 		public const string PRODUCT_ID = "productId";
 		public const string CONTENT_ID = "contentId";
 		public const string PRODUCT_TYPE = "productType";
+		public const string ADAPTER_DATA = "adapterData";
 		#endregion
 
 		#region Private Fields
 		private int _ProductId = Int32.MinValue;
 		private int _ContentId = Int32.MinValue;
 		private TransactionType _ProductType = null;
+		private string _AdapterData = null;
 		#endregion
 
 		#region Properties
@@ -80,6 +82,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("ProductType");
 			}
 		}
+		[JsonProperty]
+		public string AdapterData
+		{
+			get { return _AdapterData; }
+			set 
+			{ 
+				_AdapterData = value;
+				OnPropertyChanged("AdapterData");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -101,6 +113,10 @@ namespace Kaltura.Types
 			{
 				this._ProductType = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["productType"].Value<string>());
 			}
+			if(node["adapterData"] != null)
+			{
+				this._AdapterData = node["adapterData"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -113,6 +129,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("productId", this._ProductId);
 			kparams.AddIfNotNull("contentId", this._ContentId);
 			kparams.AddIfNotNull("productType", this._ProductType);
+			kparams.AddIfNotNull("adapterData", this._AdapterData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -125,6 +142,8 @@ namespace Kaltura.Types
 					return "ContentId";
 				case PRODUCT_TYPE:
 					return "ProductType";
+				case ADAPTER_DATA:
+					return "AdapterData";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -46,6 +46,7 @@ namespace Kaltura.Types
 		public const string IS_PROTECTED = "isProtected";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
+		public const string META_DATA = "metaData";
 		#endregion
 
 		#region Private Fields
@@ -57,6 +58,7 @@ namespace Kaltura.Types
 		private bool? _IsProtected = null;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
+		private IDictionary<string, StringValue> _MetaData;
 		#endregion
 
 		#region Properties
@@ -140,6 +142,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("UpdateDate");
 			}
 		}
+		[JsonProperty]
+		public IDictionary<string, StringValue> MetaData
+		{
+			get { return _MetaData; }
+			set 
+			{ 
+				_MetaData = value;
+				OnPropertyChanged("MetaData");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -181,6 +193,18 @@ namespace Kaltura.Types
 			{
 				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
 			}
+			if(node["metaData"] != null)
+			{
+				{
+					string key;
+					this._MetaData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["metaData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._MetaData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
+			}
 		}
 		#endregion
 
@@ -198,6 +222,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("isProtected", this._IsProtected);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("metaData", this._MetaData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -220,6 +245,8 @@ namespace Kaltura.Types
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case META_DATA:
+					return "MetaData";
 				default:
 					return base.getPropertyName(apiName);
 			}
