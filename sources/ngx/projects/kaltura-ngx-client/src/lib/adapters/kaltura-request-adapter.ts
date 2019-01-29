@@ -1,4 +1,3 @@
-
 import {map, catchError} from 'rxjs/operators';
 import { KalturaRequest } from '../api/kaltura-request';
 import { Observable } from 'rxjs';
@@ -8,7 +7,8 @@ import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { KalturaRequestOptions, KalturaRequestOptionsArgs } from '../api/kaltura-request-options';
 import { KalturaClientOptions } from '../kaltura-client-options';
-import { createEndpoint, getHeaders, prepareParameters } from './utils';
+import { createClientTag, createEndpoint, getHeaders, prepareParameters } from './utils';
+import { environment } from '../environment';
 
 
 
@@ -24,6 +24,10 @@ export class KalturaRequestAdapter {
         const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
         delete parameters['service'];
         delete parameters['action'];
+
+        if (environment.request.avoidQueryString) {
+          parameters['clientTag'] = createClientTag(request, clientOptions);
+        }
 
 
         return this._http.request('post', endpointUrl,

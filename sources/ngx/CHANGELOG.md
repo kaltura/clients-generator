@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 11.2.0 (2019-01-29)
+
+### Features
+
+* For ott clients the client tag now is added to the request body.
+
+### Fix
+
+* For ott clients requesting a url type request now generates the url with format value 20
+* For ott clients upload requests now sends all parameters as part of the request body
+
 ## 11.1.1 (2018-11-24)
 
 ### Fix
