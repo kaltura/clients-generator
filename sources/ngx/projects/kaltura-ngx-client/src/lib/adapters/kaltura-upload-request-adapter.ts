@@ -168,7 +168,7 @@ export class KalturaUploadRequestAdapter {
       delete parameters['action'];
 
       if (environment.request.avoidQueryString) {
-        data['clientTag'] = createClientTag(request, this.clientOptions);
+        data.append('clientTag',createClientTag(request, this.clientOptions));
         (Object.keys(parameters) || []).forEach(key => {
           data.append(key, parameters[key]);
         });

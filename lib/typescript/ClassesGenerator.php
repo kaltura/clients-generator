@@ -104,11 +104,13 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
     function createEnvironmentsFile()
     {
         $nestedResponse = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
+        $requestFileFormat = $this->targetKalturaServer === 'ott' ? '20' : '1';
         $avoidQueryString = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
         $fileContent = "export interface Environment {
     request: {
         apiVersion: string,
-        avoidQueryString: boolean
+        avoidQueryString: boolean,
+        fileFormatValue: number
     }
     response: {
         nestedResponse: boolean
@@ -118,7 +120,8 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
 export const environment: Environment = {
     request: {
         apiVersion: '{$this->serverMetadata->apiVersion}',
-        avoidQueryString: {$avoidQueryString}
+        avoidQueryString: {$avoidQueryString},
+        fileFormatValue: {$requestFileFormat}
     },
     response: {
         nestedResponse: {$nestedResponse}
