@@ -35,29 +35,17 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class ExternalRecording : Recording
+	public class ExternalRecordingFilter : RecordingFilter
 	{
 		#region Constants
-		public const string EXTERNAL_ID = "externalId";
 		public const string META_DATA = "metaData";
 		#endregion
 
 		#region Private Fields
-		private string _ExternalId = null;
 		private IDictionary<string, StringValue> _MetaData;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string ExternalId
-		{
-			get { return _ExternalId; }
-			set 
-			{ 
-				_ExternalId = value;
-				OnPropertyChanged("ExternalId");
-			}
-		}
 		[JsonProperty]
 		public IDictionary<string, StringValue> MetaData
 		{
@@ -71,16 +59,12 @@ namespace Kaltura.Types
 		#endregion
 
 		#region CTor
-		public ExternalRecording()
+		public ExternalRecordingFilter()
 		{
 		}
 
-		public ExternalRecording(JToken node) : base(node)
+		public ExternalRecordingFilter(JToken node) : base(node)
 		{
-			if(node["externalId"] != null)
-			{
-				this._ExternalId = node["externalId"].Value<string>();
-			}
 			if(node["metaData"] != null)
 			{
 				{
@@ -101,8 +85,7 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaExternalRecording");
-			kparams.AddIfNotNull("externalId", this._ExternalId);
+				kparams.AddReplace("objectType", "KalturaExternalRecordingFilter");
 			kparams.AddIfNotNull("metaData", this._MetaData);
 			return kparams;
 		}
@@ -110,8 +93,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case EXTERNAL_ID:
-					return "ExternalId";
 				case META_DATA:
 					return "MetaData";
 				default:
