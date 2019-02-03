@@ -53,10 +53,10 @@ namespace Kaltura.Types
 		#region Private Fields
 		private string _PartnerName = null;
 		private int _MainLanguage = Int32.MinValue;
-		private IList<IntegerValue> _SecondaryLanguages;
+		private string _SecondaryLanguages = null;
 		private DeleteMediaPolicy _DeleteMediaPolicy = null;
 		private int _MainCurrency = Int32.MinValue;
-		private IList<IntegerValue> _SecondaryCurrencys;
+		private string _SecondaryCurrencys = null;
 		private DowngradePolicy _DowngradePolicy = null;
 		private string _MailSettings = null;
 		private string _DateFormat = null;
@@ -85,7 +85,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public IList<IntegerValue> SecondaryLanguages
+		public string SecondaryLanguages
 		{
 			get { return _SecondaryLanguages; }
 			set 
@@ -115,7 +115,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public IList<IntegerValue> SecondaryCurrencys
+		public string SecondaryCurrencys
 		{
 			get { return _SecondaryCurrencys; }
 			set 
@@ -183,11 +183,7 @@ namespace Kaltura.Types
 			}
 			if(node["secondaryLanguages"] != null)
 			{
-				this._SecondaryLanguages = new List<IntegerValue>();
-				foreach(var arrayNode in node["secondaryLanguages"].Children())
-				{
-					this._SecondaryLanguages.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-				}
+				this._SecondaryLanguages = node["secondaryLanguages"].Value<string>();
 			}
 			if(node["deleteMediaPolicy"] != null)
 			{
@@ -199,11 +195,7 @@ namespace Kaltura.Types
 			}
 			if(node["secondaryCurrencys"] != null)
 			{
-				this._SecondaryCurrencys = new List<IntegerValue>();
-				foreach(var arrayNode in node["secondaryCurrencys"].Children())
-				{
-					this._SecondaryCurrencys.Add(ObjectFactory.Create<IntegerValue>(arrayNode));
-				}
+				this._SecondaryCurrencys = node["secondaryCurrencys"].Value<string>();
 			}
 			if(node["downgradePolicy"] != null)
 			{
