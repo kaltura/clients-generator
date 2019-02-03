@@ -79,6 +79,35 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class HouseholdLimitationsListRequestBuilder : RequestBuilder<ListResponse<HouseholdLimitations>>
+	{
+		#region Constants
+		#endregion
+
+
+		public HouseholdLimitationsListRequestBuilder()
+			: base("householdlimitations", "list")
+		{
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<ListResponse<HouseholdLimitations>>(result);
+		}
+	}
+
 
 	public class HouseholdLimitationsService
 	{
@@ -89,6 +118,11 @@ namespace Kaltura.Services
 		public static HouseholdLimitationsGetRequestBuilder Get(int id)
 		{
 			return new HouseholdLimitationsGetRequestBuilder(id);
+		}
+
+		public static HouseholdLimitationsListRequestBuilder List()
+		{
+			return new HouseholdLimitationsListRequestBuilder();
 		}
 	}
 }

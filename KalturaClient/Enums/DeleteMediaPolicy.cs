@@ -27,14 +27,11 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class PartnerConfigurationType : StringEnum
+	public sealed class DeleteMediaPolicy : StringEnum
 	{
-		public static readonly PartnerConfigurationType DEFAULTPAYMENTGATEWAY = new PartnerConfigurationType("DefaultPaymentGateway");
-		public static readonly PartnerConfigurationType ENABLEPAYMENTGATEWAYSELECTION = new PartnerConfigurationType("EnablePaymentGatewaySelection");
-		public static readonly PartnerConfigurationType OSSADAPTER = new PartnerConfigurationType("OSSAdapter");
-		public static readonly PartnerConfigurationType CONCURRENCY = new PartnerConfigurationType("Concurrency");
-		public static readonly PartnerConfigurationType GENERAL = new PartnerConfigurationType("General");
+		public static readonly DeleteMediaPolicy DISABLE = new DeleteMediaPolicy("Disable");
+		public static readonly DeleteMediaPolicy DELETE = new DeleteMediaPolicy("Delete");
 
-		private PartnerConfigurationType(string name) : base(name) { }
+		private DeleteMediaPolicy(string name) : base(name) { }
 	}
 }

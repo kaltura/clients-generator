@@ -38,6 +38,7 @@ namespace Kaltura.Types
 	public class Language : ObjectBase
 	{
 		#region Constants
+		public const string ID = "id";
 		public const string NAME = "name";
 		public const string SYSTEM_NAME = "systemName";
 		public const string CODE = "code";
@@ -46,6 +47,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
+		private int _Id = Int32.MinValue;
 		private string _Name = null;
 		private string _SystemName = null;
 		private string _Code = null;
@@ -54,6 +56,16 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public int Id
+		{
+			get { return _Id; }
+			set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
+		}
 		[JsonProperty]
 		public string Name
 		{
@@ -113,6 +125,10 @@ namespace Kaltura.Types
 
 		public Language(JToken node) : base(node)
 		{
+			if(node["id"] != null)
+			{
+				this._Id = ParseInt(node["id"].Value<string>());
+			}
 			if(node["name"] != null)
 			{
 				this._Name = node["name"].Value<string>();
@@ -142,6 +158,7 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaLanguage");
+			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("systemName", this._SystemName);
 			kparams.AddIfNotNull("code", this._Code);
@@ -153,6 +170,8 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
+				case ID:
+					return "Id";
 				case NAME:
 					return "Name";
 				case SYSTEM_NAME:
