@@ -27,5 +27,9 @@ export class KalturaRequestBase extends KalturaObjectBase {
     getNetworkTag(): string {
         return this._networkTag;
     }
+
+    public getFormatValue() {
+      return 1;
+    }
 }
 

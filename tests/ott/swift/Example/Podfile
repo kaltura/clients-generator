@@ -1,13 +1,13 @@
 use_frameworks!
 
 target 'KalturaClient_Example' do
-  pod 'KalturaOttClient', :path => '../KalturaClient.podspec'
+  pod 'KalturaOttClient', :path => '../KalturaOttClient.podspec'
 
   target 'KalturaClient_Tests' do
     inherit! :search_paths
 
-    pod 'KalturaOttClient', :path => '../KalturaClient.podspec'
+    pod 'KalturaOttClient', :path => '../KalturaOttClient.podspec'
     pod 'Quick', '~> 1.0.0'
-    pod 'Nimble', '~> 5.1.1'
+    pod 'Nimble', '~> 7.0.3'
   end
 end
