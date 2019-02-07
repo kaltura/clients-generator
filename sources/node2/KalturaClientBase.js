@@ -290,6 +290,7 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			body = jsonBody;
 		}
 
+		options.headers['Content-Length'] = body.length;
 		var httpInterface = options.protocol === 'http:' ? http : https;
 		var request = httpInterface.request(options, function(response) {
 			response.setEncoding('utf8');
