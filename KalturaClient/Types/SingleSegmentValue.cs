@@ -39,10 +39,12 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID = "id";
+		public const string AFFECTED_USERS = "affectedUsers";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
+		private int _AffectedUsers = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -54,6 +56,16 @@ namespace Kaltura.Types
 			{ 
 				_Id = value;
 				OnPropertyChanged("Id");
+			}
+		}
+		[JsonProperty]
+		public int AffectedUsers
+		{
+			get { return _AffectedUsers; }
+			private set 
+			{ 
+				_AffectedUsers = value;
+				OnPropertyChanged("AffectedUsers");
 			}
 		}
 		#endregion
@@ -69,6 +81,10 @@ namespace Kaltura.Types
 			{
 				this._Id = ParseLong(node["id"].Value<string>());
 			}
+			if(node["affectedUsers"] != null)
+			{
+				this._AffectedUsers = ParseInt(node["affectedUsers"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -79,6 +95,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaSingleSegmentValue");
 			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("affectedUsers", this._AffectedUsers);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -87,6 +104,8 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
+				case AFFECTED_USERS:
+					return "AffectedUsers";
 				default:
 					return base.getPropertyName(apiName);
 			}
