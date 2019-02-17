@@ -40,11 +40,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string EXTERNAL_ID = "externalId";
 		public const string META_DATA = "metaData";
+		public const string EXPIRY_DATE = "expiryDate";
 		#endregion
 
 		#region Private Fields
 		private string _ExternalId = null;
 		private IDictionary<string, StringValue> _MetaData;
+		private long _ExpiryDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -66,6 +68,16 @@ namespace Kaltura.Types
 			{ 
 				_MetaData = value;
 				OnPropertyChanged("MetaData");
+			}
+		}
+		[JsonProperty]
+		public long ExpiryDate
+		{
+			get { return _ExpiryDate; }
+			private set 
+			{ 
+				_ExpiryDate = value;
+				OnPropertyChanged("ExpiryDate");
 			}
 		}
 		#endregion
@@ -93,6 +105,10 @@ namespace Kaltura.Types
 					}
 				}
 			}
+			if(node["expiryDate"] != null)
+			{
+				this._ExpiryDate = ParseLong(node["expiryDate"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -104,6 +120,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaExternalRecording");
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("metaData", this._MetaData);
+			kparams.AddIfNotNull("expiryDate", this._ExpiryDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -114,6 +131,8 @@ namespace Kaltura.Types
 					return "ExternalId";
 				case META_DATA:
 					return "MetaData";
+				case EXPIRY_DATE:
+					return "ExpiryDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

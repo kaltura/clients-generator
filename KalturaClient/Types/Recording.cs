@@ -104,7 +104,7 @@ namespace Kaltura.Types
 		public long ViewableUntilDate
 		{
 			get { return _ViewableUntilDate; }
-			private set 
+			set 
 			{ 
 				_ViewableUntilDate = value;
 				OnPropertyChanged("ViewableUntilDate");
