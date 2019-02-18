@@ -35,7 +35,7 @@ namespace Kaltura
 	{
 		public Client(Configuration config) : base(config)
 		{
-				ApiVersion = "5.1.2.25382";
+				ApiVersion = "5.1.2.28271";
 				ClientTag = "dotnet:19-02-18";
 		}
 	
@@ -217,7 +217,7 @@ namespace Kaltura
  			return SessionId;
  		}
 			
- 		public bool AbortOnError
+ 		public bool? AbortOnError
  		{
  			get
  			{
@@ -229,17 +229,17 @@ namespace Kaltura
  			}
  		}
 			
- 		public void setAbortOnError(bool value)
+ 		public void setAbortOnError(bool? value)
  		{
  			AbortOnError = value;
  		}
 			
- 		public bool getAbortOnError()
+ 		public bool? getAbortOnError()
  		{
  			return AbortOnError;
  		}
 			
- 		public bool AbortAllOnError
+ 		public bool? AbortAllOnError
  		{
  			get
  			{
@@ -251,12 +251,12 @@ namespace Kaltura
  			}
  		}
 			
- 		public void setAbortAllOnError(bool value)
+ 		public void setAbortAllOnError(bool? value)
  		{
  			AbortAllOnError = value;
  		}
 			
- 		public bool getAbortAllOnError()
+ 		public bool? getAbortAllOnError()
  		{
  			return AbortAllOnError;
  		}
@@ -281,6 +281,28 @@ namespace Kaltura
  		public SkipCondition getSkipCondition()
  		{
  			return SkipCondition;
+ 		}
+			
+ 		public bool? AbortOnError
+ 		{
+ 			get
+ 			{
+ 				return requestConfiguration.AbortOnError;
+ 			}
+ 			set
+ 			{
+ 				requestConfiguration.AbortOnError = value;
+ 			}
+ 		}
+			
+ 		public void setAbortOnError(bool? value)
+ 		{
+ 			AbortOnError = value;
+ 		}
+			
+ 		public bool? getAbortOnError()
+ 		{
+ 			return AbortOnError;
  		}
 		#endregion
 	}

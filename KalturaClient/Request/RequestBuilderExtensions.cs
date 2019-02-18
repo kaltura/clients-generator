@@ -84,7 +84,7 @@ namespace Kaltura.Request
 		/// <summary>
 		/// Abort the Multireuqset call if any error occurs in one of the requests
 		/// </summary>
-		public static BaseRequestBuilder<T> WithAbortOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool value)
+		public static BaseRequestBuilder<T> WithAbortOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool? value)
 		{
 			requestBuilder.AbortOnError = value;
 			return requestBuilder;
@@ -92,7 +92,7 @@ namespace Kaltura.Request
 		/// <summary>
 		/// Abort all following requests if current request has an error
 		/// </summary>
-		public static BaseRequestBuilder<T> WithAbortAllOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool value)
+		public static BaseRequestBuilder<T> WithAbortAllOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool? value)
 		{
 			requestBuilder.AbortAllOnError = value;
 			return requestBuilder;
@@ -103,6 +103,14 @@ namespace Kaltura.Request
 		public static BaseRequestBuilder<T> WithSkipCondition<T>(this BaseRequestBuilder<T> requestBuilder, SkipCondition value)
 		{
 			requestBuilder.SkipCondition = value;
+			return requestBuilder;
+		}
+		/// <summary>
+		/// Abort the Multireuqset call if any error occurs in one of the requests
+		/// </summary>
+		public static BaseRequestBuilder<T> WithAbortOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool? value)
+		{
+			requestBuilder.AbortOnError = value;
 			return requestBuilder;
 		}
 	}
