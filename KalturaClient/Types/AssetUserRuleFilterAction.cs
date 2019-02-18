@@ -38,12 +38,24 @@ namespace Kaltura.Types
 	public class AssetUserRuleFilterAction : AssetUserRuleAction
 	{
 		#region Constants
+		public const string APPLY_ON_CHANNEL = "applyOnChannel";
 		#endregion
 
 		#region Private Fields
+		private bool? _ApplyOnChannel = null;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public bool? ApplyOnChannel
+		{
+			get { return _ApplyOnChannel; }
+			set 
+			{ 
+				_ApplyOnChannel = value;
+				OnPropertyChanged("ApplyOnChannel");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -53,6 +65,10 @@ namespace Kaltura.Types
 
 		public AssetUserRuleFilterAction(JToken node) : base(node)
 		{
+			if(node["applyOnChannel"] != null)
+			{
+				this._ApplyOnChannel = ParseBool(node["applyOnChannel"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -62,12 +78,15 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaAssetUserRuleFilterAction");
+			kparams.AddIfNotNull("applyOnChannel", this._ApplyOnChannel);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case APPLY_ON_CHANNEL:
+					return "ApplyOnChannel";
 				default:
 					return base.getPropertyName(apiName);
 			}
