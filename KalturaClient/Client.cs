@@ -35,7 +35,7 @@ namespace Kaltura
 	{
 		public Client(Configuration config) : base(config)
 		{
-				ApiVersion = "5.1.2.19212";
+				ApiVersion = "5.1.2.25382";
 				ClientTag = "dotnet:19-02-18";
 		}
 	
@@ -83,28 +83,6 @@ namespace Kaltura
  		public string getApiVersion()
  		{
  			return ApiVersion;
- 		}
-			
- 		public bool AbortOnError
- 		{
- 			get
- 			{
- 				return clientConfiguration.AbortOnError;
- 			}
- 			set
- 			{
- 				clientConfiguration.AbortOnError = value;
- 			}
- 		}
-			
- 		public void setAbortOnError(bool value)
- 		{
- 			AbortOnError = value;
- 		}
-			
- 		public bool getAbortOnError()
- 		{
- 			return AbortOnError;
  		}
 			
  		public int PartnerId
@@ -237,6 +215,28 @@ namespace Kaltura
  		public string getSessionId()
  		{
  			return SessionId;
+ 		}
+			
+ 		public bool AbortOnError
+ 		{
+ 			get
+ 			{
+ 				return requestConfiguration.AbortOnError;
+ 			}
+ 			set
+ 			{
+ 				requestConfiguration.AbortOnError = value;
+ 			}
+ 		}
+			
+ 		public void setAbortOnError(bool value)
+ 		{
+ 			AbortOnError = value;
+ 		}
+			
+ 		public bool getAbortOnError()
+ 		{
+ 			return AbortOnError;
  		}
 			
  		public bool AbortAllOnError
