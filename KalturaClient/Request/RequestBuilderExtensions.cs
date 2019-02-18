@@ -105,13 +105,5 @@ namespace Kaltura.Request
 			requestBuilder.SkipCondition = value;
 			return requestBuilder;
 		}
-		/// <summary>
-		/// Abort the Multireuqset call if any error occurs in one of the requests
-		/// </summary>
-		public static BaseRequestBuilder<T> WithAbortOnError<T>(this BaseRequestBuilder<T> requestBuilder, bool? value)
-		{
-			requestBuilder.AbortOnError = value;
-			return requestBuilder;
-		}
 	}
 }
