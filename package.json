@@ -21,8 +21,6 @@
   },
   "homepage": "https://github.com/kaltura/clients-generator#readme",
   "dependencies": {
-    "copy-dir": {
-      "version": "0.4.0"
-    }
+    "copy-dir": "^0.4.0"
   }
 }
