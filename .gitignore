@@ -22,3 +22,5 @@ tests/config.ini
 output/
 npm-debug*.log
 KalturaClient*.xml
+/node_modules/
+/package-lock.json
