@@ -2,6 +2,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const child_process = require( 'child_process' );
 
+const rimraf = require('rimraf');
 const copydir = require('copy-dir');
 
 
@@ -103,13 +104,15 @@ function copyFiles(generatedPath, gitPath) {
 	return new Promise((resolve, reject) => {
 		console.log(`Copy from ${generatedPath} to ${gitPath}`);
 		
-		copydir(generatedPath, gitPath, (err) => {
-			if(err) {
-				reject(`Failed to copy directory from ${generatedPath} to ${gitPath}: ` + err);
-			}
-			else {
-				resolve(gitPath);
-			}
+		rimraf(gitPath + '/*', () => {
+			copydir(generatedPath, gitPath, (err) => {
+				if(err) {
+					reject(`Failed to copy directory from ${generatedPath} to ${gitPath}: ` + err);
+				}
+				else {
+					resolve(gitPath);
+				}
+			});
 		});
 	});
 }
