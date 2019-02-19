@@ -85,7 +85,7 @@ function gitClone(repo) {
 
 function gitCheckout(generatedPath, gitPath, isNew) {
 	console.log(`Checking out git ${gitPath} branch ${branch}`);
-	return execWithPomise('git checkout ' + (isNew ? '-b ' : '') + branch, gitPath, {
+	return execWithPomise('git checkout -B ' + branch, gitPath, {
 		generatedPath: generatedPath, 
 		gitPath: gitPath
 	});
