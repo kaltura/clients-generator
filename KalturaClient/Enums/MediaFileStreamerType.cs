@@ -33,6 +33,7 @@ namespace Kaltura.Enums
 		public static readonly MediaFileStreamerType MPEG_DASH = new MediaFileStreamerType("MPEG_DASH");
 		public static readonly MediaFileStreamerType URL = new MediaFileStreamerType("URL");
 		public static readonly MediaFileStreamerType SMOOTH_STREAMING = new MediaFileStreamerType("SMOOTH_STREAMING");
+		public static readonly MediaFileStreamerType NONE = new MediaFileStreamerType("NONE");
 
 		private MediaFileStreamerType(string name) : base(name) { }
 	}

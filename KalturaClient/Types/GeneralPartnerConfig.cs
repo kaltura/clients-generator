@@ -43,7 +43,7 @@ namespace Kaltura.Types
 		public const string SECONDARY_LANGUAGES = "secondaryLanguages";
 		public const string DELETE_MEDIA_POLICY = "deleteMediaPolicy";
 		public const string MAIN_CURRENCY = "mainCurrency";
-		public const string SECONDARY_CURRENCYS = "secondaryCurrencys";
+		public const string SECONDARY_CURRENCIES = "secondaryCurrencies";
 		public const string DOWNGRADE_POLICY = "downgradePolicy";
 		public const string MAIL_SETTINGS = "mailSettings";
 		public const string DATE_FORMAT = "dateFormat";
@@ -56,7 +56,7 @@ namespace Kaltura.Types
 		private string _SecondaryLanguages = null;
 		private DeleteMediaPolicy _DeleteMediaPolicy = null;
 		private int _MainCurrency = Int32.MinValue;
-		private string _SecondaryCurrencys = null;
+		private string _SecondaryCurrencies = null;
 		private DowngradePolicy _DowngradePolicy = null;
 		private string _MailSettings = null;
 		private string _DateFormat = null;
@@ -115,13 +115,13 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public string SecondaryCurrencys
+		public string SecondaryCurrencies
 		{
-			get { return _SecondaryCurrencys; }
+			get { return _SecondaryCurrencies; }
 			set 
 			{ 
-				_SecondaryCurrencys = value;
-				OnPropertyChanged("SecondaryCurrencys");
+				_SecondaryCurrencies = value;
+				OnPropertyChanged("SecondaryCurrencies");
 			}
 		}
 		[JsonProperty]
@@ -193,9 +193,9 @@ namespace Kaltura.Types
 			{
 				this._MainCurrency = ParseInt(node["mainCurrency"].Value<string>());
 			}
-			if(node["secondaryCurrencys"] != null)
+			if(node["secondaryCurrencies"] != null)
 			{
-				this._SecondaryCurrencys = node["secondaryCurrencys"].Value<string>();
+				this._SecondaryCurrencies = node["secondaryCurrencies"].Value<string>();
 			}
 			if(node["downgradePolicy"] != null)
 			{
@@ -227,7 +227,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("secondaryLanguages", this._SecondaryLanguages);
 			kparams.AddIfNotNull("deleteMediaPolicy", this._DeleteMediaPolicy);
 			kparams.AddIfNotNull("mainCurrency", this._MainCurrency);
-			kparams.AddIfNotNull("secondaryCurrencys", this._SecondaryCurrencys);
+			kparams.AddIfNotNull("secondaryCurrencies", this._SecondaryCurrencies);
 			kparams.AddIfNotNull("downgradePolicy", this._DowngradePolicy);
 			kparams.AddIfNotNull("mailSettings", this._MailSettings);
 			kparams.AddIfNotNull("dateFormat", this._DateFormat);
@@ -248,8 +248,8 @@ namespace Kaltura.Types
 					return "DeleteMediaPolicy";
 				case MAIN_CURRENCY:
 					return "MainCurrency";
-				case SECONDARY_CURRENCYS:
-					return "SecondaryCurrencys";
+				case SECONDARY_CURRENCIES:
+					return "SecondaryCurrencies";
 				case DOWNGRADE_POLICY:
 					return "DowngradePolicy";
 				case MAIL_SETTINGS:
