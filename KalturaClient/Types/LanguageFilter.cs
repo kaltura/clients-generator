@@ -39,13 +39,11 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string CODE_IN = "codeIn";
-		public const string EXCLUDE_PARTNER = "excludePartner";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _CodeIn = null;
-		private bool? _ExcludePartner = null;
 		private LanguageOrderBy _OrderBy = null;
 		#endregion
 
@@ -58,16 +56,6 @@ namespace Kaltura.Types
 			{ 
 				_CodeIn = value;
 				OnPropertyChanged("CodeIn");
-			}
-		}
-		[JsonProperty]
-		public bool? ExcludePartner
-		{
-			get { return _ExcludePartner; }
-			set 
-			{ 
-				_ExcludePartner = value;
-				OnPropertyChanged("ExcludePartner");
 			}
 		}
 		[JsonProperty]
@@ -93,10 +81,6 @@ namespace Kaltura.Types
 			{
 				this._CodeIn = node["codeIn"].Value<string>();
 			}
-			if(node["excludePartner"] != null)
-			{
-				this._ExcludePartner = ParseBool(node["excludePartner"].Value<string>());
-			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (LanguageOrderBy)StringEnum.Parse(typeof(LanguageOrderBy), node["orderBy"].Value<string>());
@@ -111,7 +95,6 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaLanguageFilter");
 			kparams.AddIfNotNull("codeIn", this._CodeIn);
-			kparams.AddIfNotNull("excludePartner", this._ExcludePartner);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -121,8 +104,6 @@ namespace Kaltura.Types
 			{
 				case CODE_IN:
 					return "CodeIn";
-				case EXCLUDE_PARTNER:
-					return "ExcludePartner";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
