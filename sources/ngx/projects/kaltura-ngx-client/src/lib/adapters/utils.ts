@@ -49,12 +49,15 @@ function _buildQuerystring(data: {}, prefix?: string) {
 
 }
 
+export function buildUrl(url: string, querystring?: {}) {
+  let formattedUrl = (url).trim();
+  const urlHasQuerystring = formattedUrl.indexOf('?') !== -1;
+  if (!querystring) {
+    return formattedUrl;
+  }
 
-export function buildUrl(url: string, querystring: {}) {
-    let formattedUrl = (url).trim();
-    const urlHasQuerystring = formattedUrl.indexOf('?') !== -1;
-    const formattedQuerystring = _buildQuerystring(querystring);
-    return `${formattedUrl}${urlHasQuerystring ? '&' : '?'}${formattedQuerystring}`;
+  const formattedQuerystring = _buildQuerystring(querystring);
+  return `${formattedUrl}${urlHasQuerystring ? '&' : '?'}${formattedQuerystring}`;
 }
 
 export function getHeaders(): any {
@@ -71,7 +74,7 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
 		request.buildRequest(defaultRequestOptions),
 		{
 			apiVersion: environment.request.apiVersion,
-			format: 1
+			format: request.getFormatValue()
 		}
 	);
 }
