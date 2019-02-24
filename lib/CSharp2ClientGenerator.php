@@ -1210,7 +1210,11 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			case 'float':
 				$null = 'float.MinValue';
 				break;
-
+				
+			case 'bool':
+			    $type = 'bool?';
+			    break;
+			    
 			case 'bigint':
 				$type = 'long';
 				$null = 'long.MinValue';
@@ -1244,11 +1248,15 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			case 'int':
 				$null = 'int.MinValue';
 				break;
-
+				
 			case 'float':
-				$null = 'float.MinValue';
-				break;
-
+			    $null = 'float.MinValue';
+			    break;
+			    
+			case 'bool':
+			    $type = 'bool?';
+			    break;
+			    
 			case 'bigint':
 				$type = 'long';
 				$null = 'long.MinValue';
