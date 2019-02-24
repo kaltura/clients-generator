@@ -15,6 +15,8 @@ public interface ConnectionConfiguration {
     int getMaxRetry(int defaultVal);
 
     String getEndpoint();
+    String getProxy();
+    int getProxyPort();
 
     int getTypeFormat(); //kalturaServiceResponseTypeFormat
 
