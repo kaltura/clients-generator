@@ -15,6 +15,7 @@ import {KalturaPlaylist} from "../api/types/KalturaPlaylist";
 import {PartnerGetAction} from "../api/types/PartnerGetAction";
 import {KalturaPlaylistType} from "../api/types/KalturaPlaylistType";
 import {KalturaEntryReplacementStatus} from "../api/types/KalturaEntryReplacementStatus";
+import {KalturaMediaEntryFilter} from "../api/types/KalturaMediaEntryFilter";
 import {KalturaMediaEntryFilterForPlaylist} from "../api/types/KalturaMediaEntryFilterForPlaylist";
 import {KalturaAPIException} from "../api/kaltura-api-exception";
 import {KalturaAppTokenHashType} from "../api/types/KalturaAppTokenHashType";
@@ -494,7 +495,9 @@ describe("Kaltura server API request", () => {
 
 		test("parse object response property that inherit from expected property type", (done) => {
 			expect.assertions(4);
-			kalturaClient.request(new BaseEntryListAction()).then(
+			kalturaClient.request(new BaseEntryListAction({
+				filter: new KalturaMediaEntryFilter()
+			})).then(
 				(response) => {
 
 					asyncAssert(() => {
@@ -558,9 +561,10 @@ describe("Kaltura server API request", () => {
 					asyncAssert(() => {
 						expect(response).toBeDefined();
 						expect(response.objects).toBeDefined();
-						const object1 = response.objects[1];
-						expect(object1).toBeDefined();
-						expect(object1.version).toBe(0);
+						const object0 = response.objects[0];
+						expect(object0).toBeDefined();
+						expect(typeof object0.version === 'number').toBeTruthy();
+
 					});
 					done();
 				},

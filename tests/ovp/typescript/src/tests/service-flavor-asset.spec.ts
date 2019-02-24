@@ -2,6 +2,7 @@ import { KalturaClient } from "../kaltura-client-service";
 import { FlavorAssetListAction } from "../api/types/FlavorAssetListAction";
 import { BaseEntryListAction } from "../api/types/BaseEntryListAction";
 import { KalturaFlavorAssetListResponse } from "../api/types/KalturaFlavorAssetListResponse";
+import { KalturaMediaEntryFilter } from "../api/types/KalturaMediaEntryFilter";
 import { KalturaFlavorAsset } from "../api/types/KalturaFlavorAsset";
 import { KalturaFlavorAssetFilter } from "../api/types/KalturaFlavorAssetFilter";
 import { getClient } from "./utils";
@@ -32,7 +33,11 @@ describe(`service "Flavor" tests`, () => {
 		expect.assertions(4);
 		kalturaClient.multiRequest(
 			[
-				new BaseEntryListAction(),
+				new BaseEntryListAction({
+					filter: new KalturaMediaEntryFilter({
+						flavorParamsIdsMatchOr: '0'
+					})
+				}),
 				new FlavorAssetListAction(
 					{
 						filter: new KalturaFlavorAssetFilter(

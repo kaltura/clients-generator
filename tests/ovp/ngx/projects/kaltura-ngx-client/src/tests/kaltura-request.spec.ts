@@ -18,6 +18,7 @@ import {KalturaEntryReplacementStatus} from "../lib/api/types/KalturaEntryReplac
 import {KalturaMediaEntryFilterForPlaylist} from "../lib/api/types/KalturaMediaEntryFilterForPlaylist";
 import {KalturaAPIException} from "../lib/api/kaltura-api-exception";
 import {KalturaAppTokenHashType} from "../lib/api/types/KalturaAppTokenHashType";
+import {KalturaMediaEntryFilter} from "../lib/api/types/KalturaMediaEntryFilter";
 import {KalturaMediaEntry} from "../lib/api/types/KalturaMediaEntry";
 import { asyncAssert, escapeRegExp, getClient } from "./utils";
 import {LoggerSettings, LogLevels} from "../lib/api/kaltura-logger";
@@ -495,7 +496,9 @@ describe("Kaltura server API request", () => {
 
 		test("parse object response property that inherit from expected property type", (done) => {
 			expect.assertions(4);
-			kalturaClient.request(new BaseEntryListAction()).subscribe(
+			kalturaClient.request(new BaseEntryListAction({
+				filter: new KalturaMediaEntryFilter()
+			})).subscribe(
 				(response) => {
 
 					asyncAssert(() => {
@@ -559,9 +562,9 @@ describe("Kaltura server API request", () => {
 					asyncAssert(() => {
 						expect(response).toBeDefined();
 						expect(response.objects).toBeDefined();
-						const object1 = response.objects[1];
-						expect(object1).toBeDefined();
-						expect(object1.version).toBe(0);
+						const object0 = response.objects[0];
+						expect(object0).toBeDefined();
+						expect(typeof object0.version === 'number').toBeTruthy();
 					});
 					done();
 				},
