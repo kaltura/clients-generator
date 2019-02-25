@@ -44,6 +44,8 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	private static final long serialVersionUID = 2096581946429839651L;
 	
 	public final static String EndPoint = "endpoint";
+	public final static String Proxy = null;
+	public final static String ProxyPort = "0";
 	public final static String ConnectTimeout = "connectTimeout";
 	public final static String ReadTimeout = "readTimeout";
 	public final static String WriteTimeout = "writeTimeout";
@@ -96,6 +98,13 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		return (String) params.get(EndPoint);
 	}
 
+	public String getProxy() {
+		return (String) params.get(Proxy);
+	}
+	public int getProxyPort() {
+		return (int) params.get(ProxyPort);
+	}
+
 	@Override
 	public int getTypeFormat() {
 		return (int) params.get(ResponseTypeFormat);
@@ -109,6 +118,15 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	public void setEndpoint(String endpoint) {
 		this.params.put(EndPoint, endpoint);
 	}
+
+	public void setProxy(String proxy) {
+		params.put(Proxy, proxy);
+	}
+
+	public void setProxyPort(int proxyPort) {
+		params.put(ProxyPort, proxyPort);
+	}
+
 
 	public Map<String, Object> getParams() {
 		return params;

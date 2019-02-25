@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+// for Proxy support
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
@@ -118,6 +121,15 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		}
 
 		@Override
+		public String getProxy() {
+		    return null;
+		}
+
+		@Override
+		public int getProxyPort() {
+		    return 0;
+		}
+		@Override
 		public int getTypeFormat() {
 			return ServiceResponseTypeFormat.RESPONSE_TYPE_JSON.getValue();
 		}
@@ -201,6 +213,11 @@ public class APIOkRequestsExecutor implements RequestQueue {
         if(config.getIgnoreSslDomainVerification()) {
         	builder.hostnameVerifier(hostnameVerifier);
         }
+	if (config.getProxy() != null && config.getProxyPort() != 0){
+		logger.debug("Proxy host is: " + config.getProxy());
+		logger.debug("Proxy port is: " + config.getProxyPort());
+		builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(config.getProxy(), config.getProxyPort())));
+	}
 
         return builder;
     }
