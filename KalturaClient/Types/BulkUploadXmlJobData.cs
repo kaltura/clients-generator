@@ -25,24 +25,54 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class BatchJobStatus : StringEnum
-	{
-		public static readonly BatchJobStatus PENDING = new BatchJobStatus("PENDING");
-		public static readonly BatchJobStatus QUEUED = new BatchJobStatus("QUEUED");
-		public static readonly BatchJobStatus PROCESSING = new BatchJobStatus("PROCESSING");
-		public static readonly BatchJobStatus PROCESSED = new BatchJobStatus("PROCESSED");
-		public static readonly BatchJobStatus MOVEFILE = new BatchJobStatus("MOVEFILE");
-		public static readonly BatchJobStatus FINISHED = new BatchJobStatus("FINISHED");
-		public static readonly BatchJobStatus FAILED = new BatchJobStatus("FAILED");
-		public static readonly BatchJobStatus ABORTED = new BatchJobStatus("ABORTED");
-		public static readonly BatchJobStatus ALMOST_DONE = new BatchJobStatus("ALMOST_DONE");
-		public static readonly BatchJobStatus RETRY = new BatchJobStatus("RETRY");
-		public static readonly BatchJobStatus FATAL = new BatchJobStatus("FATAL");
-		public static readonly BatchJobStatus DONT_PROCESS = new BatchJobStatus("DONT_PROCESS");
-		public static readonly BatchJobStatus FINISHED_PARTIALLY = new BatchJobStatus("FINISHED_PARTIALLY");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private BatchJobStatus(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BulkUploadXmlJobData : BulkUploadJobData
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public BulkUploadXmlJobData()
+		{
+		}
+
+		public BulkUploadXmlJobData(JToken node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBulkUploadXmlJobData");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

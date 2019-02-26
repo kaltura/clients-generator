@@ -35,43 +35,31 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class AssetUserRuleFilter : Filter
+	public class BulkUploadFilter : PersistedFilter
 	{
 		#region Constants
-		public const string ATTACHED_USER_ID_EQUAL_CURRENT = "attachedUserIdEqualCurrent";
-		public const string ACTIONS_CONTAIN_TYPE = "actionsContainType";
+		public const string STATUS_EQUAL = "statusEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private bool? _AttachedUserIdEqualCurrent = null;
-		private RuleActionType _ActionsContainType = null;
-		private AssetUserRuleOrderBy _OrderBy = null;
+		private BatchUploadJobStatus _StatusEqual = null;
+		private BulkUploadOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? AttachedUserIdEqualCurrent
+		public BatchUploadJobStatus StatusEqual
 		{
-			get { return _AttachedUserIdEqualCurrent; }
+			get { return _StatusEqual; }
 			set 
 			{ 
-				_AttachedUserIdEqualCurrent = value;
-				OnPropertyChanged("AttachedUserIdEqualCurrent");
+				_StatusEqual = value;
+				OnPropertyChanged("StatusEqual");
 			}
 		}
 		[JsonProperty]
-		public RuleActionType ActionsContainType
-		{
-			get { return _ActionsContainType; }
-			set 
-			{ 
-				_ActionsContainType = value;
-				OnPropertyChanged("ActionsContainType");
-			}
-		}
-		[JsonProperty]
-		public new AssetUserRuleOrderBy OrderBy
+		public new BulkUploadOrderBy OrderBy
 		{
 			get { return _OrderBy; }
 			set 
@@ -83,23 +71,19 @@ namespace Kaltura.Types
 		#endregion
 
 		#region CTor
-		public AssetUserRuleFilter()
+		public BulkUploadFilter()
 		{
 		}
 
-		public AssetUserRuleFilter(JToken node) : base(node)
+		public BulkUploadFilter(JToken node) : base(node)
 		{
-			if(node["attachedUserIdEqualCurrent"] != null)
+			if(node["statusEqual"] != null)
 			{
-				this._AttachedUserIdEqualCurrent = ParseBool(node["attachedUserIdEqualCurrent"].Value<string>());
-			}
-			if(node["actionsContainType"] != null)
-			{
-				this._ActionsContainType = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), node["actionsContainType"].Value<string>());
+				this._StatusEqual = (BatchUploadJobStatus)StringEnum.Parse(typeof(BatchUploadJobStatus), node["statusEqual"].Value<string>());
 			}
 			if(node["orderBy"] != null)
 			{
-				this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), node["orderBy"].Value<string>());
+				this._OrderBy = (BulkUploadOrderBy)StringEnum.Parse(typeof(BulkUploadOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -109,9 +93,8 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetUserRuleFilter");
-			kparams.AddIfNotNull("attachedUserIdEqualCurrent", this._AttachedUserIdEqualCurrent);
-			kparams.AddIfNotNull("actionsContainType", this._ActionsContainType);
+				kparams.AddReplace("objectType", "KalturaBulkUploadFilter");
+			kparams.AddIfNotNull("statusEqual", this._StatusEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -119,10 +102,8 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case ATTACHED_USER_ID_EQUAL_CURRENT:
-					return "AttachedUserIdEqualCurrent";
-				case ACTIONS_CONTAIN_TYPE:
-					return "ActionsContainType";
+				case STATUS_EQUAL:
+					return "StatusEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

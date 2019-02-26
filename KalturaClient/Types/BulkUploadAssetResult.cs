@@ -35,87 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class Bulk : ObjectBase
+	public class BulkUploadAssetResult : BulkUploadResult
 	{
 		#region Constants
-		public const string ID = "id";
-		public const string STATUS = "status";
-		public const string CREATE_DATE = "createDate";
-		public const string UPDATE_DATE = "updateDate";
+		public const string TYPE = "type";
+		public const string EXTERNAL_ID = "externalId";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
-		private BatchJobStatus _Status = null;
-		private long _CreateDate = long.MinValue;
-		private long _UpdateDate = long.MinValue;
+		private int _Type = Int32.MinValue;
+		private string _ExternalId = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long Id
+		public int Type
 		{
-			get { return _Id; }
+			get { return _Type; }
 			private set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
+				_Type = value;
+				OnPropertyChanged("Type");
 			}
 		}
 		[JsonProperty]
-		public BatchJobStatus Status
+		public string ExternalId
 		{
-			get { return _Status; }
+			get { return _ExternalId; }
 			private set 
 			{ 
-				_Status = value;
-				OnPropertyChanged("Status");
-			}
-		}
-		[JsonProperty]
-		public long CreateDate
-		{
-			get { return _CreateDate; }
-			private set 
-			{ 
-				_CreateDate = value;
-				OnPropertyChanged("CreateDate");
-			}
-		}
-		[JsonProperty]
-		public long UpdateDate
-		{
-			get { return _UpdateDate; }
-			private set 
-			{ 
-				_UpdateDate = value;
-				OnPropertyChanged("UpdateDate");
+				_ExternalId = value;
+				OnPropertyChanged("ExternalId");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public Bulk()
+		public BulkUploadAssetResult()
 		{
 		}
 
-		public Bulk(JToken node) : base(node)
+		public BulkUploadAssetResult(JToken node) : base(node)
 		{
-			if(node["id"] != null)
+			if(node["type"] != null)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				this._Type = ParseInt(node["type"].Value<string>());
 			}
-			if(node["status"] != null)
+			if(node["externalId"] != null)
 			{
-				this._Status = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), node["status"].Value<string>());
-			}
-			if(node["createDate"] != null)
-			{
-				this._CreateDate = ParseLong(node["createDate"].Value<string>());
-			}
-			if(node["updateDate"] != null)
-			{
-				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+				this._ExternalId = node["externalId"].Value<string>();
 			}
 		}
 		#endregion
@@ -125,25 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBulk");
-			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("status", this._Status);
-			kparams.AddIfNotNull("createDate", this._CreateDate);
-			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+				kparams.AddReplace("objectType", "KalturaBulkUploadAssetResult");
+			kparams.AddIfNotNull("type", this._Type);
+			kparams.AddIfNotNull("externalId", this._ExternalId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
-				case STATUS:
-					return "Status";
-				case CREATE_DATE:
-					return "CreateDate";
-				case UPDATE_DATE:
-					return "UpdateDate";
+				case TYPE:
+					return "Type";
+				case EXTERNAL_ID:
+					return "ExternalId";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -79,6 +79,57 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetAddFromBulkUploadRequestBuilder : RequestBuilder<long>
+	{
+		#region Constants
+		public const string FILE_DATA = "fileData";
+		public const string BULK_UPLOAD_JOB_DATA = "bulkUploadJobData";
+		#endregion
+
+		public Stream FileData
+		{
+			set;
+			get;
+		}
+		public BulkUploadJobData BulkUploadJobData
+		{
+			set;
+			get;
+		}
+
+		public AssetAddFromBulkUploadRequestBuilder()
+			: base("asset", "addFromBulkUpload")
+		{
+		}
+
+		public AssetAddFromBulkUploadRequestBuilder(Stream fileData, BulkUploadJobData bulkUploadJobData)
+			: this()
+		{
+			this.FileData = fileData;
+			this.BulkUploadJobData = bulkUploadJobData;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("bulkUploadJobData"))
+				kparams.AddIfNotNull("bulkUploadJobData", BulkUploadJobData);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			kfiles.Add("fileData", FileData);
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return result.Value<long>();
+		}
+	}
+
 	public class AssetCountRequestBuilder : RequestBuilder<AssetCount>
 	{
 		#region Constants
@@ -527,6 +578,11 @@ namespace Kaltura.Services
 		public static AssetAddRequestBuilder Add(Asset asset)
 		{
 			return new AssetAddRequestBuilder(asset);
+		}
+
+		public static AssetAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadJobData bulkUploadJobData)
+		{
+			return new AssetAddFromBulkUploadRequestBuilder(fileData, bulkUploadJobData);
 		}
 
 		public static AssetCountRequestBuilder Count(SearchAssetFilter filter = null)

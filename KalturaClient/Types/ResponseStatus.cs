@@ -35,71 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class AssetUserRuleFilter : Filter
+	public class ResponseStatus : ObjectBase
 	{
 		#region Constants
-		public const string ATTACHED_USER_ID_EQUAL_CURRENT = "attachedUserIdEqualCurrent";
-		public const string ACTIONS_CONTAIN_TYPE = "actionsContainType";
-		public new const string ORDER_BY = "orderBy";
+		public const string CODE = "code";
+		public const string MESSAGE = "message";
 		#endregion
 
 		#region Private Fields
-		private bool? _AttachedUserIdEqualCurrent = null;
-		private RuleActionType _ActionsContainType = null;
-		private AssetUserRuleOrderBy _OrderBy = null;
+		private int _Code = Int32.MinValue;
+		private string _Message = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? AttachedUserIdEqualCurrent
+		public int Code
 		{
-			get { return _AttachedUserIdEqualCurrent; }
-			set 
+			get { return _Code; }
+			private set 
 			{ 
-				_AttachedUserIdEqualCurrent = value;
-				OnPropertyChanged("AttachedUserIdEqualCurrent");
+				_Code = value;
+				OnPropertyChanged("Code");
 			}
 		}
 		[JsonProperty]
-		public RuleActionType ActionsContainType
+		public string Message
 		{
-			get { return _ActionsContainType; }
-			set 
+			get { return _Message; }
+			private set 
 			{ 
-				_ActionsContainType = value;
-				OnPropertyChanged("ActionsContainType");
-			}
-		}
-		[JsonProperty]
-		public new AssetUserRuleOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_Message = value;
+				OnPropertyChanged("Message");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public AssetUserRuleFilter()
+		public ResponseStatus()
 		{
 		}
 
-		public AssetUserRuleFilter(JToken node) : base(node)
+		public ResponseStatus(JToken node) : base(node)
 		{
-			if(node["attachedUserIdEqualCurrent"] != null)
+			if(node["code"] != null)
 			{
-				this._AttachedUserIdEqualCurrent = ParseBool(node["attachedUserIdEqualCurrent"].Value<string>());
+				this._Code = ParseInt(node["code"].Value<string>());
 			}
-			if(node["actionsContainType"] != null)
+			if(node["message"] != null)
 			{
-				this._ActionsContainType = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), node["actionsContainType"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (AssetUserRuleOrderBy)StringEnum.Parse(typeof(AssetUserRuleOrderBy), node["orderBy"].Value<string>());
+				this._Message = node["message"].Value<string>();
 			}
 		}
 		#endregion
@@ -109,22 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaAssetUserRuleFilter");
-			kparams.AddIfNotNull("attachedUserIdEqualCurrent", this._AttachedUserIdEqualCurrent);
-			kparams.AddIfNotNull("actionsContainType", this._ActionsContainType);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaResponseStatus");
+			kparams.AddIfNotNull("code", this._Code);
+			kparams.AddIfNotNull("message", this._Message);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ATTACHED_USER_ID_EQUAL_CURRENT:
-					return "AttachedUserIdEqualCurrent";
-				case ACTIONS_CONTAIN_TYPE:
-					return "ActionsContainType";
-				case ORDER_BY:
-					return "OrderBy";
+				case CODE:
+					return "Code";
+				case MESSAGE:
+					return "Message";
 				default:
 					return base.getPropertyName(apiName);
 			}

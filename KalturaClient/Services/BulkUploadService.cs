@@ -36,34 +36,27 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-	public class BulkListRequestBuilder : RequestBuilder<ListResponse<Bulk>>
+	public class BulkUploadListRequestBuilder : RequestBuilder<ListResponse<BulkUpload>>
 	{
 		#region Constants
 		public const string FILTER = "filter";
-		public const string PAGER = "pager";
 		#endregion
 
-		public BulkFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
+		public BulkUploadFilter Filter
 		{
 			set;
 			get;
 		}
 
-		public BulkListRequestBuilder()
-			: base("bulk", "list")
+		public BulkUploadListRequestBuilder()
+			: base("bulkupload", "list")
 		{
 		}
 
-		public BulkListRequestBuilder(BulkFilter filter, FilterPager pager)
+		public BulkUploadListRequestBuilder(BulkUploadFilter filter)
 			: this()
 		{
 			this.Filter = filter;
-			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -71,8 +64,6 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
-			if (!isMapped("pager"))
-				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -84,68 +75,20 @@ namespace Kaltura.Services
 
 		public override object Deserialize(JToken result)
 		{
-			return ObjectFactory.Create<ListResponse<Bulk>>(result);
-		}
-	}
-
-	public class BulkServeLogRequestBuilder : RequestBuilder<Bulk>
-	{
-		#region Constants
-		public const string ID = "id";
-		#endregion
-
-		public long Id
-		{
-			set;
-			get;
-		}
-
-		public BulkServeLogRequestBuilder()
-			: base("bulk", "serveLog")
-		{
-		}
-
-		public BulkServeLogRequestBuilder(long id)
-			: this()
-		{
-			this.Id = id;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("id"))
-				kparams.AddIfNotNull("id", Id);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<Bulk>(result);
+			return ObjectFactory.Create<ListResponse<BulkUpload>>(result);
 		}
 	}
 
 
-	public class BulkService
+	public class BulkUploadService
 	{
-		private BulkService()
+		private BulkUploadService()
 		{
 		}
 
-		public static BulkListRequestBuilder List(BulkFilter filter = null, FilterPager pager = null)
+		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter = null)
 		{
-			return new BulkListRequestBuilder(filter, pager);
-		}
-
-		public static BulkServeLogRequestBuilder ServeLog(long id)
-		{
-			return new BulkServeLogRequestBuilder(id);
+			return new BulkUploadListRequestBuilder(filter);
 		}
 	}
 }

@@ -248,6 +248,10 @@ namespace Kaltura
 		public static string TimeShiftedTvPartnerSettingsNegativeBufferSent = "5024";
 		public static string CDNPartnerSettingsNotFound = "5025";
 		public static string PermissionNameNotExists = "5028";
+		public static string AssetRuleNotExists = "5030";
+		public static string AssetUserRuleDoesNotExists = "5031";
+		public static string UserAlreadyAttachedToAssetUserRule = "5032";
+		public static string AssetUserRulesOperationsDisable = "5033";
 		public static string RoleDoesNotExists = "5038";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
@@ -295,7 +299,7 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentGatewaySuspended = "6051";
+		public static string PaymentMethodExternalIdRequired = "6051";
 		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";

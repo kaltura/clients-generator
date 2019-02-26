@@ -35,55 +35,87 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BulkFilter : PersistedFilter
+	public class BulkUploadResult : ObjectBase
 	{
 		#region Constants
-		public const string STATUS_EQUAL = "statusEqual";
-		public new const string ORDER_BY = "orderBy";
+		public const string OBJECT_ID = "objectId";
+		public const string INDEX = "index";
+		public const string BULK_UPLOAD_ID = "bulkUploadId";
+		public const string STATUS = "status";
 		#endregion
 
 		#region Private Fields
-		private BatchJobStatus _StatusEqual = null;
-		private BulkOrderBy _OrderBy = null;
+		private long _ObjectId = long.MinValue;
+		private int _Index = Int32.MinValue;
+		private long _BulkUploadId = long.MinValue;
+		private ResponseStatus _Status;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public BatchJobStatus StatusEqual
+		public long ObjectId
 		{
-			get { return _StatusEqual; }
-			set 
+			get { return _ObjectId; }
+			private set 
 			{ 
-				_StatusEqual = value;
-				OnPropertyChanged("StatusEqual");
+				_ObjectId = value;
+				OnPropertyChanged("ObjectId");
 			}
 		}
 		[JsonProperty]
-		public new BulkOrderBy OrderBy
+		public int Index
 		{
-			get { return _OrderBy; }
-			set 
+			get { return _Index; }
+			private set 
 			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_Index = value;
+				OnPropertyChanged("Index");
+			}
+		}
+		[JsonProperty]
+		public long BulkUploadId
+		{
+			get { return _BulkUploadId; }
+			private set 
+			{ 
+				_BulkUploadId = value;
+				OnPropertyChanged("BulkUploadId");
+			}
+		}
+		[JsonProperty]
+		public ResponseStatus Status
+		{
+			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public BulkFilter()
+		public BulkUploadResult()
 		{
 		}
 
-		public BulkFilter(JToken node) : base(node)
+		public BulkUploadResult(JToken node) : base(node)
 		{
-			if(node["statusEqual"] != null)
+			if(node["objectId"] != null)
 			{
-				this._StatusEqual = (BatchJobStatus)StringEnum.Parse(typeof(BatchJobStatus), node["statusEqual"].Value<string>());
+				this._ObjectId = ParseLong(node["objectId"].Value<string>());
 			}
-			if(node["orderBy"] != null)
+			if(node["index"] != null)
 			{
-				this._OrderBy = (BulkOrderBy)StringEnum.Parse(typeof(BulkOrderBy), node["orderBy"].Value<string>());
+				this._Index = ParseInt(node["index"].Value<string>());
+			}
+			if(node["bulkUploadId"] != null)
+			{
+				this._BulkUploadId = ParseLong(node["bulkUploadId"].Value<string>());
+			}
+			if(node["status"] != null)
+			{
+				this._Status = ObjectFactory.Create<ResponseStatus>(node["status"]);
 			}
 		}
 		#endregion
@@ -93,19 +125,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBulkFilter");
-			kparams.AddIfNotNull("statusEqual", this._StatusEqual);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaBulkUploadResult");
+			kparams.AddIfNotNull("objectId", this._ObjectId);
+			kparams.AddIfNotNull("index", this._Index);
+			kparams.AddIfNotNull("bulkUploadId", this._BulkUploadId);
+			kparams.AddIfNotNull("status", this._Status);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case STATUS_EQUAL:
-					return "StatusEqual";
-				case ORDER_BY:
-					return "OrderBy";
+				case OBJECT_ID:
+					return "ObjectId";
+				case INDEX:
+					return "Index";
+				case BULK_UPLOAD_ID:
+					return "BulkUploadId";
+				case STATUS:
+					return "Status";
 				default:
 					return base.getPropertyName(apiName);
 			}
