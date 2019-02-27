@@ -254,8 +254,9 @@ abstract class ClientGeneratorFromXml
 		$alwaysAdd = array(
 				'KalturaApiExceptionArg',
 				'KalturaClientConfiguration',
-				'KalturaRequestConfiguration',
-				'KalturaListResponse',
+        	    'KalturaRequestConfiguration',
+        	    'KalturaListResponse',
+        	    'KalturaResponseType',
 		);
 
 		foreach($alwaysAdd as $additional)

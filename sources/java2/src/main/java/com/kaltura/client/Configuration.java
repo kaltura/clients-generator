@@ -76,7 +76,6 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(WriteTimeout, config.getWriteTimeout());
 		params.put(MaxRetry, config.getMaxRetry(2));
 		params.put(AcceptGzipEncoding, config.getAcceptGzipEncoding());
-		params.put(ResponseTypeFormat, config.getTypeFormat());
 		params.put(IgnoreSslDomainVerification, config.getIgnoreSslDomainVerification());
 		params.put(EndPoint, config.getEndpoint());
 	}
@@ -88,7 +87,6 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(WriteTimeout, 30000);
 		params.put(MaxRetry, 3);
 		params.put(AcceptGzipEncoding, false);
-		params.put(ResponseTypeFormat, ServiceResponseTypeFormat.RESPONSE_TYPE_JSON.getValue());
 		params.put(IgnoreSslDomainVerification, false);
 		params.put(EndPoint, "http://www.kaltura.com/");
 	}
@@ -103,11 +101,6 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	}
 	public int getProxyPort() {
 		return (int) params.get(ProxyPort);
-	}
-
-	@Override
-	public int getTypeFormat() {
-		return (int) params.get(ResponseTypeFormat);
 	}
 
 	@Override
@@ -192,16 +185,8 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(AcceptGzipEncoding, accept);
 	}
 
-	public void setServiceResponseTypeFormat(ServiceResponseTypeFormat format) {
-		params.put(ResponseTypeFormat, format.getValue());
-	}
-
 	public void setIgnoreSslDomainVerification(boolean ignore) {
 		params.put(IgnoreSslDomainVerification, ignore);
-	}
-
-	public ServiceResponseTypeFormat getServiceResponseTypeFormat() {
-		return ServiceResponseTypeFormat.get((int) params.get(ResponseTypeFormat));
 	}
 
 	public void setMaxRetry(int retry) {

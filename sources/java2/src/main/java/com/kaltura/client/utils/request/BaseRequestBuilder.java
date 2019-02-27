@@ -25,7 +25,7 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
     protected String url;
     protected Files files = null;
     protected HashMap<String, String> headers;
-    private ConnectionConfiguration connectionConfig;
+    protected ConnectionConfiguration connectionConfig;
 
     /**
      * callback for the parsed response.
@@ -131,7 +131,7 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
         return params;
     }
 
-    private void prepareUrl(String endPoint) {
+    protected void prepareUrl(String endPoint) {
         if (url == null) {
             StringBuilder urlBuilder = new StringBuilder(endPoint.replaceAll("/$", ""))
             .append("/")
