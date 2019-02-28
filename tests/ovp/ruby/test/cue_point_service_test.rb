@@ -34,7 +34,7 @@ class CuePointServiceTest < Test::Unit::TestCase
     
     # creates a media_entry 
     media_entry = Kaltura::KalturaMediaEntry.new
-    media_entry.name = "kaltura_test_cuepointservicetest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
+    media_entry.name = "kaltura_test_cuepointservicetest_" + Time.now.getutc.strftime("%d/%m/%Y %H:%M:%S:%L")
     media_entry.media_type = Kaltura::KalturaMediaType::VIDEO
     video_file = File.open("test/media/test.wmv")
     
