@@ -118,6 +118,12 @@ namespace Kaltura
 					return new ListResponse<PersonalFeed>(jToken);
 				case "KalturaTopicListResponse":
 					return new ListResponse<Topic>(jToken);
+				case "KalturaGenericListResponse":
+					return new ListResponse<T>(jToken);
+				case "KalturaIntegerValueListResponse":
+					return new ListResponse<IntegerValue>(jToken);
+				case "KalturaReportListResponse":
+					return new ListResponse<Report>(jToken);
 				case "KalturaBulkUploadListResponse":
 					return new ListResponse<BulkUpload>(jToken);
 				case "KalturaSegmentationTypeListResponse":
@@ -148,12 +154,6 @@ namespace Kaltura
 					return new ListResponse<ProductPrice>(jToken);
 				case "KalturaPartnerConfigurationListResponse":
 					return new ListResponse<PartnerConfiguration>(jToken);
-				case "KalturaGenericListResponse":
-					return new ListResponse<T>(jToken);
-				case "KalturaIntegerValueListResponse":
-					return new ListResponse<IntegerValue>(jToken);
-				case "KalturaReportListResponse":
-					return new ListResponse<Report>(jToken);
 				case "KalturaHouseholdLimitationsListResponse":
 					return new ListResponse<HouseholdLimitations>(jToken);
 				case "KalturaHouseholdDeviceListResponse":

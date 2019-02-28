@@ -38,24 +38,12 @@ namespace Kaltura.Types
 	public class BulkUploadJobData : ObjectBase
 	{
 		#region Constants
-		public const string ENTRY_DATA = "entryData";
 		#endregion
 
 		#region Private Fields
-		private BulkUploadEntryData _EntryData;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public BulkUploadEntryData EntryData
-		{
-			get { return _EntryData; }
-			set 
-			{ 
-				_EntryData = value;
-				OnPropertyChanged("EntryData");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -65,10 +53,6 @@ namespace Kaltura.Types
 
 		public BulkUploadJobData(JToken node) : base(node)
 		{
-			if(node["entryData"] != null)
-			{
-				this._EntryData = ObjectFactory.Create<BulkUploadEntryData>(node["entryData"]);
-			}
 		}
 		#endregion
 
@@ -78,15 +62,12 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBulkUploadJobData");
-			kparams.AddIfNotNull("entryData", this._EntryData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ENTRY_DATA:
-					return "EntryData";
 				default:
 					return base.getPropertyName(apiName);
 			}

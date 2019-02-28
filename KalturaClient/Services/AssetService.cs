@@ -79,14 +79,20 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class AssetAddFromBulkUploadRequestBuilder : RequestBuilder<long>
+	public class AssetAddFromBulkUploadRequestBuilder : RequestBuilder<BulkUpload>
 	{
 		#region Constants
 		public const string FILE_DATA = "fileData";
+		public const string ASSET_TYPE = "assetType";
 		public const string BULK_UPLOAD_JOB_DATA = "bulkUploadJobData";
 		#endregion
 
 		public Stream FileData
+		{
+			set;
+			get;
+		}
+		public AssetType AssetType
 		{
 			set;
 			get;
@@ -102,16 +108,19 @@ namespace Kaltura.Services
 		{
 		}
 
-		public AssetAddFromBulkUploadRequestBuilder(Stream fileData, BulkUploadJobData bulkUploadJobData)
+		public AssetAddFromBulkUploadRequestBuilder(Stream fileData, AssetType assetType, BulkUploadJobData bulkUploadJobData)
 			: this()
 		{
 			this.FileData = fileData;
+			this.AssetType = assetType;
 			this.BulkUploadJobData = bulkUploadJobData;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetType"))
+				kparams.AddIfNotNull("assetType", AssetType);
 			if (!isMapped("bulkUploadJobData"))
 				kparams.AddIfNotNull("bulkUploadJobData", BulkUploadJobData);
 			return kparams;
@@ -126,7 +135,7 @@ namespace Kaltura.Services
 
 		public override object Deserialize(JToken result)
 		{
-			return result.Value<long>();
+			return ObjectFactory.Create<BulkUpload>(result);
 		}
 	}
 
@@ -580,9 +589,9 @@ namespace Kaltura.Services
 			return new AssetAddRequestBuilder(asset);
 		}
 
-		public static AssetAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadJobData bulkUploadJobData)
+		public static AssetAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, AssetType assetType, BulkUploadJobData bulkUploadJobData)
 		{
-			return new AssetAddFromBulkUploadRequestBuilder(fileData, bulkUploadJobData);
+			return new AssetAddFromBulkUploadRequestBuilder(fileData, assetType, bulkUploadJobData);
 		}
 
 		public static AssetCountRequestBuilder Count(SearchAssetFilter filter = null)

@@ -39,21 +39,23 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID = "id";
+		public const string FILE_NAME = "fileName";
 		public const string STATUS = "status";
+		public const string ACTION = "action";
+		public const string NUM_OF_OBJECTS = "numOfObjects";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
-		public const string UPLOAD_TOKEN_ID = "uploadTokenId";
-		public const string ACTION = "action";
 		public const string RESULTS = "results";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
-		private BatchUploadJobStatus _Status = null;
+		private string _FileName = null;
+		private BulkUploadJobStatus _Status = null;
+		private BulkUploadJobAction _Action = null;
+		private int _NumOfObjects = Int32.MinValue;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
-		private string _UploadTokenId = null;
-		private BatchUploadJobAction _Action = null;
 		private IList<BulkUploadResult> _Results;
 		#endregion
 
@@ -69,13 +71,43 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public BatchUploadJobStatus Status
+		public string FileName
+		{
+			get { return _FileName; }
+			private set 
+			{ 
+				_FileName = value;
+				OnPropertyChanged("FileName");
+			}
+		}
+		[JsonProperty]
+		public BulkUploadJobStatus Status
 		{
 			get { return _Status; }
 			private set 
 			{ 
 				_Status = value;
 				OnPropertyChanged("Status");
+			}
+		}
+		[JsonProperty]
+		public BulkUploadJobAction Action
+		{
+			get { return _Action; }
+			private set 
+			{ 
+				_Action = value;
+				OnPropertyChanged("Action");
+			}
+		}
+		[JsonProperty]
+		public int NumOfObjects
+		{
+			get { return _NumOfObjects; }
+			private set 
+			{ 
+				_NumOfObjects = value;
+				OnPropertyChanged("NumOfObjects");
 			}
 		}
 		[JsonProperty]
@@ -96,26 +128,6 @@ namespace Kaltura.Types
 			{ 
 				_UpdateDate = value;
 				OnPropertyChanged("UpdateDate");
-			}
-		}
-		[JsonProperty]
-		public string UploadTokenId
-		{
-			get { return _UploadTokenId; }
-			private set 
-			{ 
-				_UploadTokenId = value;
-				OnPropertyChanged("UploadTokenId");
-			}
-		}
-		[JsonProperty]
-		public BatchUploadJobAction Action
-		{
-			get { return _Action; }
-			private set 
-			{ 
-				_Action = value;
-				OnPropertyChanged("Action");
 			}
 		}
 		[JsonProperty]
@@ -141,9 +153,21 @@ namespace Kaltura.Types
 			{
 				this._Id = ParseLong(node["id"].Value<string>());
 			}
+			if(node["fileName"] != null)
+			{
+				this._FileName = node["fileName"].Value<string>();
+			}
 			if(node["status"] != null)
 			{
-				this._Status = (BatchUploadJobStatus)StringEnum.Parse(typeof(BatchUploadJobStatus), node["status"].Value<string>());
+				this._Status = (BulkUploadJobStatus)StringEnum.Parse(typeof(BulkUploadJobStatus), node["status"].Value<string>());
+			}
+			if(node["action"] != null)
+			{
+				this._Action = (BulkUploadJobAction)StringEnum.Parse(typeof(BulkUploadJobAction), node["action"].Value<string>());
+			}
+			if(node["numOfObjects"] != null)
+			{
+				this._NumOfObjects = ParseInt(node["numOfObjects"].Value<string>());
 			}
 			if(node["createDate"] != null)
 			{
@@ -152,14 +176,6 @@ namespace Kaltura.Types
 			if(node["updateDate"] != null)
 			{
 				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
-			}
-			if(node["uploadTokenId"] != null)
-			{
-				this._UploadTokenId = node["uploadTokenId"].Value<string>();
-			}
-			if(node["action"] != null)
-			{
-				this._Action = (BatchUploadJobAction)StringEnum.Parse(typeof(BatchUploadJobAction), node["action"].Value<string>());
 			}
 			if(node["results"] != null)
 			{
@@ -179,11 +195,12 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBulkUpload");
 			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("fileName", this._FileName);
 			kparams.AddIfNotNull("status", this._Status);
+			kparams.AddIfNotNull("action", this._Action);
+			kparams.AddIfNotNull("numOfObjects", this._NumOfObjects);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
-			kparams.AddIfNotNull("uploadTokenId", this._UploadTokenId);
-			kparams.AddIfNotNull("action", this._Action);
 			kparams.AddIfNotNull("results", this._Results);
 			return kparams;
 		}
@@ -193,16 +210,18 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
+				case FILE_NAME:
+					return "FileName";
 				case STATUS:
 					return "Status";
+				case ACTION:
+					return "Action";
+				case NUM_OF_OBJECTS:
+					return "NumOfObjects";
 				case CREATE_DATE:
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
-				case UPLOAD_TOKEN_ID:
-					return "UploadTokenId";
-				case ACTION:
-					return "Action";
 				case RESULTS:
 					return "Results";
 				default:

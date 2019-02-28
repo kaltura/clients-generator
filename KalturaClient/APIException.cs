@@ -306,6 +306,7 @@ namespace Kaltura
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
 		public static string Conflict = "7000";
 		public static string MinFriendsLimitation = "7001";
+		public static string InvalidParameters = "7010";
 		public static string NoNotificationSettingsSent = "8000";
 		public static string PushNotificationFalse = "8001";
 		public static string NoNotificationPartnerSettings = "8002";
@@ -392,6 +393,7 @@ namespace Kaltura
 		public static string ArgumentsDuplicate = "500066";
 		public static string InvalidArgumentValue = "500067";
 		public static string OneOfArgumentsCannotBeEmpty = "500081";
+		public static string TypeNotSupported = "500083";
 		public static string MediaIdsMustBeNumeric = "500029";
 		public static string EpgInternalIdsMustBeNumeric = "500030";
 		public static string ListTypeCannotBeEmptyOrAll = "500032";

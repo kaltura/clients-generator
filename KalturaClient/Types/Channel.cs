@@ -50,6 +50,7 @@ namespace Kaltura.Types
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
 		public const string SUPPORT_SEGMENT_BASED_ORDERING = "supportSegmentBasedOrdering";
+		public const string ASSET_USER_RULE_ID = "assetUserRuleId";
 		#endregion
 
 		#region Private Fields
@@ -65,6 +66,7 @@ namespace Kaltura.Types
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
 		private bool? _SupportSegmentBasedOrdering = null;
+		private long _AssetUserRuleId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -188,6 +190,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("SupportSegmentBasedOrdering");
 			}
 		}
+		[JsonProperty]
+		public long AssetUserRuleId
+		{
+			get { return _AssetUserRuleId; }
+			set 
+			{ 
+				_AssetUserRuleId = value;
+				OnPropertyChanged("AssetUserRuleId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -253,6 +265,10 @@ namespace Kaltura.Types
 			{
 				this._SupportSegmentBasedOrdering = ParseBool(node["supportSegmentBasedOrdering"].Value<string>());
 			}
+			if(node["assetUserRuleId"] != null)
+			{
+				this._AssetUserRuleId = ParseLong(node["assetUserRuleId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -274,6 +290,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			kparams.AddIfNotNull("supportSegmentBasedOrdering", this._SupportSegmentBasedOrdering);
+			kparams.AddIfNotNull("assetUserRuleId", this._AssetUserRuleId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -304,6 +321,8 @@ namespace Kaltura.Types
 					return "UpdateDate";
 				case SUPPORT_SEGMENT_BASED_ORDERING:
 					return "SupportSegmentBasedOrdering";
+				case ASSET_USER_RULE_ID:
+					return "AssetUserRuleId";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BulkUploadEntryData : ObjectBase
+	public class BulkUploadMediaAssetResult : BulkUploadAssetResult
 	{
 		#region Constants
 		#endregion
@@ -47,11 +47,11 @@ namespace Kaltura.Types
 		#endregion
 
 		#region CTor
-		public BulkUploadEntryData()
+		public BulkUploadMediaAssetResult()
 		{
 		}
 
-		public BulkUploadEntryData(JToken node) : base(node)
+		public BulkUploadMediaAssetResult(JToken node) : base(node)
 		{
 		}
 		#endregion
@@ -61,7 +61,7 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBulkUploadEntryData");
+				kparams.AddReplace("objectType", "KalturaBulkUploadMediaAssetResult");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)

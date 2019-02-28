@@ -25,54 +25,14 @@
 //
 // @ignore
 // ===================================================================================================
-using System;
-using System.Xml;
-using System.Collections.Generic;
-using Kaltura.Enums;
-using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Kaltura.Types
+namespace Kaltura.Enums
 {
-	public class BulkUploadAssetEntryData : BulkUploadEntryData
+	public sealed class BulkUploadJobStatus : StringEnum
 	{
-		#region Constants
-		#endregion
+		public static readonly BulkUploadJobStatus PENDING = new BulkUploadJobStatus("PENDING");
+		public static readonly BulkUploadJobStatus UPLOADED = new BulkUploadJobStatus("UPLOADED");
+		public static readonly BulkUploadJobStatus QUEUED = new BulkUploadJobStatus("QUEUED");
 
-		#region Private Fields
-		#endregion
-
-		#region Properties
-		#endregion
-
-		#region CTor
-		public BulkUploadAssetEntryData()
-		{
-		}
-
-		public BulkUploadAssetEntryData(JToken node) : base(node)
-		{
-		}
-		#endregion
-
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
-		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBulkUploadAssetEntryData");
-			return kparams;
-		}
-		protected override string getPropertyName(string apiName)
-		{
-			switch(apiName)
-			{
-				default:
-					return base.getPropertyName(apiName);
-			}
-		}
-		#endregion
+		private BulkUploadJobStatus(string name) : base(name) { }
 	}
 }
-

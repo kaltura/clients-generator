@@ -43,13 +43,13 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private BatchUploadJobStatus _StatusEqual = null;
+		private BulkUploadJobStatus _StatusEqual = null;
 		private BulkUploadOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public BatchUploadJobStatus StatusEqual
+		public BulkUploadJobStatus StatusEqual
 		{
 			get { return _StatusEqual; }
 			set 
@@ -79,7 +79,7 @@ namespace Kaltura.Types
 		{
 			if(node["statusEqual"] != null)
 			{
-				this._StatusEqual = (BatchUploadJobStatus)StringEnum.Parse(typeof(BatchUploadJobStatus), node["statusEqual"].Value<string>());
+				this._StatusEqual = (BulkUploadJobStatus)StringEnum.Parse(typeof(BulkUploadJobStatus), node["statusEqual"].Value<string>());
 			}
 			if(node["orderBy"] != null)
 			{
