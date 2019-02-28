@@ -40,7 +40,7 @@ class ConfigurationTest < Test::Unit::TestCase
     assert_raise NoMethodError do
       base_entry = Kaltura::KalturaBaseEntry.new
       base_entry.type = Kaltura::KalturaEntryType::DOCUMENT
-      base_entry.name = "kaltura_test"
+      base_entry.name = "kaltura_test_configurationtest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
       pdf_file = File.open("test/media/test.pdf")
       pdf_token = @client.invalid_service.upload(pdf_file)
     end
@@ -138,7 +138,7 @@ class ConfigurationTest < Test::Unit::TestCase
       
       base_entry = Kaltura::KalturaBaseEntry.new
       base_entry.type = Kaltura::KalturaEntryType::DOCUMENT
-      base_entry.name = "kaltura_test"
+      base_entry.name = "kaltura_test_configurationtest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
       pdf_file = File.open("test/media/test.pdf")
       
       

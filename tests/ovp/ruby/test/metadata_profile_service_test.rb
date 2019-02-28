@@ -36,7 +36,7 @@ class MetadataProfileServiceTest < Test::Unit::TestCase
 		
 		# creates a metadata_profile
 		metadata_profile = Kaltura::KalturaMetadataProfile.new
-		metadata_profile.name = "test profile"
+		metadata_profile.name = "test profile" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
 		metadata_profile.system_name = unique_id
 		metadata_profile.metadata_object_type = Kaltura::KalturaMetadataObjectType::ENTRY
 		metadata_profile.create_mode = Kaltura::KalturaMetadataProfileCreateMode::API
