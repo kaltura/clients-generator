@@ -33,7 +33,7 @@ class BaseEntryServiceTest < Test::Unit::TestCase
 
 		base_entry = Kaltura::KalturaBaseEntry.new
 		base_entry.type = Kaltura::KalturaEntryType::MEDIA_CLIP
-		base_entry.name = "kaltura_test_baseentryservicetest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
+		base_entry.name = "kaltura_test_baseentryservicetest_" + Time.now.getutc.strftime("%d/%m/%Y %H:%M:%S:%L")
 		media_file = File.open("test/media/test.mov")
 
 		upload_token = @client.upload_token_service.add()

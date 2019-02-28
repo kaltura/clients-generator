@@ -66,7 +66,7 @@ class AccessControlServiceTest < Test::Unit::TestCase
 		site_rule.conditions << site_condition
 
 		access_control = Kaltura::KalturaAccessControlProfile.new
-		access_control.name = "kaltura_test_accesscontrolservicetest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
+		access_control.name = "kaltura_test_accesscontrolservicetest_" + Time.now.getutc.strftime("%d/%m/%Y %H:%M:%S:%L")
 		access_control.is_default = Kaltura::KalturaNullableBoolean::FALSE_VALUE
 
 		access_control.rules = []

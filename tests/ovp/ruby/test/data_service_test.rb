@@ -36,7 +36,7 @@ class DataServiceTest < Test::Unit::TestCase
     should "get the file url with data content" do
     
       data_entry = Kaltura::KalturaDataEntry.new
-      data_entry.name = "kaltura_test_dataservicetest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
+      data_entry.name = "kaltura_test_dataservicetest_" + Time.now.getutc.strftime("%d/%m/%Y %H:%M:%S:%L")
       data_entry.data_content = @content
       
       created_entry = @client.data_service.add(data_entry)
@@ -60,7 +60,7 @@ class DataServiceTest < Test::Unit::TestCase
       should "get the file url with data content when the forceProxy is 0" do
 
         data_entry = Kaltura::KalturaDataEntry.new
-        data_entry.name = "kaltura_test_dataservicetest_" + Time.now.getutc.to_date.strftime("%d/%m/%Y %H:%M:%S:%L")
+        data_entry.name = "kaltura_test_dataservicetest_" + Time.now.getutc.strftime("%d/%m/%Y %H:%M:%S:%L")
         data_entry.data_content = @content
 
         created_entry = @client.data_service.add(data_entry)
