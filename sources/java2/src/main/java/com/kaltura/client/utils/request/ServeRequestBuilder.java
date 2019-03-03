@@ -50,6 +50,11 @@ public abstract class ServeRequestBuilder extends RequestBuilder<String, String,
 	public String getTokenizer() throws APIException {
 		throw new APIException(APIException.FailureStep.OnRequest, "Served content response can not be used as multi-request token");
 	}
+	
+	@Override
+    public MultiRequestBuilder add(RequestBuilder<?, ?, ?> another) throws APIException {
+    	throw new APIException("Multi-request is not supported on serve actions"); 
+    }
 }
 
 

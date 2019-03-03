@@ -129,11 +129,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		public int getProxyPort() {
 		    return 0;
 		}
-		@Override
-		public int getTypeFormat() {
-			return ServiceResponseTypeFormat.RESPONSE_TYPE_JSON.getValue();
-		}
-
+		
 		@Override
 		public boolean getIgnoreSslDomainVerification() {
 			return false;

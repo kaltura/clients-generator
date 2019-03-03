@@ -18,7 +18,5 @@ public interface ConnectionConfiguration {
     String getProxy();
     int getProxyPort();
 
-    int getTypeFormat(); //kalturaServiceResponseTypeFormat
-
 	boolean getIgnoreSslDomainVerification();
 }
