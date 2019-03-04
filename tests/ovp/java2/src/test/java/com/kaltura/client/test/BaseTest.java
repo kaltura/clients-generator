@@ -145,7 +145,7 @@ abstract class BaseTest extends TestCase {
 	
 	protected void startSession(SessionType type) throws Exception {
 		
-		String sessionId = client.generateSessionV2(testConfig.getAdminSecret(), testConfig.getUserId(), type, testConfig.getPartnerId(), 86400, "");
+		String sessionId = client.generateSessionV2(testConfig.getAdminSecret(), testConfig.getUserId(), type, testConfig.getPartnerId(), 86400, "disableentitlement");
 		if (logger.isEnabled()){
 			logger.debug("Session id:" + sessionId);
 		}
