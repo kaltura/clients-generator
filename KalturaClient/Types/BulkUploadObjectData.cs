@@ -25,14 +25,54 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class BulkUploadResultStatus : StringEnum
-	{
-		public static readonly BulkUploadResultStatus ERROR = new BulkUploadResultStatus("Error");
-		public static readonly BulkUploadResultStatus OK = new BulkUploadResultStatus("Ok");
-		public static readonly BulkUploadResultStatus INPROGRESS = new BulkUploadResultStatus("InProgress");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private BulkUploadResultStatus(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BulkUploadObjectData : ObjectBase
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public BulkUploadObjectData()
+		{
+		}
+
+		public BulkUploadObjectData(JToken node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBulkUploadObjectData");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

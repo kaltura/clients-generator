@@ -83,8 +83,8 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILE_DATA = "fileData";
-		public const string ASSET_TYPE = "assetType";
 		public const string BULK_UPLOAD_JOB_DATA = "bulkUploadJobData";
+		public const string BULK_UPLOAD_ASSET_DATA = "bulkUploadAssetData";
 		#endregion
 
 		public Stream FileData
@@ -92,12 +92,12 @@ namespace Kaltura.Services
 			set;
 			get;
 		}
-		public AssetType AssetType
+		public BulkUploadJobData BulkUploadJobData
 		{
 			set;
 			get;
 		}
-		public BulkUploadJobData BulkUploadJobData
+		public BulkUploadAssetData BulkUploadAssetData
 		{
 			set;
 			get;
@@ -108,21 +108,21 @@ namespace Kaltura.Services
 		{
 		}
 
-		public AssetAddFromBulkUploadRequestBuilder(Stream fileData, AssetType assetType, BulkUploadJobData bulkUploadJobData)
+		public AssetAddFromBulkUploadRequestBuilder(Stream fileData, BulkUploadJobData bulkUploadJobData, BulkUploadAssetData bulkUploadAssetData)
 			: this()
 		{
 			this.FileData = fileData;
-			this.AssetType = assetType;
 			this.BulkUploadJobData = bulkUploadJobData;
+			this.BulkUploadAssetData = bulkUploadAssetData;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("assetType"))
-				kparams.AddIfNotNull("assetType", AssetType);
 			if (!isMapped("bulkUploadJobData"))
 				kparams.AddIfNotNull("bulkUploadJobData", BulkUploadJobData);
+			if (!isMapped("bulkUploadAssetData"))
+				kparams.AddIfNotNull("bulkUploadAssetData", BulkUploadAssetData);
 			return kparams;
 		}
 
@@ -589,9 +589,9 @@ namespace Kaltura.Services
 			return new AssetAddRequestBuilder(asset);
 		}
 
-		public static AssetAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, AssetType assetType, BulkUploadJobData bulkUploadJobData)
+		public static AssetAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadJobData bulkUploadJobData, BulkUploadAssetData bulkUploadAssetData)
 		{
-			return new AssetAddFromBulkUploadRequestBuilder(fileData, assetType, bulkUploadJobData);
+			return new AssetAddFromBulkUploadRequestBuilder(fileData, bulkUploadJobData, bulkUploadAssetData);
 		}
 
 		public static AssetCountRequestBuilder Count(SearchAssetFilter filter = null)

@@ -25,14 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class BulkUploadResultStatus : StringEnum
-	{
-		public static readonly BulkUploadResultStatus ERROR = new BulkUploadResultStatus("Error");
-		public static readonly BulkUploadResultStatus OK = new BulkUploadResultStatus("Ok");
-		public static readonly BulkUploadResultStatus INPROGRESS = new BulkUploadResultStatus("InProgress");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private BulkUploadResultStatus(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BulkUploadAssetData : BulkUploadObjectData
+	{
+		#region Constants
+		public const string TYPE_ID = "typeId";
+		#endregion
+
+		#region Private Fields
+		private long _TypeId = long.MinValue;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public long TypeId
+		{
+			get { return _TypeId; }
+			set 
+			{ 
+				_TypeId = value;
+				OnPropertyChanged("TypeId");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public BulkUploadAssetData()
+		{
+		}
+
+		public BulkUploadAssetData(JToken node) : base(node)
+		{
+			if(node["typeId"] != null)
+			{
+				this._TypeId = ParseLong(node["typeId"].Value<string>());
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBulkUploadAssetData");
+			kparams.AddIfNotNull("typeId", this._TypeId);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case TYPE_ID:
+					return "TypeId";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

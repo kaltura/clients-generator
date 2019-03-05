@@ -29,9 +29,16 @@ namespace Kaltura.Enums
 {
 	public sealed class BulkUploadJobStatus : StringEnum
 	{
-		public static readonly BulkUploadJobStatus PENDING = new BulkUploadJobStatus("PENDING");
-		public static readonly BulkUploadJobStatus UPLOADED = new BulkUploadJobStatus("UPLOADED");
-		public static readonly BulkUploadJobStatus QUEUED = new BulkUploadJobStatus("QUEUED");
+		public static readonly BulkUploadJobStatus PENDING = new BulkUploadJobStatus("Pending");
+		public static readonly BulkUploadJobStatus UPLOADED = new BulkUploadJobStatus("Uploaded");
+		public static readonly BulkUploadJobStatus QUEUED = new BulkUploadJobStatus("Queued");
+		public static readonly BulkUploadJobStatus PARSING = new BulkUploadJobStatus("Parsing");
+		public static readonly BulkUploadJobStatus PROCESSING = new BulkUploadJobStatus("Processing");
+		public static readonly BulkUploadJobStatus PROCESSED = new BulkUploadJobStatus("Processed");
+		public static readonly BulkUploadJobStatus SUCCESS = new BulkUploadJobStatus("Success");
+		public static readonly BulkUploadJobStatus PARTIAL = new BulkUploadJobStatus("Partial");
+		public static readonly BulkUploadJobStatus FAILED = new BulkUploadJobStatus("Failed");
+		public static readonly BulkUploadJobStatus FATAL = new BulkUploadJobStatus("Fatal");
 
 		private BulkUploadJobStatus(string name) : base(name) { }
 	}

@@ -41,6 +41,7 @@ namespace Kaltura.Types
 		public const string MEDIA_PROTOCOL = "mediaProtocol";
 		public const string STREAMER_TYPE = "streamerType";
 		public const string ASSET_FILE_IDS = "assetFileIds";
+		public const string ADAPTER_DATA = "adapterData";
 		public const string CONTEXT = "context";
 		public const string URL_TYPE = "urlType";
 		#endregion
@@ -49,6 +50,7 @@ namespace Kaltura.Types
 		private string _MediaProtocol = null;
 		private string _StreamerType = null;
 		private string _AssetFileIds = null;
+		private IDictionary<string, StringValue> _AdapterData;
 		private PlaybackContextType _Context = null;
 		private UrlType _UrlType = null;
 		#endregion
@@ -82,6 +84,16 @@ namespace Kaltura.Types
 			{ 
 				_AssetFileIds = value;
 				OnPropertyChanged("AssetFileIds");
+			}
+		}
+		[JsonProperty]
+		public IDictionary<string, StringValue> AdapterData
+		{
+			get { return _AdapterData; }
+			set 
+			{ 
+				_AdapterData = value;
+				OnPropertyChanged("AdapterData");
 			}
 		}
 		[JsonProperty]
@@ -125,6 +137,18 @@ namespace Kaltura.Types
 			{
 				this._AssetFileIds = node["assetFileIds"].Value<string>();
 			}
+			if(node["adapterData"] != null)
+			{
+				{
+					string key;
+					this._AdapterData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["adapterData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._AdapterData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
+			}
 			if(node["context"] != null)
 			{
 				this._Context = (PlaybackContextType)StringEnum.Parse(typeof(PlaybackContextType), node["context"].Value<string>());
@@ -145,6 +169,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("mediaProtocol", this._MediaProtocol);
 			kparams.AddIfNotNull("streamerType", this._StreamerType);
 			kparams.AddIfNotNull("assetFileIds", this._AssetFileIds);
+			kparams.AddIfNotNull("adapterData", this._AdapterData);
 			kparams.AddIfNotNull("context", this._Context);
 			kparams.AddIfNotNull("urlType", this._UrlType);
 			return kparams;
@@ -159,6 +184,8 @@ namespace Kaltura.Types
 					return "StreamerType";
 				case ASSET_FILE_IDS:
 					return "AssetFileIds";
+				case ADAPTER_DATA:
+					return "AdapterData";
 				case CONTEXT:
 					return "Context";
 				case URL_TYPE:

@@ -27,12 +27,12 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class BulkUploadResultStatus : StringEnum
+	public enum ResponseType
 	{
-		public static readonly BulkUploadResultStatus ERROR = new BulkUploadResultStatus("Error");
-		public static readonly BulkUploadResultStatus OK = new BulkUploadResultStatus("Ok");
-		public static readonly BulkUploadResultStatus INPROGRESS = new BulkUploadResultStatus("InProgress");
-
-		private BulkUploadResultStatus(string name) : base(name) { }
+		JSON = 1,
+		XML = 2,
+		JSONP = 9,
+		ASSET_XML = 30,
+		EXCEL = 31,
 	}
 }

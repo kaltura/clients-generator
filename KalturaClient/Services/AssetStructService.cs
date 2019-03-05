@@ -124,6 +124,49 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetStructGetRequestBuilder : RequestBuilder<AssetStruct>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public AssetStructGetRequestBuilder()
+			: base("assetstruct", "get")
+		{
+		}
+
+		public AssetStructGetRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<AssetStruct>(result);
+		}
+	}
+
 	public class AssetStructListRequestBuilder : RequestBuilder<ListResponse<AssetStruct>>
 	{
 		#region Constants
@@ -234,6 +277,11 @@ namespace Kaltura.Services
 		public static AssetStructDeleteRequestBuilder Delete(long id)
 		{
 			return new AssetStructDeleteRequestBuilder(id);
+		}
+
+		public static AssetStructGetRequestBuilder Get(long id)
+		{
+			return new AssetStructGetRequestBuilder(id);
 		}
 
 		public static AssetStructListRequestBuilder List(AssetStructFilter filter = null)

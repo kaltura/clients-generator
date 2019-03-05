@@ -36,6 +36,49 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+	public class BulkUploadGetRequestBuilder : RequestBuilder<BulkUpload>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id
+		{
+			set;
+			get;
+		}
+
+		public BulkUploadGetRequestBuilder()
+			: base("bulkupload", "get")
+		{
+		}
+
+		public BulkUploadGetRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<BulkUpload>(result);
+		}
+	}
+
 	public class BulkUploadListRequestBuilder : RequestBuilder<ListResponse<BulkUpload>>
 	{
 		#region Constants
@@ -84,6 +127,11 @@ namespace Kaltura.Services
 	{
 		private BulkUploadService()
 		{
+		}
+
+		public static BulkUploadGetRequestBuilder Get(long id)
+		{
+			return new BulkUploadGetRequestBuilder(id);
 		}
 
 		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter = null)
