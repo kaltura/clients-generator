@@ -35,27 +35,63 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BulkUploadFilter : PersistedFilter
+	public class BulkUploadFilter : Filter
 	{
 		#region Constants
-		public const string STATUS_EQUAL = "statusEqual";
+		public const string UPLOADED_ON_EQUAL = "uploadedOnEqual";
+		public const string DATE_COMPARISON_TYPE = "dateComparisonType";
+		public const string STATUS_IN = "statusIn";
+		public const string USER_ID_EQUAL_CURRENT = "userIdEqualCurrent";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private BulkUploadJobStatus _StatusEqual = null;
+		private long _UploadedOnEqual = long.MinValue;
+		private DateComparisonType _DateComparisonType = null;
+		private string _StatusIn = null;
+		private bool? _UserIdEqualCurrent = null;
 		private BulkUploadOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public BulkUploadJobStatus StatusEqual
+		public long UploadedOnEqual
 		{
-			get { return _StatusEqual; }
+			get { return _UploadedOnEqual; }
 			set 
 			{ 
-				_StatusEqual = value;
-				OnPropertyChanged("StatusEqual");
+				_UploadedOnEqual = value;
+				OnPropertyChanged("UploadedOnEqual");
+			}
+		}
+		[JsonProperty]
+		public DateComparisonType DateComparisonType
+		{
+			get { return _DateComparisonType; }
+			set 
+			{ 
+				_DateComparisonType = value;
+				OnPropertyChanged("DateComparisonType");
+			}
+		}
+		[JsonProperty]
+		public string StatusIn
+		{
+			get { return _StatusIn; }
+			set 
+			{ 
+				_StatusIn = value;
+				OnPropertyChanged("StatusIn");
+			}
+		}
+		[JsonProperty]
+		public bool? UserIdEqualCurrent
+		{
+			get { return _UserIdEqualCurrent; }
+			set 
+			{ 
+				_UserIdEqualCurrent = value;
+				OnPropertyChanged("UserIdEqualCurrent");
 			}
 		}
 		[JsonProperty]
@@ -77,9 +113,21 @@ namespace Kaltura.Types
 
 		public BulkUploadFilter(JToken node) : base(node)
 		{
-			if(node["statusEqual"] != null)
+			if(node["uploadedOnEqual"] != null)
 			{
-				this._StatusEqual = (BulkUploadJobStatus)StringEnum.Parse(typeof(BulkUploadJobStatus), node["statusEqual"].Value<string>());
+				this._UploadedOnEqual = ParseLong(node["uploadedOnEqual"].Value<string>());
+			}
+			if(node["dateComparisonType"] != null)
+			{
+				this._DateComparisonType = (DateComparisonType)StringEnum.Parse(typeof(DateComparisonType), node["dateComparisonType"].Value<string>());
+			}
+			if(node["statusIn"] != null)
+			{
+				this._StatusIn = node["statusIn"].Value<string>();
+			}
+			if(node["userIdEqualCurrent"] != null)
+			{
+				this._UserIdEqualCurrent = ParseBool(node["userIdEqualCurrent"].Value<string>());
 			}
 			if(node["orderBy"] != null)
 			{
@@ -94,7 +142,10 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBulkUploadFilter");
-			kparams.AddIfNotNull("statusEqual", this._StatusEqual);
+			kparams.AddIfNotNull("uploadedOnEqual", this._UploadedOnEqual);
+			kparams.AddIfNotNull("dateComparisonType", this._DateComparisonType);
+			kparams.AddIfNotNull("statusIn", this._StatusIn);
+			kparams.AddIfNotNull("userIdEqualCurrent", this._UserIdEqualCurrent);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -102,8 +153,14 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case STATUS_EQUAL:
-					return "StatusEqual";
+				case UPLOADED_ON_EQUAL:
+					return "UploadedOnEqual";
+				case DATE_COMPARISON_TYPE:
+					return "DateComparisonType";
+				case STATUS_IN:
+					return "StatusIn";
+				case USER_ID_EQUAL_CURRENT:
+					return "UserIdEqualCurrent";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

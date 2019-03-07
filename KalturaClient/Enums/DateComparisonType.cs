@@ -27,11 +27,12 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class BulkUploadOrderBy : StringEnum
+	public sealed class DateComparisonType : StringEnum
 	{
-		public static readonly BulkUploadOrderBy NONE = new BulkUploadOrderBy("NONE");
-		public static readonly BulkUploadOrderBy UPDATE_DATE = new BulkUploadOrderBy("UPDATE_DATE");
+		public static readonly DateComparisonType GREATERTHANOREQUAL = new DateComparisonType("GreaterThanOrEqual");
+		public static readonly DateComparisonType LESSTHANOREQUAL = new DateComparisonType("LessThanOrEqual");
+		public static readonly DateComparisonType EQUAL = new DateComparisonType("Equal");
 
-		private BulkUploadOrderBy(string name) : base(name) { }
+		private DateComparisonType(string name) : base(name) { }
 	}
 }

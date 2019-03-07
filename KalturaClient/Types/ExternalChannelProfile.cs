@@ -45,6 +45,7 @@ namespace Kaltura.Types
 		public const string FILTER_EXPRESSION = "filterExpression";
 		public const string RECOMMENDATION_ENGINE_ID = "recommendationEngineId";
 		public const string ENRICHMENTS = "enrichments";
+		public const string ASSET_USER_RULE_ID = "assetUserRuleId";
 		#endregion
 
 		#region Private Fields
@@ -55,6 +56,7 @@ namespace Kaltura.Types
 		private string _FilterExpression = null;
 		private int _RecommendationEngineId = Int32.MinValue;
 		private IList<ChannelEnrichmentHolder> _Enrichments;
+		private long _AssetUserRuleId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -128,6 +130,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Enrichments");
 			}
 		}
+		[JsonProperty]
+		public long AssetUserRuleId
+		{
+			get { return _AssetUserRuleId; }
+			set 
+			{ 
+				_AssetUserRuleId = value;
+				OnPropertyChanged("AssetUserRuleId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -169,6 +181,10 @@ namespace Kaltura.Types
 					this._Enrichments.Add(ObjectFactory.Create<ChannelEnrichmentHolder>(arrayNode));
 				}
 			}
+			if(node["assetUserRuleId"] != null)
+			{
+				this._AssetUserRuleId = ParseLong(node["assetUserRuleId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -185,6 +201,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("filterExpression", this._FilterExpression);
 			kparams.AddIfNotNull("recommendationEngineId", this._RecommendationEngineId);
 			kparams.AddIfNotNull("enrichments", this._Enrichments);
+			kparams.AddIfNotNull("assetUserRuleId", this._AssetUserRuleId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -205,6 +222,8 @@ namespace Kaltura.Types
 					return "RecommendationEngineId";
 				case ENRICHMENTS:
 					return "Enrichments";
+				case ASSET_USER_RULE_ID:
+					return "AssetUserRuleId";
 				default:
 					return base.getPropertyName(apiName);
 			}

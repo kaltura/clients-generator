@@ -83,9 +83,15 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILTER = "filter";
+		public const string PAGER = "pager";
 		#endregion
 
 		public BulkUploadFilter Filter
+		{
+			set;
+			get;
+		}
+		public FilterPager Pager
 		{
 			set;
 			get;
@@ -96,10 +102,11 @@ namespace Kaltura.Services
 		{
 		}
 
-		public BulkUploadListRequestBuilder(BulkUploadFilter filter)
+		public BulkUploadListRequestBuilder(BulkUploadFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
+			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -107,6 +114,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
+			if (!isMapped("pager"))
+				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -134,9 +143,9 @@ namespace Kaltura.Services
 			return new BulkUploadGetRequestBuilder(id);
 		}
 
-		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter = null)
+		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter = null, FilterPager pager = null)
 		{
-			return new BulkUploadListRequestBuilder(filter);
+			return new BulkUploadListRequestBuilder(filter, pager);
 		}
 	}
 }
