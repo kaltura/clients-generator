@@ -59,7 +59,7 @@ class KalturaBaseTest(unittest.TestCase):
         self.client = KalturaClient(self.config)
         self.ks = generateSessionFunction(ADMIN_SECRET, USER_NAME, 
                                              KalturaSessionType.ADMIN, PARTNER_ID, 
-                                             86400, "")
+                                             86400, "disableentitlement")
         self.client.setKs(self.ks)            
             
             
