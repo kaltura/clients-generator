@@ -36,11 +36,7 @@ namespace Kaltura.Enums
 		public static readonly ChannelEnrichment DEVICETYPE = new ChannelEnrichment("DeviceType");
 		public static readonly ChannelEnrichment UTCOFFSET = new ChannelEnrichment("UTCOffset");
 		public static readonly ChannelEnrichment LANGUAGE = new ChannelEnrichment("Language");
-		public static readonly ChannelEnrichment NPVRSUPPORT = new ChannelEnrichment("NPVRSupport");
-		public static readonly ChannelEnrichment CATCHUP = new ChannelEnrichment("Catchup");
-		public static readonly ChannelEnrichment PARENTAL = new ChannelEnrichment("Parental");
 		public static readonly ChannelEnrichment DTTREGION = new ChannelEnrichment("DTTRegion");
-		public static readonly ChannelEnrichment ATHOME = new ChannelEnrichment("AtHome");
 
 		private ChannelEnrichment(string name) : base(name) { }
 	}

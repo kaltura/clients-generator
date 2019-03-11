@@ -143,7 +143,7 @@ namespace Kaltura.Services
 			return new BulkUploadGetRequestBuilder(id);
 		}
 
-		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter = null, FilterPager pager = null)
+		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter, FilterPager pager = null)
 		{
 			return new BulkUploadListRequestBuilder(filter, pager);
 		}

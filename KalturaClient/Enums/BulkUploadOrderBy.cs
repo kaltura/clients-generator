@@ -30,7 +30,8 @@ namespace Kaltura.Enums
 	public sealed class BulkUploadOrderBy : StringEnum
 	{
 		public static readonly BulkUploadOrderBy NONE = new BulkUploadOrderBy("NONE");
-		public static readonly BulkUploadOrderBy UPDATE_DATE = new BulkUploadOrderBy("UPDATE_DATE");
+		public static readonly BulkUploadOrderBy UPDATE_DATE_ASC = new BulkUploadOrderBy("UPDATE_DATE_ASC");
+		public static readonly BulkUploadOrderBy UPDATE_DATE_DESC = new BulkUploadOrderBy("UPDATE_DATE_DESC");
 
 		private BulkUploadOrderBy(string name) : base(name) { }
 	}

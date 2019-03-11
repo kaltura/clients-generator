@@ -54,6 +54,7 @@ namespace Kaltura.Types
 		public const string PURCHASE_ID = "purchaseId";
 		public const string REMARKS = "remarks";
 		public const string BILLING_PRICE_TYPE = "billingPriceType";
+		public const string EXTERNAL_TRANSACTION_ID = "externalTransactionId";
 		#endregion
 
 		#region Private Fields
@@ -73,6 +74,7 @@ namespace Kaltura.Types
 		private int _PurchaseId = Int32.MinValue;
 		private string _Remarks = null;
 		private BillingPriceType _BillingPriceType = null;
+		private string _ExternalTransactionId = null;
 		#endregion
 
 		#region Properties
@@ -236,6 +238,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("BillingPriceType");
 			}
 		}
+		[JsonProperty]
+		public string ExternalTransactionId
+		{
+			get { return _ExternalTransactionId; }
+			private set 
+			{ 
+				_ExternalTransactionId = value;
+				OnPropertyChanged("ExternalTransactionId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -309,6 +321,10 @@ namespace Kaltura.Types
 			{
 				this._BillingPriceType = (BillingPriceType)StringEnum.Parse(typeof(BillingPriceType), node["billingPriceType"].Value<string>());
 			}
+			if(node["externalTransactionId"] != null)
+			{
+				this._ExternalTransactionId = node["externalTransactionId"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -334,6 +350,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("purchaseId", this._PurchaseId);
 			kparams.AddIfNotNull("remarks", this._Remarks);
 			kparams.AddIfNotNull("billingPriceType", this._BillingPriceType);
+			kparams.AddIfNotNull("externalTransactionId", this._ExternalTransactionId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -372,6 +389,8 @@ namespace Kaltura.Types
 					return "Remarks";
 				case BILLING_PRICE_TYPE:
 					return "BillingPriceType";
+				case EXTERNAL_TRANSACTION_ID:
+					return "ExternalTransactionId";
 				default:
 					return base.getPropertyName(apiName);
 			}
