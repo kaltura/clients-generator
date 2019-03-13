@@ -271,7 +271,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 		if(in_array($name , array("KalturaGroup")))
 		{
-			return "k".preg_replace('/^Kaltura/', '', $name);
+			return preg_replace('/^Kaltura/', '', $name) . "_";
 		}
 		
 		return preg_replace('/^Kaltura/', '', $name);
