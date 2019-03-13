@@ -44,6 +44,7 @@ namespace Kaltura.Types
 		public const string STATUS = "status";
 		public const string ERROR_CODE = "errorCode";
 		public const string ERROR_MESSAGE = "errorMessage";
+		public const string WARNINGS = "warnings";
 		#endregion
 
 		#region Private Fields
@@ -53,6 +54,7 @@ namespace Kaltura.Types
 		private BulkUploadResultStatus _Status = null;
 		private int _ErrorCode = Int32.MinValue;
 		private string _ErrorMessage = null;
+		private IList<Message> _Warnings;
 		#endregion
 
 		#region Properties
@@ -116,6 +118,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("ErrorMessage");
 			}
 		}
+		[JsonProperty]
+		public IList<Message> Warnings
+		{
+			get { return _Warnings; }
+			private set 
+			{ 
+				_Warnings = value;
+				OnPropertyChanged("Warnings");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -149,6 +161,14 @@ namespace Kaltura.Types
 			{
 				this._ErrorMessage = node["errorMessage"].Value<string>();
 			}
+			if(node["warnings"] != null)
+			{
+				this._Warnings = new List<Message>();
+				foreach(var arrayNode in node["warnings"].Children())
+				{
+					this._Warnings.Add(ObjectFactory.Create<Message>(arrayNode));
+				}
+			}
 		}
 		#endregion
 
@@ -164,6 +184,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("errorCode", this._ErrorCode);
 			kparams.AddIfNotNull("errorMessage", this._ErrorMessage);
+			kparams.AddIfNotNull("warnings", this._Warnings);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -182,6 +203,8 @@ namespace Kaltura.Types
 					return "ErrorCode";
 				case ERROR_MESSAGE:
 					return "ErrorMessage";
+				case WARNINGS:
+					return "Warnings";
 				default:
 					return base.getPropertyName(apiName);
 			}

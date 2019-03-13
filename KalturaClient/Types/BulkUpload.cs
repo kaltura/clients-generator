@@ -45,6 +45,7 @@ namespace Kaltura.Types
 		public const string NUM_OF_OBJECTS = "numOfObjects";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
+		public const string UPLOADED_BY_USER_ID = "uploadedByUserId";
 		public const string RESULTS = "results";
 		#endregion
 
@@ -56,6 +57,7 @@ namespace Kaltura.Types
 		private int _NumOfObjects = Int32.MinValue;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
+		private long _UploadedByUserId = long.MinValue;
 		private IList<BulkUploadResult> _Results;
 		#endregion
 
@@ -131,6 +133,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public long UploadedByUserId
+		{
+			get { return _UploadedByUserId; }
+			private set 
+			{ 
+				_UploadedByUserId = value;
+				OnPropertyChanged("UploadedByUserId");
+			}
+		}
+		[JsonProperty]
 		public IList<BulkUploadResult> Results
 		{
 			get { return _Results; }
@@ -177,6 +189,10 @@ namespace Kaltura.Types
 			{
 				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
 			}
+			if(node["uploadedByUserId"] != null)
+			{
+				this._UploadedByUserId = ParseLong(node["uploadedByUserId"].Value<string>());
+			}
 			if(node["results"] != null)
 			{
 				this._Results = new List<BulkUploadResult>();
@@ -201,6 +217,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("numOfObjects", this._NumOfObjects);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("uploadedByUserId", this._UploadedByUserId);
 			kparams.AddIfNotNull("results", this._Results);
 			return kparams;
 		}
@@ -222,6 +239,8 @@ namespace Kaltura.Types
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case UPLOADED_BY_USER_ID:
+					return "UploadedByUserId";
 				case RESULTS:
 					return "Results";
 				default:

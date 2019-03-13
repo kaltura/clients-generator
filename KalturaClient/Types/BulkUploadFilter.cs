@@ -38,30 +38,30 @@ namespace Kaltura.Types
 	public class BulkUploadFilter : Filter
 	{
 		#region Constants
-		public const string FILE_OBJECT_NAME_EQUAL = "fileObjectNameEqual";
+		public const string BULK_OBJECT_NAME_EQUAL = "bulkObjectNameEqual";
 		public const string CREATE_DATE_GREATER_THAN_OR_EQUAL = "createDateGreaterThanOrEqual";
-		public const string USER_ID_EQUAL_CURRENT = "userIdEqualCurrent";
-		public const string SHOULD_GET_ON_GOING_BULK_UPLOADS = "shouldGetOnGoingBulkUploads";
+		public const string UPLOADED_BY_USER_ID_EQUAL_CURRENT = "uploadedByUserIdEqualCurrent";
+		public const string STATUS_IN = "statusIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _FileObjectNameEqual = null;
+		private string _BulkObjectNameEqual = null;
 		private long _CreateDateGreaterThanOrEqual = long.MinValue;
-		private bool? _UserIdEqualCurrent = null;
-		private bool? _ShouldGetOnGoingBulkUploads = null;
+		private bool? _UploadedByUserIdEqualCurrent = null;
+		private string _StatusIn = null;
 		private BulkUploadOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string FileObjectNameEqual
+		public string BulkObjectNameEqual
 		{
-			get { return _FileObjectNameEqual; }
+			get { return _BulkObjectNameEqual; }
 			set 
 			{ 
-				_FileObjectNameEqual = value;
-				OnPropertyChanged("FileObjectNameEqual");
+				_BulkObjectNameEqual = value;
+				OnPropertyChanged("BulkObjectNameEqual");
 			}
 		}
 		[JsonProperty]
@@ -75,23 +75,23 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public bool? UserIdEqualCurrent
+		public bool? UploadedByUserIdEqualCurrent
 		{
-			get { return _UserIdEqualCurrent; }
+			get { return _UploadedByUserIdEqualCurrent; }
 			set 
 			{ 
-				_UserIdEqualCurrent = value;
-				OnPropertyChanged("UserIdEqualCurrent");
+				_UploadedByUserIdEqualCurrent = value;
+				OnPropertyChanged("UploadedByUserIdEqualCurrent");
 			}
 		}
 		[JsonProperty]
-		public bool? ShouldGetOnGoingBulkUploads
+		public string StatusIn
 		{
-			get { return _ShouldGetOnGoingBulkUploads; }
+			get { return _StatusIn; }
 			set 
 			{ 
-				_ShouldGetOnGoingBulkUploads = value;
-				OnPropertyChanged("ShouldGetOnGoingBulkUploads");
+				_StatusIn = value;
+				OnPropertyChanged("StatusIn");
 			}
 		}
 		[JsonProperty]
@@ -113,21 +113,21 @@ namespace Kaltura.Types
 
 		public BulkUploadFilter(JToken node) : base(node)
 		{
-			if(node["fileObjectNameEqual"] != null)
+			if(node["bulkObjectNameEqual"] != null)
 			{
-				this._FileObjectNameEqual = node["fileObjectNameEqual"].Value<string>();
+				this._BulkObjectNameEqual = node["bulkObjectNameEqual"].Value<string>();
 			}
 			if(node["createDateGreaterThanOrEqual"] != null)
 			{
 				this._CreateDateGreaterThanOrEqual = ParseLong(node["createDateGreaterThanOrEqual"].Value<string>());
 			}
-			if(node["userIdEqualCurrent"] != null)
+			if(node["uploadedByUserIdEqualCurrent"] != null)
 			{
-				this._UserIdEqualCurrent = ParseBool(node["userIdEqualCurrent"].Value<string>());
+				this._UploadedByUserIdEqualCurrent = ParseBool(node["uploadedByUserIdEqualCurrent"].Value<string>());
 			}
-			if(node["shouldGetOnGoingBulkUploads"] != null)
+			if(node["statusIn"] != null)
 			{
-				this._ShouldGetOnGoingBulkUploads = ParseBool(node["shouldGetOnGoingBulkUploads"].Value<string>());
+				this._StatusIn = node["statusIn"].Value<string>();
 			}
 			if(node["orderBy"] != null)
 			{
@@ -142,10 +142,10 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBulkUploadFilter");
-			kparams.AddIfNotNull("fileObjectNameEqual", this._FileObjectNameEqual);
+			kparams.AddIfNotNull("bulkObjectNameEqual", this._BulkObjectNameEqual);
 			kparams.AddIfNotNull("createDateGreaterThanOrEqual", this._CreateDateGreaterThanOrEqual);
-			kparams.AddIfNotNull("userIdEqualCurrent", this._UserIdEqualCurrent);
-			kparams.AddIfNotNull("shouldGetOnGoingBulkUploads", this._ShouldGetOnGoingBulkUploads);
+			kparams.AddIfNotNull("uploadedByUserIdEqualCurrent", this._UploadedByUserIdEqualCurrent);
+			kparams.AddIfNotNull("statusIn", this._StatusIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -153,14 +153,14 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case FILE_OBJECT_NAME_EQUAL:
-					return "FileObjectNameEqual";
+				case BULK_OBJECT_NAME_EQUAL:
+					return "BulkObjectNameEqual";
 				case CREATE_DATE_GREATER_THAN_OR_EQUAL:
 					return "CreateDateGreaterThanOrEqual";
-				case USER_ID_EQUAL_CURRENT:
-					return "UserIdEqualCurrent";
-				case SHOULD_GET_ON_GOING_BULK_UPLOADS:
-					return "ShouldGetOnGoingBulkUploads";
+				case UPLOADED_BY_USER_ID_EQUAL_CURRENT:
+					return "UploadedByUserIdEqualCurrent";
+				case STATUS_IN:
+					return "StatusIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
