@@ -38,7 +38,7 @@ namespace Kaltura.Types
 	public class BulkUploadFilter : Filter
 	{
 		#region Constants
-		public const string BULK_OBJECT_NAME_EQUAL = "bulkObjectNameEqual";
+		public const string BULK_OBJECT_TYPE_EQUAL = "bulkObjectTypeEqual";
 		public const string CREATE_DATE_GREATER_THAN_OR_EQUAL = "createDateGreaterThanOrEqual";
 		public const string UPLOADED_BY_USER_ID_EQUAL_CURRENT = "uploadedByUserIdEqualCurrent";
 		public const string STATUS_IN = "statusIn";
@@ -46,7 +46,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private string _BulkObjectNameEqual = null;
+		private string _BulkObjectTypeEqual = null;
 		private long _CreateDateGreaterThanOrEqual = long.MinValue;
 		private bool? _UploadedByUserIdEqualCurrent = null;
 		private string _StatusIn = null;
@@ -55,13 +55,13 @@ namespace Kaltura.Types
 
 		#region Properties
 		[JsonProperty]
-		public string BulkObjectNameEqual
+		public string BulkObjectTypeEqual
 		{
-			get { return _BulkObjectNameEqual; }
+			get { return _BulkObjectTypeEqual; }
 			set 
 			{ 
-				_BulkObjectNameEqual = value;
-				OnPropertyChanged("BulkObjectNameEqual");
+				_BulkObjectTypeEqual = value;
+				OnPropertyChanged("BulkObjectTypeEqual");
 			}
 		}
 		[JsonProperty]
@@ -113,9 +113,9 @@ namespace Kaltura.Types
 
 		public BulkUploadFilter(JToken node) : base(node)
 		{
-			if(node["bulkObjectNameEqual"] != null)
+			if(node["bulkObjectTypeEqual"] != null)
 			{
-				this._BulkObjectNameEqual = node["bulkObjectNameEqual"].Value<string>();
+				this._BulkObjectTypeEqual = node["bulkObjectTypeEqual"].Value<string>();
 			}
 			if(node["createDateGreaterThanOrEqual"] != null)
 			{
@@ -142,7 +142,7 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBulkUploadFilter");
-			kparams.AddIfNotNull("bulkObjectNameEqual", this._BulkObjectNameEqual);
+			kparams.AddIfNotNull("bulkObjectTypeEqual", this._BulkObjectTypeEqual);
 			kparams.AddIfNotNull("createDateGreaterThanOrEqual", this._CreateDateGreaterThanOrEqual);
 			kparams.AddIfNotNull("uploadedByUserIdEqualCurrent", this._UploadedByUserIdEqualCurrent);
 			kparams.AddIfNotNull("statusIn", this._StatusIn);
@@ -153,8 +153,8 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case BULK_OBJECT_NAME_EQUAL:
-					return "BulkObjectNameEqual";
+				case BULK_OBJECT_TYPE_EQUAL:
+					return "BulkObjectTypeEqual";
 				case CREATE_DATE_GREATER_THAN_OR_EQUAL:
 					return "CreateDateGreaterThanOrEqual";
 				case UPLOADED_BY_USER_ID_EQUAL_CURRENT:
