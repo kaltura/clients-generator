@@ -268,8 +268,14 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			$arrayType = $this->getListResponseType($name);
 			return "ListResponse<$arrayType>";
 		}
+
+		$name =  preg_replace('/^Kaltura/', '', $name);
+		if(in_array($name , array("Group")))
+		{
+			return $name . "_";
+		}
 		
-		return preg_replace('/^Kaltura/', '', $name);
+		return $name;
 	}
 
 	function writeClass(DOMElement $classNode)
