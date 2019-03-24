@@ -46,7 +46,7 @@ function getPaths(file) {
 				else {
 					gitClone(repo)
 					.then(() => gitCheckout(generatedPath, gitPath, true))
-					.then(() => gitPush(gitPath))
+					.then(() => gitPull(gitPath))
 					.then(() => {
 						resolve({
 							generatedPath: generatedPath, 
