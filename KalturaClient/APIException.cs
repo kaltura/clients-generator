@@ -174,6 +174,7 @@ namespace Kaltura
 		public static string AssetStructSystemNameAlreadyInUse = "4027";
 		public static string MetaIdsDoesNotExist = "4031";
 		public static string AssetStructDoesNotExist = "4028";
+		public static string AssetStructMetasConatinSystemNameDuplication = "4085";
 		public static string CanNotChangePredefinedAssetStructSystemName = "4029";
 		public static string CanNotDeletePredefinedAssetStruct = "4030";
 		public static string MetaSystemNameAlreadyInUse = "4032";
@@ -222,7 +223,7 @@ namespace Kaltura
 		public static string ChannelMetaOrderByIsInvalid = "4061";
 		public static string AccountIsNotOpcSupported = "4074";
 		public static string CanNotDeleteParentAssetStruct = "4072";
-		public static string InvalidBulkUploadStructure = "4085";
+		public static string InvalidBulkUploadStructure = "4086";
 		public static string BulkUploadDoesNotExist = "4082";
 		public static string BulkUploadResultIsMissing = "4083";
 		public static string NoPinDefined = "5001";
@@ -365,6 +366,9 @@ namespace Kaltura
 		public static string MissingExternalIdentifier = "11001";
 		public static string UnknownIngestType = "11002";
 		public static string EPGSProgramDatesError = "11003";
+		public static string IngestProfileNotExists = "5048";
+		public static string IngestProfileIdRequired = "5060";
+		public static string NoIngestProfileToInsert = "5049";
 		public static string BadRequest = "500003";
 		public static string InvalidVersion = "500057";
 		public static string ServiceForbidden = "500004";
