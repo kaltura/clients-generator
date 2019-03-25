@@ -409,6 +409,7 @@ namespace Kaltura
 		public static string InvalidArgumentValue = "500067";
 		public static string OneOfArgumentsCannotBeEmpty = "500081";
 		public static string TypeNotSupported = "500083";
+		public static string FormatNotSupported = "500084";
 		public static string MediaIdsMustBeNumeric = "500029";
 		public static string EpgInternalIdsMustBeNumeric = "500030";
 		public static string ListTypeCannotBeEmptyOrAll = "500032";
