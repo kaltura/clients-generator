@@ -35,24 +35,40 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BulkUploadXmlJobData : BulkUploadJobData
+	public class BulkUploadIngestJobData : BulkUploadJobData
 	{
 		#region Constants
+		public const string INGEST_PROFILE_ID = "ingestProfileId";
 		#endregion
 
 		#region Private Fields
+		private int _IngestProfileId = Int32.MinValue;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public int IngestProfileId
+		{
+			get { return _IngestProfileId; }
+			set 
+			{ 
+				_IngestProfileId = value;
+				OnPropertyChanged("IngestProfileId");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public BulkUploadXmlJobData()
+		public BulkUploadIngestJobData()
 		{
 		}
 
-		public BulkUploadXmlJobData(JToken node) : base(node)
+		public BulkUploadIngestJobData(JToken node) : base(node)
 		{
+			if(node["ingestProfileId"] != null)
+			{
+				this._IngestProfileId = ParseInt(node["ingestProfileId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -61,13 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBulkUploadXmlJobData");
+				kparams.AddReplace("objectType", "KalturaBulkUploadIngestJobData");
+			kparams.AddIfNotNull("ingestProfileId", this._IngestProfileId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case INGEST_PROFILE_ID:
+					return "IngestProfileId";
 				default:
 					return base.getPropertyName(apiName);
 			}
