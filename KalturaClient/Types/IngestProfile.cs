@@ -55,7 +55,7 @@ namespace Kaltura.Types
 		private string _ExternalId = null;
 		private int _AssetTypeId = Int32.MinValue;
 		private string _TransformationAdapterUrl = null;
-		private string _TransformationAdapterSettings = null;
+		private IDictionary<string, StringValue> _TransformationAdapterSettings;
 		private string _TransformationAdapterSharedSecret = null;
 		private int _DefaultAutoFillPolicy = Int32.MinValue;
 		private int _DefaultOverlapPolicy = Int32.MinValue;
@@ -113,7 +113,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public string TransformationAdapterSettings
+		public IDictionary<string, StringValue> TransformationAdapterSettings
 		{
 			get { return _TransformationAdapterSettings; }
 			set 
@@ -183,7 +183,15 @@ namespace Kaltura.Types
 			}
 			if(node["transformationAdapterSettings"] != null)
 			{
-				this._TransformationAdapterSettings = node["transformationAdapterSettings"].Value<string>();
+				{
+					string key;
+					this._TransformationAdapterSettings = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["transformationAdapterSettings"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._TransformationAdapterSettings[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
 			}
 			if(node["transformationAdapterSharedSecret"] != null)
 			{
