@@ -45,6 +45,7 @@ TEST_CAT_NAM='testme'+$RANDOM
 CAT_ID=`kalcli -x category add category:objectType=KalturaCategory category:name=$TEST_CAT_NAM  ks=$KS|awk '$1 == "id" {print $2}'`
 report "category->add()" $?
 if [ $RC -eq 0 ];then
+    sleep 5
     TOTALC=`kalcli -x category list filter:objectType=KalturaCategoryFilter filter:fullNameEqual=$TEST_CAT_NAM ks=$KS|awk '$1 == "totalCount" {print $2}'`
     if [ $TOTALC -eq 1 ];then
 	report "category->list()" 0

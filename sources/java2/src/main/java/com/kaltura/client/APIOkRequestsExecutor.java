@@ -17,9 +17,17 @@ import java.util.concurrent.TimeUnit;
 // for Proxy support
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -158,6 +166,32 @@ public class APIOkRequestsExecutor implements RequestQueue {
 			return true;
 		}
 	};
+	protected static final TrustManager[] trustAllCerts = new TrustManager[] {
+	    new X509TrustManager() {
+	        @Override
+	        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+	        }
+
+	        @Override
+	        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+	        }
+
+	        @Override
+	        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+	          return new java.security.cert.X509Certificate[]{};
+	        }
+	    }
+	};
+	protected static final SSLContext trustAllSslContext;
+	static {
+	    try {
+	        trustAllSslContext = SSLContext.getInstance("SSL");
+	        trustAllSslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+	    } catch (NoSuchAlgorithmException | KeyManagementException e) {
+	        throw new RuntimeException(e);
+	    }
+	}
+	protected static final SSLSocketFactory trustAllSslSocketFactory = trustAllSslContext.getSocketFactory();
 
     public static APIOkRequestsExecutor getExecutor() {
         if (self == null) {
@@ -208,6 +242,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
                 
         if(config.getIgnoreSslDomainVerification()) {
         	builder.hostnameVerifier(hostnameVerifier);
+        	builder.sslSocketFactory(trustAllSslSocketFactory, (X509TrustManager)trustAllCerts[0]);
         }
 	if (config.getProxy() != null && config.getProxyPort() != 0){
 		logger.debug("Proxy host is: " + config.getProxy());
