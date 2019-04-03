@@ -14,51 +14,58 @@ import { environment } from '../environment';
 
 export class KalturaRequestAdapter {
 
-    constructor(private _http: HttpClient) {
+  constructor(private _http: HttpClient) {
+  }
+
+  public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): Observable<T>;
+  public transmit<T>(request: KalturaRequest<any>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions, format: string): Observable<any>;
+  public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions, format?: string): Observable<T> {
+
+    const requestSpecificFormat = typeof format !== 'undefined';
+    const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
+
+    const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
+    delete parameters['service'];
+    delete parameters['action'];
+
+    if (environment.request.avoidQueryString) {
+      parameters['clientTag'] = createClientTag(request, clientOptions);
     }
 
-    public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): Observable<T> {
+    if (requestSpecificFormat) {
+      parameters['format'] = requestSpecificFormat;
+    }
 
-        const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-        const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
-        delete parameters['service'];
-        delete parameters['action'];
-
-        if (environment.request.avoidQueryString) {
-          parameters['clientTag'] = createClientTag(request, clientOptions);
+    return this._http.request('post', endpointUrl,
+      {
+        body: parameters,
+        headers: requestSpecificFormat ? undefined : getHeaders()
+      }).pipe(
+      catchError(
+        error => {
+          const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
+          throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
         }
+      ),
+      map(
+        result => {
+          try {
+            const response = request.handleResponse(result, requestSpecificFormat);
 
-
-        return this._http.request('post', endpointUrl,
-            {
-                body: parameters,
-                headers: getHeaders()
-            }).pipe(
-            catchError(
-                error => {
-                    const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-                    throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
-                }
-            ),
-            map(
-                result => {
-                    try {
-                        const response = request.handleResponse(result);
-
-                        if (response.error) {
-                            throw response.error;
-                        } else {
-                            return response.result;
-                        }
-                    } catch (error) {
-                        if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
-                            throw error;
-                        } else {
-                            const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-                            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response');
-                        }
-                    }
-                }));
-    }
+            if (response.error) {
+              throw response.error;
+            } else {
+              return response.result;
+            }
+          } catch (error) {
+            if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
+              throw error;
+            } else {
+              const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
+              throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response');
+            }
+          }
+        }));
+  }
 }

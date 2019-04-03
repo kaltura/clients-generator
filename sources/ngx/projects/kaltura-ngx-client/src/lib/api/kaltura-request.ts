@@ -47,61 +47,80 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
         return response;
     }
 
-    handleResponse(response: any): KalturaResponse<T> {
-        let responseResult: any;
-        let responseError: any;
+  parseServerResponse(response: any, returnRawResponse: boolean): { status: boolean, response: any} {
+    try {
 
+      const unwrappedResponse = this._unwrapResponse(response);
+
+      if (!unwrappedResponse) {
+        return {
+          status: false,
+          response: new KalturaAPIException(`server response is undefined, expected '${this.responseType} / ${this.responseSubType}'`, 'client::response_type_error', null)
+        };
+      }
+
+      if (unwrappedResponse instanceof KalturaAPIException) {
+        // handle situation when multi request propagated actual api exception object.
+        return { status: false, response: unwrappedResponse};
+      }
+
+      if (unwrappedResponse.objectType === 'KalturaAPIException') {
+        return { status: false,
+          response: new KalturaAPIException(
+          unwrappedResponse.message,
+          unwrappedResponse.code,
+          unwrappedResponse.args
+        )};
+      }
+
+      if (returnRawResponse) {
+        return { status: true, response: unwrappedResponse};
+      }
+
+      const parsedResponse = super._parseResponseProperty(
+        "",
+        {
+          type: this.responseType,
+          subType: this.responseSubType
+        },
+        unwrappedResponse
+      );
+
+      if (!parsedResponse && this.responseType !== 'v') {
+        return {
+          status: false,
+        response: new KalturaAPIException(`server response is undefined, expected '${this.responseType} / ${this.responseSubType}'`, 'client::response_type_error', null)
+        };
+      }
+
+      return { status: true, response: parsedResponse};
+    } catch (ex) {
+      return {
+        status: false,
+        response: new KalturaAPIException(ex.message, 'client::general_error', null)
+      };
+    }
+  }
+
+    handleResponse(response: any, returnRawResponse: boolean = false): KalturaResponse<T> {
+      let responseResult: any;
+      let responseError: any;
+
+      let parsedResponse = this.parseServerResponse(response, returnRawResponse);
+
+      const result = parsedResponse.status ?
+        new KalturaResponse<T>(parsedResponse.response, null) :
+        new KalturaResponse<T>(null, parsedResponse.response);
+
+      if (this.callback) {
         try {
-            const unwrappedResponse = this._unwrapResponse(response);
-            let responseObject = null;
-
-            if (unwrappedResponse) {
-                if (unwrappedResponse instanceof KalturaAPIException)
-                {
-                    // handle situation when multi request propagated actual api exception object.
-                    responseObject = unwrappedResponse;
-                }else if (unwrappedResponse.objectType === 'KalturaAPIException') {
-                    responseObject = new KalturaAPIException(
-                        unwrappedResponse.message,
-                        unwrappedResponse.code,
-                        unwrappedResponse.args
-                    );
-                } else {
-                    responseObject = super._parseResponseProperty(
-                        "",
-                        {
-                            type: this.responseType,
-                            subType: this.responseSubType
-                        },
-                        unwrappedResponse
-                    );
-                }
-            }
-
-            if (!responseObject && this.responseType !== 'v') {
-                responseError = new KalturaAPIException(`server response is undefined, expected '${this.responseType} / ${this.responseSubType}'`, 'client::response_type_error', null);
-            } else if (responseObject instanceof KalturaAPIException) {
-                // got exception from library
-                responseError = responseObject;
-            }else {
-                responseResult = responseObject;
-            }
+          this.callback(result);
         } catch (ex) {
-            responseError = new KalturaAPIException(ex.message, 'client::general_error', null);
+          // do nothing by design
         }
+      }
 
-
-        const result = new KalturaResponse<T>(responseResult, responseError);
-
-        if (this.callback) {
-            try {
-                this.callback(result);
-            } catch (ex) {
-                // do nothing by design
-            }
-        }
-
-        return result;
+      return result;
     }
 
     setRequestOptions(optionArgs: KalturaRequestOptionsArgs): this;

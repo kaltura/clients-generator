@@ -82,14 +82,22 @@ export class KalturaClient {
         return null;
     }
 
+
+
+
     public request<T>(request: KalturaRequest<T>): Observable<T>;
     public request<T>(request: KalturaFileRequest): Observable<{ url: string }>;
-    public request<T>(request: KalturaRequest<T> | KalturaFileRequest): Observable<T | { url: string }> {
+    public request<T>(request: KalturaRequest<any>, format: string): Observable<any>;
+    public request<T>(request: KalturaRequest<T> | KalturaFileRequest, format?: string): Observable<T | { url: string }> {
 
         const optionsViolationError = this._validateOptions();
 
         if (optionsViolationError) {
             return observableThrowError(optionsViolationError);
+        }
+
+        if (typeof format !== 'undefined') {
+          return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions, format);
         }
 
         if (request instanceof KalturaFileRequest) {
