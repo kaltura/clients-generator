@@ -180,9 +180,15 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
     }
     
     protected APIException generateErrorResponse(ResponseElement response) {
-    	APIException exception = new APIException(response.getError().getMessage());
-    	exception.setCode(String.valueOf(response.getError().getCode()));
-    	return exception;
+    	if(response.getError() != null) {
+            APIException exception = new APIException(response.getError().getMessage());
+            exception.setCode(String.valueOf(response.getError().getCode()));
+            return exception;
+        } else {
+            APIException exception = new APIException(response.getResponse());
+            exception.setCode(String.valueOf(-1));
+            return exception;
+        }
     }
     
     public RequestElement<ReturnedType> build(final Client client, boolean addSignature) {
