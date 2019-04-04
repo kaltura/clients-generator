@@ -39,10 +39,12 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string KS = "ks";
+		public const string EXPIRATION = "expiration";
 		#endregion
 
 		#region Private Fields
 		private string _Ks = null;
+		private long _Expiration = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -54,6 +56,16 @@ namespace Kaltura.Types
 			{ 
 				_Ks = value;
 				OnPropertyChanged("Ks");
+			}
+		}
+		[JsonProperty]
+		public long Expiration
+		{
+			get { return _Expiration; }
+			set 
+			{ 
+				_Expiration = value;
+				OnPropertyChanged("Expiration");
 			}
 		}
 		#endregion
@@ -69,6 +81,10 @@ namespace Kaltura.Types
 			{
 				this._Ks = node["ks"].Value<string>();
 			}
+			if(node["expiration"] != null)
+			{
+				this._Expiration = ParseLong(node["expiration"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -79,6 +95,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaLoginSession");
 			kparams.AddIfNotNull("ks", this._Ks);
+			kparams.AddIfNotNull("expiration", this._Expiration);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -87,6 +104,8 @@ namespace Kaltura.Types
 			{
 				case KS:
 					return "Ks";
+				case EXPIRATION:
+					return "Expiration";
 				default:
 					return base.getPropertyName(apiName);
 			}
