@@ -42,7 +42,7 @@ namespace Kaltura.Types
 		public const string INDEX = "index";
 		public const string BULK_UPLOAD_ID = "bulkUploadId";
 		public const string STATUS = "status";
-		public const string ERROR = "error";
+		public const string ERRORS = "errors";
 		public const string WARNINGS = "warnings";
 		#endregion
 
@@ -51,7 +51,7 @@ namespace Kaltura.Types
 		private int _Index = Int32.MinValue;
 		private long _BulkUploadId = long.MinValue;
 		private BulkUploadResultStatus _Status = null;
-		private Message _Error;
+		private IList<Message> _Errors;
 		private IList<Message> _Warnings;
 		#endregion
 
@@ -97,13 +97,13 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public Message Error
+		public IList<Message> Errors
 		{
-			get { return _Error; }
+			get { return _Errors; }
 			private set 
 			{ 
-				_Error = value;
-				OnPropertyChanged("Error");
+				_Errors = value;
+				OnPropertyChanged("Errors");
 			}
 		}
 		[JsonProperty]
@@ -141,9 +141,13 @@ namespace Kaltura.Types
 			{
 				this._Status = (BulkUploadResultStatus)StringEnum.Parse(typeof(BulkUploadResultStatus), node["status"].Value<string>());
 			}
-			if(node["error"] != null)
+			if(node["errors"] != null)
 			{
-				this._Error = ObjectFactory.Create<Message>(node["error"]);
+				this._Errors = new List<Message>();
+				foreach(var arrayNode in node["errors"].Children())
+				{
+					this._Errors.Add(ObjectFactory.Create<Message>(arrayNode));
+				}
 			}
 			if(node["warnings"] != null)
 			{
@@ -166,7 +170,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("index", this._Index);
 			kparams.AddIfNotNull("bulkUploadId", this._BulkUploadId);
 			kparams.AddIfNotNull("status", this._Status);
-			kparams.AddIfNotNull("error", this._Error);
+			kparams.AddIfNotNull("errors", this._Errors);
 			kparams.AddIfNotNull("warnings", this._Warnings);
 			return kparams;
 		}
@@ -182,8 +186,8 @@ namespace Kaltura.Types
 					return "BulkUploadId";
 				case STATUS:
 					return "Status";
-				case ERROR:
-					return "Error";
+				case ERRORS:
+					return "Errors";
 				case WARNINGS:
 					return "Warnings";
 				default:
