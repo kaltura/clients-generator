@@ -24,7 +24,8 @@ export class KalturaRequestAdapter {
     const requestSpecificFormat = typeof format !== 'undefined';
     const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-    const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
+    const endpointOptions = { ...clientOptions, service: parameters['service'], action:  parameters['action'], format };
+    const endpointUrl = createEndpoint(request, endpointOptions);
     delete parameters['service'];
     delete parameters['action'];
 
@@ -32,14 +33,10 @@ export class KalturaRequestAdapter {
       parameters['clientTag'] = createClientTag(request, clientOptions);
     }
 
-    if (requestSpecificFormat) {
-      parameters['format'] = requestSpecificFormat;
-    }
-
-
     return this._http.request('post', endpointUrl,
       {
         body: parameters,
+        responseType: requestSpecificFormat ? 'text' : 'json',
         headers: requestSpecificFormat ? undefined : getHeaders()
       }).pipe(
       catchError(
@@ -59,6 +56,8 @@ export class KalturaRequestAdapter {
               return response.result;
             }
           } catch (error) {
+
+
             if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
               throw error;
             } else {

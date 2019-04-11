@@ -40,8 +40,7 @@ describe("Kaltura File request", () => {
           asyncAssert(() => {
             expect(result).toBeDefined();
             expect(result.url).toBeDefined();
-            expect(result.url).toBe(`https://www.kaltura.com/api_v3/service/thumbasset/action/serve?clientTag=ngx-tests&ks=ks123&thumbAssetId=1_ep9epsxy&apiVersion=${environment.request.apiVersion}&format=1`);
-
+            expect(result.url).toBe(`https://www.kaltura.com/api_v3/service/thumbasset/action/serve?format=1&clientTag=ngx-tests&ks=ks123&thumbAssetId=1_ep9epsxy&apiVersion=${environment.request.apiVersion}`);
           });
 
           done();

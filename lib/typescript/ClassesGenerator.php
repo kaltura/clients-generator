@@ -31,13 +31,31 @@ class ClassesGenerator extends TypescriptGeneratorBase
             $result[] = $this->createClassFile($class);
         }
 
+        $result[] = $this->createClientServiceFile();
         $result[] = $this->createRequestOptionsFile();
         $result[] = $this->createEnvironmentsFile();
+
+		$result = array_filter($result);
 
         return $result;
     }
 
 
+  function createClientServiceFile()
+    {
+        $isAngularFramework = $this->framework === 'ngx';
+        if (!$isAngularFramework) {
+            return null;
+        }
+
+        $fileContent = file_get_contents(__DIR__ . "/ngx-templates/kaltura-client.service.template.ts");
+        $fileContent = str_replace("_FORMAT_TYPES_TOKEN_", "KalturaResponseType", $fileContent);
+
+        $file = new GeneratedFileData();
+        $file->path = "../kaltura-client.service.ts";
+        $file->content = $fileContent;
+        return $file;
+    }
 
     function createRequestOptionsFile()
     {
@@ -97,7 +115,6 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
         $file = new GeneratedFileData();
         $file->path = "kaltura-request-options.ts";
         $file->content = $fileContent;
-        $result[] = $file;
         return $file;
     }
 
@@ -131,7 +148,6 @@ export const environment: Environment = {
 	    $file = new GeneratedFileData();
 	    $file->path = "../environment.ts";
 	    $file->content = $fileContent;
-	    $result[] = $file;
 	    return $file;
 	}
 

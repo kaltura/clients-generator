@@ -163,7 +163,8 @@ export class KalturaUploadRequestAdapter {
         console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
       }
 
-      let endpointUrl = createEndpoint(request, this.clientOptions, parameters['service'], parameters['action']);
+      const endpointOptions = { ...this.clientOptions, service: parameters['service'], action:  parameters['action'] }
+      let endpointUrl = createEndpoint(request, endpointOptions);
       delete parameters['service'];
       delete parameters['action'];
 
