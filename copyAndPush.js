@@ -45,8 +45,6 @@ function getPaths(file) {
 				}
 				else {
 					gitClone(repo)
-					.then(() => gitCheckout(generatedPath, gitPath, true))
-					.then(() => gitPull(generatedPath, gitPath))
 					.then(() => {
 						resolve({
 							generatedPath: generatedPath, 
@@ -82,7 +80,7 @@ function execWithPomise(command, cwd, resolveData) {
 
 function gitClone(repo) {
 	console.log(`Cloning git repo ${repo}, branch ${branch}`);
-	return execWithPomise(`${git} clone https://${token}@github.com/kaltura/${repo}`, branchPath);
+	return execWithPomise(`${git} clone --barnch ${branch} https://${token}@github.com/kaltura/${repo}`, branchPath);
 }
 
 function gitCheckout(generatedPath, gitPath, isNew) {
