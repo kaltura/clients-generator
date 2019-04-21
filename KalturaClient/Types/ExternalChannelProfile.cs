@@ -46,6 +46,7 @@ namespace Kaltura.Types
 		public const string RECOMMENDATION_ENGINE_ID = "recommendationEngineId";
 		public const string ENRICHMENTS = "enrichments";
 		public const string ASSET_USER_RULE_ID = "assetUserRuleId";
+		public const string META_DATA = "metaData";
 		#endregion
 
 		#region Private Fields
@@ -57,6 +58,7 @@ namespace Kaltura.Types
 		private int _RecommendationEngineId = Int32.MinValue;
 		private IList<ChannelEnrichmentHolder> _Enrichments;
 		private long _AssetUserRuleId = long.MinValue;
+		private IDictionary<string, StringValue> _MetaData;
 		#endregion
 
 		#region Properties
@@ -140,6 +142,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetUserRuleId");
 			}
 		}
+		[JsonProperty]
+		public IDictionary<string, StringValue> MetaData
+		{
+			get { return _MetaData; }
+			set 
+			{ 
+				_MetaData = value;
+				OnPropertyChanged("MetaData");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -185,6 +197,18 @@ namespace Kaltura.Types
 			{
 				this._AssetUserRuleId = ParseLong(node["assetUserRuleId"].Value<string>());
 			}
+			if(node["metaData"] != null)
+			{
+				{
+					string key;
+					this._MetaData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["metaData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._MetaData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
+			}
 		}
 		#endregion
 
@@ -202,6 +226,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("recommendationEngineId", this._RecommendationEngineId);
 			kparams.AddIfNotNull("enrichments", this._Enrichments);
 			kparams.AddIfNotNull("assetUserRuleId", this._AssetUserRuleId);
+			kparams.AddIfNotNull("metaData", this._MetaData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -224,6 +249,8 @@ namespace Kaltura.Types
 					return "Enrichments";
 				case ASSET_USER_RULE_ID:
 					return "AssetUserRuleId";
+				case META_DATA:
+					return "MetaData";
 				default:
 					return base.getPropertyName(apiName);
 			}

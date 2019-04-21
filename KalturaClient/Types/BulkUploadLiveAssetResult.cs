@@ -35,55 +35,75 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class LoginSession : ObjectBase
+	public class BulkUploadLiveAssetResult : BulkUploadResult
 	{
 		#region Constants
-		public const string KS = "ks";
-		public const string EXPIRY = "expiry";
+		public const string ID = "id";
+		public const string EXTERNAL_EPG_INGEST_ID = "externalEpgIngestId";
+		public const string PROGRAMS = "programs";
 		#endregion
 
 		#region Private Fields
-		private string _Ks = null;
-		private long _Expiry = long.MinValue;
+		private int _Id = Int32.MinValue;
+		private string _ExternalEpgIngestId = null;
+		private IList<BulkUploadProgramAssetResult> _Programs;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string Ks
+		public int Id
 		{
-			get { return _Ks; }
-			set 
+			get { return _Id; }
+			private set 
 			{ 
-				_Ks = value;
-				OnPropertyChanged("Ks");
+				_Id = value;
+				OnPropertyChanged("Id");
 			}
 		}
 		[JsonProperty]
-		public long Expiry
+		public string ExternalEpgIngestId
 		{
-			get { return _Expiry; }
-			set 
+			get { return _ExternalEpgIngestId; }
+			private set 
 			{ 
-				_Expiry = value;
-				OnPropertyChanged("Expiry");
+				_ExternalEpgIngestId = value;
+				OnPropertyChanged("ExternalEpgIngestId");
+			}
+		}
+		[JsonProperty]
+		public IList<BulkUploadProgramAssetResult> Programs
+		{
+			get { return _Programs; }
+			private set 
+			{ 
+				_Programs = value;
+				OnPropertyChanged("Programs");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public LoginSession()
+		public BulkUploadLiveAssetResult()
 		{
 		}
 
-		public LoginSession(JToken node) : base(node)
+		public BulkUploadLiveAssetResult(JToken node) : base(node)
 		{
-			if(node["ks"] != null)
+			if(node["id"] != null)
 			{
-				this._Ks = node["ks"].Value<string>();
+				this._Id = ParseInt(node["id"].Value<string>());
 			}
-			if(node["expiry"] != null)
+			if(node["externalEpgIngestId"] != null)
 			{
-				this._Expiry = ParseLong(node["expiry"].Value<string>());
+				this._ExternalEpgIngestId = node["externalEpgIngestId"].Value<string>();
+			}
+			if(node["programs"] != null)
+			{
+				this._Programs = new List<BulkUploadProgramAssetResult>();
+				foreach(var arrayNode in node["programs"].Children())
+				{
+					this._Programs.Add(ObjectFactory.Create<BulkUploadProgramAssetResult>(arrayNode));
+				}
 			}
 		}
 		#endregion
@@ -93,19 +113,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaLoginSession");
-			kparams.AddIfNotNull("ks", this._Ks);
-			kparams.AddIfNotNull("expiry", this._Expiry);
+				kparams.AddReplace("objectType", "KalturaBulkUploadLiveAssetResult");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("externalEpgIngestId", this._ExternalEpgIngestId);
+			kparams.AddIfNotNull("programs", this._Programs);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case KS:
-					return "Ks";
-				case EXPIRY:
-					return "Expiry";
+				case ID:
+					return "Id";
+				case EXTERNAL_EPG_INGEST_ID:
+					return "ExternalEpgIngestId";
+				case PROGRAMS:
+					return "Programs";
 				default:
 					return base.getPropertyName(apiName);
 			}

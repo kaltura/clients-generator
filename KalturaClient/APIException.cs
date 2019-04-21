@@ -369,6 +369,7 @@ namespace Kaltura
 		public static string IngestProfileNotExists = "5048";
 		public static string IngestProfileIdRequired = "5060";
 		public static string NoIngestProfileToInsert = "5049";
+		public static string EPGLanguageNotFound = "11004";
 		public static string BadRequest = "500003";
 		public static string InvalidVersion = "500057";
 		public static string ServiceForbidden = "500004";

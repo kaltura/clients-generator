@@ -57,8 +57,8 @@ namespace Kaltura.Types
 		private string _TransformationAdapterUrl = null;
 		private IDictionary<string, StringValue> _TransformationAdapterSettings;
 		private string _TransformationAdapterSharedSecret = null;
-		private int _DefaultAutoFillPolicy = Int32.MinValue;
-		private int _DefaultOverlapPolicy = Int32.MinValue;
+		private IngestProfileAutofillPolicy _DefaultAutoFillPolicy = null;
+		private IngestProfileOverlapPolicy _DefaultOverlapPolicy = null;
 		#endregion
 
 		#region Properties
@@ -133,7 +133,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public int DefaultAutoFillPolicy
+		public IngestProfileAutofillPolicy DefaultAutoFillPolicy
 		{
 			get { return _DefaultAutoFillPolicy; }
 			set 
@@ -143,7 +143,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public int DefaultOverlapPolicy
+		public IngestProfileOverlapPolicy DefaultOverlapPolicy
 		{
 			get { return _DefaultOverlapPolicy; }
 			set 
@@ -199,11 +199,11 @@ namespace Kaltura.Types
 			}
 			if(node["defaultAutoFillPolicy"] != null)
 			{
-				this._DefaultAutoFillPolicy = ParseInt(node["defaultAutoFillPolicy"].Value<string>());
+				this._DefaultAutoFillPolicy = (IngestProfileAutofillPolicy)StringEnum.Parse(typeof(IngestProfileAutofillPolicy), node["defaultAutoFillPolicy"].Value<string>());
 			}
 			if(node["defaultOverlapPolicy"] != null)
 			{
-				this._DefaultOverlapPolicy = ParseInt(node["defaultOverlapPolicy"].Value<string>());
+				this._DefaultOverlapPolicy = (IngestProfileOverlapPolicy)StringEnum.Parse(typeof(IngestProfileOverlapPolicy), node["defaultOverlapPolicy"].Value<string>());
 			}
 		}
 		#endregion

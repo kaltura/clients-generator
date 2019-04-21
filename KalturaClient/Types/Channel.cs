@@ -51,6 +51,7 @@ namespace Kaltura.Types
 		public const string UPDATE_DATE = "updateDate";
 		public const string SUPPORT_SEGMENT_BASED_ORDERING = "supportSegmentBasedOrdering";
 		public const string ASSET_USER_RULE_ID = "assetUserRuleId";
+		public const string META_DATA = "metaData";
 		#endregion
 
 		#region Private Fields
@@ -67,6 +68,7 @@ namespace Kaltura.Types
 		private long _UpdateDate = long.MinValue;
 		private bool? _SupportSegmentBasedOrdering = null;
 		private long _AssetUserRuleId = long.MinValue;
+		private IDictionary<string, StringValue> _MetaData;
 		#endregion
 
 		#region Properties
@@ -200,6 +202,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("AssetUserRuleId");
 			}
 		}
+		[JsonProperty]
+		public IDictionary<string, StringValue> MetaData
+		{
+			get { return _MetaData; }
+			set 
+			{ 
+				_MetaData = value;
+				OnPropertyChanged("MetaData");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -269,6 +281,18 @@ namespace Kaltura.Types
 			{
 				this._AssetUserRuleId = ParseLong(node["assetUserRuleId"].Value<string>());
 			}
+			if(node["metaData"] != null)
+			{
+				{
+					string key;
+					this._MetaData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["metaData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._MetaData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
+			}
 		}
 		#endregion
 
@@ -291,6 +315,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			kparams.AddIfNotNull("supportSegmentBasedOrdering", this._SupportSegmentBasedOrdering);
 			kparams.AddIfNotNull("assetUserRuleId", this._AssetUserRuleId);
+			kparams.AddIfNotNull("metaData", this._MetaData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -323,6 +348,8 @@ namespace Kaltura.Types
 					return "SupportSegmentBasedOrdering";
 				case ASSET_USER_RULE_ID:
 					return "AssetUserRuleId";
+				case META_DATA:
+					return "MetaData";
 				default:
 					return base.getPropertyName(apiName);
 			}
