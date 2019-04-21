@@ -42,6 +42,26 @@ export class KalturaRequestAdapter {
       }).pipe(
       catchError(
         error => {
+          if (environment.response.customErrorInHttp500) {
+            if (error && typeof error.error === 'string') {
+              const actualError = JSON.parse(error.error).result.error;
+              throw new KalturaAPIException(actualError.message, actualError.code, actualError.args);
+            }
+            if (error && error.error instanceof Blob) {
+              return Observable.create((observer) => {
+                const reader = new FileReader();
+                reader.addEventListener('loadend', (e) => {
+                  const text = (e.srcElement as any).result;
+                  const actualError = JSON.parse(text).result.error;
+                  observer.error(new KalturaAPIException(actualError.message, actualError.code, actualError.args));
+                });
+
+                // Start reading the blob as text.
+                reader.readAsText(error.error);
+              });
+            }
+          }
+
           const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
           throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
         }
