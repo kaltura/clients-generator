@@ -19,7 +19,8 @@ export class KalturaRequestAdapter {
 
   public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): Observable<T>;
   public transmit<T>(request: KalturaRequest<any>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions, format: string): Observable<any>;
-  public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions, format?: string): Observable<T> {
+  public transmit<T>(request: KalturaRequest<any>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions, format: string, responseType: 'blob' | 'text'): Observable<any>;
+  public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions, format?: string, responseType: 'blob' | 'text' = 'text'): Observable<any> {
 
     const requestSpecificFormat = typeof format !== 'undefined';
     const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
@@ -36,7 +37,7 @@ export class KalturaRequestAdapter {
     return this._http.request('post', endpointUrl,
       {
         body: parameters,
-        responseType: requestSpecificFormat ? 'text' : 'json',
+        responseType: requestSpecificFormat ? responseType || 'text' : 'json',
         headers: requestSpecificFormat ? undefined : getHeaders()
       }).pipe(
       catchError(

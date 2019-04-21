@@ -84,8 +84,8 @@ export class KalturaClient {
 
   public request<T>(request: KalturaRequest<T>): Observable<T>;
   public request<T>(request: KalturaFileRequest): Observable<{ url: string }>;
-  public request<T>(request: KalturaRequest<any>, format: _FORMAT_TYPES_TOKEN_): Observable<any>;
-  public request<T>(request: KalturaRequest<T> | KalturaFileRequest, format?: _FORMAT_TYPES_TOKEN_): Observable<T | { url: string }> {
+  public request<T>(request: KalturaRequest<any>, format: _FORMAT_TYPES_TOKEN_, responseType: 'blob' | 'text'): Observable<any>;
+  public request<T>(request: KalturaRequest<T> | KalturaFileRequest, format?: _FORMAT_TYPES_TOKEN_, responseType?: 'blob' | 'text'): Observable<T | { url: string }> {
 
     const optionsViolationError = this._validateOptions();
 
@@ -94,7 +94,7 @@ export class KalturaClient {
     }
 
     if (typeof format !== 'undefined') {
-      return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions, format +'');
+      return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions, format +'', responseType);
     }
 
     if (request instanceof KalturaFileRequest) {
