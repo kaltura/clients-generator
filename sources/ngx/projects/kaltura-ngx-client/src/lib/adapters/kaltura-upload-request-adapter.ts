@@ -170,9 +170,7 @@ export class KalturaUploadRequestAdapter {
 
       if (environment.request.avoidQueryString) {
         data.append('clientTag',createClientTag(request, this.clientOptions));
-        (Object.keys(parameters) || []).forEach(key => {
-          data.append(key, parameters[key]);
-        });
+        data.append("json", JSON.stringify(parameters));
       } else {
         endpointUrl = buildUrl(endpointUrl, parameters);
       }
