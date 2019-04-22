@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Send kaltura request with a specific format (i.e json, xml, excel)
 
+### Fix
+
+* Pass serialized parameters to ott server as part of upload request
+
 ## 11.2.0 (2019-01-29)
 
 ### Features
