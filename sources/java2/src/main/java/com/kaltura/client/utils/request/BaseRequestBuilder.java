@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends RequestBuilderData<SelfType> implements RequestElement<ReturnedType> {
 
-	protected Class<ReturnedType> type;
+    protected Class<ReturnedType> type;
     protected String url;
     protected Files files = null;
     protected HashMap<String, String> headers;
@@ -41,9 +41,9 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
 
     public abstract String getTag();
 
-	public Class<?> getType() {
-		return type;
-	}
+    public Class<?> getType() {
+        return type;
+    }
 
     @Override
     public String getMethod() {
@@ -55,13 +55,13 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
         return params.toString();
     }
 
-	protected Params getParams() {
+    protected Params getParams() {
         return params;
     }
 	
     public void setParams(Map<String, Object> objParams) {
         params.putAll(objParams); // !! null params should be checked - should not appear in request body or be presented as empty string.
-	}
+    }
 
     public BaseRequestBuilder<ReturnedType, SelfType> setFile(String key, FileHolder value) {
         if (files != null) {
@@ -114,14 +114,14 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
      */
     protected Params prepareParams(Client configurations, boolean addSignature) {
 
-        if(params == null){
+        if (params == null){
             params = new Params();
         }
 
         // add default params:
         //params.add("format", configurations.getConnectionConfiguration().getServiceResponseTypeFormat());
         params.add("ignoreNull", true);
-        if(configurations != null) {
+        if (configurations != null) {
             params.putAll(configurations.getClientConfiguration());
             params.putAll(configurations.getRequestConfiguration());
         }
@@ -147,7 +147,7 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     final public Response<ReturnedType> parseResponse(ResponseElement response) {
         ReturnedType result = null;
         APIException error = null;
@@ -167,22 +167,28 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
 
     @Override
     public void onComplete(Response<ReturnedType> response) {
-        if(onCompletion != null) {
+        if (onCompletion != null) {
             onCompletion.onComplete((Response<ReturnedType>) response);
         }
     }
 
     protected Object parse(String response) throws APIException {
-    	if(response.length() == 0 || response.toLowerCase().equals("null")) {
+    	if (response.length() == 0 || response.toLowerCase().equals("null")) {
     		return null;
     	}
     	return GsonParser.parseObject(response, type);
     }
     
     protected APIException generateErrorResponse(ResponseElement response) {
-    	APIException exception = new APIException(response.getError().getMessage());
-    	exception.setCode(String.valueOf(response.getError().getCode()));
-    	return exception;
+    	if (response.getError() != null) {
+            APIException exception = new APIException(response.getError().getMessage());
+            exception.setCode(String.valueOf(response.getError().getCode()));
+            return exception;
+        } else {
+            APIException exception = new APIException(response.getResponse());
+            exception.setCode(String.valueOf(-1));
+            return exception;
+        }
     }
     
     public RequestElement<ReturnedType> build(final Client client, boolean addSignature) {
@@ -207,27 +213,11 @@ public abstract class BaseRequestBuilder<ReturnedType, SelfType> extends Request
     }
 
     private void addDefaultHeaders() {
-        if(!headers.containsKey(APIConstants.HeaderAccept)) {
+        if (!headers.containsKey(APIConstants.HeaderAccept)) {
             headers.put(APIConstants.HeaderAccept, "application/json");
         }
-        if(!headers.containsKey(APIConstants.HeaderAcceptCharset)) {
+        if (!headers.containsKey(APIConstants.HeaderAcceptCharset)) {
             headers.put(APIConstants.HeaderAcceptCharset, "utf-8,ISO-8859-1;q=0.7,*;q=0.5");
         }
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

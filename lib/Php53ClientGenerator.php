@@ -495,7 +495,7 @@ class Php53ClientGenerator extends ClientGeneratorFromXml
 				case "bool" :
 					$this->appendLine("		if(count(\$xml->{$propName}))");
 					$this->appendLine("		{");
-					$this->appendLine("			if(!empty(\$xml->{$propName}))");
+					$this->appendLine("			if(!empty(\$xml->{$propName}) && \$xml->{$propName} != 'false')");
 					$this->appendLine("				\$this->$propName = true;");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = false;");
