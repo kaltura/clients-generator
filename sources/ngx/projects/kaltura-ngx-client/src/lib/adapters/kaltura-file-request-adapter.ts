@@ -10,7 +10,8 @@ export class KalturaFileRequestAdapter {
 
     public transmit(request: KalturaFileRequest, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): Observable<{ url: string }> {
         const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
-        const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
+      const endpointOptions = { ...clientOptions, service: parameters['service'], action:  parameters['action'] }
+        const endpointUrl = createEndpoint(request, endpointOptions);
         delete parameters['service'];
         delete parameters['action'];
 

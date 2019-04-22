@@ -31,13 +31,31 @@ class ClassesGenerator extends TypescriptGeneratorBase
             $result[] = $this->createClassFile($class);
         }
 
+        $result[] = $this->createClientServiceFile();
         $result[] = $this->createRequestOptionsFile();
         $result[] = $this->createEnvironmentsFile();
+
+		$result = array_filter($result);
 
         return $result;
     }
 
 
+  function createClientServiceFile()
+    {
+        $isAngularFramework = $this->framework === 'ngx';
+        if (!$isAngularFramework) {
+            return null;
+        }
+
+        $fileContent = file_get_contents(__DIR__ . "/ngx-templates/kaltura-client.service.template.ts");
+        $fileContent = str_replace("_FORMAT_TYPES_TOKEN_", "KalturaResponseType", $fileContent);
+
+        $file = new GeneratedFileData();
+        $file->path = "../kaltura-client.service.ts";
+        $file->content = $fileContent;
+        return $file;
+    }
 
     function createRequestOptionsFile()
     {
@@ -97,7 +115,6 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
         $file = new GeneratedFileData();
         $file->path = "kaltura-request-options.ts";
         $file->content = $fileContent;
-        $result[] = $file;
         return $file;
     }
 
@@ -106,6 +123,7 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
         $nestedResponse = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
         $requestFileFormat = $this->targetKalturaServer === 'ott' ? '20' : '1';
         $avoidQueryString = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
+        $customErrorInHttp500 = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
         $fileContent = "export interface Environment {
     request: {
         apiVersion: string,
@@ -113,7 +131,8 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
         fileFormatValue: number
     }
     response: {
-        nestedResponse: boolean
+        nestedResponse: boolean,
+        customErrorInHttp500: boolean
     };
 }
 
@@ -124,14 +143,14 @@ export const environment: Environment = {
         fileFormatValue: {$requestFileFormat}
     },
     response: {
-        nestedResponse: {$nestedResponse}
+        nestedResponse: {$nestedResponse},
+        customErrorInHttp500: {$customErrorInHttp500}
     }
 }";
 
 	    $file = new GeneratedFileData();
 	    $file->path = "../environment.ts";
 	    $file->content = $fileContent;
-	    $result[] = $file;
 	    return $file;
 	}
 
