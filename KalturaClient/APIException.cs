@@ -264,7 +264,6 @@ namespace Kaltura
 		public static string IllegalExcelFile = "5045";
 		public static string EnqueueFailed = "5044";
 		public static string ExcelMandatoryValueIsMissing = "5046";
-		public static string InvalidArgumentValue = "5047";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";

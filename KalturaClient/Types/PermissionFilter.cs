@@ -39,11 +39,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string CURRENT_USER_PERMISSIONS_CONTAINS = "currentUserPermissionsContains";
+		public const string ROLE_ID_IN = "roleIdIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private bool? _CurrentUserPermissionsContains = null;
+		private long _RoleIdIn = long.MinValue;
 		private PermissionOrderBy _OrderBy = null;
 		#endregion
 
@@ -56,6 +58,16 @@ namespace Kaltura.Types
 			{ 
 				_CurrentUserPermissionsContains = value;
 				OnPropertyChanged("CurrentUserPermissionsContains");
+			}
+		}
+		[JsonProperty]
+		public long RoleIdIn
+		{
+			get { return _RoleIdIn; }
+			set 
+			{ 
+				_RoleIdIn = value;
+				OnPropertyChanged("RoleIdIn");
 			}
 		}
 		[JsonProperty]
@@ -81,6 +93,10 @@ namespace Kaltura.Types
 			{
 				this._CurrentUserPermissionsContains = ParseBool(node["currentUserPermissionsContains"].Value<string>());
 			}
+			if(node["roleIdIn"] != null)
+			{
+				this._RoleIdIn = ParseLong(node["roleIdIn"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (PermissionOrderBy)StringEnum.Parse(typeof(PermissionOrderBy), node["orderBy"].Value<string>());
@@ -95,6 +111,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaPermissionFilter");
 			kparams.AddIfNotNull("currentUserPermissionsContains", this._CurrentUserPermissionsContains);
+			kparams.AddIfNotNull("roleIdIn", this._RoleIdIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -104,6 +121,8 @@ namespace Kaltura.Types
 			{
 				case CURRENT_USER_PERMISSIONS_CONTAINS:
 					return "CurrentUserPermissionsContains";
+				case ROLE_ID_IN:
+					return "RoleIdIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
