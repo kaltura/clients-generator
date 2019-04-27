@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,6 +29,8 @@ namespace Kaltura.Request
         private OnErrorHandler onError;
         private Client client = null;
         private readonly string requestId;
+        private static readonly HttpClientHandler _HttpClientHandler = new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
+        private static readonly HttpClient _HttpClient = new HttpClient(_HttpClientHandler);
 
         public string Boundary
         {
@@ -116,13 +121,12 @@ namespace Kaltura.Request
 
             var url = client.Configuration.ServiceUrl + "/api_v3" + getPath();
 
-            this.Log(string.Format("url : [{0}]", url));
+            Log(string.Format("url : [{0}]", url));
 
             var files = getFiles();
-            var request = BuildRequest(url, files, client.Configuration.Timeout);
-            await WriteRequestBodyAsync(files, request);
-            var responseObject = await GetResponseAsync(request);
-            this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
+            var responseObject = await SendRequestAsync(url, files, client.Configuration.Timeout);
+            sw.Stop();
+            Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
 
             return responseObject;
         }
@@ -134,7 +138,7 @@ namespace Kaltura.Request
                 if (t.Status == TaskStatus.Faulted)
                 {
                     var ex = t.Exception.InnerException == null ? t.Exception : t.Exception.InnerException;
-                    
+
                     OnComplete(null, ex); return;
                 }
 
@@ -152,86 +156,91 @@ namespace Kaltura.Request
             return result;
         }
 
-
-
-        private async Task<T> GetResponseAsync(HttpWebRequest request)
+        private async Task<T> SendRequestAsync(string url, Files files, int timeout)
         {
-            T responseObject = default(T);
             try
             {
-                using (var response = await request.GetResponseAsync())
-                using (var responseStream = response.GetResponseStream())
-                using (var responseReader = new StreamReader(responseStream))
+                _HttpClientHandler.Proxy = CreateProxy();
+                _HttpClient.Timeout = files.Count == 0 ? TimeSpan.FromMilliseconds(timeout) : Timeout.InfiniteTimeSpan;
+                _HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var jsonBodyStr = GetRequestJsonBodyString();
+
+                HttpResponseMessage response;
+                using (var content = GetHttpRequestContent(files, jsonBodyStr))
                 {
-                    var responseString = await responseReader.ReadToEndAsync();
-                    var headersStr = GetResponseHeadersString(response);
-                    this.Log(string.Format("result : {0}", responseString));
-                    this.Log(string.Format("result headers : {0}", headersStr));
-                   
-                    responseObject = ParseResponseString<T>(responseString);
-                }
-            }
-            catch (WebException wex)
-            {
-                using (var errorResponse = wex.Response)
-                {
-                    var httpResponse = (HttpWebResponse)errorResponse;
-                    this.Log(string.Format("Error code : {0}", httpResponse.StatusCode));
-                    using (var responseDataStream = errorResponse.GetResponseStream())
-                    using (var reader = new StreamReader(responseDataStream))
+                    var additionalRequestHeaders = getHeaders();
+                    foreach (var key in additionalRequestHeaders.AllKeys)
                     {
-                        var text = reader.ReadToEnd();
-                        this.Log(string.Format("ErrorResponse : {0}", text));
+                        content.Headers.Add(key, additionalRequestHeaders[key]);
                     }
+                    var requestHeadersStr = content.Headers.ToString().Replace("\r\n", ", ");
+                    Log(string.Format("reqeust header: [{0}]", requestHeadersStr));
+                    response = await _HttpClient.PostAsync(url, content);
                 }
 
-                throw wex;
+                var responseString = await response.Content.ReadAsStringAsync();
+                var responseHeadersStr = response.Headers.ToString().Replace("\r\n", ", ");
+                Log(string.Format("result : {0}", responseString));
+                Log(string.Format("result headers : {0}", responseHeadersStr));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseObject = ParseResponseString<T>(responseString);
+                    return responseObject;
+                }
+                else
+                {
+                    throw new Exception(string.Format("Error while getting reponse for [{0}] status code:{1}", url, response.StatusCode));
+                }
             }
             catch (Exception e)
             {
-                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{1}", request.RequestUri, e));
+                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{1}", url, e));
                 throw e;
             }
-
-            return responseObject;
         }
 
-        private async Task WriteRequestBodyAsync(Files files, HttpWebRequest request)
+        private static HttpContent GetHttpRequestContent(Files files, string jsonBodyStr)
         {
-            var requestBodyStr = GetRequestBodyString(files);
-            var requestBody = Encoding.UTF8.GetBytes(requestBodyStr);
-            using (var postStream = await request.GetRequestStreamAsync())
+            if (files.Count == 0)
             {
-                await postStream.WriteAsync(requestBody, 0, requestBody.Length);
+                var content = new StringContent(jsonBodyStr);
+                content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+                return content;
+
+            }
+            else
+            {
+                var multipartContent = new MultipartFormDataContent();
+
+                //Content-Disposition: form-data; name="json"
+                var stringContent = new StringContent(jsonBodyStr);
+                stringContent.Headers.Add("Content-Disposition", "form-data; name=\"json\"");
+                multipartContent.Add(stringContent, "json");
+
+                foreach (var fileEntry in files)
+                {
+                    var fileStream = fileEntry.Value;
+                    var streamContent = new StreamContent(fileStream);
+                    streamContent.Headers.Add("Content-Type", "application/octet-stream");
+                    if (fileStream is FileStream)
+                    {
+                        var fs = (FileStream)fileStream;
+                        streamContent.Headers.Add("Content-Disposition", "form-data; name=\"" + fileEntry.Key + "\"; filename=\"" + Path.GetFileName(fs.Name) + "\"");
+                    }
+                    else if (fileStream is MemoryStream)
+                    {
+                        streamContent.Headers.Add("Content-Disposition", "form-data; name=\"" + fileEntry.Key + "\"; filename=\"Memory-Stream-Upload\"");
+                    }
+
+                    multipartContent.Add(streamContent, "file", "Memory-Stream-Upload");
+                }
+
+                return multipartContent;
             }
         }
 
-        private HttpWebRequest BuildRequest(string url, Files files, int timeout)
-        {
-            Client client;
-            var request = (HttpWebRequest)HttpWebRequest.Create(url);
-            request.Timeout = files.Count == 0 ? timeout : Timeout.Infinite;
-            request.Method = "POST";
-
-            request.Headers = getHeaders();
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Accept = "application/json";
-            request.ContentType = getContentType();
-            request.Proxy = CreateProxy();
-            return request;
-        }
-
-        private static string GetResponseHeadersString(WebResponse response)
-        {
-            var responseHeadersBuilder = new StringBuilder();
-            foreach (var key in response.Headers.AllKeys)
-            {
-                responseHeadersBuilder.Append(key + ":" + response.Headers[key] + " ; ");
-            }
-            return responseHeadersBuilder.ToString();
-        }
-
-        private string GetRequestBodyString(Files files)
+        private string GetRequestJsonBodyString()
         {
             var requestBody = "";
             var parameters = getParameters(false);
@@ -242,64 +251,9 @@ namespace Kaltura.Request
             var json = parameters.ToJson();
             this.Log(string.Format("full reqeust data: [{0}]", json));
 
-            requestBody = files.Count == 0 ? json : GetMultipartRequestBody(files, json);
+            requestBody = json;
 
             return requestBody;
-        }
-
-        private string GetMultipartRequestBody(Files files, string json)
-        {
-            string requestBody;
-            var sb = new StringBuilder();
-            var paramsBuffer = BuildMultiPartParamsBuffer(json);
-            sb.Append(paramsBuffer);
-            foreach (var fileEntry in files)
-            {
-                var fileStream = fileEntry.Value;
-                if (fileStream is FileStream)
-                {
-                    var fs = (FileStream)fileStream;
-                    sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"" + Path.GetFileName(fs.Name) + "\"" + "\r\n");
-                }
-                else if (fileStream is MemoryStream)
-                {
-                    sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"Memory-Stream-Upload\"" + "\r\n");
-                }
-
-                sb.Append("Content-Type: application/octet-stream" + "\r\n");
-                sb.Append("\r\n");
-                sb.Append("\r\n--" + Boundary + "\r\n");
-            }
-
-            requestBody = sb.ToString();
-            return requestBody;
-        }
-
-        private string BuildMultiPartParamsBuffer(string json)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("--" + Boundary + "\r\n");
-            sb.Append("Content-Disposition: form-data; name=\"json\"\r\n");
-            sb.Append("\r\n");
-            sb.Append(HttpUtility.UrlDecode(json));
-            sb.Append("\r\n--" + Boundary + "\r\n");
-
-            return sb.ToString();
-        }
-
-        private void ValidateXmlResult(XmlDocument doc)
-        {
-            XmlElement xml = doc["xml"];
-            if (xml != null)
-            {
-                XmlElement result = xml["result"];
-                if (result != null)
-                {
-                    return;
-                }
-            }
-
-            throw new SerializationException("Invalid result");
         }
 
         private WebProxy CreateProxy()
@@ -332,18 +286,6 @@ namespace Kaltura.Request
                 sBuilder.Append(data[i].ToString("x2"));
             }
             return sBuilder.ToString();
-        }
-
-        protected string getContentType()
-        {
-            if (getFiles().Count > 0)
-            {
-                return "multipart/form-data; boundary=" + Boundary;
-            }
-            else
-            {
-                return "application/json";
-            }
         }
 
         protected WebHeaderCollection getHeaders()
