@@ -224,7 +224,7 @@ namespace Kaltura.Request
             foreach (var fileEntry in files)
             {
                 var fileStream = fileEntry.Value;
-                var filename = (fileStream as FileStream) == null ? "emory-Stream-Upload" : Path.GetFileName(((FileStream)fileStream).Name);
+                var filename = (fileStream as FileStream) == null ? "Memory-Stream-Upload" : Path.GetFileName(((FileStream)fileStream).Name);
 
                 var header = string.Format(headerTemplate, fileEntry.Key, filename, "application/octet-stream");
                 var headerbytes = Encoding.UTF8.GetBytes(header);
