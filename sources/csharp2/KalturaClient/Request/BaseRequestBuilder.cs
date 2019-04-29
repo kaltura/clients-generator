@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -10,9 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
-using Kaltura.Types;
-using Newtonsoft.Json.Linq;
-using String = System.String;
 
 namespace Kaltura.Request
 {
@@ -134,7 +130,7 @@ namespace Kaltura.Request
                 if (t.Status == TaskStatus.Faulted)
                 {
                     var ex = t.Exception.InnerException == null ? t.Exception : t.Exception.InnerException;
-                    
+
                     OnComplete(null, ex); return;
                 }
 
@@ -167,7 +163,7 @@ namespace Kaltura.Request
                     var headersStr = GetResponseHeadersString(response);
                     this.Log(string.Format("result : {0}", responseString));
                     this.Log(string.Format("result headers : {0}", headersStr));
-                   
+
                     responseObject = ParseResponseString<T>(responseString);
                 }
             }
@@ -198,13 +194,55 @@ namespace Kaltura.Request
 
         private async Task WriteRequestBodyAsync(Files files, HttpWebRequest request)
         {
-            var requestBodyStr = GetRequestBodyString(files);
+            var requestBodyStr = GetRequestBodyJsonString();
             var requestBody = Encoding.UTF8.GetBytes(requestBodyStr);
             using (var postStream = await request.GetRequestStreamAsync())
             {
-                await postStream.WriteAsync(requestBody, 0, requestBody.Length);
+
+                if (files.Count == 0)
+                {
+                    await postStream.WriteAsync(requestBody, 0, requestBody.Length);
+
+                }
+                else
+                {
+                    await WriteMultipartRequestBody(postStream, files, requestBodyStr);
+                }
             }
         }
+
+        private async Task WriteMultipartRequestBody(Stream postStream, Files files, string jsonBody)
+        {
+            var paramsBuffer = BuildMultiPartParamsBuffer(jsonBody);
+            var paramsBufferBytes = Encoding.UTF8.GetBytes(paramsBuffer);
+
+            await postStream.WriteAsync(paramsBufferBytes, 0, paramsBuffer.Length);
+
+            var bundryBytes = Encoding.UTF8.GetBytes(Boundary);
+            var headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
+
+            foreach (var fileEntry in files)
+            {
+                var fileStream = fileEntry.Value;
+                var filename = (fileStream as FileStream) == null ? "Memory-Stream-Upload" : Path.GetFileName(((FileStream)fileStream).Name);
+
+                var header = string.Format(headerTemplate, fileEntry.Key, filename, "application/octet-stream");
+                var headerbytes = Encoding.UTF8.GetBytes(header);
+                await postStream.WriteAsync(headerbytes, 0, headerbytes.Length);
+
+                byte[] buffer = new byte[4096];
+                int bytesRead = 0;
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
+                {
+                    await postStream.WriteAsync(buffer, 0, bytesRead);
+                }
+
+
+                var trailer = Encoding.UTF8.GetBytes("\r\n--" + Boundary + "--\r\n");
+                await postStream.WriteAsync(trailer, 0, trailer.Length);
+            }
+        }
+
 
         private HttpWebRequest BuildRequest(string url, Files files, int timeout)
         {
@@ -231,7 +269,7 @@ namespace Kaltura.Request
             return responseHeadersBuilder.ToString();
         }
 
-        private string GetRequestBodyString(Files files)
+        private string GetRequestBodyJsonString()
         {
             var requestBody = "";
             var parameters = getParameters(false);
@@ -242,7 +280,7 @@ namespace Kaltura.Request
             var json = parameters.ToJson();
             this.Log(string.Format("full reqeust data: [{0}]", json));
 
-            requestBody = files.Count == 0 ? json : GetMultipartRequestBody(files, json);
+            requestBody = json;
 
             return requestBody;
         }

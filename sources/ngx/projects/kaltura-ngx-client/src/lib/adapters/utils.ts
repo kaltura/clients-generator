@@ -6,20 +6,32 @@ import { KalturaRequest } from '../api/kaltura-request';
 import { KalturaFileRequest } from '../api/kaltura-file-request';
 import { environment } from '../environment';
 
-export function  createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string): string {
-	const endpoint = options.endpointUrl;
-	const clientTag = createClientTag(request, options);
-	let result = `${endpoint}/api_v3/service/${service}`;
+export type CreateEndpointOptions = KalturaClientOptions & {
+  service: string,
+  action?: string,
+  format?: string
+}
 
-	if (action) {
-		result += `/action/${action}`;
-	}
+export function createEndpoint(request: KalturaRequestBase, options: CreateEndpointOptions): string {
+  const endpoint = options.endpointUrl;
+  const clientTag = createClientTag(request, options);
+  let result = `${endpoint}/api_v3/service/${options.service}`;
 
-	if (clientTag)
-	{
-		result += `?${_buildQuerystring({clientTag})}`;
-	}
-	return result;
+  if (options.action) {
+    result += `/action/${options.action}`;
+  }
+
+  const format = options.format || request.getFormatValue();
+
+  result += `?format=${format}`;
+
+  if (clientTag)
+  {
+    result += `&${_buildQuerystring({clientTag})}`;
+  }
+
+
+  return result;
 }
 
 export function createClientTag(request: KalturaRequestBase, options: KalturaClientOptions)
@@ -74,7 +86,6 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
 		request.buildRequest(defaultRequestOptions),
 		{
 			apiVersion: environment.request.apiVersion,
-			format: request.getFormatValue()
 		}
 	);
 }

@@ -99,8 +99,15 @@ export class KalturaUploadRequestAdapter {
     });
   }
 
-  private _getFormData(filePropertyName: string, fileName: string, fileChunk: File | Blob): FormData {
+  private _getFormData(filePropertyName: string, fileName: string, fileChunk: File | Blob, parameters: any): FormData {
     const result = new FormData();
+
+    if (environment.request.avoidQueryString) {
+      // NOTICE: workaround to OTT Server 5.2.0 that will break if the `json` property is not the first appended property
+      // should have been added at line 178
+      result.append("json", JSON.stringify(parameters));
+    }
+
     result.append("Filename", fileName);
     result.append(filePropertyName, fileChunk, fileName);
     return result;
@@ -126,9 +133,14 @@ export class KalturaUploadRequestAdapter {
     return Observable.create(observer => {
       const parameters = prepareParameters(request, this.clientOptions, this.defaultRequestOptions);
 
+      const endpointOptions = { ...this.clientOptions, service: parameters['service'], action:  parameters['action'] }
+      let endpointUrl = createEndpoint(request, endpointOptions);
+      delete parameters['service'];
+      delete parameters['action'];
+
       let isComplete = false;
       const {propertyName, file} = request.getFileInfo();
-      let data = this._getFormData(propertyName, file.name, file);
+      let data = this._getFormData(propertyName, file.name, file, parameters);
 
       let fileStart = 0;
 
@@ -154,24 +166,17 @@ export class KalturaUploadRequestAdapter {
         fileStart = uploadChunkData.resumeAt;
         const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + actualChunkFileSize;
 
-        data = this._getFormData(propertyName, file.name, file.slice(fileStart, fileEnd, file.type));
-
         parameters.resume = uploadChunkData.resume;
         parameters.resumeAt = uploadChunkData.resumeAt;
         parameters.finalChunk = uploadChunkData.finalChunk;
+
+        data = this._getFormData(propertyName, file.name, file.slice(fileStart, fileEnd, file.type), parameters);
       } else {
         console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
       }
 
-      let endpointUrl = createEndpoint(request, this.clientOptions, parameters['service'], parameters['action']);
-      delete parameters['service'];
-      delete parameters['action'];
-
       if (environment.request.avoidQueryString) {
         data.append('clientTag',createClientTag(request, this.clientOptions));
-        (Object.keys(parameters) || []).forEach(key => {
-          data.append(key, parameters[key]);
-        });
       } else {
         endpointUrl = buildUrl(endpointUrl, parameters);
       }

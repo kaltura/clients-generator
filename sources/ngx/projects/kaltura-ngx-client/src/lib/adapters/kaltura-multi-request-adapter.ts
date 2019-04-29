@@ -20,7 +20,8 @@ export class KalturaMultiRequestAdapter {
 
         const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-        const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
+      const endpointOptions = { ...clientOptions, service: parameters['service'], action:  parameters['action'] }
+        const endpointUrl = createEndpoint(request, endpointOptions);
         delete parameters['service'];
         delete parameters['action'];
 
