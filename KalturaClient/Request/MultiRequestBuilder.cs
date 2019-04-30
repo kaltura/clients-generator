@@ -92,7 +92,7 @@ namespace Kaltura.Request
 
             foreach (IRequestBuilder request in requests)
             {
-                foreach (KeyValuePair<string, Stream> file in request.getFiles())
+                foreach (KeyValuePair<string, FileData> file in request.getFiles())
                 {
                     kfiles.Add(request.MultiRequestIndex + ":" + file.Key, file.Value);
                 }

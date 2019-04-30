@@ -71,11 +71,7 @@ namespace Kaltura.Services
 		public const string SETTINGS = "settings";
 		#endregion
 
-		public NotificationsPartnerSettings Settings
-		{
-			set;
-			get;
-		}
+		public NotificationsPartnerSettings Settings { get; set; }
 
 		public NotificationsPartnerSettingsUpdateRequestBuilder()
 			: base("notificationspartnersettings", "update")

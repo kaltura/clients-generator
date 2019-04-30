@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string COMMENT = "comment";
 		#endregion
 
-		public AssetComment Comment
-		{
-			set;
-			get;
-		}
+		public AssetComment Comment { get; set; }
 
 		public AssetCommentAddRequestBuilder()
 			: base("assetcomment", "add")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public AssetCommentFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public AssetCommentFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public AssetCommentListRequestBuilder()
 			: base("assetcomment", "list")

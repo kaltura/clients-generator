@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public PricePlanFilter Filter
-		{
-			set;
-			get;
-		}
+		public PricePlanFilter Filter { get; set; }
 
 		public PricePlanListRequestBuilder()
 			: base("priceplan", "list")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PRICE_PLAN = "pricePlan";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public PricePlan PricePlan
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public PricePlan PricePlan { get; set; }
 
 		public PricePlanUpdateRequestBuilder()
 			: base("priceplan", "update")

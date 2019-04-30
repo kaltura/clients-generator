@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ASSET_STRUCT = "assetStruct";
 		#endregion
 
-		public AssetStruct AssetStruct
-		{
-			set;
-			get;
-		}
+		public AssetStruct AssetStruct { get; set; }
 
 		public AssetStructAddRequestBuilder()
 			: base("assetstruct", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public AssetStructDeleteRequestBuilder()
 			: base("assetstruct", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public AssetStructGetRequestBuilder()
 			: base("assetstruct", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public AssetStructFilter Filter
-		{
-			set;
-			get;
-		}
+		public AssetStructFilter Filter { get; set; }
 
 		public AssetStructListRequestBuilder()
 			: base("assetstruct", "list")
@@ -217,16 +201,8 @@ namespace Kaltura.Services
 		public const string ASSET_STRUCT = "assetStruct";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public AssetStruct AssetStruct
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public AssetStruct AssetStruct { get; set; }
 
 		public AssetStructUpdateRequestBuilder()
 			: base("assetstruct", "update")

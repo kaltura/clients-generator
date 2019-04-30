@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string CODE = "code";
 		#endregion
 
-		public string Code
-		{
-			set;
-			get;
-		}
+		public string Code { get; set; }
 
 		public CouponGetRequestBuilder()
 			: base("coupon", "get")

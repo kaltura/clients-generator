@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY = "paymentGateway";
 		#endregion
 
-		public PaymentGatewayProfile PaymentGateway
-		{
-			set;
-			get;
-		}
+		public PaymentGatewayProfile PaymentGateway { get; set; }
 
 		public PaymentGatewayProfileAddRequestBuilder()
 			: base("paymentgatewayprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
 
 		public PaymentGatewayProfileDeleteRequestBuilder()
 			: base("paymentgatewayprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
 
 		public PaymentGatewayProfileGenerateSharedSecretRequestBuilder()
 			: base("paymentgatewayprofile", "generateSharedSecret")
@@ -175,21 +163,9 @@ namespace Kaltura.Services
 		public const string EXTRA_PARAMETERS = "extraParameters";
 		#endregion
 
-		public string Alias
-		{
-			set;
-			get;
-		}
-		public string Intent
-		{
-			set;
-			get;
-		}
-		public IList<KeyValue> ExtraParameters
-		{
-			set;
-			get;
-		}
+		public string Alias { get; set; }
+		public string Intent { get; set; }
+		public IList<KeyValue> ExtraParameters { get; set; }
 
 		public PaymentGatewayProfileGetConfigurationRequestBuilder()
 			: base("paymentgatewayprofile", "getConfiguration")
@@ -264,16 +240,8 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY = "paymentGateway";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
-		public PaymentGatewayProfile PaymentGateway
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
+		public PaymentGatewayProfile PaymentGateway { get; set; }
 
 		public PaymentGatewayProfileUpdateRequestBuilder()
 			: base("paymentgatewayprofile", "update")

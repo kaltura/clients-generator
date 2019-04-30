@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ADAPTER = "adapter";
 		#endregion
 
-		public CDNAdapterProfile Adapter
-		{
-			set;
-			get;
-		}
+		public CDNAdapterProfile Adapter { get; set; }
 
 		public CdnAdapterProfileAddRequestBuilder()
 			: base("cdnadapterprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ADAPTER_ID = "adapterId";
 		#endregion
 
-		public int AdapterId
-		{
-			set;
-			get;
-		}
+		public int AdapterId { get; set; }
 
 		public CdnAdapterProfileDeleteRequestBuilder()
 			: base("cdnadapterprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ADAPTER_ID = "adapterId";
 		#endregion
 
-		public int AdapterId
-		{
-			set;
-			get;
-		}
+		public int AdapterId { get; set; }
 
 		public CdnAdapterProfileGenerateSharedSecretRequestBuilder()
 			: base("cdnadapterprofile", "generateSharedSecret")
@@ -203,16 +191,8 @@ namespace Kaltura.Services
 		public const string ADAPTER = "adapter";
 		#endregion
 
-		public int AdapterId
-		{
-			set;
-			get;
-		}
-		public CDNAdapterProfile Adapter
-		{
-			set;
-			get;
-		}
+		public int AdapterId { get; set; }
+		public CDNAdapterProfile Adapter { get; set; }
 
 		public CdnAdapterProfileUpdateRequestBuilder()
 			: base("cdnadapterprofile", "update")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FOLLOW_TV_SERIES = "followTvSeries";
 		#endregion
 
-		public FollowTvSeries FollowTvSeries
-		{
-			set;
-			get;
-		}
+		public FollowTvSeries FollowTvSeries { get; set; }
 
 		public FollowTvSeriesAddRequestBuilder()
 			: base("followtvseries", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ASSET_ID = "assetId";
 		#endregion
 
-		public int AssetId
-		{
-			set;
-			get;
-		}
+		public int AssetId { get; set; }
 
 		public FollowTvSeriesDeleteRequestBuilder()
 			: base("followtvseries", "delete")
@@ -132,21 +124,9 @@ namespace Kaltura.Services
 		public new const string PARTNER_ID = "partnerId";
 		#endregion
 
-		public int AssetId
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
+		public int AssetId { get; set; }
+		public string Token { get; set; }
+		public new int PartnerId { get; set; }
 
 		public FollowTvSeriesDeleteWithTokenRequestBuilder()
 			: base("followtvseries", "deleteWithToken")
@@ -192,16 +172,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public FollowTvSeriesFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public FollowTvSeriesFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public FollowTvSeriesListRequestBuilder()
 			: base("followtvseries", "list")

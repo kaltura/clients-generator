@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string TYPE = "type";
 		#endregion
 
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
+		public SocialNetwork Type { get; set; }
 
 		public SocialGetRequestBuilder()
 			: base("social", "get")
@@ -87,21 +83,9 @@ namespace Kaltura.Services
 		public const string TYPE = "type";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Token { get; set; }
+		public SocialNetwork Type { get; set; }
 
 		public SocialGetByTokenRequestBuilder()
 			: base("social", "getByToken")
@@ -147,16 +131,8 @@ namespace Kaltura.Services
 		public new const string PARTNER_ID = "partnerId";
 		#endregion
 
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
+		public SocialNetwork Type { get; set; }
+		public new int PartnerId { get; set; }
 
 		public SocialGetConfigurationRequestBuilder()
 			: base("social", "getConfiguration")
@@ -201,26 +177,10 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Token { get; set; }
+		public SocialNetwork Type { get; set; }
+		public string Udid { get; set; }
 
 		public SocialLoginRequestBuilder()
 			: base("social", "login")
@@ -269,16 +229,8 @@ namespace Kaltura.Services
 		public const string TYPE = "type";
 		#endregion
 
-		public string Token
-		{
-			set;
-			get;
-		}
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
+		public string Token { get; set; }
+		public SocialNetwork Type { get; set; }
 
 		public SocialMergeRequestBuilder()
 			: base("social", "merge")
@@ -323,26 +275,10 @@ namespace Kaltura.Services
 		public const string EMAIL = "email";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
-		public string Email
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Token { get; set; }
+		public SocialNetwork Type { get; set; }
+		public string Email { get; set; }
 
 		public SocialRegisterRequestBuilder()
 			: base("social", "register")
@@ -390,11 +326,7 @@ namespace Kaltura.Services
 		public const string TYPE = "type";
 		#endregion
 
-		public SocialNetwork Type
-		{
-			set;
-			get;
-		}
+		public SocialNetwork Type { get; set; }
 
 		public SocialUnmergeRequestBuilder()
 			: base("social", "unmerge")
@@ -433,11 +365,7 @@ namespace Kaltura.Services
 		public const string CONFIGURATION = "configuration";
 		#endregion
 
-		public SocialConfig Configuration
-		{
-			set;
-			get;
-		}
+		public SocialConfig Configuration { get; set; }
 
 		public SocialUpdateConfigurationRequestBuilder()
 			: base("social", "UpdateConfiguration")

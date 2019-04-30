@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public PpvGetRequestBuilder()
 			: base("ppv", "get")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public PpvFilter Filter
-		{
-			set;
-			get;
-		}
+		public PpvFilter Filter { get; set; }
 
 		public PpvListRequestBuilder()
 			: base("ppv", "list")

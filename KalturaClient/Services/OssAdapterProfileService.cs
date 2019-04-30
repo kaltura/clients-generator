@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string OSS_ADAPTER = "ossAdapter";
 		#endregion
 
-		public OSSAdapterProfile OssAdapter
-		{
-			set;
-			get;
-		}
+		public OSSAdapterProfile OssAdapter { get; set; }
 
 		public OssAdapterProfileAddRequestBuilder()
 			: base("ossadapterprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string OSS_ADAPTER_ID = "ossAdapterId";
 		#endregion
 
-		public int OssAdapterId
-		{
-			set;
-			get;
-		}
+		public int OssAdapterId { get; set; }
 
 		public OssAdapterProfileDeleteRequestBuilder()
 			: base("ossadapterprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string OSS_ADAPTER_ID = "ossAdapterId";
 		#endregion
 
-		public int OssAdapterId
-		{
-			set;
-			get;
-		}
+		public int OssAdapterId { get; set; }
 
 		public OssAdapterProfileGenerateSharedSecretRequestBuilder()
 			: base("ossadapterprofile", "generateSharedSecret")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public OssAdapterProfileGetRequestBuilder()
 			: base("ossadapterprofile", "get")
@@ -246,16 +230,8 @@ namespace Kaltura.Services
 		public const string OSS_ADAPTER = "ossAdapter";
 		#endregion
 
-		public int OssAdapterId
-		{
-			set;
-			get;
-		}
-		public OSSAdapterProfile OssAdapter
-		{
-			set;
-			get;
-		}
+		public int OssAdapterId { get; set; }
+		public OSSAdapterProfile OssAdapter { get; set; }
 
 		public OssAdapterProfileUpdateRequestBuilder()
 			: base("ossadapterprofile", "update")

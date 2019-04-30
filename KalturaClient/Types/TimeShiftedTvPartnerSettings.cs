@@ -59,6 +59,7 @@ namespace Kaltura.Types
 		public const string QUOTA_OVERAGE_POLICY = "quotaOveragePolicy";
 		public const string PROTECTION_POLICY = "protectionPolicy";
 		public const string RECOVERY_GRACE_PERIOD = "recoveryGracePeriod";
+		public const string PRIVATE_COPY_ENABLED = "privateCopyEnabled";
 		#endregion
 
 		#region Private Fields
@@ -83,6 +84,7 @@ namespace Kaltura.Types
 		private QuotaOveragePolicy _QuotaOveragePolicy = null;
 		private ProtectionPolicy _ProtectionPolicy = null;
 		private int _RecoveryGracePeriod = Int32.MinValue;
+		private bool? _PrivateCopyEnabled = null;
 		#endregion
 
 		#region Properties
@@ -296,6 +298,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("RecoveryGracePeriod");
 			}
 		}
+		[JsonProperty]
+		public bool? PrivateCopyEnabled
+		{
+			get { return _PrivateCopyEnabled; }
+			set 
+			{ 
+				_PrivateCopyEnabled = value;
+				OnPropertyChanged("PrivateCopyEnabled");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -389,6 +401,10 @@ namespace Kaltura.Types
 			{
 				this._RecoveryGracePeriod = ParseInt(node["recoveryGracePeriod"].Value<string>());
 			}
+			if(node["privateCopyEnabled"] != null)
+			{
+				this._PrivateCopyEnabled = ParseBool(node["privateCopyEnabled"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -419,6 +435,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("quotaOveragePolicy", this._QuotaOveragePolicy);
 			kparams.AddIfNotNull("protectionPolicy", this._ProtectionPolicy);
 			kparams.AddIfNotNull("recoveryGracePeriod", this._RecoveryGracePeriod);
+			kparams.AddIfNotNull("privateCopyEnabled", this._PrivateCopyEnabled);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -467,6 +484,8 @@ namespace Kaltura.Types
 					return "ProtectionPolicy";
 				case RECOVERY_GRACE_PERIOD:
 					return "RecoveryGracePeriod";
+				case PRIVATE_COPY_ENABLED:
+					return "PrivateCopyEnabled";
 				default:
 					return base.getPropertyName(apiName);
 			}

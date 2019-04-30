@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string META = "meta";
 		#endregion
 
-		public Meta Meta
-		{
-			set;
-			get;
-		}
+		public Meta Meta { get; set; }
 
 		public MetaAddRequestBuilder()
 			: base("meta", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public MetaDeleteRequestBuilder()
 			: base("meta", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public MetaFilter Filter
-		{
-			set;
-			get;
-		}
+		public MetaFilter Filter { get; set; }
 
 		public MetaListRequestBuilder()
 			: base("meta", "list")
@@ -174,16 +162,8 @@ namespace Kaltura.Services
 		public const string META = "meta";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public Meta Meta
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public Meta Meta { get; set; }
 
 		public MetaUpdateRequestBuilder()
 			: base("meta", "update")

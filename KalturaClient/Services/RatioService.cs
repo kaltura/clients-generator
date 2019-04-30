@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string RATIO = "ratio";
 		#endregion
 
-		public Ratio Ratio
-		{
-			set;
-			get;
-		}
+		public Ratio Ratio { get; set; }
 
 		public RatioAddRequestBuilder()
 			: base("ratio", "add")
@@ -115,16 +111,8 @@ namespace Kaltura.Services
 		public const string RATIO = "ratio";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public Ratio Ratio
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public Ratio Ratio { get; set; }
 
 		public RatioUpdateRequestBuilder()
 			: base("ratio", "update")

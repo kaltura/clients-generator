@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string SECRET = "secret";
 		#endregion
 
-		public string Secret
-		{
-			set;
-			get;
-		}
+		public string Secret { get; set; }
 
 		public UserLoginPinAddRequestBuilder()
 			: base("userloginpin", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string PIN_CODE = "pinCode";
 		#endregion
 
-		public string PinCode
-		{
-			set;
-			get;
-		}
+		public string PinCode { get; set; }
 
 		public UserLoginPinDeleteRequestBuilder()
 			: base("userloginpin", "delete")
@@ -162,16 +154,8 @@ namespace Kaltura.Services
 		public const string SECRET = "secret";
 		#endregion
 
-		public string PinCode
-		{
-			set;
-			get;
-		}
-		public string Secret
-		{
-			set;
-			get;
-		}
+		public string PinCode { get; set; }
+		public string Secret { get; set; }
 
 		public UserLoginPinUpdateRequestBuilder()
 			: base("userloginpin", "update")

@@ -43,16 +43,8 @@ namespace Kaltura.Services
 		public const string PRODUCT_TYPE = "productType";
 		#endregion
 
-		public int AssetId
-		{
-			set;
-			get;
-		}
-		public TransactionType ProductType
-		{
-			set;
-			get;
-		}
+		public int AssetId { get; set; }
+		public TransactionType ProductType { get; set; }
 
 		public EntitlementCancelRequestBuilder()
 			: base("entitlement", "cancel")
@@ -96,11 +88,7 @@ namespace Kaltura.Services
 		public const string SUBSCRIPTION_ID = "subscriptionId";
 		#endregion
 
-		public string SubscriptionId
-		{
-			set;
-			get;
-		}
+		public string SubscriptionId { get; set; }
 
 		public EntitlementCancelRenewalRequestBuilder()
 			: base("entitlement", "cancelRenewal")
@@ -139,11 +127,7 @@ namespace Kaltura.Services
 		public const string SCHEDULED_SUBSCRIPTION_ID = "scheduledSubscriptionId";
 		#endregion
 
-		public long ScheduledSubscriptionId
-		{
-			set;
-			get;
-		}
+		public long ScheduledSubscriptionId { get; set; }
 
 		public EntitlementCancelScheduledSubscriptionRequestBuilder()
 			: base("entitlement", "cancelScheduledSubscription")
@@ -216,16 +200,8 @@ namespace Kaltura.Services
 		public const string PRODUCT_TYPE = "productType";
 		#endregion
 
-		public int AssetId
-		{
-			set;
-			get;
-		}
-		public TransactionType ProductType
-		{
-			set;
-			get;
-		}
+		public int AssetId { get; set; }
+		public TransactionType ProductType { get; set; }
 
 		public EntitlementForceCancelRequestBuilder()
 			: base("entitlement", "forceCancel")
@@ -269,11 +245,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public EntitlementGetNextRenewalRequestBuilder()
 			: base("entitlement", "getNextRenewal")
@@ -315,26 +287,10 @@ namespace Kaltura.Services
 		public const string CONTENT_ID = "contentId";
 		#endregion
 
-		public int ProductId
-		{
-			set;
-			get;
-		}
-		public TransactionType ProductType
-		{
-			set;
-			get;
-		}
-		public bool History
-		{
-			set;
-			get;
-		}
-		public int ContentId
-		{
-			set;
-			get;
-		}
+		public int ProductId { get; set; }
+		public TransactionType ProductType { get; set; }
+		public bool History { get; set; }
+		public int ContentId { get; set; }
 
 		public EntitlementGrantRequestBuilder()
 			: base("entitlement", "grant")
@@ -385,16 +341,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public EntitlementFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public EntitlementFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public EntitlementListRequestBuilder()
 			: base("entitlement", "list")
@@ -438,21 +386,9 @@ namespace Kaltura.Services
 		public const string HISTORY = "history";
 		#endregion
 
-		public int CurrentProductId
-		{
-			set;
-			get;
-		}
-		public int NewProductId
-		{
-			set;
-			get;
-		}
-		public bool History
-		{
-			set;
-			get;
-		}
+		public int CurrentProductId { get; set; }
+		public int NewProductId { get; set; }
+		public bool History { get; set; }
 
 		public EntitlementSwapRequestBuilder()
 			: base("entitlement", "swap")
@@ -500,16 +436,8 @@ namespace Kaltura.Services
 		public const string ENTITLEMENT = "entitlement";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
-		public Entitlement Entitlement
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
+		public Entitlement Entitlement { get; set; }
 
 		public EntitlementUpdateRequestBuilder()
 			: base("entitlement", "update")

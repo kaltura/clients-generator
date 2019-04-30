@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public CountryFilter Filter
-		{
-			set;
-			get;
-		}
+		public CountryFilter Filter { get; set; }
 
 		public CountryListRequestBuilder()
 			: base("country", "list")

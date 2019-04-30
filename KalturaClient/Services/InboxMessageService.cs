@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public InboxMessageGetRequestBuilder()
 			: base("inboxmessage", "get")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public InboxMessageFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public InboxMessageFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public InboxMessageListRequestBuilder()
 			: base("inboxmessage", "list")
@@ -138,16 +126,8 @@ namespace Kaltura.Services
 		public const string STATUS = "status";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
-		public InboxMessageStatus Status
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
+		public InboxMessageStatus Status { get; set; }
 
 		public InboxMessageUpdateStatusRequestBuilder()
 			: base("inboxmessage", "updateStatus")

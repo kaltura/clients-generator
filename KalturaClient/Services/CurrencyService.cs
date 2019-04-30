@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public CurrencyFilter Filter
-		{
-			set;
-			get;
-		}
+		public CurrencyFilter Filter { get; set; }
 
 		public CurrencyListRequestBuilder()
 			: base("currency", "list")

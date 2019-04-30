@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ENGAGEMENT = "engagement";
 		#endregion
 
-		public Engagement Engagement
-		{
-			set;
-			get;
-		}
+		public Engagement Engagement { get; set; }
 
 		public EngagementAddRequestBuilder()
 			: base("engagement", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public EngagementDeleteRequestBuilder()
 			: base("engagement", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public EngagementGetRequestBuilder()
 			: base("engagement", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public EngagementFilter Filter
-		{
-			set;
-			get;
-		}
+		public EngagementFilter Filter { get; set; }
 
 		public EngagementListRequestBuilder()
 			: base("engagement", "list")

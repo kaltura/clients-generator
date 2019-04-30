@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
 
 		public HouseholdPaymentGatewayDisableRequestBuilder()
 			: base("householdpaymentgateway", "disable")
@@ -87,11 +83,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
 
 		public HouseholdPaymentGatewayEnableRequestBuilder()
 			: base("householdpaymentgateway", "enable")
@@ -132,11 +124,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_EXTERNAL_ID = "paymentGatewayExternalId";
 		#endregion
 
-		public string PaymentGatewayExternalId
-		{
-			set;
-			get;
-		}
+		public string PaymentGatewayExternalId { get; set; }
 
 		public HouseholdPaymentGatewayGetChargeIDRequestBuilder()
 			: base("householdpaymentgateway", "getChargeID")
@@ -177,21 +165,9 @@ namespace Kaltura.Services
 		public const string EXTRA_PARAMETERS = "extraParameters";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
-		public string Intent
-		{
-			set;
-			get;
-		}
-		public IList<KeyValue> ExtraParameters
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
+		public string Intent { get; set; }
+		public IList<KeyValue> ExtraParameters { get; set; }
 
 		public HouseholdPaymentGatewayInvokeRequestBuilder()
 			: base("householdpaymentgateway", "invoke")
@@ -265,11 +241,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
 
 		public HouseholdPaymentGatewayResumeRequestBuilder()
 			: base("householdpaymentgateway", "resume")
@@ -309,16 +281,8 @@ namespace Kaltura.Services
 		public const string CHARGE_ID = "chargeId";
 		#endregion
 
-		public string PaymentGatewayExternalId
-		{
-			set;
-			get;
-		}
-		public string ChargeId
-		{
-			set;
-			get;
-		}
+		public string PaymentGatewayExternalId { get; set; }
+		public string ChargeId { get; set; }
 
 		public HouseholdPaymentGatewaySetChargeIDRequestBuilder()
 			: base("householdpaymentgateway", "setChargeID")
@@ -362,11 +326,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
 
 		public HouseholdPaymentGatewaySuspendRequestBuilder()
 			: base("householdpaymentgateway", "suspend")

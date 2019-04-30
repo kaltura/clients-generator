@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string HOUSEHOLD = "household";
 		#endregion
 
-		public Household Household
-		{
-			set;
-			get;
-		}
+		public Household Household { get; set; }
 
 		public HouseholdAddRequestBuilder()
 			: base("household", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public HouseholdDeleteRequestBuilder()
 			: base("household", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public HouseholdGetRequestBuilder()
 			: base("household", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public HouseholdPurgeRequestBuilder()
 			: base("household", "purge")
@@ -218,11 +202,7 @@ namespace Kaltura.Services
 		public const string FREQUENCY_TYPE = "frequencyType";
 		#endregion
 
-		public HouseholdFrequencyType FrequencyType
-		{
-			set;
-			get;
-		}
+		public HouseholdFrequencyType FrequencyType { get; set; }
 
 		public HouseholdResetFrequencyRequestBuilder()
 			: base("household", "resetFrequency")
@@ -292,11 +272,7 @@ namespace Kaltura.Services
 		public const string ROLE_ID = "roleId";
 		#endregion
 
-		public int RoleId
-		{
-			set;
-			get;
-		}
+		public int RoleId { get; set; }
 
 		public HouseholdSuspendRequestBuilder()
 			: base("household", "suspend")
@@ -337,11 +313,7 @@ namespace Kaltura.Services
 		public const string HOUSEHOLD = "household";
 		#endregion
 
-		public Household Household
-		{
-			set;
-			get;
-		}
+		public Household Household { get; set; }
 
 		public HouseholdUpdateRequestBuilder()
 			: base("household", "update")

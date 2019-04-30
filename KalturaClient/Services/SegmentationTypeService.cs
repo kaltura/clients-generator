@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string SEGMENTATION_TYPE = "segmentationType";
 		#endregion
 
-		public SegmentationType SegmentationType
-		{
-			set;
-			get;
-		}
+		public SegmentationType SegmentationType { get; set; }
 
 		public SegmentationTypeAddRequestBuilder()
 			: base("segmentationtype", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public SegmentationTypeDeleteRequestBuilder()
 			: base("segmentationtype", "delete")
@@ -131,16 +123,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public SegmentationTypeFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public SegmentationTypeFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public SegmentationTypeListRequestBuilder()
 			: base("segmentationtype", "list")
@@ -183,16 +167,8 @@ namespace Kaltura.Services
 		public const string SEGMENTATION_TYPE = "segmentationType";
 		#endregion
 
-		public long SegmentationTypeId
-		{
-			set;
-			get;
-		}
-		public SegmentationType SegmentationType
-		{
-			set;
-			get;
-		}
+		public long SegmentationTypeId { get; set; }
+		public SegmentationType SegmentationType { get; set; }
 
 		public SegmentationTypeUpdateRequestBuilder()
 			: base("segmentationtype", "update")

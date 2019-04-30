@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string EMAIL_MESSAGE = "emailMessage";
 		#endregion
 
-		public EmailMessage EmailMessage
-		{
-			set;
-			get;
-		}
+		public EmailMessage EmailMessage { get; set; }
 
 		public EmailSendRequestBuilder()
 			: base("email", "send")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string SESSION = "session";
 		#endregion
 
-		public string Session
-		{
-			set;
-			get;
-		}
+		public string Session { get; set; }
 
 		public SessionGetRequestBuilder()
 			: base("session", "get")
@@ -116,11 +112,7 @@ namespace Kaltura.Services
 		public const string USER_ID_TO_SWITCH = "userIdToSwitch";
 		#endregion
 
-		public string UserIdToSwitch
-		{
-			set;
-			get;
-		}
+		public string UserIdToSwitch { get; set; }
 
 		public SessionSwitchUserRequestBuilder()
 			: base("session", "switchUser")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ADAPTER = "adapter";
 		#endregion
 
-		public CDVRAdapterProfile Adapter
-		{
-			set;
-			get;
-		}
+		public CDVRAdapterProfile Adapter { get; set; }
 
 		public CDVRAdapterProfileAddRequestBuilder()
 			: base("cdvradapterprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ADAPTER_ID = "adapterId";
 		#endregion
 
-		public int AdapterId
-		{
-			set;
-			get;
-		}
+		public int AdapterId { get; set; }
 
 		public CDVRAdapterProfileDeleteRequestBuilder()
 			: base("cdvradapterprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ADAPTER_ID = "adapterId";
 		#endregion
 
-		public int AdapterId
-		{
-			set;
-			get;
-		}
+		public int AdapterId { get; set; }
 
 		public CDVRAdapterProfileGenerateSharedSecretRequestBuilder()
 			: base("cdvradapterprofile", "generateSharedSecret")
@@ -203,16 +191,8 @@ namespace Kaltura.Services
 		public const string ADAPTER = "adapter";
 		#endregion
 
-		public int AdapterId
-		{
-			set;
-			get;
-		}
-		public CDVRAdapterProfile Adapter
-		{
-			set;
-			get;
-		}
+		public int AdapterId { get; set; }
+		public CDVRAdapterProfile Adapter { get; set; }
 
 		public CDVRAdapterProfileUpdateRequestBuilder()
 			: base("cdvradapterprofile", "update")

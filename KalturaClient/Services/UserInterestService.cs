@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string USER_INTEREST = "userInterest";
 		#endregion
 
-		public UserInterest UserInterest
-		{
-			set;
-			get;
-		}
+		public UserInterest UserInterest { get; set; }
 
 		public UserInterestAddRequestBuilder()
 			: base("userinterest", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public UserInterestDeleteRequestBuilder()
 			: base("userinterest", "delete")
@@ -132,21 +124,9 @@ namespace Kaltura.Services
 		public new const string PARTNER_ID = "partnerId";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
+		public string Token { get; set; }
+		public new int PartnerId { get; set; }
 
 		public UserInterestDeleteWithTokenRequestBuilder()
 			: base("userinterest", "deleteWithToken")

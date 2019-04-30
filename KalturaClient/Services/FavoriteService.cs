@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FAVORITE = "favorite";
 		#endregion
 
-		public Favorite Favorite
-		{
-			set;
-			get;
-		}
+		public Favorite Favorite { get; set; }
 
 		public FavoriteAddRequestBuilder()
 			: base("favorite", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public FavoriteDeleteRequestBuilder()
 			: base("favorite", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public FavoriteFilter Filter
-		{
-			set;
-			get;
-		}
+		public FavoriteFilter Filter { get; set; }
 
 		public FavoriteListRequestBuilder()
 			: base("favorite", "list")

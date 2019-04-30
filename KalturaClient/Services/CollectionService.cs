@@ -43,16 +43,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public CollectionFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public CollectionFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public CollectionListRequestBuilder()
 			: base("collection", "list")

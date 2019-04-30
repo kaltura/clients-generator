@@ -43,16 +43,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public TransactionHistoryFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public TransactionHistoryFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public TransactionHistoryListRequestBuilder()
 			: base("transactionhistory", "list")

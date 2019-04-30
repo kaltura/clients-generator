@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string CONFIGURATION_GROUP_DEVICE = "configurationGroupDevice";
 		#endregion
 
-		public ConfigurationGroupDevice ConfigurationGroupDevice
-		{
-			set;
-			get;
-		}
+		public ConfigurationGroupDevice ConfigurationGroupDevice { get; set; }
 
 		public ConfigurationGroupDeviceAddRequestBuilder()
 			: base("configurationgroupdevice", "add")
@@ -87,11 +83,7 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public string Udid { get; set; }
 
 		public ConfigurationGroupDeviceDeleteRequestBuilder()
 			: base("configurationgroupdevice", "delete")
@@ -132,11 +124,7 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public string Udid { get; set; }
 
 		public ConfigurationGroupDeviceGetRequestBuilder()
 			: base("configurationgroupdevice", "get")
@@ -176,16 +164,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public ConfigurationGroupDeviceFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public ConfigurationGroupDeviceFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public ConfigurationGroupDeviceListRequestBuilder()
 			: base("configurationgroupdevice", "list")

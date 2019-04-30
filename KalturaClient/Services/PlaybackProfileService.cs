@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PLAYBACK_PROFILE = "playbackProfile";
 		#endregion
 
-		public PlaybackProfile PlaybackProfile
-		{
-			set;
-			get;
-		}
+		public PlaybackProfile PlaybackProfile { get; set; }
 
 		public PlaybackProfileAddRequestBuilder()
 			: base("playbackprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public PlaybackProfileDeleteRequestBuilder()
 			: base("playbackprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public PlaybackProfileGenerateSharedSecretRequestBuilder()
 			: base("playbackprofile", "generateSharedSecret")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public PlaybackProfileFilter Filter
-		{
-			set;
-			get;
-		}
+		public PlaybackProfileFilter Filter { get; set; }
 
 		public PlaybackProfileListRequestBuilder()
 			: base("playbackprofile", "list")
@@ -217,16 +201,8 @@ namespace Kaltura.Services
 		public const string PLAYBACK_PROFILE = "playbackProfile";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
-		public PlaybackProfile PlaybackProfile
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
+		public PlaybackProfile PlaybackProfile { get; set; }
 
 		public PlaybackProfileUpdateRequestBuilder()
 			: base("playbackprofile", "update")

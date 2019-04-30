@@ -71,11 +71,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public PermissionFilter Filter
-		{
-			set;
-			get;
-		}
+		public PermissionFilter Filter { get; set; }
 
 		public PermissionListRequestBuilder()
 			: base("permission", "list")

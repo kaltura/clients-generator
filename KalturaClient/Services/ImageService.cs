@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string IMAGE = "image";
 		#endregion
 
-		public Image Image
-		{
-			set;
-			get;
-		}
+		public Image Image { get; set; }
 
 		public ImageAddRequestBuilder()
 			: base("image", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public ImageDeleteRequestBuilder()
 			: base("image", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public ImageFilter Filter
-		{
-			set;
-			get;
-		}
+		public ImageFilter Filter { get; set; }
 
 		public ImageListRequestBuilder()
 			: base("image", "list")
@@ -174,16 +162,8 @@ namespace Kaltura.Services
 		public const string CONTENT = "content";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public ContentResource Content
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public ContentResource Content { get; set; }
 
 		public ImageSetContentRequestBuilder()
 			: base("image", "setContent")

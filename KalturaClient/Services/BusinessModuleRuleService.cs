@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string BUSINESS_MODULE_RULE = "businessModuleRule";
 		#endregion
 
-		public BusinessModuleRule BusinessModuleRule
-		{
-			set;
-			get;
-		}
+		public BusinessModuleRule BusinessModuleRule { get; set; }
 
 		public BusinessModuleRuleAddRequestBuilder()
 			: base("businessmodulerule", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public BusinessModuleRuleDeleteRequestBuilder()
 			: base("businessmodulerule", "delete")
@@ -128,11 +120,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public BusinessModuleRuleGetRequestBuilder()
 			: base("businessmodulerule", "get")
@@ -171,11 +159,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public BusinessModuleRuleFilter Filter
-		{
-			set;
-			get;
-		}
+		public BusinessModuleRuleFilter Filter { get; set; }
 
 		public BusinessModuleRuleListRequestBuilder()
 			: base("businessmodulerule", "list")
@@ -215,16 +199,8 @@ namespace Kaltura.Services
 		public const string BUSINESS_MODULE_RULE = "businessModuleRule";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public BusinessModuleRule BusinessModuleRule
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public BusinessModuleRule BusinessModuleRule { get; set; }
 
 		public BusinessModuleRuleUpdateRequestBuilder()
 			: base("businessmodulerule", "update")

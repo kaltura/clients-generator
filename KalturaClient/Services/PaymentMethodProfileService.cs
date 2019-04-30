@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_METHOD = "paymentMethod";
 		#endregion
 
-		public PaymentMethodProfile PaymentMethod
-		{
-			set;
-			get;
-		}
+		public PaymentMethodProfile PaymentMethod { get; set; }
 
 		public PaymentMethodProfileAddRequestBuilder()
 			: base("paymentmethodprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
 		#endregion
 
-		public int PaymentMethodId
-		{
-			set;
-			get;
-		}
+		public int PaymentMethodId { get; set; }
 
 		public PaymentMethodProfileDeleteRequestBuilder()
 			: base("paymentmethodprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public PaymentMethodProfileFilter Filter
-		{
-			set;
-			get;
-		}
+		public PaymentMethodProfileFilter Filter { get; set; }
 
 		public PaymentMethodProfileListRequestBuilder()
 			: base("paymentmethodprofile", "list")
@@ -174,16 +162,8 @@ namespace Kaltura.Services
 		public const string PAYMENT_METHOD = "paymentMethod";
 		#endregion
 
-		public int PaymentMethodId
-		{
-			set;
-			get;
-		}
-		public PaymentMethodProfile PaymentMethod
-		{
-			set;
-			get;
-		}
+		public int PaymentMethodId { get; set; }
+		public PaymentMethodProfile PaymentMethod { get; set; }
 
 		public PaymentMethodProfileUpdateRequestBuilder()
 			: base("paymentmethodprofile", "update")

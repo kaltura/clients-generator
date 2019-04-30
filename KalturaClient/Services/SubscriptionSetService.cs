@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string SUBSCRIPTION_SET = "subscriptionSet";
 		#endregion
 
-		public SubscriptionSet SubscriptionSet
-		{
-			set;
-			get;
-		}
+		public SubscriptionSet SubscriptionSet { get; set; }
 
 		public SubscriptionSetAddRequestBuilder()
 			: base("subscriptionset", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public SubscriptionSetDeleteRequestBuilder()
 			: base("subscriptionset", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public SubscriptionSetGetRequestBuilder()
 			: base("subscriptionset", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public SubscriptionSetFilter Filter
-		{
-			set;
-			get;
-		}
+		public SubscriptionSetFilter Filter { get; set; }
 
 		public SubscriptionSetListRequestBuilder()
 			: base("subscriptionset", "list")
@@ -217,16 +201,8 @@ namespace Kaltura.Services
 		public const string SUBSCRIPTION_SET = "subscriptionSet";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public SubscriptionSet SubscriptionSet
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public SubscriptionSet SubscriptionSet { get; set; }
 
 		public SubscriptionSetUpdateRequestBuilder()
 			: base("subscriptionset", "update")

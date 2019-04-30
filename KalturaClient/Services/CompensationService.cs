@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string COMPENSATION = "compensation";
 		#endregion
 
-		public Compensation Compensation
-		{
-			set;
-			get;
-		}
+		public Compensation Compensation { get; set; }
 
 		public CompensationAddRequestBuilder()
 			: base("compensation", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public CompensationDeleteRequestBuilder()
 			: base("compensation", "delete")
@@ -128,11 +120,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public CompensationGetRequestBuilder()
 			: base("compensation", "get")

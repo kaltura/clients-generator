@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string COUPONS_GROUP = "couponsGroup";
 		#endregion
 
-		public CouponsGroup CouponsGroup
-		{
-			set;
-			get;
-		}
+		public CouponsGroup CouponsGroup { get; set; }
 
 		public CouponsGroupAddRequestBuilder()
 			: base("couponsgroup", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public CouponsGroupDeleteRequestBuilder()
 			: base("couponsgroup", "delete")
@@ -131,16 +123,8 @@ namespace Kaltura.Services
 		public const string COUPON_GENERATION_OPTIONS = "couponGenerationOptions";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public CouponGenerationOptions CouponGenerationOptions
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public CouponGenerationOptions CouponGenerationOptions { get; set; }
 
 		public CouponsGroupGenerateRequestBuilder()
 			: base("couponsgroup", "generate")
@@ -182,11 +166,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public CouponsGroupGetRequestBuilder()
 			: base("couponsgroup", "get")
@@ -255,16 +235,8 @@ namespace Kaltura.Services
 		public const string COUPONS_GROUP = "couponsGroup";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public CouponsGroup CouponsGroup
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public CouponsGroup CouponsGroup { get; set; }
 
 		public CouponsGroupUpdateRequestBuilder()
 			: base("couponsgroup", "update")

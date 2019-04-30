@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public SearchHistoryFilter Filter
-		{
-			set;
-			get;
-		}
+		public SearchHistoryFilter Filter { get; set; }
 
 		public SearchHistoryCleanRequestBuilder()
 			: base("searchhistory", "clean")
@@ -87,11 +83,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public SearchHistoryDeleteRequestBuilder()
 			: base("searchhistory", "delete")
@@ -133,16 +125,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public SearchHistoryFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public SearchHistoryFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public SearchHistoryListRequestBuilder()
 			: base("searchhistory", "list")

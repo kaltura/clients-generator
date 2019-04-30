@@ -71,11 +71,7 @@ namespace Kaltura.Services
 		public const string SETTINGS = "settings";
 		#endregion
 
-		public TimeShiftedTvPartnerSettings Settings
-		{
-			set;
-			get;
-		}
+		public TimeShiftedTvPartnerSettings Settings { get; set; }
 
 		public TimeShiftedTvPartnerSettingsUpdateRequestBuilder()
 			: base("timeshiftedtvpartnersettings", "update")

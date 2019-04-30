@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string RECORDING = "recording";
 		#endregion
 
-		public Recording Recording
-		{
-			set;
-			get;
-		}
+		public Recording Recording { get; set; }
 
 		public RecordingAddRequestBuilder()
 			: base("recording", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public RecordingCancelRequestBuilder()
 			: base("recording", "cancel")
@@ -128,11 +120,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public RecordingDeleteRequestBuilder()
 			: base("recording", "delete")
@@ -171,11 +159,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public RecordingGetRequestBuilder()
 			: base("recording", "get")
@@ -215,16 +199,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public RecordingFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public RecordingFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public RecordingListRequestBuilder()
 			: base("recording", "list")
@@ -266,11 +242,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public RecordingProtectRequestBuilder()
 			: base("recording", "protect")
@@ -310,16 +282,8 @@ namespace Kaltura.Services
 		public const string RECORDING = "recording";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public Recording Recording
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public Recording Recording { get; set; }
 
 		public RecordingUpdateRequestBuilder()
 			: base("recording", "update")

@@ -44,21 +44,9 @@ namespace Kaltura.Services
 		public const string ACTIVATION_TOKEN = "activationToken";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Username
-		{
-			set;
-			get;
-		}
-		public string ActivationToken
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Username { get; set; }
+		public string ActivationToken { get; set; }
 
 		public OttUserActivateRequestBuilder()
 			: base("ottuser", "activate")
@@ -103,11 +91,7 @@ namespace Kaltura.Services
 		public const string ROLE_ID = "roleId";
 		#endregion
 
-		public long RoleId
-		{
-			set;
-			get;
-		}
+		public long RoleId { get; set; }
 
 		public OttUserAddRoleRequestBuilder()
 			: base("ottuser", "addRole")
@@ -149,16 +133,8 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Udid { get; set; }
 
 		public OttUserAnonymousLoginRequestBuilder()
 			: base("ottuser", "anonymousLogin")
@@ -289,11 +265,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public OTTUserFilter Filter
-		{
-			set;
-			get;
-		}
+		public OTTUserFilter Filter { get; set; }
 
 		public OttUserListRequestBuilder()
 			: base("ottuser", "list")
@@ -336,31 +308,11 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Username
-		{
-			set;
-			get;
-		}
-		public string Password
-		{
-			set;
-			get;
-		}
-		public IDictionary<string, StringValue> ExtraParams
-		{
-			set;
-			get;
-		}
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Username { get; set; }
+		public string Password { get; set; }
+		public IDictionary<string, StringValue> ExtraParams { get; set; }
+		public string Udid { get; set; }
 
 		public OttUserLoginRequestBuilder()
 			: base("ottuser", "login")
@@ -414,26 +366,10 @@ namespace Kaltura.Services
 		public const string SECRET = "secret";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Pin
-		{
-			set;
-			get;
-		}
-		public string Udid
-		{
-			set;
-			get;
-		}
-		public string Secret
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Pin { get; set; }
+		public string Udid { get; set; }
+		public string Secret { get; set; }
 
 		public OttUserLoginWithPinRequestBuilder()
 			: base("ottuser", "loginWithPin")
@@ -514,21 +450,9 @@ namespace Kaltura.Services
 		public const string PASSWORD = "password";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public OTTUser User
-		{
-			set;
-			get;
-		}
-		public string Password
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public OTTUser User { get; set; }
+		public string Password { get; set; }
 
 		public OttUserRegisterRequestBuilder()
 			: base("ottuser", "register")
@@ -574,16 +498,8 @@ namespace Kaltura.Services
 		public const string USERNAME = "username";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Username
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Username { get; set; }
 
 		public OttUserResendActivationTokenRequestBuilder()
 			: base("ottuser", "resendActivationToken")
@@ -629,21 +545,9 @@ namespace Kaltura.Services
 		public const string TEMPLATE_NAME = "templateName";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Username
-		{
-			set;
-			get;
-		}
-		public string TemplateName
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Username { get; set; }
+		public string TemplateName { get; set; }
 
 		public OttUserResetPasswordRequestBuilder()
 			: base("ottuser", "resetPassword")
@@ -692,21 +596,9 @@ namespace Kaltura.Services
 		public const string PASSWORD = "password";
 		#endregion
 
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public string Password
-		{
-			set;
-			get;
-		}
+		public new int PartnerId { get; set; }
+		public string Token { get; set; }
+		public string Password { get; set; }
 
 		public OttUserSetInitialPasswordRequestBuilder()
 			: base("ottuser", "setInitialPassword")
@@ -752,16 +644,8 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public OTTUser User
-		{
-			set;
-			get;
-		}
-		public string Id
-		{
-			set;
-			get;
-		}
+		public OTTUser User { get; set; }
+		public string Id { get; set; }
 
 		public OttUserUpdateRequestBuilder()
 			: base("ottuser", "update")
@@ -804,16 +688,8 @@ namespace Kaltura.Services
 		public const string VALUE = "value";
 		#endregion
 
-		public string Key
-		{
-			set;
-			get;
-		}
-		public StringValue Value
-		{
-			set;
-			get;
-		}
+		public string Key { get; set; }
+		public StringValue Value { get; set; }
 
 		public OttUserUpdateDynamicDataRequestBuilder()
 			: base("ottuser", "updateDynamicData")
@@ -857,21 +733,9 @@ namespace Kaltura.Services
 		public const string NEW_PASSWORD = "newPassword";
 		#endregion
 
-		public string Username
-		{
-			set;
-			get;
-		}
-		public string OldPassword
-		{
-			set;
-			get;
-		}
-		public string NewPassword
-		{
-			set;
-			get;
-		}
+		public string Username { get; set; }
+		public string OldPassword { get; set; }
+		public string NewPassword { get; set; }
 
 		public OttUserUpdateLoginDataRequestBuilder()
 			: base("ottuser", "updateLoginData")
@@ -919,16 +783,8 @@ namespace Kaltura.Services
 		public const string PASSWORD = "password";
 		#endregion
 
-		public new int UserId
-		{
-			set;
-			get;
-		}
-		public string Password
-		{
-			set;
-			get;
-		}
+		public new int UserId { get; set; }
+		public string Password { get; set; }
 
 		public OttUserUpdatePasswordRequestBuilder()
 			: base("ottuser", "updatePassword")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public TopicDeleteRequestBuilder()
 			: base("topic", "delete")
@@ -87,11 +83,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public TopicGetRequestBuilder()
 			: base("topic", "get")
@@ -131,16 +123,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public TopicFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public TopicFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public TopicListRequestBuilder()
 			: base("topic", "list")
@@ -183,16 +167,8 @@ namespace Kaltura.Services
 		public const string AUTOMATIC_ISSUE_NOTIFICATION = "automaticIssueNotification";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
-		public TopicAutomaticIssueNotification AutomaticIssueNotification
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
+		public TopicAutomaticIssueNotification AutomaticIssueNotification { get; set; }
 
 		public TopicUpdateStatusRequestBuilder()
 			: base("topic", "updateStatus")

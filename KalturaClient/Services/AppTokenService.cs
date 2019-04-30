@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string APP_TOKEN = "appToken";
 		#endregion
 
-		public AppToken AppToken
-		{
-			set;
-			get;
-		}
+		public AppToken AppToken { get; set; }
 
 		public AppTokenAddRequestBuilder()
 			: base("apptoken", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public AppTokenDeleteRequestBuilder()
 			: base("apptoken", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public AppTokenGetRequestBuilder()
 			: base("apptoken", "get")
@@ -177,31 +165,11 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
-		public string TokenHash
-		{
-			set;
-			get;
-		}
-		public new string UserId
-		{
-			set;
-			get;
-		}
-		public int Expiry
-		{
-			set;
-			get;
-		}
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
+		public string TokenHash { get; set; }
+		public new string UserId { get; set; }
+		public int Expiry { get; set; }
+		public string Udid { get; set; }
 
 		public AppTokenStartSessionRequestBuilder()
 			: base("apptoken", "startSession")

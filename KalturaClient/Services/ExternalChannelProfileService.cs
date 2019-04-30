@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string EXTERNAL_CHANNEL = "externalChannel";
 		#endregion
 
-		public ExternalChannelProfile ExternalChannel
-		{
-			set;
-			get;
-		}
+		public ExternalChannelProfile ExternalChannel { get; set; }
 
 		public ExternalChannelProfileAddRequestBuilder()
 			: base("externalchannelprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string EXTERNAL_CHANNEL_ID = "externalChannelId";
 		#endregion
 
-		public int ExternalChannelId
-		{
-			set;
-			get;
-		}
+		public int ExternalChannelId { get; set; }
 
 		public ExternalChannelProfileDeleteRequestBuilder()
 			: base("externalchannelprofile", "delete")
@@ -160,16 +152,8 @@ namespace Kaltura.Services
 		public const string EXTERNAL_CHANNEL = "externalChannel";
 		#endregion
 
-		public int ExternalChannelId
-		{
-			set;
-			get;
-		}
-		public ExternalChannelProfile ExternalChannel
-		{
-			set;
-			get;
-		}
+		public int ExternalChannelId { get; set; }
+		public ExternalChannelProfile ExternalChannel { get; set; }
 
 		public ExternalChannelProfileUpdateRequestBuilder()
 			: base("externalchannelprofile", "update")

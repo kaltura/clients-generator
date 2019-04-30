@@ -41,14 +41,12 @@ namespace Kaltura.Types
 		public const string PROGRAM_ID = "programId";
 		public const string PROGRAM_EXTERNAL_ID = "programExternalId";
 		public const string LIVE_ASSET_ID = "liveAssetId";
-		public const string LIVE_ASSET_EXTERNAL_ID = "liveAssetExternalId";
 		#endregion
 
 		#region Private Fields
 		private int _ProgramId = Int32.MinValue;
 		private string _ProgramExternalId = null;
 		private int _LiveAssetId = Int32.MinValue;
-		private string _LiveAssetExternalId = null;
 		#endregion
 
 		#region Properties
@@ -82,16 +80,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("LiveAssetId");
 			}
 		}
-		[JsonProperty]
-		public string LiveAssetExternalId
-		{
-			get { return _LiveAssetExternalId; }
-			private set 
-			{ 
-				_LiveAssetExternalId = value;
-				OnPropertyChanged("LiveAssetExternalId");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -113,10 +101,6 @@ namespace Kaltura.Types
 			{
 				this._LiveAssetId = ParseInt(node["liveAssetId"].Value<string>());
 			}
-			if(node["liveAssetExternalId"] != null)
-			{
-				this._LiveAssetExternalId = node["liveAssetExternalId"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -129,7 +113,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("programId", this._ProgramId);
 			kparams.AddIfNotNull("programExternalId", this._ProgramExternalId);
 			kparams.AddIfNotNull("liveAssetId", this._LiveAssetId);
-			kparams.AddIfNotNull("liveAssetExternalId", this._LiveAssetExternalId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -142,8 +125,6 @@ namespace Kaltura.Types
 					return "ProgramExternalId";
 				case LIVE_ASSET_ID:
 					return "LiveAssetId";
-				case LIVE_ASSET_EXTERNAL_ID:
-					return "LiveAssetExternalId";
 				default:
 					return base.getPropertyName(apiName);
 			}

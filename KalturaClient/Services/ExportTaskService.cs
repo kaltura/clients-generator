@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string TASK = "task";
 		#endregion
 
-		public ExportTask Task
-		{
-			set;
-			get;
-		}
+		public ExportTask Task { get; set; }
 
 		public ExportTaskAddRequestBuilder()
 			: base("exporttask", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public ExportTaskDeleteRequestBuilder()
 			: base("exporttask", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public ExportTaskGetRequestBuilder()
 			: base("exporttask", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public ExportTaskFilter Filter
-		{
-			set;
-			get;
-		}
+		public ExportTaskFilter Filter { get; set; }
 
 		public ExportTaskListRequestBuilder()
 			: base("exporttask", "list")
@@ -217,16 +201,8 @@ namespace Kaltura.Services
 		public const string TASK = "task";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public ExportTask Task
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public ExportTask Task { get; set; }
 
 		public ExportTaskUpdateRequestBuilder()
 			: base("exporttask", "update")

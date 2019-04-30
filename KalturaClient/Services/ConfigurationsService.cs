@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string CONFIGURATIONS = "configurations";
 		#endregion
 
-		public Configurations Configurations
-		{
-			set;
-			get;
-		}
+		public Configurations Configurations { get; set; }
 
 		public ConfigurationsAddRequestBuilder()
 			: base("configurations", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public ConfigurationsDeleteRequestBuilder()
 			: base("configurations", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public ConfigurationsGetRequestBuilder()
 			: base("configurations", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public ConfigurationsFilter Filter
-		{
-			set;
-			get;
-		}
+		public ConfigurationsFilter Filter { get; set; }
 
 		public ConfigurationsListRequestBuilder()
 			: base("configurations", "list")
@@ -217,16 +201,8 @@ namespace Kaltura.Services
 		public const string CONFIGURATIONS = "configurations";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
-		public Configurations Configurations
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
+		public Configurations Configurations { get; set; }
 
 		public ConfigurationsUpdateRequestBuilder()
 			: base("configurations", "update")

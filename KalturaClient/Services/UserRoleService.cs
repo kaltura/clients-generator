@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ROLE = "role";
 		#endregion
 
-		public UserRole Role
-		{
-			set;
-			get;
-		}
+		public UserRole Role { get; set; }
 
 		public UserRoleAddRequestBuilder()
 			: base("userrole", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public UserRoleDeleteRequestBuilder()
 			: base("userrole", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public UserRoleFilter Filter
-		{
-			set;
-			get;
-		}
+		public UserRoleFilter Filter { get; set; }
 
 		public UserRoleListRequestBuilder()
 			: base("userrole", "list")
@@ -174,16 +162,8 @@ namespace Kaltura.Services
 		public const string ROLE = "role";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public UserRole Role
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public UserRole Role { get; set; }
 
 		public UserRoleUpdateRequestBuilder()
 			: base("userrole", "update")

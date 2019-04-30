@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string UPLOAD_TOKEN = "uploadToken";
 		#endregion
 
-		public UploadToken UploadToken
-		{
-			set;
-			get;
-		}
+		public UploadToken UploadToken { get; set; }
 
 		public UploadTokenAddRequestBuilder()
 			: base("uploadtoken", "add")
@@ -86,16 +82,9 @@ namespace Kaltura.Services
 		public const string FILE_DATA = "fileData";
 		#endregion
 
-		public string UploadTokenId
-		{
-			set;
-			get;
-		}
-		public Stream FileData
-		{
-			set;
-			get;
-		}
+		public string UploadTokenId { get; set; }
+		public Stream FileData { get; set; }
+		public string FileData_FileName { get; set; }
 
 		public UploadTokenUploadRequestBuilder()
 			: base("uploadtoken", "upload")
@@ -120,7 +109,7 @@ namespace Kaltura.Services
 		public override Files getFiles()
 		{
 			Files kfiles = base.getFiles();
-			kfiles.Add("fileData", FileData);
+			kfiles.Add("fileData", new FileData(FileData, FileData_FileName));
 			return kfiles;
 		}
 

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string TAG = "tag";
 		#endregion
 
-		public Tag Tag
-		{
-			set;
-			get;
-		}
+		public Tag Tag { get; set; }
 
 		public TagAddRequestBuilder()
 			: base("tag", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public TagDeleteRequestBuilder()
 			: base("tag", "delete")
@@ -131,16 +123,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public TagFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public TagFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public TagListRequestBuilder()
 			: base("tag", "list")
@@ -183,16 +167,8 @@ namespace Kaltura.Services
 		public const string TAG = "tag";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public Tag Tag
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public Tag Tag { get; set; }
 
 		public TagUpdateRequestBuilder()
 			: base("tag", "update")

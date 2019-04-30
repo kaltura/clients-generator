@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string MESSAGE_TYPE = "messageType";
 		#endregion
 
-		public MessageTemplateType MessageType
-		{
-			set;
-			get;
-		}
+		public MessageTemplateType MessageType { get; set; }
 
 		public MessageTemplateGetRequestBuilder()
 			: base("messagetemplate", "get")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string TEMPLATE = "template";
 		#endregion
 
-		public MessageTemplateType MessageType
-		{
-			set;
-			get;
-		}
-		public MessageTemplate Template
-		{
-			set;
-			get;
-		}
+		public MessageTemplateType MessageType { get; set; }
+		public MessageTemplate Template { get; set; }
 
 		public MessageTemplateUpdateRequestBuilder()
 			: base("messagetemplate", "update")

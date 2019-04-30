@@ -43,16 +43,8 @@ namespace Kaltura.Services
 		public const string TYPE = "type";
 		#endregion
 
-		public string Identifier
-		{
-			set;
-			get;
-		}
-		public NotificationType Type
-		{
-			set;
-			get;
-		}
+		public string Identifier { get; set; }
+		public NotificationType Type { get; set; }
 
 		public NotificationRegisterRequestBuilder()
 			: base("notification", "register")
@@ -95,16 +87,8 @@ namespace Kaltura.Services
 		public const string PUSH_MESSAGE = "pushMessage";
 		#endregion
 
-		public new int UserId
-		{
-			set;
-			get;
-		}
-		public PushMessage PushMessage
-		{
-			set;
-			get;
-		}
+		public new int UserId { get; set; }
+		public PushMessage PushMessage { get; set; }
 
 		public NotificationSendPushRequestBuilder()
 			: base("notification", "sendPush")
@@ -148,11 +132,7 @@ namespace Kaltura.Services
 		public const string MESSAGE = "message";
 		#endregion
 
-		public string Message
-		{
-			set;
-			get;
-		}
+		public string Message { get; set; }
 
 		public NotificationSendSmsRequestBuilder()
 			: base("notification", "sendSms")
@@ -193,11 +173,7 @@ namespace Kaltura.Services
 		public const string PUSH_TOKEN = "pushToken";
 		#endregion
 
-		public string PushToken
-		{
-			set;
-			get;
-		}
+		public string PushToken { get; set; }
 
 		public NotificationSetDevicePushTokenRequestBuilder()
 			: base("notification", "setDevicePushToken")

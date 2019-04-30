@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public UnifiedPaymentGetNextRenewalRequestBuilder()
 			: base("unifiedpayment", "getNextRenewal")

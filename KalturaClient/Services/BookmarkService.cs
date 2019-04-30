@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string BOOKMARK = "bookmark";
 		#endregion
 
-		public Bookmark Bookmark
-		{
-			set;
-			get;
-		}
+		public Bookmark Bookmark { get; set; }
 
 		public BookmarkAddRequestBuilder()
 			: base("bookmark", "add")
@@ -87,11 +83,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public BookmarkFilter Filter
-		{
-			set;
-			get;
-		}
+		public BookmarkFilter Filter { get; set; }
 
 		public BookmarkListRequestBuilder()
 			: base("bookmark", "list")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string CONFIGURATION_GROUP = "configurationGroup";
 		#endregion
 
-		public ConfigurationGroup ConfigurationGroup
-		{
-			set;
-			get;
-		}
+		public ConfigurationGroup ConfigurationGroup { get; set; }
 
 		public ConfigurationGroupAddRequestBuilder()
 			: base("configurationgroup", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public ConfigurationGroupDeleteRequestBuilder()
 			: base("configurationgroup", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public ConfigurationGroupGetRequestBuilder()
 			: base("configurationgroup", "get")
@@ -203,16 +191,8 @@ namespace Kaltura.Services
 		public const string CONFIGURATION_GROUP = "configurationGroup";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
-		public ConfigurationGroup ConfigurationGroup
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
+		public ConfigurationGroup ConfigurationGroup { get; set; }
 
 		public ConfigurationGroupUpdateRequestBuilder()
 			: base("configurationgroup", "update")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public TvmRuleFilter Filter
-		{
-			set;
-			get;
-		}
+		public TvmRuleFilter Filter { get; set; }
 
 		public TvmRuleListRequestBuilder()
 			: base("tvmrule", "list")

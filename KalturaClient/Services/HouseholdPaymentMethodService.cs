@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string HOUSEHOLD_PAYMENT_METHOD = "householdPaymentMethod";
 		#endregion
 
-		public HouseholdPaymentMethod HouseholdPaymentMethod
-		{
-			set;
-			get;
-		}
+		public HouseholdPaymentMethod HouseholdPaymentMethod { get; set; }
 
 		public HouseholdPaymentMethodAddRequestBuilder()
 			: base("householdpaymentmethod", "add")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
-		public int PaymentMethodId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
+		public int PaymentMethodId { get; set; }
 
 		public HouseholdPaymentMethodForceRemoveRequestBuilder()
 			: base("householdpaymentmethod", "forceRemove")
@@ -169,16 +157,8 @@ namespace Kaltura.Services
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
-		public int PaymentMethodId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
+		public int PaymentMethodId { get; set; }
 
 		public HouseholdPaymentMethodRemoveRequestBuilder()
 			: base("householdpaymentmethod", "remove")
@@ -223,16 +203,8 @@ namespace Kaltura.Services
 		public const string PAYMENT_METHOD_ID = "paymentMethodId";
 		#endregion
 
-		public int PaymentGatewayId
-		{
-			set;
-			get;
-		}
-		public int PaymentMethodId
-		{
-			set;
-			get;
-		}
+		public int PaymentGatewayId { get; set; }
+		public int PaymentMethodId { get; set; }
 
 		public HouseholdPaymentMethodSetAsDefaultRequestBuilder()
 			: base("householdpaymentmethod", "setAsDefault")

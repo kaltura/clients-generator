@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PERSONAL_LIST = "personalList";
 		#endregion
 
-		public PersonalList PersonalList
-		{
-			set;
-			get;
-		}
+		public PersonalList PersonalList { get; set; }
 
 		public PersonalListAddRequestBuilder()
 			: base("personallist", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string PERSONAL_LIST_ID = "personalListId";
 		#endregion
 
-		public long PersonalListId
-		{
-			set;
-			get;
-		}
+		public long PersonalListId { get; set; }
 
 		public PersonalListDeleteRequestBuilder()
 			: base("personallist", "delete")
@@ -129,16 +121,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public PersonalListFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public PersonalListFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public PersonalListListRequestBuilder()
 			: base("personallist", "list")

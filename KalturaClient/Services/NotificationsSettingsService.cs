@@ -71,11 +71,7 @@ namespace Kaltura.Services
 		public const string SETTINGS = "settings";
 		#endregion
 
-		public NotificationsSettings Settings
-		{
-			set;
-			get;
-		}
+		public NotificationsSettings Settings { get; set; }
 
 		public NotificationsSettingsUpdateRequestBuilder()
 			: base("notificationssettings", "update")
@@ -118,21 +114,9 @@ namespace Kaltura.Services
 		public new const string PARTNER_ID = "partnerId";
 		#endregion
 
-		public NotificationsSettings Settings
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
+		public NotificationsSettings Settings { get; set; }
+		public string Token { get; set; }
+		public new int PartnerId { get; set; }
 
 		public NotificationsSettingsUpdateWithTokenRequestBuilder()
 			: base("notificationssettings", "updateWithToken")

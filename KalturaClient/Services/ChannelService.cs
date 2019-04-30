@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string CHANNEL = "channel";
 		#endregion
 
-		public Channel Channel
-		{
-			set;
-			get;
-		}
+		public Channel Channel { get; set; }
 
 		public ChannelAddRequestBuilder()
 			: base("channel", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string CHANNEL_ID = "channelId";
 		#endregion
 
-		public int ChannelId
-		{
-			set;
-			get;
-		}
+		public int ChannelId { get; set; }
 
 		public ChannelDeleteRequestBuilder()
 			: base("channel", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public ChannelGetRequestBuilder()
 			: base("channel", "get")
@@ -174,16 +162,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public ChannelsFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public ChannelsFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public ChannelListRequestBuilder()
 			: base("channel", "list")
@@ -226,16 +206,8 @@ namespace Kaltura.Services
 		public const string CHANNEL = "channel";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
-		public Channel Channel
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
+		public Channel Channel { get; set; }
 
 		public ChannelUpdateRequestBuilder()
 			: base("channel", "update")

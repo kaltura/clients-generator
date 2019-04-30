@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public AssetHistoryFilter Filter
-		{
-			set;
-			get;
-		}
+		public AssetHistoryFilter Filter { get; set; }
 
 		public AssetHistoryCleanRequestBuilder()
 			: base("assethistory", "clean")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public AssetHistoryFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public AssetHistoryFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public AssetHistoryListRequestBuilder()
 			: base("assethistory", "list")

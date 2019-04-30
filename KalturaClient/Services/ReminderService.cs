@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string REMINDER = "reminder";
 		#endregion
 
-		public Reminder Reminder
-		{
-			set;
-			get;
-		}
+		public Reminder Reminder { get; set; }
 
 		public ReminderAddRequestBuilder()
 			: base("reminder", "add")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string TYPE = "type";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public ReminderType Type
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public ReminderType Type { get; set; }
 
 		public ReminderDeleteRequestBuilder()
 			: base("reminder", "delete")
@@ -142,26 +130,10 @@ namespace Kaltura.Services
 		public new const string PARTNER_ID = "partnerId";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public ReminderType Type
-		{
-			set;
-			get;
-		}
-		public string Token
-		{
-			set;
-			get;
-		}
-		public new int PartnerId
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public ReminderType Type { get; set; }
+		public string Token { get; set; }
+		public new int PartnerId { get; set; }
 
 		public ReminderDeleteWithTokenRequestBuilder()
 			: base("reminder", "deleteWithToken")
@@ -210,16 +182,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public ReminderFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public ReminderFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public ReminderListRequestBuilder()
 			: base("reminder", "list")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ASSET_USER_RULE = "assetUserRule";
 		#endregion
 
-		public AssetUserRule AssetUserRule
-		{
-			set;
-			get;
-		}
+		public AssetUserRule AssetUserRule { get; set; }
 
 		public AssetUserRuleAddRequestBuilder()
 			: base("assetuserrule", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string RULE_ID = "ruleId";
 		#endregion
 
-		public long RuleId
-		{
-			set;
-			get;
-		}
+		public long RuleId { get; set; }
 
 		public AssetUserRuleAttachUserRequestBuilder()
 			: base("assetuserrule", "attachUser")
@@ -128,11 +120,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public AssetUserRuleDeleteRequestBuilder()
 			: base("assetuserrule", "delete")
@@ -171,11 +159,7 @@ namespace Kaltura.Services
 		public const string RULE_ID = "ruleId";
 		#endregion
 
-		public long RuleId
-		{
-			set;
-			get;
-		}
+		public long RuleId { get; set; }
 
 		public AssetUserRuleDetachUserRequestBuilder()
 			: base("assetuserrule", "detachUser")
@@ -214,11 +198,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public AssetUserRuleFilter Filter
-		{
-			set;
-			get;
-		}
+		public AssetUserRuleFilter Filter { get; set; }
 
 		public AssetUserRuleListRequestBuilder()
 			: base("assetuserrule", "list")
@@ -258,16 +238,8 @@ namespace Kaltura.Services
 		public const string ASSET_USER_RULE = "assetUserRule";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public AssetUserRule AssetUserRule
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public AssetUserRule AssetUserRule { get; set; }
 
 		public AssetUserRuleUpdateRequestBuilder()
 			: base("assetuserrule", "update")

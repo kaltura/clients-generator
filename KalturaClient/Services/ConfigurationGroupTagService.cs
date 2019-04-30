@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string CONFIGURATION_GROUP_TAG = "configurationGroupTag";
 		#endregion
 
-		public ConfigurationGroupTag ConfigurationGroupTag
-		{
-			set;
-			get;
-		}
+		public ConfigurationGroupTag ConfigurationGroupTag { get; set; }
 
 		public ConfigurationGroupTagAddRequestBuilder()
 			: base("configurationgrouptag", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string TAG = "tag";
 		#endregion
 
-		public string Tag
-		{
-			set;
-			get;
-		}
+		public string Tag { get; set; }
 
 		public ConfigurationGroupTagDeleteRequestBuilder()
 			: base("configurationgrouptag", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string TAG = "tag";
 		#endregion
 
-		public string Tag
-		{
-			set;
-			get;
-		}
+		public string Tag { get; set; }
 
 		public ConfigurationGroupTagGetRequestBuilder()
 			: base("configurationgrouptag", "get")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public ConfigurationGroupTagFilter Filter
-		{
-			set;
-			get;
-		}
+		public ConfigurationGroupTagFilter Filter { get; set; }
 
 		public ConfigurationGroupTagListRequestBuilder()
 			: base("configurationgrouptag", "list")

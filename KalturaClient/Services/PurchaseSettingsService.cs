@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string BY = "by";
 		#endregion
 
-		public EntityReferenceBy By
-		{
-			set;
-			get;
-		}
+		public EntityReferenceBy By { get; set; }
 
 		public PurchaseSettingsGetRequestBuilder()
 			: base("purchasesettings", "get")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string SETTINGS = "settings";
 		#endregion
 
-		public EntityReferenceBy EntityReference
-		{
-			set;
-			get;
-		}
-		public PurchaseSettings Settings
-		{
-			set;
-			get;
-		}
+		public EntityReferenceBy EntityReference { get; set; }
+		public PurchaseSettings Settings { get; set; }
 
 		public PurchaseSettingsUpdateRequestBuilder()
 			: base("purchasesettings", "update")

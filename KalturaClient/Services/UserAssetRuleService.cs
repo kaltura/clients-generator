@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public UserAssetRuleFilter Filter
-		{
-			set;
-			get;
-		}
+		public UserAssetRuleFilter Filter { get; set; }
 
 		public UserAssetRuleListRequestBuilder()
 			: base("userassetrule", "list")

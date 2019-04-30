@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public AssetStructMetaFilter Filter
-		{
-			set;
-			get;
-		}
+		public AssetStructMetaFilter Filter { get; set; }
 
 		public AssetStructMetaListRequestBuilder()
 			: base("assetstructmeta", "list")
@@ -87,21 +83,9 @@ namespace Kaltura.Services
 		public const string ASSET_STRUCT_META = "assetStructMeta";
 		#endregion
 
-		public long AssetStructId
-		{
-			set;
-			get;
-		}
-		public long MetaId
-		{
-			set;
-			get;
-		}
-		public AssetStructMeta AssetStructMeta
-		{
-			set;
-			get;
-		}
+		public long AssetStructId { get; set; }
+		public long MetaId { get; set; }
+		public AssetStructMeta AssetStructMeta { get; set; }
 
 		public AssetStructMetaUpdateRequestBuilder()
 			: base("assetstructmeta", "update")

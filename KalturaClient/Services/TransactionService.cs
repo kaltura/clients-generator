@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PURCHASE = "purchase";
 		#endregion
 
-		public Purchase Purchase
-		{
-			set;
-			get;
-		}
+		public Purchase Purchase { get; set; }
 
 		public TransactionDowngradeRequestBuilder()
 			: base("transaction", "downgrade")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string PURCHASE_SESSION = "purchaseSession";
 		#endregion
 
-		public PurchaseSession PurchaseSession
-		{
-			set;
-			get;
-		}
+		public PurchaseSession PurchaseSession { get; set; }
 
 		public TransactionGetPurchaseSessionIdRequestBuilder()
 			: base("transaction", "getPurchaseSessionId")
@@ -128,11 +120,7 @@ namespace Kaltura.Services
 		public const string PURCHASE = "purchase";
 		#endregion
 
-		public Purchase Purchase
-		{
-			set;
-			get;
-		}
+		public Purchase Purchase { get; set; }
 
 		public TransactionPurchaseRequestBuilder()
 			: base("transaction", "purchase")
@@ -172,16 +160,8 @@ namespace Kaltura.Services
 		public const string TRANSACTION_TYPE = "transactionType";
 		#endregion
 
-		public int AssetId
-		{
-			set;
-			get;
-		}
-		public TransactionType TransactionType
-		{
-			set;
-			get;
-		}
+		public int AssetId { get; set; }
+		public TransactionType TransactionType { get; set; }
 
 		public TransactionSetWaiverRequestBuilder()
 			: base("transaction", "setWaiver")
@@ -228,26 +208,10 @@ namespace Kaltura.Services
 		public const string STATUS = "status";
 		#endregion
 
-		public string PaymentGatewayId
-		{
-			set;
-			get;
-		}
-		public string ExternalTransactionId
-		{
-			set;
-			get;
-		}
-		public string Signature
-		{
-			set;
-			get;
-		}
-		public TransactionStatus Status
-		{
-			set;
-			get;
-		}
+		public string PaymentGatewayId { get; set; }
+		public string ExternalTransactionId { get; set; }
+		public string Signature { get; set; }
+		public TransactionStatus Status { get; set; }
 
 		public TransactionUpdateStatusRequestBuilder()
 			: base("transaction", "updateStatus")
@@ -295,11 +259,7 @@ namespace Kaltura.Services
 		public const string PURCHASE = "purchase";
 		#endregion
 
-		public Purchase Purchase
-		{
-			set;
-			get;
-		}
+		public Purchase Purchase { get; set; }
 
 		public TransactionUpgradeRequestBuilder()
 			: base("transaction", "upgrade")
@@ -338,11 +298,7 @@ namespace Kaltura.Services
 		public const string EXTERNAL_RECEIPT = "externalReceipt";
 		#endregion
 
-		public ExternalReceipt ExternalReceipt
-		{
-			set;
-			get;
-		}
+		public ExternalReceipt ExternalReceipt { get; set; }
 
 		public TransactionValidateReceiptRequestBuilder()
 			: base("transaction", "validateReceipt")

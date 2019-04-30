@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string QUERY = "query";
 		#endregion
 
-		public AssetStatisticsQuery Query
-		{
-			set;
-			get;
-		}
+		public AssetStatisticsQuery Query { get; set; }
 
 		public AssetStatisticsQueryRequestBuilder()
 			: base("assetstatistics", "query")

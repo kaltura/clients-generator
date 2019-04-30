@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ENGAGEMENT_ADAPTER = "engagementAdapter";
 		#endregion
 
-		public EngagementAdapter EngagementAdapter
-		{
-			set;
-			get;
-		}
+		public EngagementAdapter EngagementAdapter { get; set; }
 
 		public EngagementAdapterAddRequestBuilder()
 			: base("engagementadapter", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public EngagementAdapterDeleteRequestBuilder()
 			: base("engagementadapter", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public EngagementAdapterGenerateSharedSecretRequestBuilder()
 			: base("engagementadapter", "generateSharedSecret")
@@ -173,11 +161,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public EngagementAdapterGetRequestBuilder()
 			: base("engagementadapter", "get")
@@ -246,16 +230,8 @@ namespace Kaltura.Services
 		public const string ENGAGEMENT_ADAPTER = "engagementAdapter";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
-		public EngagementAdapter EngagementAdapter
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
+		public EngagementAdapter EngagementAdapter { get; set; }
 
 		public EngagementAdapterUpdateRequestBuilder()
 			: base("engagementadapter", "update")

@@ -71,11 +71,7 @@ namespace Kaltura.Services
 		public const string SETTINGS = "settings";
 		#endregion
 
-		public CDNPartnerSettings Settings
-		{
-			set;
-			get;
-		}
+		public CDNPartnerSettings Settings { get; set; }
 
 		public CdnPartnerSettingsUpdateRequestBuilder()
 			: base("cdnpartnersettings", "update")

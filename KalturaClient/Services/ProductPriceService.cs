@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public ProductPriceFilter Filter
-		{
-			set;
-			get;
-		}
+		public ProductPriceFilter Filter { get; set; }
 
 		public ProductPriceListRequestBuilder()
 			: base("productprice", "list")

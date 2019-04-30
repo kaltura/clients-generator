@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string RECOMMENDATION_ENGINE = "recommendationEngine";
 		#endregion
 
-		public RecommendationProfile RecommendationEngine
-		{
-			set;
-			get;
-		}
+		public RecommendationProfile RecommendationEngine { get; set; }
 
 		public RecommendationProfileAddRequestBuilder()
 			: base("recommendationprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public RecommendationProfileDeleteRequestBuilder()
 			: base("recommendationprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string RECOMMENDATION_ENGINE_ID = "recommendationEngineId";
 		#endregion
 
-		public int RecommendationEngineId
-		{
-			set;
-			get;
-		}
+		public int RecommendationEngineId { get; set; }
 
 		public RecommendationProfileGenerateSharedSecretRequestBuilder()
 			: base("recommendationprofile", "generateSharedSecret")
@@ -203,16 +191,8 @@ namespace Kaltura.Services
 		public const string RECOMMENDATION_ENGINE = "recommendationEngine";
 		#endregion
 
-		public int RecommendationEngineId
-		{
-			set;
-			get;
-		}
-		public RecommendationProfile RecommendationEngine
-		{
-			set;
-			get;
-		}
+		public int RecommendationEngineId { get; set; }
+		public RecommendationProfile RecommendationEngine { get; set; }
 
 		public RecommendationProfileUpdateRequestBuilder()
 			: base("recommendationprofile", "update")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string PARENTAL_RULE = "parentalRule";
 		#endregion
 
-		public ParentalRule ParentalRule
-		{
-			set;
-			get;
-		}
+		public ParentalRule ParentalRule { get; set; }
 
 		public ParentalRuleAddRequestBuilder()
 			: base("parentalrule", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public ParentalRuleDeleteRequestBuilder()
 			: base("parentalrule", "delete")
@@ -131,16 +123,8 @@ namespace Kaltura.Services
 		public const string ENTITY_REFERENCE = "entityReference";
 		#endregion
 
-		public long RuleId
-		{
-			set;
-			get;
-		}
-		public EntityReferenceBy EntityReference
-		{
-			set;
-			get;
-		}
+		public long RuleId { get; set; }
+		public EntityReferenceBy EntityReference { get; set; }
 
 		public ParentalRuleDisableRequestBuilder()
 			: base("parentalrule", "disable")
@@ -184,11 +168,7 @@ namespace Kaltura.Services
 		public const string ENTITY_REFERENCE = "entityReference";
 		#endregion
 
-		public EntityReferenceBy EntityReference
-		{
-			set;
-			get;
-		}
+		public EntityReferenceBy EntityReference { get; set; }
 
 		public ParentalRuleDisableDefaultRequestBuilder()
 			: base("parentalrule", "disableDefault")
@@ -230,16 +210,8 @@ namespace Kaltura.Services
 		public const string ENTITY_REFERENCE = "entityReference";
 		#endregion
 
-		public long RuleId
-		{
-			set;
-			get;
-		}
-		public EntityReferenceBy EntityReference
-		{
-			set;
-			get;
-		}
+		public long RuleId { get; set; }
+		public EntityReferenceBy EntityReference { get; set; }
 
 		public ParentalRuleEnableRequestBuilder()
 			: base("parentalrule", "enable")
@@ -283,11 +255,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public ParentalRuleGetRequestBuilder()
 			: base("parentalrule", "get")
@@ -326,11 +294,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public ParentalRuleFilter Filter
-		{
-			set;
-			get;
-		}
+		public ParentalRuleFilter Filter { get; set; }
 
 		public ParentalRuleListRequestBuilder()
 			: base("parentalrule", "list")
@@ -370,16 +334,8 @@ namespace Kaltura.Services
 		public const string PARENTAL_RULE = "parentalRule";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public ParentalRule ParentalRule
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public ParentalRule ParentalRule { get; set; }
 
 		public ParentalRuleUpdateRequestBuilder()
 			: base("parentalrule", "update")

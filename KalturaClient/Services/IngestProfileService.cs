@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string INGEST_PROFILE = "ingestProfile";
 		#endregion
 
-		public IngestProfile IngestProfile
-		{
-			set;
-			get;
-		}
+		public IngestProfile IngestProfile { get; set; }
 
 		public IngestProfileAddRequestBuilder()
 			: base("ingestprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string INGEST_PROFILE_ID = "ingestProfileId";
 		#endregion
 
-		public int IngestProfileId
-		{
-			set;
-			get;
-		}
+		public int IngestProfileId { get; set; }
 
 		public IngestProfileDeleteRequestBuilder()
 			: base("ingestprofile", "delete")
@@ -160,16 +152,8 @@ namespace Kaltura.Services
 		public const string INGEST_PROFILE = "ingestProfile";
 		#endregion
 
-		public int IngestProfileId
-		{
-			set;
-			get;
-		}
-		public IngestProfile IngestProfile
-		{
-			set;
-			get;
-		}
+		public int IngestProfileId { get; set; }
+		public IngestProfile IngestProfile { get; set; }
 
 		public IngestProfileUpdateRequestBuilder()
 			: base("ingestprofile", "update")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string SOCIAL_ACTION = "socialAction";
 		#endregion
 
-		public SocialAction SocialAction
-		{
-			set;
-			get;
-		}
+		public SocialAction SocialAction { get; set; }
 
 		public SocialActionAddRequestBuilder()
 			: base("socialaction", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public SocialActionDeleteRequestBuilder()
 			: base("socialaction", "delete")
@@ -135,16 +127,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public SocialActionFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public SocialActionFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public SocialActionListRequestBuilder()
 			: base("socialaction", "list")

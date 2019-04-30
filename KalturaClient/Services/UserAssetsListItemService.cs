@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string USER_ASSETS_LIST_ITEM = "userAssetsListItem";
 		#endregion
 
-		public UserAssetsListItem UserAssetsListItem
-		{
-			set;
-			get;
-		}
+		public UserAssetsListItem UserAssetsListItem { get; set; }
 
 		public UserAssetsListItemAddRequestBuilder()
 			: base("userassetslistitem", "add")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string LIST_TYPE = "listType";
 		#endregion
 
-		public string AssetId
-		{
-			set;
-			get;
-		}
-		public UserAssetsListType ListType
-		{
-			set;
-			get;
-		}
+		public string AssetId { get; set; }
+		public UserAssetsListType ListType { get; set; }
 
 		public UserAssetsListItemDeleteRequestBuilder()
 			: base("userassetslistitem", "delete")
@@ -141,21 +129,9 @@ namespace Kaltura.Services
 		public const string ITEM_TYPE = "itemType";
 		#endregion
 
-		public string AssetId
-		{
-			set;
-			get;
-		}
-		public UserAssetsListType ListType
-		{
-			set;
-			get;
-		}
-		public UserAssetsListItemType ItemType
-		{
-			set;
-			get;
-		}
+		public string AssetId { get; set; }
+		public UserAssetsListType ListType { get; set; }
+		public UserAssetsListItemType ItemType { get; set; }
 
 		public UserAssetsListItemGetRequestBuilder()
 			: base("userassetslistitem", "get")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string RECORDING = "recording";
 		#endregion
 
-		public SeriesRecording Recording
-		{
-			set;
-			get;
-		}
+		public SeriesRecording Recording { get; set; }
 
 		public SeriesRecordingAddRequestBuilder()
 			: base("seriesrecording", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public SeriesRecordingCancelRequestBuilder()
 			: base("seriesrecording", "cancel")
@@ -129,16 +121,8 @@ namespace Kaltura.Services
 		public const string EPG_ID = "epgId";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public long EpgId
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public long EpgId { get; set; }
 
 		public SeriesRecordingCancelByEpgIdRequestBuilder()
 			: base("seriesrecording", "cancelByEpgId")
@@ -181,16 +165,8 @@ namespace Kaltura.Services
 		public const string SEASON_NUMBER = "seasonNumber";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public long SeasonNumber
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public long SeasonNumber { get; set; }
 
 		public SeriesRecordingCancelBySeasonNumberRequestBuilder()
 			: base("seriesrecording", "cancelBySeasonNumber")
@@ -232,11 +208,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public SeriesRecordingDeleteRequestBuilder()
 			: base("seriesrecording", "delete")
@@ -276,16 +248,8 @@ namespace Kaltura.Services
 		public const string SEASON_NUMBER = "seasonNumber";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public int SeasonNumber
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public int SeasonNumber { get; set; }
 
 		public SeriesRecordingDeleteBySeasonNumberRequestBuilder()
 			: base("seriesrecording", "deleteBySeasonNumber")
@@ -327,11 +291,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public SeriesRecordingFilter Filter
-		{
-			set;
-			get;
-		}
+		public SeriesRecordingFilter Filter { get; set; }
 
 		public SeriesRecordingListRequestBuilder()
 			: base("seriesrecording", "list")

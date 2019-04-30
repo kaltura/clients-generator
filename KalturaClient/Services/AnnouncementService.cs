@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ANNOUNCEMENT = "announcement";
 		#endregion
 
-		public Announcement Announcement
-		{
-			set;
-			get;
-		}
+		public Announcement Announcement { get; set; }
 
 		public AnnouncementAddRequestBuilder()
 			: base("announcement", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public AnnouncementDeleteRequestBuilder()
 			: base("announcement", "delete")
@@ -162,16 +154,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public AnnouncementFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public AnnouncementFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public AnnouncementListRequestBuilder()
 			: base("announcement", "list")
@@ -214,16 +198,8 @@ namespace Kaltura.Services
 		public const string ANNOUNCEMENT = "announcement";
 		#endregion
 
-		public int AnnouncementId
-		{
-			set;
-			get;
-		}
-		public Announcement Announcement
-		{
-			set;
-			get;
-		}
+		public int AnnouncementId { get; set; }
+		public Announcement Announcement { get; set; }
 
 		public AnnouncementUpdateRequestBuilder()
 			: base("announcement", "update")
@@ -266,16 +242,8 @@ namespace Kaltura.Services
 		public const string STATUS = "status";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public bool Status
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public bool Status { get; set; }
 
 		public AnnouncementUpdateStatusRequestBuilder()
 			: base("announcement", "updateStatus")

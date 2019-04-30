@@ -43,16 +43,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public SocialFriendActivityFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public SocialFriendActivityFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public SocialFriendActivityListRequestBuilder()
 			: base("socialfriendactivity", "list")

@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string HOUSEHOLD_USER = "householdUser";
 		#endregion
 
-		public HouseholdUser HouseholdUser
-		{
-			set;
-			get;
-		}
+		public HouseholdUser HouseholdUser { get; set; }
 
 		public HouseholdUserAddRequestBuilder()
 			: base("householduser", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public string Id
-		{
-			set;
-			get;
-		}
+		public string Id { get; set; }
 
 		public HouseholdUserDeleteRequestBuilder()
 			: base("householduser", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public HouseholdUserFilter Filter
-		{
-			set;
-			get;
-		}
+		public HouseholdUserFilter Filter { get; set; }
 
 		public HouseholdUserListRequestBuilder()
 			: base("householduser", "list")

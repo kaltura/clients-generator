@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string MEDIA_FILE = "mediaFile";
 		#endregion
 
-		public MediaFile MediaFile
-		{
-			set;
-			get;
-		}
+		public MediaFile MediaFile { get; set; }
 
 		public MediaFileAddRequestBuilder()
 			: base("mediafile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
 
 		public MediaFileDeleteRequestBuilder()
 			: base("mediafile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public MediaFileFilter Filter
-		{
-			set;
-			get;
-		}
+		public MediaFileFilter Filter { get; set; }
 
 		public MediaFileListRequestBuilder()
 			: base("mediafile", "list")
@@ -174,16 +162,8 @@ namespace Kaltura.Services
 		public const string MEDIA_FILE = "mediaFile";
 		#endregion
 
-		public long Id
-		{
-			set;
-			get;
-		}
-		public MediaFile MediaFile
-		{
-			set;
-			get;
-		}
+		public long Id { get; set; }
+		public MediaFile MediaFile { get; set; }
 
 		public MediaFileUpdateRequestBuilder()
 			: base("mediafile", "update")

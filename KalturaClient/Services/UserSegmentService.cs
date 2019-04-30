@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string USER_SEGMENT = "userSegment";
 		#endregion
 
-		public UserSegment UserSegment
-		{
-			set;
-			get;
-		}
+		public UserSegment UserSegment { get; set; }
 
 		public UserSegmentAddRequestBuilder()
 			: base("usersegment", "add")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string SEGMENT_ID = "segmentId";
 		#endregion
 
-		public new string UserId
-		{
-			set;
-			get;
-		}
-		public long SegmentId
-		{
-			set;
-			get;
-		}
+		public new string UserId { get; set; }
+		public long SegmentId { get; set; }
 
 		public UserSegmentDeleteRequestBuilder()
 			: base("usersegment", "delete")
@@ -140,16 +128,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public UserSegmentFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public UserSegmentFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public UserSegmentListRequestBuilder()
 			: base("usersegment", "list")

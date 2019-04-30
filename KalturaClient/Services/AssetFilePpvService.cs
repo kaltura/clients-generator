@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string ASSET_FILE_PPV = "assetFilePpv";
 		#endregion
 
-		public AssetFilePpv AssetFilePpv
-		{
-			set;
-			get;
-		}
+		public AssetFilePpv AssetFilePpv { get; set; }
 
 		public AssetFilePpvAddRequestBuilder()
 			: base("assetfileppv", "add")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PPV_MODULE_ID = "ppvModuleId";
 		#endregion
 
-		public long AssetFileId
-		{
-			set;
-			get;
-		}
-		public long PpvModuleId
-		{
-			set;
-			get;
-		}
+		public long AssetFileId { get; set; }
+		public long PpvModuleId { get; set; }
 
 		public AssetFilePpvDeleteRequestBuilder()
 			: base("assetfileppv", "delete")
@@ -139,11 +127,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public AssetFilePpvFilter Filter
-		{
-			set;
-			get;
-		}
+		public AssetFilePpvFilter Filter { get; set; }
 
 		public AssetFilePpvListRequestBuilder()
 			: base("assetfileppv", "list")
@@ -184,21 +168,9 @@ namespace Kaltura.Services
 		public const string ASSET_FILE_PPV = "assetFilePpv";
 		#endregion
 
-		public long AssetFileId
-		{
-			set;
-			get;
-		}
-		public long PpvModuleId
-		{
-			set;
-			get;
-		}
-		public AssetFilePpv AssetFilePpv
-		{
-			set;
-			get;
-		}
+		public long AssetFileId { get; set; }
+		public long PpvModuleId { get; set; }
+		public AssetFilePpv AssetFilePpv { get; set; }
 
 		public AssetFilePpvUpdateRequestBuilder()
 			: base("assetfileppv", "update")

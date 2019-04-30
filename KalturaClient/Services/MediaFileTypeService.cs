@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string MEDIA_FILE_TYPE = "mediaFileType";
 		#endregion
 
-		public MediaFileType MediaFileType
-		{
-			set;
-			get;
-		}
+		public MediaFileType MediaFileType { get; set; }
 
 		public MediaFileTypeAddRequestBuilder()
 			: base("mediafiletype", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string ID = "id";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
 
 		public MediaFileTypeDeleteRequestBuilder()
 			: base("mediafiletype", "delete")
@@ -160,16 +152,8 @@ namespace Kaltura.Services
 		public const string MEDIA_FILE_TYPE = "mediaFileType";
 		#endregion
 
-		public int Id
-		{
-			set;
-			get;
-		}
-		public MediaFileType MediaFileType
-		{
-			set;
-			get;
-		}
+		public int Id { get; set; }
+		public MediaFileType MediaFileType { get; set; }
 
 		public MediaFileTypeUpdateRequestBuilder()
 			: base("mediafiletype", "update")

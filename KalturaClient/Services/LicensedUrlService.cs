@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string REQUEST = "request";
 		#endregion
 
-		public LicensedUrlBaseRequest Request
-		{
-			set;
-			get;
-		}
+		public LicensedUrlBaseRequest Request { get; set; }
 
 		public LicensedUrlGetRequestBuilder()
 			: base("licensedurl", "get")

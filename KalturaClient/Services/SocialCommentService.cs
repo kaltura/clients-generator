@@ -43,16 +43,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public SocialCommentFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public SocialCommentFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public SocialCommentListRequestBuilder()
 			: base("socialcomment", "list")

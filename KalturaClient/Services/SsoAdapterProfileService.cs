@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string SSO_ADAPTER = "ssoAdapter";
 		#endregion
 
-		public SSOAdapterProfile SsoAdapter
-		{
-			set;
-			get;
-		}
+		public SSOAdapterProfile SsoAdapter { get; set; }
 
 		public SsoAdapterProfileAddRequestBuilder()
 			: base("ssoadapterprofile", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string SSO_ADAPTER_ID = "ssoAdapterId";
 		#endregion
 
-		public int SsoAdapterId
-		{
-			set;
-			get;
-		}
+		public int SsoAdapterId { get; set; }
 
 		public SsoAdapterProfileDeleteRequestBuilder()
 			: base("ssoadapterprofile", "delete")
@@ -130,11 +122,7 @@ namespace Kaltura.Services
 		public const string SSO_ADAPTER_ID = "ssoAdapterId";
 		#endregion
 
-		public int SsoAdapterId
-		{
-			set;
-			get;
-		}
+		public int SsoAdapterId { get; set; }
 
 		public SsoAdapterProfileGenerateSharedSecretRequestBuilder()
 			: base("ssoadapterprofile", "generateSharedSecret")
@@ -203,16 +191,8 @@ namespace Kaltura.Services
 		public const string SSO_ADAPTER = "ssoAdapter";
 		#endregion
 
-		public int SsoAdapterId
-		{
-			set;
-			get;
-		}
-		public SSOAdapterProfile SsoAdapter
-		{
-			set;
-			get;
-		}
+		public int SsoAdapterId { get; set; }
+		public SSOAdapterProfile SsoAdapter { get; set; }
 
 		public SsoAdapterProfileUpdateRequestBuilder()
 			: base("ssoadapterprofile", "update")

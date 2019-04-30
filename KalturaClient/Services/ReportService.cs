@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string UDID = "udid";
 		#endregion
 
-		public string Udid
-		{
-			set;
-			get;
-		}
+		public string Udid { get; set; }
 
 		public ReportGetRequestBuilder()
 			: base("report", "get")
@@ -86,16 +82,8 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public ReportFilter Filter
-		{
-			set;
-			get;
-		}
-		public FilterPager Pager
-		{
-			set;
-			get;
-		}
+		public ReportFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public ReportListRequestBuilder()
 			: base("report", "list")

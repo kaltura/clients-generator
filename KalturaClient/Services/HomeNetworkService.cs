@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string HOME_NETWORK = "homeNetwork";
 		#endregion
 
-		public HomeNetwork HomeNetwork
-		{
-			set;
-			get;
-		}
+		public HomeNetwork HomeNetwork { get; set; }
 
 		public HomeNetworkAddRequestBuilder()
 			: base("homenetwork", "add")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string EXTERNAL_ID = "externalId";
 		#endregion
 
-		public string ExternalId
-		{
-			set;
-			get;
-		}
+		public string ExternalId { get; set; }
 
 		public HomeNetworkDeleteRequestBuilder()
 			: base("homenetwork", "delete")
@@ -160,16 +152,8 @@ namespace Kaltura.Services
 		public const string HOME_NETWORK = "homeNetwork";
 		#endregion
 
-		public string ExternalId
-		{
-			set;
-			get;
-		}
-		public HomeNetwork HomeNetwork
-		{
-			set;
-			get;
-		}
+		public string ExternalId { get; set; }
+		public HomeNetwork HomeNetwork { get; set; }
 
 		public HomeNetworkUpdateRequestBuilder()
 			: base("homenetwork", "update")

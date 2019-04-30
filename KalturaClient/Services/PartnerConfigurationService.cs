@@ -42,11 +42,7 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public PartnerConfigurationFilter Filter
-		{
-			set;
-			get;
-		}
+		public PartnerConfigurationFilter Filter { get; set; }
 
 		public PartnerConfigurationListRequestBuilder()
 			: base("partnerconfiguration", "list")
@@ -85,11 +81,7 @@ namespace Kaltura.Services
 		public const string CONFIGURATION = "configuration";
 		#endregion
 
-		public PartnerConfiguration Configuration
-		{
-			set;
-			get;
-		}
+		public PartnerConfiguration Configuration { get; set; }
 
 		public PartnerConfigurationUpdateRequestBuilder()
 			: base("partnerconfiguration", "update")

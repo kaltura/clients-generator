@@ -44,21 +44,9 @@ namespace Kaltura.Services
 		public const string RULE_ID = "ruleId";
 		#endregion
 
-		public EntityReferenceBy By
-		{
-			set;
-			get;
-		}
-		public PinType Type
-		{
-			set;
-			get;
-		}
-		public int RuleId
-		{
-			set;
-			get;
-		}
+		public EntityReferenceBy By { get; set; }
+		public PinType Type { get; set; }
+		public int RuleId { get; set; }
 
 		public PinGetRequestBuilder()
 			: base("pin", "get")
@@ -106,26 +94,10 @@ namespace Kaltura.Services
 		public const string RULE_ID = "ruleId";
 		#endregion
 
-		public EntityReferenceBy By
-		{
-			set;
-			get;
-		}
-		public PinType Type
-		{
-			set;
-			get;
-		}
-		public Pin Pin
-		{
-			set;
-			get;
-		}
-		public int RuleId
-		{
-			set;
-			get;
-		}
+		public EntityReferenceBy By { get; set; }
+		public PinType Type { get; set; }
+		public Pin Pin { get; set; }
+		public int RuleId { get; set; }
 
 		public PinUpdateRequestBuilder()
 			: base("pin", "update")
@@ -175,21 +147,9 @@ namespace Kaltura.Services
 		public const string RULE_ID = "ruleId";
 		#endregion
 
-		public string Pin
-		{
-			set;
-			get;
-		}
-		public PinType Type
-		{
-			set;
-			get;
-		}
-		public int RuleId
-		{
-			set;
-			get;
-		}
+		public string Pin { get; set; }
+		public PinType Type { get; set; }
+		public int RuleId { get; set; }
 
 		public PinValidateRequestBuilder()
 			: base("pin", "validate")
