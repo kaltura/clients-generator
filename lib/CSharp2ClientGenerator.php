@@ -841,12 +841,12 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			$param = $this->fixParamName($paramName);
 			$new = isset($news[$paramName]) ? 'new ' : '';
 			$paramName = ucfirst($param);
-			$this->appendLine("		public {$new}$dotNetType $paramName");
-			$this->appendLine("		{");
-			$this->appendLine("			set;");
-			$this->appendLine("			get;");
-			$this->appendLine("		}");
-			$params[$param] = $isFile;
+			$this->appendLine("		public {$new}$dotNetType $paramName { get; set; }");
+            $params[$param] = $isFile;
+            
+            if ($isFile){
+                $this->appendLine("		public string {$paramName}_FileName { get; set; }");
+            }
 		}
 
 		$this->appendLine();
@@ -888,13 +888,13 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 		$this->appendLine("		public override Files getFiles()");
 		$this->appendLine("		{");
-		$this->appendLine("			Files kfiles = base.getFiles();");
+        $this->appendLine("			Files kfiles = base.getFiles();");
 		foreach($params as $param => $isFile)
 		{
 			if($isFile)
 			{
 				$paramName = ucfirst($param);
-				$this->appendLine("			kfiles.Add(\"$param\", $paramName);");
+				$this->appendLine("			kfiles.Add(\"$param\", new FileData($paramName, {$paramName}_FileName));");
 			}
 		}
 		$this->appendLine("			return kfiles;");
