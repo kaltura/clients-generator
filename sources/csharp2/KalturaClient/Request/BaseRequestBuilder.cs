@@ -223,8 +223,8 @@ namespace Kaltura.Request
 
             foreach (var fileEntry in files)
             {
-                var fileStream = fileEntry.Value;
-                var filename = (fileStream as FileStream) == null ? "Memory-Stream-Upload" : Path.GetFileName(((FileStream)fileStream).Name);
+                var fileStream = fileEntry.Value.FileStream;
+                var filename = fileEntry.Value.FileName != null ? fileEntry.Value.FileName : "Memory-Stream-Upload";
 
                 var header = string.Format(headerTemplate, fileEntry.Key, filename, "application/octet-stream");
                 var headerbytes = Encoding.UTF8.GetBytes(header);
@@ -282,34 +282,6 @@ namespace Kaltura.Request
 
             requestBody = json;
 
-            return requestBody;
-        }
-
-        private string GetMultipartRequestBody(Files files, string json)
-        {
-            string requestBody;
-            var sb = new StringBuilder();
-            var paramsBuffer = BuildMultiPartParamsBuffer(json);
-            sb.Append(paramsBuffer);
-            foreach (var fileEntry in files)
-            {
-                var fileStream = fileEntry.Value;
-                if (fileStream is FileStream)
-                {
-                    var fs = (FileStream)fileStream;
-                    sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"" + Path.GetFileName(fs.Name) + "\"" + "\r\n");
-                }
-                else if (fileStream is MemoryStream)
-                {
-                    sb.Append("Content-Disposition: form-data; name=\"" + fileEntry.Key + "\"; filename=\"Memory-Stream-Upload\"" + "\r\n");
-                }
-
-                sb.Append("Content-Type: application/octet-stream" + "\r\n");
-                sb.Append("\r\n");
-                sb.Append("\r\n--" + Boundary + "\r\n");
-            }
-
-            requestBody = sb.ToString();
             return requestBody;
         }
 
