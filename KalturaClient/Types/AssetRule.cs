@@ -40,11 +40,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string CONDITIONS = "conditions";
 		public const string ACTIONS = "actions";
+		public const string STATUS = "status";
 		#endregion
 
 		#region Private Fields
 		private IList<Condition> _Conditions;
 		private IList<AssetRuleAction> _Actions;
+		private AssetRuleStatus _Status = null;
 		#endregion
 
 		#region Properties
@@ -66,6 +68,16 @@ namespace Kaltura.Types
 			{ 
 				_Actions = value;
 				OnPropertyChanged("Actions");
+			}
+		}
+		[JsonProperty]
+		public AssetRuleStatus Status
+		{
+			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
 			}
 		}
 		#endregion
@@ -93,6 +105,10 @@ namespace Kaltura.Types
 					this._Actions.Add(ObjectFactory.Create<AssetRuleAction>(arrayNode));
 				}
 			}
+			if(node["status"] != null)
+			{
+				this._Status = (AssetRuleStatus)StringEnum.Parse(typeof(AssetRuleStatus), node["status"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -104,6 +120,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaAssetRule");
 			kparams.AddIfNotNull("conditions", this._Conditions);
 			kparams.AddIfNotNull("actions", this._Actions);
+			kparams.AddIfNotNull("status", this._Status);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -114,6 +131,8 @@ namespace Kaltura.Types
 					return "Conditions";
 				case ACTIONS:
 					return "Actions";
+				case STATUS:
+					return "Status";
 				default:
 					return base.getPropertyName(apiName);
 			}
