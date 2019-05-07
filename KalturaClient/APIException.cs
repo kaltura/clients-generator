@@ -226,6 +226,7 @@ namespace Kaltura
 		public static string InvalidBulkUploadStructure = "4086";
 		public static string BulkUploadDoesNotExist = "4082";
 		public static string BulkUploadResultIsMissing = "4083";
+		public static string RelatedEntitiesExceedLimitation = "4087";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";

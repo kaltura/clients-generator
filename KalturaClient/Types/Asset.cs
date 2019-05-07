@@ -48,6 +48,7 @@ namespace Kaltura.Types
 		public const string MEDIA_FILES = "mediaFiles";
 		public const string METAS = "metas";
 		public const string TAGS = "tags";
+		public const string RELATED_ENTITIES = "relatedEntities";
 		public const string START_DATE = "startDate";
 		public const string END_DATE = "endDate";
 		public const string CREATE_DATE = "createDate";
@@ -66,6 +67,7 @@ namespace Kaltura.Types
 		private IList<MediaFile> _MediaFiles;
 		private IDictionary<string, Value> _Metas;
 		private IDictionary<string, MultilingualStringValueArray> _Tags;
+		private IDictionary<string, RelatedEntityArray> _RelatedEntities;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
 		private long _CreateDate = long.MinValue;
@@ -172,6 +174,16 @@ namespace Kaltura.Types
 			{ 
 				_Tags = value;
 				OnPropertyChanged("Tags");
+			}
+		}
+		[JsonProperty]
+		public IDictionary<string, RelatedEntityArray> RelatedEntities
+		{
+			get { return _RelatedEntities; }
+			set 
+			{ 
+				_RelatedEntities = value;
+				OnPropertyChanged("RelatedEntities");
 			}
 		}
 		[JsonProperty]
@@ -305,6 +317,18 @@ namespace Kaltura.Types
 					}
 				}
 			}
+			if(node["relatedEntities"] != null)
+			{
+				{
+					string key;
+					this._RelatedEntities = new Dictionary<string, RelatedEntityArray>();
+					foreach(var arrayNode in node["relatedEntities"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._RelatedEntities[key] = ObjectFactory.Create<RelatedEntityArray>(arrayNode.Value);
+					}
+				}
+			}
 			if(node["startDate"] != null)
 			{
 				this._StartDate = ParseLong(node["startDate"].Value<string>());
@@ -344,6 +368,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("mediaFiles", this._MediaFiles);
 			kparams.AddIfNotNull("metas", this._Metas);
 			kparams.AddIfNotNull("tags", this._Tags);
+			kparams.AddIfNotNull("relatedEntities", this._RelatedEntities);
 			kparams.AddIfNotNull("startDate", this._StartDate);
 			kparams.AddIfNotNull("endDate", this._EndDate);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
@@ -375,6 +400,8 @@ namespace Kaltura.Types
 					return "Metas";
 				case TAGS:
 					return "Tags";
+				case RELATED_ENTITIES:
+					return "RelatedEntities";
 				case START_DATE:
 					return "StartDate";
 				case END_DATE:

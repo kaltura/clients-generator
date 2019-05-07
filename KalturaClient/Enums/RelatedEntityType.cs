@@ -27,15 +27,13 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class MetaDataType : StringEnum
+	public sealed class RelatedEntityType : StringEnum
 	{
-		public static readonly MetaDataType STRING = new MetaDataType("STRING");
-		public static readonly MetaDataType MULTILINGUAL_STRING = new MetaDataType("MULTILINGUAL_STRING");
-		public static readonly MetaDataType NUMBER = new MetaDataType("NUMBER");
-		public static readonly MetaDataType BOOLEAN = new MetaDataType("BOOLEAN");
-		public static readonly MetaDataType DATE = new MetaDataType("DATE");
-		public static readonly MetaDataType RELEATED_ENTITY = new MetaDataType("RELEATED_ENTITY");
+		public static readonly RelatedEntityType CHANNEL = new RelatedEntityType("CHANNEL");
+		public static readonly RelatedEntityType EXTERNAL_CHANNEL = new RelatedEntityType("EXTERNAL_CHANNEL");
+		public static readonly RelatedEntityType MEDIA = new RelatedEntityType("MEDIA");
+		public static readonly RelatedEntityType PROGRAM = new RelatedEntityType("PROGRAM");
 
-		private MetaDataType(string name) : base(name) { }
+		private RelatedEntityType(string name) : base(name) { }
 	}
 }
