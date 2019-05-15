@@ -43,20 +43,20 @@ function cloneObject(src) {
 }
 
 function copyObject(src, dest) {
-		for(let key in src) {
-			switch(typeof(src[key])) {
-				case 'function':
-					break;
+	for (let key in src) {
+		switch (typeof (src[key])) {
+			case 'function':
+				break;
 
-				case 'object':
+			case 'object':
 				dest[key] = cloneObject(src[key]);
-					break;
+				break;
 
-				default:
+			default:
 				dest[key] = src[key];
-					break;
-			}
+				break;
 		}
+	}
 }
 
 /**
@@ -107,14 +107,15 @@ class ILogger {
  * Kaltura configuration object
  */
 class Configuration {
-	
+
 	constructor() {
 		this.logger = new ILogger();
 		this.serviceUrl = 'http://www.kaltura.com';
 		this.serviceBase = '/api_v3/service';
 		this.timeout = 30000;
+		this.agentOptions = null;
 	}
-	
+
 	/**
 	 * Set logger to get kaltura client debug logs.
 	 * 
@@ -139,7 +140,7 @@ class Configuration {
  * 
  */
 class ClientBase extends kaltura.RequestData {
-	
+
 	/**
 	 * @param Configuration config
 	 */
@@ -157,7 +158,7 @@ class ClientBase extends kaltura.RequestData {
 	getConfig() {
 		return this.config;
 	}
-	
+
 	/**
 	 * @param Configuration config setter for the referenced configuration object.
 	 */
@@ -202,14 +203,14 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 
 	constructor(service = null, action = null, data = null, files = null) {
 		super();
-		
-		if(service) {
+
+		if (service) {
 			this.service = service;
 			this.action = action;
 			this.data = data;
 			this.files = files;
 		}
-		
+
 		this.callback = null;
 	}
 
@@ -250,15 +251,15 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 		options.timeout = client.config.timeout;
 		options.method = 'POST';
 		options.headers = {
-			'Accept' : 'application/json',
-			'Content-Type' : 'application/json',
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
 		};
 
 		let jsonBody = JSON.stringify(json, (key, value) => (value === null ? undefined : value));
 		client.log('URL: ' + requestUrl + ', JSON: ' + jsonBody);
-		
+
 		let body;
-		if(files && Object.keys(files).length > 0){
+		if (files && Object.keys(files).length > 0) {
 			let crlf = '\r\n';
 			let boundary = '---------------------------' + Math.random();
 			let delimiter = crlf + '--' + boundary;
@@ -267,16 +268,16 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			postData.push();
 			postData.push(new Buffer(delimiter + crlf + 'Content-Disposition: form-data; name="json"' + crlf + crlf));
 			postData.push(new Buffer(jsonBody));
-			
-			for(let key in files) {
-				if(typeof(files[key]) === 'function'){
+
+			for (let key in files) {
+				if (typeof (files[key]) === 'function') {
 					continue;
 				}
-				
+
 				let filePath = files[key];
 				let fileName = path.basename(filePath);
 				let data = fs.readFileSync(filePath);
-				let headers = [ 'Content-Disposition: form-data; name="' + key + '"; filename="' + fileName + '"' + crlf, 'Content-Type: application/octet-stream' + crlf ];
+				let headers = ['Content-Disposition: form-data; name="' + key + '"; filename="' + fileName + '"' + crlf, 'Content-Type: application/octet-stream' + crlf];
 
 				postData.push(new Buffer(delimiter + crlf + headers.join('') + crlf));
 				postData.push(new Buffer(data));
@@ -290,28 +291,35 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			body = jsonBody;
 		}
 
-		options.headers['Content-Length'] = body.length;
 		var httpInterface = options.protocol === 'http:' ? http : https;
-		var request = httpInterface.request(options, function(response) {
+		if (client.config.agentOptions) {
+			if (!client.agent) {
+				client.agent = new httpInterface.Agent(client.config.agentOptions);
+			}
+			options.agent = client.agent;
+		}
+		options.headers['Content-Length'] = body.length;
+
+		var request = httpInterface.request(options, function (response) {
 			response.setEncoding('utf8');
 
 			var data = '';
-			response.on('data', function(chunk) {
+			response.on('data', function (chunk) {
 				data += chunk;
 			});
-			response.on('end', function() {
+			response.on('end', function () {
 				let sessionId;
 				let serverId;
-				for ( var header in response.headers) {
-					if(header === 'x-me') {
+				for (var header in response.headers) {
+					if (header === 'x-me') {
 						serverId = response.headers[header];
 					}
-					else if(header === 'x-kaltura-session') {
+					else if (header === 'x-kaltura-session') {
 						sessionId = response.headers[header];
 					}
 				}
 				client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + data);
- 
+
 				let json;
 				try {
 					json = JSON.parse(data);
@@ -341,7 +349,7 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 				}
 			});
 		});
-		request.on('error', function(err) {
+		request.on('error', function (err) {
 			if (callback) {
 				callback(false, err);
 			}
@@ -389,11 +397,11 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			this.completion(callback);
 		}
 
-		if(this.callback === null) {
+		if (this.callback === null) {
 			let This = this;
 			return new Promise((resolve, reject) => {
 				This.completion((success, result) => {
-					if(success) {
+					if (success) {
 						resolve(result);
 					}
 					else {
@@ -429,16 +437,16 @@ class MultiRequestBuilder extends RequestBuilder {
 
 		this.requests = [];
 		this.generalCallback = null;
-		
+
 		let This = this;
-		this.callback = function(success, results) {
+		this.callback = function (success, results) {
 			if (!success)
 				throw new Error(results);
 
 			for (let i = 0; i < This.requests.length; i++) {
 				if (This.requests[i].callback) {
 					if (results[i] && typeof (results[i]) == 'object'
-							&& results[i].code && results[i].message)
+						&& results[i].code && results[i].message)
 						This.requests[i].callback(false, results[i]);
 					else
 						This.requests[i].callback(true, results[i]);
@@ -447,7 +455,7 @@ class MultiRequestBuilder extends RequestBuilder {
 
 			if (This.generalCallback) {
 				if (results && typeof (results) == 'object' && results.code
-						&& results.message)
+					&& results.message)
 					This.generalCallback(false, results)
 				else
 					This.generalCallback(true, results)
@@ -475,7 +483,7 @@ class MultiRequestBuilder extends RequestBuilder {
 
 	getData() {
 		this.data = {
-			format : ClientBase.FORMAT_JSON
+			format: ClientBase.FORMAT_JSON
 		}
 
 		for (let i = 0; i < this.requests.length; i++) {
@@ -495,15 +503,15 @@ class MultiRequestBuilder extends RequestBuilder {
 
 		for (let i = 0; i < this.requests.length; i++) {
 			let requestFiles = this.requests[i].getFiles();
-			if(requestFiles) {
-				for(let key in requestFiles) {
-					if(typeof(requestFiles[key]) !== 'function') {
+			if (requestFiles) {
+				for (let key in requestFiles) {
+					if (typeof (requestFiles[key]) !== 'function') {
 						this.files[i + ':' + key] = requestFiles[key];
 					}
 				}
 			}
 		}
-		
+
 		return this.files;
 	}
 
@@ -511,12 +519,12 @@ class MultiRequestBuilder extends RequestBuilder {
 		if (callback) {
 			this.completion(callback);
 		}
-		
-		if(this.generalCallback === null) {
+
+		if (this.generalCallback === null) {
 			let This = this;
 			return new Promise((resolve, reject) => {
 				This.completion((success, result) => {
-					if(success) {
+					if (success) {
 						resolve(result);
 					}
 					else {
@@ -535,7 +543,7 @@ class MultiRequestBuilder extends RequestBuilder {
 class BaseObject {
 
 	constructor(object) {
-		if(object) {
+		if (object) {
 			copyObject(object, this);
 		}
 	}
