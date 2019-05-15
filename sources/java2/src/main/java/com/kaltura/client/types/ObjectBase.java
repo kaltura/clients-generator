@@ -62,8 +62,15 @@ public class ObjectBase implements Serializable, ResponseType {
     public ObjectBase(JsonObject jsonObject) throws APIException {
         if(jsonObject == null) return;
 
-        // set members values:
-        relatedObjects = GsonParser.parseMap(jsonObject.getAsJsonObject("relatedObjects"), ListResponse.class);
+		// set members values:
+		try
+		{
+			relatedObjects = GsonParser.parseMap(jsonObject.getAsJsonObject("relatedObjects"), ListResponse.class);
+		}
+		catch (ClassCastException e)
+		{
+			relatedObjects = GsonParser.parseMap(new JsonObject(), ListResponse.class);
+		}
     }
     
 	public void setToken(String key, String token) {
