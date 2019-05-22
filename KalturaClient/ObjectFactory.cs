@@ -148,6 +148,10 @@ namespace Kaltura
 					return new ListResponse<ProductPrice>(jToken);
 				case "KalturaPartnerConfigurationListResponse":
 					return new ListResponse<PartnerConfiguration>(jToken);
+				case "KalturaTopicNotificationListResponse":
+					return new ListResponse<TopicNotification>(jToken);
+				case "KalturaTopicNotificationMessageListResponse":
+					return new ListResponse<TopicNotificationMessage>(jToken);
 				case "KalturaGenericListResponse":
 					return new ListResponse<T>(jToken);
 				case "KalturaIntegerValueListResponse":

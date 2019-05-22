@@ -69,6 +69,7 @@ namespace Kaltura.Types
 		public const string DEPENDENCY_TYPE = "dependencyType";
 		public const string EXTERNAL_ID = "externalId";
 		public const string IS_CANCELLATION_BLOCKED = "isCancellationBlocked";
+		public const string PRE_SALE_DATE = "preSaleDate";
 		#endregion
 
 		#region Private Fields
@@ -103,6 +104,7 @@ namespace Kaltura.Types
 		private SubscriptionDependencyType _DependencyType = null;
 		private string _ExternalId = null;
 		private bool? _IsCancellationBlocked = null;
+		private long _PreSaleDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -416,6 +418,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsCancellationBlocked");
 			}
 		}
+		[JsonProperty]
+		public long PreSaleDate
+		{
+			get { return _PreSaleDate; }
+			set 
+			{ 
+				_PreSaleDate = value;
+				OnPropertyChanged("PreSaleDate");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -581,6 +593,10 @@ namespace Kaltura.Types
 			{
 				this._IsCancellationBlocked = ParseBool(node["isCancellationBlocked"].Value<string>());
 			}
+			if(node["preSaleDate"] != null)
+			{
+				this._PreSaleDate = ParseLong(node["preSaleDate"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -621,6 +637,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("dependencyType", this._DependencyType);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("isCancellationBlocked", this._IsCancellationBlocked);
+			kparams.AddIfNotNull("preSaleDate", this._PreSaleDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -689,6 +706,8 @@ namespace Kaltura.Types
 					return "ExternalId";
 				case IS_CANCELLATION_BLOCKED:
 					return "IsCancellationBlocked";
+				case PRE_SALE_DATE:
+					return "PreSaleDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

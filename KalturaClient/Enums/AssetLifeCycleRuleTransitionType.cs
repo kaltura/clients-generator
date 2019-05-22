@@ -27,19 +27,11 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class RuleActionType : StringEnum
+	public sealed class AssetLifeCycleRuleTransitionType : StringEnum
 	{
-		public static readonly RuleActionType BLOCK = new RuleActionType("BLOCK");
-		public static readonly RuleActionType START_DATE_OFFSET = new RuleActionType("START_DATE_OFFSET");
-		public static readonly RuleActionType END_DATE_OFFSET = new RuleActionType("END_DATE_OFFSET");
-		public static readonly RuleActionType USER_BLOCK = new RuleActionType("USER_BLOCK");
-		public static readonly RuleActionType ALLOW_PLAYBACK = new RuleActionType("ALLOW_PLAYBACK");
-		public static readonly RuleActionType BLOCK_PLAYBACK = new RuleActionType("BLOCK_PLAYBACK");
-		public static readonly RuleActionType APPLY_DISCOUNT_MODULE = new RuleActionType("APPLY_DISCOUNT_MODULE");
-		public static readonly RuleActionType APPLY_PLAYBACK_ADAPTER = new RuleActionType("APPLY_PLAYBACK_ADAPTER");
-		public static readonly RuleActionType FILTER = new RuleActionType("FILTER");
-		public static readonly RuleActionType ASSET_LIFE_CYCLE_TRANSITION = new RuleActionType("ASSET_LIFE_CYCLE_TRANSITION");
+		public static readonly AssetLifeCycleRuleTransitionType TAG = new AssetLifeCycleRuleTransitionType("TAG");
+		public static readonly AssetLifeCycleRuleTransitionType BUSINESS_MODEL = new AssetLifeCycleRuleTransitionType("BUSINESS_MODEL");
 
-		private RuleActionType(string name) : base(name) { }
+		private AssetLifeCycleRuleTransitionType(string name) : base(name) { }
 	}
 }

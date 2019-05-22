@@ -25,21 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class RuleActionType : StringEnum
-	{
-		public static readonly RuleActionType BLOCK = new RuleActionType("BLOCK");
-		public static readonly RuleActionType START_DATE_OFFSET = new RuleActionType("START_DATE_OFFSET");
-		public static readonly RuleActionType END_DATE_OFFSET = new RuleActionType("END_DATE_OFFSET");
-		public static readonly RuleActionType USER_BLOCK = new RuleActionType("USER_BLOCK");
-		public static readonly RuleActionType ALLOW_PLAYBACK = new RuleActionType("ALLOW_PLAYBACK");
-		public static readonly RuleActionType BLOCK_PLAYBACK = new RuleActionType("BLOCK_PLAYBACK");
-		public static readonly RuleActionType APPLY_DISCOUNT_MODULE = new RuleActionType("APPLY_DISCOUNT_MODULE");
-		public static readonly RuleActionType APPLY_PLAYBACK_ADAPTER = new RuleActionType("APPLY_PLAYBACK_ADAPTER");
-		public static readonly RuleActionType FILTER = new RuleActionType("FILTER");
-		public static readonly RuleActionType ASSET_LIFE_CYCLE_TRANSITION = new RuleActionType("ASSET_LIFE_CYCLE_TRANSITION");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private RuleActionType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class DateTrigger : Trigger
+	{
+		#region Constants
+		public const string DATE = "date";
+		#endregion
+
+		#region Private Fields
+		private long _Date = long.MinValue;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public long Date
+		{
+			get { return _Date; }
+			set 
+			{ 
+				_Date = value;
+				OnPropertyChanged("Date");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public DateTrigger()
+		{
+		}
+
+		public DateTrigger(JToken node) : base(node)
+		{
+			if(node["date"] != null)
+			{
+				this._Date = ParseLong(node["date"].Value<string>());
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaDateTrigger");
+			kparams.AddIfNotNull("date", this._Date);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case DATE:
+					return "Date";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+
