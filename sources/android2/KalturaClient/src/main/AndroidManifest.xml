@@ -1,11 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kaltura.client"
-    android:versionCode="1"
-    android:versionName="1.0">
-
-    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="25" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kaltura.client">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
 
 </manifest>

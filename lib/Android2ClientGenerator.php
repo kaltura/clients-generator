@@ -30,6 +30,7 @@ class Android2ClientGenerator extends Java2ClientGenerator
     {
         $excludePaths = array(
             "KalturaClient/src/main/java/com/kaltura/client/LoggerLog4j.java",
+            "KalturaClient/src/main/resources", // Log4j config files
         );
 
         foreach($excludePaths as $excludePath)
