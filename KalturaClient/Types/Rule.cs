@@ -41,12 +41,14 @@ namespace Kaltura.Types
 		public const string ID = "id";
 		public const string NAME = "name";
 		public const string DESCRIPTION = "description";
+		public const string LABEL = "label";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Name = null;
 		private string _Description = null;
+		private string _Label = null;
 		#endregion
 
 		#region Properties
@@ -80,6 +82,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Description");
 			}
 		}
+		[JsonProperty]
+		public string Label
+		{
+			get { return _Label; }
+			set 
+			{ 
+				_Label = value;
+				OnPropertyChanged("Label");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -101,6 +113,10 @@ namespace Kaltura.Types
 			{
 				this._Description = node["description"].Value<string>();
 			}
+			if(node["label"] != null)
+			{
+				this._Label = node["label"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -113,6 +129,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("description", this._Description);
+			kparams.AddIfNotNull("label", this._Label);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -125,6 +142,8 @@ namespace Kaltura.Types
 					return "Name";
 				case DESCRIPTION:
 					return "Description";
+				case LABEL:
+					return "Label";
 				default:
 					return base.getPropertyName(apiName);
 			}

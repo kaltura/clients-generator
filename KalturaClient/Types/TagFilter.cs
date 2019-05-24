@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string TAG_STARTS_WITH = "tagStartsWith";
 		public const string TYPE_EQUAL = "typeEqual";
 		public const string LANGUAGE_EQUAL = "languageEqual";
+		public const string ID_IN = "idIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -50,6 +51,7 @@ namespace Kaltura.Types
 		private string _TagStartsWith = null;
 		private int _TypeEqual = Int32.MinValue;
 		private string _LanguageEqual = null;
+		private string _IdIn = null;
 		private TagOrderBy _OrderBy = null;
 		#endregion
 
@@ -95,6 +97,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public string IdIn
+		{
+			get { return _IdIn; }
+			set 
+			{ 
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
+			}
+		}
+		[JsonProperty]
 		public new TagOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -129,6 +141,10 @@ namespace Kaltura.Types
 			{
 				this._LanguageEqual = node["languageEqual"].Value<string>();
 			}
+			if(node["idIn"] != null)
+			{
+				this._IdIn = node["idIn"].Value<string>();
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (TagOrderBy)StringEnum.Parse(typeof(TagOrderBy), node["orderBy"].Value<string>());
@@ -146,6 +162,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("tagStartsWith", this._TagStartsWith);
 			kparams.AddIfNotNull("typeEqual", this._TypeEqual);
 			kparams.AddIfNotNull("languageEqual", this._LanguageEqual);
+			kparams.AddIfNotNull("idIn", this._IdIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -161,6 +178,8 @@ namespace Kaltura.Types
 					return "TypeEqual";
 				case LANGUAGE_EQUAL:
 					return "LanguageEqual";
+				case ID_IN:
+					return "IdIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

@@ -40,6 +40,7 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID = "id";
 		public const string MESSAGE = "message";
+		public const string IMAGE_URL = "imageUrl";
 		public const string TOPIC_NOTIFICATION_ID = "topicNotificationId";
 		public const string TRIGGER = "trigger";
 		public const string DISPATCHERS = "dispatchers";
@@ -48,6 +49,7 @@ namespace Kaltura.Types
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Message = null;
+		private string _ImageUrl = null;
 		private long _TopicNotificationId = long.MinValue;
 		private Trigger _Trigger;
 		private IList<Dispatcher> _Dispatchers;
@@ -72,6 +74,16 @@ namespace Kaltura.Types
 			{ 
 				_Message = value;
 				OnPropertyChanged("Message");
+			}
+		}
+		[JsonProperty]
+		public string ImageUrl
+		{
+			get { return _ImageUrl; }
+			set 
+			{ 
+				_ImageUrl = value;
+				OnPropertyChanged("ImageUrl");
 			}
 		}
 		[JsonProperty]
@@ -121,6 +133,10 @@ namespace Kaltura.Types
 			{
 				this._Message = node["message"].Value<string>();
 			}
+			if(node["imageUrl"] != null)
+			{
+				this._ImageUrl = node["imageUrl"].Value<string>();
+			}
 			if(node["topicNotificationId"] != null)
 			{
 				this._TopicNotificationId = ParseLong(node["topicNotificationId"].Value<string>());
@@ -148,6 +164,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaTopicNotificationMessage");
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("message", this._Message);
+			kparams.AddIfNotNull("imageUrl", this._ImageUrl);
 			kparams.AddIfNotNull("topicNotificationId", this._TopicNotificationId);
 			kparams.AddIfNotNull("trigger", this._Trigger);
 			kparams.AddIfNotNull("dispatchers", this._Dispatchers);
@@ -161,6 +178,8 @@ namespace Kaltura.Types
 					return "Id";
 				case MESSAGE:
 					return "Message";
+				case IMAGE_URL:
+					return "ImageUrl";
 				case TOPIC_NOTIFICATION_ID:
 					return "TopicNotificationId";
 				case TRIGGER:
