@@ -118,19 +118,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILTER = "filter";
+		public const string PAGER = "pager";
 		#endregion
 
 		public TopicNotificationMessageFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public TopicNotificationMessageListRequestBuilder()
 			: base("topicnotificationmessage", "list")
 		{
 		}
 
-		public TopicNotificationMessageListRequestBuilder(TopicNotificationMessageFilter filter)
+		public TopicNotificationMessageListRequestBuilder(TopicNotificationMessageFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
+			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -138,6 +141,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
+			if (!isMapped("pager"))
+				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -214,9 +219,9 @@ namespace Kaltura.Services
 			return new TopicNotificationMessageDeleteRequestBuilder(id);
 		}
 
-		public static TopicNotificationMessageListRequestBuilder List(TopicNotificationMessageFilter filter = null)
+		public static TopicNotificationMessageListRequestBuilder List(TopicNotificationMessageFilter filter = null, FilterPager pager = null)
 		{
-			return new TopicNotificationMessageListRequestBuilder(filter);
+			return new TopicNotificationMessageListRequestBuilder(filter, pager);
 		}
 
 		public static TopicNotificationMessageUpdateRequestBuilder Update(int id, TopicNotificationMessage topicNotificationMessage)

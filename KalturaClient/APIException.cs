@@ -344,6 +344,8 @@ namespace Kaltura
 		public static string UserInboxMessagesNotExist = "8020";
 		public static string TopicNotificationNotFound = "8042";
 		public static string TopicNotificationMessageNotFound = "8043";
+		public static string WrongTopicNotification = "8044";
+		public static string WrongTopicNotificationTrigger = "8045";
 		public static string InvalidPriceCode = "9000";
 		public static string InvalidValue = "9001";
 		public static string InvalidDiscountCode = "9002";
