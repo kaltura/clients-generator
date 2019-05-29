@@ -58,11 +58,11 @@ class CuePointServiceTest < Test::Unit::TestCase
     filter_pager = Kaltura::KalturaFilterPager.new      
     
     for i in 1..5 do
-    cue_point_list = @client.cue_point_service.list(cue_point_filter, filter_pager)
-    if cue_point_list.total_count > 0
-        break
-    else
-        sleep(1)
+        cue_point_list = @client.cue_point_service.list(cue_point_filter, filter_pager)
+        if cue_point_list.total_count > 0
+            break
+        end
+            sleep(1)
     end
 
     assert_equal cue_point_list.total_count, 1
