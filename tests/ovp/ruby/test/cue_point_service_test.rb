@@ -51,17 +51,22 @@ class CuePointServiceTest < Test::Unit::TestCase
     created_cue_point = @client.cue_point_service.add(cue_point) 
     
     assert_not_nil created_cue_point.id
-  
+
     # list the cuepoints
     cue_point_filter = Kaltura::KalturaCuePointFilter.new
     cue_point_filter.entry_id_equal = created_entry.id
     filter_pager = Kaltura::KalturaFilterPager.new      
     
-    cue_point_list = @client.cue_point_service.list(cue_point_filter, filter_pager)    
-    
-    assert_equal cue_point_list.total_count, 1
+    for i in 1..5 do
+    cue_point_list = @client.cue_point_service.list(cue_point_filter, filter_pager)
+    if cue_point_list.total_count > 0
+        break
+    else
+        sleep(1)
+    end
 
-    assert_nil @client.cue_point_service.delete(created_cue_point.id)    
+    assert_equal cue_point_list.total_count, 1
+    assert_nil @client.cue_point_service.delete(created_cue_point.id)
     assert_nil @client.media_service.delete(created_entry.id)
   end
 end
