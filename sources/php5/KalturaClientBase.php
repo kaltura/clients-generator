@@ -401,10 +401,6 @@ class KalturaClientBase
 					throw new KalturaClientException("failed to unserialize server result\n$postResult", KalturaClientException::ERROR_UNSERIALIZE_FAILED);
 				}
 				$dump = print_r($result, true);
-				if(isset($this->config->max_print))
-				{
-					$dump = self::getFirstLines($dump, $this->config->max_print);
-				}
 				$this->log("result (object dump): " . $dump);
 			}
 			elseif ($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
@@ -416,10 +412,6 @@ class KalturaClientBase
 					throw new KalturaClientException("failed to unserialize server result\n$postResult", KalturaClientException::ERROR_UNSERIALIZE_FAILED);
 				}
 				$result = $this->jsObjectToClientObject($result);
-				if(isset($this->config->max_print))
-				{
-					$dump = self::getFirstLines($dump, $this->config->max_print);
-				}
 				$dump = print_r($result, true);
 				$this->log("result (object dump): " . $dump);
 			}
@@ -990,7 +982,13 @@ class KalturaClientBase
 	protected function log($msg)
 	{
 		if ($this->shouldLog)
+		{
+			if(isset($this->config->max_print))
+			{
+				$msg = self::getFirstLines($msg, $this->config->max_print);
+			}
 			$this->config->getLogger()->log($msg);
+		}
 	}
 
 	/**
