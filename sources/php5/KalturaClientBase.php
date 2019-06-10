@@ -430,6 +430,13 @@ class KalturaClientBase
 		return $result;
 	}
 
+	protected static function getFirstLines(&$string, $numbOfLines)
+	{
+		$stringAsArrayOfLines = explode(PHP_EOL,$string);
+		$stringAsArrayOfLines = array_slice($stringAsArrayOfLines, 0, $numbOfLines);
+		$string = implode (PHP_EOL, $stringAsArrayOfLines);
+	}
+
 	/**
 	 * Sorts array recursively
 	 *
@@ -974,7 +981,13 @@ class KalturaClientBase
 	protected function log($msg)
 	{
 		if ($this->shouldLog)
+		{
+			if(isset($this->config->max_print))
+			{
+				self::getFirstLines($msg, $this->config->max_print);
+			}
 			$this->config->getLogger()->log($msg);
+		}
 	}
 
 	/**
