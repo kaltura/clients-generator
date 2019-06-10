@@ -44,7 +44,7 @@ function getPaths(file) {
 					});
 				}
 				else {
-					gitClone(repo)
+					gitCloneBranch(repo)
 					.then(() => {
 						resolve({
 							generatedPath: generatedPath, 
@@ -52,6 +52,15 @@ function getPaths(file) {
 						});
 					}, (err) => {
 						reject(`Failed to clone repo ${repo}: ${err}`);
+						gitClone(repo)
+						.then(() => {
+							resolve({
+								generatedPath: generatedPath, 
+								gitPath: gitPath
+							});
+						}, (err) => {
+							reject(`Failed to clone repo ${repo}: ${err}`);
+						});
 					});
 				}
 			})
@@ -79,6 +88,11 @@ function execWithPomise(command, cwd, resolveData) {
 }
 
 function gitClone(repo) {
+	console.log(`Cloning git repo ${repo}`);
+	return execWithPomise(`${git} clone https://${token}@github.com/kaltura/${repo}`, branchPath);
+}
+
+function gitCloneBranch(repo) {
 	console.log(`Cloning git repo ${repo}, branch ${branch}`);
 	return execWithPomise(`${git} clone -b ${branch} https://${token}@github.com/kaltura/${repo}`, branchPath);
 }
