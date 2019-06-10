@@ -68,7 +68,7 @@ function getPaths(file) {
 	});
 }
 
-function execWithPomise(command, cwd, resolveData) {
+function execWithPomise(command, cwd, resolveData, alwaysResolve) {
 	if(!resolveData) {
 		resolveData = cwd;
 	}
@@ -76,11 +76,13 @@ function execWithPomise(command, cwd, resolveData) {
 		child_process.exec(command, {
 			cwd: cwd
 		}, (err, stdout, stderr) => {
-			if(err) {
+			if(!err) {
+				console.log(`Command [${command}] executed successfully in  ${cwd}`);
+			}
+			if(err && !alwaysResolve) {
 				reject(`Failed to execute [${command}] in folder ${cwd}, code [${err.code}]: ${err}`);
 			}
 			else {
-				console.log(`Command [${command}] executed successfully in  ${cwd}`);
 				resolve(resolveData);
 			}
 		});
@@ -110,7 +112,7 @@ function gitPull(generatedPath, gitPath) {
 	return execWithPomise(git + ' pull origin ' + branch, gitPath, {
 		generatedPath: generatedPath, 
 		gitPath: gitPath
-	});
+	}, true);
 }
 
 function copyFiles(generatedPath, gitPath) {
