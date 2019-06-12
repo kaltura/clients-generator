@@ -831,7 +831,8 @@ class KalturaClientBase
 				{
 					$this->jsObjectToClientObject($value->error);
 				}
-				else{
+				else
+				{
 					throw new KalturaClientException("Response format not supported - objectType is required for all objects", KalturaClientException::ERROR_FORMAT_NOT_SUPPORTED);
 				}
 			}
