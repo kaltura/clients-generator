@@ -830,7 +830,18 @@ class KalturaClientBase
 			
 			if(!isset($value->objectType))
 			{
-				throw new KalturaClientException("Response format not supported - objectType is required for all objects", KalturaClientException::ERROR_FORMAT_NOT_SUPPORTED);
+				if (isset($value->result))
+				{
+					$value = $this->jsObjectToClientObject($value->result);
+				}
+				else if (isset($value->error))
+				{
+					$this->jsObjectToClientObject($value->error);
+				}
+				else
+				{
+					throw new KalturaClientException("Response format not supported - objectType is required for all objects", KalturaClientException::ERROR_FORMAT_NOT_SUPPORTED);
+				}
 			}
 			
 			$objectType = $value->objectType;
