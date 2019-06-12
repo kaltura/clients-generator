@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 7.0.1 (2019-06-12)
+
+### Fix
+
+* upload asset was not working due to bad url creation.
+
 ## 7.0.0 (2019-01-24)
 
 
