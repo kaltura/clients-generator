@@ -10,20 +10,45 @@ import { KalturaClientException } from '../api/kaltura-client-exception';
 import { environment } from '../environment';
 
 
-export function  createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string): string {
-    const endpoint = options.endpointUrl;
-    const clientTag = createClientTag(request, options);
-    let result = `${endpoint}/api_v3/service/${service}`;
+export function  createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryparams?: {} ): string {
+	const endpoint = options.endpointUrl;
+	const clientTag = createClientTag(request, options);
+	let url = `${endpoint}/api_v3/service/${service}`;
 
-    if (action) {
-        result += `/action/${action}`;
-    }
+	if (action) {
+		url += `/action/${action}`;
+	}
 
-    if (clientTag)
-    {
-        result += `?${buildQuerystring({clientTag})}`;
-    }
-    return result;
+	const queryparams = {
+		...(additionalQueryparams || {}),
+		...(clientTag ? {clientTag} : {})
+	};
+
+	return buildUrl(url, queryparams);
+}
+
+export function buildUrl(url: string, querystring?: {}) {
+	let formattedUrl = (url).trim();
+	if (!querystring) {
+		return formattedUrl;
+	}
+	const urlHasQuerystring = formattedUrl.indexOf('?') !== -1;
+	const formattedQuerystring = _buildQuerystring(querystring);
+	return `${formattedUrl}${urlHasQuerystring ? '&' : '?'}${formattedQuerystring}`;
+}
+
+function _buildQuerystring(data: {}, prefix?: string) {
+	let str = [], p;
+	for (p in data) {
+		if (data.hasOwnProperty(p)) {
+			let k = prefix ? prefix + "[" + p + "]" : p, v = data[p];
+			str.push((v !== null && typeof v === "object") ?
+				_buildQuerystring(v, k) :
+				encodeURIComponent(k) + "=" + encodeURIComponent(v));
+		}
+	}
+	return str.join("&");
+
 }
 
 export function createClientTag(request: KalturaRequestBase, options: KalturaClientOptions)

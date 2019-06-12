@@ -9,10 +9,9 @@ export class KalturaFileRequestAdapter {
 
     public transmit(request: KalturaFileRequest, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<{ url: string }> {
         const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
-        const endpointUrl = createEndpoint(request, clientOptions, parameters['service'], parameters['action']);
-        delete parameters['service'];
-        delete parameters['action'];
+        const { service, action, ...queryparams } = parameters;
+        const endpointUrl = createEndpoint(request, clientOptions, service, action, queryparams);
 
-        return CancelableAction.resolve({url: `${endpointUrl}?${buildQuerystring(parameters)}`});
+        return CancelableAction.resolve({url: endpointUrl});
     }
 }

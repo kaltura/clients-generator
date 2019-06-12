@@ -13,11 +13,10 @@ export class KalturaMultiRequestAdapter {
 
     transmit(request: KalturaMultiRequest, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<KalturaMultiResponse> {
 
-        const body = prepareParameters(request, clientOptions, defaultRequestOptions);
+        const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-        const endpoint = createEndpoint(request, clientOptions, body['service'], body['action']);
-        delete body['service'];
-        delete body['action'];
+        const { service, action, ...body } = parameters;
+        const endpoint = createEndpoint(request, clientOptions, service, action);
 
         return <any>(createCancelableAction<KalturaMultiResponse>({endpoint, headers: getHeaders(), body})
             .then(result => {
