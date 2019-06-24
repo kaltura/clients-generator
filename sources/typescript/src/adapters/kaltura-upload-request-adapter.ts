@@ -5,6 +5,7 @@ import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaClientOptions } from '../kaltura-client-options';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { CancelableAction } from '../cancelable-action';
+import { buildUrl } from '../../../ngx/projects/kaltura-ngx-client/src/lib/adapters/utils';
 
 interface UploadByChunksData {
     enabled: boolean;
@@ -146,11 +147,8 @@ export class KalturaUploadRequestAdapter {
                 console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
             }
 
-            let endpointUrl = createEndpoint(request, this.clientOptions, parameters['service'], parameters['action']);
-            delete parameters['service'];
-            delete parameters['action'];
-            const querystring = buildQuerystring(parameters);
-            endpointUrl = `${endpointUrl}?${querystring}`;
+            const { service, action, ...queryparams } = parameters;
+            const endpointUrl = createEndpoint(request, this.clientOptions, service, action, queryparams);
 
             const xhr = new XMLHttpRequest();
 

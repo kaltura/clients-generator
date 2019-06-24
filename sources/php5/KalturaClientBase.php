@@ -430,6 +430,13 @@ class KalturaClientBase
 		return $result;
 	}
 
+	protected static function getFirstLines(&$string, $numbOfLines)
+	{
+		$stringAsArrayOfLines = explode(PHP_EOL,$string);
+		$stringAsArrayOfLines = array_slice($stringAsArrayOfLines, 0, $numbOfLines);
+		$string = implode (PHP_EOL, $stringAsArrayOfLines);
+	}
+
 	/**
 	 * Sorts array recursively
 	 *
@@ -823,7 +830,18 @@ class KalturaClientBase
 			
 			if(!isset($value->objectType))
 			{
-				throw new KalturaClientException("Response format not supported - objectType is required for all objects", KalturaClientException::ERROR_FORMAT_NOT_SUPPORTED);
+				if (isset($value->result))
+				{
+					$value = $this->jsObjectToClientObject($value->result);
+				}
+				else if (isset($value->error))
+				{
+					$this->jsObjectToClientObject($value->error);
+				}
+				else
+				{
+					throw new KalturaClientException("Response format not supported - objectType is required for all objects", KalturaClientException::ERROR_FORMAT_NOT_SUPPORTED);
+				}
 			}
 			
 			$objectType = $value->objectType;
@@ -974,7 +992,13 @@ class KalturaClientBase
 	protected function log($msg)
 	{
 		if ($this->shouldLog)
+		{
+			if(isset($this->config->max_print))
+			{
+				self::getFirstLines($msg, $this->config->max_print);
+			}
 			$this->config->getLogger()->log($msg);
+		}
 	}
 
 	/**

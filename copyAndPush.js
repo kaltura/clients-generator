@@ -44,7 +44,7 @@ function getPaths(file) {
 					});
 				}
 				else {
-					gitClone(repo)
+					gitCloneBranch(repo)
 					.then(() => {
 						resolve({
 							generatedPath: generatedPath, 
@@ -52,6 +52,15 @@ function getPaths(file) {
 						});
 					}, (err) => {
 						reject(`Failed to clone repo ${repo}: ${err}`);
+						gitClone(repo)
+						.then(() => {
+							resolve({
+								generatedPath: generatedPath, 
+								gitPath: gitPath
+							});
+						}, (err) => {
+							reject(`Failed to clone repo ${repo}: ${err}`);
+						});
 					});
 				}
 			})
@@ -59,7 +68,7 @@ function getPaths(file) {
 	});
 }
 
-function execWithPomise(command, cwd, resolveData) {
+function execWithPomise(command, cwd, resolveData, alwaysResolve) {
 	if(!resolveData) {
 		resolveData = cwd;
 	}
@@ -67,11 +76,13 @@ function execWithPomise(command, cwd, resolveData) {
 		child_process.exec(command, {
 			cwd: cwd
 		}, (err, stdout, stderr) => {
-			if(err) {
+			if(!err) {
+				console.log(`Command [${command}] executed successfully in  ${cwd}`);
+			}
+			if(err && !alwaysResolve) {
 				reject(`Failed to execute [${command}] in folder ${cwd}, code [${err.code}]: ${err}`);
 			}
 			else {
-				console.log(`Command [${command}] executed successfully in  ${cwd}`);
 				resolve(resolveData);
 			}
 		});
@@ -79,6 +90,11 @@ function execWithPomise(command, cwd, resolveData) {
 }
 
 function gitClone(repo) {
+	console.log(`Cloning git repo ${repo}`);
+	return execWithPomise(`${git} clone https://${token}@github.com/kaltura/${repo}`, branchPath);
+}
+
+function gitCloneBranch(repo) {
 	console.log(`Cloning git repo ${repo}, branch ${branch}`);
 	return execWithPomise(`${git} clone -b ${branch} https://${token}@github.com/kaltura/${repo}`, branchPath);
 }
@@ -96,7 +112,7 @@ function gitPull(generatedPath, gitPath) {
 	return execWithPomise(git + ' pull origin ' + branch, gitPath, {
 		generatedPath: generatedPath, 
 		gitPath: gitPath
-	});
+	}, true);
 }
 
 function copyFiles(generatedPath, gitPath) {

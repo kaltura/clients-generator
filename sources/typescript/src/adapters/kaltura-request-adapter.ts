@@ -13,11 +13,11 @@ export class KalturaRequestAdapter {
 
     public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<T> {
 
-        const body = prepareParameters(request, clientOptions, defaultRequestOptions);
+        const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-        const endpoint = createEndpoint(request, clientOptions, body['service'], body['action']);
-        delete body['service'];
-        delete body['action'];
+        const { service, action, ...body } = parameters;
+
+        const endpoint = createEndpoint(request, clientOptions, service, action);
 
         return <any>createCancelableAction<T>({endpoint, headers: getHeaders(), body})
             .then(result => {
