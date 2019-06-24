@@ -2,14 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 7.1.0 (2019-06-24)
+
+### Features
+
+* Update minimum chunk size to the higher value between 5mb and {file size}/10,000 PLAT-9931 
+
+
 ## 7.0.1 (2019-06-12)
 
 ### Fix
 
 * upload asset was not working due to bad url creation.
 
-## 7.0.0 (2019-01-24)
 
+## 7.0.0 (2019-01-24)
 
  ### Breaking Change
  

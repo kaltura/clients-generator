@@ -153,7 +153,7 @@ export class KalturaUploadRequestAdapter {
             console.warn(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 5Mb. using value 5Mb instead`);
             actualChunkFileSize = 5e6;
           } else {
-            console.log(`using user requetsed chunk size '${userChunkFileSize}'`);
+            console.log(`using user requested chunk size '${userChunkFileSize}'`);
             actualChunkFileSize = userChunkFileSize;
           }
         } else {
@@ -163,7 +163,7 @@ export class KalturaUploadRequestAdapter {
 
         if (file && file.size && file.size/1e4 > actualChunkFileSize) {
           actualChunkFileSize = file.size/1e4;
-          console.warn(`requested chunk size '${actualChunkFileSize}' is not optional as minimal value must be larger then {file size}/10,000. setting new chunk size '${actualChunkFileSize} for file with size ${file.size}`);
+          console.warn(`requested chunk size is not possible, minimal value must be larger then {file size}/10,000 (${file.size}/10,000). setting custom chunk size ${actualChunkFileSize} for this specific file upload`);
         }
 
         uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= actualChunkFileSize;
