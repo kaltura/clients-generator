@@ -82,7 +82,7 @@ public class PartnerServiceTest extends BaseTest {
 		startAdminSession();
 
 		final CountDownLatch doneSignal = new CountDownLatch(1);
-		addTestPartner(new OnCompletion<Partner>() {
+		getTestPartner(new OnCompletion<Partner>() {
 
 			@Override
 			public void onComplete(Partner partner) {

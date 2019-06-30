@@ -172,7 +172,7 @@ abstract class BaseTest extends TestCase {
 	    return sb.toString();
 	}
 
-	public void addTestPartner(final OnCompletion<Partner> onCompletion)
+	public void getTestPartner(final OnCompletion<Partner> onCompletion)
 	{
 		GetPartnerBuilder requestBuilder = PartnerService.get(testConfig.getPartnerId())
 				.setCompletion(new OnCompletion<Response<Partner>>() {
