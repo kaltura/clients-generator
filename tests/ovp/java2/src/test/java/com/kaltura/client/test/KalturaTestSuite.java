@@ -43,6 +43,7 @@ public class KalturaTestSuite extends TestSuite
 		suite.addTestSuite(ResponseProfileTest.class);
 		suite.addTestSuite(PluginTest.class);
 		suite.addTestSuite(ErrorTest.class);
+		suite.addTestSuite(PartnerServiceTest.class);
 
 		return suite;
 	}
