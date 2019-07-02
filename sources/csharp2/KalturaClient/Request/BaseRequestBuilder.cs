@@ -23,11 +23,8 @@ namespace Kaltura.Request
         private Client client = null;
         private readonly string requestId;
 
-        public string Boundary
-        {
-            get;
-            set;
-        }
+        public int? ResponseLogLength { get; set; }
+        public string Boundary { get; set; }
 
         public BaseRequestBuilder(string service)
         {
@@ -161,7 +158,16 @@ namespace Kaltura.Request
                 {
                     var responseString = await responseReader.ReadToEndAsync();
                     var headersStr = GetResponseHeadersString(response);
-                    this.Log(string.Format("result : {0}", responseString));
+
+                    var responseLogMsg = responseString;
+                    var responseLogLengthToUse = this.ResponseLogLength.HasValue? this.ResponseLogLength : client.ResponseLogLength;
+                    if (responseLogLengthToUse.HasValue)
+                    {
+                        var trimLength = Math.Min(responseLogLengthToUse.Value, responseString.Length);
+                        responseLogMsg = responseString.Substring(0,trimLength);
+                    }
+
+                    this.Log(string.Format("result : {0}", responseLogMsg));
                     this.Log(string.Format("result headers : {0}", headersStr));
 
                     responseObject = ParseResponseString<T>(responseString);
