@@ -1,12 +1,9 @@
-
 import {map, catchError} from 'rxjs/operators';
-
-
 import { HttpClient } from '@angular/common/http';
 import { KalturaMultiRequest } from '../api/kaltura-multi-request';
 import { KalturaMultiResponse } from '../api/kaltura-multi-response';
 import { Observable } from 'rxjs';
-import { createEndpoint, getHeaders, prepareParameters } from './utils';
+import { createClientTag, createEndpoint, getHeaders, prepareParameters } from './utils';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { KalturaRequestOptions } from '../api/kaltura-request-options';
@@ -24,8 +21,6 @@ export class KalturaMultiRequestAdapter {
         const endpointUrl = createEndpoint(request, endpointOptions);
         delete parameters['service'];
         delete parameters['action'];
-
-
 
         return this._http.request('post', endpointUrl,
             {
