@@ -30,10 +30,6 @@ export class KalturaRequestAdapter {
     delete parameters['service'];
     delete parameters['action'];
 
-    if (environment.request.avoidQueryString) {
-      parameters['clientTag'] = createClientTag(request, clientOptions);
-    }
-
     return this._http.request('post', endpointUrl,
       {
         body: parameters,

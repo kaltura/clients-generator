@@ -7,6 +7,7 @@ import { KalturaAPIException } from "./kaltura-api-exception";
 import { KalturaObjectMetadata } from './kaltura-object-base';
 import { KalturaRequestOptions } from './kaltura-request-options';
 import { environment } from '../environment';
+import { createClientTag } from '../adapters/utils';
 
 
 export class KalturaMultiRequest extends KalturaRequestBase {
@@ -20,11 +21,15 @@ export class KalturaMultiRequest extends KalturaRequestBase {
         this.requests = args;
     }
 
-    buildRequest(defaultRequestOptions: KalturaRequestOptions): {} {
+    buildRequest(defaultRequestOptions: KalturaRequestOptions | null, clientTag?: string): {} {
         const result = super.toRequestObject();
 
-        for (let i = 0, length = this.requests.length; i < length; i++) {
-            result[i] = this.requests[i].buildRequest(defaultRequestOptions);
+      if (environment.request.avoidQueryString) {
+        result['clientTag'] = createClientTag(this, clientTag);
+      }
+
+      for (let i = 0, length = this.requests.length; i < length; i++) {
+            result[i] = this.requests[i].buildRequest(defaultRequestOptions, clientTag);
         }
 
         return result;

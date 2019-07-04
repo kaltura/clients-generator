@@ -176,7 +176,7 @@ export class KalturaUploadRequestAdapter {
       }
 
       if (environment.request.avoidQueryString) {
-        data.append('clientTag',createClientTag(request, this.clientOptions));
+        data.append('clientTag',createClientTag(request, this.clientOptions.clientTag));
       } else {
         endpointUrl = buildUrl(endpointUrl, parameters);
       }
