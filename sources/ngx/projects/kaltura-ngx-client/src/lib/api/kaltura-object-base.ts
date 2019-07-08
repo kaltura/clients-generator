@@ -14,6 +14,7 @@ export interface KalturaObjectPropertyMetadata
   type : string;
   subType? : string;
   default? : string;
+  externalKey?: string;
   subTypeConstructor? : { new() : KalturaObjectBase };
 };
 
@@ -98,8 +99,8 @@ export abstract class KalturaObjectBase {
     // this is not an option as it created circle reference where KalturaListResponse > KalturaObjectBase > KalturaListResponse.
     // Hence, we cannot set the type explicitly and we need to expose the default type 'KalturaObjectBase'
     return { properties : {
-      relatedObjects: { type: 'a', readOnly: true, subTypeConstructor : null, subType : 'KalturaListResponse'},
-    }};
+        relatedObjects: { type: 'a', readOnly: true, subTypeConstructor : null, subType : 'KalturaListResponse'},
+      }};
   }
 
   public hasMetadataProperty(propertyName: string): boolean
@@ -107,7 +108,7 @@ export abstract class KalturaObjectBase {
     return !!this._getMetadata().properties[propertyName];
   }
 
-  toRequestObject() : {} {
+  toRequestObject(externalData: Record<string, any>) : {} {
     const metadata = this._getMetadata();
     let result = {};
 
@@ -300,7 +301,7 @@ export abstract class KalturaObjectBase {
     return result;
   }
 
-  private _createRequestPropertyValue(propertyName : string, property : KalturaObjectPropertyMetadata) : { status : 'missing' | 'removed' | 'exists', value? : any } {
+  private _createRequestPropertyValue(propertyName : string, property : KalturaObjectPropertyMetadata, externalData: Record<string, any>) : { status : 'missing' | 'removed' | 'exists', value? : any } {
 
     let result : { status : 'missing' | 'removed' | 'exists', value? : any } = { status : 'missing'};
 
@@ -310,6 +311,13 @@ export abstract class KalturaObjectBase {
       if (property.default)
       {
         result = { status : 'exists', value : property.default};
+      }
+    } else if (property.type === 'ex')
+    {
+      // external data value
+      if (property.externalKey && externalData)
+      {
+        result = { status : 'exists', value : externalData[property.externalKey]};
       }
     } else if (this._dependentProperties[propertyName])
     {
@@ -337,7 +345,7 @@ export abstract class KalturaObjectBase {
               break;
             case 'o': // object
               if (value instanceof KalturaObjectBase) {
-                result = { status : 'exists', value : value.toRequestObject()};
+                result = { status : 'exists', value : value.toRequestObject(externalData)};
               }else
               {
                 throw new Error(`failed to parse property. Expected '${propertyName} to be kaltura object`);
@@ -350,7 +358,7 @@ export abstract class KalturaObjectBase {
                 {
                   if (item instanceof KalturaObjectBase)
                   {
-                    parsedArray.push(item.toRequestObject());
+                    parsedArray.push(item.toRequestObject(externalData));
                   }
                 });
 
@@ -376,7 +384,7 @@ export abstract class KalturaObjectBase {
                   valueKeys.forEach(itemKey => {
                     var itemValue = value[itemKey];
                     if (itemValue instanceof KalturaObjectBase) {
-                      parsedObject[itemKey] = itemValue.toRequestObject();
+                      parsedObject[itemKey] = itemValue.toRequestObject(externalData);
                     }
 
                   });
