@@ -56,6 +56,9 @@ import com.kaltura.client.services.UploadTokenService.AddUploadTokenBuilder;
 import com.kaltura.client.services.UploadTokenService.UploadUploadTokenBuilder;
 import com.kaltura.client.types.APIException;
 import com.kaltura.client.types.MediaEntry;
+import com.kaltura.client.types.Partner;
+import com.kaltura.client.services.PartnerService;
+import com.kaltura.client.services.PartnerService.GetPartnerBuilder;
 import com.kaltura.client.types.UploadToken;
 import com.kaltura.client.types.UploadedFileTokenResource;
 import com.kaltura.client.utils.request.NullRequestBuilder;
@@ -168,7 +171,22 @@ abstract class BaseTest extends TestCase {
 	    }
 	    return sb.toString();
 	}
-	
+
+	public void getTestPartner(final OnCompletion<Partner> onCompletion)
+	{
+		GetPartnerBuilder requestBuilder = PartnerService.get(testConfig.getPartnerId())
+				.setCompletion(new OnCompletion<Response<Partner>>() {
+
+					@Override
+					public void onComplete(Response<Partner> result) {
+						assertNull(result.error);
+						final Partner partner = result.results;
+						onCompletion.onComplete(partner);
+					}
+				});
+		APIOkRequestsExecutor.getExecutor().queue(requestBuilder.build(client));
+	}
+
 	// Entry utils
 	
 	public void addTestImage(String name, final OnCompletion<MediaEntry> onCompletion)
