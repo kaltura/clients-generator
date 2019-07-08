@@ -4,6 +4,7 @@ import { KalturaAPIException } from './kaltura-api-exception';
 import { KalturaObjectBase } from './kaltura-object-base';
 import { KalturaRequestOptions, KalturaRequestOptionsArgs } from './kaltura-request-options';
 import { environment } from '../environment';
+import { createClientTag } from '../adapters/utils';
 
 export interface KalturaRequestArgs extends KalturaRequestBaseArgs
 {
@@ -129,15 +130,22 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
     return this.__requestOptions__;
   }
 
-  buildRequest(defaultRequestOptions: KalturaRequestOptions): {} {
+  buildRequest(defaultRequestOptions: KalturaRequestOptions | null, clientTag?: string): {} {
     const requestOptionsObject = this.__requestOptions__ ? this.__requestOptions__.toRequestObject() : {};
     const defaultRequestOptionsObject = defaultRequestOptions ? defaultRequestOptions.toRequestObject() : {};
 
-    return Object.assign(
+    const result = Object.assign(
       {},
       defaultRequestOptionsObject,
       requestOptionsObject,
       this.toRequestObject()
     );
+
+    if (environment.request.avoidQueryString) {
+      result['clientTag'] = createClientTag(this, clientTag);
+    }
+
+    return result;
+
   }
 }

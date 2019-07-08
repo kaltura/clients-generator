@@ -5,7 +5,6 @@ import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaClientOptions } from '../kaltura-client-options';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { CancelableAction } from '../cancelable-action';
-import { buildUrl } from '../../../ngx/projects/kaltura-ngx-client/src/lib/adapters/utils';
 
 interface UploadByChunksData {
     enabled: boolean;

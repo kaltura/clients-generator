@@ -9,12 +9,13 @@ import { environment } from '../environment';
 export type CreateEndpointOptions = KalturaClientOptions & {
   service: string,
   action?: string,
-  format?: string
+  format?: string,
+  avoidClientTag?: boolean
 }
 
 export function createEndpoint(request: KalturaRequestBase, options: CreateEndpointOptions): string {
   const endpoint = options.endpointUrl;
-  const clientTag = createClientTag(request, options);
+  const clientTag = createClientTag(request, options.clientTag);
   let result = `${endpoint}/api_v3/service/${options.service}`;
 
   if (options.action) {
@@ -25,19 +26,17 @@ export function createEndpoint(request: KalturaRequestBase, options: CreateEndpo
 
   result += `?format=${format}`;
 
-  if (clientTag)
-  {
+  if (!options.avoidClientTag && clientTag) {
     result += `&${_buildQuerystring({clientTag})}`;
   }
-
 
   return result;
 }
 
-export function createClientTag(request: KalturaRequestBase, options: KalturaClientOptions)
+export function createClientTag(request: KalturaRequestBase, clientTag?: string)
 {
 	const networkTag = (request.getNetworkTag() || "").trim();
-	const clientTag = (options.clientTag || "").trim() || "ng-app";
+	clientTag = (clientTag || "").trim() || "ng-app";
 
 	if (networkTag && networkTag.length)
 	{
@@ -79,11 +78,11 @@ export function getHeaders(): any {
 	};
 }
 
-export function prepareParameters(request: KalturaRequest<any> | KalturaMultiRequest | KalturaFileRequest,  options: KalturaClientOptions,  defaultRequestOptions: KalturaRequestOptions): any {
+export function prepareParameters(request: KalturaRequest<any> | KalturaMultiRequest | KalturaFileRequest,  options: KalturaClientOptions,  defaultRequestOptions: KalturaRequestOptions | null): any {
 
 	return Object.assign(
 		{},
-		request.buildRequest(defaultRequestOptions),
+		request.buildRequest(defaultRequestOptions, options.clientTag),
 		{
 			apiVersion: environment.request.apiVersion,
 		}

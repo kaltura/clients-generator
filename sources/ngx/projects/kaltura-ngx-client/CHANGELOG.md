@@ -2,11 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## 11.4.0 (2019-06-24)
+## 11.5.0 (2019-07-08)
 
 ### Features
 
 * Update minimum chunk size to the higher value between 5mb and {file size}/10,000 PLAT-9931 
+
+
+## 11.4.0 (2019-07-02)
+
+### Features
+
+* For OTT clients add the client tag to requests of multi-request
+
 
 ## 11.3.0 (2019-04-11)
 

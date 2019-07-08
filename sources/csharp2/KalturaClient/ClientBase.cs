@@ -49,11 +49,9 @@ namespace Kaltura
         protected ClientConfiguration clientConfiguration = new ClientConfiguration();
         protected RequestConfiguration requestConfiguration = new RequestConfiguration();
         
-        public Configuration Configuration
-        {
-            get;
-            set;
-        }
+        public int? ResponseLogLength { get; set; }
+
+        public Configuration Configuration{ get; set; }
 
         public ClientConfiguration ClientConfiguration
         {
