@@ -133,8 +133,10 @@ module Kaltura
 				return result_object
 
 			rescue KalturaAPIError => e
+				reset_request()
 				raise e
 			rescue Exception => e
+				reset_request()
 				raise KalturaAPIError.new("KALTURA_RUBY_CLIENT_ERROR", e.to_s)
 			end
 		end
