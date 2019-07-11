@@ -656,7 +656,11 @@ public class MediaServiceTest extends BaseTest {
 				filter.setReferenceIdEqual(entry.getReferenceId());
 				List<MediaEntryFilterForPlaylist> filters = new ArrayList<MediaEntryFilterForPlaylist>();
 				filters.add(filter);
-				Thread.sleep(5000);
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException ie) {
+					throw new RuntimeException("Failed while waiting for executeFromFilters");
+				}
 				ExecuteFromFiltersPlaylistBuilder requestBuilder = PlaylistService.executeFromFilters(filters, 5)
 				.setCompletion(new OnCompletion<Response<List<BaseEntry>>>() {
 
