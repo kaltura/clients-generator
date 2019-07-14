@@ -130,8 +130,13 @@ public class MultiRequestTest extends BaseTest{
 				assertTrue(result.results.get(4) instanceof UploadToken);
 				mToken =(UploadToken) result.results.get(4);
 				assertEquals(UploadTokenStatus.CLOSED, mToken.getStatus());
-				
-				
+
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException ie) {
+					throw new RuntimeException("Failed while waiting for executeFromFilters");
+				}
+
 				// execute from filters (Array: Array, int)
 				MediaEntryFilterForPlaylist filter = new MediaEntryFilterForPlaylist();
 				filter.setReferenceIdEqual(mEntry.getReferenceId());

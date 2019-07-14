@@ -98,7 +98,13 @@ public class MultiRequestTest extends BaseTest{
 		
 		// Multi request part II:
 		client.startMultiRequest();
-		
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException ie) {
+			throw new RuntimeException("Failed while waiting for executeFromFilters");
+		}
+
 		// execute from filters (Array: Array, int)
 		KalturaMediaEntryFilterForPlaylist filter = new KalturaMediaEntryFilterForPlaylist();
 		filter.setReferenceIdEqual(mEntry.getReferenceId());

@@ -96,6 +96,12 @@ public class MultiRequestTest extends BaseTest{
 		assertTrue(multi.get(3) instanceof KalturaMediaEntry);
 		// 4
 		assertTrue(multi.get(4) instanceof KalturaUploadToken);
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException ie) {
+			throw new RuntimeException("Failed while waiting for executeFromFilters");
+		}
 		
 		// Multi request part II:
 		client.startMultiRequest();
