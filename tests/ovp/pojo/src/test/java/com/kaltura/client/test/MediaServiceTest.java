@@ -513,7 +513,11 @@ public class MediaServiceTest extends BaseTest {
 			filter.setReferenceIdEqual(entry.getReferenceId());
 			ArrayList<KalturaMediaEntryFilterForPlaylist> filters = new ArrayList<KalturaMediaEntryFilterForPlaylist>();
 			filters.add(filter);
-			Thread.sleep(5000);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException ie) {
+				throw new RuntimeException("Failed while waiting for executeFromFilters");
+			}
 			List<KalturaBaseEntry> res = client.getPlaylistService().executeFromFilters(filters, 5);
 			assertNotNull(res);
 			assertEquals(1, res.size());
