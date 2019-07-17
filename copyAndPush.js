@@ -51,7 +51,6 @@ function getPaths(file) {
 							gitPath: gitPath
 						});
 					}, (err) => {
-						reject(`Failed to clone repo ${repo}: ${err}`);
 						gitClone(repo)
 						.then(() => {
 							resolve({
