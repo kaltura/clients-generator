@@ -130,4 +130,64 @@ describe("Add media", () => {
     		});
     	});
     });
+
+	describe("from buffers", () => {
+		const filePath = './test/DemoVideo.mp4';
+		const uploadToken = new kaltura.objects.UploadToken();
+		let createdUploadToken;
+		it('creates file', (done) => {
+			kaltura.services.uploadToken.add(uploadToken)
+				.execute(client)
+				.then(token => {
+					createdUploadToken = token;
+					return kaltura.services.uploadToken.upload(
+						createdUploadToken.id,
+						Buffer.alloc(0),
+						false,
+						false,
+						0,
+					).execute(client);
+				})
+				.then((uploadToken) => {
+					expect(uploadToken.status).to.equal(kaltura.enums.UploadTokenStatus.PARTIAL_UPLOAD);
+					const mediaEntry = new kaltura.objects.MediaEntry();
+					mediaEntry.mediaType = kaltura.enums.MediaType.VIDEO;
+					return kaltura.services.media.add(mediaEntry)
+						.execute(client);
+				})
+				.then(entry => {
+					const resource = new kaltura.objects.UploadedFileTokenResource();
+					resource.token = createdUploadToken.id;
+					return kaltura.services.media.addContent(entry.id, resource).execute(client);
+				})
+				.then(() => {
+					return new Promise((resolve, reject) => {
+						const uploads = [];
+						const stats = fs.statSync(filePath);
+						const rs = fs.createReadStream(filePath);
+						let resumeAt = 0;
+						rs.on('data', (data) => {
+							const p = kaltura.services.uploadToken.upload(
+								createdUploadToken.id,
+								data,
+								true,
+								rs.bytesRead === stats.size,
+								resumeAt,
+							).execute(client);
+							uploads.push(p);
+							resumeAt += data.length;
+						});
+						rs.once('close', () => resolve(Promise.all(uploads)));
+						rs.once('error', reject);
+					})
+				})
+				.then(uploadTokens => {
+					const lastUpload = uploadTokens.pop();
+					uploadTokens.forEach((token) => expect(token.status).to.equal(kaltura.enums.UploadTokenStatus.PARTIAL_UPLOAD));
+					expect(lastUpload.status).to.equal(kaltura.enums.UploadTokenStatus.CLOSED);
+					done();
+				})
+				.catch((err) => done(err));
+		});
+	});
 });
