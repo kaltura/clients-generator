@@ -280,7 +280,7 @@ public class MediaServiceTest extends BaseTest {
 	 * Media Service -
 	 *  - add From Url
 	 * http://www.kaltura.org/how-update-supposed-work-api-v3
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void testUpdate() throws Exception {
 		startUserSession();
@@ -656,6 +656,11 @@ public class MediaServiceTest extends BaseTest {
 				filter.setReferenceIdEqual(entry.getReferenceId());
 				List<MediaEntryFilterForPlaylist> filters = new ArrayList<MediaEntryFilterForPlaylist>();
 				filters.add(filter);
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException ie) {
+					throw new RuntimeException("Failed while waiting for executeFromFilters");
+				}
 				ExecuteFromFiltersPlaylistBuilder requestBuilder = PlaylistService.executeFromFilters(filters, 5)
 				.setCompletion(new OnCompletion<Response<List<BaseEntry>>>() {
 
