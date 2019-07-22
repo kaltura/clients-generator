@@ -140,13 +140,8 @@ describe("Add media", () => {
 				.execute(client)
 				.then(token => {
 					createdUploadToken = token;
-					return kaltura.services.uploadToken.upload(
-						createdUploadToken.id,
-						Buffer.alloc(0),
-						false,
-						false,
-						0,
-					).execute(client);
+					return kaltura.services.uploadToken.upload(createdUploadToken.id, Buffer.alloc(0), false, false, 0)
+						.execute(client);
 				})
 				.then((uploadToken) => {
 					expect(uploadToken.status).to.equal(kaltura.enums.UploadTokenStatus.PARTIAL_UPLOAD);
@@ -167,13 +162,8 @@ describe("Add media", () => {
 						const rs = fs.createReadStream(filePath);
 						let resumeAt = 0;
 						rs.on('data', (data) => {
-							const p = kaltura.services.uploadToken.upload(
-								createdUploadToken.id,
-								data,
-								true,
-								rs.bytesRead === stats.size,
-								resumeAt,
-							).execute(client);
+							const p = kaltura.services.uploadToken.upload(createdUploadToken.id, data, true, rs.bytesRead === stats.size, resumeAt)
+								.execute(client);
 							uploads.push(p);
 							resumeAt += data.length;
 						});
