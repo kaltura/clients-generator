@@ -29,11 +29,10 @@
 
 const md5 = require('md5');
 const fs = require('fs');
-const url = require('url');
 const path = require('path');
 const http = require('http');
 const https = require('https');
-const querystring = require("querystring");
+const request = require('request');
 
 const kaltura = require('./KalturaRequestData');
 
@@ -167,6 +166,17 @@ class ClientBase extends kaltura.RequestData {
 		if (config.getLogger() instanceof ILogger) {
 			this.shouldLog = true;
 		}
+		const options = {
+			timeout: config.timeout,
+		};
+		if (config.agentOptions) {
+			const httpInterface = options.uri.startsWith('https') ? https : http;
+			options.agent = new httpInterface.Agent(config.agentOptions);
+		}
+		if (config.proxy) {
+			options.proxy = config.proxy;
+		}
+		this.request = request.defaults(options);
 	}
 
 	/**
@@ -247,8 +257,9 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 		let callback = this.callback;
 		let requestUrl = this.getUrl(client);
 
-		let options = url.parse(requestUrl);
-		options.timeout = client.config.timeout;
+		let options = {
+			uri: requestUrl,
+		};
 		options.method = 'POST';
 		options.headers = {
 			'Accept': 'application/json',
@@ -299,76 +310,59 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			body = jsonBody;
 		}
 
-		var httpInterface = options.protocol === 'http:' ? http : https;
-		if (client.config.agentOptions) {
-			if (!client.agent) {
-				client.agent = new httpInterface.Agent(client.config.agentOptions);
-			}
-			options.agent = client.agent;
-		}
 		options.headers['Content-Length'] = body.length;
+		options.body = body;
 
-		var request = httpInterface.request(options, function (response) {
-			response.setEncoding('utf8');
-
-			var data = '';
-			response.on('data', function (chunk) {
-				data += chunk;
-			});
-			response.on('end', function () {
-				let sessionId;
-				let serverId;
-				for (var header in response.headers) {
-					if (header === 'x-me') {
-						serverId = response.headers[header];
-					}
-					else if (header === 'x-kaltura-session') {
-						sessionId = response.headers[header];
-					}
+		client.request(options, (err, response, data) => {
+			if (err) {
+				if (callback) {
+					callback(false, err);
+					return;
 				}
-				client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + data);
-
-				let json;
-				try {
-					json = JSON.parse(data);
-				} catch (err) {
-					json = {
-						error: err
-					}
+				else {
+					throw new Error(json.message);
 				}
-				if (json && typeof (json) === 'object' && json.code && json.message) {
-					if (callback) {
-						callback(false, json);
-					}
-					else {
-						throw new Error(json.message);
-					}
-				}
-				else if (json && typeof (json) === 'object' && json.result && json.result.error && json.result.error.objectType == 'KalturaAPIException') {
-					if (callback) {
-						callback(false, json);
-					}
-					else {
-						throw new Error(json.message);
-					}
-				}
-				else if (callback) {
-					callback(true, json);
-				}
-			});
-		});
-		request.on('error', function (err) {
-			if (callback) {
-				callback(false, err);
 			}
-			else {
-				throw new Error(json.message);
+			let sessionId;
+			let serverId;
+			for (var header in response.headers) {
+				if (header === 'x-me') {
+					serverId = response.headers[header];
+				}
+				else if (header === 'x-kaltura-session') {
+					sessionId = response.headers[header];
+				}
+			}
+			client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + data);
+
+			let json;
+			try {
+				json = JSON.parse(data);
+			} catch (err) {
+				json = {
+					error: err
+				}
+			}
+			if (json && typeof (json) === 'object' && json.code && json.message) {
+				if (callback) {
+					callback(false, json);
+				}
+				else {
+					throw new Error(json.message);
+				}
+			}
+			else if (json && typeof (json) === 'object' && json.result && json.result.error && json.result.error.objectType == 'KalturaAPIException') {
+				if (callback) {
+					callback(false, json);
+				}
+				else {
+					throw new Error(json.message);
+				}
+			}
+			else if (callback) {
+				callback(true, json);
 			}
 		});
-
-		request.setTimeout(client.config.timeout);
-		request.write(body);
-		request.end();
 	}
 
 	sign() {
