@@ -16,7 +16,7 @@ to the url of the proxy. For example:
 ```js
 const config = new kaltura.Configuration();
     
-const proxyUrl = new url.URL('http://some.proxy.com');
+const proxyUrl = new URL('http://some.proxy.com');
 proxyUrl.username = 'user';
 proxyUrl.password = 'pass';
     
