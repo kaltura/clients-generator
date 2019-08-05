@@ -100,6 +100,14 @@
             <version>2.8.5</version>
         </dependency>
 
+
+	<!-- https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib -->
+	<dependency>
+	    <groupId>org.jetbrains.kotlin</groupId>
+	    <artifactId>kotlin-stdlib</artifactId>
+	    <version>1.3.41</version>
+	</dependency>
+
         <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
