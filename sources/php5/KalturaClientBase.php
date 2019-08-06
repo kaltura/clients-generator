@@ -1440,6 +1440,12 @@ class KalturaConfiguration
 	public $requestHeaders				= array();
 	public $method						= KalturaClientBase::METHOD_POST;
 
+
+	public function setServiceUrl ($serviceUrl)
+	{
+		$this->serviceUrl = $serviceUrl;
+	}
+
 	/**
 	 * Set logger to get kaltura client debug logs
 	 *
