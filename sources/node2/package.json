@@ -28,11 +28,10 @@
   },
   "dependencies": {
     "md5": "*",
-    "url": "*",
     "path": "*",
     "http": "*",
     "https": "*",
-    "querystring": "*"
+    "request": "~2.88.0",
   },
   "devDependencies": {
     "shortid": "^2.2.8",

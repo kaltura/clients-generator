@@ -9,6 +9,20 @@ You can install this client library using npm with:
 ```
 npm install kaltura-client 
 ```
+## Proxy settings for client
+If the Kaltura client has to be used behind a proxy, this can be set in the KalturaConfiguration by setting proxy
+to the url of the proxy. For example:
+
+```js
+const config = new kaltura.Configuration();
+    
+const proxyUrl = new URL('http://some.proxy.com');
+proxyUrl.username = 'user';
+proxyUrl.password = 'pass';
+    
+config.proxy = proxyUrl.toString();
+const client = new kaltura.Client(config);
+```
 
 ## Sanity Check
 - Copy config.template.json to config.json  and set partnerId, secret and serviceUrl
