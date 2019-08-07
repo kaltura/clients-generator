@@ -245,7 +245,7 @@ class KalturaClientBase
 
 		$params = array();
 		$files = array();
-		$this->log("service url: [" . $this->config->serviceUrl . "]");
+		$this->log("service url: [" . $this->config->getServiceUrl() . "]");
 
 		// append the basic params
 		$this->addParam($params, "format", $this->config->format);
@@ -262,7 +262,7 @@ class KalturaClientBase
 		$signature = $this->signature($params);
 		$this->addParam($params, "kalsig", $signature);
 
-		$url = $this->config->serviceUrl . "/api_v3/service/{$call->service}/action/{$call->action}";
+		$url = $this->config->getServiceUrl() . "/api_v3/service/{$call->service}/action/{$call->action}";
 		$url .= '?' . http_build_query($params);
 		$this->log("Returned url [$url]");
 		return $url;
@@ -310,7 +310,7 @@ class KalturaClientBase
 
 		$params = array();
 		$files = array();
-		$this->log("service url: [" . $this->config->serviceUrl . "]");
+		$this->log("service url: [" . $this->config->getServiceUrl() . "]");
 
 		// append the basic params
 		$this->addParam($params, "format", $this->config->format);
@@ -321,7 +321,7 @@ class KalturaClientBase
 			$this->addParam($params, $param, $value);
 		}
 
-		$url = $this->config->serviceUrl."/api_v3/service";
+		$url = $this->config->getServiceUrl()."/api_v3/service";
 		if ($this->isMultiRequest)
 		{
 			$url .= "/multirequest";
@@ -1445,6 +1445,12 @@ class KalturaConfiguration
 	{
 		$this->serviceUrl = $serviceUrl;
 	}
+
+	public function getServiceUrl ()
+	{
+		return $this->serviceUrl;
+	}
+
 
 	/**
 	 * Set logger to get kaltura client debug logs
