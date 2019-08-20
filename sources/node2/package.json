@@ -31,7 +31,7 @@
     "path": "*",
     "http": "*",
     "https": "*",
-    "request": "~2.88.0",
+    "request": "~2.88.0"
   },
   "devDependencies": {
     "shortid": "^2.2.8",
