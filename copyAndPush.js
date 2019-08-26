@@ -90,13 +90,13 @@ function execWithPomise(command, cwd, resolveData, alwaysResolve) {
 }
 
 function gitClone(repo) {
-	console.log(`Cloning git repo ${repo}`);
-	return execWithPomise(`${git} clone https://${token}@github.com/kaltura/${repo}`, branchPath);
+	console.log(`Cloning git repo ${repo} and setting user name`);
+	return execWithPomise(`${git} clone https://${token}@github.com/kaltura/${repo} && cd ${repo} && git config user.name "Backend CI" && git config user.email "ott.rnd.core@kaltura.com"`, branchPath);
 }
 
 function gitCloneBranch(repo) {
 	console.log(`Cloning git repo ${repo}, branch ${branch}`);
-	return execWithPomise(`${git} clone -b ${branch} https://${token}@github.com/kaltura/${repo}`, branchPath);
+	return execWithPomise(`${git} clone -b ${branch} https://${token}@github.com/kaltura/${repo} && cd ${repo} && git config user.name "Backend CI" && git config user.email "ott.rnd.core@kaltura.com"`, branchPath)
 }
 
 function gitCheckout(generatedPath, gitPath, isNew) {
