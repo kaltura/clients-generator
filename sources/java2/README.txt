@@ -50,6 +50,13 @@ To build the API:
  - Build the project
 
 
+== HTTP Proxy Support ==
+
+After initialising an object of the `Configuration` class, invoke the below methods:
+config.setProxy("proxy.host");
+config.setProxyPort(int_port);
+
+
 == TESTING THE API CLIENT LIBRARY USING ECLIPSE ==
 
 To run the JUnit test suite that accompanies this source:

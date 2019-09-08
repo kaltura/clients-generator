@@ -58,7 +58,8 @@ function getPaths(file) {
 								gitPath: gitPath
 							});
 						}, (err) => {
-							reject(`Failed to clone repo ${repo}: ${err}`);
+                            reject(`Failed to clone repo ${repo}: ${err}`);
+                            process.exit(1);
 						});
 					});
 				}
@@ -121,7 +122,8 @@ function copyFiles(generatedPath, gitPath) {
 		rimraf(gitPath + '/*', () => {
 			copydir(generatedPath, gitPath, (err) => {
 				if(err) {
-					reject(`Failed to copy directory from ${generatedPath} to ${gitPath}: ` + err);
+                    reject(`Failed to copy directory from ${generatedPath} to ${gitPath}: ` + err);
+                    process.exit(1);
 				}
 				else {
 					resolve(gitPath);
