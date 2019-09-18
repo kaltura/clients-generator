@@ -39,6 +39,8 @@ using System.Runtime.Serialization;
 using System.Threading;
 using Kaltura.Types;
 using Kaltura.Enums;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Kaltura
 {
@@ -48,10 +50,10 @@ namespace Kaltura
 
         protected ClientConfiguration clientConfiguration = new ClientConfiguration();
         protected RequestConfiguration requestConfiguration = new RequestConfiguration();
-        
+
         public int? ResponseLogLength { get; set; }
 
-        public Configuration Configuration{ get; set; }
+        public Configuration Configuration { get; set; }
 
         public ClientConfiguration ClientConfiguration
         {
@@ -62,10 +64,48 @@ namespace Kaltura
         {
             get { return requestConfiguration; }
         }
+        public HttpClient HttpClient { get; internal set; }
+
+
 
         public ClientBase(Configuration config)
         {
             Configuration = config;
+
+            var httpClientHandler = new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                Proxy = CreateProxy(),
+#if NETSTANDARD2_0
+                MaxConnectionsPerServer = Configuration.MaxConnectionsPerServer,
+#endif
+            };
+
+            ServicePointManager.DefaultConnectionLimit = Configuration.MaxConnectionsPerServer;
+            HttpClient = new HttpClient(httpClientHandler);
+            HttpClient.Timeout = Timeout.InfiniteTimeSpan;
+            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
+
+
+
+        private WebProxy CreateProxy()
+        {
+            WebProxy proxyToSet;
+            if (string.IsNullOrEmpty(Configuration.ProxyAddress)) { return null; }
+
+            if (!(string.IsNullOrEmpty(Configuration.ProxyUser) || string.IsNullOrEmpty(Configuration.ProxyPassword)))
+            {
+                ICredentials credentials = new NetworkCredential(Configuration.ProxyUser, Configuration.ProxyPassword);
+                proxyToSet = new WebProxy(Configuration.ProxyAddress, false, null, credentials);
+            }
+            else
+            {
+                proxyToSet = new WebProxy(Configuration.ProxyAddress);
+            }
+
+            return proxyToSet;
+        }
+
     }
 }

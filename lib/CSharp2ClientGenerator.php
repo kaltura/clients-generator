@@ -55,7 +55,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$errorNodes = $xpath->query("/xml/errors/error");
 		$this->writeApiException($errorNodes);
 
-		$this->writeCsproj();
 	}
 
 	function writeApiException(DOMNodeList $errorNodes)
@@ -643,25 +642,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		$file = "Types/$className.cs";
 		$this->addFile("KalturaClient/".$file, $this->getTextBlock());
 		$this->_csprojIncludes[] = $file;
-	}
-
-	function writeCsproj()
-	{
-		$csprojDoc = new DOMDocument();
-		$csprojDoc->formatOutput = true;
-		$csprojDoc->load($this->_sourcePath."/KalturaClient/KalturaClient.csproj");
-		$csprojXPath = new DOMXPath($csprojDoc);
-		$csprojXPath->registerNamespace("m", "http://schemas.microsoft.com/developer/msbuild/2003");
-		$compileNodes = $csprojXPath->query("//m:ItemGroup/m:Compile/..");
-		$compileItemGroupElement = $compileNodes->item(0);
-
-		foreach($this->_csprojIncludes as $include)
-		{
-			$compileElement = $csprojDoc->createElement("Compile");
-			$compileElement->setAttribute("Include", str_replace("/","\\", $include));
-			$compileItemGroupElement->appendChild($compileElement);
-		}
-		$this->addFile("KalturaClient/KalturaClient.csproj", $csprojDoc->saveXML(), false);
 	}
 
 	function writeService(DOMElement $serviceNode)

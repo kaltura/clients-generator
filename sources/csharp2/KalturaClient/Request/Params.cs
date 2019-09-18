@@ -27,6 +27,7 @@
 // ===================================================================================================
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Web;
 using Kaltura.Types;
@@ -59,7 +60,7 @@ namespace Kaltura.Request
         {
             string str = "";
             foreach (KeyValuePair<string, ISerializable> item in this)
-                str += (item.Key + "=" + HttpUtility.UrlEncode(item.Value.ToQueryString()) + "&");
+                str += (item.Key + "=" + WebUtility.UrlEncode(item.Value.ToQueryString()) + "&");
 
             if (str.EndsWith("&"))
                 str = str.Substring(0, str.Length - 1);

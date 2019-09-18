@@ -94,7 +94,7 @@ namespace Kaltura
 			    string[] splittedPriv = privilege.Split(':');
 			    if(splittedPriv.Length > 1) 
                 {
-				    fields.Add(splittedPriv[0], HttpUtility.UrlEncode(splittedPriv[1], Encoding.UTF8));
+				    fields.Add(splittedPriv[0], WebUtility.UrlEncode(splittedPriv[1]));
 			    } 
                 else 
                 {
