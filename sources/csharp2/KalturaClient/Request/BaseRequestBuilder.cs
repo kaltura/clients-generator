@@ -198,7 +198,7 @@ namespace Kaltura.Request
             var responseHeadersBuilder = new StringBuilder();
             foreach (var header in response.Headers)
             {
-                responseHeadersBuilder.Append(header.Key + ":" + header.Value + " ; ");
+                responseHeadersBuilder.Append(header.Key + ":" + string.Join(",",header.Value) + " ; ");
             }
             return responseHeadersBuilder.ToString();
         }
