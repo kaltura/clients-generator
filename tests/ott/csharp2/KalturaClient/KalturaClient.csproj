@@ -6,7 +6,7 @@
     <AssemblyTitle>KalturaClient</AssemblyTitle>
     <Company>Kaltura</Company>
     <Product>KalturaClient</Product>
-    <PackageId>Kaltura.Client</PackageId>
+    <PackageId>Kaltura.OttClient</PackageId>
     <Description>Kaltura API Client Library</Description>
     <PackageTags>kaltura ott rest api client</PackageTags>
     <Copyright>Copyright (C) 2006-2019  Kaltura Inc.</Copyright>
