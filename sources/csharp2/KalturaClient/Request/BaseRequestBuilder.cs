@@ -129,7 +129,9 @@ namespace Kaltura.Request
                 var responseString = await response.Content.ReadAsStringAsync();
                 var headersStr = GetResponseHeadersString(response);
 
-                this.Log(string.Format("result : {0}", responseString));
+                var responseLogMsg = GetTrimmedResponseToLog(client, responseString);
+
+                this.Log(string.Format("result : {0}", responseLogMsg));
                 this.Log(string.Format("result headers : {0}", headersStr));
 
                 response.EnsureSuccessStatusCode();
@@ -142,6 +144,19 @@ namespace Kaltura.Request
                 this.Log(string.Format("Error General Exception occored during request, ex:{0}", e));
                 throw;
             }
+        }
+
+        private string GetTrimmedResponseToLog(Client client, string responseString)
+        {
+            var responseLogMsg = responseString;
+            var responseLogLengthToUse = this.ResponseLogLength.HasValue ? this.ResponseLogLength : client.ResponseLogLength;
+            if (responseLogLengthToUse.HasValue)
+            {
+                var trimLength = Math.Min(responseLogLengthToUse.Value, responseString.Length);
+                responseLogMsg = responseString.Substring(0, trimLength);
+            }
+
+            return responseLogMsg;
         }
 
         private static HttpContent GetPostBodyHttpContent(Files files, string requestBodyStr)
@@ -198,7 +213,7 @@ namespace Kaltura.Request
             var responseHeadersBuilder = new StringBuilder();
             foreach (var header in response.Headers)
             {
-                responseHeadersBuilder.Append(header.Key + ":" + string.Join(",",header.Value) + " ; ");
+                responseHeadersBuilder.Append(header.Key + ":" + string.Join(",", header.Value) + " ; ");
             }
             return responseHeadersBuilder.ToString();
         }
