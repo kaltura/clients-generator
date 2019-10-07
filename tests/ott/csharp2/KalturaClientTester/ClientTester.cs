@@ -59,10 +59,9 @@ namespace Kaltura
         private int openTasks = 0;
         private OnLogin onLogin;
 
-        static void Main(string[] args)
+         static void Main(string[] args)
         {
             ClientTester operatorTester = new ClientTester(new OnLogin(OnOperatorLogin), OPERATOR_USERNAME, OPERATOR_PASSWORD);
-
             ClientTester masterTester = new ClientTester(new OnLogin(OnMasterLogin), MASTER_USERNAME, MASTER_PASSWORD, MASTER_DEVICE);
 
             while (masterTester.openTasks > 0 || operatorTester.openTasks > 0)
@@ -77,7 +76,36 @@ namespace Kaltura
         private static void OnOperatorLogin(ClientTester tester)
         {
             tester.ListUserRoles();
-			tester.ListUserRolesWithImpersonation();
+            tester.ListUserRolesWithImpersonation();
+            tester.TestUpload();
+        }
+
+        private void TestUpload()
+        {
+            openTasks++;
+            UploadTokenService.Add()
+                .SetCompletion(new OnCompletedHandler<UploadToken>(OnUploadTokenAddComplete))
+                .Execute(client);
+        }
+
+        private Stream _FileStream = File.OpenRead("UploadFileTest.txt");
+        private void OnUploadTokenAddComplete(UploadToken token, Exception error)
+        {
+            openTasks++;
+            if (error != null) { throw error; }
+
+            UploadTokenService.Upload(token.Id, _FileStream)
+                .SetCompletion(new OnCompletedHandler<UploadToken>(OnUploadComplete))
+                .Execute(client);
+
+            openTasks--;
+        }
+
+        private void OnUploadComplete(UploadToken response, Exception error)
+        {
+            if (error != null) { throw error; }
+            _FileStream.Close();
+            openTasks--;
         }
 
         private static void OnMasterLogin(ClientTester tester)
@@ -94,7 +122,7 @@ namespace Kaltura
         private ClientTester(OnLogin onLogin, string username, string password, string udid = null)
         {
             this.onLogin = onLogin;
-        
+
             uniqueTag = Guid.NewGuid().ToString().Replace("-", "").Substring(0, 20);
 
             Configuration config = new Configuration();
@@ -139,7 +167,7 @@ namespace Kaltura
 
         private void ListUserRoles()
         {
-            openTasks ++;
+            openTasks++;
             UserRoleService.List()
                 .SetCompletion(new OnCompletedHandler<ListResponse<UserRole>>(OnUserRoleListComplete))
                 .Execute(client);
@@ -227,7 +255,7 @@ namespace Kaltura
 
         private void GetAsset(string id, AssetReferenceType assetReferenceType)
         {
-            openTasks ++;
+            openTasks++;
             AssetService.Get(id, assetReferenceType)
                 .SetCompletion(new OnCompletedHandler<Asset>(OnAssetGetComplete))
                 .Execute(client);

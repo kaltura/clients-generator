@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
@@ -112,12 +114,73 @@ namespace Kaltura.Request
             this.Log(string.Format("url : [{0}]", url));
 
             var files = getFiles();
-            var request = BuildRequest(url, files, client.Configuration.Timeout);
-            await WriteRequestBodyAsync(files, request);
-            var responseObject = await GetResponseAsync(request);
-            this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
+            var requestBodyStr = GetRequestBodyJsonString();
 
-            return responseObject;
+            var timeoutMs = files.Count == 0 ? client.Configuration.Timeout : Timeout.Infinite;
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromMilliseconds(timeoutMs));
+
+            try
+            {
+                var content = GetPostBodyHttpContent(files, requestBodyStr);
+                SetRequestHeaders(content);
+
+                var response = await client.HttpClient.PostAsync(url, content, cts.Token);
+                var responseString = await response.Content.ReadAsStringAsync();
+                var headersStr = GetResponseHeadersString(response);
+
+                var responseLogMsg = GetTrimmedResponseToLog(client, responseString);
+
+                this.Log(string.Format("result : {0}", responseLogMsg));
+                this.Log(string.Format("result headers : {0}", headersStr));
+
+                response.EnsureSuccessStatusCode();
+                var responseObject = ParseResponseString<T>(responseString);
+                this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
+                return responseObject;
+            }
+            catch (Exception e)
+            {
+                this.Log(string.Format("Error General Exception occored during request, ex:{0}", e));
+                throw;
+            }
+        }
+
+        private string GetTrimmedResponseToLog(Client client, string responseString)
+        {
+            var responseLogMsg = responseString;
+            var responseLogLengthToUse = this.ResponseLogLength.HasValue ? this.ResponseLogLength : client.ResponseLogLength;
+            if (responseLogLengthToUse.HasValue)
+            {
+                var trimLength = Math.Min(responseLogLengthToUse.Value, responseString.Length);
+                responseLogMsg = responseString.Substring(0, trimLength);
+            }
+
+            return responseLogMsg;
+        }
+
+        private static HttpContent GetPostBodyHttpContent(Files files, string requestBodyStr)
+        {
+            if (files.Count == 0)
+            {
+                var jsonContent = new StringContent(requestBodyStr);
+                jsonContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+                return jsonContent;
+            }
+            else
+            {
+                var form = new MultipartFormDataContent();
+                form.Add(new StringContent(requestBodyStr), "json");
+                foreach (var fileEntry in files)
+                {
+                    var filename = fileEntry.Value.FileName ?? "Memory-Stream-Upload";
+                    var fileContent = new StreamContent(fileEntry.Value.FileStream);
+
+                    form.Add(fileContent, fileEntry.Key, filename);
+                }
+
+                return form;
+            }
         }
 
         public void Execute(Client client = null)
@@ -145,132 +208,12 @@ namespace Kaltura.Request
             return result;
         }
 
-
-
-        private async Task<T> GetResponseAsync(HttpWebRequest request)
-        {
-            T responseObject = default(T);
-            try
-            {
-                using (var response = await request.GetResponseAsync())
-                using (var responseStream = response.GetResponseStream())
-                using (var responseReader = new StreamReader(responseStream))
-                {
-                    var responseString = await responseReader.ReadToEndAsync();
-                    var headersStr = GetResponseHeadersString(response);
-
-                    var responseLogMsg = responseString;
-                    var responseLogLengthToUse = this.ResponseLogLength.HasValue? this.ResponseLogLength : client.ResponseLogLength;
-                    if (responseLogLengthToUse.HasValue)
-                    {
-                        var trimLength = Math.Min(responseLogLengthToUse.Value, responseString.Length);
-                        responseLogMsg = responseString.Substring(0,trimLength);
-                    }
-
-                    this.Log(string.Format("result : {0}", responseLogMsg));
-                    this.Log(string.Format("result headers : {0}", headersStr));
-
-                    responseObject = ParseResponseString<T>(responseString);
-                }
-            }
-            catch (WebException wex)
-            {
-                using (var errorResponse = wex.Response)
-                {
-                    var httpResponse = (HttpWebResponse)errorResponse;
-                    this.Log(string.Format("Error code : {0}", httpResponse.StatusCode));
-                    using (var responseDataStream = errorResponse.GetResponseStream())
-                    using (var reader = new StreamReader(responseDataStream))
-                    {
-                        var text = reader.ReadToEnd();
-                        this.Log(string.Format("ErrorResponse : {0}", text));
-                    }
-                }
-
-                throw wex;
-            }
-            catch (Exception e)
-            {
-                this.Log(string.Format("Error while getting reponse for [{0}] excpetion:{1}", request.RequestUri, e));
-                throw e;
-            }
-
-            return responseObject;
-        }
-
-        private async Task WriteRequestBodyAsync(Files files, HttpWebRequest request)
-        {
-            var requestBodyStr = GetRequestBodyJsonString();
-            var requestBody = Encoding.UTF8.GetBytes(requestBodyStr);
-            using (var postStream = await request.GetRequestStreamAsync())
-            {
-
-                if (files.Count == 0)
-                {
-                    await postStream.WriteAsync(requestBody, 0, requestBody.Length);
-
-                }
-                else
-                {
-                    await WriteMultipartRequestBody(postStream, files, requestBodyStr);
-                }
-            }
-        }
-
-        private async Task WriteMultipartRequestBody(Stream postStream, Files files, string jsonBody)
-        {
-            var paramsBuffer = BuildMultiPartParamsBuffer(jsonBody);
-            var paramsBufferBytes = Encoding.UTF8.GetBytes(paramsBuffer);
-
-            await postStream.WriteAsync(paramsBufferBytes, 0, paramsBuffer.Length);
-
-            var bundryBytes = Encoding.UTF8.GetBytes(Boundary);
-            var headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
-
-            foreach (var fileEntry in files)
-            {
-                var fileStream = fileEntry.Value.FileStream;
-                var filename = fileEntry.Value.FileName != null ? fileEntry.Value.FileName : "Memory-Stream-Upload";
-
-                var header = string.Format(headerTemplate, fileEntry.Key, filename, "application/octet-stream");
-                var headerbytes = Encoding.UTF8.GetBytes(header);
-                await postStream.WriteAsync(headerbytes, 0, headerbytes.Length);
-
-                byte[] buffer = new byte[4096];
-                int bytesRead = 0;
-                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0)
-                {
-                    await postStream.WriteAsync(buffer, 0, bytesRead);
-                }
-
-
-                var trailer = Encoding.UTF8.GetBytes("\r\n--" + Boundary + "--\r\n");
-                await postStream.WriteAsync(trailer, 0, trailer.Length);
-            }
-        }
-
-
-        private HttpWebRequest BuildRequest(string url, Files files, int timeout)
-        {
-            Client client;
-            var request = (HttpWebRequest)HttpWebRequest.Create(url);
-            request.Timeout = files.Count == 0 ? timeout : Timeout.Infinite;
-            request.Method = "POST";
-
-            request.Headers = getHeaders();
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            request.Accept = "application/json";
-            request.ContentType = getContentType();
-            request.Proxy = CreateProxy();
-            return request;
-        }
-
-        private static string GetResponseHeadersString(WebResponse response)
+        private static string GetResponseHeadersString(HttpResponseMessage response)
         {
             var responseHeadersBuilder = new StringBuilder();
-            foreach (var key in response.Headers.AllKeys)
+            foreach (var header in response.Headers)
             {
-                responseHeadersBuilder.Append(key + ":" + response.Headers[key] + " ; ");
+                responseHeadersBuilder.Append(header.Key + ":" + string.Join(",", header.Value) + " ; ");
             }
             return responseHeadersBuilder.ToString();
         }
@@ -291,52 +234,6 @@ namespace Kaltura.Request
             return requestBody;
         }
 
-        private string BuildMultiPartParamsBuffer(string json)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("--" + Boundary + "\r\n");
-            sb.Append("Content-Disposition: form-data; name=\"json\"\r\n");
-            sb.Append("\r\n");
-            sb.Append(HttpUtility.UrlDecode(json));
-            sb.Append("\r\n--" + Boundary + "\r\n");
-
-            return sb.ToString();
-        }
-
-        private void ValidateXmlResult(XmlDocument doc)
-        {
-            XmlElement xml = doc["xml"];
-            if (xml != null)
-            {
-                XmlElement result = xml["result"];
-                if (result != null)
-                {
-                    return;
-                }
-            }
-
-            throw new SerializationException("Invalid result");
-        }
-
-        private WebProxy CreateProxy()
-        {
-            var proxyToSet = new WebProxy();
-            if (string.IsNullOrEmpty(client.Configuration.ProxyAddress))
-                return null;
-            Console.WriteLine("Create proxy");
-            if (!(string.IsNullOrEmpty(client.Configuration.ProxyUser) || string.IsNullOrEmpty(client.Configuration.ProxyPassword)))
-            {
-                ICredentials credentials = new NetworkCredential(client.Configuration.ProxyUser, client.Configuration.ProxyPassword);
-                proxyToSet = new WebProxy(client.Configuration.ProxyAddress, false, null, credentials);
-            }
-            else
-            {
-                proxyToSet = new WebProxy(client.Configuration.ProxyAddress);
-            }
-
-            return proxyToSet;
-        }
-
         private string Signature(Params kparams)
         {
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
@@ -350,15 +247,12 @@ namespace Kaltura.Request
             return sBuilder.ToString();
         }
 
-        protected string getContentType()
+        private void SetRequestHeaders(HttpContent reqContent)
         {
-            if (getFiles().Count > 0)
+            var headers = getHeaders();
+            foreach (var headerKey in headers.AllKeys)
             {
-                return "multipart/form-data; boundary=" + Boundary;
-            }
-            else
-            {
-                return "application/json";
+                reqContent.Headers.Add(headerKey, headers[headerKey]);
             }
         }
 
