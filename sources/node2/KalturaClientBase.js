@@ -168,7 +168,6 @@ class ClientBase extends kaltura.RequestData {
 		}
 		const options = {
 			timeout: config.timeout,
-			uri: config.serviceUrl,
 		};
 		if (config.agentOptions) {
 			const httpInterface = options.uri.startsWith('https') ? https : http;
