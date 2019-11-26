@@ -43,6 +43,7 @@ namespace Kaltura.Types
 		public const string EXTERNAL_ID = "externalId";
 		public const string IS_DEFAULT = "isDefault";
 		public const string LINEAR_CHANNELS = "linearChannels";
+		public const string PARENT_ID = "parentId";
 		#endregion
 
 		#region Private Fields
@@ -51,6 +52,7 @@ namespace Kaltura.Types
 		private string _ExternalId = null;
 		private bool? _IsDefault = null;
 		private IList<RegionalChannel> _LinearChannels;
+		private long _ParentId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -88,7 +90,7 @@ namespace Kaltura.Types
 		public bool? IsDefault
 		{
 			get { return _IsDefault; }
-			set 
+			private set 
 			{ 
 				_IsDefault = value;
 				OnPropertyChanged("IsDefault");
@@ -102,6 +104,16 @@ namespace Kaltura.Types
 			{ 
 				_LinearChannels = value;
 				OnPropertyChanged("LinearChannels");
+			}
+		}
+		[JsonProperty]
+		public long ParentId
+		{
+			get { return _ParentId; }
+			set 
+			{ 
+				_ParentId = value;
+				OnPropertyChanged("ParentId");
 			}
 		}
 		#endregion
@@ -137,6 +149,10 @@ namespace Kaltura.Types
 					this._LinearChannels.Add(ObjectFactory.Create<RegionalChannel>(arrayNode));
 				}
 			}
+			if(node["parentId"] != null)
+			{
+				this._ParentId = ParseLong(node["parentId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -151,6 +167,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("isDefault", this._IsDefault);
 			kparams.AddIfNotNull("linearChannels", this._LinearChannels);
+			kparams.AddIfNotNull("parentId", this._ParentId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -167,6 +184,8 @@ namespace Kaltura.Types
 					return "IsDefault";
 				case LINEAR_CHANNELS:
 					return "LinearChannels";
+				case PARENT_ID:
+					return "ParentId";
 				default:
 					return base.getPropertyName(apiName);
 			}

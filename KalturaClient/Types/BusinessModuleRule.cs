@@ -46,7 +46,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private IList<Condition> _Conditions;
-		private IList<ApplyDiscountModuleAction> _Actions;
+		private IList<BusinessModuleRuleAction> _Actions;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
 		#endregion
@@ -63,7 +63,7 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public IList<ApplyDiscountModuleAction> Actions
+		public IList<BusinessModuleRuleAction> Actions
 		{
 			get { return _Actions; }
 			set 
@@ -111,10 +111,10 @@ namespace Kaltura.Types
 			}
 			if(node["actions"] != null)
 			{
-				this._Actions = new List<ApplyDiscountModuleAction>();
+				this._Actions = new List<BusinessModuleRuleAction>();
 				foreach(var arrayNode in node["actions"].Children())
 				{
-					this._Actions.Add(ObjectFactory.Create<ApplyDiscountModuleAction>(arrayNode));
+					this._Actions.Add(ObjectFactory.Create<BusinessModuleRuleAction>(arrayNode));
 				}
 			}
 			if(node["createDate"] != null)

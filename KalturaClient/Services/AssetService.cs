@@ -308,23 +308,26 @@ namespace Kaltura.Services
 		public const string ASSET_ID = "assetId";
 		public const string ASSET_TYPE = "assetType";
 		public const string CONTEXT_DATA_PARAMS = "contextDataParams";
+		public const string SOURCE_TYPE = "sourceType";
 		#endregion
 
 		public string AssetId { get; set; }
 		public AssetType AssetType { get; set; }
 		public PlaybackContextOptions ContextDataParams { get; set; }
+		public string SourceType { get; set; }
 
 		public AssetGetPlaybackContextRequestBuilder()
 			: base("asset", "getPlaybackContext")
 		{
 		}
 
-		public AssetGetPlaybackContextRequestBuilder(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams)
+		public AssetGetPlaybackContextRequestBuilder(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType)
 			: this()
 		{
 			this.AssetId = assetId;
 			this.AssetType = assetType;
 			this.ContextDataParams = contextDataParams;
+			this.SourceType = sourceType;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -336,6 +339,8 @@ namespace Kaltura.Services
 				kparams.AddIfNotNull("assetType", AssetType);
 			if (!isMapped("contextDataParams"))
 				kparams.AddIfNotNull("contextDataParams", ContextDataParams);
+			if (!isMapped("sourceType"))
+				kparams.AddIfNotNull("sourceType", SourceType);
 			return kparams;
 		}
 
@@ -527,9 +532,9 @@ namespace Kaltura.Services
 			return new AssetGetAdsContextRequestBuilder(assetId, assetType, contextDataParams);
 		}
 
-		public static AssetGetPlaybackContextRequestBuilder GetPlaybackContext(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams)
+		public static AssetGetPlaybackContextRequestBuilder GetPlaybackContext(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType = null)
 		{
-			return new AssetGetPlaybackContextRequestBuilder(assetId, assetType, contextDataParams);
+			return new AssetGetPlaybackContextRequestBuilder(assetId, assetType, contextDataParams, sourceType);
 		}
 
 		public static AssetListRequestBuilder List(AssetFilter filter = null, FilterPager pager = null)

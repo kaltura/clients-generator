@@ -47,6 +47,7 @@ namespace Kaltura.Types
 		public const string UPDATE_DATE = "updateDate";
 		public const string UPLOADED_BY_USER_ID = "uploadedByUserId";
 		public const string RESULTS = "results";
+		public const string ERRORS = "errors";
 		#endregion
 
 		#region Private Fields
@@ -59,6 +60,7 @@ namespace Kaltura.Types
 		private long _UpdateDate = long.MinValue;
 		private long _UploadedByUserId = long.MinValue;
 		private IList<BulkUploadResult> _Results;
+		private IList<Message> _Errors;
 		#endregion
 
 		#region Properties
@@ -152,6 +154,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Results");
 			}
 		}
+		[JsonProperty]
+		public IList<Message> Errors
+		{
+			get { return _Errors; }
+			private set 
+			{ 
+				_Errors = value;
+				OnPropertyChanged("Errors");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -201,6 +213,14 @@ namespace Kaltura.Types
 					this._Results.Add(ObjectFactory.Create<BulkUploadResult>(arrayNode));
 				}
 			}
+			if(node["errors"] != null)
+			{
+				this._Errors = new List<Message>();
+				foreach(var arrayNode in node["errors"].Children())
+				{
+					this._Errors.Add(ObjectFactory.Create<Message>(arrayNode));
+				}
+			}
 		}
 		#endregion
 
@@ -219,6 +239,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			kparams.AddIfNotNull("uploadedByUserId", this._UploadedByUserId);
 			kparams.AddIfNotNull("results", this._Results);
+			kparams.AddIfNotNull("errors", this._Errors);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -243,6 +264,8 @@ namespace Kaltura.Types
 					return "UploadedByUserId";
 				case RESULTS:
 					return "Results";
+				case ERRORS:
+					return "Errors";
 				default:
 					return base.getPropertyName(apiName);
 			}

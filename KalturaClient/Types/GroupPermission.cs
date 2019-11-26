@@ -50,7 +50,7 @@ namespace Kaltura.Types
 		public string Group
 		{
 			get { return _Group; }
-			set 
+			private set 
 			{ 
 				_Group = value;
 				OnPropertyChanged("Group");

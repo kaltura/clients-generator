@@ -44,6 +44,7 @@ namespace Kaltura.Types
 		public const string TOPIC_NOTIFICATION_ID = "topicNotificationId";
 		public const string TRIGGER = "trigger";
 		public const string DISPATCHERS = "dispatchers";
+		public const string STATUS = "status";
 		#endregion
 
 		#region Private Fields
@@ -53,6 +54,7 @@ namespace Kaltura.Types
 		private long _TopicNotificationId = long.MinValue;
 		private Trigger _Trigger;
 		private IList<Dispatcher> _Dispatchers;
+		private AnnouncementStatus _Status = null;
 		#endregion
 
 		#region Properties
@@ -116,6 +118,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Dispatchers");
 			}
 		}
+		[JsonProperty]
+		public AnnouncementStatus Status
+		{
+			get { return _Status; }
+			private set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -153,6 +165,10 @@ namespace Kaltura.Types
 					this._Dispatchers.Add(ObjectFactory.Create<Dispatcher>(arrayNode));
 				}
 			}
+			if(node["status"] != null)
+			{
+				this._Status = (AnnouncementStatus)StringEnum.Parse(typeof(AnnouncementStatus), node["status"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -168,6 +184,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("topicNotificationId", this._TopicNotificationId);
 			kparams.AddIfNotNull("trigger", this._Trigger);
 			kparams.AddIfNotNull("dispatchers", this._Dispatchers);
+			kparams.AddIfNotNull("status", this._Status);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -186,6 +203,8 @@ namespace Kaltura.Types
 					return "Trigger";
 				case DISPATCHERS:
 					return "Dispatchers";
+				case STATUS:
+					return "Status";
 				default:
 					return base.getPropertyName(apiName);
 			}

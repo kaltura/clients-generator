@@ -75,6 +75,45 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class CouponListRequestBuilder : RequestBuilder<ListResponse<Coupon>>
+	{
+		#region Constants
+		public const string FILTER = "filter";
+		#endregion
+
+		public CouponFilter Filter { get; set; }
+
+		public CouponListRequestBuilder()
+			: base("coupon", "list")
+		{
+		}
+
+		public CouponListRequestBuilder(CouponFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<ListResponse<Coupon>>(result);
+		}
+	}
+
 
 	public class CouponService
 	{
@@ -85,6 +124,11 @@ namespace Kaltura.Services
 		public static CouponGetRequestBuilder Get(string code)
 		{
 			return new CouponGetRequestBuilder(code);
+		}
+
+		public static CouponListRequestBuilder List(CouponFilter filter)
+		{
+			return new CouponListRequestBuilder(filter);
 		}
 	}
 }

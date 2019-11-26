@@ -43,6 +43,7 @@ namespace Kaltura.Types
 		public const string DAYS = "days";
 		public const string TYPE = "type";
 		public const string OPERATOR = "operator";
+		public const string BUSINESS_MODULE_ID_IN = "businessModuleIdIn";
 		#endregion
 
 		#region Private Fields
@@ -51,6 +52,7 @@ namespace Kaltura.Types
 		private int _Days = Int32.MinValue;
 		private MonetizationType _Type = null;
 		private MathemticalOperatorType _Operator = null;
+		private string _BusinessModuleIdIn = null;
 		#endregion
 
 		#region Properties
@@ -104,6 +106,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Operator");
 			}
 		}
+		[JsonProperty]
+		public string BusinessModuleIdIn
+		{
+			get { return _BusinessModuleIdIn; }
+			set 
+			{ 
+				_BusinessModuleIdIn = value;
+				OnPropertyChanged("BusinessModuleIdIn");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -133,6 +145,10 @@ namespace Kaltura.Types
 			{
 				this._Operator = (MathemticalOperatorType)StringEnum.Parse(typeof(MathemticalOperatorType), node["operator"].Value<string>());
 			}
+			if(node["businessModuleIdIn"] != null)
+			{
+				this._BusinessModuleIdIn = node["businessModuleIdIn"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -147,6 +163,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("days", this._Days);
 			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("operator", this._Operator);
+			kparams.AddIfNotNull("businessModuleIdIn", this._BusinessModuleIdIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -163,6 +180,8 @@ namespace Kaltura.Types
 					return "Type";
 				case OPERATOR:
 					return "Operator";
+				case BUSINESS_MODULE_ID_IN:
+					return "BusinessModuleIdIn";
 				default:
 					return base.getPropertyName(apiName);
 			}

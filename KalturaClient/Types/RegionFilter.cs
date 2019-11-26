@@ -39,11 +39,17 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string EXTERNAL_ID_IN = "externalIdIn";
+		public const string ID_IN = "idIn";
+		public const string PARENT_ID_EQUAL = "parentIdEqual";
+		public const string LIVE_ASSET_ID_EQUAL = "liveAssetIdEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _ExternalIdIn = null;
+		private string _IdIn = null;
+		private int _ParentIdEqual = Int32.MinValue;
+		private int _LiveAssetIdEqual = Int32.MinValue;
 		private RegionOrderBy _OrderBy = null;
 		#endregion
 
@@ -56,6 +62,36 @@ namespace Kaltura.Types
 			{ 
 				_ExternalIdIn = value;
 				OnPropertyChanged("ExternalIdIn");
+			}
+		}
+		[JsonProperty]
+		public string IdIn
+		{
+			get { return _IdIn; }
+			set 
+			{ 
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
+			}
+		}
+		[JsonProperty]
+		public int ParentIdEqual
+		{
+			get { return _ParentIdEqual; }
+			set 
+			{ 
+				_ParentIdEqual = value;
+				OnPropertyChanged("ParentIdEqual");
+			}
+		}
+		[JsonProperty]
+		public int LiveAssetIdEqual
+		{
+			get { return _LiveAssetIdEqual; }
+			set 
+			{ 
+				_LiveAssetIdEqual = value;
+				OnPropertyChanged("LiveAssetIdEqual");
 			}
 		}
 		[JsonProperty]
@@ -81,6 +117,18 @@ namespace Kaltura.Types
 			{
 				this._ExternalIdIn = node["externalIdIn"].Value<string>();
 			}
+			if(node["idIn"] != null)
+			{
+				this._IdIn = node["idIn"].Value<string>();
+			}
+			if(node["parentIdEqual"] != null)
+			{
+				this._ParentIdEqual = ParseInt(node["parentIdEqual"].Value<string>());
+			}
+			if(node["liveAssetIdEqual"] != null)
+			{
+				this._LiveAssetIdEqual = ParseInt(node["liveAssetIdEqual"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), node["orderBy"].Value<string>());
@@ -95,6 +143,9 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaRegionFilter");
 			kparams.AddIfNotNull("externalIdIn", this._ExternalIdIn);
+			kparams.AddIfNotNull("idIn", this._IdIn);
+			kparams.AddIfNotNull("parentIdEqual", this._ParentIdEqual);
+			kparams.AddIfNotNull("liveAssetIdEqual", this._LiveAssetIdEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -104,6 +155,12 @@ namespace Kaltura.Types
 			{
 				case EXTERNAL_ID_IN:
 					return "ExternalIdIn";
+				case ID_IN:
+					return "IdIn";
+				case PARENT_ID_EQUAL:
+					return "ParentIdEqual";
+				case LIVE_ASSET_ID_EQUAL:
+					return "LiveAssetIdEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

@@ -54,6 +54,7 @@ namespace Kaltura.Types
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
 		public const string EXTERNAL_ID = "externalId";
+		public const string INDEX_STATUS = "indexStatus";
 		#endregion
 
 		#region Private Fields
@@ -73,6 +74,7 @@ namespace Kaltura.Types
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
 		private string _ExternalId = null;
+		private AssetIndexStatus _IndexStatus = null;
 		#endregion
 
 		#region Properties
@@ -236,6 +238,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
+		[JsonProperty]
+		public AssetIndexStatus IndexStatus
+		{
+			get { return _IndexStatus; }
+			private set 
+			{ 
+				_IndexStatus = value;
+				OnPropertyChanged("IndexStatus");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -349,6 +361,10 @@ namespace Kaltura.Types
 			{
 				this._ExternalId = node["externalId"].Value<string>();
 			}
+			if(node["indexStatus"] != null)
+			{
+				this._IndexStatus = (AssetIndexStatus)StringEnum.Parse(typeof(AssetIndexStatus), node["indexStatus"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -374,6 +390,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
+			kparams.AddIfNotNull("indexStatus", this._IndexStatus);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -412,6 +429,8 @@ namespace Kaltura.Types
 					return "UpdateDate";
 				case EXTERNAL_ID:
 					return "ExternalId";
+				case INDEX_STATUS:
+					return "IndexStatus";
 				default:
 					return base.getPropertyName(apiName);
 			}

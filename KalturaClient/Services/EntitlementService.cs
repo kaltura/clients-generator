@@ -36,6 +36,50 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+	public class EntitlementApplyCouponRequestBuilder : RequestBuilder<VoidResponse>
+	{
+		#region Constants
+		public const string PURCHASE_ID = "purchaseId";
+		public const string COUPON_CODE = "couponCode";
+		#endregion
+
+		public long PurchaseId { get; set; }
+		public string CouponCode { get; set; }
+
+		public EntitlementApplyCouponRequestBuilder()
+			: base("entitlement", "applyCoupon")
+		{
+		}
+
+		public EntitlementApplyCouponRequestBuilder(long purchaseId, string couponCode)
+			: this()
+		{
+			this.PurchaseId = purchaseId;
+			this.CouponCode = couponCode;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("purchaseId"))
+				kparams.AddIfNotNull("purchaseId", PurchaseId);
+			if (!isMapped("couponCode"))
+				kparams.AddIfNotNull("couponCode", CouponCode);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return null;
+		}
+	}
+
 	public class EntitlementCancelRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -478,6 +522,11 @@ namespace Kaltura.Services
 	{
 		private EntitlementService()
 		{
+		}
+
+		public static EntitlementApplyCouponRequestBuilder ApplyCoupon(long purchaseId, string couponCode)
+		{
+			return new EntitlementApplyCouponRequestBuilder(purchaseId, couponCode);
 		}
 
 		public static EntitlementCancelRequestBuilder Cancel(int assetId, TransactionType productType)

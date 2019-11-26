@@ -41,6 +41,7 @@ namespace Kaltura.Types
 		public const string SUBSCRIPTION_ID_IN = "subscriptionIdIn";
 		public const string MEDIA_FILE_ID_EQUAL = "mediaFileIdEqual";
 		public const string EXTERNAL_ID_IN = "externalIdIn";
+		public const string COUPON_GROUP_ID_EQUAL = "couponGroupIdEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -48,6 +49,7 @@ namespace Kaltura.Types
 		private string _SubscriptionIdIn = null;
 		private int _MediaFileIdEqual = Int32.MinValue;
 		private string _ExternalIdIn = null;
+		private int _CouponGroupIdEqual = Int32.MinValue;
 		private SubscriptionOrderBy _OrderBy = null;
 		#endregion
 
@@ -83,6 +85,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public int CouponGroupIdEqual
+		{
+			get { return _CouponGroupIdEqual; }
+			set 
+			{ 
+				_CouponGroupIdEqual = value;
+				OnPropertyChanged("CouponGroupIdEqual");
+			}
+		}
+		[JsonProperty]
 		public new SubscriptionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -113,6 +125,10 @@ namespace Kaltura.Types
 			{
 				this._ExternalIdIn = node["externalIdIn"].Value<string>();
 			}
+			if(node["couponGroupIdEqual"] != null)
+			{
+				this._CouponGroupIdEqual = ParseInt(node["couponGroupIdEqual"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (SubscriptionOrderBy)StringEnum.Parse(typeof(SubscriptionOrderBy), node["orderBy"].Value<string>());
@@ -129,6 +145,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("subscriptionIdIn", this._SubscriptionIdIn);
 			kparams.AddIfNotNull("mediaFileIdEqual", this._MediaFileIdEqual);
 			kparams.AddIfNotNull("externalIdIn", this._ExternalIdIn);
+			kparams.AddIfNotNull("couponGroupIdEqual", this._CouponGroupIdEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -142,6 +159,8 @@ namespace Kaltura.Types
 					return "MediaFileIdEqual";
 				case EXTERNAL_ID_IN:
 					return "ExternalIdIn";
+				case COUPON_GROUP_ID_EQUAL:
+					return "CouponGroupIdEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

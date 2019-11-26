@@ -36,6 +36,84 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+	public class PermissionAddRequestBuilder : RequestBuilder<Permission>
+	{
+		#region Constants
+		public const string PERMISSION = "permission";
+		#endregion
+
+		public Permission Permission { get; set; }
+
+		public PermissionAddRequestBuilder()
+			: base("permission", "add")
+		{
+		}
+
+		public PermissionAddRequestBuilder(Permission permission)
+			: this()
+		{
+			this.Permission = permission;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("permission"))
+				kparams.AddIfNotNull("permission", Permission);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<Permission>(result);
+		}
+	}
+
+	public class PermissionDeleteRequestBuilder : RequestBuilder<VoidResponse>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id { get; set; }
+
+		public PermissionDeleteRequestBuilder()
+			: base("permission", "delete")
+		{
+		}
+
+		public PermissionDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return null;
+		}
+	}
+
 	public class PermissionGetCurrentPermissionsRequestBuilder : RequestBuilder<string>
 	{
 		#region Constants
@@ -109,6 +187,16 @@ namespace Kaltura.Services
 	{
 		private PermissionService()
 		{
+		}
+
+		public static PermissionAddRequestBuilder Add(Permission permission)
+		{
+			return new PermissionAddRequestBuilder(permission);
+		}
+
+		public static PermissionDeleteRequestBuilder Delete(long id)
+		{
+			return new PermissionDeleteRequestBuilder(id);
 		}
 
 		public static PermissionGetCurrentPermissionsRequestBuilder GetCurrentPermissions()

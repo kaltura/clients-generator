@@ -70,84 +70,68 @@ namespace Kaltura
 			string className = jToken["objectType"].Value<string>();
 			switch (className)
 			{
-				case "KalturaSocialCommentListResponse":
-					return new ListResponse<SocialComment>(jToken);
-				case "KalturaSocialFriendActivityListResponse":
-					return new ListResponse<SocialFriendActivity>(jToken);
-				case "KalturaSocialActionListResponse":
-					return new ListResponse<SocialAction>(jToken);
-				case "KalturaHouseholdPaymentMethodListResponse":
-					return new ListResponse<HouseholdPaymentMethod>(jToken);
-				case "KalturaPaymentMethodProfileListResponse":
-					return new ListResponse<PaymentMethodProfile>(jToken);
-				case "KalturaHouseholdPaymentGatewayListResponse":
-					return new ListResponse<HouseholdPaymentGateway>(jToken);
-				case "KalturaPaymentGatewayProfileListResponse":
-					return new ListResponse<PaymentGatewayProfile>(jToken);
-				case "KalturaConfigurationsListResponse":
-					return new ListResponse<Configurations>(jToken);
-				case "KalturaConfigurationGroupDeviceListResponse":
-					return new ListResponse<ConfigurationGroupDevice>(jToken);
-				case "KalturaConfigurationGroupTagListResponse":
-					return new ListResponse<ConfigurationGroupTag>(jToken);
-				case "KalturaConfigurationGroupListResponse":
-					return new ListResponse<ConfigurationGroup>(jToken);
-				case "KalturaSSOAdapterProfileListResponse":
-					return new ListResponse<SSOAdapterProfile>(jToken);
-				case "KalturaUserInterestListResponse":
-					return new ListResponse<UserInterest>(jToken);
+				case "KalturaAnnouncementListResponse":
+					return new ListResponse<Announcement>(jToken);
 				case "KalturaFavoriteListResponse":
 					return new ListResponse<Favorite>(jToken);
 				case "KalturaOTTUserListResponse":
 					return new ListResponse<OTTUser>(jToken);
-				case "KalturaPersonalListListResponse":
-					return new ListResponse<PersonalList>(jToken);
-				case "KalturaEngagementListResponse":
-					return new ListResponse<Engagement>(jToken);
-				case "KalturaEngagementAdapterListResponse":
-					return new ListResponse<EngagementAdapter>(jToken);
-				case "KalturaReminderListResponse":
-					return new ListResponse<Reminder>(jToken);
-				case "KalturaInboxMessageListResponse":
-					return new ListResponse<InboxMessage>(jToken);
-				case "KalturaFollowTvSeriesListResponse":
-					return new ListResponse<FollowTvSeries>(jToken);
-				case "KalturaAnnouncementListResponse":
-					return new ListResponse<Announcement>(jToken);
-				case "KalturaPersonalFeedListResponse":
-					return new ListResponse<PersonalFeed>(jToken);
-				case "KalturaTopicListResponse":
-					return new ListResponse<Topic>(jToken);
+				case "KalturaSSOAdapterProfileListResponse":
+					return new ListResponse<SSOAdapterProfile>(jToken);
+				case "KalturaUserInterestListResponse":
+					return new ListResponse<UserInterest>(jToken);
 				case "KalturaBulkUploadListResponse":
 					return new ListResponse<BulkUpload>(jToken);
+				case "KalturaSocialActionListResponse":
+					return new ListResponse<SocialAction>(jToken);
+				case "KalturaSocialCommentListResponse":
+					return new ListResponse<SocialComment>(jToken);
+				case "KalturaSocialFriendActivityListResponse":
+					return new ListResponse<SocialFriendActivity>(jToken);
 				case "KalturaSegmentationTypeListResponse":
 					return new ListResponse<SegmentationType>(jToken);
 				case "KalturaUserSegmentListResponse":
 					return new ListResponse<UserSegment>(jToken);
 				case "KalturaAssetFilePpvListResponse":
 					return new ListResponse<AssetFilePpv>(jToken);
-				case "KalturaPpvListResponse":
-					return new ListResponse<Ppv>(jToken);
 				case "KalturaCollectionListResponse":
 					return new ListResponse<Collection>(jToken);
-				case "KalturaDiscountDetailsListResponse":
-					return new ListResponse<DiscountDetails>(jToken);
-				case "KalturaSubscriptionSetListResponse":
-					return new ListResponse<SubscriptionSet>(jToken);
-				case "KalturaProductPriceListResponse":
-					return new ListResponse<ProductPrice>(jToken);
 				case "KalturaCouponsGroupListResponse":
 					return new ListResponse<CouponsGroup>(jToken);
+				case "KalturaDiscountDetailsListResponse":
+					return new ListResponse<DiscountDetails>(jToken);
+				case "KalturaPpvListResponse":
+					return new ListResponse<Ppv>(jToken);
 				case "KalturaPriceDetailsListResponse":
 					return new ListResponse<PriceDetails>(jToken);
 				case "KalturaPricePlanListResponse":
 					return new ListResponse<PricePlan>(jToken);
-				case "KalturaSubscriptionListResponse":
-					return new ListResponse<Subscription>(jToken);
+				case "KalturaProductPriceListResponse":
+					return new ListResponse<ProductPrice>(jToken);
 				case "KalturaProductsPriceListResponse":
 					return new ListResponse<ProductPrice>(jToken);
+				case "KalturaSubscriptionListResponse":
+					return new ListResponse<Subscription>(jToken);
+				case "KalturaSubscriptionSetListResponse":
+					return new ListResponse<SubscriptionSet>(jToken);
 				case "KalturaPartnerConfigurationListResponse":
 					return new ListResponse<PartnerConfiguration>(jToken);
+				case "KalturaPersonalListListResponse":
+					return new ListResponse<PersonalList>(jToken);
+				case "KalturaEngagementAdapterListResponse":
+					return new ListResponse<EngagementAdapter>(jToken);
+				case "KalturaEngagementListResponse":
+					return new ListResponse<Engagement>(jToken);
+				case "KalturaInboxMessageListResponse":
+					return new ListResponse<InboxMessage>(jToken);
+				case "KalturaFollowTvSeriesListResponse":
+					return new ListResponse<FollowTvSeries>(jToken);
+				case "KalturaPersonalFeedListResponse":
+					return new ListResponse<PersonalFeed>(jToken);
+				case "KalturaReminderListResponse":
+					return new ListResponse<Reminder>(jToken);
+				case "KalturaTopicListResponse":
+					return new ListResponse<Topic>(jToken);
 				case "KalturaTopicNotificationListResponse":
 					return new ListResponse<TopicNotification>(jToken);
 				case "KalturaTopicNotificationMessageListResponse":
@@ -158,108 +142,132 @@ namespace Kaltura
 					return new ListResponse<IntegerValue>(jToken);
 				case "KalturaReportListResponse":
 					return new ListResponse<Report>(jToken);
-				case "KalturaHouseholdLimitationsListResponse":
-					return new ListResponse<HouseholdLimitations>(jToken);
-				case "KalturaHouseholdDeviceListResponse":
-					return new ListResponse<HouseholdDevice>(jToken);
-				case "KalturaHouseholdUserListResponse":
-					return new ListResponse<HouseholdUser>(jToken);
 				case "KalturaHomeNetworkListResponse":
 					return new ListResponse<HomeNetwork>(jToken);
-				case "KalturaSeriesRecordingListResponse":
-					return new ListResponse<SeriesRecording>(jToken);
-				case "KalturaHouseholdPremiumServiceListResponse":
-					return new ListResponse<HouseholdPremiumService>(jToken);
-				case "KalturaCDVRAdapterProfileListResponse":
-					return new ListResponse<CDVRAdapterProfile>(jToken);
-				case "KalturaRecordingListResponse":
-					return new ListResponse<Recording>(jToken);
+				case "KalturaHouseholdDeviceListResponse":
+					return new ListResponse<HouseholdDevice>(jToken);
+				case "KalturaHouseholdLimitationsListResponse":
+					return new ListResponse<HouseholdLimitations>(jToken);
+				case "KalturaHouseholdUserListResponse":
+					return new ListResponse<HouseholdUser>(jToken);
+				case "KalturaConfigurationGroupDeviceListResponse":
+					return new ListResponse<ConfigurationGroupDevice>(jToken);
+				case "KalturaConfigurationGroupListResponse":
+					return new ListResponse<ConfigurationGroup>(jToken);
+				case "KalturaConfigurationGroupTagListResponse":
+					return new ListResponse<ConfigurationGroupTag>(jToken);
+				case "KalturaConfigurationsListResponse":
+					return new ListResponse<Configurations>(jToken);
 				case "KalturaBillingTransactionListResponse":
 					return new ListResponse<BillingTransaction>(jToken);
+				case "KalturaCDVRAdapterProfileListResponse":
+					return new ListResponse<CDVRAdapterProfile>(jToken);
 				case "KalturaEntitlementListResponse":
 					return new ListResponse<Entitlement>(jToken);
+				case "KalturaHouseholdPremiumServiceListResponse":
+					return new ListResponse<HouseholdPremiumService>(jToken);
+				case "KalturaRecordingListResponse":
+					return new ListResponse<Recording>(jToken);
+				case "KalturaSeriesRecordingListResponse":
+					return new ListResponse<SeriesRecording>(jToken);
+				case "KalturaAssetCommentListResponse":
+					return new ListResponse<AssetComment>(jToken);
+				case "KalturaAssetCountListResponse":
+					return new ListResponse<AssetsCount>(jToken);
+				case "KalturaAssetListResponse":
+					return new ListResponse<Asset>(jToken);
+				case "KalturaAssetStatisticsListResponse":
+					return new ListResponse<AssetStatistics>(jToken);
+				case "KalturaAssetStructListResponse":
+					return new ListResponse<AssetStruct>(jToken);
 				case "KalturaAssetStructMetaListResponse":
 					return new ListResponse<AssetStructMeta>(jToken);
-				case "KalturaMediaFileTypeListResponse":
-					return new ListResponse<MediaFileType>(jToken);
+				case "KalturaBookmarkListResponse":
+					return new ListResponse<Bookmark>(jToken);
 				case "KalturaChannelListResponse":
 					return new ListResponse<Channel>(jToken);
 				case "KalturaImageListResponse":
 					return new ListResponse<Image>(jToken);
+				case "KalturaImageTypeListResponse":
+					return new ListResponse<ImageType>(jToken);
+				case "KalturaMediaFileListResponse":
+					return new ListResponse<MediaFile>(jToken);
+				case "KalturaMediaFileTypeListResponse":
+					return new ListResponse<MediaFileType>(jToken);
 				case "KalturaRatioListResponse":
 					return new ListResponse<Ratio>(jToken);
 				case "KalturaTagListResponse":
 					return new ListResponse<Tag>(jToken);
-				case "KalturaAssetListResponse":
-					return new ListResponse<Asset>(jToken);
-				case "KalturaAssetStructListResponse":
-					return new ListResponse<AssetStruct>(jToken);
-				case "KalturaImageTypeListResponse":
-					return new ListResponse<ImageType>(jToken);
-				case "KalturaAssetCountListResponse":
-					return new ListResponse<AssetsCount>(jToken);
-				case "KalturaBookmarkListResponse":
-					return new ListResponse<Bookmark>(jToken);
-				case "KalturaAssetCommentListResponse":
-					return new ListResponse<AssetComment>(jToken);
-				case "KalturaAssetStatisticsListResponse":
-					return new ListResponse<AssetStatistics>(jToken);
-				case "KalturaMediaFileListResponse":
-					return new ListResponse<MediaFile>(jToken);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(jToken);
-				case "KalturaIngestProfileListResponse":
-					return new ListResponse<IngestProfile>(jToken);
-				case "KalturaTvmRuleListResponse":
-					return new ListResponse<TvmRule>(jToken);
-				case "KalturaPlaybackProfileListResponse":
-					return new ListResponse<PlaybackProfile>(jToken);
-				case "KalturaBusinessModuleRuleListResponse":
-					return new ListResponse<BusinessModuleRule>(jToken);
-				case "KalturaDrmProfileListResponse":
-					return new ListResponse<DrmProfile>(jToken);
-				case "KalturaPermissionListResponse":
-					return new ListResponse<Permission>(jToken);
-				case "KalturaMediaConcurrencyRuleListResponse":
-					return new ListResponse<MediaConcurrencyRule>(jToken);
-				case "KalturaAssetUserRuleListResponse":
-					return new ListResponse<AssetUserRule>(jToken);
-				case "KalturaCurrencyListResponse":
-					return new ListResponse<Currency>(jToken);
+				case "KalturaHouseholdPaymentMethodListResponse":
+					return new ListResponse<HouseholdPaymentMethod>(jToken);
+				case "KalturaHouseholdPaymentGatewayListResponse":
+					return new ListResponse<HouseholdPaymentGateway>(jToken);
+				case "KalturaPaymentGatewayProfileListResponse":
+					return new ListResponse<PaymentGatewayProfile>(jToken);
+				case "KalturaPaymentMethodProfileListResponse":
+					return new ListResponse<PaymentMethodProfile>(jToken);
 				case "KalturaAssetRuleListResponse":
 					return new ListResponse<AssetRule>(jToken);
-				case "KalturaLanguageListResponse":
-					return new ListResponse<Language>(jToken);
-				case "KalturaMetaListResponse":
-					return new ListResponse<Meta>(jToken);
-				case "KalturaDeviceBrandListResponse":
-					return new ListResponse<DeviceBrand>(jToken);
-				case "KalturaCountryListResponse":
-					return new ListResponse<Country>(jToken);
-				case "KalturaOSSAdapterProfileListResponse":
-					return new ListResponse<OSSAdapterProfile>(jToken);
-				case "KalturaSearchHistoryListResponse":
-					return new ListResponse<SearchHistory>(jToken);
-				case "KalturaDeviceFamilyListResponse":
-					return new ListResponse<DeviceFamily>(jToken);
-				case "KalturaRegionListResponse":
-					return new ListResponse<Region>(jToken);
-				case "KalturaUserAssetRuleListResponse":
-					return new ListResponse<UserAssetRule>(jToken);
+				case "KalturaAssetUserRuleListResponse":
+					return new ListResponse<AssetUserRule>(jToken);
+				case "KalturaBusinessModuleRuleListResponse":
+					return new ListResponse<BusinessModuleRule>(jToken);
 				case "KalturaCDNAdapterProfileListResponse":
 					return new ListResponse<CDNAdapterProfile>(jToken);
+				case "KalturaCountryListResponse":
+					return new ListResponse<Country>(jToken);
+				case "KalturaCurrencyListResponse":
+					return new ListResponse<Currency>(jToken);
+				case "KalturaDeviceBrandListResponse":
+					return new ListResponse<DeviceBrand>(jToken);
+				case "KalturaDeviceFamilyListResponse":
+					return new ListResponse<DeviceFamily>(jToken);
+				case "KalturaDrmProfileListResponse":
+					return new ListResponse<DrmProfile>(jToken);
 				case "KalturaExportTaskListResponse":
 					return new ListResponse<ExportTask>(jToken);
 				case "KalturaExternalChannelProfileListResponse":
 					return new ListResponse<ExternalChannelProfile>(jToken);
-				case "KalturaRecommendationProfileListResponse":
-					return new ListResponse<RecommendationProfile>(jToken);
-				case "KalturaRegistrySettingsListResponse":
-					return new ListResponse<RegistrySettings>(jToken);
+				case "KalturaIngestProfileListResponse":
+					return new ListResponse<IngestProfile>(jToken);
+				case "KalturaLanguageListResponse":
+					return new ListResponse<Language>(jToken);
+				case "KalturaMediaConcurrencyRuleListResponse":
+					return new ListResponse<MediaConcurrencyRule>(jToken);
+				case "KalturaMetaListResponse":
+					return new ListResponse<Meta>(jToken);
+				case "KalturaOSSAdapterProfileListResponse":
+					return new ListResponse<OSSAdapterProfile>(jToken);
 				case "KalturaParentalRuleListResponse":
 					return new ListResponse<ParentalRule>(jToken);
+				case "KalturaPermissionListResponse":
+					return new ListResponse<Permission>(jToken);
+				case "KalturaPlaybackProfileListResponse":
+					return new ListResponse<PlaybackProfile>(jToken);
+				case "KalturaRecommendationProfileListResponse":
+					return new ListResponse<RecommendationProfile>(jToken);
+				case "KalturaRegionListResponse":
+					return new ListResponse<Region>(jToken);
+				case "KalturaRegistrySettingsListResponse":
+					return new ListResponse<RegistrySettings>(jToken);
+				case "KalturaSearchHistoryListResponse":
+					return new ListResponse<SearchHistory>(jToken);
+				case "KalturaTvmRuleListResponse":
+					return new ListResponse<TvmRule>(jToken);
+				case "KalturaUserAssetRuleListResponse":
+					return new ListResponse<UserAssetRule>(jToken);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(jToken);
+				case "KalturaCouponListResponse":
+					return new ListResponse<Coupon>(jToken);
+				case "KalturaEventNotificationListResponse":
+					return new ListResponse<EventNotification>(jToken);
+				case "KalturaHouseholdCouponListResponse":
+					return new ListResponse<HouseholdCoupon>(jToken);
+				case "KalturaPasswordPolicyListResponse":
+					return new ListResponse<PasswordPolicy>(jToken);
 			}
 		
 			return null;

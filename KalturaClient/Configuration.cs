@@ -39,10 +39,12 @@ namespace Kaltura
         private EServiceFormat _ServiceFormat = EServiceFormat.RESPONSE_TYPE_XML;
         private ILogger _Logger;
         private int _Timeout = 120000;
-		private string _ProxyAddress = "";
-		private string _ProxyUser = null;
+        private string _ProxyAddress = "";
+        private string _ProxyUser = null;
         private string _ProxyPassword = null;
-        private WebHeaderCollection _RequestHeaders; 
+        private WebHeaderCollection _RequestHeaders;
+        private int _MaxConnectionsPerServer = int.MaxValue;
+
 
         #endregion
 
@@ -61,7 +63,7 @@ namespace Kaltura
 
         public ILogger Logger
         {
-            set { _Logger = value;  }
+            set { _Logger = value; }
             get { return _Logger; }
         }
 
@@ -71,11 +73,11 @@ namespace Kaltura
             get { return _Timeout; }
         }
 
-		public string ProxyAddress 
-		{
-			set { _ProxyAddress = value; }
-			get { return _ProxyAddress; }
-		}
+        public string ProxyAddress
+        {
+            set { _ProxyAddress = value; }
+            get { return _ProxyAddress; }
+        }
 
         public string ProxyUser
         {
@@ -93,6 +95,12 @@ namespace Kaltura
             get { return _RequestHeaders; }
         }
 
+        public int MaxConnectionsPerServer
+        {
+            set { _MaxConnectionsPerServer = value; }
+            get { return _MaxConnectionsPerServer; }
+        }
+
         #endregion
 
         #region CTor
@@ -104,7 +112,7 @@ namespace Kaltura
         public Configuration()
         {
             this._RequestHeaders = new WebHeaderCollection();
-        } 
+        }
 
         #endregion
     }

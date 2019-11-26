@@ -292,7 +292,7 @@ namespace Kaltura.Services
 			return new TopicNotificationDeleteRequestBuilder(id);
 		}
 
-		public static TopicNotificationListRequestBuilder List(TopicNotificationFilter filter = null)
+		public static TopicNotificationListRequestBuilder List(TopicNotificationFilter filter)
 		{
 			return new TopicNotificationListRequestBuilder(filter);
 		}

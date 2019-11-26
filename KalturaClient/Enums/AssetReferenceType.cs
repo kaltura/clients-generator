@@ -32,6 +32,7 @@ namespace Kaltura.Enums
 		public static readonly AssetReferenceType MEDIA = new AssetReferenceType("media");
 		public static readonly AssetReferenceType EPG_INTERNAL = new AssetReferenceType("epg_internal");
 		public static readonly AssetReferenceType EPG_EXTERNAL = new AssetReferenceType("epg_external");
+		public static readonly AssetReferenceType NPVR = new AssetReferenceType("npvr");
 
 		private AssetReferenceType(string name) : base(name) { }
 	}

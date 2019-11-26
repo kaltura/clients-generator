@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string NAME = "name";
 		public const string DESCRIPTION = "description";
 		public const string CONDITIONS = "conditions";
+		public const string ACTIONS = "actions";
 		public const string VALUE = "value";
 		public const string CREATE_DATE = "createDate";
 		public const string VERSION = "version";
@@ -52,6 +53,7 @@ namespace Kaltura.Types
 		private string _Name = null;
 		private string _Description = null;
 		private IList<BaseSegmentCondition> _Conditions;
+		private IList<BaseSegmentAction> _Actions;
 		private BaseSegmentValue _Value;
 		private long _CreateDate = long.MinValue;
 		private long _Version = long.MinValue;
@@ -96,6 +98,16 @@ namespace Kaltura.Types
 			{ 
 				_Conditions = value;
 				OnPropertyChanged("Conditions");
+			}
+		}
+		[JsonProperty]
+		public IList<BaseSegmentAction> Actions
+		{
+			get { return _Actions; }
+			set 
+			{ 
+				_Actions = value;
+				OnPropertyChanged("Actions");
 			}
 		}
 		[JsonProperty]
@@ -157,6 +169,14 @@ namespace Kaltura.Types
 					this._Conditions.Add(ObjectFactory.Create<BaseSegmentCondition>(arrayNode));
 				}
 			}
+			if(node["actions"] != null)
+			{
+				this._Actions = new List<BaseSegmentAction>();
+				foreach(var arrayNode in node["actions"].Children())
+				{
+					this._Actions.Add(ObjectFactory.Create<BaseSegmentAction>(arrayNode));
+				}
+			}
 			if(node["value"] != null)
 			{
 				this._Value = ObjectFactory.Create<BaseSegmentValue>(node["value"]);
@@ -182,6 +202,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("description", this._Description);
 			kparams.AddIfNotNull("conditions", this._Conditions);
+			kparams.AddIfNotNull("actions", this._Actions);
 			kparams.AddIfNotNull("value", this._Value);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("version", this._Version);
@@ -199,6 +220,8 @@ namespace Kaltura.Types
 					return "Description";
 				case CONDITIONS:
 					return "Conditions";
+				case ACTIONS:
+					return "Actions";
 				case VALUE:
 					return "Value";
 				case CREATE_DATE:

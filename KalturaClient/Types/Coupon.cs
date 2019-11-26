@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string STATUS = "status";
 		public const string TOTAL_USES = "totalUses";
 		public const string LEFT_USES = "leftUses";
+		public const string COUPON_CODE = "couponCode";
 		#endregion
 
 		#region Private Fields
@@ -49,6 +50,7 @@ namespace Kaltura.Types
 		private CouponStatus _Status = null;
 		private int _TotalUses = Int32.MinValue;
 		private int _LeftUses = Int32.MinValue;
+		private string _CouponCode = null;
 		#endregion
 
 		#region Properties
@@ -92,6 +94,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("LeftUses");
 			}
 		}
+		[JsonProperty]
+		public string CouponCode
+		{
+			get { return _CouponCode; }
+			private set 
+			{ 
+				_CouponCode = value;
+				OnPropertyChanged("CouponCode");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -117,6 +129,10 @@ namespace Kaltura.Types
 			{
 				this._LeftUses = ParseInt(node["leftUses"].Value<string>());
 			}
+			if(node["couponCode"] != null)
+			{
+				this._CouponCode = node["couponCode"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -130,6 +146,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("totalUses", this._TotalUses);
 			kparams.AddIfNotNull("leftUses", this._LeftUses);
+			kparams.AddIfNotNull("couponCode", this._CouponCode);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -144,6 +161,8 @@ namespace Kaltura.Types
 					return "TotalUses";
 				case LEFT_USES:
 					return "LeftUses";
+				case COUPON_CODE:
+					return "CouponCode";
 				default:
 					return base.getPropertyName(apiName);
 			}

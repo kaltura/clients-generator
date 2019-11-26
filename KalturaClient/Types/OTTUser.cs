@@ -55,6 +55,8 @@ namespace Kaltura.Types
 		public const string ROLE_IDS = "roleIds";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
+		public const string LAST_LOGIN_DATE = "lastLoginDate";
+		public const string FAILED_LOGIN_COUNT = "failedLoginCount";
 		#endregion
 
 		#region Private Fields
@@ -75,6 +77,8 @@ namespace Kaltura.Types
 		private string _RoleIds = null;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
+		private long _LastLoginDate = long.MinValue;
+		private int _FailedLoginCount = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -248,6 +252,26 @@ namespace Kaltura.Types
 				OnPropertyChanged("UpdateDate");
 			}
 		}
+		[JsonProperty]
+		public long LastLoginDate
+		{
+			get { return _LastLoginDate; }
+			private set 
+			{ 
+				_LastLoginDate = value;
+				OnPropertyChanged("LastLoginDate");
+			}
+		}
+		[JsonProperty]
+		public int FailedLoginCount
+		{
+			get { return _FailedLoginCount; }
+			private set 
+			{ 
+				_FailedLoginCount = value;
+				OnPropertyChanged("FailedLoginCount");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -333,6 +357,14 @@ namespace Kaltura.Types
 			{
 				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
 			}
+			if(node["lastLoginDate"] != null)
+			{
+				this._LastLoginDate = ParseLong(node["lastLoginDate"].Value<string>());
+			}
+			if(node["failedLoginCount"] != null)
+			{
+				this._FailedLoginCount = ParseInt(node["failedLoginCount"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -359,6 +391,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("roleIds", this._RoleIds);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("lastLoginDate", this._LastLoginDate);
+			kparams.AddIfNotNull("failedLoginCount", this._FailedLoginCount);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -399,6 +433,10 @@ namespace Kaltura.Types
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case LAST_LOGIN_DATE:
+					return "LastLoginDate";
+				case FAILED_LOGIN_COUNT:
+					return "FailedLoginCount";
 				default:
 					return base.getPropertyName(apiName);
 			}

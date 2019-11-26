@@ -41,12 +41,14 @@ namespace Kaltura.Types
 		public const string BUSINESS_MODULE_TYPE_APPLIED = "businessModuleTypeApplied";
 		public const string BUSINESS_MODULE_ID_APPLIED = "businessModuleIdApplied";
 		public const string SEGMENT_IDS_APPLIED = "segmentIdsApplied";
+		public const string ACTIONS_CONTAIN_TYPE = "actionsContainType";
 		#endregion
 
 		#region Private Fields
 		private TransactionType _BusinessModuleTypeApplied = null;
 		private long _BusinessModuleIdApplied = long.MinValue;
 		private string _SegmentIdsApplied = null;
+		private RuleActionType _ActionsContainType = null;
 		#endregion
 
 		#region Properties
@@ -80,6 +82,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("SegmentIdsApplied");
 			}
 		}
+		[JsonProperty]
+		public RuleActionType ActionsContainType
+		{
+			get { return _ActionsContainType; }
+			set 
+			{ 
+				_ActionsContainType = value;
+				OnPropertyChanged("ActionsContainType");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -101,6 +113,10 @@ namespace Kaltura.Types
 			{
 				this._SegmentIdsApplied = node["segmentIdsApplied"].Value<string>();
 			}
+			if(node["actionsContainType"] != null)
+			{
+				this._ActionsContainType = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), node["actionsContainType"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -113,6 +129,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("businessModuleTypeApplied", this._BusinessModuleTypeApplied);
 			kparams.AddIfNotNull("businessModuleIdApplied", this._BusinessModuleIdApplied);
 			kparams.AddIfNotNull("segmentIdsApplied", this._SegmentIdsApplied);
+			kparams.AddIfNotNull("actionsContainType", this._ActionsContainType);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -125,6 +142,8 @@ namespace Kaltura.Types
 					return "BusinessModuleIdApplied";
 				case SEGMENT_IDS_APPLIED:
 					return "SegmentIdsApplied";
+				case ACTIONS_CONTAIN_TYPE:
+					return "ActionsContainType";
 				default:
 					return base.getPropertyName(apiName);
 			}

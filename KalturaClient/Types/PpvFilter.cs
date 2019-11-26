@@ -39,11 +39,13 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string ID_IN = "idIn";
+		public const string COUPON_GROUP_ID_EQUAL = "couponGroupIdEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _IdIn = null;
+		private int _CouponGroupIdEqual = Int32.MinValue;
 		private PpvOrderBy _OrderBy = null;
 		#endregion
 
@@ -56,6 +58,16 @@ namespace Kaltura.Types
 			{ 
 				_IdIn = value;
 				OnPropertyChanged("IdIn");
+			}
+		}
+		[JsonProperty]
+		public int CouponGroupIdEqual
+		{
+			get { return _CouponGroupIdEqual; }
+			set 
+			{ 
+				_CouponGroupIdEqual = value;
+				OnPropertyChanged("CouponGroupIdEqual");
 			}
 		}
 		[JsonProperty]
@@ -81,6 +93,10 @@ namespace Kaltura.Types
 			{
 				this._IdIn = node["idIn"].Value<string>();
 			}
+			if(node["couponGroupIdEqual"] != null)
+			{
+				this._CouponGroupIdEqual = ParseInt(node["couponGroupIdEqual"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (PpvOrderBy)StringEnum.Parse(typeof(PpvOrderBy), node["orderBy"].Value<string>());
@@ -95,6 +111,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaPpvFilter");
 			kparams.AddIfNotNull("idIn", this._IdIn);
+			kparams.AddIfNotNull("couponGroupIdEqual", this._CouponGroupIdEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -104,6 +121,8 @@ namespace Kaltura.Types
 			{
 				case ID_IN:
 					return "IdIn";
+				case COUPON_GROUP_ID_EQUAL:
+					return "CouponGroupIdEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

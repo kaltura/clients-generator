@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class ApplyDiscountModuleAction : RuleAction
+	public class ApplyDiscountModuleAction : BusinessModuleRuleAction
 	{
 		#region Constants
 		public const string DISCOUNT_MODULE_ID = "discountModuleId";

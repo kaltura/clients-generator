@@ -41,6 +41,7 @@ namespace Kaltura.Types
 		public const string CONDITIONS_CONTAIN_TYPE = "conditionsContainType";
 		public const string ASSET_APPLIED = "assetApplied";
 		public const string ACTIONS_CONTAIN_TYPE = "actionsContainType";
+		public const string ASSET_RULE_ID_EQUAL = "assetRuleIdEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -48,6 +49,7 @@ namespace Kaltura.Types
 		private RuleConditionType _ConditionsContainType = null;
 		private SlimAsset _AssetApplied;
 		private RuleActionType _ActionsContainType = null;
+		private long _AssetRuleIdEqual = long.MinValue;
 		private AssetRuleOrderBy _OrderBy = null;
 		#endregion
 
@@ -83,6 +85,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public long AssetRuleIdEqual
+		{
+			get { return _AssetRuleIdEqual; }
+			set 
+			{ 
+				_AssetRuleIdEqual = value;
+				OnPropertyChanged("AssetRuleIdEqual");
+			}
+		}
+		[JsonProperty]
 		public new AssetRuleOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -113,6 +125,10 @@ namespace Kaltura.Types
 			{
 				this._ActionsContainType = (RuleActionType)StringEnum.Parse(typeof(RuleActionType), node["actionsContainType"].Value<string>());
 			}
+			if(node["assetRuleIdEqual"] != null)
+			{
+				this._AssetRuleIdEqual = ParseLong(node["assetRuleIdEqual"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (AssetRuleOrderBy)StringEnum.Parse(typeof(AssetRuleOrderBy), node["orderBy"].Value<string>());
@@ -129,6 +145,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("conditionsContainType", this._ConditionsContainType);
 			kparams.AddIfNotNull("assetApplied", this._AssetApplied);
 			kparams.AddIfNotNull("actionsContainType", this._ActionsContainType);
+			kparams.AddIfNotNull("assetRuleIdEqual", this._AssetRuleIdEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -142,6 +159,8 @@ namespace Kaltura.Types
 					return "AssetApplied";
 				case ACTIONS_CONTAIN_TYPE:
 					return "ActionsContainType";
+				case ASSET_RULE_ID_EQUAL:
+					return "AssetRuleIdEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

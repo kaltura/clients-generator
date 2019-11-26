@@ -41,12 +41,16 @@ namespace Kaltura.Types
 		public const string ID = "id";
 		public const string NAME = "name";
 		public const string FRIENDLY_NAME = "friendlyName";
+		public const string DEPENDS_ON_PERMISSION_NAMES = "dependsOnPermissionNames";
+		public const string TYPE = "type";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Name = null;
 		private string _FriendlyName = null;
+		private string _DependsOnPermissionNames = null;
+		private PermissionType _Type = null;
 		#endregion
 
 		#region Properties
@@ -80,6 +84,26 @@ namespace Kaltura.Types
 				OnPropertyChanged("FriendlyName");
 			}
 		}
+		[JsonProperty]
+		public string DependsOnPermissionNames
+		{
+			get { return _DependsOnPermissionNames; }
+			private set 
+			{ 
+				_DependsOnPermissionNames = value;
+				OnPropertyChanged("DependsOnPermissionNames");
+			}
+		}
+		[JsonProperty]
+		public PermissionType Type
+		{
+			get { return _Type; }
+			set 
+			{ 
+				_Type = value;
+				OnPropertyChanged("Type");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -101,6 +125,14 @@ namespace Kaltura.Types
 			{
 				this._FriendlyName = node["friendlyName"].Value<string>();
 			}
+			if(node["dependsOnPermissionNames"] != null)
+			{
+				this._DependsOnPermissionNames = node["dependsOnPermissionNames"].Value<string>();
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (PermissionType)StringEnum.Parse(typeof(PermissionType), node["type"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -113,6 +145,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("friendlyName", this._FriendlyName);
+			kparams.AddIfNotNull("dependsOnPermissionNames", this._DependsOnPermissionNames);
+			kparams.AddIfNotNull("type", this._Type);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -125,6 +159,10 @@ namespace Kaltura.Types
 					return "Name";
 				case FRIENDLY_NAME:
 					return "FriendlyName";
+				case DEPENDS_ON_PERMISSION_NAMES:
+					return "DependsOnPermissionNames";
+				case TYPE:
+					return "Type";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -38,6 +38,9 @@ namespace Kaltura.Enums
 		public static readonly RuleConditionType DATE = new RuleConditionType("DATE");
 		public static readonly RuleConditionType OR = new RuleConditionType("OR");
 		public static readonly RuleConditionType HEADER = new RuleConditionType("HEADER");
+		public static readonly RuleConditionType USER_SUBSCRIPTION = new RuleConditionType("USER_SUBSCRIPTION");
+		public static readonly RuleConditionType ASSET_SUBSCRIPTION = new RuleConditionType("ASSET_SUBSCRIPTION");
+		public static readonly RuleConditionType USER_ROLE = new RuleConditionType("USER_ROLE");
 
 		private RuleConditionType(string name) : base(name) { }
 	}

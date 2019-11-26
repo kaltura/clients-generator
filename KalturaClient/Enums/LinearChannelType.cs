@@ -33,6 +33,7 @@ namespace Kaltura.Enums
 		public static readonly LinearChannelType DTT = new LinearChannelType("DTT");
 		public static readonly LinearChannelType OTT = new LinearChannelType("OTT");
 		public static readonly LinearChannelType DTT_AND_OTT = new LinearChannelType("DTT_AND_OTT");
+		public static readonly LinearChannelType VRM_EXPORT = new LinearChannelType("VRM_EXPORT");
 
 		private LinearChannelType(string name) : base(name) { }
 	}
