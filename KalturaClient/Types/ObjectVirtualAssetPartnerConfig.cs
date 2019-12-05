@@ -35,55 +35,43 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class SegmentationTypeFilter : Filter
+	public class ObjectVirtualAssetPartnerConfig : PartnerConfiguration
 	{
 		#region Constants
-		public const string ID_IN = "idIn";
-		public const string KSQL = "kSql";
+		public const string OBJECT_VIRTUAL_ASSETS = "objectVirtualAssets";
 		#endregion
 
 		#region Private Fields
-		private string _IdIn = null;
-		private string _KSql = null;
+		private IList<ObjectVirtualAssetInfo> _ObjectVirtualAssets;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string IdIn
+		public IList<ObjectVirtualAssetInfo> ObjectVirtualAssets
 		{
-			get { return _IdIn; }
+			get { return _ObjectVirtualAssets; }
 			set 
 			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
-			}
-		}
-		[JsonProperty]
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
+				_ObjectVirtualAssets = value;
+				OnPropertyChanged("ObjectVirtualAssets");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public SegmentationTypeFilter()
+		public ObjectVirtualAssetPartnerConfig()
 		{
 		}
 
-		public SegmentationTypeFilter(JToken node) : base(node)
+		public ObjectVirtualAssetPartnerConfig(JToken node) : base(node)
 		{
-			if(node["idIn"] != null)
+			if(node["objectVirtualAssets"] != null)
 			{
-				this._IdIn = node["idIn"].Value<string>();
-			}
-			if(node["kSql"] != null)
-			{
-				this._KSql = node["kSql"].Value<string>();
+				this._ObjectVirtualAssets = new List<ObjectVirtualAssetInfo>();
+				foreach(var arrayNode in node["objectVirtualAssets"].Children())
+				{
+					this._ObjectVirtualAssets.Add(ObjectFactory.Create<ObjectVirtualAssetInfo>(arrayNode));
+				}
 			}
 		}
 		#endregion
@@ -93,19 +81,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSegmentationTypeFilter");
-			kparams.AddIfNotNull("idIn", this._IdIn);
-			kparams.AddIfNotNull("kSql", this._KSql);
+				kparams.AddReplace("objectType", "KalturaObjectVirtualAssetPartnerConfig");
+			kparams.AddIfNotNull("objectVirtualAssets", this._ObjectVirtualAssets);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_IN:
-					return "IdIn";
-				case KSQL:
-					return "KSql";
+				case OBJECT_VIRTUAL_ASSETS:
+					return "ObjectVirtualAssets";
 				default:
 					return base.getPropertyName(apiName);
 			}

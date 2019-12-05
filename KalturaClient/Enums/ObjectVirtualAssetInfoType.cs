@@ -27,15 +27,11 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class PartnerConfigurationType : StringEnum
+	public sealed class ObjectVirtualAssetInfoType : StringEnum
 	{
-		public static readonly PartnerConfigurationType DEFAULTPAYMENTGATEWAY = new PartnerConfigurationType("DefaultPaymentGateway");
-		public static readonly PartnerConfigurationType ENABLEPAYMENTGATEWAYSELECTION = new PartnerConfigurationType("EnablePaymentGatewaySelection");
-		public static readonly PartnerConfigurationType OSSADAPTER = new PartnerConfigurationType("OSSAdapter");
-		public static readonly PartnerConfigurationType CONCURRENCY = new PartnerConfigurationType("Concurrency");
-		public static readonly PartnerConfigurationType GENERAL = new PartnerConfigurationType("General");
-		public static readonly PartnerConfigurationType OBJECTVIRTUALASSET = new PartnerConfigurationType("ObjectVirtualAsset");
+		public static readonly ObjectVirtualAssetInfoType SUBSCRIPTION = new ObjectVirtualAssetInfoType("Subscription");
+		public static readonly ObjectVirtualAssetInfoType SEGMENT = new ObjectVirtualAssetInfoType("Segment");
 
-		private PartnerConfigurationType(string name) : base(name) { }
+		private ObjectVirtualAssetInfoType(string name) : base(name) { }
 	}
 }

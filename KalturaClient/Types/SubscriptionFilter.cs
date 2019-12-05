@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string MEDIA_FILE_ID_EQUAL = "mediaFileIdEqual";
 		public const string EXTERNAL_ID_IN = "externalIdIn";
 		public const string COUPON_GROUP_ID_EQUAL = "couponGroupIdEqual";
+		public const string KSQL = "kSql";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -50,6 +51,7 @@ namespace Kaltura.Types
 		private int _MediaFileIdEqual = Int32.MinValue;
 		private string _ExternalIdIn = null;
 		private int _CouponGroupIdEqual = Int32.MinValue;
+		private string _KSql = null;
 		private SubscriptionOrderBy _OrderBy = null;
 		#endregion
 
@@ -95,6 +97,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public string KSql
+		{
+			get { return _KSql; }
+			set 
+			{ 
+				_KSql = value;
+				OnPropertyChanged("KSql");
+			}
+		}
+		[JsonProperty]
 		public new SubscriptionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -129,6 +141,10 @@ namespace Kaltura.Types
 			{
 				this._CouponGroupIdEqual = ParseInt(node["couponGroupIdEqual"].Value<string>());
 			}
+			if(node["kSql"] != null)
+			{
+				this._KSql = node["kSql"].Value<string>();
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (SubscriptionOrderBy)StringEnum.Parse(typeof(SubscriptionOrderBy), node["orderBy"].Value<string>());
@@ -146,6 +162,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("mediaFileIdEqual", this._MediaFileIdEqual);
 			kparams.AddIfNotNull("externalIdIn", this._ExternalIdIn);
 			kparams.AddIfNotNull("couponGroupIdEqual", this._CouponGroupIdEqual);
+			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -161,6 +178,8 @@ namespace Kaltura.Types
 					return "ExternalIdIn";
 				case COUPON_GROUP_ID_EQUAL:
 					return "CouponGroupIdEqual";
+				case KSQL:
+					return "KSql";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

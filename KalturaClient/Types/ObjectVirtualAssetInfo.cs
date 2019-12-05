@@ -35,55 +35,71 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class SegmentationTypeFilter : Filter
+	public class ObjectVirtualAssetInfo : ObjectBase
 	{
 		#region Constants
-		public const string ID_IN = "idIn";
-		public const string KSQL = "kSql";
+		public const string ASSET_STRUCT_ID = "assetStructId";
+		public const string META_ID = "metaId";
+		public const string TYPE = "type";
 		#endregion
 
 		#region Private Fields
-		private string _IdIn = null;
-		private string _KSql = null;
+		private int _AssetStructId = Int32.MinValue;
+		private int _MetaId = Int32.MinValue;
+		private ObjectVirtualAssetInfoType _Type = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string IdIn
+		public int AssetStructId
 		{
-			get { return _IdIn; }
+			get { return _AssetStructId; }
 			set 
 			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
+				_AssetStructId = value;
+				OnPropertyChanged("AssetStructId");
 			}
 		}
 		[JsonProperty]
-		public string KSql
+		public int MetaId
 		{
-			get { return _KSql; }
+			get { return _MetaId; }
 			set 
 			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
+				_MetaId = value;
+				OnPropertyChanged("MetaId");
+			}
+		}
+		[JsonProperty]
+		public ObjectVirtualAssetInfoType Type
+		{
+			get { return _Type; }
+			set 
+			{ 
+				_Type = value;
+				OnPropertyChanged("Type");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public SegmentationTypeFilter()
+		public ObjectVirtualAssetInfo()
 		{
 		}
 
-		public SegmentationTypeFilter(JToken node) : base(node)
+		public ObjectVirtualAssetInfo(JToken node) : base(node)
 		{
-			if(node["idIn"] != null)
+			if(node["assetStructId"] != null)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				this._AssetStructId = ParseInt(node["assetStructId"].Value<string>());
 			}
-			if(node["kSql"] != null)
+			if(node["metaId"] != null)
 			{
-				this._KSql = node["kSql"].Value<string>();
+				this._MetaId = ParseInt(node["metaId"].Value<string>());
+			}
+			if(node["type"] != null)
+			{
+				this._Type = (ObjectVirtualAssetInfoType)StringEnum.Parse(typeof(ObjectVirtualAssetInfoType), node["type"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +109,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSegmentationTypeFilter");
-			kparams.AddIfNotNull("idIn", this._IdIn);
-			kparams.AddIfNotNull("kSql", this._KSql);
+				kparams.AddReplace("objectType", "KalturaObjectVirtualAssetInfo");
+			kparams.AddIfNotNull("assetStructId", this._AssetStructId);
+			kparams.AddIfNotNull("metaId", this._MetaId);
+			kparams.AddIfNotNull("type", this._Type);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_IN:
-					return "IdIn";
-				case KSQL:
-					return "KSql";
+				case ASSET_STRUCT_ID:
+					return "AssetStructId";
+				case META_ID:
+					return "MetaId";
+				case TYPE:
+					return "Type";
 				default:
 					return base.getPropertyName(apiName);
 			}
