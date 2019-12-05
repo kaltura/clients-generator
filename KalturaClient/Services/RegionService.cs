@@ -118,19 +118,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILTER = "filter";
+		public const string PAGER = "pager";
 		#endregion
 
 		public RegionFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public RegionListRequestBuilder()
 			: base("region", "list")
 		{
 		}
 
-		public RegionListRequestBuilder(RegionFilter filter)
+		public RegionListRequestBuilder(RegionFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
+			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -138,6 +141,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
+			if (!isMapped("pager"))
+				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -214,9 +219,9 @@ namespace Kaltura.Services
 			return new RegionDeleteRequestBuilder(id);
 		}
 
-		public static RegionListRequestBuilder List(RegionFilter filter)
+		public static RegionListRequestBuilder List(RegionFilter filter, FilterPager pager = null)
 		{
-			return new RegionListRequestBuilder(filter);
+			return new RegionListRequestBuilder(filter, pager);
 		}
 
 		public static RegionUpdateRequestBuilder Update(int id, Region region)

@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string ID_IN = "idIn";
 		public const string PARENT_ID_EQUAL = "parentIdEqual";
 		public const string LIVE_ASSET_ID_EQUAL = "liveAssetIdEqual";
+		public const string PARENT_ONLY = "parentOnly";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -50,6 +51,7 @@ namespace Kaltura.Types
 		private string _IdIn = null;
 		private int _ParentIdEqual = Int32.MinValue;
 		private int _LiveAssetIdEqual = Int32.MinValue;
+		private bool? _ParentOnly = null;
 		private RegionOrderBy _OrderBy = null;
 		#endregion
 
@@ -95,6 +97,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public bool? ParentOnly
+		{
+			get { return _ParentOnly; }
+			set 
+			{ 
+				_ParentOnly = value;
+				OnPropertyChanged("ParentOnly");
+			}
+		}
+		[JsonProperty]
 		public new RegionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -129,6 +141,10 @@ namespace Kaltura.Types
 			{
 				this._LiveAssetIdEqual = ParseInt(node["liveAssetIdEqual"].Value<string>());
 			}
+			if(node["parentOnly"] != null)
+			{
+				this._ParentOnly = ParseBool(node["parentOnly"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), node["orderBy"].Value<string>());
@@ -146,6 +162,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("idIn", this._IdIn);
 			kparams.AddIfNotNull("parentIdEqual", this._ParentIdEqual);
 			kparams.AddIfNotNull("liveAssetIdEqual", this._LiveAssetIdEqual);
+			kparams.AddIfNotNull("parentOnly", this._ParentOnly);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -161,6 +178,8 @@ namespace Kaltura.Types
 					return "ParentIdEqual";
 				case LIVE_ASSET_ID_EQUAL:
 					return "LiveAssetIdEqual";
+				case PARENT_ONLY:
+					return "ParentOnly";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
