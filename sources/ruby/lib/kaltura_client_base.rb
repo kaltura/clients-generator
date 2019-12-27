@@ -194,6 +194,16 @@ module Kaltura
 			}
 
 			log("request options: " + JSON.pretty_generate(options))
+                        if @config.http_proxy and !@config.http_proxy.empty?
+                          RestClient.proxy = @config.http_proxy
+                          log('Proxy server: ' + @config.http_proxy + ' will be used (KalturaConfiguration::http_proxy was set).')
+                        elsif ENV['https_proxy']
+                          RestClient.proxy = ENV['https_proxy']
+                          log('Proxy server: ' + ENV['https_proxy'] + ' will be used (https_proxy ENV var is set).')
+                        elsif ENV['http_proxy']
+                          RestClient.proxy = ENV['http_proxy']
+                          log('Proxy server: ' + ENV['http_proxy'] + ' will be used (http_proxy ENV var is set).')
+                        end
 			res = RestClient::Request.execute(options)
 
 			return res
@@ -474,6 +484,7 @@ module Kaltura
 	class KalturaConfiguration
 		attr_accessor :logger
 		attr_accessor :service_url
+		attr_accessor :http_proxy
 		attr_accessor :format
 		attr_accessor :timeout
 		attr_accessor :requestHeaders
@@ -490,6 +501,10 @@ module Kaltura
 
 		def service_url=(url)
 			@service_url = url.chomp('/')
+		end
+
+		def http_proxy=(proxy_host_port)
+			@http_proxy = proxy_host_port
 		end
 	end
 
