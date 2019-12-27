@@ -44,11 +44,13 @@ class Test::Unit::TestCase
         
     partner_id = config_file["test"]["partner_id"]
     service_url = config_file["test"]["service_url"]
+    http_proxy = config_file["test"]["http_proxy"]
     administrator_secret = config_file["test"]["administrator_secret"]
     timeout = config_file["test"]["timeout"]
     
     config = Kaltura::KalturaConfiguration.new()
     config.service_url = service_url
+    config.http_proxy = http_proxy
     config.logger = Logger.new(STDOUT)
     config.timeout = timeout
     
