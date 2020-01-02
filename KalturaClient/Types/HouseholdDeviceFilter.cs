@@ -40,12 +40,14 @@ namespace Kaltura.Types
 		#region Constants
 		public const string HOUSEHOLD_ID_EQUAL = "householdIdEqual";
 		public const string DEVICE_FAMILY_ID_IN = "deviceFamilyIdIn";
+		public const string EXTERNAL_ID_EQUAL = "externalIdEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private int _HouseholdIdEqual = Int32.MinValue;
 		private string _DeviceFamilyIdIn = null;
+		private string _ExternalIdEqual = null;
 		private HouseholdDeviceOrderBy _OrderBy = null;
 		#endregion
 
@@ -68,6 +70,16 @@ namespace Kaltura.Types
 			{ 
 				_DeviceFamilyIdIn = value;
 				OnPropertyChanged("DeviceFamilyIdIn");
+			}
+		}
+		[JsonProperty]
+		public string ExternalIdEqual
+		{
+			get { return _ExternalIdEqual; }
+			set 
+			{ 
+				_ExternalIdEqual = value;
+				OnPropertyChanged("ExternalIdEqual");
 			}
 		}
 		[JsonProperty]
@@ -97,6 +109,10 @@ namespace Kaltura.Types
 			{
 				this._DeviceFamilyIdIn = node["deviceFamilyIdIn"].Value<string>();
 			}
+			if(node["externalIdEqual"] != null)
+			{
+				this._ExternalIdEqual = node["externalIdEqual"].Value<string>();
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (HouseholdDeviceOrderBy)StringEnum.Parse(typeof(HouseholdDeviceOrderBy), node["orderBy"].Value<string>());
@@ -112,6 +128,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaHouseholdDeviceFilter");
 			kparams.AddIfNotNull("householdIdEqual", this._HouseholdIdEqual);
 			kparams.AddIfNotNull("deviceFamilyIdIn", this._DeviceFamilyIdIn);
+			kparams.AddIfNotNull("externalIdEqual", this._ExternalIdEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -123,6 +140,8 @@ namespace Kaltura.Types
 					return "HouseholdIdEqual";
 				case DEVICE_FAMILY_ID_IN:
 					return "DeviceFamilyIdIn";
+				case EXTERNAL_ID_EQUAL:
+					return "ExternalIdEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

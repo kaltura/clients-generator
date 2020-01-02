@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class HouseholdDevice : ObjectBase
+	public class HouseholdDevice : OTTObjectSupportNullable
 	{
 		#region Constants
 		public const string HOUSEHOLD_ID = "householdId";
@@ -46,6 +46,7 @@ namespace Kaltura.Types
 		public const string STATUS = "status";
 		public const string DEVICE_FAMILY_ID = "deviceFamilyId";
 		public const string DRM = "drm";
+		public const string EXTERNAL_ID = "externalId";
 		#endregion
 
 		#region Private Fields
@@ -57,6 +58,7 @@ namespace Kaltura.Types
 		private DeviceStatus _Status = null;
 		private long _DeviceFamilyId = long.MinValue;
 		private CustomDrmPlaybackPluginData _Drm;
+		private string _ExternalId = null;
 		#endregion
 
 		#region Properties
@@ -140,6 +142,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Drm");
 			}
 		}
+		[JsonProperty]
+		public string ExternalId
+		{
+			get { return _ExternalId; }
+			set 
+			{ 
+				_ExternalId = value;
+				OnPropertyChanged("ExternalId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -181,6 +193,10 @@ namespace Kaltura.Types
 			{
 				this._Drm = ObjectFactory.Create<CustomDrmPlaybackPluginData>(node["drm"]);
 			}
+			if(node["externalId"] != null)
+			{
+				this._ExternalId = node["externalId"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -198,6 +214,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("deviceFamilyId", this._DeviceFamilyId);
 			kparams.AddIfNotNull("drm", this._Drm);
+			kparams.AddIfNotNull("externalId", this._ExternalId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -220,6 +237,8 @@ namespace Kaltura.Types
 					return "DeviceFamilyId";
 				case DRM:
 					return "Drm";
+				case EXTERNAL_ID:
+					return "ExternalId";
 				default:
 					return base.getPropertyName(apiName);
 			}
