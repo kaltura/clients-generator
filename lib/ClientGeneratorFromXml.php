@@ -402,7 +402,7 @@ abstract class ClientGeneratorFromXml
 		$this->outputPath = $outputPath;
 		$this->copyPath = $copyPath;
 
-		$this->addFile('agpl.txt', file_get_contents(__DIR__ . '/../sources/agpl.txt'), false);
+		$this->addFile('LICENSE.txt', file_get_contents(__DIR__ . '/../sources/agpl.txt'), false);
 	}
 
     public function setAdditionalSourcesPath($path)
