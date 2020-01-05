@@ -52,6 +52,7 @@ class ConfigurationTest < Test::Unit::TestCase
         
     partner_id = config["test"]["partner_id"]
     service_url = config["test"]["service_url"]
+    http_proxy = config["test"]["http_proxy"]
     administrator_secret = config["test"]["administrator_secret"]
     timeout = config["test"]["timeout"]
     
@@ -59,6 +60,7 @@ class ConfigurationTest < Test::Unit::TestCase
 
     config = Kaltura::KalturaConfiguration.new()
     config.service_url = service_url
+    config.http_proxy = http_proxy
     config.logger = Logger.new(STDOUT)
     config.timeout = timeout
     
