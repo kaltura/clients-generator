@@ -35,29 +35,19 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class UserSegmentFilter : Filter
+	public class HouseholdSegmentFilter : CrudFilter
 	{
 		#region Constants
-		public const string USER_ID_EQUAL = "userIdEqual";
 		public const string KSQL = "kSql";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _UserIdEqual = null;
 		private string _KSql = null;
+		private HouseholdSegmentOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string UserIdEqual
-		{
-			get { return _UserIdEqual; }
-			set 
-			{ 
-				_UserIdEqual = value;
-				OnPropertyChanged("UserIdEqual");
-			}
-		}
 		[JsonProperty]
 		public string KSql
 		{
@@ -68,22 +58,32 @@ namespace Kaltura.Types
 				OnPropertyChanged("KSql");
 			}
 		}
+		[JsonProperty]
+		public new HouseholdSegmentOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public UserSegmentFilter()
+		public HouseholdSegmentFilter()
 		{
 		}
 
-		public UserSegmentFilter(JToken node) : base(node)
+		public HouseholdSegmentFilter(JToken node) : base(node)
 		{
-			if(node["userIdEqual"] != null)
-			{
-				this._UserIdEqual = node["userIdEqual"].Value<string>();
-			}
 			if(node["kSql"] != null)
 			{
 				this._KSql = node["kSql"].Value<string>();
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (HouseholdSegmentOrderBy)StringEnum.Parse(typeof(HouseholdSegmentOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaUserSegmentFilter");
-			kparams.AddIfNotNull("userIdEqual", this._UserIdEqual);
+				kparams.AddReplace("objectType", "KalturaHouseholdSegmentFilter");
 			kparams.AddIfNotNull("kSql", this._KSql);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case USER_ID_EQUAL:
-					return "UserIdEqual";
 				case KSQL:
 					return "KSql";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

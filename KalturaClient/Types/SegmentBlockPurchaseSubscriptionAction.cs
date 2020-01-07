@@ -35,56 +35,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class UserSegmentFilter : Filter
+	public class SegmentBlockPurchaseSubscriptionAction : BlockSubscriptionSegmentAction
 	{
 		#region Constants
-		public const string USER_ID_EQUAL = "userIdEqual";
-		public const string KSQL = "kSql";
 		#endregion
 
 		#region Private Fields
-		private string _UserIdEqual = null;
-		private string _KSql = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string UserIdEqual
-		{
-			get { return _UserIdEqual; }
-			set 
-			{ 
-				_UserIdEqual = value;
-				OnPropertyChanged("UserIdEqual");
-			}
-		}
-		[JsonProperty]
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public UserSegmentFilter()
+		public SegmentBlockPurchaseSubscriptionAction()
 		{
 		}
 
-		public UserSegmentFilter(JToken node) : base(node)
+		public SegmentBlockPurchaseSubscriptionAction(JToken node) : base(node)
 		{
-			if(node["userIdEqual"] != null)
-			{
-				this._UserIdEqual = node["userIdEqual"].Value<string>();
-			}
-			if(node["kSql"] != null)
-			{
-				this._KSql = node["kSql"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -93,19 +61,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaUserSegmentFilter");
-			kparams.AddIfNotNull("userIdEqual", this._UserIdEqual);
-			kparams.AddIfNotNull("kSql", this._KSql);
+				kparams.AddReplace("objectType", "KalturaSegmentBlockPurchaseSubscriptionAction");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case USER_ID_EQUAL:
-					return "UserIdEqual";
-				case KSQL:
-					return "KSql";
 				default:
 					return base.getPropertyName(apiName);
 			}

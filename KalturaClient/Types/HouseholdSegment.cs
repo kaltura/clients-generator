@@ -35,55 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class UserSegmentFilter : Filter
+	public class HouseholdSegment : CrudObject
 	{
 		#region Constants
-		public const string USER_ID_EQUAL = "userIdEqual";
-		public const string KSQL = "kSql";
+		public const string SEGMENT_ID = "segmentId";
+		public const string HOUSEHOLD_ID = "householdId";
 		#endregion
 
 		#region Private Fields
-		private string _UserIdEqual = null;
-		private string _KSql = null;
+		private long _SegmentId = long.MinValue;
+		private long _HouseholdId = long.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string UserIdEqual
+		public long SegmentId
 		{
-			get { return _UserIdEqual; }
+			get { return _SegmentId; }
 			set 
 			{ 
-				_UserIdEqual = value;
-				OnPropertyChanged("UserIdEqual");
+				_SegmentId = value;
+				OnPropertyChanged("SegmentId");
 			}
 		}
 		[JsonProperty]
-		public string KSql
+		public long HouseholdId
 		{
-			get { return _KSql; }
+			get { return _HouseholdId; }
 			set 
 			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
+				_HouseholdId = value;
+				OnPropertyChanged("HouseholdId");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public UserSegmentFilter()
+		public HouseholdSegment()
 		{
 		}
 
-		public UserSegmentFilter(JToken node) : base(node)
+		public HouseholdSegment(JToken node) : base(node)
 		{
-			if(node["userIdEqual"] != null)
+			if(node["segmentId"] != null)
 			{
-				this._UserIdEqual = node["userIdEqual"].Value<string>();
+				this._SegmentId = ParseLong(node["segmentId"].Value<string>());
 			}
-			if(node["kSql"] != null)
+			if(node["householdId"] != null)
 			{
-				this._KSql = node["kSql"].Value<string>();
+				this._HouseholdId = ParseLong(node["householdId"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaUserSegmentFilter");
-			kparams.AddIfNotNull("userIdEqual", this._UserIdEqual);
-			kparams.AddIfNotNull("kSql", this._KSql);
+				kparams.AddReplace("objectType", "KalturaHouseholdSegment");
+			kparams.AddIfNotNull("segmentId", this._SegmentId);
+			kparams.AddIfNotNull("householdId", this._HouseholdId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case USER_ID_EQUAL:
-					return "UserIdEqual";
-				case KSQL:
-					return "KSql";
+				case SEGMENT_ID:
+					return "SegmentId";
+				case HOUSEHOLD_ID:
+					return "HouseholdId";
 				default:
 					return base.getPropertyName(apiName);
 			}
