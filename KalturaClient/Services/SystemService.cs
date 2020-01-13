@@ -39,11 +39,11 @@ namespace Kaltura.Services
 	public class SystemClearLocalServerCacheRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
-		public const string ACTION = "action";
+		public const string CLEAR_CACHE_ACTION = "clearCacheAction";
 		public const string KEY = "key";
 		#endregion
 
-		public string Action { get; set; }
+		public string ClearCacheAction { get; set; }
 		public string Key { get; set; }
 
 		public SystemClearLocalServerCacheRequestBuilder()
@@ -51,18 +51,18 @@ namespace Kaltura.Services
 		{
 		}
 
-		public SystemClearLocalServerCacheRequestBuilder(string action, string key)
+		public SystemClearLocalServerCacheRequestBuilder(string clearCacheAction, string key)
 			: this()
 		{
-			this.Action = action;
+			this.ClearCacheAction = clearCacheAction;
 			this.Key = key;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("action"))
-				kparams.AddIfNotNull("action", Action);
+			if (!isMapped("clearCacheAction"))
+				kparams.AddIfNotNull("clearCacheAction", ClearCacheAction);
 			if (!isMapped("key"))
 				kparams.AddIfNotNull("key", Key);
 			return kparams;
@@ -289,9 +289,9 @@ namespace Kaltura.Services
 		{
 		}
 
-		public static SystemClearLocalServerCacheRequestBuilder ClearLocalServerCache(string action = null, string key = null)
+		public static SystemClearLocalServerCacheRequestBuilder ClearLocalServerCache(string clearCacheAction = null, string key = null)
 		{
-			return new SystemClearLocalServerCacheRequestBuilder(action, key);
+			return new SystemClearLocalServerCacheRequestBuilder(clearCacheAction, key);
 		}
 
 		public static SystemGetLogLevelRequestBuilder GetLogLevel()
