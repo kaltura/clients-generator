@@ -121,7 +121,7 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public RegionFilter Filter { get; set; }
+		public BaseRegionFilter Filter { get; set; }
 		public FilterPager Pager { get; set; }
 
 		public RegionListRequestBuilder()
@@ -129,7 +129,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public RegionListRequestBuilder(RegionFilter filter, FilterPager pager)
+		public RegionListRequestBuilder(BaseRegionFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
@@ -219,7 +219,7 @@ namespace Kaltura.Services
 			return new RegionDeleteRequestBuilder(id);
 		}
 
-		public static RegionListRequestBuilder List(RegionFilter filter, FilterPager pager = null)
+		public static RegionListRequestBuilder List(BaseRegionFilter filter, FilterPager pager = null)
 		{
 			return new RegionListRequestBuilder(filter, pager);
 		}

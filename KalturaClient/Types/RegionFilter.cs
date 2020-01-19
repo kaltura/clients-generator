@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class RegionFilter : Filter
+	public class RegionFilter : BaseRegionFilter
 	{
 		#region Constants
 		public const string EXTERNAL_ID_IN = "externalIdIn";
