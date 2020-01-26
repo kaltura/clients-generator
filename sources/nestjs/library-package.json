@@ -1,0 +1,56 @@
+{
+  "name": "@kaltura/nestjs-ott-client",
+  "version": "1.0.5",
+  "description": "NestJS npm package starter",
+  "author": "John Biundo <johnfbiundo@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "main": "public-api.js",
+  "files": [
+    "**/*",
+    "*.md"
+  ],
+  "scripts": {
+    "start:dev": "../node_modules/.bin/tsc -w",
+    "build": "../node_modules/.bin/tsc",
+    "build:nest": "../node_modules/.bin/nest build",
+    "prepare": "npm run build",
+    "format": "../node_modules/.bin/prettier --write \\\"src/**/*.ts\\\"",
+    "lint": "../node_modules/.bin/tslint -p tsconfig.json -c tslint.json",
+    "test": "../node_modules/.bin/jest",
+    "test:watch": "../node_modules/.bin/jest --watch",
+    "test:cov": "../node_modules/.bin/jest --coverage",
+    "test:e2e": "../node_modules/.bin/jest --config ./test/jest-e2e.json"
+  },
+  "keywords": [
+    "nestjs"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nestjsplus/nestjs-package-starter"
+  },
+  "bugs": "https://github.com/nestjsplus/nestjs-package-starter",
+  "peerDependencies": {
+    "rxjs": "^6.5.4"
+  },
+  "devDependencies": {},
+  "dependencies": {},
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
+
