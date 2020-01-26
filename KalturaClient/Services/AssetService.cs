@@ -356,6 +356,60 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class AssetGetPlaybackManifestRequestBuilder : RequestBuilder<PlaybackContext>
+	{
+		#region Constants
+		public const string ASSET_ID = "assetId";
+		public const string ASSET_TYPE = "assetType";
+		public const string CONTEXT_DATA_PARAMS = "contextDataParams";
+		public const string SOURCE_TYPE = "sourceType";
+		#endregion
+
+		public string AssetId { get; set; }
+		public AssetType AssetType { get; set; }
+		public PlaybackContextOptions ContextDataParams { get; set; }
+		public string SourceType { get; set; }
+
+		public AssetGetPlaybackManifestRequestBuilder()
+			: base("asset", "getPlaybackManifest")
+		{
+		}
+
+		public AssetGetPlaybackManifestRequestBuilder(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType)
+			: this()
+		{
+			this.AssetId = assetId;
+			this.AssetType = assetType;
+			this.ContextDataParams = contextDataParams;
+			this.SourceType = sourceType;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("assetId"))
+				kparams.AddIfNotNull("assetId", AssetId);
+			if (!isMapped("assetType"))
+				kparams.AddIfNotNull("assetType", AssetType);
+			if (!isMapped("contextDataParams"))
+				kparams.AddIfNotNull("contextDataParams", ContextDataParams);
+			if (!isMapped("sourceType"))
+				kparams.AddIfNotNull("sourceType", SourceType);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<PlaybackContext>(result);
+		}
+	}
+
 	public class AssetListRequestBuilder : RequestBuilder<ListResponse<Asset>>
 	{
 		#region Constants
@@ -535,6 +589,11 @@ namespace Kaltura.Services
 		public static AssetGetPlaybackContextRequestBuilder GetPlaybackContext(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType = null)
 		{
 			return new AssetGetPlaybackContextRequestBuilder(assetId, assetType, contextDataParams, sourceType);
+		}
+
+		public static AssetGetPlaybackManifestRequestBuilder GetPlaybackManifest(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType = null)
+		{
+			return new AssetGetPlaybackManifestRequestBuilder(assetId, assetType, contextDataParams, sourceType);
 		}
 
 		public static AssetListRequestBuilder List(AssetFilter filter = null, FilterPager pager = null)
