@@ -123,7 +123,7 @@ namespace Kaltura.Services
 		public const string PAGER = "pager";
 		#endregion
 
-		public SegmentationTypeFilter Filter { get; set; }
+		public BaseSegmentationTypeFilter Filter { get; set; }
 		public FilterPager Pager { get; set; }
 
 		public SegmentationTypeListRequestBuilder()
@@ -131,7 +131,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public SegmentationTypeListRequestBuilder(SegmentationTypeFilter filter, FilterPager pager)
+		public SegmentationTypeListRequestBuilder(BaseSegmentationTypeFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
@@ -221,7 +221,7 @@ namespace Kaltura.Services
 			return new SegmentationTypeDeleteRequestBuilder(id);
 		}
 
-		public static SegmentationTypeListRequestBuilder List(SegmentationTypeFilter filter = null, FilterPager pager = null)
+		public static SegmentationTypeListRequestBuilder List(BaseSegmentationTypeFilter filter = null, FilterPager pager = null)
 		{
 			return new SegmentationTypeListRequestBuilder(filter, pager);
 		}

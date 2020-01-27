@@ -35,56 +35,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class SegmentationTypeFilter : BaseSegmentationTypeFilter
+	public class BaseSegmentationTypeFilter : Filter
 	{
 		#region Constants
-		public const string ID_IN = "idIn";
-		public const string KSQL = "kSql";
 		#endregion
 
 		#region Private Fields
-		private string _IdIn = null;
-		private string _KSql = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string IdIn
-		{
-			get { return _IdIn; }
-			set 
-			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
-			}
-		}
-		[JsonProperty]
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public SegmentationTypeFilter()
+		public BaseSegmentationTypeFilter()
 		{
 		}
 
-		public SegmentationTypeFilter(JToken node) : base(node)
+		public BaseSegmentationTypeFilter(JToken node) : base(node)
 		{
-			if(node["idIn"] != null)
-			{
-				this._IdIn = node["idIn"].Value<string>();
-			}
-			if(node["kSql"] != null)
-			{
-				this._KSql = node["kSql"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -93,19 +61,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSegmentationTypeFilter");
-			kparams.AddIfNotNull("idIn", this._IdIn);
-			kparams.AddIfNotNull("kSql", this._KSql);
+				kparams.AddReplace("objectType", "KalturaBaseSegmentationTypeFilter");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_IN:
-					return "IdIn";
-				case KSQL:
-					return "KSql";
 				default:
 					return base.getPropertyName(apiName);
 			}
