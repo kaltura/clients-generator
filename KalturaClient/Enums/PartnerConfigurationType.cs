@@ -35,6 +35,7 @@ namespace Kaltura.Enums
 		public static readonly PartnerConfigurationType CONCURRENCY = new PartnerConfigurationType("Concurrency");
 		public static readonly PartnerConfigurationType GENERAL = new PartnerConfigurationType("General");
 		public static readonly PartnerConfigurationType OBJECTVIRTUALASSET = new PartnerConfigurationType("ObjectVirtualAsset");
+		public static readonly PartnerConfigurationType COMMERCE = new PartnerConfigurationType("Commerce");
 
 		private PartnerConfigurationType(string name) : base(name) { }
 	}
