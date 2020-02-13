@@ -14,7 +14,6 @@ console.log(`jenkins job name ${jenkins_job_name}`);
 const jenkins_job_build_number = process.env['BUILD_NUMBER'] || 'no_jenkins_build_number';
 console.log(`jenkins build number ${jenkins_job_build_number}`);
 
-${env.BUILD_NUMBER}
 
 let branchPath = path.join(__dirname, branch);
 if(!fs.existsSync(branchPath)) {
