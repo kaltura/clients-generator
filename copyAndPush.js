@@ -1,18 +1,18 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const child_process = require( 'child_process' );
-
 const rimraf = require('rimraf');
 const copydir = require('copy-dir');
-
-
 
 const sourcePath = process.argv[2];
 const branch = process.argv[3].replace(/^origin\//, '');
 const token = process.argv[4];
 const git = process.argv[5] || 'git';
 
-
+const jenkins_job_name = process.env['JOB_NAME'] || 'no_jenkins_job_name';
+console.log(`jenkins job name ${jenkins_job_name}`);
+const jenkins_job_build_number = process.env['BUILD_NUMBER'] || 'no_jenkins_build_number';
+console.log(`jenkins build number ${jenkins_job_build_number}`);
 
 let branchPath = path.join(__dirname, branch);
 if(!fs.existsSync(branchPath)) {
