@@ -30,7 +30,7 @@ export class KalturaRequestAdapter {
     delete parameters['action'];
 
     const config: AxiosRequestConfig = {
-      url: 'http://' + endpointUrl,
+      url: endpointUrl,
       method: 'POST',
       data: parameters,
       responseType: requestSpecificFormat ? responseType || 'text' : 'json',

@@ -2,7 +2,7 @@ import { KalturaResponse } from './kaltura-response';
 import { KalturaAPIException } from './kaltura-api-exception';
 
 export class KalturaMultiResponse extends Array<KalturaResponse<any>> {
-  constructor(results: Array<KalturaResponse<any>> = []) {
+  constructor(results: Array<KalturaResponse<any>> = [], public debugInfo?) {
     super();
 
     if (new.target) {

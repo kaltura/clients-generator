@@ -1,7 +1,7 @@
 import { KalturaAPIException } from './kaltura-api-exception';
 
 export class KalturaResponse<T> {
-  constructor(public result: T, public error: KalturaAPIException, public debugInfo) {
+  constructor(public result: T, public error: KalturaAPIException, public debugInfo?) {
 
   }
 }

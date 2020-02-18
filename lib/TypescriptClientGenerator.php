@@ -11,7 +11,7 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
     private $_framework;
     private $_targetKalturaServer;
 
-	function __construct($xmlPath, Zend_Config $config, $framework = "nestjs", $srcAPIBasePath = "src/api")
+	function __construct($xmlPath, Zend_Config $config, $framework = "typescript", $srcAPIBasePath = "src/api")
 	{
 		parent::__construct($xmlPath, $framework, $config);
 

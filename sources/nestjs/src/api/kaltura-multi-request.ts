@@ -64,9 +64,14 @@ export class KalturaMultiRequest extends KalturaRequestBase {
   }
 
   handleResponse(responses: any): KalturaMultiResponse {
+    const responsesData = responses['data'];
+    const debugInfo = {
+      beExecutionTime: responses['data'].executionTime,
+    };
+
     const kalturaResponses: Array<KalturaResponse<any>> = [];
 
-    const unwrappedResponse = this._unwrapResponse(responses);
+    const unwrappedResponse = this._unwrapResponse(responsesData);
 
     if (!unwrappedResponse || !(unwrappedResponse instanceof Array) || unwrappedResponse.length !== this.requests.length) {
       const response = new KalturaAPIException(`server response is invalid, expected array of ${this.requests.length}`,
@@ -78,7 +83,16 @@ export class KalturaMultiRequest extends KalturaRequestBase {
 
       for (let i = 0, len = this.requests.length; i < len; i++) {
         const serverResponse = unwrappedResponse[i];
-        kalturaResponses.push(this.requests[i].handleResponse(serverResponse));
+
+        let result: KalturaResponse<any>;
+
+        const parsedResponse = this.requests[i].parseServerResponse(serverResponse);
+
+        result = parsedResponse.status ?
+          new KalturaResponse(parsedResponse.response, undefined, undefined) :
+          new KalturaResponse(undefined, parsedResponse.response, undefined);
+
+        kalturaResponses.push(result);
       }
 
       if (this.callback) {
@@ -90,6 +104,6 @@ export class KalturaMultiRequest extends KalturaRequestBase {
       }
     }
 
-    return new KalturaMultiResponse(kalturaResponses);
+    return new KalturaMultiResponse(kalturaResponses, debugInfo);
   }
 }
