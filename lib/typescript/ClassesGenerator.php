@@ -1,7 +1,7 @@
 <?php
 
-require_once(__DIR__ . '/TypescriptGeneratorBase.php');
-require_once(__DIR__ . '/GeneratedFileData.php');
+require_once (__DIR__. '/TypescriptGeneratorBase.php');
+require_once (__DIR__. '/GeneratedFileData.php');
 
 class ClassesGenerator extends TypescriptGeneratorBase
 {
@@ -13,7 +13,7 @@ class ClassesGenerator extends TypescriptGeneratorBase
     {
         parent::__construct($serverMetadata);
 
-        $this->targetKalturaServer = $targetKalturaServer;
+		$this->targetKalturaServer = $targetKalturaServer;
         $this->framework = $framework;
         $this->disableDateParsing = $disableDateParsing;
 
@@ -35,13 +35,13 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $result[] = $this->createRequestOptionsFile();
         $result[] = $this->createEnvironmentsFile();
 
-        $result = array_filter($result);
+		$result = array_filter($result);
 
         return $result;
     }
 
 
-    function createClientServiceFile()
+  function createClientServiceFile()
     {
         $isAngularFramework = $this->framework === 'ngx';
         if (!$isAngularFramework) {
@@ -102,7 +102,8 @@ import { KalturaObjectMetadata } from './kaltura-object-base';
 {$this->utils->ifExp($isAngularFramework, "import { InjectionToken } from '@angular/core';", "")}
 ";
 
-        if ($isAngularFramework) {
+        if($isAngularFramework)
+        {
             $fileContent .= "
 export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaRequestOptionsArgs> = new InjectionToken('kaltura client default request options');
 
@@ -147,11 +148,11 @@ export const environment: Environment = {
     }
 }";
 
-        $file = new GeneratedFileData();
-        $file->path = "../environment.ts";
-        $file->content = $fileContent;
-        return $file;
-    }
+	    $file = new GeneratedFileData();
+	    $file->path = "../environment.ts";
+	    $file->content = $fileContent;
+	    return $file;
+	}
 
     function createClassFile(ClassType $class)
     {
@@ -168,7 +169,7 @@ export const environment: Environment = {
         $createClassArgs->typesPath = "./";
         $createClassArgs->properties = $class->properties;
         $createClassArgs->importedItems = array();
-        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('objectType', false, KalturaServerTypes::Simple, 'constant', $class->name);
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('objectType',false,KalturaServerTypes::Simple,'constant', $class->name);
         $createClassArgs->requireDataInCtor = false;
 
         $generatedCode = $this->createClassExp($createClassArgs);
@@ -202,19 +203,19 @@ import { KalturaTypesFactory } from '../kaltura-types-factory';";
         return $file;
     }
 
-    function createServiceActionFile(Service $service, ServiceAction $serviceAction)
+    function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
         $isAngularFramework = $this->framework === 'ngx';
         $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
 
-        $importedItems = array($className, 'KalturaRequest');
+        $importedItems = array($className,'KalturaRequest');
 
         $getImportExpForTypeArgs = new stdClass();
         $getImportExpForTypeArgs->enumPath = "./";
         $getImportExpForTypeArgs->typesPath = "./";
         $getImportExpForTypeArgs->type = $serviceAction->resultType;
         $getImportExpForTypeArgs->typeClassName = $serviceAction->resultClassName;
-        $importResultType = $this->getImportExpForType($getImportExpForTypeArgs, $importedItems);
+        $importResultType = $this->getImportExpForType($getImportExpForTypeArgs,$importedItems);
         if ($importResultType) {
             // prevent duplicate import for the result class
             $importedItems[] = $serviceAction->resultClassName;
@@ -227,19 +228,23 @@ import { KalturaTypesFactory } from '../kaltura-types-factory';";
         $createClassArgs->typesPath = "./";
         $createClassArgs->properties = $serviceAction->params;
         $createClassArgs->importedItems = &$importedItems;
-        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service', false, KalturaServerTypes::Simple, 'constant', $service->id);
-        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action', false, KalturaServerTypes::Simple, 'constant', $serviceAction->name);
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('service',false,KalturaServerTypes::Simple,'constant', $service->id);
+        $createClassArgs->customMetadataProperties[] = $this->createMetadataProperty('action',false,KalturaServerTypes::Simple,'constant', $serviceAction->name);
 
-        if ($serviceAction->resultType === KalturaServerTypes::File) {
+        if ($serviceAction->resultType === KalturaServerTypes::File)
+        {
             $actionNG2ResultType = "{ url: string }";
             $baseFullType = "KalturaFileRequest";
             $baseType = "KalturaFileRequest";
 
-        } else if ($this->hasFileProperty($serviceAction->params)) {
+        }else if ($this->hasFileProperty($serviceAction->params))
+        {
             $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
             $baseFullType = "KalturaUploadRequest<{$actionNG2ResultType}>";
             $baseType = "KalturaUploadRequest";
-        } else {
+        }
+        else
+        {
             $actionNG2ResultType = $this->toNG2TypeExp($serviceAction->resultType, $serviceAction->resultClassName);
             $baseFullType = "KalturaRequest<{$actionNG2ResultType}>";
             $baseType = "KalturaRequest";
@@ -256,8 +261,9 @@ import { KalturaTypesFactory } from '../kaltura-types-factory';";
  * Server response type:         {$actionNG2ResultType}
  * Server failure response type: KalturaAPIException";
 
-        if (!$isAngularFramework) {
-            $createClassArgs->documentation .= "
+        if (!$isAngularFramework)
+        {
+        $createClassArgs->documentation .= "
  * @class
  * @extends {$baseType}";
         }
@@ -267,12 +273,15 @@ import { KalturaTypesFactory } from '../kaltura-types-factory';";
         $resultType = $this->toApplicationType($serviceAction->resultType, $serviceAction->resultClassName);
 
         // calculate ctor super execution argument
-        if ($serviceAction->resultType === KalturaServerTypes::File) {
+        if ($serviceAction->resultType === KalturaServerTypes::File)
+        {
             $createClassArgs->superArgs = "";
-        } else {
+        }else
+        {
             if (isset($resultType->subType)) {
                 $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : {$resultType->subType}  }";
-            } else {
+            }else
+            {
                 $createClassArgs->superArgs = "{responseType : '{$resultType->type}', responseSubType : '{$resultType->subType}', responseConstructor : null }";
             }
         }
@@ -301,9 +310,9 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
     function createClassExp($args)
     {
         $name = $args->name;
-        $classDocumentation = isset($args->documentation) ? $args->documentation : '';
+        $classDocumentation = isset($args->documentation) ? $args->documentation : '' ;
         $base = isset($args->base) ? $args->base : null;
-        $baseStrippedClassName = isset($base) ? preg_replace('/<.+>/i', '', $base) : null;
+        $baseStrippedClassName = isset($base) ? preg_replace('/<.+>/i','',$base) : null;
         $baseIsGenerated = isset($args->baseIsGenerated) ? $args->baseIsGenerated : false;
         $basePath = isset($args->basePath) ? $args->basePath : null;
         $customMetadataProperties = isset($args->customMetadataProperties) ? $args->customMetadataProperties : array();
@@ -315,18 +324,23 @@ import { KalturaObjectMetadata } from '../kaltura-object-base';
         $importedItems[] = $name;
 
         // enrich super args
-        if ($superArgs === '') {
+        if ($superArgs === '')
+        {
             $superArgs = 'data';
-        } else {
-            $superArgs = 'data, ' . $superArgs;
+        }else
+        {
+            $superArgs =  'data, ' . $superArgs;
         }
 
         $baseImport = null;
-        if ($baseStrippedClassName && $basePath) {
+        if ($baseStrippedClassName && $basePath)
+        {
             $importedItems[] = $baseStrippedClassName;
-            if ($baseIsGenerated) {
+            if ($baseIsGenerated)
+            {
                 $importFilePath = $basePath . $baseStrippedClassName; //utils::toLispCase($strippedBase);
-            } else {
+            }else
+            {
                 $importFilePath = $basePath . utils::toLispCase($baseStrippedClassName);
             }
             $baseImport = "import { {$baseStrippedClassName}, {$baseStrippedClassName}Args } from '{$importFilePath}';";
@@ -361,7 +375,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         {$this->utils->buildExpression($aggregatedData->assignPropertiesDefault, NewLine, 2)}";
         }
 
-        $generatedBody .= "
+    $generatedBody .= "
     }
 
     protected _getMetadata() : KalturaObjectMetadata
@@ -379,7 +393,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 ";
 
         $result = array();
-        $result[] = $this->utils->buildExpression($aggregatedData->imports, NewLine);
+        $result[] = $this->utils->buildExpression($aggregatedData->imports,NewLine);
         $result[] = $generatedBody;
 
         return $result;
@@ -402,14 +416,16 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         $result->constructorContent = array();
         $result->assignPropertiesDefault = array();
 
-        if (count($properties) != 0) {
-            foreach ($properties as $property) {
+        if (count($properties) != 0)
+        {
+            foreach($properties as $property) {
 
-                if (isset($property->customDeclaration)) {
+                if (isset($property->customDeclaration))
+                {
                     $ng2ParamType = $property->customDeclaration;
                 } else if ($property->type === KalturaServerTypes::File) {
                     $ng2ParamType = "File";
-                } else {
+                }else {
                     $ng2ParamType = $this->toNG2TypeExp($property->type, $property->typeClassName);
                 }
 
@@ -425,7 +441,8 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
                 $result->classProperties[] = ($readOnly ? "readonly " : "") . "{$property->name} : {$ng2ParamType};";
 
-                if ($default) {
+                if ($default)
+                {
                     $result->assignPropertiesDefault[] = "if (typeof this.{$property->name} === 'undefined') this.{$property->name} = {$default};";
                 }
 
@@ -439,7 +456,8 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 $getImportExpForTypeArgs->type = $property->type;
                 $getImportExpForTypeArgs->typeClassName = $property->typeClassName;
                 $propertyImport = $this->getImportExpForType($getImportExpForTypeArgs, $importedItems);
-                if ($propertyImport) {
+                if ($propertyImport)
+                {
                     $result->imports[] = $propertyImport;
                 }
             }
@@ -468,22 +486,24 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
         switch ($type) {
             case KalturaServerTypes::EnumOfInt:
             case KalturaServerTypes::EnumOfString:
-                if (in_array($typeClassName, $importedItems) === false) {
-                    $importedItems[] = $typeClassName;
-                    $fileName = $typeClassName; //$this->utils->toLispCase($typeClassName);
-                    $result = "import { {$typeClassName} } from '{$enumPath}{$fileName}';";
-                }
-                break;
+            if (in_array($typeClassName,$importedItems) === false) {
+                $importedItems[] = $typeClassName;
+                $fileName = $typeClassName; //$this->utils->toLispCase($typeClassName);
+                $result = "import { {$typeClassName} } from '{$enumPath}{$fileName}';";
+            }
+            break;
             case KalturaServerTypes::Object:
             case KalturaServerTypes::ArrayOfObjects:
             case KalturaServerTypes::MapOfObjects:
-                if (!in_array($typeClassName, $importedItems)) {
+                if (!in_array($typeClassName,$importedItems)) {
                     $importedItems[] = $typeClassName;
 
-                    if ($typeClassName === 'KalturaObjectBase') {
+                    if ($typeClassName === 'KalturaObjectBase')
+                    {
                         $typesPath = "../";
                         $fileName = $this->utils->toLispCase($typeClassName);
-                    } else {
+                    }else
+                    {
                         $fileName = $typeClassName; //$this->utils->toLispCase($typeClassName);
 
                     }
@@ -577,7 +597,7 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
     {
         $neededObject = array_filter(
             $array,
-            function ($e) {
+            function ($e)  {
                 return !$e->optional;
             }
         );
@@ -587,7 +607,8 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
 
     protected function toNG2TypeExp($type, $typeClassName, $resultCreatedCallback = null)
     {
-        return parent::toNG2TypeExp($type, $typeClassName, function ($type, $typeClassName, $result) {
+        return parent::toNG2TypeExp($type,$typeClassName,function($type,$typeClassName,$result)
+        {
             return $result;
         });
     }
