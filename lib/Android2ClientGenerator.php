@@ -17,14 +17,15 @@ class Android2ClientGenerator extends Java2ClientGenerator
 		$sourcePath = realpath($sourcePath);
         $destPath = $this->normalizeSlashes($destPath);
         
-        echo "Adding files from [$sourcePath] to [$destPath].";
+        KalturaLog::info("Adding files from [$sourcePath] to [$destPath].");
 		$this->addSourceFiles($sourcePath, $sourcePath . DIRECTORY_SEPARATOR, $destPath);
 	}
 	
 	public function generate() 
 	{
-		$this->addFiles("sources/java2/src", "KalturaClient/src/");
-        $this->addFiles("{$this->testsPath}/java2/src", "KalturaClient/src/");
+        $this->addFiles("sources/java2/src", "KalturaClient/src/");
+        $this->addFiles("tests/{$this->$testsDir}/java2/src", "KalturaClient/src/");
+
 		parent::generate();
 	}
 
