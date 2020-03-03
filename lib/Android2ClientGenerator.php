@@ -15,7 +15,9 @@ class Android2ClientGenerator extends Java2ClientGenerator
 	protected function addFiles($sourcePath, $destPath)
 	{
 		$sourcePath = realpath($sourcePath);
-		$destPath = $this->normalizeSlashes($destPath);
+        $destPath = $this->normalizeSlashes($destPath);
+        
+        KalturaLog::info("Adding files from: $sourcePath to: $destPath");
 		$this->addSourceFiles($sourcePath, $sourcePath . DIRECTORY_SEPARATOR, $destPath);
 	}
 	
