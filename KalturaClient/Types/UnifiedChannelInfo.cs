@@ -25,14 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class ObjectVirtualAssetInfoType : StringEnum
-	{
-		public static readonly ObjectVirtualAssetInfoType SUBSCRIPTION = new ObjectVirtualAssetInfoType("Subscription");
-		public static readonly ObjectVirtualAssetInfoType SEGMENT = new ObjectVirtualAssetInfoType("Segment");
-		public static readonly ObjectVirtualAssetInfoType CATEGORY = new ObjectVirtualAssetInfoType("Category");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private ObjectVirtualAssetInfoType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class UnifiedChannelInfo : UnifiedChannel
+	{
+		#region Constants
+		public const string NAME = "name";
+		#endregion
+
+		#region Private Fields
+		private string _Name = null;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public string Name
+		{
+			get { return _Name; }
+			set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public UnifiedChannelInfo()
+		{
+		}
+
+		public UnifiedChannelInfo(JToken node) : base(node)
+		{
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaUnifiedChannelInfo");
+			kparams.AddIfNotNull("name", this._Name);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case NAME:
+					return "Name";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

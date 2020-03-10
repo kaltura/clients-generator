@@ -233,6 +233,10 @@ namespace Kaltura
 		public static string RelatedEntitiesExceedLimitation = "4087";
 		public static string AccountEpgIngestVersionDoesNotSupportBulk = "4088";
 		public static string CanNotDeleteObjectVirtualAssetMeta = "4090";
+		public static string CategoryNotExist = "4091";
+		public static string ChildCategoryNotExist = "4092";
+		public static string ChildCategoryAlreadyBelongsToAnotherCategory = "4093";
+		public static string ChildCategoryCannotBeTheCategoryItself = "4094";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -326,8 +330,8 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentMethodExternalIdRequired = "6051";
-		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
+		public static string PaymentGatewaySuspended = "6051";
+		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
@@ -443,6 +447,7 @@ namespace Kaltura
 		public static string UnableToCreateHouseholdForRole = "500062";
 		public static string HttpMethodNotSupported = "500065";
 		public static string PropertyIsOpcSupported = "500082";
+		public static string KeyCannotBeEmptyOrNull = "500086";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";

@@ -27,12 +27,14 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class ObjectVirtualAssetInfoType : StringEnum
+	public sealed class CategoryItemOrderBy : StringEnum
 	{
-		public static readonly ObjectVirtualAssetInfoType SUBSCRIPTION = new ObjectVirtualAssetInfoType("Subscription");
-		public static readonly ObjectVirtualAssetInfoType SEGMENT = new ObjectVirtualAssetInfoType("Segment");
-		public static readonly ObjectVirtualAssetInfoType CATEGORY = new ObjectVirtualAssetInfoType("Category");
+		public static readonly CategoryItemOrderBy NAME_ASC = new CategoryItemOrderBy("NAME_ASC");
+		public static readonly CategoryItemOrderBy NAME_DESC = new CategoryItemOrderBy("NAME_DESC");
+		public static readonly CategoryItemOrderBy CREATE_DATE_ASC = new CategoryItemOrderBy("CREATE_DATE_ASC");
+		public static readonly CategoryItemOrderBy CREATE_DATE_DESC = new CategoryItemOrderBy("CREATE_DATE_DESC");
+		public static readonly CategoryItemOrderBy NONE = new CategoryItemOrderBy("NONE");
 
-		private ObjectVirtualAssetInfoType(string name) : base(name) { }
+		private CategoryItemOrderBy(string name) : base(name) { }
 	}
 }

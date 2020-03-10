@@ -27,12 +27,11 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class ObjectVirtualAssetInfoType : StringEnum
+	public sealed class ChannelType : StringEnum
 	{
-		public static readonly ObjectVirtualAssetInfoType SUBSCRIPTION = new ObjectVirtualAssetInfoType("Subscription");
-		public static readonly ObjectVirtualAssetInfoType SEGMENT = new ObjectVirtualAssetInfoType("Segment");
-		public static readonly ObjectVirtualAssetInfoType CATEGORY = new ObjectVirtualAssetInfoType("Category");
+		public static readonly ChannelType INTERNAL = new ChannelType("Internal");
+		public static readonly ChannelType EXTERNAL = new ChannelType("External");
 
-		private ObjectVirtualAssetInfoType(string name) : base(name) { }
+		private ChannelType(string name) : base(name) { }
 	}
 }

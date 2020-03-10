@@ -25,14 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class ObjectVirtualAssetInfoType : StringEnum
-	{
-		public static readonly ObjectVirtualAssetInfoType SUBSCRIPTION = new ObjectVirtualAssetInfoType("Subscription");
-		public static readonly ObjectVirtualAssetInfoType SEGMENT = new ObjectVirtualAssetInfoType("Segment");
-		public static readonly ObjectVirtualAssetInfoType CATEGORY = new ObjectVirtualAssetInfoType("Category");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private ObjectVirtualAssetInfoType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class CategoryItemAncestorsFilter : CategoryItemFilter
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		#region Private Fields
+		private long _Id = long.MinValue;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public long Id
+		{
+			get { return _Id; }
+			set 
+			{ 
+				_Id = value;
+				OnPropertyChanged("Id");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public CategoryItemAncestorsFilter()
+		{
+		}
+
+		public CategoryItemAncestorsFilter(JToken node) : base(node)
+		{
+			if(node["id"] != null)
+			{
+				this._Id = ParseLong(node["id"].Value<string>());
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaCategoryItemAncestorsFilter");
+			kparams.AddIfNotNull("id", this._Id);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case ID:
+					return "Id";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+
