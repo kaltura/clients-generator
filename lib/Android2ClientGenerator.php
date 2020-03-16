@@ -1,7 +1,7 @@
 <?php
 class Android2ClientGenerator extends Java2ClientGenerator
 {
-    private $_testsDir;
+    private $_testsDir = "";
 
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "android2")
 	{
@@ -16,8 +16,10 @@ class Android2ClientGenerator extends Java2ClientGenerator
 
     public function setTestsPath($testsDir)
     {
+        KalturaLog::info("Android2ClientGenerator setTestsPath.");
         parent::setTestsPath($testsDir);
         $this->_testsDir = $testsDir;
+        KalturaLog::info("Android2ClientGenerator _testsDir: {$this->_testsDir}.");
     }
 
 	protected function addFiles($sourcePath, $destPath)
@@ -30,10 +32,10 @@ class Android2ClientGenerator extends Java2ClientGenerator
 	
 	public function generate() 
 	{
-		$this->addFiles("sources/java2/src", "KalturaClient/src/");
-        $this->addFiles("tests/{$this->$_testsDir}/java2/src", "KalturaClient/src/");
+        parent::generate();
 
-		parent::generate();
+        $this->addFiles("sources/java2/src", "KalturaClient/src/");
+        $this->addFiles("tests/{$this->$_testsDir}/java2/src", "KalturaClient/src/");
 	}
 
     protected function addFile($fileName, $fileContents, $addLicense = true)

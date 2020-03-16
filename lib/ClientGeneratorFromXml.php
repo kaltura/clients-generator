@@ -416,6 +416,8 @@ abstract class ClientGeneratorFromXml
 
 	public function setTestsPath($testsDir)
 	{
+		KalturaLog::info("ClientGeneratorFromXml setTestsPath.");
+
 		$testsPath = realpath("tests/$testsDir");
 		if(file_exists("$testsPath/{$this->_sourceName}"))
 		{
