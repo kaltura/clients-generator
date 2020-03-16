@@ -89,6 +89,7 @@ require_once(__DIR__ . '/lib/typescript/EnumsGenerator.php');
 require_once(__DIR__ . '/lib/typescript/IndexFilesGenerator.php');
 require_once(__DIR__ . '/lib/TypescriptClientGenerator.php');
 require_once(__DIR__ . '/lib/NGXClientGenerator.php');
+require_once(__DIR__ . '/lib/NestJsClientGenerator.php');
 
 //the name of the summary file that will be used by the UI -
 $summaryFileName = 'summary.kinf';

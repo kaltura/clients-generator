@@ -156,7 +156,7 @@ export const environment: Environment = {
 
     function createClassFile(ClassType $class)
     {
-        $isAngularFramework = $this->framework === 'ngx';
+        $useTypesMapping = $this->framework === 'ngx' || $this->framework === 'nestjs';
 
         $createClassArgs = new stdClass();
         $createClassArgs->name = $class->name;
@@ -176,8 +176,7 @@ export const environment: Environment = {
 
         $classFunctionName = ucfirst($class->name);
         $imports = "";
-        if($isAngularFramework)
-        {
+        if ($useTypesMapping) {
             $imports .= "import { KalturaObjectMetadata, typesMappingStorage } from '../kaltura-object-base';";
         } else {
             $imports .= "import { KalturaObjectMetadata } from '../kaltura-object-base';
@@ -189,13 +188,12 @@ import { KalturaTypesFactory } from '../kaltura-types-factory';";
 
 {$generatedCode[1]}
 ";
-        if($isAngularFramework)
-        {
-			$fileContent .= "typesMappingStorage['$class->name'] = $classFunctionName;";
-		} else {
-			$fileContent .= "KalturaTypesFactory.registerType('$class->name',$classFunctionName);
+        if ($useTypesMapping) {
+            $fileContent .= "typesMappingStorage['$class->name'] = $classFunctionName;";
+        } else {
+            $fileContent .= "KalturaTypesFactory.registerType('$class->name',$classFunctionName);
 ";
-		}
+        }
 
         $file = new GeneratedFileData();
         $fileName = $class->name; //$this->utils->toLispCase($class->name);
