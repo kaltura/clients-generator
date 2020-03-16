@@ -16,10 +16,8 @@ class Android2ClientGenerator extends Java2ClientGenerator
 
     public function setTestsPath($testsDir)
     {
-        KalturaLog::info("Android2ClientGenerator setTestsPath.");
         parent::setTestsPath($testsDir);
         $this->_testsDir = $testsDir;
-        KalturaLog::info("Android2ClientGenerator _testsDir: {$this->_testsDir}.");
     }
 
 	protected function addFiles($sourcePath, $destPath)
