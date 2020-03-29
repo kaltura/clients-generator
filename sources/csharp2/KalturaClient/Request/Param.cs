@@ -97,7 +97,7 @@ namespace Kaltura.Request
                 case PARAM_TYPE_LONG:
                     return _LongValue.ToString();
                 case PARAM_TYPE_FLOAT:
-                    return String.Format(CultureInfo.InvariantCulture,"{0:F20}", _FloatValue);
+                    return String.Format(Math.Round((decimal)_FloatValue, 20).ToString(CultureInfo.InvariantCulture));
                 case PARAM_TYPE_STRING:
                 default:
                     return "\"" + _Value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\t", "\\t").Replace("\n", "\\n") + "\"";
