@@ -55,6 +55,7 @@ namespace Kaltura.Types
 		public const string MAIL_SENDER_NAME = "mailSenderName";
 		public const string MAIL_NOTIFICATION_ADAPTER_ID = "mailNotificationAdapterId";
 		public const string SMS_ENABLED = "smsEnabled";
+		public const string IOT_ENABLED = "iotEnabled";
 		#endregion
 
 		#region Private Fields
@@ -75,6 +76,7 @@ namespace Kaltura.Types
 		private string _MailSenderName = null;
 		private long _MailNotificationAdapterId = long.MinValue;
 		private bool? _SmsEnabled = null;
+		private bool? _IotEnabled = null;
 		#endregion
 
 		#region Properties
@@ -248,6 +250,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("SmsEnabled");
 			}
 		}
+		[JsonProperty]
+		public bool? IotEnabled
+		{
+			get { return _IotEnabled; }
+			set 
+			{ 
+				_IotEnabled = value;
+				OnPropertyChanged("IotEnabled");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -325,6 +337,10 @@ namespace Kaltura.Types
 			{
 				this._SmsEnabled = ParseBool(node["smsEnabled"].Value<string>());
 			}
+			if(node["iotEnabled"] != null)
+			{
+				this._IotEnabled = ParseBool(node["iotEnabled"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -351,6 +367,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("mailSenderName", this._MailSenderName);
 			kparams.AddIfNotNull("mailNotificationAdapterId", this._MailNotificationAdapterId);
 			kparams.AddIfNotNull("smsEnabled", this._SmsEnabled);
+			kparams.AddIfNotNull("iotEnabled", this._IotEnabled);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -391,6 +408,8 @@ namespace Kaltura.Types
 					return "MailNotificationAdapterId";
 				case SMS_ENABLED:
 					return "SmsEnabled";
+				case IOT_ENABLED:
+					return "IotEnabled";
 				default:
 					return base.getPropertyName(apiName);
 			}

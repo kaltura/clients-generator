@@ -25,19 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class PartnerConfigurationType : StringEnum
-	{
-		public static readonly PartnerConfigurationType DEFAULTPAYMENTGATEWAY = new PartnerConfigurationType("DefaultPaymentGateway");
-		public static readonly PartnerConfigurationType ENABLEPAYMENTGATEWAYSELECTION = new PartnerConfigurationType("EnablePaymentGatewaySelection");
-		public static readonly PartnerConfigurationType OSSADAPTER = new PartnerConfigurationType("OSSAdapter");
-		public static readonly PartnerConfigurationType CONCURRENCY = new PartnerConfigurationType("Concurrency");
-		public static readonly PartnerConfigurationType GENERAL = new PartnerConfigurationType("General");
-		public static readonly PartnerConfigurationType OBJECTVIRTUALASSET = new PartnerConfigurationType("ObjectVirtualAsset");
-		public static readonly PartnerConfigurationType COMMERCE = new PartnerConfigurationType("Commerce");
-		public static readonly PartnerConfigurationType PLAYBACK = new PartnerConfigurationType("Playback");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private PartnerConfigurationType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class IotFilter : CrudFilter
+	{
+		#region Constants
+		public new const string ORDER_BY = "orderBy";
+		#endregion
+
+		#region Private Fields
+		private IotOrderBy _OrderBy = null;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public new IotOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public IotFilter()
+		{
+		}
+
+		public IotFilter(JToken node) : base(node)
+		{
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (IotOrderBy)StringEnum.Parse(typeof(IotOrderBy), node["orderBy"].Value<string>());
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaIotFilter");
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case ORDER_BY:
+					return "OrderBy";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

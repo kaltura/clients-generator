@@ -390,6 +390,7 @@ namespace Kaltura
 		public static string AdapterIdentifierRequired = "10001";
 		public static string AdapterIsRequired = "10002";
 		public static string NoAdapterToInsert = "10003";
+		public static string CanNotDeleteDefaultAdapter = "10004";
 		public static string IllegalXml = "11000";
 		public static string MissingExternalIdentifier = "11001";
 		public static string UnknownIngestType = "11002";

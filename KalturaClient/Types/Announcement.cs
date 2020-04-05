@@ -51,6 +51,7 @@ namespace Kaltura.Types
 		public const string MAIL_TEMPLATE = "mailTemplate";
 		public const string MAIL_SUBJECT = "mailSubject";
 		public const string INCLUDE_SMS = "includeSms";
+		public const string INCLUDE_IOT = "includeIot";
 		#endregion
 
 		#region Private Fields
@@ -67,6 +68,7 @@ namespace Kaltura.Types
 		private string _MailTemplate = null;
 		private string _MailSubject = null;
 		private bool? _IncludeSms = null;
+		private bool? _IncludeIot = null;
 		#endregion
 
 		#region Properties
@@ -200,6 +202,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("IncludeSms");
 			}
 		}
+		[JsonProperty]
+		public bool? IncludeIot
+		{
+			get { return _IncludeIot; }
+			set 
+			{ 
+				_IncludeIot = value;
+				OnPropertyChanged("IncludeIot");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -261,6 +273,10 @@ namespace Kaltura.Types
 			{
 				this._IncludeSms = ParseBool(node["includeSms"].Value<string>());
 			}
+			if(node["includeIot"] != null)
+			{
+				this._IncludeIot = ParseBool(node["includeIot"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -283,6 +299,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("mailTemplate", this._MailTemplate);
 			kparams.AddIfNotNull("mailSubject", this._MailSubject);
 			kparams.AddIfNotNull("includeSms", this._IncludeSms);
+			kparams.AddIfNotNull("includeIot", this._IncludeIot);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -315,6 +332,8 @@ namespace Kaltura.Types
 					return "MailSubject";
 				case INCLUDE_SMS:
 					return "IncludeSms";
+				case INCLUDE_IOT:
+					return "IncludeIot";
 				default:
 					return base.getPropertyName(apiName);
 			}
