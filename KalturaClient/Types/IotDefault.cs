@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class Default : ObjectBase
+	public class IotDefault : ObjectBase
 	{
 		#region Constants
 		public const string POOL_ID = "poolId";
@@ -83,11 +83,11 @@ namespace Kaltura.Types
 		#endregion
 
 		#region CTor
-		public Default()
+		public IotDefault()
 		{
 		}
 
-		public Default(JToken node) : base(node)
+		public IotDefault(JToken node) : base(node)
 		{
 			if(node["poolId"] != null)
 			{
@@ -109,7 +109,7 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDefault");
+				kparams.AddReplace("objectType", "KalturaIotDefault");
 			kparams.AddIfNotNull("poolId", this._PoolId);
 			kparams.AddIfNotNull("region", this._Region);
 			kparams.AddIfNotNull("appClientId", this._AppClientId);

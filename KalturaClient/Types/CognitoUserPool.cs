@@ -38,22 +38,22 @@ namespace Kaltura.Types
 	public class CognitoUserPool : ObjectBase
 	{
 		#region Constants
-		public const string DEFAULT = "default";
+		public const string IOT_DEFAULT = "iotDefault";
 		#endregion
 
 		#region Private Fields
-		private Default _Default;
+		private IotDefault _IotDefault;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public Default Default
+		public IotDefault IotDefault
 		{
-			get { return _Default; }
+			get { return _IotDefault; }
 			set 
 			{ 
-				_Default = value;
-				OnPropertyChanged("Default");
+				_IotDefault = value;
+				OnPropertyChanged("IotDefault");
 			}
 		}
 		#endregion
@@ -65,9 +65,9 @@ namespace Kaltura.Types
 
 		public CognitoUserPool(JToken node) : base(node)
 		{
-			if(node["default"] != null)
+			if(node["iotDefault"] != null)
 			{
-				this._Default = ObjectFactory.Create<Default>(node["default"]);
+				this._IotDefault = ObjectFactory.Create<IotDefault>(node["iotDefault"]);
 			}
 		}
 		#endregion
@@ -78,15 +78,15 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaCognitoUserPool");
-			kparams.AddIfNotNull("default", this._Default);
+			kparams.AddIfNotNull("iotDefault", this._IotDefault);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case DEFAULT:
-					return "Default";
+				case IOT_DEFAULT:
+					return "IotDefault";
 				default:
 					return base.getPropertyName(apiName);
 			}
