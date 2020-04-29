@@ -308,7 +308,8 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 			options.headers['Content-Type'] = 'multipart/form-data; boundary=' + boundary;
 		}
 		else {
-			body = jsonBody;
+			options.json = true;
+			body = JSON.parse(jsonBody);
 		}
 
 		options.headers['Content-Length'] = body.length;
@@ -334,16 +335,20 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 					sessionId = response.headers[header];
 				}
 			}
-			client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + data);
-
+			
 			let json;
-			try {
-				json = JSON.parse(data);
-			} catch (err) {
-				json = {
-					error: err
+			if (typeof data === 'string') {
+				client.debug('Response server (Str) [' + serverId + '] session [' + sessionId + ']: ' + data);
+				try {
+					json = JSON.parse(data);
+				} catch (err) {
+					json = data; //handle cases where Kaltura returns non JSON formatted responses like KS or serve
 				}
+			} else {
+				client.debug('Response server (Json) [' + serverId + '] session [' + sessionId + ']: ' + JSON.stringify(data));
+				json = data;
 			}
+		
 			if (json && typeof (json) === 'object' && json.code && json.message) {
 				if (callback) {
 					callback(false, json);
