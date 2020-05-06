@@ -18,6 +18,11 @@ For example, to generate php53 run:
 php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml php53
 ```
 
+For example generation of typescript for ott:
+```shell script
+php exec.php -tott typescript ./output
+```
+
 To generate all available clients, run:
 ```
 while read CLIENT;do php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml $CLIENT;done < /opt/kaltura/clients-generator/config/generator.all.ini
