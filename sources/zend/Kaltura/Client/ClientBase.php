@@ -907,7 +907,7 @@ class Kaltura_Client_ClientBase
                 OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING,
                 $iv
             );
-        } else if (function_exists('mcrypt_encrypt')) {
+        } else {
             return mcrypt_encrypt(
                 MCRYPT_RIJNDAEL_128,
                 $key,
