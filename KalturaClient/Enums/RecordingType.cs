@@ -32,6 +32,7 @@ namespace Kaltura.Enums
 		public static readonly RecordingType SINGLE = new RecordingType("SINGLE");
 		public static readonly RecordingType SEASON = new RecordingType("SEASON");
 		public static readonly RecordingType SERIES = new RecordingType("SERIES");
+		public static readonly RecordingType ORIGINALBROADCAST = new RecordingType("OriginalBroadcast");
 
 		private RecordingType(string name) : base(name) { }
 	}

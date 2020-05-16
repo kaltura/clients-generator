@@ -155,6 +155,50 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class SsoAdapterProfileInvokeRequestBuilder : RequestBuilder<SSOAdapterProfileInvoke>
+	{
+		#region Constants
+		public const string INTENT = "intent";
+		public const string ADAPTER_DATA = "adapterData";
+		#endregion
+
+		public string Intent { get; set; }
+		public IList<KeyValue> AdapterData { get; set; }
+
+		public SsoAdapterProfileInvokeRequestBuilder()
+			: base("ssoadapterprofile", "invoke")
+		{
+		}
+
+		public SsoAdapterProfileInvokeRequestBuilder(string intent, IList<KeyValue> adapterData)
+			: this()
+		{
+			this.Intent = intent;
+			this.AdapterData = adapterData;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("intent"))
+				kparams.AddIfNotNull("intent", Intent);
+			if (!isMapped("adapterData"))
+				kparams.AddIfNotNull("adapterData", AdapterData);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<SSOAdapterProfileInvoke>(result);
+		}
+	}
+
 	public class SsoAdapterProfileListRequestBuilder : RequestBuilder<ListResponse<SSOAdapterProfile>>
 	{
 		#region Constants
@@ -248,6 +292,11 @@ namespace Kaltura.Services
 		public static SsoAdapterProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int ssoAdapterId)
 		{
 			return new SsoAdapterProfileGenerateSharedSecretRequestBuilder(ssoAdapterId);
+		}
+
+		public static SsoAdapterProfileInvokeRequestBuilder Invoke(string intent, IList<KeyValue> adapterData)
+		{
+			return new SsoAdapterProfileInvokeRequestBuilder(intent, adapterData);
 		}
 
 		public static SsoAdapterProfileListRequestBuilder List()
