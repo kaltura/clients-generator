@@ -156,7 +156,8 @@ export const environment: Environment = {
 
     function createClassFile(ClassType $class)
     {
-        $useTypesMapping = $this->framework === 'ngx' || $this->framework === 'nestjs';
+        // TODO we need to figure out why those frameworks are using different factory implementation
+        $useTypesMapping = $this->framework === 'ngx' || $this->framework === 'nestjs' || $this->framework === 'rxjs';
 
         $createClassArgs = new stdClass();
         $createClassArgs->name = $class->name;
