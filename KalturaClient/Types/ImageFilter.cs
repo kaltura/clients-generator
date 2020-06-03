@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string IMAGE_OBJECT_ID_EQUAL = "imageObjectIdEqual";
 		public const string IMAGE_OBJECT_TYPE_EQUAL = "imageObjectTypeEqual";
 		public const string IS_DEFAULT_EQUAL = "isDefaultEqual";
+		public const string IMAGE_OBJECT_ID_IN = "imageObjectIdIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -50,6 +51,7 @@ namespace Kaltura.Types
 		private long _ImageObjectIdEqual = long.MinValue;
 		private ImageObjectType _ImageObjectTypeEqual = null;
 		private bool? _IsDefaultEqual = null;
+		private string _ImageObjectIdIn = null;
 		private ImageOrderBy _OrderBy = null;
 		#endregion
 
@@ -95,6 +97,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public string ImageObjectIdIn
+		{
+			get { return _ImageObjectIdIn; }
+			set 
+			{ 
+				_ImageObjectIdIn = value;
+				OnPropertyChanged("ImageObjectIdIn");
+			}
+		}
+		[JsonProperty]
 		public new ImageOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -129,6 +141,10 @@ namespace Kaltura.Types
 			{
 				this._IsDefaultEqual = ParseBool(node["isDefaultEqual"].Value<string>());
 			}
+			if(node["imageObjectIdIn"] != null)
+			{
+				this._ImageObjectIdIn = node["imageObjectIdIn"].Value<string>();
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (ImageOrderBy)StringEnum.Parse(typeof(ImageOrderBy), node["orderBy"].Value<string>());
@@ -146,6 +162,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("imageObjectIdEqual", this._ImageObjectIdEqual);
 			kparams.AddIfNotNull("imageObjectTypeEqual", this._ImageObjectTypeEqual);
 			kparams.AddIfNotNull("isDefaultEqual", this._IsDefaultEqual);
+			kparams.AddIfNotNull("imageObjectIdIn", this._ImageObjectIdIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -161,6 +178,8 @@ namespace Kaltura.Types
 					return "ImageObjectTypeEqual";
 				case IS_DEFAULT_EQUAL:
 					return "IsDefaultEqual";
+				case IMAGE_OBJECT_ID_IN:
+					return "ImageObjectIdIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

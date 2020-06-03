@@ -35,24 +35,40 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CrudObject : OTTObjectSupportNullable
+	public class ExternalChannelProfileFilter : Filter
 	{
 		#region Constants
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
+		private ExternalChannelProfileOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public new ExternalChannelProfileOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public CrudObject()
+		public ExternalChannelProfileFilter()
 		{
 		}
 
-		public CrudObject(JToken node) : base(node)
+		public ExternalChannelProfileFilter(JToken node) : base(node)
 		{
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ExternalChannelProfileOrderBy)StringEnum.Parse(typeof(ExternalChannelProfileOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -61,13 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCrudObject");
+				kparams.AddReplace("objectType", "KalturaExternalChannelProfileFilter");
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

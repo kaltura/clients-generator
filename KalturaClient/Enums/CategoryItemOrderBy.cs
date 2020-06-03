@@ -34,6 +34,8 @@ namespace Kaltura.Enums
 		public static readonly CategoryItemOrderBy CREATE_DATE_ASC = new CategoryItemOrderBy("CREATE_DATE_ASC");
 		public static readonly CategoryItemOrderBy CREATE_DATE_DESC = new CategoryItemOrderBy("CREATE_DATE_DESC");
 		public static readonly CategoryItemOrderBy NONE = new CategoryItemOrderBy("NONE");
+		public static readonly CategoryItemOrderBy UPDATE_DATE_ASC = new CategoryItemOrderBy("UPDATE_DATE_ASC");
+		public static readonly CategoryItemOrderBy UPDATE_DATE_DESC = new CategoryItemOrderBy("UPDATE_DATE_DESC");
 
 		private CategoryItemOrderBy(string name) : base(name) { }
 	}

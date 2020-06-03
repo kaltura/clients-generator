@@ -35,24 +35,40 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CrudObject : OTTObjectSupportNullable
+	public class ExternalChannelProfileByIdInFilter : ExternalChannelProfileFilter
 	{
 		#region Constants
+		public const string ID_IN = "idIn";
 		#endregion
 
 		#region Private Fields
+		private string _IdIn = null;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public string IdIn
+		{
+			get { return _IdIn; }
+			set 
+			{ 
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public CrudObject()
+		public ExternalChannelProfileByIdInFilter()
 		{
 		}
 
-		public CrudObject(JToken node) : base(node)
+		public ExternalChannelProfileByIdInFilter(JToken node) : base(node)
 		{
+			if(node["idIn"] != null)
+			{
+				this._IdIn = node["idIn"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -61,13 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCrudObject");
+				kparams.AddReplace("objectType", "KalturaExternalChannelProfileByIdInFilter");
+			kparams.AddIfNotNull("idIn", this._IdIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case ID_IN:
+					return "IdIn";
 				default:
 					return base.getPropertyName(apiName);
 			}

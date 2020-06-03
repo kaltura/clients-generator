@@ -35,24 +35,40 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CrudObject : OTTObjectSupportNullable
+	public class ExternalRecordingResponseProfileFilter : RelatedObjectFilter
 	{
 		#region Constants
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
+		private ExternalRecordingResponseProfileOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public new ExternalRecordingResponseProfileOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public CrudObject()
+		public ExternalRecordingResponseProfileFilter()
 		{
 		}
 
-		public CrudObject(JToken node) : base(node)
+		public ExternalRecordingResponseProfileFilter(JToken node) : base(node)
 		{
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (ExternalRecordingResponseProfileOrderBy)StringEnum.Parse(typeof(ExternalRecordingResponseProfileOrderBy), node["orderBy"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -61,13 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCrudObject");
+				kparams.AddReplace("objectType", "KalturaExternalRecordingResponseProfileFilter");
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

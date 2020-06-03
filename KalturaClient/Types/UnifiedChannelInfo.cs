@@ -39,10 +39,14 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string NAME = "name";
+		public const string START_DATE_IN_SECONDS = "startDateInSeconds";
+		public const string END_DATE_IN_SECONDS = "endDateInSeconds";
 		#endregion
 
 		#region Private Fields
 		private string _Name = null;
+		private long _StartDateInSeconds = long.MinValue;
+		private long _EndDateInSeconds = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -54,6 +58,26 @@ namespace Kaltura.Types
 			{ 
 				_Name = value;
 				OnPropertyChanged("Name");
+			}
+		}
+		[JsonProperty]
+		public long StartDateInSeconds
+		{
+			get { return _StartDateInSeconds; }
+			set 
+			{ 
+				_StartDateInSeconds = value;
+				OnPropertyChanged("StartDateInSeconds");
+			}
+		}
+		[JsonProperty]
+		public long EndDateInSeconds
+		{
+			get { return _EndDateInSeconds; }
+			set 
+			{ 
+				_EndDateInSeconds = value;
+				OnPropertyChanged("EndDateInSeconds");
 			}
 		}
 		#endregion
@@ -69,6 +93,14 @@ namespace Kaltura.Types
 			{
 				this._Name = node["name"].Value<string>();
 			}
+			if(node["startDateInSeconds"] != null)
+			{
+				this._StartDateInSeconds = ParseLong(node["startDateInSeconds"].Value<string>());
+			}
+			if(node["endDateInSeconds"] != null)
+			{
+				this._EndDateInSeconds = ParseLong(node["endDateInSeconds"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -79,6 +111,8 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaUnifiedChannelInfo");
 			kparams.AddIfNotNull("name", this._Name);
+			kparams.AddIfNotNull("startDateInSeconds", this._StartDateInSeconds);
+			kparams.AddIfNotNull("endDateInSeconds", this._EndDateInSeconds);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -87,6 +121,10 @@ namespace Kaltura.Types
 			{
 				case NAME:
 					return "Name";
+				case START_DATE_IN_SECONDS:
+					return "StartDateInSeconds";
+				case END_DATE_IN_SECONDS:
+					return "EndDateInSeconds";
 				default:
 					return base.getPropertyName(apiName);
 			}

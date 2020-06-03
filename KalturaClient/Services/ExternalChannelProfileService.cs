@@ -119,17 +119,27 @@ namespace Kaltura.Services
 	public class ExternalChannelProfileListRequestBuilder : RequestBuilder<ListResponse<ExternalChannelProfile>>
 	{
 		#region Constants
+		public const string FILTER = "filter";
 		#endregion
 
+		public ExternalChannelProfileFilter Filter { get; set; }
 
 		public ExternalChannelProfileListRequestBuilder()
 			: base("externalchannelprofile", "list")
 		{
 		}
 
+		public ExternalChannelProfileListRequestBuilder(ExternalChannelProfileFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -206,9 +216,9 @@ namespace Kaltura.Services
 			return new ExternalChannelProfileDeleteRequestBuilder(externalChannelId);
 		}
 
-		public static ExternalChannelProfileListRequestBuilder List()
+		public static ExternalChannelProfileListRequestBuilder List(ExternalChannelProfileFilter filter = null)
 		{
-			return new ExternalChannelProfileListRequestBuilder();
+			return new ExternalChannelProfileListRequestBuilder(filter);
 		}
 
 		public static ExternalChannelProfileUpdateRequestBuilder Update(int externalChannelId, ExternalChannelProfile externalChannel)

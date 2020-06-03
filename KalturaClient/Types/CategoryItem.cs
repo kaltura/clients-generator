@@ -46,6 +46,9 @@ namespace Kaltura.Types
 		public const string UNIFIED_CHANNELS = "unifiedChannels";
 		public const string DYNAMIC_DATA = "dynamicData";
 		public const string UPDATE_DATE = "updateDate";
+		public const string IS_ACTIVE = "isActive";
+		public const string START_DATE_IN_SECONDS = "startDateInSeconds";
+		public const string END_DATE_IN_SECONDS = "endDateInSeconds";
 		#endregion
 
 		#region Private Fields
@@ -57,6 +60,9 @@ namespace Kaltura.Types
 		private IList<UnifiedChannel> _UnifiedChannels;
 		private IDictionary<string, StringValue> _DynamicData;
 		private long _UpdateDate = long.MinValue;
+		private bool? _IsActive = null;
+		private long _StartDateInSeconds = long.MinValue;
+		private long _EndDateInSeconds = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -140,6 +146,36 @@ namespace Kaltura.Types
 				OnPropertyChanged("UpdateDate");
 			}
 		}
+		[JsonProperty]
+		public bool? IsActive
+		{
+			get { return _IsActive; }
+			set 
+			{ 
+				_IsActive = value;
+				OnPropertyChanged("IsActive");
+			}
+		}
+		[JsonProperty]
+		public long StartDateInSeconds
+		{
+			get { return _StartDateInSeconds; }
+			set 
+			{ 
+				_StartDateInSeconds = value;
+				OnPropertyChanged("StartDateInSeconds");
+			}
+		}
+		[JsonProperty]
+		public long EndDateInSeconds
+		{
+			get { return _EndDateInSeconds; }
+			set 
+			{ 
+				_EndDateInSeconds = value;
+				OnPropertyChanged("EndDateInSeconds");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -197,6 +233,18 @@ namespace Kaltura.Types
 			{
 				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
 			}
+			if(node["isActive"] != null)
+			{
+				this._IsActive = ParseBool(node["isActive"].Value<string>());
+			}
+			if(node["startDateInSeconds"] != null)
+			{
+				this._StartDateInSeconds = ParseLong(node["startDateInSeconds"].Value<string>());
+			}
+			if(node["endDateInSeconds"] != null)
+			{
+				this._EndDateInSeconds = ParseLong(node["endDateInSeconds"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -214,6 +262,9 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("unifiedChannels", this._UnifiedChannels);
 			kparams.AddIfNotNull("dynamicData", this._DynamicData);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("isActive", this._IsActive);
+			kparams.AddIfNotNull("startDateInSeconds", this._StartDateInSeconds);
+			kparams.AddIfNotNull("endDateInSeconds", this._EndDateInSeconds);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -236,6 +287,12 @@ namespace Kaltura.Types
 					return "DynamicData";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case IS_ACTIVE:
+					return "IsActive";
+				case START_DATE_IN_SECONDS:
+					return "StartDateInSeconds";
+				case END_DATE_IN_SECONDS:
+					return "EndDateInSeconds";
 				default:
 					return base.getPropertyName(apiName);
 			}

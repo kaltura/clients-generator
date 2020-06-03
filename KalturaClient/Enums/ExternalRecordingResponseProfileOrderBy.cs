@@ -25,54 +25,12 @@
 //
 // @ignore
 // ===================================================================================================
-using System;
-using System.Xml;
-using System.Collections.Generic;
-using Kaltura.Enums;
-using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Kaltura.Types
+namespace Kaltura.Enums
 {
-	public class CrudObject : OTTObjectSupportNullable
+	public sealed class ExternalRecordingResponseProfileOrderBy : StringEnum
 	{
-		#region Constants
-		#endregion
+		public static readonly ExternalRecordingResponseProfileOrderBy NONE = new ExternalRecordingResponseProfileOrderBy("NONE");
 
-		#region Private Fields
-		#endregion
-
-		#region Properties
-		#endregion
-
-		#region CTor
-		public CrudObject()
-		{
-		}
-
-		public CrudObject(JToken node) : base(node)
-		{
-		}
-		#endregion
-
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
-		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCrudObject");
-			return kparams;
-		}
-		protected override string getPropertyName(string apiName)
-		{
-			switch(apiName)
-			{
-				default:
-					return base.getPropertyName(apiName);
-			}
-		}
-		#endregion
+		private ExternalRecordingResponseProfileOrderBy(string name) : base(name) { }
 	}
 }
-
