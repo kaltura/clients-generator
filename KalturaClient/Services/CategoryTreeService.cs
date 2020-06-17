@@ -84,19 +84,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string CATEGORY_ITEM_ID = "categoryItemId";
+		public const string FILTER = "filter";
 		#endregion
 
 		public long CategoryItemId { get; set; }
+		public bool Filter { get; set; }
 
 		public CategoryTreeGetRequestBuilder()
 			: base("categorytree", "get")
 		{
 		}
 
-		public CategoryTreeGetRequestBuilder(long categoryItemId)
+		public CategoryTreeGetRequestBuilder(long categoryItemId, bool filter)
 			: this()
 		{
 			this.CategoryItemId = categoryItemId;
+			this.Filter = filter;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -104,6 +107,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("categoryItemId"))
 				kparams.AddIfNotNull("categoryItemId", CategoryItemId);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -131,9 +136,9 @@ namespace Kaltura.Services
 			return new CategoryTreeDuplicateRequestBuilder(categoryItemId, name);
 		}
 
-		public static CategoryTreeGetRequestBuilder Get(long categoryItemId)
+		public static CategoryTreeGetRequestBuilder Get(long categoryItemId, bool filter)
 		{
-			return new CategoryTreeGetRequestBuilder(categoryItemId);
+			return new CategoryTreeGetRequestBuilder(categoryItemId, filter);
 		}
 	}
 }
