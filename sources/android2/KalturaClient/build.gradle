@@ -1,13 +1,18 @@
 
 apply plugin: 'com.android.library'
 
+try {
+    apply plugin: 'com.github.dcendents.android-maven'
+} catch (UnknownPluginException ignored) {
+    // That's ok
+}
+
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 28
     }
 
     buildTypes {
@@ -20,30 +25,36 @@ android {
     lintOptions {
         abortOnError false
     }
+}
 
-    sourceSets {
-        main {
-            java {
-                srcDirs = ['src/main/java']
-            }
-        }
+// Build a jar with source files
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
 
-        test {
-            java {
-                srcDirs = ['src/test/java']
-            }
-        }
-    }
+// Build Javadoc
+task javadoc(type: Javadoc) {
+    println("🔴🔵️ Note: Javadoc generation creates a lot of classpath errors, but they are harmless 🔵🔴")
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+// Build a jar with Javadoc
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+// Includes sources and javadoc in the publication
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'commons-codec:commons-codec:1.4'
-    compile 'org.codeartisans:org.json:20130603'
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.squareup.okio:okio:1.12.0'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.awaitility:awaitility:3.0.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
 }
