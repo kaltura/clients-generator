@@ -1,41 +1,66 @@
 import { KalturaClientUtils } from "./kaltura-client-utils";
-import { KalturaLogger } from "./kaltura-logger";
-import { KalturaObjectClass, typesMapping } from "./types-mapping";
+import { KalturaLogger } from './kaltura-logger';
 
-export type DependentProperty = { property: string, request: number, targetPath?: string[] };
+export type DependentProperty = { property : string, request : number, targetPath? : string[] };
 
-export interface KalturaObjectMetadata {
-  properties: { [key: string]: KalturaObjectPropertyMetadata };
+export interface KalturaObjectMetadata
+{
+  properties : { [key : string] : KalturaObjectPropertyMetadata};
 }
 
-export interface KalturaObjectPropertyMetadata {
-  readOnly?: boolean;
-  type: string;
-  subType?: string;
-  default?: string;
-  subTypeConstructor?: { new(): KalturaObjectBase };
+export interface KalturaObjectPropertyMetadata
+{
+  readOnly? : boolean;
+  type : string;
+  subType? : string;
+  default? : string;
+  subTypeConstructor? : { new() : KalturaObjectBase };
 };
 
-export interface KalturaObjectBaseArgs {
-  relatedObjects?: { [key: string]: KalturaObjectBase };
+export interface KalturaObjectBaseArgs
+{
+  relatedObjects? : KalturaObjectBase[];
 }
 
-const logger = new KalturaLogger("KalturaObjectBase");
+const logger = new KalturaLogger('KalturaObjectBase');
+
+export type KalturaObjectClass = { new(...args) : KalturaObjectBase };
+export const typesMappingStorage : { [key : string] : KalturaObjectClass} = {};
+
+export class KalturaObjectBaseFactory {
+  static createObject(type: KalturaObjectBase) : KalturaObjectBase;
+  static createObject(typeName : string) : KalturaObjectBase;
+  static createObject(type : any) : KalturaObjectBase
+  {
+    let typeName = '';
+
+    if (type instanceof KalturaObjectBase)
+    {
+      typeName = type.getTypeName();
+    }else if(typeof type === 'string')
+    {
+      typeName = type;
+    }
+
+    const factory : KalturaObjectClass = typeName ? typesMappingStorage[typeName] : null;
+    return factory ? new factory() : null;
+  }
+}
 
 export abstract class KalturaObjectBase {
 
   private _allowedEmptyArray: string[] = [];
-  private _dependentProperties: { [key: string]: DependentProperty } = {};
-  relatedObjects: { [key: string]: KalturaObjectBase }; // see developer notice in method '_getMetadata()'
+  private _dependentProperties : { [key : string] : DependentProperty} = {};
+  relatedObjects : KalturaObjectBase[]; // see developer notice in method '_getMetadata()'
 
 
-  allowEmptyArray(...properties: string[]): this {
+  allowEmptyArray(... properties: string[]): this {
     const metadata = this._getMetadata().properties;
     for (const property of properties) {
       const metadataProperty = metadata[property];
       if (!metadataProperty) {
         logger.warn(`ignore property '${property}' flaged to allow empty array as it doesn't not exists on type (did you set the right property in method 'allowEmptyArray'?)`);
-      } else if (metadataProperty.type !== "a") {
+      } else if (metadataProperty.type !== 'a') {
         logger.warn(`ignore property '${property}' flaged to allow empty array as it is not of type array (did you set the right property in method 'allowEmptyArray'?)`);
       } else {
         this._allowedEmptyArray.push(property);
@@ -45,62 +70,67 @@ export abstract class KalturaObjectBase {
     return this;
   }
 
-  setData(handler: (request: this) => void): this {
+  setData(handler : (request :  this) => void) :  this {
     if (handler) {
       handler(this);
     }
     return this;
   }
 
-  constructor(data?: {}) {
-    if (data) {
+  constructor(data? : {})
+  {
+    if (data)
+    {
       Object.assign(this, data);
     }
 
-    if (typeof this.relatedObjects === "undefined") this.relatedObjects = {};
+    if (typeof this.relatedObjects === 'undefined') this.relatedObjects = [];
   }
 
-  public getTypeName(): string {
-    return this._getMetadata().properties["objectType"].default;
+  public getTypeName() : string
+  {
+    return this._getMetadata().properties['objectType'].default;
   }
 
-  protected _getMetadata(): KalturaObjectMetadata {
+  protected _getMetadata() : KalturaObjectMetadata
+  {
     // DEVELOPER NOTICE: according to the server schema, property 'relatedObjects' should have be of type 'KalturaListResponse'.
     // this is not an option as it created circle reference where KalturaListResponse > KalturaObjectBase > KalturaListResponse.
     // Hence, we cannot set the type explicitly and we need to expose the default type 'KalturaObjectBase'
-    return {
-      properties: {
-        relatedObjects: {type: "m", readOnly: true, subTypeConstructor: null, subType: "KalturaListResponse"},
-      }
-    };
+    return { properties : {
+      relatedObjects: { type: 'a', readOnly: true, subTypeConstructor : null, subType : 'KalturaListResponse'},
+    }};
   }
 
-  public hasMetadataProperty(propertyName: string): boolean {
+  public hasMetadataProperty(propertyName: string): boolean
+  {
     return !!this._getMetadata().properties[propertyName];
   }
 
-  toRequestObject(): {} {
+  toRequestObject() : {} {
     const metadata = this._getMetadata();
     let result = {};
 
     try {
       Object.keys(metadata.properties).forEach(propertyName => {
-        const propertyData = metadata.properties[propertyName];
+        const propertyData  = metadata.properties[propertyName];
         const propertyValue = this._createRequestPropertyValue(propertyName, propertyData);
 
-        switch (propertyValue.status) {
+        switch (propertyValue.status)
+        {
           case "exists":
             result[propertyName] = propertyValue.value;
             break;
           case "removed":
-            result[`${propertyName}__null`] = ""; // mark property for deletion
+            result[`${propertyName}__null`] = ''; // mark property for deletion
             break;
           case "missing":
           default:
             break;
         }
       });
-    } catch (err) {
+    }catch(err)
+    {
       // TODO [kaltura] should use logHandler
       logger.warn(err.message);
       throw err;
@@ -109,7 +139,7 @@ export abstract class KalturaObjectBase {
     return result;
   }
 
-  fromResponseObject(data: any): {} {
+  fromResponseObject(data : any) : {} {
     const metadata = this._getMetadata();
     let result = {};
 
@@ -118,11 +148,13 @@ export abstract class KalturaObjectBase {
         const propertyData = metadata.properties[propertyName];
         const propertyValue = this._parseResponseProperty(propertyName, propertyData, data);
 
-        if (propertyValue != null && typeof propertyValue !== "undefined") {
+        if (propertyValue != null && typeof propertyValue !== 'undefined')
+        {
           this[propertyName] = propertyValue;
         }
       });
-    } catch (err) {
+    }catch(err)
+    {
       // TODO [kaltura] should use logHandler
       logger.warn(err.message);
       throw err;
@@ -132,57 +164,61 @@ export abstract class KalturaObjectBase {
   }
 
 
-  protected _parseResponseProperty(propertyName: string, property: KalturaObjectPropertyMetadata, source: any): any {
+
+  protected _parseResponseProperty(propertyName : string, property : KalturaObjectPropertyMetadata, source : any) : any {
 
     let result;
     let sourceValue = propertyName ? source[propertyName] : source;
 
-    if (typeof sourceValue !== "undefined") {
+    if (typeof sourceValue !== 'undefined') {
       if (sourceValue === null) {
         result = null;
       } else {
         switch (property.type) {
-          case "b": // boolean
-            if (typeof sourceValue === "boolean") {
+          case 'b': // boolean
+            if (typeof sourceValue === 'boolean') {
               result = sourceValue;
-            } else if (sourceValue + "" === "0") {
+            } else if (sourceValue + '' === '0') {
               result = false;
-            } else if (sourceValue + "" === "1") {
+            } else if (sourceValue + '' === '1') {
               result = true;
             }
             break;
-          case "s": // string
-            result = sourceValue + "";
+          case 's': // string
+            result = sourceValue + '';
             break;
-          case "n": // number
-          case "en": // enum of type number
+          case 'n': // number
+          case 'en': // enum of type number
             result = sourceValue * 1;
             break;
-          case "es": // enum of type number
-            result = typeof sourceValue !== "undefined" && sourceValue !== null ? sourceValue.toString() : undefined;
+          case 'es': // enum of type number
+            result = typeof sourceValue !== 'undefined' && sourceValue !== null ? sourceValue.toString() : undefined;
             break;
-          case "o": // object
-            const propertyObjectType = sourceValue["objectType"];
+          case 'o': // object
+            const propertyObjectType = sourceValue['objectType'];
 
-            if (propertyObjectType) {
+            if (propertyObjectType)
+            {
               result = this._createKalturaObject(propertyObjectType, property.subType);
 
               if (result) {
                 result.fromResponseObject(sourceValue);
               } else {
-                throw new Error(`Failed to create kaltura object of type '${source["objectType"]}' (fallback type '${property.subType}')`);
+                throw new Error(`Failed to create kaltura object of type '${source['objectType']}' (fallback type '${property.subType}')`);
               }
-            } else {
+            }else
+            {
               throw new Error(`Failed to create kaltura object for property '${propertyName}' (type '${property.subType}'). provided response object is missing property 'objectType'.`);
             }
 
             break;
-          case "m": // map
+          case 'm': // map
             const parsedMap = {};
             if (sourceValue instanceof Object) {
-              Object.keys(sourceValue).forEach(itemKey => {
+              Object.keys(sourceValue).forEach(itemKey =>
+              {
                 const itemValue = sourceValue[itemKey];
-                const newItem = this._createKalturaObject(itemValue["objectType"], property.subType);
+                const newItem =  this._createKalturaObject(itemValue['objectType'], property.subType);
 
                 if (itemValue && newItem) {
                   newItem.fromResponseObject(itemValue);
@@ -198,17 +234,17 @@ export abstract class KalturaObjectBase {
               throw new Error(`failed to parse property '${propertyName}. Expected type object, got type '${typeof sourceValue}`);
             }
             break;
-          case "a": // array
+          case 'a': // array
             if (sourceValue instanceof Array) {
               const parsedArray = [];
               sourceValue.forEach(responseItem => {
-                const newItem = this._createKalturaObject(responseItem["objectType"], property.subType);
+                const newItem = this._createKalturaObject(responseItem['objectType'], property.subType);
 
                 if (newItem) {
                   newItem.fromResponseObject(responseItem);
                   parsedArray.push(newItem);
                 } else {
-                  throw new Error(`Failed to create kaltura object for type '${responseItem["objectType"]}' and for fallback type '${property.subType}'`);
+                  throw new Error(`Failed to create kaltura object for type '${responseItem['objectType']}' and for fallback type '${property.subType}'`);
                 }
               });
 
@@ -217,10 +253,10 @@ export abstract class KalturaObjectBase {
               throw new Error(`failed to parse property '${propertyName}. Expected type array, got type '${typeof sourceValue}`);
             }
             break;
-          case "d": // date
+          case 'd': // date
             if (this._isNumeric(sourceValue)) {
-              result = KalturaClientUtils.fromServerDate(sourceValue * 1);
-            } else {
+              result = KalturaClientUtils.fromServerDate(sourceValue*1)
+            }else {
               throw new Error(`failed to parse property '${propertyName}. Expected type date, got type '${typeof sourceValue}`);
             }
             break;
@@ -234,90 +270,86 @@ export abstract class KalturaObjectBase {
     return result;
   }
 
-  private _isNumeric(n: any): boolean {
+  private _isNumeric(n : any) : boolean {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
-  static createObject(type: KalturaObjectBase): KalturaObjectBase;
-  static createObject(typeName: string): KalturaObjectBase;
-  static createObject(type: any): KalturaObjectBase {
-    let typeName = "";
-
-    if (type instanceof KalturaObjectBase) {
-      typeName = type.getTypeName();
-    } else if (typeof type === "string") {
-      typeName = type;
-    }
-
-    const factory: KalturaObjectClass = typeName ? typesMapping[typeName] : null;
-    return factory ? new factory() : null;
-  }
-
-
-  private _createKalturaObject(objectType: string, fallbackObjectType?: string): KalturaObjectBase {
+  private _createKalturaObject(objectType : string, fallbackObjectType? : string) : KalturaObjectBase
+  {
     let result = null;
     let usedFallbackType = false;
-    if (objectType) {
-      result = KalturaObjectBase.createObject(objectType);
+    if (objectType)
+    {
+      result = KalturaObjectBaseFactory.createObject(objectType);
     }
 
-    if (!result && fallbackObjectType) {
+    if (!result && fallbackObjectType)
+    {
       usedFallbackType = true;
-      result = KalturaObjectBase.createObject(fallbackObjectType);
+      result = KalturaObjectBaseFactory.createObject(fallbackObjectType);
     }
 
-    if (usedFallbackType && result) {
+    if (usedFallbackType && result)
+    {
       logger.warn(`[kaltura-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
-    } else if (!result) {
+    }else if (!result)
+    {
       logger.warn(`[kaltura-client]: Could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
     }
 
     return result;
   }
 
-  private _createRequestPropertyValue(propertyName: string, property: KalturaObjectPropertyMetadata): { status: "missing" | "removed" | "exists", value?: any } {
+  private _createRequestPropertyValue(propertyName : string, property : KalturaObjectPropertyMetadata) : { status : 'missing' | 'removed' | 'exists', value? : any } {
 
-    let result: { status: "missing" | "removed" | "exists", value?: any } = {status: "missing"};
+    let result : { status : 'missing' | 'removed' | 'exists', value? : any } = { status : 'missing'};
 
-    if (property.type === "c") {
+    if (property.type === 'c')
+    {
       // constant string
-      if (property.default) {
-        result = {status: "exists", value: property.default};
+      if (property.default)
+      {
+        result = { status : 'exists', value : property.default};
       }
-    } else if (this._dependentProperties[propertyName]) {
+    } else if (this._dependentProperties[propertyName])
+    {
       const dependentProperty = this._dependentProperties[propertyName];
-      const resultValue = `{${dependentProperty.request}:result${dependentProperty.targetPath ? ":" + dependentProperty.targetPath : ""}}`;
-      result = {status: "exists", value: resultValue};
-    } else if (!property.readOnly) {
+      const resultValue = `{${dependentProperty.request}:result${dependentProperty.targetPath ? ':' + dependentProperty.targetPath : ''}}`;
+      result = { status : 'exists', value : resultValue};
+    }
+    else if (!property.readOnly) {
       let value = this[propertyName];
 
-      if (typeof value !== "undefined") {
+      if (typeof value !== 'undefined') {
         if (value === null) {
-          result = {status: "removed"};
+          result = { status : 'removed'};
         } else {
           switch (property.type) {
-            case "b": // boolean
-              result = {status: "exists", value: value};
+            case 'b': // boolean
+              result = { status : 'exists', value : value};
               break;
-            case "s": // string
-              result = {status: "exists", value: value + ""};
+            case 's': // string
+              result = { status : 'exists', value : value + ''};
               break;
-            case "n": // number
-            case "en": // enum of type number
-              result = {status: "exists", value: value * 1};
+            case 'n': // number
+            case 'en': // enum of type number
+              result = { status : 'exists', value : value * 1};
               break;
-            case "o": // object
+            case 'o': // object
               if (value instanceof KalturaObjectBase) {
-                result = {status: "exists", value: value.toRequestObject()};
-              } else {
+                result = { status : 'exists', value : value.toRequestObject()};
+              }else
+              {
                 throw new Error(`failed to parse property. Expected '${propertyName} to be kaltura object`);
               }
               break;
-            case "a": // array
+            case 'a': // array
               if (value instanceof Array) {
                 const parsedArray = [];
-                value.forEach(item => {
-                  if (item instanceof KalturaObjectBase) {
+                value.forEach(item =>
+                {
+                  if (item instanceof KalturaObjectBase)
+                  {
                     parsedArray.push(item.toRequestObject());
                   }
                 });
@@ -325,23 +357,24 @@ export abstract class KalturaObjectBase {
                 const allowEmptyArrayAsAValue = this._allowedEmptyArray.indexOf(propertyName) !== -1;
                 if (allowEmptyArrayAsAValue || parsedArray.length !== 0) {
                   if (parsedArray.length === value.length) {
-                    result = {status: "exists", value: parsedArray};
+                    result = {status: 'exists', value: parsedArray};
                   } else {
                     throw new Error(`failed to parse array. Expected all '${propertyName} items to be kaltura object`);
                   }
                 }
-              } else {
+              }else
+              {
                 throw new Error(`failed to parse property. Expected '${propertyName} to be Array`);
               }
               break;
-            case "m": // map
+            case 'm': //map
               if (value instanceof Object) {
                 const valueKeys = Object.keys(value);
 
                 if (valueKeys.length > 0) {
                   const parsedObject = {};
                   valueKeys.forEach(itemKey => {
-                    let itemValue = value[itemKey];
+                    var itemValue = value[itemKey];
                     if (itemValue instanceof KalturaObjectBase) {
                       parsedObject[itemKey] = itemValue.toRequestObject();
                     }
@@ -349,28 +382,30 @@ export abstract class KalturaObjectBase {
                   });
 
                   if (valueKeys.length === Object.keys(parsedObject).length) {
-                    result = {status: "exists", value: parsedObject};
+                    result = {status: 'exists', value: parsedObject};
                   } else {
                     throw new Error(`failed to parse map. Expected all '${propertyName} items to be kaltura object`);
                   }
                 }
-              } else {
+              }else
+              {
                 throw new Error(`failed to parse property. Expected '${propertyName} to be kaltura object`);
               }
               break;
-            case "d": // date
+            case 'd': // date
               if (value instanceof Date) {
-                result = {status: "exists", value: KalturaClientUtils.toServerDate(value)};
-              } else {
+                result = { status : 'exists', value : KalturaClientUtils.toServerDate(value)};
+              }else {
                 throw new Error(`failed to parse property. Expected '${propertyName} to be date`);
               }
               break;
-            case "es": // enum of type string
-              result = {status: "exists", value: typeof value === "string" ? value : undefined};
+            case 'es': // enum of type string
+              result = { status : 'exists', value : typeof value === 'string' ? value : undefined};
               break;
-            case "f":
-              if (value instanceof FormData) {
-                result = {status: "exists", value: value};
+            case 'f':
+              if (value instanceof FormData)
+              {
+                result = {status : 'exists', value : value};
               }
               break;
             default:
@@ -384,11 +419,14 @@ export abstract class KalturaObjectBase {
     return result;
   }
 
-  setDependency(...dependency: (DependentProperty | [string, number] | [string, number, string])[]): this {
-    for (let i = 0, len = dependency.length; i < len; i++) {
+  setDependency(...dependency : (DependentProperty | [string, number] | [string, number,string])[]) : this
+  {
+    for(let i = 0, len = dependency.length;i<len;i++)
+    {
       const item = dependency[i];
-      let {property, request, targetPath} = <any>item;
-      if (item instanceof Array) {
+      let { property, request, targetPath } = <any>item;
+      if (item instanceof Array)
+      {
         property = item[0];
         request = item[1];
         targetPath = item.length === 3 ? item[2] : null;
@@ -398,7 +436,7 @@ export abstract class KalturaObjectBase {
       // since Javascript array are zero based index we expose the api as zero based
       // and transform the index value in the actual request by adding 1
       request = request + 1;
-      this._dependentProperties[property] = {property, request, targetPath};
+      this._dependentProperties[property] = { property , request, targetPath };
     }
 
     return this;

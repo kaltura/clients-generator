@@ -1,4 +1,3 @@
-export * from "./api/index";
-export * from "./cancelable-action";
-export * from "./kaltura-client-options";
-export * from "./kaltura-client-service";
+export * from './api/index';
+export { KalturaClient } from './kaltura-client';
+export * from './kaltura-client-options';

@@ -40,7 +40,7 @@ gulp.task('scripts:library', function () {
 });
 
 function compileAppScripts() {
-  var tsProject = $.typescript.createProject({...tsconfig, noEmitOnError:false});
+  var tsProject = $.typescript.createProject(tsconfig);
   var opt = {
     tsProject: tsProject,
     inPath: ["src/**/*.ts",

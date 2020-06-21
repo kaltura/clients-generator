@@ -1,4 +1,4 @@
-import { map, catchError } from "rxjs/operators";
+import {map, catchError} from "rxjs/operators";
 import { KalturaRequest } from "../api/kaltura-request";
 import { Observable } from "rxjs";
 import { KalturaAPIException } from "../api/kaltura-api-exception";
@@ -7,6 +7,8 @@ import { KalturaRequestOptions } from "../api/kaltura-request-options";
 import { KalturaClientOptions } from "../kaltura-client-options";
 import { fetchRequest, createEndpoint, getHeaders, prepareParameters } from "./utils";
 import { environment } from "../environment";
+
+
 
 export class KalturaRequestAdapter {
 
@@ -20,7 +22,7 @@ export class KalturaRequestAdapter {
     const requestSpecificFormat = typeof format !== "undefined";
     const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-    const endpointOptions = {...clientOptions, service: parameters["service"], action: parameters["action"], format};
+    const endpointOptions = { ...clientOptions, service: parameters["service"], action:  parameters["action"], format };
     const endpoint = createEndpoint(request, endpointOptions);
     delete parameters["service"];
     delete parameters["action"];

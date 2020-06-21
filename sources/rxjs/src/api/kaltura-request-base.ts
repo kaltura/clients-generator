@@ -1,34 +1,35 @@
-import { KalturaObjectBase, KalturaObjectBaseArgs } from "./kaltura-object-base";
+import { KalturaObjectBase, KalturaObjectBaseArgs } from './kaltura-object-base';
+import { KalturaRequestOptions, KalturaRequestOptionsArgs } from './kaltura-request-options';
 
-export interface KalturaRequestBaseArgs extends KalturaObjectBaseArgs {
+
+export interface KalturaRequestBaseArgs  extends KalturaObjectBaseArgs {
 }
 
 
 export class KalturaRequestBase extends KalturaObjectBase {
 
-  private _networkTag: string;
+    private _networkTag: string;
 
-  constructor(data: KalturaRequestBaseArgs) {
-    super(data);
-  }
-
-  setNetworkTag(tag: string): this {
-    if (!tag || tag.length > 10) {
-      console.warn(`cannot set network tag longer than 10 characters. ignoring tag '${tag}`);
-    } else {
-      this._networkTag = tag;
+    constructor(data: KalturaRequestBaseArgs) {
+        super(data);
     }
 
-    return this;
-  }
+    setNetworkTag(tag: string): this {
+        if (!tag || tag.length > 10) {
+            console.warn(`cannot set network tag longer than 10 characters. ignoring tag '${tag}`);
+        } else {
+            this._networkTag = tag;
+        }
 
-  getNetworkTag(): string {
-    return this._networkTag;
-  }
+        return this;
+    }
 
-  public getFormatValue() {
-    return 1;
-  }
+    getNetworkTag(): string {
+        return this._networkTag;
+    }
 
+    public getFormatValue() {
+      return 1;
+    }
 }
 

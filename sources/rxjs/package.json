@@ -1,13 +1,23 @@
 {
   "name": "kaltura-rxjs-client",
   "private": true,
-  "version": "7.0.2",
-  "description": "Kaltura RxJs client",
+  "version": "7.0.1",
+  "description": "Kaltura RXJS Typescript client",
   "keywords": [
     "Kaltura"
   ],
   "license": "AGPL-3.0",
   "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "contributors": [
+    {
+      "name": "Eran Sakal",
+      "email": "eran@sakalim.com"
+    },
+    {
+      "name": "Amir Chervinsky",
+      "email": "amir.chr@gmail.com"
+    }
+  ],
   "scripts": {
     "build": "gulp build",
     "build:prod": "gulp build --production",
@@ -16,17 +26,11 @@
     "deploy": "rm -rf dist && npm run build && cd dist && npm pack && npm link",
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript.git"
-  },
-  "bugs": {
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/issues"
-  },
   "main": "./index.js",
   "dependencies": {
     "@types/node": "^8.0.47",
-    "rxjs": "^6.5.5"
+    "rxjs": "^6.5.4",
+    "tslib": "^1.10.0"
   },
   "devDependencies": {
     "@types/core-js": "^0.9.37",
@@ -38,28 +42,27 @@
     "fs-extra": "^7.0.0",
     "gulp": "^4.0.0",
     "gulp-add-src": "^1.0.0",
-    "gulp-json-editor": "^2.2.1",
-    "gulp-load-plugins": "^1.4.0",
+    "gulp-json-editor": "^2.5.4",
+    "gulp-load-plugins": "^2.0.3",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-tslint": "~7.1.0",
+    "gulp-tslint": "^8.1.4",
     "gulp-typescript": "^6.0.0-alpha.1",
     "gulp-util": "^3.0.7",
-    "jest": "^21.2.1",
+    "jest": "^26.0.1",
     "merge2": "^1.0.2",
     "rimraf": "^2.5.1",
-    "ts-jest": "^21.2.4",
-    "tslib": "^1.11.1",
-    "tslint": "^6.1.2",
+    "ts-jest": "^25.5.1",
+    "tslint": "^5.20.1",
     "tslint-loader": "3.2.1",
-    "typescript": "^3.8.3",
-    "yargs": "^5.0.0"
+    "typescript": "^3.7.5",
+    "yargs": "^15.3.1"
   },
   "engines": {
     "node": ">= 7.0.0",
     "npm": ">= 5.0.0"
   },
   "jest": {
-    "setupTestFrameworkScriptFile": "<rootDir>/tests/setup-jest.ts",
+    "setupTestFrameworkScriptFile": "<rootDir>/src/tests/setup-jest.ts",
     "transform": {
       "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
