@@ -136,7 +136,7 @@ namespace Kaltura.Services
 			return new CategoryTreeDuplicateRequestBuilder(categoryItemId, name);
 		}
 
-		public static CategoryTreeGetRequestBuilder Get(long categoryItemId, bool filter)
+		public static CategoryTreeGetRequestBuilder Get(long categoryItemId, bool filter = false)
 		{
 			return new CategoryTreeGetRequestBuilder(categoryItemId, filter);
 		}
