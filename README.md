@@ -20,7 +20,7 @@ php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml php
 
 For example generation of typescript for ott:
 ```shell script
-php exec.php -tott typescript ./output
+php exec.php -tott rxjs ./output
 ```
 
 To generate all available clients, run:

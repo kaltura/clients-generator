@@ -1,4 +1,4 @@
-import {throwError as observableThrowError,  Observable } from 'rxjs';
+import { Observable, throwError as observableThrowError } from 'rxjs';
 import { Inject, Injectable, Optional, Self } from '@angular/core';
 
 
@@ -11,12 +11,13 @@ import { KalturaFileRequest } from './api/kaltura-file-request';
 import { KalturaUploadRequest } from './api/kaltura-upload-request';
 import { KalturaRequestAdapter } from './adapters/kaltura-request-adapter';
 import { KalturaFileRequestAdapter } from './adapters/kaltura-file-request-adapter';
-import { KalturaClientOptions, KALTURA_CLIENT_OPTIONS } from './kaltura-client-options';
+import { KALTURA_CLIENT_OPTIONS, KalturaClientOptions } from './kaltura-client-options';
 import { KalturaMultiRequestAdapter } from './adapters/kaltura-multi-request-adapter';
 import { KalturaClientException } from './api/kaltura-client-exception';
 import { KalturaUploadRequestAdapter } from './adapters/kaltura-upload-request-adapter';
 import {
-  KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS, KalturaRequestOptions,
+  KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS,
+  KalturaRequestOptions,
   KalturaRequestOptionsArgs
 } from './api/kaltura-request-options';
 
@@ -25,7 +26,8 @@ export class KalturaClient {
 
   private _defaultRequestOptions: KalturaRequestOptions;
 
-  constructor(private _http: HttpClient, @Inject(KALTURA_CLIENT_OPTIONS) @Optional() @Self() private _options: KalturaClientOptions,
+  constructor(private _http: HttpClient,
+              @Inject(KALTURA_CLIENT_OPTIONS) @Optional() @Self() private _options: KalturaClientOptions,
               @Inject(KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS) @Optional() @Self()  defaultRequestOptionsArgs: KalturaRequestOptionsArgs) {
     this._defaultRequestOptions = new KalturaRequestOptions(defaultRequestOptionsArgs || {});
   }
@@ -50,7 +52,7 @@ export class KalturaClient {
 
   public appendDefaultRequestOptions(args: KalturaRequestOptionsArgs): void {
     if (!args) {
-      throw new KalturaClientException('client::append_default_request_options',`missing required argument 'args'`);
+      throw new KalturaClientException('client::append_default_request_options', `missing required argument 'args'`);
     }
 
     this._defaultRequestOptions = Object.assign(
@@ -60,7 +62,7 @@ export class KalturaClient {
 
   public setDefaultRequestOptions(args: KalturaRequestOptionsArgs): void {
     if (!args) {
-      throw new KalturaClientException('client::set_default_request_options',`missing required argument 'args'`);
+      throw new KalturaClientException('client::set_default_request_options', `missing required argument 'args'`);
     }
 
     this._defaultRequestOptions = new KalturaRequestOptions(args);
@@ -68,7 +70,7 @@ export class KalturaClient {
 
   private _validateOptions(): Error | null {
     if (!this._options) {
-      return new KalturaClientException('client::missing_options','cannot transmit request, missing client options (did you forgot to provide options manually or using KALTURA_CLIENT_OPTIONS?)');
+      return new KalturaClientException('client::missing_options', 'cannot transmit request, missing client options (did you forgot to provide options manually or using KALTURA_CLIENT_OPTIONS?)');
     }
 
     if (!this._options.endpointUrl) {
@@ -94,7 +96,7 @@ export class KalturaClient {
     }
 
     if (typeof format !== 'undefined') {
-      return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions, format +'', responseType);
+      return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions, format + '', responseType);
     }
 
     if (request instanceof KalturaFileRequest) {
@@ -102,11 +104,10 @@ export class KalturaClient {
 
     } else if (request instanceof KalturaUploadRequest) {
       return new KalturaUploadRequestAdapter(this._options, this._defaultRequestOptions).transmit(request);
-    }
-    else if (request instanceof KalturaRequest) {
+    } else if (request instanceof KalturaRequest) {
       return new KalturaRequestAdapter(this._http).transmit(request, this._options, this._defaultRequestOptions);
     } else {
-      return observableThrowError(new KalturaClientException("client::request_type_error", 'unsupported request type requested'));
+      return observableThrowError(new KalturaClientException('client::request_type_error', 'unsupported request type requested'));
     }
   }
 

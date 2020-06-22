@@ -1,6 +1,6 @@
 <?php
 
-class RxJsClientGenerator extends TypescriptClientGenerator
+class RxJSClientGenerator extends TypescriptClientGenerator
 {
 	function __construct($xmlPath, Zend_Config $config)
 	{
