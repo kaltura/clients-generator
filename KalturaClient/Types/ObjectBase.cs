@@ -40,14 +40,12 @@ namespace Kaltura.Types
         #region Private Fields
 
         private IDictionary<string, IListResponse> _RelatedObjects;
-        
+
         protected Dictionary<string, MultiRequestToken> multiRequestMappings = null;
 
         #endregion
 
         #region Properties
-
-        public IDictionary<string, IEnumerable<string>> Headers{get;set;}
 
         public IDictionary<string, IListResponse> RelatedObjects
         {
