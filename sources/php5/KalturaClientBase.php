@@ -159,6 +159,16 @@ class KalturaClientBase
 	private $responseHeaders = array();
 
 	/**
+	 * @var boolean
+	 */
+	private $persistConnection = false;
+
+	/**
+	 * @var resource
+	 */
+	private static $curlHandle = null;
+
+	/**
 	 * path to save served results
 	 * @var string
 	 */
@@ -223,6 +233,34 @@ class KalturaClientBase
 				}
 			}
 		}
+	}
+
+	/* Set if curl should reuse connection across requests
+	 *
+	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+	 *
+	 * @param boolean
+	*/
+	public function setPersistConnection($enable){
+		$this->persistConnection = $enable;
+	}
+
+	/* Close curl handle
+	*  Either called near end of doCurl method if persistConnection == false or can be run explicitly to clean up connection upon ulimate completion of request.
+	*  
+	*/
+	public static function closeCurlHandle(){
+		curl_close(self::$curlHandle);
+		self::$curlHandle = null;
+	}
+
+	/* Get handle for curl processes */
+	private static function getCurlHandle(){
+		if(self::$curlHandle === null){
+			self::$curlHandle = curl_init();
+		}
+		
+		return self::$curlHandle;
 	}
 
 	/* Store response headers into array */
@@ -503,26 +541,33 @@ class KalturaClientBase
 		{
 			$requestHeaders[] = 'Accept: application/json';
 		}
+
 		
 		$this->responseHeaders = array();
 		$cookies = array();
-		$ch = curl_init();
+
+		// Get new or existing curl handle
+		$ch = self::getCurlHandle();
+
+		// Reset options on handle (in case existing)
+		curl_reset($ch);
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		if($this->config->method == self::METHOD_POST) {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			if (count($files) > 0)
 			{
 				$params = array('json' => $params);
-                foreach ($files as $key => $file) {
-                    // The usage of the @filename API for file uploading is
-                    // deprecated since PHP 5.5. CURLFile must be used instead.
-                    if (PHP_VERSION_ID >= 50500) {
-                        $params[$key] = new \CURLFile($file);
-                    } else {
-                        $params[$key] = "@" . $file; // let curl know its a file
-                    }
-                }
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+				foreach ($files as $key => $file) {
+					// The usage of the @filename API for file uploading is
+					// deprecated since PHP 5.5. CURLFile must be used instead.
+					if (PHP_VERSION_ID >= 50500) {
+						$params[$key] = new \CURLFile($file);
+					} else {
+						$params[$key] = "@" . $file; // let curl know its a file
+					}
+				}
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 			}
 			else
 			{
@@ -598,7 +643,11 @@ class KalturaClientBase
 			fclose($destinationResource);
 
 		$curlError = curl_error($ch);
-		curl_close($ch);
+
+		if(!$this->persistConnection){
+			self::closeCurlHandle();
+		}
+
 		return array($result, $curlError);
 	}
 

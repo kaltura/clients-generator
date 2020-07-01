@@ -85,6 +85,16 @@ class Base
 	private $responseHeaders = array();
 
 	/**
+	 * @var boolean
+	 */
+	private $persistConnection = false;
+
+	/**
+	 * @var resource
+	 */
+	private static $curlHandle = null;
+
+	/**
 	 * Kaltura client constructor
 	 *
 	 * @param \Kaltura\Client\Configuration $config
@@ -97,6 +107,34 @@ class Base
 		if ($logger)
 			$this->shouldLog = true;
 	}
+    
+    /* Set if curl should reuse connection across requests
+     *
+     * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+     *
+     * @param boolean
+    */
+    public function setPersistConnection($enable){
+        $this->persistConnection = $enable;
+    }
+    
+    /* Close curl handle
+    *  Either called near end of doCurl method if persistConnection == false or can be run explicitly to clean up connection upon ulimate completion of request.
+    *  
+    */
+    public static function closeCurlHandle(){
+        curl_close(self::$curlHandle);
+        self::$curlHandle = null;
+    }
+    
+    /* Get handle for curl processes */
+    private static function getCurlHandle(){
+        if(self::$curlHandle === null){
+            self::$curlHandle = curl_init();
+        }
+        
+        return self::$curlHandle;
+    }
 
 	/* Store response headers into array */
 	public function readHeader($ch, $string)
@@ -327,7 +365,13 @@ class Base
 		}
 
 		$cookies = array();
-		$ch = curl_init();
+
+		// Get new or existing curl handle
+		$ch = self::getCurlHandle();
+
+		// Reset options on handle (in case existing)
+		curl_reset($ch);
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		if (count($files) > 0)
@@ -399,7 +443,11 @@ class Base
 		$result = curl_exec($ch);
 		$curlErrorCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$curlError = curl_error($ch);
-		curl_close($ch);
+
+		if(!$this->persistConnection){
+			self::closeCurlHandle();
+		}
+
 		return array($result, $curlErrorCode, $curlError);
 	}
 
