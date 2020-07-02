@@ -53,3 +53,8 @@ catch (ClientException $ex)
 // run the tester
 $tester = new \Test\Zend2ClientTester($client, intval($testerConfig['partnerId']));
 $tester->run();
+
+// run the tester with a persistent connection
+$client->setPersistConnection(true);
+$tester = new \Test\Zend2ClientTester($client, intval($testerConfig['partnerId']));
+$tester->run();

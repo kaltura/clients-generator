@@ -43,15 +43,18 @@ class TestMain implements IKalturaLogger
 	 * @var array
 	 */
 	private $config;
+    
+    private $persistConnection = false;
 	
 	public function log($message)
 	{
 		echo date('Y-m-d H:i:s') . ' ' .  $message . "\n";
 	}
 
-	public static function run()
+	public static function run($persistConnection = false)
 	{   
 		$test = new TestMain();
+        $test->persistConnection = $persistConnection;
 		$test->loadConfig();
 		$test->listActions();
 		$test->multiRequest();
@@ -78,6 +81,7 @@ class TestMain implements IKalturaLogger
 		$kConfig->serviceUrl = $this->config[self::CONFIG_ITEM_SERVICE_URL];
 		$kConfig->setLogger($this);
 		$client = new KalturaClient($kConfig);
+        $client->setPersistConnection($this->persistConnection);
 		
 		$userId = "SomeUser";
 		$sessionType = ($isAdmin)? KalturaSessionType::ADMIN : KalturaSessionType::USER; 
@@ -143,3 +147,6 @@ class TestMain implements IKalturaLogger
 }
 
 TestMain::run();
+
+//Rerun with a persistent connection
+TestMain::run(true);
