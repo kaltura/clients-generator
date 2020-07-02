@@ -146,7 +146,11 @@ class TestMain implements IKalturaLogger
 	}
 }
 
-TestMain::run();
+$options = getopt('', array('persistConnection'));
 
-//Rerun with a persistent connection
-TestMain::run(true);
+if(array_key_exists("persistConnection",$options)){
+	//Rerun with a persistent connection
+	TestMain::run(true);
+}else{
+	TestMain::run();
+}

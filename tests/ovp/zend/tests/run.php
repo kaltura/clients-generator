@@ -40,11 +40,13 @@ catch (Kaltura_Client_ClientException $ex)
 	die;
 }
 
-// run the tester
-$tester = new ZendClientTester($client, intval($testerConfig['partnerId']));
-$tester->run();
+$options = getopt('', array('persistConnection'));
 
-// run the tester with persistent connection
-$client->setPersistConnection(true);
+if(array_key_exists("persistConnection",$options)){
+    // run the tester with persistent connection
+    $client->setPersistConnection(true);
+}
+
+// run the tester
 $tester = new ZendClientTester($client, intval($testerConfig['partnerId']));
 $tester->run();

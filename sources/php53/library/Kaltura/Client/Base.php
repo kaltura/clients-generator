@@ -355,6 +355,8 @@ class Base
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
+		$this->log("persistent: ". var_export($this->persistConnection,true));
+		
 		if($this->config->getFormat() == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
 			$requestHeaders[] = 'Accept: application/json';
