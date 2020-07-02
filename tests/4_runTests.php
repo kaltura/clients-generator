@@ -103,25 +103,13 @@ runJavaTests("{$rootDir}/java");
 echo "Php5\n==================\n";
 executeCommandFrom("{$rootDir}/php5/TestCode", $config['php']['php_bin'], 'TestMain.php');
 
-// Php5
-echo "Php5 Persistent Connection\n==================\n";
-executeCommandFrom("{$rootDir}/php5/TestCode", $config['php']['php_bin'], 'TestMainPersistent.php');
-
 // Php5Zend
 echo "Php5Zend\n==================\n";
 executeCommandFrom("{$rootDir}/php5Zend/tests", $config['php']['php_bin'], 'run.php');
 
-// Php5Zend
-echo "Php5Zend Persistent Connection\n==================\n";
-executeCommandFrom("{$rootDir}/php5Zend/tests", $config['php']['php_bin'], 'run-persistent.php');
-
 // Php53
 echo "Php5.3\n==================\n";
 executeCommandFrom("{$rootDir}/php53/tests", $config['php']['php_bin'], 'run.php');
-
-// Php53
-echo "Php5.3 Persistent Connection\n==================\n";
-executeCommandFrom("{$rootDir}/php53/tests", $config['php']['php_bin'], 'run-persistent.php');
 
 // Python
 echo "Python\n==================\n";
