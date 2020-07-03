@@ -42,8 +42,6 @@ namespace Kaltura.Types
 		public const string SOUND = "sound";
 		public const string ACTION = "action";
 		public const string URL = "url";
-		public const string UDID = "udid";
-		public const string PUSH_CHANNELS = "pushChannels";
 		#endregion
 
 		#region Private Fields
@@ -51,8 +49,6 @@ namespace Kaltura.Types
 		private string _Sound = null;
 		private string _Action = null;
 		private string _Url = null;
-		private string _Udid = null;
-		private string _PushChannels = null;
 		#endregion
 
 		#region Properties
@@ -96,26 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Url");
 			}
 		}
-		[JsonProperty]
-		public string Udid
-		{
-			get { return _Udid; }
-			set 
-			{ 
-				_Udid = value;
-				OnPropertyChanged("Udid");
-			}
-		}
-		[JsonProperty]
-		public string PushChannels
-		{
-			get { return _PushChannels; }
-			set 
-			{ 
-				_PushChannels = value;
-				OnPropertyChanged("PushChannels");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -141,14 +117,6 @@ namespace Kaltura.Types
 			{
 				this._Url = node["url"].Value<string>();
 			}
-			if(node["udid"] != null)
-			{
-				this._Udid = node["udid"].Value<string>();
-			}
-			if(node["pushChannels"] != null)
-			{
-				this._PushChannels = node["pushChannels"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -162,8 +130,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("sound", this._Sound);
 			kparams.AddIfNotNull("action", this._Action);
 			kparams.AddIfNotNull("url", this._Url);
-			kparams.AddIfNotNull("udid", this._Udid);
-			kparams.AddIfNotNull("pushChannels", this._PushChannels);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -178,10 +144,6 @@ namespace Kaltura.Types
 					return "Action";
 				case URL:
 					return "Url";
-				case UDID:
-					return "Udid";
-				case PUSH_CHANNELS:
-					return "PushChannels";
 				default:
 					return base.getPropertyName(apiName);
 			}

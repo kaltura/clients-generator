@@ -50,7 +50,6 @@ namespace Kaltura.Types
 		public const string HOUSEHOLD_LIMITATION_MODULE = "householdLimitationModule";
 		public const string ENABLE_REGION_FILTERING = "enableRegionFiltering";
 		public const string DEFAULT_REGION = "defaultRegion";
-		public const string ROLLING_DEVICE_DATA = "rollingDeviceData";
 		#endregion
 
 		#region Private Fields
@@ -66,7 +65,6 @@ namespace Kaltura.Types
 		private int _HouseholdLimitationModule = Int32.MinValue;
 		private bool? _EnableRegionFiltering = null;
 		private int _DefaultRegion = Int32.MinValue;
-		private RollingDeviceRemovalData _RollingDeviceData;
 		#endregion
 
 		#region Properties
@@ -190,16 +188,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DefaultRegion");
 			}
 		}
-		[JsonProperty]
-		public RollingDeviceRemovalData RollingDeviceData
-		{
-			get { return _RollingDeviceData; }
-			set 
-			{ 
-				_RollingDeviceData = value;
-				OnPropertyChanged("RollingDeviceData");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -257,10 +245,6 @@ namespace Kaltura.Types
 			{
 				this._DefaultRegion = ParseInt(node["defaultRegion"].Value<string>());
 			}
-			if(node["rollingDeviceData"] != null)
-			{
-				this._RollingDeviceData = ObjectFactory.Create<RollingDeviceRemovalData>(node["rollingDeviceData"]);
-			}
 		}
 		#endregion
 
@@ -282,7 +266,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("householdLimitationModule", this._HouseholdLimitationModule);
 			kparams.AddIfNotNull("enableRegionFiltering", this._EnableRegionFiltering);
 			kparams.AddIfNotNull("defaultRegion", this._DefaultRegion);
-			kparams.AddIfNotNull("rollingDeviceData", this._RollingDeviceData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -313,8 +296,6 @@ namespace Kaltura.Types
 					return "EnableRegionFiltering";
 				case DEFAULT_REGION:
 					return "DefaultRegion";
-				case ROLLING_DEVICE_DATA:
-					return "RollingDeviceData";
 				default:
 					return base.getPropertyName(apiName);
 			}

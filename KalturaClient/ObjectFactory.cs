@@ -260,8 +260,6 @@ namespace Kaltura
 					return new ListResponse<UserAssetRule>(jToken);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(jToken);
-				case "KalturaCategoryItemListResponse":
-					return new ListResponse<CategoryItem>(jToken);
 				case "KalturaCouponListResponse":
 					return new ListResponse<Coupon>(jToken);
 				case "KalturaEventNotificationListResponse":
