@@ -46,6 +46,7 @@ namespace Kaltura.Types
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
 		public const string IS_INHERITED = "isInherited";
+		public const string IS_LOCATION_TAG = "isLocationTag";
 		#endregion
 
 		#region Private Fields
@@ -57,6 +58,7 @@ namespace Kaltura.Types
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
 		private bool? _IsInherited = null;
+		private bool? _IsLocationTag = null;
 		#endregion
 
 		#region Properties
@@ -140,6 +142,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsInherited");
 			}
 		}
+		[JsonProperty]
+		public bool? IsLocationTag
+		{
+			get { return _IsLocationTag; }
+			set 
+			{ 
+				_IsLocationTag = value;
+				OnPropertyChanged("IsLocationTag");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -181,6 +193,10 @@ namespace Kaltura.Types
 			{
 				this._IsInherited = ParseBool(node["isInherited"].Value<string>());
 			}
+			if(node["isLocationTag"] != null)
+			{
+				this._IsLocationTag = ParseBool(node["isLocationTag"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -198,6 +214,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			kparams.AddIfNotNull("isInherited", this._IsInherited);
+			kparams.AddIfNotNull("isLocationTag", this._IsLocationTag);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -220,6 +237,8 @@ namespace Kaltura.Types
 					return "UpdateDate";
 				case IS_INHERITED:
 					return "IsInherited";
+				case IS_LOCATION_TAG:
+					return "IsLocationTag";
 				default:
 					return base.getPropertyName(apiName);
 			}

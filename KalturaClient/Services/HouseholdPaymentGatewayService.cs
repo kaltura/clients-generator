@@ -239,19 +239,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
+		public const string ADAPTER_DATA = "adapterData";
 		#endregion
 
 		public int PaymentGatewayId { get; set; }
+		public IList<KeyValue> AdapterData { get; set; }
 
 		public HouseholdPaymentGatewayResumeRequestBuilder()
 			: base("householdpaymentgateway", "resume")
 		{
 		}
 
-		public HouseholdPaymentGatewayResumeRequestBuilder(int paymentGatewayId)
+		public HouseholdPaymentGatewayResumeRequestBuilder(int paymentGatewayId, IList<KeyValue> adapterData)
 			: this()
 		{
 			this.PaymentGatewayId = paymentGatewayId;
+			this.AdapterData = adapterData;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -259,6 +262,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("paymentGatewayId"))
 				kparams.AddIfNotNull("paymentGatewayId", PaymentGatewayId);
+			if (!isMapped("adapterData"))
+				kparams.AddIfNotNull("adapterData", AdapterData);
 			return kparams;
 		}
 
@@ -324,19 +329,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
+		public const string SUSPEND_SETTINGS = "suspendSettings";
 		#endregion
 
 		public int PaymentGatewayId { get; set; }
+		public SuspendSettings SuspendSettings { get; set; }
 
 		public HouseholdPaymentGatewaySuspendRequestBuilder()
 			: base("householdpaymentgateway", "suspend")
 		{
 		}
 
-		public HouseholdPaymentGatewaySuspendRequestBuilder(int paymentGatewayId)
+		public HouseholdPaymentGatewaySuspendRequestBuilder(int paymentGatewayId, SuspendSettings suspendSettings)
 			: this()
 		{
 			this.PaymentGatewayId = paymentGatewayId;
+			this.SuspendSettings = suspendSettings;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -344,6 +352,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("paymentGatewayId"))
 				kparams.AddIfNotNull("paymentGatewayId", PaymentGatewayId);
+			if (!isMapped("suspendSettings"))
+				kparams.AddIfNotNull("suspendSettings", SuspendSettings);
 			return kparams;
 		}
 
@@ -391,9 +401,9 @@ namespace Kaltura.Services
 			return new HouseholdPaymentGatewayListRequestBuilder();
 		}
 
-		public static HouseholdPaymentGatewayResumeRequestBuilder Resume(int paymentGatewayId)
+		public static HouseholdPaymentGatewayResumeRequestBuilder Resume(int paymentGatewayId, IList<KeyValue> adapterData = null)
 		{
-			return new HouseholdPaymentGatewayResumeRequestBuilder(paymentGatewayId);
+			return new HouseholdPaymentGatewayResumeRequestBuilder(paymentGatewayId, adapterData);
 		}
 
 		public static HouseholdPaymentGatewaySetChargeIDRequestBuilder SetChargeID(string paymentGatewayExternalId, string chargeId)
@@ -401,9 +411,9 @@ namespace Kaltura.Services
 			return new HouseholdPaymentGatewaySetChargeIDRequestBuilder(paymentGatewayExternalId, chargeId);
 		}
 
-		public static HouseholdPaymentGatewaySuspendRequestBuilder Suspend(int paymentGatewayId)
+		public static HouseholdPaymentGatewaySuspendRequestBuilder Suspend(int paymentGatewayId, SuspendSettings suspendSettings = null)
 		{
-			return new HouseholdPaymentGatewaySuspendRequestBuilder(paymentGatewayId);
+			return new HouseholdPaymentGatewaySuspendRequestBuilder(paymentGatewayId, suspendSettings);
 		}
 	}
 }

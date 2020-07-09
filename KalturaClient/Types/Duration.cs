@@ -35,71 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class ChannelFilter : BaseSearchAssetFilter
+	public class Duration : ObjectBase
 	{
 		#region Constants
-		public const string ID_EQUAL = "idEqual";
-		public const string EXCLUDE_WATCHED = "excludeWatched";
-		public new const string ORDER_BY = "orderBy";
+		public const string UNIT = "unit";
+		public const string VALUE = "value";
 		#endregion
 
 		#region Private Fields
-		private int _IdEqual = Int32.MinValue;
-		private bool? _ExcludeWatched = null;
-		private ChannelOrderBy _OrderBy = null;
+		private DurationUnit _Unit = null;
+		private int _Value = Int32.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public int IdEqual
+		public DurationUnit Unit
 		{
-			get { return _IdEqual; }
+			get { return _Unit; }
 			set 
 			{ 
-				_IdEqual = value;
-				OnPropertyChanged("IdEqual");
+				_Unit = value;
+				OnPropertyChanged("Unit");
 			}
 		}
 		[JsonProperty]
-		public bool? ExcludeWatched
+		public int Value
 		{
-			get { return _ExcludeWatched; }
+			get { return _Value; }
 			set 
 			{ 
-				_ExcludeWatched = value;
-				OnPropertyChanged("ExcludeWatched");
-			}
-		}
-		[JsonProperty]
-		public new ChannelOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_Value = value;
+				OnPropertyChanged("Value");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public ChannelFilter()
+		public Duration()
 		{
 		}
 
-		public ChannelFilter(JToken node) : base(node)
+		public Duration(JToken node) : base(node)
 		{
-			if(node["idEqual"] != null)
+			if(node["unit"] != null)
 			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
+				this._Unit = (DurationUnit)StringEnum.Parse(typeof(DurationUnit), node["unit"].Value<string>());
 			}
-			if(node["excludeWatched"] != null)
+			if(node["value"] != null)
 			{
-				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), node["orderBy"].Value<string>());
+				this._Value = ParseInt(node["value"].Value<string>());
 			}
 		}
 		#endregion
@@ -109,22 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaChannelFilter");
-			kparams.AddIfNotNull("idEqual", this._IdEqual);
-			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaDuration");
+			kparams.AddIfNotNull("unit", this._Unit);
+			kparams.AddIfNotNull("value", this._Value);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_EQUAL:
-					return "IdEqual";
-				case EXCLUDE_WATCHED:
-					return "ExcludeWatched";
-				case ORDER_BY:
-					return "OrderBy";
+				case UNIT:
+					return "Unit";
+				case VALUE:
+					return "Value";
 				default:
 					return base.getPropertyName(apiName);
 			}

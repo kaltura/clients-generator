@@ -200,10 +200,10 @@ namespace Kaltura
 					return new ListResponse<Tag>(jToken);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(jToken);
-				case "KalturaHouseholdPaymentMethodListResponse":
-					return new ListResponse<HouseholdPaymentMethod>(jToken);
 				case "KalturaHouseholdPaymentGatewayListResponse":
 					return new ListResponse<HouseholdPaymentGateway>(jToken);
+				case "KalturaHouseholdPaymentMethodListResponse":
+					return new ListResponse<HouseholdPaymentMethod>(jToken);
 				case "KalturaPaymentGatewayProfileListResponse":
 					return new ListResponse<PaymentGatewayProfile>(jToken);
 				case "KalturaPaymentMethodProfileListResponse":

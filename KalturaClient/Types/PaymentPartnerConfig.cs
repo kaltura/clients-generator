@@ -35,71 +35,43 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class ChannelFilter : BaseSearchAssetFilter
+	public class PaymentPartnerConfig : PartnerConfiguration
 	{
 		#region Constants
-		public const string ID_EQUAL = "idEqual";
-		public const string EXCLUDE_WATCHED = "excludeWatched";
-		public new const string ORDER_BY = "orderBy";
+		public const string UNIFIED_BILLING_CYCLES = "unifiedBillingCycles";
 		#endregion
 
 		#region Private Fields
-		private int _IdEqual = Int32.MinValue;
-		private bool? _ExcludeWatched = null;
-		private ChannelOrderBy _OrderBy = null;
+		private IList<UnifiedBillingCycle> _UnifiedBillingCycles;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public int IdEqual
+		public IList<UnifiedBillingCycle> UnifiedBillingCycles
 		{
-			get { return _IdEqual; }
+			get { return _UnifiedBillingCycles; }
 			set 
 			{ 
-				_IdEqual = value;
-				OnPropertyChanged("IdEqual");
-			}
-		}
-		[JsonProperty]
-		public bool? ExcludeWatched
-		{
-			get { return _ExcludeWatched; }
-			set 
-			{ 
-				_ExcludeWatched = value;
-				OnPropertyChanged("ExcludeWatched");
-			}
-		}
-		[JsonProperty]
-		public new ChannelOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_UnifiedBillingCycles = value;
+				OnPropertyChanged("UnifiedBillingCycles");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public ChannelFilter()
+		public PaymentPartnerConfig()
 		{
 		}
 
-		public ChannelFilter(JToken node) : base(node)
+		public PaymentPartnerConfig(JToken node) : base(node)
 		{
-			if(node["idEqual"] != null)
+			if(node["unifiedBillingCycles"] != null)
 			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
-			}
-			if(node["excludeWatched"] != null)
-			{
-				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), node["orderBy"].Value<string>());
+				this._UnifiedBillingCycles = new List<UnifiedBillingCycle>();
+				foreach(var arrayNode in node["unifiedBillingCycles"].Children())
+				{
+					this._UnifiedBillingCycles.Add(ObjectFactory.Create<UnifiedBillingCycle>(arrayNode));
+				}
 			}
 		}
 		#endregion
@@ -109,22 +81,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaChannelFilter");
-			kparams.AddIfNotNull("idEqual", this._IdEqual);
-			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaPaymentPartnerConfig");
+			kparams.AddIfNotNull("unifiedBillingCycles", this._UnifiedBillingCycles);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_EQUAL:
-					return "IdEqual";
-				case EXCLUDE_WATCHED:
-					return "ExcludeWatched";
-				case ORDER_BY:
-					return "OrderBy";
+				case UNIFIED_BILLING_CYCLES:
+					return "UnifiedBillingCycles";
 				default:
 					return base.getPropertyName(apiName);
 			}

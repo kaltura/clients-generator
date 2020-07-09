@@ -35,71 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class ChannelFilter : BaseSearchAssetFilter
+	public class SuspendSettings : ObjectBase
 	{
 		#region Constants
-		public const string ID_EQUAL = "idEqual";
-		public const string EXCLUDE_WATCHED = "excludeWatched";
-		public new const string ORDER_BY = "orderBy";
+		public const string REVOKE_ENTITLEMENTS = "revokeEntitlements";
+		public const string STOP_RENEW = "stopRenew";
 		#endregion
 
 		#region Private Fields
-		private int _IdEqual = Int32.MinValue;
-		private bool? _ExcludeWatched = null;
-		private ChannelOrderBy _OrderBy = null;
+		private bool? _RevokeEntitlements = null;
+		private bool? _StopRenew = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public int IdEqual
+		public bool? RevokeEntitlements
 		{
-			get { return _IdEqual; }
+			get { return _RevokeEntitlements; }
 			set 
 			{ 
-				_IdEqual = value;
-				OnPropertyChanged("IdEqual");
+				_RevokeEntitlements = value;
+				OnPropertyChanged("RevokeEntitlements");
 			}
 		}
 		[JsonProperty]
-		public bool? ExcludeWatched
+		public bool? StopRenew
 		{
-			get { return _ExcludeWatched; }
+			get { return _StopRenew; }
 			set 
 			{ 
-				_ExcludeWatched = value;
-				OnPropertyChanged("ExcludeWatched");
-			}
-		}
-		[JsonProperty]
-		public new ChannelOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_StopRenew = value;
+				OnPropertyChanged("StopRenew");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public ChannelFilter()
+		public SuspendSettings()
 		{
 		}
 
-		public ChannelFilter(JToken node) : base(node)
+		public SuspendSettings(JToken node) : base(node)
 		{
-			if(node["idEqual"] != null)
+			if(node["revokeEntitlements"] != null)
 			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
+				this._RevokeEntitlements = ParseBool(node["revokeEntitlements"].Value<string>());
 			}
-			if(node["excludeWatched"] != null)
+			if(node["stopRenew"] != null)
 			{
-				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), node["orderBy"].Value<string>());
+				this._StopRenew = ParseBool(node["stopRenew"].Value<string>());
 			}
 		}
 		#endregion
@@ -109,22 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaChannelFilter");
-			kparams.AddIfNotNull("idEqual", this._IdEqual);
-			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaSuspendSettings");
+			kparams.AddIfNotNull("revokeEntitlements", this._RevokeEntitlements);
+			kparams.AddIfNotNull("stopRenew", this._StopRenew);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_EQUAL:
-					return "IdEqual";
-				case EXCLUDE_WATCHED:
-					return "ExcludeWatched";
-				case ORDER_BY:
-					return "OrderBy";
+				case REVOKE_ENTITLEMENTS:
+					return "RevokeEntitlements";
+				case STOP_RENEW:
+					return "StopRenew";
 				default:
 					return base.getPropertyName(apiName);
 			}

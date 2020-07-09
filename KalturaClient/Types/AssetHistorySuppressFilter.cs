@@ -35,72 +35,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class ChannelFilter : BaseSearchAssetFilter
+	public class AssetHistorySuppressFilter : RelatedObjectFilter
 	{
 		#region Constants
-		public const string ID_EQUAL = "idEqual";
-		public const string EXCLUDE_WATCHED = "excludeWatched";
-		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private int _IdEqual = Int32.MinValue;
-		private bool? _ExcludeWatched = null;
-		private ChannelOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public int IdEqual
-		{
-			get { return _IdEqual; }
-			set 
-			{ 
-				_IdEqual = value;
-				OnPropertyChanged("IdEqual");
-			}
-		}
-		[JsonProperty]
-		public bool? ExcludeWatched
-		{
-			get { return _ExcludeWatched; }
-			set 
-			{ 
-				_ExcludeWatched = value;
-				OnPropertyChanged("ExcludeWatched");
-			}
-		}
-		[JsonProperty]
-		public new ChannelOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public ChannelFilter()
+		public AssetHistorySuppressFilter()
 		{
 		}
 
-		public ChannelFilter(JToken node) : base(node)
+		public AssetHistorySuppressFilter(JToken node) : base(node)
 		{
-			if(node["idEqual"] != null)
-			{
-				this._IdEqual = ParseInt(node["idEqual"].Value<string>());
-			}
-			if(node["excludeWatched"] != null)
-			{
-				this._ExcludeWatched = ParseBool(node["excludeWatched"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (ChannelOrderBy)StringEnum.Parse(typeof(ChannelOrderBy), node["orderBy"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -109,22 +61,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaChannelFilter");
-			kparams.AddIfNotNull("idEqual", this._IdEqual);
-			kparams.AddIfNotNull("excludeWatched", this._ExcludeWatched);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaAssetHistorySuppressFilter");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_EQUAL:
-					return "IdEqual";
-				case EXCLUDE_WATCHED:
-					return "ExcludeWatched";
-				case ORDER_BY:
-					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -237,6 +237,8 @@ namespace Kaltura
 		public static string ChildCategoryNotExist = "4092";
 		public static string ChildCategoryAlreadyBelongsToAnotherCategory = "4093";
 		public static string ChildCategoryCannotBeTheCategoryItself = "4094";
+		public static string InvalidAssetStruct = "4098";
+		public static string NoNextEpisode = "4099";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -284,6 +286,9 @@ namespace Kaltura
 		public static string RegionCannotBeParent = "5067";
 		public static string DefaultRegionCannotBeDeleted = "5068";
 		public static string CannotDeleteRegionInUse = "5069";
+		public static string FileExceededMaxSize = "4095";
+		public static string FileExtensionNotSupported = "4096";
+		public static string FileMimeDifferentThanExpected = "4097";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
@@ -330,7 +335,7 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentGatewaySuspended = "6051";
+		public static string PaymentMethodExternalIdRequired = "6051";
 		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
