@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'Linux'
+        label 'Windows'
     }
     parameters{
         string(name: 'CLIENT_XML_VER', defaultValue: '5_3_6', description: 'KalturaClient XML version')
