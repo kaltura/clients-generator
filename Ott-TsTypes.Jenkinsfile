@@ -26,7 +26,7 @@ pipeline {
             steps{
                 script {
                     sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
-                    sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
+//                     sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
                     sh(label: 'ZIP', script:'$zip -r tstypes.zip output/tstypes/')
                 }
             }
