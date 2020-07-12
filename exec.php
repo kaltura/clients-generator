@@ -91,6 +91,7 @@ require_once(__DIR__ . '/lib/TypescriptClientGenerator.php');
 require_once(__DIR__ . '/lib/NGXClientGenerator.php');
 require_once(__DIR__ . '/lib/NestJsClientGenerator.php');
 require_once(__DIR__ . '/lib/RxJSClientGenerator.php');
+require_once(__DIR__ . '/lib/TsTypesClientGenerator.php');
 
 //the name of the summary file that will be used by the UI -
 $summaryFileName = 'summary.kinf';
