@@ -97,11 +97,12 @@ require_once(__DIR__ . '/lib/TsTypesClientGenerator.php');
 $summaryFileName = 'summary.kinf';
 $tmpXmlFileName = tempnam(sys_get_temp_dir(), 'kaltura.generator.');
 
-$options = getopt('hx:r:t:', array(
+$options = getopt('hx:r:t:g:', array(
 	'help',
 	'xml:',
 	'root:',
 	'tests:',
+	'gzip-name',
 	'dont-gzip',
 ));
 
@@ -114,6 +115,7 @@ function showHelpAndExit()
 	echo "\t\t-x, --xml:    \tUse XML path or URL as source XML.\n";
 	echo "\t\t-r, --root:   \tRoot path, default is /opt/kaltura.\n";
 	echo "\t\t-t, --tests:  \tUse different tests configuration, valid values are OVP or OTT, default is OVP.\n";
+	echo "\t\t-g, --gzip-name:  \tGive name to gzip file.\n";
 	echo "\t\t--dont-gzip:  \tTar the packages without gzip.\n";
 
 	exit;
@@ -122,7 +124,7 @@ function showHelpAndExit()
 $schemaXmlPath = null;
 $rootPath = realpath('/opt/kaltura');
 $testsDir = 'ovp';
-
+$gzipName = null;
 $gzip = true;
 foreach($options as $option => $value)
 {
@@ -145,6 +147,10 @@ foreach($options as $option => $value)
 	elseif($option == 'dont-gzip')
 	{
 		$gzip = false;
+	}
+	elseif($option == 'g')
+	{
+		$gzipName = strtolower($value);
 	}
 
 	array_shift($argv);
@@ -348,7 +354,7 @@ foreach($config as $name => $item)
 
 	//tar gzip the client library
 	if (!$shouldNotPackage)
-		createPackage($outputPath, $name, $generatedDate, $gzip);
+		createPackage($outputPath, $name, $generatedDate, $gzip, $gzipName);
 
 	KalturaLog::info("$name generated successfully");
 }
@@ -372,7 +378,7 @@ function fixPath($path)
  * @param $outputPath 		The path the client library files are located at.
  * @param $generatorName	The name of the client library.
  */
-function createPackage($outputPath, $generatorName, $generatedDate, $gzip)
+function createPackage($outputPath, $generatorName, $generatedDate, $gzip, $gzipName)
 {
 	KalturaLog::info("Trying to package");
 	$output = shell_exec("tar --version");
@@ -382,7 +388,15 @@ function createPackage($outputPath, $generatorName, $generatedDate, $gzip)
 	}
 	else
 	{
-		$fileName = "{$generatorName}_{$generatedDate}.tar.gz";
+	    if($gzipName != null)
+	    {
+	        $fileName = "{$gzipName}.tar.gz";
+	    }
+	    else
+	    {
+	        $fileName = "{$generatorName}_{$generatedDate}.tar.gz";
+	    }
+
 		$gzipOutputPath = "../".$fileName;
 		$options = $gzip ? '-czf' : '-cf';
 		$cmd = "tar $options \"$gzipOutputPath\" ../".$generatorName;

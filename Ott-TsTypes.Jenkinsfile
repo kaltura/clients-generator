@@ -25,8 +25,8 @@ pipeline {
         stage('Generate Types and ZIP'){
             steps{
                 script {
-                    sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
-                    sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
+                    sh(label: 'Generate TsTypes', script:'php exec.php -tott -gtstypes tstypes ./output')
+                    sh(label: 'Generate TsTypes', script:'php exec.php -tott -gtstypes tstypes ./output')
                 }
             }
         }
@@ -34,7 +34,7 @@ pipeline {
             steps {
                 sh(
                     label:'Upload ZIP to S3',
-                    script:"aws s3 cp output/ ${S3_CLIENT_LIBS_OTT_TSTYPES} --recursive --exclude '*' --include 'tstypes_*'")
+                    script:"aws s3 cp output/tstypes.tar.gz ${S3_CLIENT_LIBS_OTT_TSTYPES} ")
             }
         }
     }
