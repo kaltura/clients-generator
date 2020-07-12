@@ -34,7 +34,7 @@ pipeline {
             steps {
                 sh(
                     label:'Upload ZIP to S3',
-                    script:"aws s3 cp output/ ${S3_CLIENT_LIBS_OTT_TSTYPES} --recursive --exclude '*' --include 'tstypes*'")
+                    script:"aws s3 cp output/ ${S3_CLIENT_LIBS_OTT_TSTYPES} --recursive --exclude '*' --include 'tstypes_*'")
             }
         }
     }
