@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'Windows'
+        label 'Linux'
     }
     parameters{
         string(name: 'CLIENT_XML_VER', defaultValue: '5_3_6', description: 'KalturaClient XML version')
@@ -27,7 +27,7 @@ pipeline {
                 script {
                     sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
                     sh(label: 'Generate TsTypes', script:'php exec.php -tott tstypes ./output')
-                    sh(label: 'ZIP', script:'$zip -r tstypes.zip output/tstypes/')
+                    sh(label: 'ZIP', script:'zip -r tstypes.zip output/tstypes/')
                 }
             }
         }
@@ -35,7 +35,7 @@ pipeline {
             steps {
                 sh(
                     label:'Upload ZIP to S3',
-                    script:"aws s3 cp tstypes.zip ${S3_CLIENT_LIBS_OTT_TSTYPES}")
+                    script:"aws s3 cp output/ ${S3_CLIENT_LIBS_OTT_TSTYPES} --recursive --exclude '*' --include 'tstypes*'")
             }
         }
     }
