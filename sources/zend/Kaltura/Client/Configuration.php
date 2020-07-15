@@ -37,6 +37,7 @@ class Kaltura_Client_Configuration
 	public $serviceUrl    				= "http://www.kaltura.com/";
 	public $format        				= Kaltura_Client_ClientBase::KALTURA_SERVICE_FORMAT_XML;
 	public $curlTimeout   				= 120;
+	public $curlReuse                   = false;
 	public $startZendDebuggerSession 	= false;
 	public $userAgent					= '';
 	public $proxyHost                   = null;
@@ -67,5 +68,25 @@ class Kaltura_Client_Configuration
 	public function getLogger()
 	{
 		return $this->logger;
+	}
+
+	/**
+	 * Set if curl should reuse connection across requests
+	 *
+	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+	 *
+	 * @param bool $curlReuse
+	 */
+	public function setCurlReuse($curlReuse){
+		$this->curlReuse = $curlReuse;
+	}
+
+	/**
+	 * Gets curl handle reuse setting
+	 *
+	 * @return the $curlReuse
+	 */
+	public function getCurlReuse(){
+		return $this->curlReuse;
 	}
 }

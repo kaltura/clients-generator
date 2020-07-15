@@ -159,11 +159,6 @@ class KalturaClientBase
 	private $responseHeaders = array();
 
 	/**
-	 * @var boolean
-	 */
-	private $persistConnection = false;
-
-	/**
 	 * @var resource
 	 */
 	private static $curlHandle = null;
@@ -235,18 +230,8 @@ class KalturaClientBase
 		}
 	}
 
-	/* Set if curl should reuse connection across requests
-	 *
-	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
-	 *
-	 * @param boolean
-	*/
-	public function setPersistConnection($enable){
-		$this->persistConnection = $enable;
-	}
-
 	/* Close curl handle
-	*  Either called near end of doCurl method if persistConnection == false or can be run explicitly to clean up connection upon ulimate completion of request.
+	*  Either called near end of doCurl method if config->getCurlReuse() == false or can be run explicitly to clean up connection upon ulimate completion of request.
 	*  
 	*/
 	public static function closeCurlHandle(){
@@ -537,7 +522,7 @@ class KalturaClientBase
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
-		$this->log("persistent: ". var_export($this->persistConnection,true));
+		$this->log("persistent: ". var_export($this->config->getCurlReuse(),true));
 
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
@@ -550,6 +535,8 @@ class KalturaClientBase
 
 		// Get new or existing curl handle
 		$ch = self::getCurlHandle();
+
+		$this->log("curlHandle: ". $ch);
 
 		// Reset options on handle (in case existing)
 		curl_reset($ch);
@@ -646,7 +633,7 @@ class KalturaClientBase
 
 		$curlError = curl_error($ch);
 
-		if(!$this->persistConnection){
+		if(!$this->config->getCurlReuse()){
 			self::closeCurlHandle();
 		}
 
@@ -1479,6 +1466,7 @@ class KalturaConfiguration
 	public $serviceUrl    				= "http://www.kaltura.com/";
 	public $format        				= KalturaClientBase::KALTURA_SERVICE_FORMAT_PHP;
 	public $curlTimeout   				= 120;
+	public $curlReuse                   = false;
 	public $userAgent					= '';
 	public $startZendDebuggerSession 	= false;
 	public $proxyHost                   = null;
@@ -1521,6 +1509,26 @@ class KalturaConfiguration
 	public function getLogger()
 	{
 		return $this->logger;
+	}
+
+	/**
+	 * Set if curl should reuse connection across requests
+	 *
+	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+	 *
+	 * @param bool $curlReuse
+	 */
+	public function setCurlReuse($curlReuse){
+		$this->curlReuse = $curlReuse;
+	}
+
+	/*
+	 * Gets curl handle reuse setting
+	 *
+	 * @return the $curlReuse
+	 */
+	public function getCurlReuse(){
+		return $this->curlReuse;
 	}
 }
 

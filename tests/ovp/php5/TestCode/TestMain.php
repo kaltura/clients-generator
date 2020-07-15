@@ -43,18 +43,21 @@ class TestMain implements IKalturaLogger
 	 * @var array
 	 */
 	private $config;
-    
-    private $persistConnection = false;
-	
+
+	/**
+	 *@var bool
+	 */
+	private $curlReuse = false;
+
 	public function log($message)
 	{
 		echo date('Y-m-d H:i:s') . ' ' .  $message . "\n";
 	}
 
-	public static function run($persistConnection = false)
+	public static function run($curlReuse = false)
 	{   
 		$test = new TestMain();
-        $test->persistConnection = $persistConnection;
+		$test->curlReuse = $curlReuse;
 		$test->loadConfig();
 		$test->listActions();
 		$test->multiRequest();
@@ -79,9 +82,9 @@ class TestMain implements IKalturaLogger
 	{
 		$kConfig = new KalturaConfiguration();
 		$kConfig->serviceUrl = $this->config[self::CONFIG_ITEM_SERVICE_URL];
+		$kConfig->setCurlReuse($this->curlReuse);
 		$kConfig->setLogger($this);
 		$client = new KalturaClient($kConfig);
-        $client->setPersistConnection($this->persistConnection);
 		
 		$userId = "SomeUser";
 		$sessionType = ($isAdmin)? KalturaSessionType::ADMIN : KalturaSessionType::USER; 
@@ -146,9 +149,9 @@ class TestMain implements IKalturaLogger
 	}
 }
 
-$options = getopt('', array('persistConnection'));
+$options = getopt('', array('curlReuse'));
 
-if(array_key_exists("persistConnection",$options)){
+if(array_key_exists("curlReuse",$options)){
 	//Rerun with a persistent connection
 	TestMain::run(true);
 }else{

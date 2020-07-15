@@ -10,11 +10,18 @@ require_once(dirname(__FILE__).'/Test/ZendClientTester.php');
 
 $testerConfig = parse_ini_file(dirname(__FILE__).'/'.CONFIG_FILE);
 
+$options = getopt('', array('curlReuse'));
+
 // init kaltura configuration
 $config = new Kaltura_Client_Configuration();
 $config->serviceUrl = $testerConfig['serviceUrl'];
 $config->curlTimeout = 120;
 $config->setLogger(new SampleLoggerImplementation());
+
+if(array_key_exists("curlReuse",$options)){
+	// run the tester with persistent connection
+	$config->setCurlReuse(true);
+}
 
 // init kaltura client
 $client = new Kaltura_Client_Client($config);
@@ -38,13 +45,6 @@ catch (Kaltura_Client_ClientException $ex)
 {
 	$config->getLogger()->log('Ping failed with client error: '.$ex->getMessage());
 	die;
-}
-
-$options = getopt('', array('persistConnection'));
-
-if(array_key_exists("persistConnection",$options)){
-    // run the tester with persistent connection
-    $client->setPersistConnection(true);
 }
 
 // run the tester

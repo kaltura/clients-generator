@@ -109,11 +109,6 @@ class Kaltura_Client_ClientBase
 	private $responseHeaders = array();
 
 	/**
-	 * @var boolean
-	 */
-	private $persistConnection = false;
-
-	/**
 	 * @var resource
 	 */
 	private static $curlHandle = null;
@@ -132,20 +127,11 @@ class Kaltura_Client_ClientBase
 			$this->shouldLog = true;
 	}
 
-	/* Set if curl should reuse connection across requests
+	/**
+	 * Close curl handle
+	 * Either called near end of doCurl method if config->getCurlReuse() == false or can be run explicitly to clean up connection upon ulimate completion of request.
 	 *
-	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
-	 *
-	 * @param boolean
-	*/
-	public function setPersistConnection($enable){
-		$this->persistConnection = $enable;
-	}
-
-	/* Close curl handle
-	*  Either called near end of doCurl method if persistConnection == false or can be run explicitly to clean up connection upon ulimate completion of request.
-	*  
-	*/
+	 */
 	public static function closeCurlHandle(){
 		curl_close(self::$curlHandle);
 		self::$curlHandle = null;
@@ -156,7 +142,6 @@ class Kaltura_Client_ClientBase
 		if(self::$curlHandle === null){
 			self::$curlHandle = curl_init();
 		}
-
 		return self::$curlHandle;
 	}
 
@@ -379,7 +364,7 @@ class Kaltura_Client_ClientBase
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
-		$this->log("persistent: ". var_export($this->persistConnection,true));
+		$this->log("persistent: ". var_export($this->config->getCurlReuse(),true));
 
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
@@ -394,6 +379,8 @@ class Kaltura_Client_ClientBase
 
 		// Get new or existing curl handle
 		$ch = self::getCurlHandle();
+
+		$this->log("curlHandle: ". $ch);
 
 		// Reset options on handle (in case existing)
 		curl_reset($ch);
@@ -474,7 +461,7 @@ class Kaltura_Client_ClientBase
 		$curlError = curl_error($ch);
 		$curlErrorCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-		if(!$this->persistConnection){
+		if(!$this->config->getCurlReuse()){
 			self::closeCurlHandle();
 		}
  

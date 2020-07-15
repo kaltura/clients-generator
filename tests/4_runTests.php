@@ -105,7 +105,7 @@ executeCommandFrom("{$rootDir}/php5/TestCode", $config['php']['php_bin'], 'TestM
 
 // Php5 with Persistent Connection
 echo "Php5 with Persistent Connection\n==================\n";
-executeCommandFrom("{$rootDir}/php5/TestCode", $config['php']['php_bin'], 'TestMain.php --persistConnection');
+executeCommandFrom("{$rootDir}/php5/TestCode", $config['php']['php_bin'], 'TestMain.php --curlReuse');
 
 // Php5Zend
 echo "Php5Zend\n==================\n";
@@ -113,7 +113,7 @@ executeCommandFrom("{$rootDir}/php5Zend/tests", $config['php']['php_bin'], 'run.
 
 // Php5Zend with Persistent Connection
 echo "Php5Zend with Persistent Connection\n==================\n";
-executeCommandFrom("{$rootDir}/php5Zend/tests", $config['php']['php_bin'], 'run.php --persistConnection');
+executeCommandFrom("{$rootDir}/php5Zend/tests", $config['php']['php_bin'], 'run.php --curlReuse');
 
 // Php53
 echo "Php5.3\n==================\n";
@@ -121,7 +121,7 @@ executeCommandFrom("{$rootDir}/php53/tests", $config['php']['php_bin'], 'run.php
 
 // Php53 with Persistent Connection
 echo "Php5.3 with Persistent Connection\n==================\n";
-executeCommandFrom("{$rootDir}/php53/tests", $config['php']['php_bin'], 'run.php --persistConnection');
+executeCommandFrom("{$rootDir}/php53/tests", $config['php']['php_bin'], 'run.php --curlReuse');
 
 // Python
 echo "Python\n==================\n";
