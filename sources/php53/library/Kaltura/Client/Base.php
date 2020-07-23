@@ -340,7 +340,7 @@ class Base
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
-		$this->log("persistent: ". var_export($this->config->getCurlReuse(),true));
+		$this->log("Reuse existing cURL handle: ". var_export($this->config->getCurlReuse(),true));
 		
 		if($this->config->getFormat() == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
@@ -355,8 +355,6 @@ class Base
 
 		// Get new or existing curl handle
 		$ch = self::getCurlHandle();
-
-		$this->log("curlHandle: ". $ch);
 
 		// Reset options on handle (in case existing)
 		curl_reset($ch);
