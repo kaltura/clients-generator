@@ -280,6 +280,9 @@ namespace Kaltura
 		public static string RegionCannotBeParent = "5067";
 		public static string DefaultRegionCannotBeDeleted = "5068";
 		public static string CannotDeleteRegionInUse = "5069";
+		public static string FileExceededMaxSize = "4091";
+		public static string FileExtensionNotSupported = "4092";
+		public static string FileMimeDifferentThanExpected = "4093";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
@@ -326,8 +329,8 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentMethodExternalIdRequired = "6051";
-		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
+		public static string PaymentGatewaySuspended = "6051";
+		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
