@@ -5,7 +5,8 @@ import { KalturaMultiRequest } from '../api/kaltura-multi-request';
 import { KalturaRequest } from '../api/kaltura-request';
 import { KalturaFileRequest } from '../api/kaltura-file-request';
 import { environment } from '../environment';
-import { KalturaAPIException, KalturaClientException } from '../api';
+import { KalturaAPIException } from '../api/kaltura-api-exception';
+import { KalturaClientException } from '../api/kaltura-client-exception';
 import { Observable } from 'rxjs';
 
 export type CreateEndpointOptions = KalturaClientOptions & {
