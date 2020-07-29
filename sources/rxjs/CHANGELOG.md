@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### Fix
 
 * warn when user bundle all the types and suggest a way to fix it
+* upgrade dependencies to resolve vulnerabilities
 
 
 ## 7.0.1 (2019-06-12)
