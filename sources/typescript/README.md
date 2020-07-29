@@ -10,9 +10,6 @@
 ### Getting Started
 To keep being update review the [changelog](CHANGELOG.md) frequently.
 
- **Found a bug?** create [kaltura/clients-generator issue](https://github.com/kaltura/clients-generator/issues)
-
-
 ## Features list
 View list of features [here](features.md).
 
@@ -27,7 +24,7 @@ Since this library was designed to be consumed directly and not using npmjs repo
 $ npm install
 $ npm run deploy
 ```
-2. open folder `dist` and find a `tar.gz` file starting with `kaltura-ngx-client-v`.
+2. open folder `dist` and find a `tar.gz` file starting with `kaltura-typescript-client-v`.
 3. copy this file to your project (we recommend coping it to folder `libs`)
 4. run the following command
  ```
@@ -35,9 +32,37 @@ $ npm run deploy
  ```
 > make sure you prefix the path with `file:` as shown above.
 
-An example of a vaild command will be: `npm install file:libs/kaltura-ngx-client-v7.1.0-20173010-1053.tgz`
+An example of a vaild command will be: `npm install file:libs/kaltura-typescript-client-v7.1.0-20173010-1053.tgz`
 
 5. if you already have older version, delete that file. You should do this only after you installed the new version.
+
+
+## Using the library in production
+> You should follow the steps below to optimize the production build by bundling only the types being used.
+
+The library has thousands of classes representing the data model of the server API. Usually, applications are using only friction of those types. Some toolchains drop the types that are not in actual use. 
+
+If you see that the bundle includes all the types or a log warning in the console like below, you should follow the steps mentioned in this section.
+
+```
+Notice! Your application bundle the whole package of kaltura-xxx-client (either rxjs/ngx/typescript), please refer to the library `readme.md` to reduce app bundle size.
+```
+
+1. make sure you have dependency for `webpack-plugin-import`.
+2. add plugin configuration to the babel file being used by your application. 
+```
+{
+  "plugins": [
+    [
+      "import", {
+      "libraryName": "kaltura-typescript-client/api/types",
+      "libraryDirectory": "",
+      "camel2DashComponentName": false,
+      "transformToDefaultImport": false
+    }]
+  ]
+}
+```
 
 ## Running integration tests
 - In `src/api/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.

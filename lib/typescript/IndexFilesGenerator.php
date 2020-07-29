@@ -21,6 +21,10 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
 
         $fileContent = $classIndex->content . $enumIndex->content . $actionIndex->content;
 
+        $fileContent .= "
+
+console.warn('Notice! Your application bundle the whole package of kaltura-xxx-client (either rxjs/ngx/typescript), please refer to the library `readme.md` to reduce app bundle size.')";
+
         $file = new GeneratedFileData();
         $file->path = "./types/index.ts";
         $file->content = $fileContent;
