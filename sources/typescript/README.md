@@ -48,7 +48,7 @@ If you see that the bundle includes all the types or a log warning in the consol
 Notice! Your application bundle the whole package of kaltura-xxx-client (either rxjs/ngx/typescript), please refer to the library `readme.md` to reduce app bundle size.
 ```
 
-1. make sure you have dependency for `webpack-plugin-import`.
+1. make sure you have dependency for `babel-plugin-import`.
 2. add plugin configuration to the babel file being used by your application. 
 ```
 {
