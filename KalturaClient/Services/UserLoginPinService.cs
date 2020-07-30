@@ -40,19 +40,25 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string SECRET = "secret";
+		public const string PIN_USAGES = "pinUsages";
+		public const string PIN_DURATION = "pinDuration";
 		#endregion
 
 		public string Secret { get; set; }
+		public int PinUsages { get; set; }
+		public long PinDuration { get; set; }
 
 		public UserLoginPinAddRequestBuilder()
 			: base("userloginpin", "add")
 		{
 		}
 
-		public UserLoginPinAddRequestBuilder(string secret)
+		public UserLoginPinAddRequestBuilder(string secret, int pinUsages, long pinDuration)
 			: this()
 		{
 			this.Secret = secret;
+			this.PinUsages = pinUsages;
+			this.PinDuration = pinDuration;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -60,6 +66,10 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("secret"))
 				kparams.AddIfNotNull("secret", Secret);
+			if (!isMapped("pinUsages"))
+				kparams.AddIfNotNull("pinUsages", PinUsages);
+			if (!isMapped("pinDuration"))
+				kparams.AddIfNotNull("pinDuration", PinDuration);
 			return kparams;
 		}
 
@@ -152,21 +162,27 @@ namespace Kaltura.Services
 		#region Constants
 		public const string PIN_CODE = "pinCode";
 		public const string SECRET = "secret";
+		public const string PIN_USAGES = "pinUsages";
+		public const string PIN_DURATION = "pinDuration";
 		#endregion
 
 		public string PinCode { get; set; }
 		public string Secret { get; set; }
+		public int PinUsages { get; set; }
+		public long PinDuration { get; set; }
 
 		public UserLoginPinUpdateRequestBuilder()
 			: base("userloginpin", "update")
 		{
 		}
 
-		public UserLoginPinUpdateRequestBuilder(string pinCode, string secret)
+		public UserLoginPinUpdateRequestBuilder(string pinCode, string secret, int pinUsages, long pinDuration)
 			: this()
 		{
 			this.PinCode = pinCode;
 			this.Secret = secret;
+			this.PinUsages = pinUsages;
+			this.PinDuration = pinDuration;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -176,6 +192,10 @@ namespace Kaltura.Services
 				kparams.AddIfNotNull("pinCode", PinCode);
 			if (!isMapped("secret"))
 				kparams.AddIfNotNull("secret", Secret);
+			if (!isMapped("pinUsages"))
+				kparams.AddIfNotNull("pinUsages", PinUsages);
+			if (!isMapped("pinDuration"))
+				kparams.AddIfNotNull("pinDuration", PinDuration);
 			return kparams;
 		}
 
@@ -198,9 +218,9 @@ namespace Kaltura.Services
 		{
 		}
 
-		public static UserLoginPinAddRequestBuilder Add(string secret = null)
+		public static UserLoginPinAddRequestBuilder Add(string secret = null, int pinUsages = Int32.MinValue, long pinDuration = null)
 		{
-			return new UserLoginPinAddRequestBuilder(secret);
+			return new UserLoginPinAddRequestBuilder(secret, pinUsages, pinDuration);
 		}
 
 		public static UserLoginPinDeleteRequestBuilder Delete(string pinCode)
@@ -213,9 +233,9 @@ namespace Kaltura.Services
 			return new UserLoginPinDeleteAllRequestBuilder();
 		}
 
-		public static UserLoginPinUpdateRequestBuilder Update(string pinCode, string secret = null)
+		public static UserLoginPinUpdateRequestBuilder Update(string pinCode, string secret = null, int pinUsages = Int32.MinValue, long pinDuration = null)
 		{
-			return new UserLoginPinUpdateRequestBuilder(pinCode, secret);
+			return new UserLoginPinUpdateRequestBuilder(pinCode, secret, pinUsages, pinDuration);
 		}
 	}
 }

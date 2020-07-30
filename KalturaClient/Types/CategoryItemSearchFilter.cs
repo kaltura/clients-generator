@@ -40,11 +40,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string KSQL = "kSql";
 		public const string ROOT_ONLY = "rootOnly";
+		public const string TYPE_EQUAL = "typeEqual";
 		#endregion
 
 		#region Private Fields
 		private string _KSql = null;
 		private bool? _RootOnly = null;
+		private string _TypeEqual = null;
 		#endregion
 
 		#region Properties
@@ -68,6 +70,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("RootOnly");
 			}
 		}
+		[JsonProperty]
+		public string TypeEqual
+		{
+			get { return _TypeEqual; }
+			set 
+			{ 
+				_TypeEqual = value;
+				OnPropertyChanged("TypeEqual");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -85,6 +97,10 @@ namespace Kaltura.Types
 			{
 				this._RootOnly = ParseBool(node["rootOnly"].Value<string>());
 			}
+			if(node["typeEqual"] != null)
+			{
+				this._TypeEqual = node["typeEqual"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -96,6 +112,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaCategoryItemSearchFilter");
 			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("rootOnly", this._RootOnly);
+			kparams.AddIfNotNull("typeEqual", this._TypeEqual);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -106,6 +123,8 @@ namespace Kaltura.Types
 					return "KSql";
 				case ROOT_ONLY:
 					return "RootOnly";
+				case TYPE_EQUAL:
+					return "TypeEqual";
 				default:
 					return base.getPropertyName(apiName);
 			}

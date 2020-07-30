@@ -59,6 +59,7 @@ namespace Kaltura.Types
 		public const string CDN_ADAPATER_PROFILE_ID = "cdnAdapaterProfileId";
 		public const string STATUS = "status";
 		public const string CATALOG_END_DATE = "catalogEndDate";
+		public const string OPL = "opl";
 		#endregion
 
 		#region Private Fields
@@ -83,6 +84,7 @@ namespace Kaltura.Types
 		private long _CdnAdapaterProfileId = long.MinValue;
 		private bool? _Status = null;
 		private long _CatalogEndDate = long.MinValue;
+		private string _Opl = null;
 		#endregion
 
 		#region Properties
@@ -296,6 +298,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("CatalogEndDate");
 			}
 		}
+		[JsonProperty]
+		public string Opl
+		{
+			get { return _Opl; }
+			set 
+			{ 
+				_Opl = value;
+				OnPropertyChanged("Opl");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -389,6 +401,10 @@ namespace Kaltura.Types
 			{
 				this._CatalogEndDate = ParseLong(node["catalogEndDate"].Value<string>());
 			}
+			if(node["opl"] != null)
+			{
+				this._Opl = node["opl"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -419,6 +435,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("cdnAdapaterProfileId", this._CdnAdapaterProfileId);
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("catalogEndDate", this._CatalogEndDate);
+			kparams.AddIfNotNull("opl", this._Opl);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -467,6 +484,8 @@ namespace Kaltura.Types
 					return "Status";
 				case CATALOG_END_DATE:
 					return "CatalogEndDate";
+				case OPL:
+					return "Opl";
 				default:
 					return base.getPropertyName(apiName);
 			}

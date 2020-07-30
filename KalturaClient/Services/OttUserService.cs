@@ -414,17 +414,27 @@ namespace Kaltura.Services
 	public class OttUserLogoutRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
+		public const string ADAPTER_DATA = "adapterData";
 		#endregion
 
+		public IDictionary<string, StringValue> AdapterData { get; set; }
 
 		public OttUserLogoutRequestBuilder()
 			: base("ottuser", "logout")
 		{
 		}
 
+		public OttUserLogoutRequestBuilder(IDictionary<string, StringValue> adapterData)
+			: this()
+		{
+			this.AdapterData = adapterData;
+		}
+
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("adapterData"))
+				kparams.AddIfNotNull("adapterData", AdapterData);
 			return kparams;
 		}
 
@@ -872,9 +882,9 @@ namespace Kaltura.Services
 			return new OttUserLoginWithPinRequestBuilder(partnerId, pin, udid, secret);
 		}
 
-		public static OttUserLogoutRequestBuilder Logout()
+		public static OttUserLogoutRequestBuilder Logout(IDictionary<string, StringValue> adapterData = null)
 		{
-			return new OttUserLogoutRequestBuilder();
+			return new OttUserLogoutRequestBuilder(adapterData);
 		}
 
 		public static OttUserRegisterRequestBuilder Register(int partnerId, OTTUser user, string password)
