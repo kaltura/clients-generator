@@ -6,7 +6,7 @@ import {KalturaMediaEntryFilter} from "../lib/api/types/KalturaMediaEntryFilter"
 import {KalturaFlavorAssetFilter} from "../lib/api/types/KalturaFlavorAssetFilter";
 import { asyncAssert, getClient } from "./utils";
 import {LoggerSettings, LogLevels} from "../lib/api/kaltura-logger";
-import {KalturaResponse} from "../lib/api";
+import {KalturaResponse} from "../lib/api/kaltura-response";
 import {KalturaClient} from "../lib/kaltura-client.service";
 
 describe(`service "Flavor" tests`, () => {
