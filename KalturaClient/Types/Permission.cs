@@ -43,6 +43,7 @@ namespace Kaltura.Types
 		public const string FRIENDLY_NAME = "friendlyName";
 		public const string DEPENDS_ON_PERMISSION_NAMES = "dependsOnPermissionNames";
 		public const string TYPE = "type";
+		public const string PERMISSION_ITEMS_IDS = "permissionItemsIds";
 		#endregion
 
 		#region Private Fields
@@ -51,6 +52,7 @@ namespace Kaltura.Types
 		private string _FriendlyName = null;
 		private string _DependsOnPermissionNames = null;
 		private PermissionType _Type = null;
+		private string _PermissionItemsIds = null;
 		#endregion
 
 		#region Properties
@@ -104,6 +106,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
+		public string PermissionItemsIds
+		{
+			get { return _PermissionItemsIds; }
+			private set 
+			{ 
+				_PermissionItemsIds = value;
+				OnPropertyChanged("PermissionItemsIds");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -133,6 +145,10 @@ namespace Kaltura.Types
 			{
 				this._Type = (PermissionType)StringEnum.Parse(typeof(PermissionType), node["type"].Value<string>());
 			}
+			if(node["permissionItemsIds"] != null)
+			{
+				this._PermissionItemsIds = node["permissionItemsIds"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -147,6 +163,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("friendlyName", this._FriendlyName);
 			kparams.AddIfNotNull("dependsOnPermissionNames", this._DependsOnPermissionNames);
 			kparams.AddIfNotNull("type", this._Type);
+			kparams.AddIfNotNull("permissionItemsIds", this._PermissionItemsIds);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -163,6 +180,8 @@ namespace Kaltura.Types
 					return "DependsOnPermissionNames";
 				case TYPE:
 					return "Type";
+				case PERMISSION_ITEMS_IDS:
+					return "PermissionItemsIds";
 				default:
 					return base.getPropertyName(apiName);
 			}

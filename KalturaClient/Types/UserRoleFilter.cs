@@ -40,12 +40,16 @@ namespace Kaltura.Types
 		#region Constants
 		public const string ID_IN = "idIn";
 		public const string CURRENT_USER_ROLE_IDS_CONTAINS = "currentUserRoleIdsContains";
+		public const string TYPE_EQUAL = "typeEqual";
+		public const string PROFILE_EQUAL = "profileEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
 		private string _IdIn = null;
 		private bool? _CurrentUserRoleIdsContains = null;
+		private UserRoleType _TypeEqual = null;
+		private UserRoleProfile _ProfileEqual = null;
 		private UserRoleOrderBy _OrderBy = null;
 		#endregion
 
@@ -68,6 +72,26 @@ namespace Kaltura.Types
 			{ 
 				_CurrentUserRoleIdsContains = value;
 				OnPropertyChanged("CurrentUserRoleIdsContains");
+			}
+		}
+		[JsonProperty]
+		public UserRoleType TypeEqual
+		{
+			get { return _TypeEqual; }
+			set 
+			{ 
+				_TypeEqual = value;
+				OnPropertyChanged("TypeEqual");
+			}
+		}
+		[JsonProperty]
+		public UserRoleProfile ProfileEqual
+		{
+			get { return _ProfileEqual; }
+			set 
+			{ 
+				_ProfileEqual = value;
+				OnPropertyChanged("ProfileEqual");
 			}
 		}
 		[JsonProperty]
@@ -97,6 +121,14 @@ namespace Kaltura.Types
 			{
 				this._CurrentUserRoleIdsContains = ParseBool(node["currentUserRoleIdsContains"].Value<string>());
 			}
+			if(node["typeEqual"] != null)
+			{
+				this._TypeEqual = (UserRoleType)StringEnum.Parse(typeof(UserRoleType), node["typeEqual"].Value<string>());
+			}
+			if(node["profileEqual"] != null)
+			{
+				this._ProfileEqual = (UserRoleProfile)StringEnum.Parse(typeof(UserRoleProfile), node["profileEqual"].Value<string>());
+			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (UserRoleOrderBy)StringEnum.Parse(typeof(UserRoleOrderBy), node["orderBy"].Value<string>());
@@ -112,6 +144,8 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaUserRoleFilter");
 			kparams.AddIfNotNull("idIn", this._IdIn);
 			kparams.AddIfNotNull("currentUserRoleIdsContains", this._CurrentUserRoleIdsContains);
+			kparams.AddIfNotNull("typeEqual", this._TypeEqual);
+			kparams.AddIfNotNull("profileEqual", this._ProfileEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -123,6 +157,10 @@ namespace Kaltura.Types
 					return "IdIn";
 				case CURRENT_USER_ROLE_IDS_CONTAINS:
 					return "CurrentUserRoleIdsContains";
+				case TYPE_EQUAL:
+					return "TypeEqual";
+				case PROFILE_EQUAL:
+					return "ProfileEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

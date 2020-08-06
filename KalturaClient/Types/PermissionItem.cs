@@ -35,24 +35,18 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class UserRole : ObjectBase
+	public class PermissionItem : ObjectBase
 	{
 		#region Constants
 		public const string ID = "id";
 		public const string NAME = "name";
-		public const string PERMISSION_NAMES = "permissionNames";
-		public const string EXCLUDED_PERMISSION_NAMES = "excludedPermissionNames";
-		public const string TYPE = "type";
-		public const string PROFILE = "profile";
+		public const string IS_EXCLUDED = "isExcluded";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
 		private string _Name = null;
-		private string _PermissionNames = null;
-		private string _ExcludedPermissionNames = null;
-		private UserRoleType _Type = null;
-		private UserRoleProfile _Profile = null;
+		private bool? _IsExcluded = null;
 		#endregion
 
 		#region Properties
@@ -77,53 +71,23 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public string PermissionNames
+		public bool? IsExcluded
 		{
-			get { return _PermissionNames; }
+			get { return _IsExcluded; }
 			set 
 			{ 
-				_PermissionNames = value;
-				OnPropertyChanged("PermissionNames");
-			}
-		}
-		[JsonProperty]
-		public string ExcludedPermissionNames
-		{
-			get { return _ExcludedPermissionNames; }
-			set 
-			{ 
-				_ExcludedPermissionNames = value;
-				OnPropertyChanged("ExcludedPermissionNames");
-			}
-		}
-		[JsonProperty]
-		public UserRoleType Type
-		{
-			get { return _Type; }
-			private set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
-		}
-		[JsonProperty]
-		public UserRoleProfile Profile
-		{
-			get { return _Profile; }
-			set 
-			{ 
-				_Profile = value;
-				OnPropertyChanged("Profile");
+				_IsExcluded = value;
+				OnPropertyChanged("IsExcluded");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public UserRole()
+		public PermissionItem()
 		{
 		}
 
-		public UserRole(JToken node) : base(node)
+		public PermissionItem(JToken node) : base(node)
 		{
 			if(node["id"] != null)
 			{
@@ -133,21 +97,9 @@ namespace Kaltura.Types
 			{
 				this._Name = node["name"].Value<string>();
 			}
-			if(node["permissionNames"] != null)
+			if(node["isExcluded"] != null)
 			{
-				this._PermissionNames = node["permissionNames"].Value<string>();
-			}
-			if(node["excludedPermissionNames"] != null)
-			{
-				this._ExcludedPermissionNames = node["excludedPermissionNames"].Value<string>();
-			}
-			if(node["type"] != null)
-			{
-				this._Type = (UserRoleType)StringEnum.Parse(typeof(UserRoleType), node["type"].Value<string>());
-			}
-			if(node["profile"] != null)
-			{
-				this._Profile = (UserRoleProfile)StringEnum.Parse(typeof(UserRoleProfile), node["profile"].Value<string>());
+				this._IsExcluded = ParseBool(node["isExcluded"].Value<string>());
 			}
 		}
 		#endregion
@@ -157,13 +109,10 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaUserRole");
+				kparams.AddReplace("objectType", "KalturaPermissionItem");
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("name", this._Name);
-			kparams.AddIfNotNull("permissionNames", this._PermissionNames);
-			kparams.AddIfNotNull("excludedPermissionNames", this._ExcludedPermissionNames);
-			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("profile", this._Profile);
+			kparams.AddIfNotNull("isExcluded", this._IsExcluded);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -174,14 +123,8 @@ namespace Kaltura.Types
 					return "Id";
 				case NAME:
 					return "Name";
-				case PERMISSION_NAMES:
-					return "PermissionNames";
-				case EXCLUDED_PERMISSION_NAMES:
-					return "ExcludedPermissionNames";
-				case TYPE:
-					return "Type";
-				case PROFILE:
-					return "Profile";
+				case IS_EXCLUDED:
+					return "IsExcluded";
 				default:
 					return base.getPropertyName(apiName);
 			}
