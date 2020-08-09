@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 12.0.0 (2020-07-26)
+
+### Breaking Change
+
+* change type of property `relatedObjects` from array to map
+
+before
+
+``
+export interface KalturaObjectBaseArgs
+{
+  relatedObjects? : KalturaObjectBase[];
+}
+``
+
+after
+
+``
+export interface KalturaObjectBaseArgs
+{
+  relatedObjects? : { [key: string] : KalturaObjectBase };
+}
+``
+
 ## 11.4.0 (2019-07-02)
 
 ### Features

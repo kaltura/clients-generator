@@ -1,7 +1,7 @@
 {
   "name": "kaltura-rxjs-client",
   "private": true,
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "Kaltura RXJS Typescript client",
   "keywords": [
     "Kaltura"

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 7.0.2 (2020-07-27)
+
+### Fix
+
+* warn when user bundle all the types and suggest a way to fix it
+
 ## 7.0.1 (2019-06-12)
 
 ### Fix
