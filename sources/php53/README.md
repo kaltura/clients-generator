@@ -2,7 +2,7 @@
 Compatible with Kaltura server version @VERSION@ and above.
 
 ## Install
-Navigation to php53 directory and run `composer install` to install class autoloader
+Navigate into the php53 directory and run `composer install` to install class autoloader
 
 ## Getting Started
 
