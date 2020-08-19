@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Kaltura.Types;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -136,6 +138,11 @@ namespace Kaltura.Request
 
                 response.EnsureSuccessStatusCode();
                 var responseObject = ParseResponseString<T>(responseString);
+                if (responseObject is ObjectBase )
+                {                    
+                    var dict = response.Headers.ToDictionary(x => x.Key, x => x.Value);
+                    (responseObject as ObjectBase).Headers = dict;
+                }
                 this.Log(string.Format("execution time for ([{0}]: [{1}]", getPath(), sw.Elapsed));
                 return responseObject;
             }
