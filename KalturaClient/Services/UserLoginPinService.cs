@@ -46,14 +46,14 @@ namespace Kaltura.Services
 
 		public string Secret { get; set; }
 		public int PinUsages { get; set; }
-		public long PinDuration { get; set; }
+		public int PinDuration { get; set; }
 
 		public UserLoginPinAddRequestBuilder()
 			: base("userloginpin", "add")
 		{
 		}
 
-		public UserLoginPinAddRequestBuilder(string secret, int pinUsages, long pinDuration)
+		public UserLoginPinAddRequestBuilder(string secret, int pinUsages, int pinDuration)
 			: this()
 		{
 			this.Secret = secret;
@@ -169,14 +169,14 @@ namespace Kaltura.Services
 		public string PinCode { get; set; }
 		public string Secret { get; set; }
 		public int PinUsages { get; set; }
-		public long PinDuration { get; set; }
+		public int PinDuration { get; set; }
 
 		public UserLoginPinUpdateRequestBuilder()
 			: base("userloginpin", "update")
 		{
 		}
 
-		public UserLoginPinUpdateRequestBuilder(string pinCode, string secret, int pinUsages, long pinDuration)
+		public UserLoginPinUpdateRequestBuilder(string pinCode, string secret, int pinUsages, int pinDuration)
 			: this()
 		{
 			this.PinCode = pinCode;
@@ -218,7 +218,7 @@ namespace Kaltura.Services
 		{
 		}
 
-		public static UserLoginPinAddRequestBuilder Add(string secret = null, int pinUsages = Int32.MinValue, long pinDuration = null)
+		public static UserLoginPinAddRequestBuilder Add(string secret = null, int pinUsages = Int32.MinValue, int pinDuration = Int32.MinValue)
 		{
 			return new UserLoginPinAddRequestBuilder(secret, pinUsages, pinDuration);
 		}
@@ -233,7 +233,7 @@ namespace Kaltura.Services
 			return new UserLoginPinDeleteAllRequestBuilder();
 		}
 
-		public static UserLoginPinUpdateRequestBuilder Update(string pinCode, string secret = null, int pinUsages = Int32.MinValue, long pinDuration = null)
+		public static UserLoginPinUpdateRequestBuilder Update(string pinCode, string secret = null, int pinUsages = Int32.MinValue, int pinDuration = Int32.MinValue)
 		{
 			return new UserLoginPinUpdateRequestBuilder(pinCode, secret, pinUsages, pinDuration);
 		}
