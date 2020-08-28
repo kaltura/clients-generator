@@ -13,7 +13,7 @@
     <Authors>Johnathan Amit-Kanarek, Arthur Vaverko, Jess Portnoy</Authors>
     <ProjectUrl>https://github.com/kaltura/KalturaOttGeneratedAPIClientsCsharp</ProjectUrl>
     <IconUrl>https://avatars2.githubusercontent.com/u/319096?s=200&amp;v=4</IconUrl>
-    <Version>5.3.2.27540</Version>
+    <Version>5.3.2.27544</Version>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
