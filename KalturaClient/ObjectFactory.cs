@@ -272,8 +272,6 @@ namespace Kaltura
 					return new ListResponse<HouseholdSegment>(jToken);
 				case "KalturaPasswordPolicyListResponse":
 					return new ListResponse<PasswordPolicy>(jToken);
-				case "KalturaPermissionItemListResponse":
-					return new ListResponse<PermissionItem>(jToken);
 			}
 		
 			return null;

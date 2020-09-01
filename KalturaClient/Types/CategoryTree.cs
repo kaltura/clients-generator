@@ -48,7 +48,6 @@ namespace Kaltura.Types
 		public const string IS_ACTIVE = "isActive";
 		public const string START_DATE_IN_SECONDS = "startDateInSeconds";
 		public const string END_DATE_IN_SECONDS = "endDateInSeconds";
-		public const string TYPE = "type";
 		#endregion
 
 		#region Private Fields
@@ -62,7 +61,6 @@ namespace Kaltura.Types
 		private bool? _IsActive = null;
 		private long _StartDateInSeconds = long.MinValue;
 		private long _EndDateInSeconds = long.MinValue;
-		private string _Type = null;
 		#endregion
 
 		#region Properties
@@ -166,16 +164,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDateInSeconds");
 			}
 		}
-		[JsonProperty]
-		public string Type
-		{
-			get { return _Type; }
-			set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -249,10 +237,6 @@ namespace Kaltura.Types
 			{
 				this._EndDateInSeconds = ParseLong(node["endDateInSeconds"].Value<string>());
 			}
-			if(node["type"] != null)
-			{
-				this._Type = node["type"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -272,7 +256,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("isActive", this._IsActive);
 			kparams.AddIfNotNull("startDateInSeconds", this._StartDateInSeconds);
 			kparams.AddIfNotNull("endDateInSeconds", this._EndDateInSeconds);
-			kparams.AddIfNotNull("type", this._Type);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -299,8 +282,6 @@ namespace Kaltura.Types
 					return "StartDateInSeconds";
 				case END_DATE_IN_SECONDS:
 					return "EndDateInSeconds";
-				case TYPE:
-					return "Type";
 				default:
 					return base.getPropertyName(apiName);
 			}

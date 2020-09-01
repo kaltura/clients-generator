@@ -239,9 +239,6 @@ namespace Kaltura
 		public static string ChildCategoryCannotBeTheCategoryItself = "4094";
 		public static string InvalidAssetStruct = "4098";
 		public static string NoNextEpisode = "4099";
-		public static string CannotDeleteAssetStruct = "4100";
-		public static string CategoryTypeNotExist = "4101";
-		public static string ExtendedTypeValueCannotBeChanged = "4102";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -292,11 +289,6 @@ namespace Kaltura
 		public static string FileExceededMaxSize = "4095";
 		public static string FileExtensionNotSupported = "4096";
 		public static string FileMimeDifferentThanExpected = "4097";
-		public static string PermissionItemNotFound = "5071";
-		public static string PermissionReadOnly = "5072";
-		public static string PermissionPermissionItemNotFound = "5073";
-		public static string PermissionPermissionItemAlreadyExists = "5074";
-		public static string RoleReadOnly = "5075";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
