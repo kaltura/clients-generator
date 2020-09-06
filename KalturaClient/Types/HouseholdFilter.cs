@@ -35,39 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BaseChannel : OTTObjectSupportNullable
+	public class HouseholdFilter : Filter
 	{
 		#region Constants
-		public const string ID = "id";
+		public const string EXTERNAL_ID_EQUAL = "externalIdEqual";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
+		private string _ExternalIdEqual = null;
+		private HouseholdOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long Id
+		public string ExternalIdEqual
 		{
-			get { return _Id; }
-			private set 
+			get { return _ExternalIdEqual; }
+			set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
+				_ExternalIdEqual = value;
+				OnPropertyChanged("ExternalIdEqual");
+			}
+		}
+		[JsonProperty]
+		public new HouseholdOrderBy OrderBy
+		{
+			get { return _OrderBy; }
+			set 
+			{ 
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public BaseChannel()
+		public HouseholdFilter()
 		{
 		}
 
-		public BaseChannel(JToken node) : base(node)
+		public HouseholdFilter(JToken node) : base(node)
 		{
-			if(node["id"] != null)
+			if(node["externalIdEqual"] != null)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				this._ExternalIdEqual = node["externalIdEqual"].Value<string>();
+			}
+			if(node["orderBy"] != null)
+			{
+				this._OrderBy = (HouseholdOrderBy)StringEnum.Parse(typeof(HouseholdOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,16 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBaseChannel");
-			kparams.AddIfNotNull("id", this._Id);
+				kparams.AddReplace("objectType", "KalturaHouseholdFilter");
+			kparams.AddIfNotNull("externalIdEqual", this._ExternalIdEqual);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
+				case EXTERNAL_ID_EQUAL:
+					return "ExternalIdEqual";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

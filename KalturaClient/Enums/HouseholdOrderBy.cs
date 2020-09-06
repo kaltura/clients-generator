@@ -27,12 +27,10 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class HouseholdDeviceOrderBy : StringEnum
+	public sealed class HouseholdOrderBy : StringEnum
 	{
-		public static readonly HouseholdDeviceOrderBy NONE = new HouseholdDeviceOrderBy("NONE");
-		public static readonly HouseholdDeviceOrderBy CREATED_DATE_ASC = new HouseholdDeviceOrderBy("CREATED_DATE_ASC");
-		public static readonly HouseholdDeviceOrderBy CREATED_DATE_DESC = new HouseholdDeviceOrderBy("CREATED_DATE_DESC");
+		public static readonly HouseholdOrderBy CREATE_DATE_DESC = new HouseholdOrderBy("CREATE_DATE_DESC");
 
-		private HouseholdDeviceOrderBy(string name) : base(name) { }
+		private HouseholdOrderBy(string name) : base(name) { }
 	}
 }

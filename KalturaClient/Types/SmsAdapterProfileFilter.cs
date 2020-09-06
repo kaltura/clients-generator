@@ -35,39 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BaseChannel : OTTObjectSupportNullable
+	public class SmsAdapterProfileFilter : CrudFilter
 	{
 		#region Constants
-		public const string ID = "id";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
+		private SmsAdapterProfileOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long Id
+		public new SmsAdapterProfileOrderBy OrderBy
 		{
-			get { return _Id; }
-			private set 
+			get { return _OrderBy; }
+			set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public BaseChannel()
+		public SmsAdapterProfileFilter()
 		{
 		}
 
-		public BaseChannel(JToken node) : base(node)
+		public SmsAdapterProfileFilter(JToken node) : base(node)
 		{
-			if(node["id"] != null)
+			if(node["orderBy"] != null)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				this._OrderBy = (SmsAdapterProfileOrderBy)StringEnum.Parse(typeof(SmsAdapterProfileOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,16 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBaseChannel");
-			kparams.AddIfNotNull("id", this._Id);
+				kparams.AddReplace("objectType", "KalturaSmsAdapterProfileFilter");
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

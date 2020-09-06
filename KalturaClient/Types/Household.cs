@@ -53,6 +53,8 @@ namespace Kaltura.Types
 		public const string FREQUENCY_NEXT_USER_ACTION = "frequencyNextUserAction";
 		public const string RESTRICTION = "restriction";
 		public const string ROLE_ID = "roleId";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
 		#endregion
 
 		#region Private Fields
@@ -71,6 +73,8 @@ namespace Kaltura.Types
 		private long _FrequencyNextUserAction = long.MinValue;
 		private HouseholdRestriction _Restriction = null;
 		private int _RoleId = Int32.MinValue;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -224,6 +228,26 @@ namespace Kaltura.Types
 				OnPropertyChanged("RoleId");
 			}
 		}
+		[JsonProperty]
+		public long CreateDate
+		{
+			get { return _CreateDate; }
+			private set 
+			{ 
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
+			}
+		}
+		[JsonProperty]
+		public long UpdateDate
+		{
+			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -293,6 +317,14 @@ namespace Kaltura.Types
 			{
 				this._RoleId = ParseInt(node["roleId"].Value<string>());
 			}
+			if(node["createDate"] != null)
+			{
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
+			}
+			if(node["updateDate"] != null)
+			{
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -317,6 +349,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("frequencyNextUserAction", this._FrequencyNextUserAction);
 			kparams.AddIfNotNull("restriction", this._Restriction);
 			kparams.AddIfNotNull("roleId", this._RoleId);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -353,6 +387,10 @@ namespace Kaltura.Types
 					return "Restriction";
 				case ROLE_ID:
 					return "RoleId";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

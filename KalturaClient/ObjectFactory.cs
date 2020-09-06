@@ -266,6 +266,8 @@ namespace Kaltura
 					return new ListResponse<Coupon>(jToken);
 				case "KalturaEventNotificationListResponse":
 					return new ListResponse<EventNotification>(jToken);
+				case "KalturaHouseholdListResponse":
+					return new ListResponse<Household>(jToken);
 				case "KalturaHouseholdCouponListResponse":
 					return new ListResponse<HouseholdCoupon>(jToken);
 				case "KalturaHouseholdSegmentListResponse":
@@ -274,6 +276,8 @@ namespace Kaltura
 					return new ListResponse<PasswordPolicy>(jToken);
 				case "KalturaPermissionItemListResponse":
 					return new ListResponse<PermissionItem>(jToken);
+				case "KalturaSmsAdapterProfileListResponse":
+					return new ListResponse<SmsAdapterProfile>(jToken);
 			}
 		
 			return null;
