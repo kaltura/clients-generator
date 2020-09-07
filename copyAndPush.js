@@ -163,8 +163,9 @@ function gitTagAndPush(gitPath) {
     {
         var tag = process.argv[6];
         console.log(`Tagging repo ${gitPath} branch ${branch} tag ${tag}`);
-        execWithPomise(git + ' tag -a ' + tag + ' -m '+ tag, gitPath);
-        return execWithPomise(git + ' push -f --tags ', gitPath);
+        return execWithPomise(git + ' tag -f ' + tag, gitPath).then((gitPath) => {
+            return execWithPomise(git + ' push -f --tags ', gitPath);
+        })
     }
 }
 
