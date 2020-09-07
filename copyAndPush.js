@@ -72,7 +72,8 @@ function execWithPomise(command, cwd, resolveData, alwaysResolve) {
 	}
 	return new Promise((resolve, reject) => {
 		child_process.exec(command, {
-			cwd: cwd
+			cwd: cwd,
+			maxBuffer: 1024 * 5000
 		}, (err, stdout, stderr) => {
 			if(!err) {
 				console.log(`Command [${command}] executed successfully in  ${cwd}`);
