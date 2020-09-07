@@ -162,9 +162,9 @@ function gitTagAndPush(gitPath) {
     if (process.argv.length>6)
     {
         var tag = process.argv[6];
-        console.log(`Taging repo ${gitPath} branch ${branch} tag ${tag}`);
-        execWithPomise(git + ' tag -a ' + ${tag} + ' -m ${tag}', gitPath);
-        return execWithPomise(git + ' push origin ' + ${tag}, gitPath);
+        console.log(`Tagging repo ${gitPath} branch ${branch} tag ${tag}`);
+        execWithPomise(git + ' tag -a ' + tag + ' -m '+ tag, gitPath);
+        return execWithPomise(git + ' push -f origin ' + tag, gitPath);
     }
 }
 
