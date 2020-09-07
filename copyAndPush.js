@@ -158,39 +158,52 @@ function stopHandlingFile() {
 	}
 }
 
+function gitTagAndPush(gitPath) {
+    if (process.argv.length>6)
+    {
+        var tag = process.argv[6];
+        console.log(`Taging repo ${gitPath} branch ${branch} tag ${tag}`);
+        execWithPomise(git + ' tag -a ' + ${tag} + ' -m ${tag}', gitPath);
+        return execWithPomise(git + ' push origin ' + ${tag}, gitPath);
+    }
+}
+
 
 fs.readdir(sourcePath, (err, files) => {
-	if(err) {
-		console.error(`Could not list the directory: ${sourcePath}`, err);
-		process.exit(1);
-	}
-	
-	files.forEach((file, index) => {
-		startHandlingFile();
-		getPaths(file)
-		.then(({generatedPath, gitPath}) => {
-			return gitCheckout(generatedPath, gitPath);
-		})
-		.then(({generatedPath, gitPath}) => {
-			return gitPull(generatedPath, gitPath);
-		})
-		.then(({generatedPath, gitPath}) => {
-			return copyFiles(generatedPath, gitPath);
-		})
-		.then((gitPath) => {
-			return gitAdd(gitPath);
-		})
-		.then((gitPath) => {
-			return gitCommit(gitPath);
-		})
-		.then((gitPath) => {
-			return gitPush(gitPath);
-		})
-		.then((gitPath) => {
-			stopHandlingFile();
-		}, (err) => {
-			console.error(err);
-			stopHandlingFile();
-		});
-	});
+    if(err) {
+        console.error(`Could not list the directory: ${sourcePath}`, err);
+        process.exit(1);
+    }
+    
+    files.forEach((file, index) => {
+        startHandlingFile();
+        getPaths(file)
+        .then(({generatedPath, gitPath}) => {
+            return gitCheckout(generatedPath, gitPath);
+        })
+        .then(({generatedPath, gitPath}) => {
+            return gitPull(generatedPath, gitPath);
+        })
+        .then(({generatedPath, gitPath}) => {
+            return copyFiles(generatedPath, gitPath);
+        })
+        .then((gitPath) => {
+            return gitAdd(gitPath);
+        })
+        .then((gitPath) => {
+            return gitCommit(gitPath);
+        })
+        .then((gitPath) => {
+            return gitPush(gitPath);
+        })
+        .then((gitPath) => {
+            return gitTagAndPush(gitPath);
+        })      
+        .then((gitPath) => {
+            stopHandlingFile();
+        }, (err) => {
+            console.error(err);
+            stopHandlingFile();
+        });
+    });
 });
