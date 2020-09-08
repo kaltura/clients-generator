@@ -48,6 +48,8 @@ namespace Kaltura.Types
 		public const string DRM = "drm";
 		public const string EXTERNAL_ID = "externalId";
 		public const string MAC_ADDRESS = "macAddress";
+		public const string MODEL = "model";
+		public const string MANUFACTURER_ID = "manufacturerId";
 		#endregion
 
 		#region Private Fields
@@ -61,6 +63,8 @@ namespace Kaltura.Types
 		private CustomDrmPlaybackPluginData _Drm;
 		private string _ExternalId = null;
 		private string _MacAddress = null;
+		private string _Model = null;
+		private long _ManufacturerId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -164,6 +168,26 @@ namespace Kaltura.Types
 				OnPropertyChanged("MacAddress");
 			}
 		}
+		[JsonProperty]
+		public string Model
+		{
+			get { return _Model; }
+			set 
+			{ 
+				_Model = value;
+				OnPropertyChanged("Model");
+			}
+		}
+		[JsonProperty]
+		public long ManufacturerId
+		{
+			get { return _ManufacturerId; }
+			set 
+			{ 
+				_ManufacturerId = value;
+				OnPropertyChanged("ManufacturerId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -213,6 +237,14 @@ namespace Kaltura.Types
 			{
 				this._MacAddress = node["macAddress"].Value<string>();
 			}
+			if(node["model"] != null)
+			{
+				this._Model = node["model"].Value<string>();
+			}
+			if(node["manufacturerId"] != null)
+			{
+				this._ManufacturerId = ParseLong(node["manufacturerId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -232,6 +264,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("drm", this._Drm);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("macAddress", this._MacAddress);
+			kparams.AddIfNotNull("model", this._Model);
+			kparams.AddIfNotNull("manufacturerId", this._ManufacturerId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -258,6 +292,10 @@ namespace Kaltura.Types
 					return "ExternalId";
 				case MAC_ADDRESS:
 					return "MacAddress";
+				case MODEL:
+					return "Model";
+				case MANUFACTURER_ID:
+					return "ManufacturerId";
 				default:
 					return base.getPropertyName(apiName);
 			}

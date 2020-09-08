@@ -35,19 +35,31 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class SmsAdapterProfileFilter : CrudFilter
+	public class DeviceReferenceDataFilter : CrudFilter
 	{
 		#region Constants
+		public const string ID_IN = "idIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private SmsAdapterProfileOrderBy _OrderBy = null;
+		private string _IdIn = null;
+		private DeviceReferenceDataOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public new SmsAdapterProfileOrderBy OrderBy
+		public string IdIn
+		{
+			get { return _IdIn; }
+			set 
+			{ 
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
+			}
+		}
+		[JsonProperty]
+		public new DeviceReferenceDataOrderBy OrderBy
 		{
 			get { return _OrderBy; }
 			set 
@@ -59,15 +71,19 @@ namespace Kaltura.Types
 		#endregion
 
 		#region CTor
-		public SmsAdapterProfileFilter()
+		public DeviceReferenceDataFilter()
 		{
 		}
 
-		public SmsAdapterProfileFilter(JToken node) : base(node)
+		public DeviceReferenceDataFilter(JToken node) : base(node)
 		{
+			if(node["idIn"] != null)
+			{
+				this._IdIn = node["idIn"].Value<string>();
+			}
 			if(node["orderBy"] != null)
 			{
-				this._OrderBy = (SmsAdapterProfileOrderBy)StringEnum.Parse(typeof(SmsAdapterProfileOrderBy), node["orderBy"].Value<string>());
+				this._OrderBy = (DeviceReferenceDataOrderBy)StringEnum.Parse(typeof(DeviceReferenceDataOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,7 +93,8 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSmsAdapterProfileFilter");
+				kparams.AddReplace("objectType", "KalturaDeviceReferenceDataFilter");
+			kparams.AddIfNotNull("idIn", this._IdIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -85,6 +102,8 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
+				case ID_IN:
+					return "IdIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

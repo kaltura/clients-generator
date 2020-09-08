@@ -25,12 +25,54 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class HouseholdOrderBy : StringEnum
-	{
-		public static readonly HouseholdOrderBy CREATE_DATE_DESC = new HouseholdOrderBy("CREATE_DATE_DESC");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private HouseholdOrderBy(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class DeviceManufacturerInformation : DeviceReferenceData
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public DeviceManufacturerInformation()
+		{
+		}
+
+		public DeviceManufacturerInformation(JToken node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaDeviceManufacturerInformation");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

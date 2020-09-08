@@ -106,7 +106,7 @@ namespace Kaltura.Types
 		public long EndDate
 		{
 			get { return _EndDate; }
-			set 
+			private set 
 			{ 
 				_EndDate = value;
 				OnPropertyChanged("EndDate");

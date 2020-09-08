@@ -35,14 +35,18 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BaseChannel : ObjectBase
+	public class DeviceReferenceData : CrudObject
 	{
 		#region Constants
 		public const string ID = "id";
+		public const string NAME = "name";
+		public const string STATUS = "status";
 		#endregion
 
 		#region Private Fields
 		private long _Id = long.MinValue;
+		private string _Name = null;
+		private bool? _Status = null;
 		#endregion
 
 		#region Properties
@@ -56,18 +60,46 @@ namespace Kaltura.Types
 				OnPropertyChanged("Id");
 			}
 		}
+		[JsonProperty]
+		public string Name
+		{
+			get { return _Name; }
+			set 
+			{ 
+				_Name = value;
+				OnPropertyChanged("Name");
+			}
+		}
+		[JsonProperty]
+		public bool? Status
+		{
+			get { return _Status; }
+			set 
+			{ 
+				_Status = value;
+				OnPropertyChanged("Status");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public BaseChannel()
+		public DeviceReferenceData()
 		{
 		}
 
-		public BaseChannel(JToken node) : base(node)
+		public DeviceReferenceData(JToken node) : base(node)
 		{
 			if(node["id"] != null)
 			{
 				this._Id = ParseLong(node["id"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
+			}
+			if(node["status"] != null)
+			{
+				this._Status = ParseBool(node["status"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,8 +109,10 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBaseChannel");
+				kparams.AddReplace("objectType", "KalturaDeviceReferenceData");
 			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("name", this._Name);
+			kparams.AddIfNotNull("status", this._Status);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -87,6 +121,10 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
+				case NAME:
+					return "Name";
+				case STATUS:
+					return "Status";
 				default:
 					return base.getPropertyName(apiName);
 			}

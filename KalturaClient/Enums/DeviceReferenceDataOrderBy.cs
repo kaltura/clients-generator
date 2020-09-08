@@ -27,10 +27,10 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class SmsAdapterProfileOrderBy : StringEnum
+	public sealed class DeviceReferenceDataOrderBy : StringEnum
 	{
-		public static readonly SmsAdapterProfileOrderBy NONE = new SmsAdapterProfileOrderBy("NONE");
+		public static readonly DeviceReferenceDataOrderBy NONE = new DeviceReferenceDataOrderBy("NONE");
 
-		private SmsAdapterProfileOrderBy(string name) : base(name) { }
+		private DeviceReferenceDataOrderBy(string name) : base(name) { }
 	}
 }

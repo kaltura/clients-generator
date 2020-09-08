@@ -35,56 +35,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class HouseholdFilter : Filter
+	public class DeviceManufacturersReferenceDataFilter : DeviceReferenceDataFilter
 	{
 		#region Constants
-		public const string EXTERNAL_ID_EQUAL = "externalIdEqual";
-		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _ExternalIdEqual = null;
-		private HouseholdOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string ExternalIdEqual
-		{
-			get { return _ExternalIdEqual; }
-			set 
-			{ 
-				_ExternalIdEqual = value;
-				OnPropertyChanged("ExternalIdEqual");
-			}
-		}
-		[JsonProperty]
-		public new HouseholdOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public HouseholdFilter()
+		public DeviceManufacturersReferenceDataFilter()
 		{
 		}
 
-		public HouseholdFilter(JToken node) : base(node)
+		public DeviceManufacturersReferenceDataFilter(JToken node) : base(node)
 		{
-			if(node["externalIdEqual"] != null)
-			{
-				this._ExternalIdEqual = node["externalIdEqual"].Value<string>();
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (HouseholdOrderBy)StringEnum.Parse(typeof(HouseholdOrderBy), node["orderBy"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -93,19 +61,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaHouseholdFilter");
-			kparams.AddIfNotNull("externalIdEqual", this._ExternalIdEqual);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaDeviceManufacturersReferenceDataFilter");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case EXTERNAL_ID_EQUAL:
-					return "ExternalIdEqual";
-				case ORDER_BY:
-					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}
