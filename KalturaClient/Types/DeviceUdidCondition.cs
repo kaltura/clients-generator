@@ -25,16 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class InboxMessageType : StringEnum
-	{
-		public static readonly InboxMessageType SYSTEMANNOUNCEMENT = new InboxMessageType("SystemAnnouncement");
-		public static readonly InboxMessageType FOLLOWED = new InboxMessageType("Followed");
-		public static readonly InboxMessageType ENGAGEMENT = new InboxMessageType("Engagement");
-		public static readonly InboxMessageType INTEREST = new InboxMessageType("Interest");
-		public static readonly InboxMessageType CAMPAIGN = new InboxMessageType("Campaign");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private InboxMessageType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class DeviceUdidCondition : Condition
+	{
+		#region Constants
+		public const string UDID_IN = "udidIn";
+		#endregion
+
+		#region Private Fields
+		private string _UdidIn = null;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public string UdidIn
+		{
+			get { return _UdidIn; }
+			set 
+			{ 
+				_UdidIn = value;
+				OnPropertyChanged("UdidIn");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public DeviceUdidCondition()
+		{
+		}
+
+		public DeviceUdidCondition(JToken node) : base(node)
+		{
+			if(node["udidIn"] != null)
+			{
+				this._UdidIn = node["udidIn"].Value<string>();
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaDeviceUdidCondition");
+			kparams.AddIfNotNull("udidIn", this._UdidIn);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case UDID_IN:
+					return "UdidIn";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

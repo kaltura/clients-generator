@@ -27,14 +27,10 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class InboxMessageType : StringEnum
+	public sealed class CampaignOrderBy : StringEnum
 	{
-		public static readonly InboxMessageType SYSTEMANNOUNCEMENT = new InboxMessageType("SystemAnnouncement");
-		public static readonly InboxMessageType FOLLOWED = new InboxMessageType("Followed");
-		public static readonly InboxMessageType ENGAGEMENT = new InboxMessageType("Engagement");
-		public static readonly InboxMessageType INTEREST = new InboxMessageType("Interest");
-		public static readonly InboxMessageType CAMPAIGN = new InboxMessageType("Campaign");
+		public static readonly CampaignOrderBy NONE = new CampaignOrderBy("NONE");
 
-		private InboxMessageType(string name) : base(name) { }
+		private CampaignOrderBy(string name) : base(name) { }
 	}
 }

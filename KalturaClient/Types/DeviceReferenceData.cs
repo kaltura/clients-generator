@@ -35,31 +35,23 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class InboxMessage : ObjectBase
+	public class DeviceReferenceData : CrudObject
 	{
 		#region Constants
 		public const string ID = "id";
-		public const string MESSAGE = "message";
+		public const string NAME = "name";
 		public const string STATUS = "status";
-		public const string TYPE = "type";
-		public const string CREATED_AT = "createdAt";
-		public const string URL = "url";
-		public const string CAMPAIGN_ID = "campaignId";
 		#endregion
 
 		#region Private Fields
-		private string _Id = null;
-		private string _Message = null;
-		private InboxMessageStatus _Status = null;
-		private InboxMessageType _Type = null;
-		private long _CreatedAt = long.MinValue;
-		private string _Url = null;
-		private long _CampaignId = long.MinValue;
+		private long _Id = long.MinValue;
+		private string _Name = null;
+		private bool? _Status = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string Id
+		public long Id
 		{
 			get { return _Id; }
 			private set 
@@ -69,101 +61,45 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public string Message
+		public string Name
 		{
-			get { return _Message; }
+			get { return _Name; }
 			set 
 			{ 
-				_Message = value;
-				OnPropertyChanged("Message");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		[JsonProperty]
-		public InboxMessageStatus Status
+		public bool? Status
 		{
 			get { return _Status; }
-			private set 
+			set 
 			{ 
 				_Status = value;
 				OnPropertyChanged("Status");
 			}
 		}
-		[JsonProperty]
-		public InboxMessageType Type
-		{
-			get { return _Type; }
-			set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
-		}
-		[JsonProperty]
-		public long CreatedAt
-		{
-			get { return _CreatedAt; }
-			private set 
-			{ 
-				_CreatedAt = value;
-				OnPropertyChanged("CreatedAt");
-			}
-		}
-		[JsonProperty]
-		public string Url
-		{
-			get { return _Url; }
-			set 
-			{ 
-				_Url = value;
-				OnPropertyChanged("Url");
-			}
-		}
-		[JsonProperty]
-		public long CampaignId
-		{
-			get { return _CampaignId; }
-			private set 
-			{ 
-				_CampaignId = value;
-				OnPropertyChanged("CampaignId");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public InboxMessage()
+		public DeviceReferenceData()
 		{
 		}
 
-		public InboxMessage(JToken node) : base(node)
+		public DeviceReferenceData(JToken node) : base(node)
 		{
 			if(node["id"] != null)
 			{
-				this._Id = node["id"].Value<string>();
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
-			if(node["message"] != null)
+			if(node["name"] != null)
 			{
-				this._Message = node["message"].Value<string>();
+				this._Name = node["name"].Value<string>();
 			}
 			if(node["status"] != null)
 			{
-				this._Status = (InboxMessageStatus)StringEnum.Parse(typeof(InboxMessageStatus), node["status"].Value<string>());
-			}
-			if(node["type"] != null)
-			{
-				this._Type = (InboxMessageType)StringEnum.Parse(typeof(InboxMessageType), node["type"].Value<string>());
-			}
-			if(node["createdAt"] != null)
-			{
-				this._CreatedAt = ParseLong(node["createdAt"].Value<string>());
-			}
-			if(node["url"] != null)
-			{
-				this._Url = node["url"].Value<string>();
-			}
-			if(node["campaignId"] != null)
-			{
-				this._CampaignId = ParseLong(node["campaignId"].Value<string>());
+				this._Status = ParseBool(node["status"].Value<string>());
 			}
 		}
 		#endregion
@@ -173,14 +109,10 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaInboxMessage");
+				kparams.AddReplace("objectType", "KalturaDeviceReferenceData");
 			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("message", this._Message);
+			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("status", this._Status);
-			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("createdAt", this._CreatedAt);
-			kparams.AddIfNotNull("url", this._Url);
-			kparams.AddIfNotNull("campaignId", this._CampaignId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -189,18 +121,10 @@ namespace Kaltura.Types
 			{
 				case ID:
 					return "Id";
-				case MESSAGE:
-					return "Message";
+				case NAME:
+					return "Name";
 				case STATUS:
 					return "Status";
-				case TYPE:
-					return "Type";
-				case CREATED_AT:
-					return "CreatedAt";
-				case URL:
-					return "Url";
-				case CAMPAIGN_ID:
-					return "CampaignId";
 				default:
 					return base.getPropertyName(apiName);
 			}

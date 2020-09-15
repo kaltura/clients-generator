@@ -25,16 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class InboxMessageType : StringEnum
-	{
-		public static readonly InboxMessageType SYSTEMANNOUNCEMENT = new InboxMessageType("SystemAnnouncement");
-		public static readonly InboxMessageType FOLLOWED = new InboxMessageType("Followed");
-		public static readonly InboxMessageType ENGAGEMENT = new InboxMessageType("Engagement");
-		public static readonly InboxMessageType INTEREST = new InboxMessageType("Interest");
-		public static readonly InboxMessageType CAMPAIGN = new InboxMessageType("Campaign");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private InboxMessageType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class DeviceFamilyCondition : Condition
+	{
+		#region Constants
+		public const string ID_IN = "idIn";
+		#endregion
+
+		#region Private Fields
+		private string _IdIn = null;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public string IdIn
+		{
+			get { return _IdIn; }
+			set 
+			{ 
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public DeviceFamilyCondition()
+		{
+		}
+
+		public DeviceFamilyCondition(JToken node) : base(node)
+		{
+			if(node["idIn"] != null)
+			{
+				this._IdIn = node["idIn"].Value<string>();
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaDeviceFamilyCondition");
+			kparams.AddIfNotNull("idIn", this._IdIn);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case ID_IN:
+					return "IdIn";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

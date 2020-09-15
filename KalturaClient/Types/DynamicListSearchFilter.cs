@@ -25,16 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class InboxMessageType : StringEnum
-	{
-		public static readonly InboxMessageType SYSTEMANNOUNCEMENT = new InboxMessageType("SystemAnnouncement");
-		public static readonly InboxMessageType FOLLOWED = new InboxMessageType("Followed");
-		public static readonly InboxMessageType ENGAGEMENT = new InboxMessageType("Engagement");
-		public static readonly InboxMessageType INTEREST = new InboxMessageType("Interest");
-		public static readonly InboxMessageType CAMPAIGN = new InboxMessageType("Campaign");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private InboxMessageType(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class DynamicListSearchFilter : DynamicListFilter
+	{
+		#region Constants
+		public const string VALUE_IN = "valueIn";
+		#endregion
+
+		#region Private Fields
+		private string _ValueIn = null;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public string ValueIn
+		{
+			get { return _ValueIn; }
+			set 
+			{ 
+				_ValueIn = value;
+				OnPropertyChanged("ValueIn");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public DynamicListSearchFilter()
+		{
+		}
+
+		public DynamicListSearchFilter(JToken node) : base(node)
+		{
+			if(node["valueIn"] != null)
+			{
+				this._ValueIn = node["valueIn"].Value<string>();
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaDynamicListSearchFilter");
+			kparams.AddIfNotNull("valueIn", this._ValueIn);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case VALUE_IN:
+					return "ValueIn";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+
