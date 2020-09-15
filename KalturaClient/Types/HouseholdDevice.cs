@@ -47,7 +47,6 @@ namespace Kaltura.Types
 		public const string DEVICE_FAMILY_ID = "deviceFamilyId";
 		public const string DRM = "drm";
 		public const string EXTERNAL_ID = "externalId";
-		public const string MAC_ADDRESS = "macAddress";
 		#endregion
 
 		#region Private Fields
@@ -60,7 +59,6 @@ namespace Kaltura.Types
 		private long _DeviceFamilyId = long.MinValue;
 		private CustomDrmPlaybackPluginData _Drm;
 		private string _ExternalId = null;
-		private string _MacAddress = null;
 		#endregion
 
 		#region Properties
@@ -154,16 +152,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		[JsonProperty]
-		public string MacAddress
-		{
-			get { return _MacAddress; }
-			set 
-			{ 
-				_MacAddress = value;
-				OnPropertyChanged("MacAddress");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -209,10 +197,6 @@ namespace Kaltura.Types
 			{
 				this._ExternalId = node["externalId"].Value<string>();
 			}
-			if(node["macAddress"] != null)
-			{
-				this._MacAddress = node["macAddress"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -231,7 +215,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("deviceFamilyId", this._DeviceFamilyId);
 			kparams.AddIfNotNull("drm", this._Drm);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
-			kparams.AddIfNotNull("macAddress", this._MacAddress);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -256,8 +239,6 @@ namespace Kaltura.Types
 					return "Drm";
 				case EXTERNAL_ID:
 					return "ExternalId";
-				case MAC_ADDRESS:
-					return "MacAddress";
 				default:
 					return base.getPropertyName(apiName);
 			}

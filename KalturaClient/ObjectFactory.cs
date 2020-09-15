@@ -200,10 +200,10 @@ namespace Kaltura
 					return new ListResponse<Tag>(jToken);
 				case "KalturaAssetHistoryListResponse":
 					return new ListResponse<AssetHistory>(jToken);
-				case "KalturaHouseholdPaymentGatewayListResponse":
-					return new ListResponse<HouseholdPaymentGateway>(jToken);
 				case "KalturaHouseholdPaymentMethodListResponse":
 					return new ListResponse<HouseholdPaymentMethod>(jToken);
+				case "KalturaHouseholdPaymentGatewayListResponse":
+					return new ListResponse<HouseholdPaymentGateway>(jToken);
 				case "KalturaPaymentGatewayProfileListResponse":
 					return new ListResponse<PaymentGatewayProfile>(jToken);
 				case "KalturaPaymentMethodProfileListResponse":
@@ -260,24 +260,16 @@ namespace Kaltura
 					return new ListResponse<UserAssetRule>(jToken);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(jToken);
-				case "KalturaCategoryItemListResponse":
-					return new ListResponse<CategoryItem>(jToken);
 				case "KalturaCouponListResponse":
 					return new ListResponse<Coupon>(jToken);
 				case "KalturaEventNotificationListResponse":
 					return new ListResponse<EventNotification>(jToken);
-				case "KalturaHouseholdListResponse":
-					return new ListResponse<Household>(jToken);
 				case "KalturaHouseholdCouponListResponse":
 					return new ListResponse<HouseholdCoupon>(jToken);
 				case "KalturaHouseholdSegmentListResponse":
 					return new ListResponse<HouseholdSegment>(jToken);
 				case "KalturaPasswordPolicyListResponse":
 					return new ListResponse<PasswordPolicy>(jToken);
-				case "KalturaPermissionItemListResponse":
-					return new ListResponse<PermissionItem>(jToken);
-				case "KalturaSmsAdapterProfileListResponse":
-					return new ListResponse<SmsAdapterProfile>(jToken);
 			}
 		
 			return null;

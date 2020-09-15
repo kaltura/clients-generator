@@ -42,7 +42,6 @@ namespace Kaltura.Types
 		public const string MEDIA_ID_EQUAL = "mediaIdEqual";
 		public const string NAME_EQUAL = "nameEqual";
 		public const string NAME_STARTS_WITH = "nameStartsWith";
-		public const string ID_IN = "idIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -51,7 +50,6 @@ namespace Kaltura.Types
 		private long _MediaIdEqual = long.MinValue;
 		private string _NameEqual = null;
 		private string _NameStartsWith = null;
-		private string _IdIn = null;
 		private ChannelsOrderBy _OrderBy = null;
 		#endregion
 
@@ -97,16 +95,6 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public string IdIn
-		{
-			get { return _IdIn; }
-			set 
-			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
-			}
-		}
-		[JsonProperty]
 		public new ChannelsOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -141,10 +129,6 @@ namespace Kaltura.Types
 			{
 				this._NameStartsWith = node["nameStartsWith"].Value<string>();
 			}
-			if(node["idIn"] != null)
-			{
-				this._IdIn = node["idIn"].Value<string>();
-			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (ChannelsOrderBy)StringEnum.Parse(typeof(ChannelsOrderBy), node["orderBy"].Value<string>());
@@ -162,7 +146,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("mediaIdEqual", this._MediaIdEqual);
 			kparams.AddIfNotNull("nameEqual", this._NameEqual);
 			kparams.AddIfNotNull("nameStartsWith", this._NameStartsWith);
-			kparams.AddIfNotNull("idIn", this._IdIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -178,8 +161,6 @@ namespace Kaltura.Types
 					return "NameEqual";
 				case NAME_STARTS_WITH:
 					return "NameStartsWith";
-				case ID_IN:
-					return "IdIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

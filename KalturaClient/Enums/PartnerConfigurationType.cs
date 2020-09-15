@@ -36,8 +36,6 @@ namespace Kaltura.Enums
 		public static readonly PartnerConfigurationType GENERAL = new PartnerConfigurationType("General");
 		public static readonly PartnerConfigurationType OBJECTVIRTUALASSET = new PartnerConfigurationType("ObjectVirtualAsset");
 		public static readonly PartnerConfigurationType COMMERCE = new PartnerConfigurationType("Commerce");
-		public static readonly PartnerConfigurationType PLAYBACK = new PartnerConfigurationType("Playback");
-		public static readonly PartnerConfigurationType PAYMENT = new PartnerConfigurationType("Payment");
 
 		private PartnerConfigurationType(string name) : base(name) { }
 	}

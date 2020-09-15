@@ -31,7 +31,6 @@ namespace Kaltura.Enums
 	{
 		public static readonly ObjectVirtualAssetInfoType SUBSCRIPTION = new ObjectVirtualAssetInfoType("Subscription");
 		public static readonly ObjectVirtualAssetInfoType SEGMENT = new ObjectVirtualAssetInfoType("Segment");
-		public static readonly ObjectVirtualAssetInfoType CATEGORY = new ObjectVirtualAssetInfoType("Category");
 
 		private ObjectVirtualAssetInfoType(string name) : base(name) { }
 	}
