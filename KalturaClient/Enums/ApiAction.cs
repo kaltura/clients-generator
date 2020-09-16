@@ -29,8 +29,7 @@ namespace Kaltura.Enums
 {
 	public sealed class ApiAction : StringEnum
 	{
-		public static readonly ApiAction INSERT = new ApiAction("INSERT");
-		public static readonly ApiAction UPDATE = new ApiAction("UPDATE");
+		public static readonly ApiAction ADD = new ApiAction("ADD");
 
 		private ApiAction(string name) : base(name) { }
 	}

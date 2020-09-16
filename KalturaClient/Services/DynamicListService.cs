@@ -202,6 +202,55 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class DynamicListAddFromBulkUploadRequestBuilder : RequestBuilder<BulkUpload>
+	{
+		#region Constants
+		public const string FILE_DATA = "fileData";
+		public const string JOB_DATA = "jobData";
+		public const string BULK_UPLOAD_ASSET_DATA = "bulkUploadAssetData";
+		#endregion
+
+		public Stream FileData { get; set; }
+		public string FileData_FileName { get; set; }
+		public BulkUploadExcelJobData JobData { get; set; }
+		public BulkUploadAssetData BulkUploadAssetData { get; set; }
+
+		public DynamicListAddFromBulkUploadRequestBuilder()
+			: base("dynamiclist", "addFromBulkUpload")
+		{
+		}
+
+		public DynamicListAddFromBulkUploadRequestBuilder(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadAssetData bulkUploadAssetData)
+			: this()
+		{
+			this.FileData = fileData;
+			this.JobData = jobData;
+			this.BulkUploadAssetData = bulkUploadAssetData;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("jobData"))
+				kparams.AddIfNotNull("jobData", JobData);
+			if (!isMapped("bulkUploadAssetData"))
+				kparams.AddIfNotNull("bulkUploadAssetData", BulkUploadAssetData);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			kfiles.Add("fileData", new FileData(FileData, FileData_FileName));
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<BulkUpload>(result);
+		}
+	}
+
 
 	public class DynamicListService
 	{
@@ -227,6 +276,11 @@ namespace Kaltura.Services
 		public static DynamicListListRequestBuilder List(DynamicListFilter filter, FilterPager pager = null)
 		{
 			return new DynamicListListRequestBuilder(filter, pager);
+		}
+
+		public static DynamicListAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadAssetData bulkUploadAssetData)
+		{
+			return new DynamicListAddFromBulkUploadRequestBuilder(fileData, jobData, bulkUploadAssetData);
 		}
 	}
 }

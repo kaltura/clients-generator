@@ -148,6 +148,8 @@ namespace Kaltura
 		public static string SubscriptionCancellationIsBlocked = "3074";
 		public static string UnknownPriceReason = "3077";
 		public static string SubscriptionDoesNotExist = "3081";
+		public static string OtherCouponIsAlreadyAppliedForSubscription = "3082";
+		public static string CampaignIsAlreadyAppliedForSubscription = "3083";
 		public static string MediaConcurrencyLimitation = "4000";
 		public static string ConcurrencyLimitation = "4001";
 		public static string BadSearchRequest = "4002";
