@@ -70,7 +70,7 @@ function ksort(arr) {
 	let sArr = [];
 	let tArr = [];
 	let n = 0;
-	for (i in arr)
+	for (let i in arr)
 		tArr[n++] = i + ' |' + arr[i];
 	tArr = tArr.sort();
 	for (let i = 0; i < tArr.length; i++) {
