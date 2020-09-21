@@ -155,50 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class HouseholdListRequestBuilder : RequestBuilder<ListResponse<Household>>
-	{
-		#region Constants
-		public const string FILTER = "filter";
-		public const string PAGER = "pager";
-		#endregion
-
-		public HouseholdFilter Filter { get; set; }
-		public FilterPager Pager { get; set; }
-
-		public HouseholdListRequestBuilder()
-			: base("household", "list")
-		{
-		}
-
-		public HouseholdListRequestBuilder(HouseholdFilter filter, FilterPager pager)
-			: this()
-		{
-			this.Filter = filter;
-			this.Pager = pager;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("filter"))
-				kparams.AddIfNotNull("filter", Filter);
-			if (!isMapped("pager"))
-				kparams.AddIfNotNull("pager", Pager);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<ListResponse<Household>>(result);
-		}
-	}
-
 	public class HouseholdPurgeRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -410,11 +366,6 @@ namespace Kaltura.Services
 		public static HouseholdGetRequestBuilder Get(int id = Int32.MinValue)
 		{
 			return new HouseholdGetRequestBuilder(id);
-		}
-
-		public static HouseholdListRequestBuilder List(HouseholdFilter filter, FilterPager pager = null)
-		{
-			return new HouseholdListRequestBuilder(filter, pager);
 		}
 
 		public static HouseholdPurgeRequestBuilder Purge(int id)
