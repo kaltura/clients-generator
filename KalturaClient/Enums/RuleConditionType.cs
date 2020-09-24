@@ -45,7 +45,7 @@ namespace Kaltura.Enums
 		public static readonly RuleConditionType DEVICE_FAMILY = new RuleConditionType("DEVICE_FAMILY");
 		public static readonly RuleConditionType DEVICE_MANUFACTURER = new RuleConditionType("DEVICE_MANUFACTURER");
 		public static readonly RuleConditionType DEVICE_MODEL = new RuleConditionType("DEVICE_MODEL");
-		public static readonly RuleConditionType DEVICE_UDID = new RuleConditionType("DEVICE_UDID");
+		public static readonly RuleConditionType DEVICE_UDID_DYNAMIC_LIST = new RuleConditionType("DEVICE_UDID_DYNAMIC_LIST");
 
 		private RuleConditionType(string name) : base(name) { }
 	}

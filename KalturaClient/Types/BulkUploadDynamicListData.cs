@@ -35,24 +35,40 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class UdidDynamicListSearchFilter : DynamicListSearchFilter
+	public class BulkUploadDynamicListData : BulkUploadObjectData
 	{
 		#region Constants
+		public const string DYNAMIC_LIST_ID = "dynamicListId";
 		#endregion
 
 		#region Private Fields
+		private long _DynamicListId = long.MinValue;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public long DynamicListId
+		{
+			get { return _DynamicListId; }
+			set 
+			{ 
+				_DynamicListId = value;
+				OnPropertyChanged("DynamicListId");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public UdidDynamicListSearchFilter()
+		public BulkUploadDynamicListData()
 		{
 		}
 
-		public UdidDynamicListSearchFilter(JToken node) : base(node)
+		public BulkUploadDynamicListData(JToken node) : base(node)
 		{
+			if(node["dynamicListId"] != null)
+			{
+				this._DynamicListId = ParseLong(node["dynamicListId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -61,13 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaUdidDynamicListSearchFilter");
+				kparams.AddReplace("objectType", "KalturaBulkUploadDynamicListData");
+			kparams.AddIfNotNull("dynamicListId", this._DynamicListId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case DYNAMIC_LIST_ID:
+					return "DynamicListId";
 				default:
 					return base.getPropertyName(apiName);
 			}

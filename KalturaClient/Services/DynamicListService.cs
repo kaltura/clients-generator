@@ -207,25 +207,25 @@ namespace Kaltura.Services
 		#region Constants
 		public const string FILE_DATA = "fileData";
 		public const string JOB_DATA = "jobData";
-		public const string BULK_UPLOAD_ASSET_DATA = "bulkUploadAssetData";
+		public const string BULK_UPLOAD_DATA = "bulkUploadData";
 		#endregion
 
 		public Stream FileData { get; set; }
 		public string FileData_FileName { get; set; }
 		public BulkUploadExcelJobData JobData { get; set; }
-		public BulkUploadAssetData BulkUploadAssetData { get; set; }
+		public BulkUploadDynamicListData BulkUploadData { get; set; }
 
 		public DynamicListAddFromBulkUploadRequestBuilder()
 			: base("dynamiclist", "addFromBulkUpload")
 		{
 		}
 
-		public DynamicListAddFromBulkUploadRequestBuilder(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadAssetData bulkUploadAssetData)
+		public DynamicListAddFromBulkUploadRequestBuilder(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadDynamicListData bulkUploadData)
 			: this()
 		{
 			this.FileData = fileData;
 			this.JobData = jobData;
-			this.BulkUploadAssetData = bulkUploadAssetData;
+			this.BulkUploadData = bulkUploadData;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -233,8 +233,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("jobData"))
 				kparams.AddIfNotNull("jobData", JobData);
-			if (!isMapped("bulkUploadAssetData"))
-				kparams.AddIfNotNull("bulkUploadAssetData", BulkUploadAssetData);
+			if (!isMapped("bulkUploadData"))
+				kparams.AddIfNotNull("bulkUploadData", BulkUploadData);
 			return kparams;
 		}
 
@@ -278,9 +278,9 @@ namespace Kaltura.Services
 			return new DynamicListListRequestBuilder(filter, pager);
 		}
 
-		public static DynamicListAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadAssetData bulkUploadAssetData)
+		public static DynamicListAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadDynamicListData bulkUploadData)
 		{
-			return new DynamicListAddFromBulkUploadRequestBuilder(fileData, jobData, bulkUploadAssetData);
+			return new DynamicListAddFromBulkUploadRequestBuilder(fileData, jobData, bulkUploadData);
 		}
 	}
 }

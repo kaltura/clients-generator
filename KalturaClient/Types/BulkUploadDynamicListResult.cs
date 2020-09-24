@@ -25,12 +25,54 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class CampaignOrderBy : StringEnum
-	{
-		public static readonly CampaignOrderBy START_DATE_DESC = new CampaignOrderBy("START_DATE_DESC");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private CampaignOrderBy(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BulkUploadDynamicListResult : BulkUploadResult
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public BulkUploadDynamicListResult()
+		{
+		}
+
+		public BulkUploadDynamicListResult(JToken node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBulkUploadDynamicListResult");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

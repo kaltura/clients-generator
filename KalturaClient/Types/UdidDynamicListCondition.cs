@@ -35,39 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DeviceUdidCondition : Condition
+	public class UdidDynamicListCondition : Condition
 	{
 		#region Constants
-		public const string UDID_IN = "udidIn";
+		public const string ID = "id";
 		#endregion
 
 		#region Private Fields
-		private string _UdidIn = null;
+		private long _Id = long.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string UdidIn
+		public long Id
 		{
-			get { return _UdidIn; }
+			get { return _Id; }
 			set 
 			{ 
-				_UdidIn = value;
-				OnPropertyChanged("UdidIn");
+				_Id = value;
+				OnPropertyChanged("Id");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DeviceUdidCondition()
+		public UdidDynamicListCondition()
 		{
 		}
 
-		public DeviceUdidCondition(JToken node) : base(node)
+		public UdidDynamicListCondition(JToken node) : base(node)
 		{
-			if(node["udidIn"] != null)
+			if(node["id"] != null)
 			{
-				this._UdidIn = node["udidIn"].Value<string>();
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,16 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDeviceUdidCondition");
-			kparams.AddIfNotNull("udidIn", this._UdidIn);
+				kparams.AddReplace("objectType", "KalturaUdidDynamicListCondition");
+			kparams.AddIfNotNull("id", this._Id);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case UDID_IN:
-					return "UdidIn";
+				case ID:
+					return "Id";
 				default:
 					return base.getPropertyName(apiName);
 			}

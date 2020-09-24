@@ -25,12 +25,73 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class CampaignOrderBy : StringEnum
-	{
-		public static readonly CampaignOrderBy START_DATE_DESC = new CampaignOrderBy("START_DATE_DESC");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private CampaignOrderBy(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BulkUploadUdidDynamicListResult : BulkUploadDynamicListResult
+	{
+		#region Constants
+		public const string UDID = "udid";
+		#endregion
+
+		#region Private Fields
+		private string _Udid = null;
+		#endregion
+
+		#region Properties
+		[JsonProperty]
+		public string Udid
+		{
+			get { return _Udid; }
+			private set 
+			{ 
+				_Udid = value;
+				OnPropertyChanged("Udid");
+			}
+		}
+		#endregion
+
+		#region CTor
+		public BulkUploadUdidDynamicListResult()
+		{
+		}
+
+		public BulkUploadUdidDynamicListResult(JToken node) : base(node)
+		{
+			if(node["udid"] != null)
+			{
+				this._Udid = node["udid"].Value<string>();
+			}
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBulkUploadUdidDynamicListResult");
+			kparams.AddIfNotNull("udid", this._Udid);
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				case UDID:
+					return "Udid";
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

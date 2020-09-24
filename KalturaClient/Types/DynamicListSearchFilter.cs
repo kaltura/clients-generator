@@ -38,22 +38,34 @@ namespace Kaltura.Types
 	public class DynamicListSearchFilter : DynamicListFilter
 	{
 		#region Constants
-		public const string VALUE_IN = "valueIn";
+		public const string ID_EQUAL = "idEqual";
+		public const string VALUE_EQUAL = "valueEqual";
 		#endregion
 
 		#region Private Fields
-		private string _ValueIn = null;
+		private long _IdEqual = long.MinValue;
+		private string _ValueEqual = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string ValueIn
+		public long IdEqual
 		{
-			get { return _ValueIn; }
+			get { return _IdEqual; }
 			set 
 			{ 
-				_ValueIn = value;
-				OnPropertyChanged("ValueIn");
+				_IdEqual = value;
+				OnPropertyChanged("IdEqual");
+			}
+		}
+		[JsonProperty]
+		public string ValueEqual
+		{
+			get { return _ValueEqual; }
+			set 
+			{ 
+				_ValueEqual = value;
+				OnPropertyChanged("ValueEqual");
 			}
 		}
 		#endregion
@@ -65,9 +77,13 @@ namespace Kaltura.Types
 
 		public DynamicListSearchFilter(JToken node) : base(node)
 		{
-			if(node["valueIn"] != null)
+			if(node["idEqual"] != null)
 			{
-				this._ValueIn = node["valueIn"].Value<string>();
+				this._IdEqual = ParseLong(node["idEqual"].Value<string>());
+			}
+			if(node["valueEqual"] != null)
+			{
+				this._ValueEqual = node["valueEqual"].Value<string>();
 			}
 		}
 		#endregion
@@ -78,15 +94,18 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaDynamicListSearchFilter");
-			kparams.AddIfNotNull("valueIn", this._ValueIn);
+			kparams.AddIfNotNull("idEqual", this._IdEqual);
+			kparams.AddIfNotNull("valueEqual", this._ValueEqual);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case VALUE_IN:
-					return "ValueIn";
+				case ID_EQUAL:
+					return "IdEqual";
+				case VALUE_EQUAL:
+					return "ValueEqual";
 				default:
 					return base.getPropertyName(apiName);
 			}
