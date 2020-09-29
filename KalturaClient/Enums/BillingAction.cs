@@ -35,6 +35,7 @@ namespace Kaltura.Enums
 		public static readonly BillingAction RENEW_CANCELED_SUBSCRIPTION = new BillingAction("renew_canceled_subscription");
 		public static readonly BillingAction CANCEL_SUBSCRIPTION_ORDER = new BillingAction("cancel_subscription_order");
 		public static readonly BillingAction SUBSCRIPTION_DATE_CHANGED = new BillingAction("subscription_date_changed");
+		public static readonly BillingAction PENDING = new BillingAction("pending");
 
 		private BillingAction(string name) : base(name) { }
 	}

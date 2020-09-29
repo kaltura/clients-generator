@@ -148,6 +148,8 @@ namespace Kaltura
 		public static string SubscriptionCancellationIsBlocked = "3074";
 		public static string UnknownPriceReason = "3077";
 		public static string SubscriptionDoesNotExist = "3081";
+		public static string PurchasePendingFailed = "3083";
+		public static string PendingEntitlement = "3084";
 		public static string MediaConcurrencyLimitation = "4000";
 		public static string ConcurrencyLimitation = "4001";
 		public static string BadSearchRequest = "4002";
@@ -242,6 +244,9 @@ namespace Kaltura
 		public static string CannotDeleteAssetStruct = "4100";
 		public static string CategoryTypeNotExist = "4101";
 		public static string ExtendedTypeValueCannotBeChanged = "4102";
+		public static string InputFormatIsInvalid = "5078";
+		public static string DuplicateRegionChannel = "5076";
+		public static string ParentAlreadyContainsChannel = "5077";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -344,7 +349,7 @@ namespace Kaltura
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
 		public static string PaymentMethodExternalIdRequired = "6051";
-		public static string PaymentGatewayExternalVerification = "6052";
+		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
