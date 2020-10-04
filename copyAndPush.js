@@ -144,7 +144,11 @@ function gitCommit(gitPath) {
 
 function gitPush(gitPath) {
 	console.log(`Pushing files to git ${gitPath} branch ${branch}`);
-	return execWithPomise(git + ' push origin ' + branch + ' : ' + branch, gitPath);
+	
+	return execWithPomise(git + ' tag -d ' + branch, gitPath).then((gitPath) => {
+		return execWithPomise(git + ' push origin ' + branch, gitPath);
+	});
+	
 }
 
 let handledFiles = 0;
@@ -166,7 +170,7 @@ function gitTagAndPush(gitPath) {
         console.log(`Tagging repo ${gitPath} branch ${branch} tag ${tag}`);
         return execWithPomise(git + ' tag -f ' + tag, gitPath).then((gitPath) => {
             return execWithPomise(git + ' push -f --tags ', gitPath);
-        })
+        });
     }
 }
 
