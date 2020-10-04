@@ -144,7 +144,7 @@ function gitCommit(gitPath) {
 
 function gitPush(gitPath) {
 	console.log(`Pushing files to git ${gitPath} branch ${branch}`);
-	return execWithPomise(git + ' push origin ' + branch, gitPath);
+	return execWithPomise(git + ' push origin ' + branch + ' : ' + branch, gitPath);
 }
 
 let handledFiles = 0;
