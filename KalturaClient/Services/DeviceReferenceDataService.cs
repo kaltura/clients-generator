@@ -162,19 +162,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILTER = "filter";
+		public const string PAGER = "pager";
 		#endregion
 
 		public DeviceReferenceDataFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public DeviceReferenceDataListRequestBuilder()
 			: base("devicereferencedata", "list")
 		{
 		}
 
-		public DeviceReferenceDataListRequestBuilder(DeviceReferenceDataFilter filter)
+		public DeviceReferenceDataListRequestBuilder(DeviceReferenceDataFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
+			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -182,6 +185,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
+			if (!isMapped("pager"))
+				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -219,9 +224,9 @@ namespace Kaltura.Services
 			return new DeviceReferenceDataDeleteRequestBuilder(id);
 		}
 
-		public static DeviceReferenceDataListRequestBuilder List(DeviceReferenceDataFilter filter = null)
+		public static DeviceReferenceDataListRequestBuilder List(DeviceReferenceDataFilter filter, FilterPager pager = null)
 		{
-			return new DeviceReferenceDataListRequestBuilder(filter);
+			return new DeviceReferenceDataListRequestBuilder(filter, pager);
 		}
 	}
 }

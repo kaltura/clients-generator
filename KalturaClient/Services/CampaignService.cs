@@ -162,19 +162,22 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string FILTER = "filter";
+		public const string PAGER = "pager";
 		#endregion
 
 		public CampaignFilter Filter { get; set; }
+		public FilterPager Pager { get; set; }
 
 		public CampaignListRequestBuilder()
 			: base("campaign", "list")
 		{
 		}
 
-		public CampaignListRequestBuilder(CampaignFilter filter)
+		public CampaignListRequestBuilder(CampaignFilter filter, FilterPager pager)
 			: this()
 		{
 			this.Filter = filter;
+			this.Pager = pager;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -182,6 +185,8 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("filter"))
 				kparams.AddIfNotNull("filter", Filter);
+			if (!isMapped("pager"))
+				kparams.AddIfNotNull("pager", Pager);
 			return kparams;
 		}
 
@@ -263,9 +268,9 @@ namespace Kaltura.Services
 			return new CampaignDeleteRequestBuilder(id);
 		}
 
-		public static CampaignListRequestBuilder List(CampaignFilter filter)
+		public static CampaignListRequestBuilder List(CampaignFilter filter, FilterPager pager = null)
 		{
-			return new CampaignListRequestBuilder(filter);
+			return new CampaignListRequestBuilder(filter, pager);
 		}
 
 		public static CampaignSetStateRequestBuilder SetState(long campaignId, ObjectState newState)

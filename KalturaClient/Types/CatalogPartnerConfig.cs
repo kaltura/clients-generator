@@ -35,39 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DeviceManufacturersReferenceDataFilter : DeviceReferenceDataFilter
+	public class CatalogPartnerConfig : PartnerConfiguration
 	{
 		#region Constants
-		public const string NAME_EQUAL = "nameEqual";
+		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
 		#endregion
 
 		#region Private Fields
-		private string _NameEqual = null;
+		private bool? _SingleMultilingualMode = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string NameEqual
+		public bool? SingleMultilingualMode
 		{
-			get { return _NameEqual; }
+			get { return _SingleMultilingualMode; }
 			set 
 			{ 
-				_NameEqual = value;
-				OnPropertyChanged("NameEqual");
+				_SingleMultilingualMode = value;
+				OnPropertyChanged("SingleMultilingualMode");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DeviceManufacturersReferenceDataFilter()
+		public CatalogPartnerConfig()
 		{
 		}
 
-		public DeviceManufacturersReferenceDataFilter(JToken node) : base(node)
+		public CatalogPartnerConfig(JToken node) : base(node)
 		{
-			if(node["nameEqual"] != null)
+			if(node["singleMultilingualMode"] != null)
 			{
-				this._NameEqual = node["nameEqual"].Value<string>();
+				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,16 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDeviceManufacturersReferenceDataFilter");
-			kparams.AddIfNotNull("nameEqual", this._NameEqual);
+				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
+			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case NAME_EQUAL:
-					return "NameEqual";
+				case SINGLE_MULTILINGUAL_MODE:
+					return "SingleMultilingualMode";
 				default:
 					return base.getPropertyName(apiName);
 			}

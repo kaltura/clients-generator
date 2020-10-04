@@ -49,6 +49,7 @@ namespace Kaltura.Types
 		public const string EXTERNAL_ID = "externalId";
 		public const string MAC_ADDRESS = "macAddress";
 		public const string MODEL = "model";
+		public const string MANUFACTURER = "manufacturer";
 		public const string MANUFACTURER_ID = "manufacturerId";
 		#endregion
 
@@ -64,6 +65,7 @@ namespace Kaltura.Types
 		private string _ExternalId = null;
 		private string _MacAddress = null;
 		private string _Model = null;
+		private string _Manufacturer = null;
 		private long _ManufacturerId = long.MinValue;
 		#endregion
 
@@ -179,10 +181,20 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public string Manufacturer
+		{
+			get { return _Manufacturer; }
+			set 
+			{ 
+				_Manufacturer = value;
+				OnPropertyChanged("Manufacturer");
+			}
+		}
+		[JsonProperty]
 		public long ManufacturerId
 		{
 			get { return _ManufacturerId; }
-			set 
+			private set 
 			{ 
 				_ManufacturerId = value;
 				OnPropertyChanged("ManufacturerId");
@@ -241,6 +253,10 @@ namespace Kaltura.Types
 			{
 				this._Model = node["model"].Value<string>();
 			}
+			if(node["manufacturer"] != null)
+			{
+				this._Manufacturer = node["manufacturer"].Value<string>();
+			}
 			if(node["manufacturerId"] != null)
 			{
 				this._ManufacturerId = ParseLong(node["manufacturerId"].Value<string>());
@@ -265,6 +281,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("macAddress", this._MacAddress);
 			kparams.AddIfNotNull("model", this._Model);
+			kparams.AddIfNotNull("manufacturer", this._Manufacturer);
 			kparams.AddIfNotNull("manufacturerId", this._ManufacturerId);
 			return kparams;
 		}
@@ -294,6 +311,8 @@ namespace Kaltura.Types
 					return "MacAddress";
 				case MODEL:
 					return "Model";
+				case MANUFACTURER:
+					return "Manufacturer";
 				case MANUFACTURER_ID:
 					return "ManufacturerId";
 				default:

@@ -244,6 +244,9 @@ namespace Kaltura
 		public static string CannotDeleteAssetStruct = "4100";
 		public static string CategoryTypeNotExist = "4101";
 		public static string ExtendedTypeValueCannotBeChanged = "4102";
+		public static string InputFormatIsInvalid = "5078";
+		public static string DuplicateRegionChannel = "5076";
+		public static string ParentAlreadyContainsChannel = "5077";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
