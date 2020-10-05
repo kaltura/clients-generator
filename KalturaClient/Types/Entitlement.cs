@@ -52,6 +52,7 @@ namespace Kaltura.Types
 		public const string MAX_USES = "maxUses";
 		public const string USER_ID = "userId";
 		public const string HOUSEHOLD_ID = "householdId";
+		public const string IS_PENDING = "isPending";
 		#endregion
 
 		#region Private Fields
@@ -69,6 +70,7 @@ namespace Kaltura.Types
 		private int _MaxUses = Int32.MinValue;
 		private string _UserId = null;
 		private long _HouseholdId = long.MinValue;
+		private bool? _IsPending = null;
 		#endregion
 
 		#region Properties
@@ -212,6 +214,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("HouseholdId");
 			}
 		}
+		[JsonProperty]
+		public bool? IsPending
+		{
+			get { return _IsPending; }
+			set 
+			{ 
+				_IsPending = value;
+				OnPropertyChanged("IsPending");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -277,6 +289,10 @@ namespace Kaltura.Types
 			{
 				this._HouseholdId = ParseLong(node["householdId"].Value<string>());
 			}
+			if(node["isPending"] != null)
+			{
+				this._IsPending = ParseBool(node["isPending"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -300,6 +316,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("maxUses", this._MaxUses);
 			kparams.AddIfNotNull("userId", this._UserId);
 			kparams.AddIfNotNull("householdId", this._HouseholdId);
+			kparams.AddIfNotNull("isPending", this._IsPending);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -334,6 +351,8 @@ namespace Kaltura.Types
 					return "UserId";
 				case HOUSEHOLD_ID:
 					return "HouseholdId";
+				case IS_PENDING:
+					return "IsPending";
 				default:
 					return base.getPropertyName(apiName);
 			}

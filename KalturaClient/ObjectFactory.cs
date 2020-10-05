@@ -260,16 +260,10 @@ namespace Kaltura
 					return new ListResponse<UserAssetRule>(jToken);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(jToken);
-				case "KalturaCampaignListResponse":
-					return new ListResponse<Campaign>(jToken);
 				case "KalturaCategoryItemListResponse":
 					return new ListResponse<CategoryItem>(jToken);
 				case "KalturaCouponListResponse":
 					return new ListResponse<Coupon>(jToken);
-				case "KalturaDeviceReferenceDataListResponse":
-					return new ListResponse<DeviceReferenceData>(jToken);
-				case "KalturaDynamicListListResponse":
-					return new ListResponse<DynamicList>(jToken);
 				case "KalturaEventNotificationListResponse":
 					return new ListResponse<EventNotification>(jToken);
 				case "KalturaHouseholdListResponse":

@@ -35,39 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DynamicListIdInFilter : DynamicListFilter
+	public class CatalogPartnerConfig : PartnerConfiguration
 	{
 		#region Constants
-		public const string ID_IN = "idIn";
+		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
 		#endregion
 
 		#region Private Fields
-		private string _IdIn = null;
+		private bool? _SingleMultilingualMode = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string IdIn
+		public bool? SingleMultilingualMode
 		{
-			get { return _IdIn; }
+			get { return _SingleMultilingualMode; }
 			set 
 			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
+				_SingleMultilingualMode = value;
+				OnPropertyChanged("SingleMultilingualMode");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DynamicListIdInFilter()
+		public CatalogPartnerConfig()
 		{
 		}
 
-		public DynamicListIdInFilter(JToken node) : base(node)
+		public CatalogPartnerConfig(JToken node) : base(node)
 		{
-			if(node["idIn"] != null)
+			if(node["singleMultilingualMode"] != null)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
 			}
 		}
 		#endregion
@@ -77,16 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDynamicListIdInFilter");
-			kparams.AddIfNotNull("idIn", this._IdIn);
+				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
+			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_IN:
-					return "IdIn";
+				case SINGLE_MULTILINGUAL_MODE:
+					return "SingleMultilingualMode";
 				default:
 					return base.getPropertyName(apiName);
 			}
