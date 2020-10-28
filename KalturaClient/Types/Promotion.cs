@@ -35,79 +35,75 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class Promotion : ObjectBase
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string DISCOUNT_MODULE_ID = "discountModuleId";
+		public const string CONDITIONS = "conditions";
+		public const string NUMBER_OF_RECURRING = "numberOfRecurring";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private long _DiscountModuleId = long.MinValue;
+		private IList<Condition> _Conditions;
+		private int _NumberOfRecurring = Int32.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public long DiscountModuleId
 		{
-			get { return _Scheme; }
+			get { return _DiscountModuleId; }
 			set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
+				_DiscountModuleId = value;
+				OnPropertyChanged("DiscountModuleId");
 			}
 		}
 		[JsonProperty]
-		public string LicenseURL
+		public IList<Condition> Conditions
 		{
-			get { return _LicenseURL; }
+			get { return _Conditions; }
 			set 
 			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
+				_Conditions = value;
+				OnPropertyChanged("Conditions");
 			}
 		}
 		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
+		public int NumberOfRecurring
 		{
-			get { return _DynamicData; }
+			get { return _NumberOfRecurring; }
 			set 
 			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_NumberOfRecurring = value;
+				OnPropertyChanged("NumberOfRecurring");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public Promotion()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public Promotion(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["discountModuleId"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
+				this._DiscountModuleId = ParseLong(node["discountModuleId"].Value<string>());
 			}
-			if(node["licenseURL"] != null)
+			if(node["conditions"] != null)
 			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
-			}
-			if(node["dynamicData"] != null)
-			{
+				this._Conditions = new List<Condition>();
+				foreach(var arrayNode in node["conditions"].Children())
 				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
+					this._Conditions.Add(ObjectFactory.Create<Condition>(arrayNode));
 				}
+			}
+			if(node["numberOfRecurring"] != null)
+			{
+				this._NumberOfRecurring = ParseInt(node["numberOfRecurring"].Value<string>());
 			}
 		}
 		#endregion
@@ -117,22 +113,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaPromotion");
+			kparams.AddIfNotNull("discountModuleId", this._DiscountModuleId);
+			kparams.AddIfNotNull("conditions", this._Conditions);
+			kparams.AddIfNotNull("numberOfRecurring", this._NumberOfRecurring);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case DISCOUNT_MODULE_ID:
+					return "DiscountModuleId";
+				case CONDITIONS:
+					return "Conditions";
+				case NUMBER_OF_RECURRING:
+					return "NumberOfRecurring";
 				default:
 					return base.getPropertyName(apiName);
 			}

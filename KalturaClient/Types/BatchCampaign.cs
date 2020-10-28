@@ -35,78 +35,42 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class BatchCampaign : Campaign
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string POPULATION_CONDITIONS = "populationConditions";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private IList<Condition> _PopulationConditions;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public IList<Condition> PopulationConditions
 		{
-			get { return _Scheme; }
+			get { return _PopulationConditions; }
 			set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
-			}
-		}
-		[JsonProperty]
-		public string LicenseURL
-		{
-			get { return _LicenseURL; }
-			set 
-			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
-			}
-		}
-		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
-		{
-			get { return _DynamicData; }
-			set 
-			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_PopulationConditions = value;
+				OnPropertyChanged("PopulationConditions");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public BatchCampaign()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public BatchCampaign(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["populationConditions"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
-			}
-			if(node["licenseURL"] != null)
-			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
-			}
-			if(node["dynamicData"] != null)
-			{
+				this._PopulationConditions = new List<Condition>();
+				foreach(var arrayNode in node["populationConditions"].Children())
 				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
+					this._PopulationConditions.Add(ObjectFactory.Create<Condition>(arrayNode));
 				}
 			}
 		}
@@ -117,22 +81,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaBatchCampaign");
+			kparams.AddIfNotNull("populationConditions", this._PopulationConditions);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case POPULATION_CONDITIONS:
+					return "PopulationConditions";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -148,6 +148,8 @@ namespace Kaltura
 		public static string SubscriptionCancellationIsBlocked = "3074";
 		public static string UnknownPriceReason = "3077";
 		public static string SubscriptionDoesNotExist = "3081";
+		public static string OtherCouponIsAlreadyAppliedForSubscription = "3082";
+		public static string CampaignIsAlreadyAppliedForSubscription = "3085";
 		public static string PurchasePendingFailed = "3083";
 		public static string PendingEntitlement = "3084";
 		public static string MediaConcurrencyLimitation = "4000";
@@ -348,8 +350,8 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentMethodExternalIdRequired = "6051";
-		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
+		public static string PaymentGatewaySuspended = "6051";
+		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
@@ -467,6 +469,8 @@ namespace Kaltura
 		public static string HttpMethodNotSupported = "500065";
 		public static string PropertyIsOpcSupported = "500082";
 		public static string KeyCannotBeEmptyOrNull = "500086";
+		public static string MissingMandatoryArgumentInProperty = "500087";
+		public static string MaxArguments = "500088";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";

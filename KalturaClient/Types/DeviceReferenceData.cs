@@ -35,79 +35,71 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class DeviceReferenceData : CrudObject
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string ID = "id";
+		public const string NAME = "name";
+		public const string STATUS = "status";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private long _Id = long.MinValue;
+		private string _Name = null;
+		private bool? _Status = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public long Id
 		{
-			get { return _Scheme; }
-			set 
+			get { return _Id; }
+			private set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
+				_Id = value;
+				OnPropertyChanged("Id");
 			}
 		}
 		[JsonProperty]
-		public string LicenseURL
+		public string Name
 		{
-			get { return _LicenseURL; }
+			get { return _Name; }
 			set 
 			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
+		public bool? Status
 		{
-			get { return _DynamicData; }
+			get { return _Status; }
 			set 
 			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_Status = value;
+				OnPropertyChanged("Status");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public DeviceReferenceData()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public DeviceReferenceData(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["id"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
-			if(node["licenseURL"] != null)
+			if(node["name"] != null)
 			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
+				this._Name = node["name"].Value<string>();
 			}
-			if(node["dynamicData"] != null)
+			if(node["status"] != null)
 			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
+				this._Status = ParseBool(node["status"].Value<string>());
 			}
 		}
 		#endregion
@@ -117,22 +109,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaDeviceReferenceData");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("name", this._Name);
+			kparams.AddIfNotNull("status", this._Status);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case ID:
+					return "Id";
+				case NAME:
+					return "Name";
+				case STATUS:
+					return "Status";
 				default:
 					return base.getPropertyName(apiName);
 			}

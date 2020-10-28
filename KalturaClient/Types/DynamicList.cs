@@ -35,79 +35,87 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class DynamicList : CrudObject
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string ID = "id";
+		public const string CREATE_DATE = "createDate";
+		public const string UPDATE_DATE = "updateDate";
+		public const string NAME = "name";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private long _Id = long.MinValue;
+		private long _CreateDate = long.MinValue;
+		private long _UpdateDate = long.MinValue;
+		private string _Name = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public long Id
 		{
-			get { return _Scheme; }
-			set 
+			get { return _Id; }
+			private set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
+				_Id = value;
+				OnPropertyChanged("Id");
 			}
 		}
 		[JsonProperty]
-		public string LicenseURL
+		public long CreateDate
 		{
-			get { return _LicenseURL; }
-			set 
+			get { return _CreateDate; }
+			private set 
 			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
+				_CreateDate = value;
+				OnPropertyChanged("CreateDate");
 			}
 		}
 		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
+		public long UpdateDate
 		{
-			get { return _DynamicData; }
+			get { return _UpdateDate; }
+			private set 
+			{ 
+				_UpdateDate = value;
+				OnPropertyChanged("UpdateDate");
+			}
+		}
+		[JsonProperty]
+		public string Name
+		{
+			get { return _Name; }
 			set 
 			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_Name = value;
+				OnPropertyChanged("Name");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public DynamicList()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public DynamicList(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["id"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
-			if(node["licenseURL"] != null)
+			if(node["createDate"] != null)
 			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
+				this._CreateDate = ParseLong(node["createDate"].Value<string>());
 			}
-			if(node["dynamicData"] != null)
+			if(node["updateDate"] != null)
 			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
+				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
+			}
+			if(node["name"] != null)
+			{
+				this._Name = node["name"].Value<string>();
 			}
 		}
 		#endregion
@@ -117,22 +125,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaDynamicList");
+			kparams.AddIfNotNull("id", this._Id);
+			kparams.AddIfNotNull("createDate", this._CreateDate);
+			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("name", this._Name);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case ID:
+					return "Id";
+				case CREATE_DATE:
+					return "CreateDate";
+				case UPDATE_DATE:
+					return "UpdateDate";
+				case NAME:
+					return "Name";
 				default:
 					return base.getPropertyName(apiName);
 			}

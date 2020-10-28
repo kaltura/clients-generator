@@ -35,79 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class DynamicListSearchFilter : DynamicListFilter
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string ID_EQUAL = "idEqual";
+		public const string VALUE_EQUAL = "valueEqual";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private long _IdEqual = long.MinValue;
+		private string _ValueEqual = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public long IdEqual
 		{
-			get { return _Scheme; }
+			get { return _IdEqual; }
 			set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
+				_IdEqual = value;
+				OnPropertyChanged("IdEqual");
 			}
 		}
 		[JsonProperty]
-		public string LicenseURL
+		public string ValueEqual
 		{
-			get { return _LicenseURL; }
+			get { return _ValueEqual; }
 			set 
 			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
-			}
-		}
-		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
-		{
-			get { return _DynamicData; }
-			set 
-			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_ValueEqual = value;
+				OnPropertyChanged("ValueEqual");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public DynamicListSearchFilter()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public DynamicListSearchFilter(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["idEqual"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
+				this._IdEqual = ParseLong(node["idEqual"].Value<string>());
 			}
-			if(node["licenseURL"] != null)
+			if(node["valueEqual"] != null)
 			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
-			}
-			if(node["dynamicData"] != null)
-			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
+				this._ValueEqual = node["valueEqual"].Value<string>();
 			}
 		}
 		#endregion
@@ -117,22 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaDynamicListSearchFilter");
+			kparams.AddIfNotNull("idEqual", this._IdEqual);
+			kparams.AddIfNotNull("valueEqual", this._ValueEqual);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case ID_EQUAL:
+					return "IdEqual";
+				case VALUE_EQUAL:
+					return "ValueEqual";
 				default:
 					return base.getPropertyName(apiName);
 			}

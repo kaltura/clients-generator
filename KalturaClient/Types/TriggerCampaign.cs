@@ -35,78 +35,74 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class TriggerCampaign : Campaign
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string SERVICE = "service";
+		public const string ACTION = "action";
+		public const string TRIGGER_CONDITIONS = "triggerConditions";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private ApiService _Service = null;
+		private ApiAction _Action = null;
+		private IList<Condition> _TriggerConditions;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public ApiService Service
 		{
-			get { return _Scheme; }
+			get { return _Service; }
 			set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
+				_Service = value;
+				OnPropertyChanged("Service");
 			}
 		}
 		[JsonProperty]
-		public string LicenseURL
+		public ApiAction Action
 		{
-			get { return _LicenseURL; }
+			get { return _Action; }
 			set 
 			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
+				_Action = value;
+				OnPropertyChanged("Action");
 			}
 		}
 		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
+		public IList<Condition> TriggerConditions
 		{
-			get { return _DynamicData; }
+			get { return _TriggerConditions; }
 			set 
 			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_TriggerConditions = value;
+				OnPropertyChanged("TriggerConditions");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public TriggerCampaign()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public TriggerCampaign(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["service"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
+				this._Service = (ApiService)StringEnum.Parse(typeof(ApiService), node["service"].Value<string>());
 			}
-			if(node["licenseURL"] != null)
+			if(node["action"] != null)
 			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
+				this._Action = (ApiAction)StringEnum.Parse(typeof(ApiAction), node["action"].Value<string>());
 			}
-			if(node["dynamicData"] != null)
+			if(node["triggerConditions"] != null)
 			{
+				this._TriggerConditions = new List<Condition>();
+				foreach(var arrayNode in node["triggerConditions"].Children())
 				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
+					this._TriggerConditions.Add(ObjectFactory.Create<Condition>(arrayNode));
 				}
 			}
 		}
@@ -117,22 +113,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaTriggerCampaign");
+			kparams.AddIfNotNull("service", this._Service);
+			kparams.AddIfNotNull("action", this._Action);
+			kparams.AddIfNotNull("triggerConditions", this._TriggerConditions);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case SERVICE:
+					return "Service";
+				case ACTION:
+					return "Action";
+				case TRIGGER_CONDITIONS:
+					return "TriggerConditions";
 				default:
 					return base.getPropertyName(apiName);
 			}

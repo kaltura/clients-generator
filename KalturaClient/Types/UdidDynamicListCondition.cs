@@ -35,79 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DrmPlaybackPluginData : PluginData
+	public class UdidDynamicListCondition : Condition
 	{
 		#region Constants
-		public const string SCHEME = "scheme";
-		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
+		public const string ID = "id";
 		#endregion
 
 		#region Private Fields
-		private DrmSchemeName _Scheme = null;
-		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
+		private long _Id = long.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public DrmSchemeName Scheme
+		public long Id
 		{
-			get { return _Scheme; }
+			get { return _Id; }
 			set 
 			{ 
-				_Scheme = value;
-				OnPropertyChanged("Scheme");
-			}
-		}
-		[JsonProperty]
-		public string LicenseURL
-		{
-			get { return _LicenseURL; }
-			set 
-			{ 
-				_LicenseURL = value;
-				OnPropertyChanged("LicenseURL");
-			}
-		}
-		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
-		{
-			get { return _DynamicData; }
-			set 
-			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
+				_Id = value;
+				OnPropertyChanged("Id");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DrmPlaybackPluginData()
+		public UdidDynamicListCondition()
 		{
 		}
 
-		public DrmPlaybackPluginData(JToken node) : base(node)
+		public UdidDynamicListCondition(JToken node) : base(node)
 		{
-			if(node["scheme"] != null)
+			if(node["id"] != null)
 			{
-				this._Scheme = (DrmSchemeName)StringEnum.Parse(typeof(DrmSchemeName), node["scheme"].Value<string>());
-			}
-			if(node["licenseURL"] != null)
-			{
-				this._LicenseURL = node["licenseURL"].Value<string>();
-			}
-			if(node["dynamicData"] != null)
-			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
+				this._Id = ParseLong(node["id"].Value<string>());
 			}
 		}
 		#endregion
@@ -117,22 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
-			kparams.AddIfNotNull("scheme", this._Scheme);
-			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
+				kparams.AddReplace("objectType", "KalturaUdidDynamicListCondition");
+			kparams.AddIfNotNull("id", this._Id);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SCHEME:
-					return "Scheme";
-				case LICENSE_URL:
-					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
+				case ID:
+					return "Id";
 				default:
 					return base.getPropertyName(apiName);
 			}
