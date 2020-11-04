@@ -31,7 +31,7 @@ Compatible with Kaltura server version @VERSION@ and above.
 ```
 
 ### Reusing API Connections
-Setting this option on the config can provide a speed boost by keeping HTTP connections open (keepalive) and reusing TLS sessions. Connections are not reused by default.
+Setting this option on the config can provide a speed boost by keeping HTTP connections open (keepalive) and reusing TLS sessions. Connections are not reused by default. (PHP 5.5 or greater required)
 ```php
 $config->setCurlReuse(true);
 ```

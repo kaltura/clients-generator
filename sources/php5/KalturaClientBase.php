@@ -536,8 +536,10 @@ class KalturaClientBase
 		// Get new or existing curl handle
 		$ch = self::getCurlHandle();
 
-		// Reset options on handle (in case existing)
-		curl_reset($ch);
+		if($this->config->getCurlReuse()){
+			// Reset options on handle (in case existing)
+			curl_reset($ch);
+		}
 
 		curl_setopt($ch, CURLOPT_URL, $url);
 		if($this->config->method == self::METHOD_POST) {
@@ -1464,7 +1466,6 @@ class KalturaConfiguration
 	public $serviceUrl    				= "http://www.kaltura.com/";
 	public $format        				= KalturaClientBase::KALTURA_SERVICE_FORMAT_PHP;
 	public $curlTimeout   				= 120;
-	public $curlReuse                   = false;
 	public $userAgent					= '';
 	public $startZendDebuggerSession 	= false;
 	public $proxyHost                   = null;
@@ -1476,6 +1477,7 @@ class KalturaConfiguration
 	public $sslCertificatePath			= null;
 	public $requestHeaders				= array();
 	public $method						= KalturaClientBase::METHOD_POST;
+	private $curlReuse                  = false;
 
 
 	public function setServiceUrl ($serviceUrl)
@@ -1517,7 +1519,14 @@ class KalturaConfiguration
 	 * @param bool $curlReuse
 	 */
 	public function setCurlReuse($curlReuse){
-		$this->curlReuse = $curlReuse;
+		//Check for curl_reset support. Is is required.
+		if(function_exists("curl_reset")){
+			$this->curlReuse = $curlReuse;
+		}
+		else
+		{
+			$this->log("curlReuse not supported. PHP >= 5.5 required");
+		}
 	}
 
 	/*

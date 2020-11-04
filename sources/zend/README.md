@@ -8,7 +8,7 @@ The code required to load the client can be found in the test runnner.
 See https://github.com/kaltura/clients-generator/blob/master/tests/ovp/zend/tests/run.php
 
 ### Reusing API Connections
-Setting this option on the config can provide a speed boost by keeping HTTP connections open (keepalive) and reusing TLS sessions. Connections are not reused by default.
+Setting this option on the config can provide a speed boost by keeping HTTP connections open (keepalive) and reusing TLS sessions. Connections are not reused by default. (PHP 5.5 or greater required)
 ```php
 $config->setCurlReuse(true);
 ```

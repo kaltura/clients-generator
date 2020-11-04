@@ -37,7 +37,6 @@ class Kaltura_Client_Configuration
 	public $serviceUrl    				= "http://www.kaltura.com/";
 	public $format        				= Kaltura_Client_ClientBase::KALTURA_SERVICE_FORMAT_XML;
 	public $curlTimeout   				= 120;
-	public $curlReuse                   = false;
 	public $startZendDebuggerSession 	= false;
 	public $userAgent					= '';
 	public $proxyHost                   = null;
@@ -49,6 +48,7 @@ class Kaltura_Client_Configuration
 	public $verifySSL 					= true;
 	public $sslCertificatePath			= null;
 	public $requestHeaders				= array();
+	private $curlReuse                  = false;
 	
 	/**
 	 * Set logger to get kaltura client debug logs
@@ -78,7 +78,14 @@ class Kaltura_Client_Configuration
 	 * @param bool $curlReuse
 	 */
 	public function setCurlReuse($curlReuse){
-		$this->curlReuse = $curlReuse;
+		//Check for curl_reset support. Is is required.
+		if(function_exists("curl_reset")){
+			$this->curlReuse = $curlReuse;
+		}
+		else
+		{
+			$this->log("curlReuse not supported. PHP >= 5.5 required");
+		}
 	}
 
 	/**

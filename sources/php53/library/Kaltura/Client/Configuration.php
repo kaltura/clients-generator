@@ -237,7 +237,14 @@ class Configuration
 	 * @param bool $curlReuse
 	 */
 	public function setCurlReuse($curlReuse){
-		$this->curlReuse = $curlReuse;
+		//Check for curl_reset support. Is is required.
+		if(function_exists("curl_reset")){
+			$this->curlReuse = $curlReuse;
+		}
+		else
+		{
+			$this->log("curlReuse not supported. PHP >= 5.5 required");
+		}
 	}
 
 	/**

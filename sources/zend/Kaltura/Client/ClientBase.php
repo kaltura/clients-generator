@@ -380,8 +380,10 @@ class Kaltura_Client_ClientBase
 		// Get new or existing curl handle
 		$ch = self::getCurlHandle();
 
-		// Reset options on handle (in case existing)
-		curl_reset($ch);
+		if($this->config->getCurlReuse()){
+			// Reset options on handle (in case existing)
+			curl_reset($ch);
+		}
 
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
