@@ -159,6 +159,11 @@ class KalturaClientBase
 	private $responseHeaders = array();
 
 	/**
+	 * @var resource
+	 */
+	private static $curlHandle = null;
+
+	/**
 	 * path to save served results
 	 * @var string
 	 */
@@ -223,6 +228,24 @@ class KalturaClientBase
 				}
 			}
 		}
+	}
+
+	/* Close curl handle
+	*  Either called near end of doCurl method if config->getCurlReuse() == false or can be run explicitly to clean up connection upon ulimate completion of request.
+	*  
+	*/
+	public static function closeCurlHandle(){
+		curl_close(self::$curlHandle);
+		self::$curlHandle = null;
+	}
+
+	/* Get handle for curl processes */
+	private static function getCurlHandle(){
+		if(self::$curlHandle === null){
+			self::$curlHandle = curl_init();
+		}
+		
+		return self::$curlHandle;
 	}
 
 	/* Store response headers into array */
@@ -495,34 +518,45 @@ class KalturaClientBase
 	private function doCurl($url, $params = array(), $files = array())
 	{
 		$requestHeaders = $this->config->requestHeaders;
-		
+
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
+		$this->log("Reuse existing cURL handle: ". var_export($this->config->getCurlReuse(),true));
+
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
 			$requestHeaders[] = 'Accept: application/json';
 		}
+
 		
 		$this->responseHeaders = array();
 		$cookies = array();
-		$ch = curl_init();
+
+		// Get new or existing curl handle
+		$ch = self::getCurlHandle();
+
+		if($this->config->getCurlReuse()){
+			// Reset options on handle (in case existing)
+			curl_reset($ch);
+		}
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		if($this->config->method == self::METHOD_POST) {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			if (count($files) > 0)
 			{
 				$params = array('json' => $params);
-                foreach ($files as $key => $file) {
-                    // The usage of the @filename API for file uploading is
-                    // deprecated since PHP 5.5. CURLFile must be used instead.
-                    if (PHP_VERSION_ID >= 50500) {
-                        $params[$key] = new \CURLFile($file);
-                    } else {
-                        $params[$key] = "@" . $file; // let curl know its a file
-                    }
-                }
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+				foreach ($files as $key => $file) {
+					// The usage of the @filename API for file uploading is
+					// deprecated since PHP 5.5. CURLFile must be used instead.
+					if (PHP_VERSION_ID >= 50500) {
+						$params[$key] = new \CURLFile($file);
+					} else {
+						$params[$key] = "@" . $file; // let curl know its a file
+					}
+				}
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 			}
 			else
 			{
@@ -598,7 +632,11 @@ class KalturaClientBase
 			fclose($destinationResource);
 
 		$curlError = curl_error($ch);
-		curl_close($ch);
+
+		if(!$this->config->getCurlReuse()){
+			self::closeCurlHandle();
+		}
+
 		return array($result, $curlError);
 	}
 
@@ -1439,6 +1477,7 @@ class KalturaConfiguration
 	public $sslCertificatePath			= null;
 	public $requestHeaders				= array();
 	public $method						= KalturaClientBase::METHOD_POST;
+	private $curlReuse                  = false;
 
 
 	public function setServiceUrl ($serviceUrl)
@@ -1470,6 +1509,33 @@ class KalturaConfiguration
 	public function getLogger()
 	{
 		return $this->logger;
+	}
+
+	/**
+	 * Set if curl should reuse connection across requests
+	 *
+	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+	 *
+	 * @param bool $curlReuse
+	 */
+	public function setCurlReuse($curlReuse){
+		//Check for curl_reset support. Is is required.
+		if(function_exists("curl_reset")){
+			$this->curlReuse = $curlReuse;
+		}
+		else
+		{
+			$this->log("curlReuse not supported. PHP >= 5.5 required");
+		}
+	}
+
+	/*
+	 * Gets curl handle reuse setting
+	 *
+	 * @return the $curlReuse
+	 */
+	public function getCurlReuse(){
+		return $this->curlReuse;
 	}
 }
 

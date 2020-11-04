@@ -20,11 +20,18 @@ $loader->register();
 
 $testerConfig = parse_ini_file(dirname(__FILE__).'/'.CONFIG_FILE);
 
+$options = getopt('', array('curlReuse'));
+
 // init kaltura configuration
 $config = new KalturaConfiguration();
 $config->setServiceUrl($testerConfig['serviceUrl']);
 $config->setCurlTimeout(120);
 $config->setLogger(new \Test\SampleLoggerImplementation());
+
+if(array_key_exists("curlReuse",$options)){
+	// run the tester with persistent connection
+	$config->setCurlReuse(true);
+}
 
 // init kaltura client
 $client = new KalturaClient($config);

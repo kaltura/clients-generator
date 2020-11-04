@@ -85,6 +85,11 @@ class Base
 	private $responseHeaders = array();
 
 	/**
+	 * @var resource
+	 */
+	private static $curlHandle = null;
+
+	/**
 	 * Kaltura client constructor
 	 *
 	 * @param \Kaltura\Client\Configuration $config
@@ -96,6 +101,24 @@ class Base
 		$logger = $this->config->getLogger();
 		if ($logger)
 			$this->shouldLog = true;
+	}
+
+	/**
+	 * Close curl handle
+	 * Either called near end of doCurl method if config->getCurlReuse() == false or can be run explicitly to clean up connection upon ulimate completion of request.
+	 *
+	 */
+	public static function closeCurlHandle(){
+		curl_close(self::$curlHandle);
+		self::$curlHandle = null;
+	}
+
+	/* Get handle for curl processes */
+	private static function getCurlHandle(){
+		if(self::$curlHandle === null){
+			self::$curlHandle = curl_init();
+		}
+		return self::$curlHandle;
 	}
 
 	/* Store response headers into array */
@@ -317,6 +340,8 @@ class Base
 		$params = $this->jsonEncode($params);
 		$this->log("curl: $url");
 		$this->log("post: $params");
+		$this->log("Reuse existing cURL handle: ". var_export($this->config->getCurlReuse(),true));
+		
 		if($this->config->getFormat() == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
 			$requestHeaders[] = 'Accept: application/json';
@@ -327,7 +352,15 @@ class Base
 		}
 
 		$cookies = array();
-		$ch = curl_init();
+
+		// Get new or existing curl handle
+		$ch = self::getCurlHandle();
+
+		if($this->config->getCurlReuse()){
+			// Reset options on handle (in case existing)
+			curl_reset($ch);
+		}
+
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		if (count($files) > 0)
@@ -399,7 +432,11 @@ class Base
 		$result = curl_exec($ch);
 		$curlErrorCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$curlError = curl_error($ch);
-		curl_close($ch);
+
+		if(!$this->config->getCurlReuse()){
+			self::closeCurlHandle();
+		}
+
 		return array($result, $curlErrorCode, $curlError);
 	}
 

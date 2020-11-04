@@ -48,6 +48,7 @@ class Kaltura_Client_Configuration
 	public $verifySSL 					= true;
 	public $sslCertificatePath			= null;
 	public $requestHeaders				= array();
+	private $curlReuse                  = false;
 	
 	/**
 	 * Set logger to get kaltura client debug logs
@@ -67,5 +68,32 @@ class Kaltura_Client_Configuration
 	public function getLogger()
 	{
 		return $this->logger;
+	}
+
+	/**
+	 * Set if curl should reuse connection across requests
+	 *
+	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+	 *
+	 * @param bool $curlReuse
+	 */
+	public function setCurlReuse($curlReuse){
+		//Check for curl_reset support. Is is required.
+		if(function_exists("curl_reset")){
+			$this->curlReuse = $curlReuse;
+		}
+		else
+		{
+			$this->log("curlReuse not supported. PHP >= 5.5 required");
+		}
+	}
+
+	/**
+	 * Gets curl handle reuse setting
+	 *
+	 * @return the $curlReuse
+	 */
+	public function getCurlReuse(){
+		return $this->curlReuse;
 	}
 }

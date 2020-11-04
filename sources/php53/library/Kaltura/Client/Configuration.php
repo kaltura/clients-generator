@@ -52,6 +52,11 @@ class Configuration
 	 * @var int
 	 */
 	private $curlTimeout   				= 120;
+    
+    /**
+	 * @var bool
+	 */
+	private $curlReuse   				= false;
 	
 	/**
 	 * @var string
@@ -117,6 +122,15 @@ class Configuration
 	public function getFormat ()
 	{
 		return $this->format;
+	}
+
+	/*
+	 * Gets curl handle reuse setting
+	 *
+	 * @return the $curlReuse
+	 */
+	public function getCurlReuse(){
+		return $this->curlReuse;
 	}
 
 	/**
@@ -213,6 +227,24 @@ class Configuration
 	public function setFormat ($format)
 	{
 		$this->format = $format;
+	}
+
+	/**
+	 * Set if curl should reuse connection across requests
+	 *
+	 * If set to true library will reuse cURL connection across requests which greatly increases performance due to connection KeepAlive and SSL Session reuse.
+	 *
+	 * @param bool $curlReuse
+	 */
+	public function setCurlReuse($curlReuse){
+		//Check for curl_reset support. Is is required.
+		if(function_exists("curl_reset")){
+			$this->curlReuse = $curlReuse;
+		}
+		else
+		{
+			$this->log("curlReuse not supported. PHP >= 5.5 required");
+		}
 	}
 
 	/**
