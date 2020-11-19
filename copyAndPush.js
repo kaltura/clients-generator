@@ -147,8 +147,9 @@ function gitPush(gitPath) {
 	
 	return execWithPomise(git + ' tag -d ' + branch, gitPath).then((gitPath) => {
 		return execWithPomise(git + ' push origin ' + branch, gitPath);
+	}).catch((err) => {
+		return execWithPomise(git + ' push origin ' + branch, gitPath);
 	});
-	
 }
 
 let handledFiles = 0;
