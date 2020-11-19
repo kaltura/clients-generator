@@ -51,6 +51,7 @@ namespace Kaltura.Types
 		public const string MODEL = "model";
 		public const string MANUFACTURER = "manufacturer";
 		public const string MANUFACTURER_ID = "manufacturerId";
+		public const string LAST_ACTIVITY_TIME = "lastActivityTime";
 		#endregion
 
 		#region Private Fields
@@ -67,6 +68,7 @@ namespace Kaltura.Types
 		private string _Model = null;
 		private string _Manufacturer = null;
 		private long _ManufacturerId = long.MinValue;
+		private long _LastActivityTime = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -200,6 +202,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("ManufacturerId");
 			}
 		}
+		[JsonProperty]
+		public long LastActivityTime
+		{
+			get { return _LastActivityTime; }
+			private set 
+			{ 
+				_LastActivityTime = value;
+				OnPropertyChanged("LastActivityTime");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -261,6 +273,10 @@ namespace Kaltura.Types
 			{
 				this._ManufacturerId = ParseLong(node["manufacturerId"].Value<string>());
 			}
+			if(node["lastActivityTime"] != null)
+			{
+				this._LastActivityTime = ParseLong(node["lastActivityTime"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -283,6 +299,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("model", this._Model);
 			kparams.AddIfNotNull("manufacturer", this._Manufacturer);
 			kparams.AddIfNotNull("manufacturerId", this._ManufacturerId);
+			kparams.AddIfNotNull("lastActivityTime", this._LastActivityTime);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -315,6 +332,8 @@ namespace Kaltura.Types
 					return "Manufacturer";
 				case MANUFACTURER_ID:
 					return "ManufacturerId";
+				case LAST_ACTIVITY_TIME:
+					return "LastActivityTime";
 				default:
 					return base.getPropertyName(apiName);
 			}
