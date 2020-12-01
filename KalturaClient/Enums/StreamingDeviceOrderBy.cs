@@ -27,20 +27,10 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class PartnerConfigurationType : StringEnum
+	public sealed class StreamingDeviceOrderBy : StringEnum
 	{
-		public static readonly PartnerConfigurationType DEFAULTPAYMENTGATEWAY = new PartnerConfigurationType("DefaultPaymentGateway");
-		public static readonly PartnerConfigurationType ENABLEPAYMENTGATEWAYSELECTION = new PartnerConfigurationType("EnablePaymentGatewaySelection");
-		public static readonly PartnerConfigurationType OSSADAPTER = new PartnerConfigurationType("OSSAdapter");
-		public static readonly PartnerConfigurationType CONCURRENCY = new PartnerConfigurationType("Concurrency");
-		public static readonly PartnerConfigurationType GENERAL = new PartnerConfigurationType("General");
-		public static readonly PartnerConfigurationType OBJECTVIRTUALASSET = new PartnerConfigurationType("ObjectVirtualAsset");
-		public static readonly PartnerConfigurationType COMMERCE = new PartnerConfigurationType("Commerce");
-		public static readonly PartnerConfigurationType PLAYBACK = new PartnerConfigurationType("Playback");
-		public static readonly PartnerConfigurationType PAYMENT = new PartnerConfigurationType("Payment");
-		public static readonly PartnerConfigurationType CATALOG = new PartnerConfigurationType("Catalog");
-		public static readonly PartnerConfigurationType SECURITY = new PartnerConfigurationType("Security");
+		public static readonly StreamingDeviceOrderBy NONE = new StreamingDeviceOrderBy("NONE");
 
-		private PartnerConfigurationType(string name) : base(name) { }
+		private StreamingDeviceOrderBy(string name) : base(name) { }
 	}
 }

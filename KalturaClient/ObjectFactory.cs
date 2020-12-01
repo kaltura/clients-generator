@@ -196,6 +196,8 @@ namespace Kaltura
 					return new ListResponse<MediaFileType>(jToken);
 				case "KalturaRatioListResponse":
 					return new ListResponse<Ratio>(jToken);
+				case "KalturaStreamingDeviceListResponse":
+					return new ListResponse<StreamingDevice>(jToken);
 				case "KalturaTagListResponse":
 					return new ListResponse<Tag>(jToken);
 				case "KalturaAssetHistoryListResponse":
