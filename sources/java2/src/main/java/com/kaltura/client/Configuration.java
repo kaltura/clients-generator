@@ -114,10 +114,12 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 
 	public void setProxy(String proxy) {
 		params.put(Proxy, proxy);
+		System.setProperty("http_proxy",proxy);
 	}
 
 	public void setProxyPort(int proxyPort) {
 		params.put(ProxyPort, proxyPort);
+		System.setProperty("http_proxy_port",String.valueOf(proxyPort));
 	}
 
 
