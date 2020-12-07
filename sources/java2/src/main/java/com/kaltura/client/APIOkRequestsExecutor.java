@@ -248,6 +248,25 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		logger.debug("Proxy host is: " + config.getProxy());
 		logger.debug("Proxy port is: " + config.getProxyPort());
 		builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(config.getProxy(), config.getProxyPort())));
+	// if a proxy was configured at the Kaltura client level (using setProxy()), the ENV var is ignored
+	// This is meant as a fallback
+	}else if (System.getenv("http_proxy") !=null && System.getenv("http_proxy_port") !=null){
+		int proxy_port = 0;
+		String proxy_error = "`http_proxy_port` ENV var is set but its value is invalid, will be ignored.";
+		// make sure the port value can be cast to int
+	        try {
+		    proxy_port = Integer.parseInt(System.getenv("http_proxy_port"));
+		} catch(NumberFormatException e) {
+		    logger.debug(proxy_error);
+		} catch(NullPointerException e) {
+		    logger.debug(proxy_error);
+		}
+		// if we haven't got a valid port, no proxy will be used.
+		if (proxy_port > 0){
+		    logger.debug("Proxy host is: " + System.getenv("http_proxy"));
+		    logger.debug("Proxy port is: " + proxy_port);
+		    builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(System.getenv("http_proxy"), proxy_port)));
+		}
 	}
 
         return builder;
