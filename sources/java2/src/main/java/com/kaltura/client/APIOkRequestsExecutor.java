@@ -263,8 +263,8 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		}
 		// if we haven't got a valid port, no proxy will be used.
 		if (proxy_port > 0){
-		    logger.debug("Proxy host is: " + System.getenv("http_proxy"));
-		    logger.debug("Proxy port is: " + proxy_port);
+		    logger.debug("Proxy host (taken from ENV var - http_proxy): " + System.getenv("http_proxy"));
+		    logger.debug("Proxy port (taken from ENV var - http_proxy_port): " + proxy_port);
 		    builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(System.getenv("http_proxy"), proxy_port)));
 		}
 	}
