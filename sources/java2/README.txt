@@ -52,9 +52,24 @@ To build the API:
 
 == HTTP Proxy Support ==
 
-After initialising an object of the `Configuration` class, invoke the below methods:
+The following methods are supported:
+
+0. After initialising an object of the `Configuration` class, invoke the below methods:
 config.setProxy("proxy.host");
 config.setProxyPort(int_port);
+
+1. Set the following Java properties:
+- http_proxy
+- http_proxy_port
+
+2. Export the following ENV vars:
+- http_proxy
+- http_proxy_port
+
+=== Order of precedence ===
+- If proxy set on the client object, it will be used, otherwise:
+    - If Java properties are set and are valid, they will be used, otherwise:
+        - If ENV vars are set and are valid, they will be used
 
 
 == TESTING THE API CLIENT LIBRARY USING ECLIPSE ==
