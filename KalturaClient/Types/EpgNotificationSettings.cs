@@ -35,55 +35,87 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class BulkUploadIngestJobData : BulkUploadJobData
+	public class EpgNotificationSettings : ObjectBase
 	{
 		#region Constants
-		public const string INGEST_PROFILE_ID = "ingestProfileId";
-		public const string DISABLE_EPG_NOTIFICATION = "disableEpgNotification";
+		public const string ENABLED = "enabled";
+		public const string DEVICE_FAMILY_IDS = "deviceFamilyIds";
+		public const string LIVE_ASSET_IDS = "liveAssetIds";
+		public const string TIME_RANGE = "timeRange";
 		#endregion
 
 		#region Private Fields
-		private int _IngestProfileId = Int32.MinValue;
-		private bool? _DisableEpgNotification = null;
+		private bool? _Enabled = null;
+		private string _DeviceFamilyIds = null;
+		private string _LiveAssetIds = null;
+		private int _TimeRange = Int32.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public int IngestProfileId
+		public bool? Enabled
 		{
-			get { return _IngestProfileId; }
+			get { return _Enabled; }
 			set 
 			{ 
-				_IngestProfileId = value;
-				OnPropertyChanged("IngestProfileId");
+				_Enabled = value;
+				OnPropertyChanged("Enabled");
 			}
 		}
 		[JsonProperty]
-		public bool? DisableEpgNotification
+		public string DeviceFamilyIds
 		{
-			get { return _DisableEpgNotification; }
+			get { return _DeviceFamilyIds; }
 			set 
 			{ 
-				_DisableEpgNotification = value;
-				OnPropertyChanged("DisableEpgNotification");
+				_DeviceFamilyIds = value;
+				OnPropertyChanged("DeviceFamilyIds");
+			}
+		}
+		[JsonProperty]
+		public string LiveAssetIds
+		{
+			get { return _LiveAssetIds; }
+			set 
+			{ 
+				_LiveAssetIds = value;
+				OnPropertyChanged("LiveAssetIds");
+			}
+		}
+		[JsonProperty]
+		public int TimeRange
+		{
+			get { return _TimeRange; }
+			set 
+			{ 
+				_TimeRange = value;
+				OnPropertyChanged("TimeRange");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public BulkUploadIngestJobData()
+		public EpgNotificationSettings()
 		{
 		}
 
-		public BulkUploadIngestJobData(JToken node) : base(node)
+		public EpgNotificationSettings(JToken node) : base(node)
 		{
-			if(node["ingestProfileId"] != null)
+			if(node["enabled"] != null)
 			{
-				this._IngestProfileId = ParseInt(node["ingestProfileId"].Value<string>());
+				this._Enabled = ParseBool(node["enabled"].Value<string>());
 			}
-			if(node["disableEpgNotification"] != null)
+			if(node["deviceFamilyIds"] != null)
 			{
-				this._DisableEpgNotification = ParseBool(node["disableEpgNotification"].Value<string>());
+				this._DeviceFamilyIds = node["deviceFamilyIds"].Value<string>();
+			}
+			if(node["liveAssetIds"] != null)
+			{
+				this._LiveAssetIds = node["liveAssetIds"].Value<string>();
+			}
+			if(node["timeRange"] != null)
+			{
+				this._TimeRange = ParseInt(node["timeRange"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +125,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaBulkUploadIngestJobData");
-			kparams.AddIfNotNull("ingestProfileId", this._IngestProfileId);
-			kparams.AddIfNotNull("disableEpgNotification", this._DisableEpgNotification);
+				kparams.AddReplace("objectType", "KalturaEpgNotificationSettings");
+			kparams.AddIfNotNull("enabled", this._Enabled);
+			kparams.AddIfNotNull("deviceFamilyIds", this._DeviceFamilyIds);
+			kparams.AddIfNotNull("liveAssetIds", this._LiveAssetIds);
+			kparams.AddIfNotNull("timeRange", this._TimeRange);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case INGEST_PROFILE_ID:
-					return "IngestProfileId";
-				case DISABLE_EPG_NOTIFICATION:
-					return "DisableEpgNotification";
+				case ENABLED:
+					return "Enabled";
+				case DEVICE_FAMILY_IDS:
+					return "DeviceFamilyIds";
+				case LIVE_ASSET_IDS:
+					return "LiveAssetIds";
+				case TIME_RANGE:
+					return "TimeRange";
 				default:
 					return base.getPropertyName(apiName);
 			}

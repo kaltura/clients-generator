@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string CREDENTIALS_PROVIDER = "credentialsProvider";
 		public const string COGNITO_USER_POOL = "cognitoUserPool";
 		public const string JSON = "json";
+		public const string TOPICS = "topics";
 		#endregion
 
 		#region Private Fields
@@ -49,6 +50,7 @@ namespace Kaltura.Types
 		private CredentialsProvider _CredentialsProvider;
 		private CognitoUserPool _CognitoUserPool;
 		private string _Json = null;
+		private string _Topics = null;
 		#endregion
 
 		#region Properties
@@ -92,6 +94,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("Json");
 			}
 		}
+		[JsonProperty]
+		public string Topics
+		{
+			get { return _Topics; }
+			set 
+			{ 
+				_Topics = value;
+				OnPropertyChanged("Topics");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -117,6 +129,10 @@ namespace Kaltura.Types
 			{
 				this._Json = node["json"].Value<string>();
 			}
+			if(node["topics"] != null)
+			{
+				this._Topics = node["topics"].Value<string>();
+			}
 		}
 		#endregion
 
@@ -130,6 +146,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("credentialsProvider", this._CredentialsProvider);
 			kparams.AddIfNotNull("cognitoUserPool", this._CognitoUserPool);
 			kparams.AddIfNotNull("json", this._Json);
+			kparams.AddIfNotNull("topics", this._Topics);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -144,6 +161,8 @@ namespace Kaltura.Types
 					return "CognitoUserPool";
 				case JSON:
 					return "Json";
+				case TOPICS:
+					return "Topics";
 				default:
 					return base.getPropertyName(apiName);
 			}
