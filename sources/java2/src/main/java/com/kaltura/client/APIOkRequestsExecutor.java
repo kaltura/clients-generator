@@ -248,6 +248,42 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		logger.debug("Proxy host is: " + config.getProxy());
 		logger.debug("Proxy port is: " + config.getProxyPort());
 		builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(config.getProxy(), config.getProxyPort())));
+	}else if (System.getProperty("http_proxy") !=null && System.getProperty("http_proxy_port") !=null){
+		int proxy_port = 0;
+		String proxy_host = System.getProperty("http_proxy");
+		String proxy_error = "`http_proxy_port` Java property is set but its value is invalid, will be ignored.";
+	        try {
+		    proxy_port = Integer.parseInt(System.getProperty("http_proxy_port"));
+		} catch(NumberFormatException e) {
+		    logger.debug(proxy_error);
+		} catch(NullPointerException e) {
+		    logger.debug(proxy_error);
+		}
+		if (proxy_port > 0){
+		    logger.debug("Proxy host (taken from Java property - http_proxy) is: " + proxy_host);
+		    logger.debug("Proxy port (taken from Java property - http_proxy_port) is: " + proxy_port);
+		    builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy_host, proxy_port)));
+		}
+	// if a proxy was configured at the Kaltura client level (using setProxy()), the ENV var is ignored
+	// This is meant as a fallback
+	}else if (System.getenv("http_proxy") !=null && System.getenv("http_proxy_port") !=null){
+		int proxy_port = 0;
+		String proxy_host = System.getenv("http_proxy");
+		String proxy_error = "`http_proxy_port` ENV var is set but its value is invalid, will be ignored.";
+		// make sure the port value can be cast to int
+	        try {
+		    proxy_port = Integer.parseInt(System.getenv("http_proxy_port"));
+		} catch(NumberFormatException e) {
+		    logger.debug(proxy_error);
+		} catch(NullPointerException e) {
+		    logger.debug(proxy_error);
+		}
+		// if we haven't got a valid port, no proxy will be used.
+		if (proxy_port > 0){
+		    logger.debug("Proxy host (taken from ENV var - http_proxy): " + proxy_host);
+		    logger.debug("Proxy port (taken from ENV var - http_proxy_port): " + proxy_port);
+		    builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy_host, proxy_port)));
+		}
 	}
 
         return builder;
