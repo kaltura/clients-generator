@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -59,8 +59,6 @@ namespace Kaltura.Types
 		public const string CDN_ADAPATER_PROFILE_ID = "cdnAdapaterProfileId";
 		public const string STATUS = "status";
 		public const string CATALOG_END_DATE = "catalogEndDate";
-		public const string OPL = "opl";
-		public const string BUSINESS_MODULE_DETAILS = "businessModuleDetails";
 		#endregion
 
 		#region Private Fields
@@ -85,8 +83,6 @@ namespace Kaltura.Types
 		private long _CdnAdapaterProfileId = long.MinValue;
 		private bool? _Status = null;
 		private long _CatalogEndDate = long.MinValue;
-		private string _Opl = null;
-		private BusinessModuleDetails _BusinessModuleDetails;
 		#endregion
 
 		#region Properties
@@ -300,26 +296,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CatalogEndDate");
 			}
 		}
-		[JsonProperty]
-		public string Opl
-		{
-			get { return _Opl; }
-			set 
-			{ 
-				_Opl = value;
-				OnPropertyChanged("Opl");
-			}
-		}
-		[JsonProperty]
-		public BusinessModuleDetails BusinessModuleDetails
-		{
-			get { return _BusinessModuleDetails; }
-			set 
-			{ 
-				_BusinessModuleDetails = value;
-				OnPropertyChanged("BusinessModuleDetails");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -413,14 +389,6 @@ namespace Kaltura.Types
 			{
 				this._CatalogEndDate = ParseLong(node["catalogEndDate"].Value<string>());
 			}
-			if(node["opl"] != null)
-			{
-				this._Opl = node["opl"].Value<string>();
-			}
-			if(node["businessModuleDetails"] != null)
-			{
-				this._BusinessModuleDetails = ObjectFactory.Create<BusinessModuleDetails>(node["businessModuleDetails"]);
-			}
 		}
 		#endregion
 
@@ -451,8 +419,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("cdnAdapaterProfileId", this._CdnAdapaterProfileId);
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("catalogEndDate", this._CatalogEndDate);
-			kparams.AddIfNotNull("opl", this._Opl);
-			kparams.AddIfNotNull("businessModuleDetails", this._BusinessModuleDetails);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -501,10 +467,6 @@ namespace Kaltura.Types
 					return "Status";
 				case CATALOG_END_DATE:
 					return "CatalogEndDate";
-				case OPL:
-					return "Opl";
-				case BUSINESS_MODULE_DETAILS:
-					return "BusinessModuleDetails";
 				default:
 					return base.getPropertyName(apiName);
 			}

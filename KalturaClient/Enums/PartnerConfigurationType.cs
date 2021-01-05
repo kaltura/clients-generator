@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -38,8 +38,6 @@ namespace Kaltura.Enums
 		public static readonly PartnerConfigurationType COMMERCE = new PartnerConfigurationType("Commerce");
 		public static readonly PartnerConfigurationType PLAYBACK = new PartnerConfigurationType("Playback");
 		public static readonly PartnerConfigurationType PAYMENT = new PartnerConfigurationType("Payment");
-		public static readonly PartnerConfigurationType CATALOG = new PartnerConfigurationType("Catalog");
-		public static readonly PartnerConfigurationType SECURITY = new PartnerConfigurationType("Security");
 
 		private PartnerConfigurationType(string name) : base(name) { }
 	}

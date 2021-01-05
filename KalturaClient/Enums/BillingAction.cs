@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -35,7 +35,6 @@ namespace Kaltura.Enums
 		public static readonly BillingAction RENEW_CANCELED_SUBSCRIPTION = new BillingAction("renew_canceled_subscription");
 		public static readonly BillingAction CANCEL_SUBSCRIPTION_ORDER = new BillingAction("cancel_subscription_order");
 		public static readonly BillingAction SUBSCRIPTION_DATE_CHANGED = new BillingAction("subscription_date_changed");
-		public static readonly BillingAction PENDING = new BillingAction("pending");
 
 		private BillingAction(string name) : base(name) { }
 	}

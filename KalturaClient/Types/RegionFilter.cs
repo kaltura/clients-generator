@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -43,7 +43,6 @@ namespace Kaltura.Types
 		public const string PARENT_ID_EQUAL = "parentIdEqual";
 		public const string LIVE_ASSET_ID_EQUAL = "liveAssetIdEqual";
 		public const string PARENT_ONLY = "parentOnly";
-		public const string EXCLUSIVE_LCN = "exclusiveLcn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -53,7 +52,6 @@ namespace Kaltura.Types
 		private int _ParentIdEqual = Int32.MinValue;
 		private int _LiveAssetIdEqual = Int32.MinValue;
 		private bool? _ParentOnly = null;
-		private bool? _ExclusiveLcn = null;
 		private RegionOrderBy _OrderBy = null;
 		#endregion
 
@@ -109,16 +107,6 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public bool? ExclusiveLcn
-		{
-			get { return _ExclusiveLcn; }
-			set 
-			{ 
-				_ExclusiveLcn = value;
-				OnPropertyChanged("ExclusiveLcn");
-			}
-		}
-		[JsonProperty]
 		public new RegionOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -157,10 +145,6 @@ namespace Kaltura.Types
 			{
 				this._ParentOnly = ParseBool(node["parentOnly"].Value<string>());
 			}
-			if(node["exclusiveLcn"] != null)
-			{
-				this._ExclusiveLcn = ParseBool(node["exclusiveLcn"].Value<string>());
-			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (RegionOrderBy)StringEnum.Parse(typeof(RegionOrderBy), node["orderBy"].Value<string>());
@@ -179,7 +163,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("parentIdEqual", this._ParentIdEqual);
 			kparams.AddIfNotNull("liveAssetIdEqual", this._LiveAssetIdEqual);
 			kparams.AddIfNotNull("parentOnly", this._ParentOnly);
-			kparams.AddIfNotNull("exclusiveLcn", this._ExclusiveLcn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -197,8 +180,6 @@ namespace Kaltura.Types
 					return "LiveAssetIdEqual";
 				case PARENT_ONLY:
 					return "ParentOnly";
-				case EXCLUSIVE_LCN:
-					return "ExclusiveLcn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

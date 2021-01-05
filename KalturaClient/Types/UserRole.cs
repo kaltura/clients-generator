@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -42,8 +42,6 @@ namespace Kaltura.Types
 		public const string NAME = "name";
 		public const string PERMISSION_NAMES = "permissionNames";
 		public const string EXCLUDED_PERMISSION_NAMES = "excludedPermissionNames";
-		public const string TYPE = "type";
-		public const string PROFILE = "profile";
 		#endregion
 
 		#region Private Fields
@@ -51,8 +49,6 @@ namespace Kaltura.Types
 		private string _Name = null;
 		private string _PermissionNames = null;
 		private string _ExcludedPermissionNames = null;
-		private UserRoleType _Type = null;
-		private UserRoleProfile _Profile = null;
 		#endregion
 
 		#region Properties
@@ -96,26 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExcludedPermissionNames");
 			}
 		}
-		[JsonProperty]
-		public UserRoleType Type
-		{
-			get { return _Type; }
-			private set 
-			{ 
-				_Type = value;
-				OnPropertyChanged("Type");
-			}
-		}
-		[JsonProperty]
-		public UserRoleProfile Profile
-		{
-			get { return _Profile; }
-			set 
-			{ 
-				_Profile = value;
-				OnPropertyChanged("Profile");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -141,14 +117,6 @@ namespace Kaltura.Types
 			{
 				this._ExcludedPermissionNames = node["excludedPermissionNames"].Value<string>();
 			}
-			if(node["type"] != null)
-			{
-				this._Type = (UserRoleType)StringEnum.Parse(typeof(UserRoleType), node["type"].Value<string>());
-			}
-			if(node["profile"] != null)
-			{
-				this._Profile = (UserRoleProfile)StringEnum.Parse(typeof(UserRoleProfile), node["profile"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -162,8 +130,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("permissionNames", this._PermissionNames);
 			kparams.AddIfNotNull("excludedPermissionNames", this._ExcludedPermissionNames);
-			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("profile", this._Profile);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -178,10 +144,6 @@ namespace Kaltura.Types
 					return "PermissionNames";
 				case EXCLUDED_PERMISSION_NAMES:
 					return "ExcludedPermissionNames";
-				case TYPE:
-					return "Type";
-				case PROFILE:
-					return "Profile";
 				default:
 					return base.getPropertyName(apiName);
 			}

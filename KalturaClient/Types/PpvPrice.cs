@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -41,6 +41,7 @@ namespace Kaltura.Types
 		public const string FILE_ID = "fileId";
 		public const string PPV_MODULE_ID = "ppvModuleId";
 		public const string IS_SUBSCRIPTION_ONLY = "isSubscriptionOnly";
+		public const string FULL_PRICE = "fullPrice";
 		public const string SUBSCRIPTION_ID = "subscriptionId";
 		public const string COLLECTION_ID = "collectionId";
 		public const string PRE_PAID_ID = "prePaidId";
@@ -60,6 +61,7 @@ namespace Kaltura.Types
 		private int _FileId = Int32.MinValue;
 		private string _PpvModuleId = null;
 		private bool? _IsSubscriptionOnly = null;
+		private Price _FullPrice;
 		private string _SubscriptionId = null;
 		private string _CollectionId = null;
 		private string _PrePaidId = null;
@@ -104,6 +106,16 @@ namespace Kaltura.Types
 			{ 
 				_IsSubscriptionOnly = value;
 				OnPropertyChanged("IsSubscriptionOnly");
+			}
+		}
+		[JsonProperty]
+		public Price FullPrice
+		{
+			get { return _FullPrice; }
+			set 
+			{ 
+				_FullPrice = value;
+				OnPropertyChanged("FullPrice");
 			}
 		}
 		[JsonProperty]
@@ -257,6 +269,10 @@ namespace Kaltura.Types
 			{
 				this._IsSubscriptionOnly = ParseBool(node["isSubscriptionOnly"].Value<string>());
 			}
+			if(node["fullPrice"] != null)
+			{
+				this._FullPrice = ObjectFactory.Create<Price>(node["fullPrice"]);
+			}
 			if(node["subscriptionId"] != null)
 			{
 				this._SubscriptionId = node["subscriptionId"].Value<string>();
@@ -329,6 +345,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("fileId", this._FileId);
 			kparams.AddIfNotNull("ppvModuleId", this._PpvModuleId);
 			kparams.AddIfNotNull("isSubscriptionOnly", this._IsSubscriptionOnly);
+			kparams.AddIfNotNull("fullPrice", this._FullPrice);
 			kparams.AddIfNotNull("subscriptionId", this._SubscriptionId);
 			kparams.AddIfNotNull("collectionId", this._CollectionId);
 			kparams.AddIfNotNull("prePaidId", this._PrePaidId);
@@ -354,6 +371,8 @@ namespace Kaltura.Types
 					return "PpvModuleId";
 				case IS_SUBSCRIPTION_ONLY:
 					return "IsSubscriptionOnly";
+				case FULL_PRICE:
+					return "FullPrice";
 				case SUBSCRIPTION_ID:
 					return "SubscriptionId";
 				case COLLECTION_ID:

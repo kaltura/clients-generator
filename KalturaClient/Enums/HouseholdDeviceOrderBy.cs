@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -30,8 +30,6 @@ namespace Kaltura.Enums
 	public sealed class HouseholdDeviceOrderBy : StringEnum
 	{
 		public static readonly HouseholdDeviceOrderBy NONE = new HouseholdDeviceOrderBy("NONE");
-		public static readonly HouseholdDeviceOrderBy CREATED_DATE_ASC = new HouseholdDeviceOrderBy("CREATED_DATE_ASC");
-		public static readonly HouseholdDeviceOrderBy CREATED_DATE_DESC = new HouseholdDeviceOrderBy("CREATED_DATE_DESC");
 
 		private HouseholdDeviceOrderBy(string name) : base(name) { }
 	}

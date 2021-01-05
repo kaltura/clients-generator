@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -41,11 +41,6 @@ namespace Kaltura.Enums
 		public static readonly RuleConditionType USER_SUBSCRIPTION = new RuleConditionType("USER_SUBSCRIPTION");
 		public static readonly RuleConditionType ASSET_SUBSCRIPTION = new RuleConditionType("ASSET_SUBSCRIPTION");
 		public static readonly RuleConditionType USER_ROLE = new RuleConditionType("USER_ROLE");
-		public static readonly RuleConditionType DEVICE_BRAND = new RuleConditionType("DEVICE_BRAND");
-		public static readonly RuleConditionType DEVICE_FAMILY = new RuleConditionType("DEVICE_FAMILY");
-		public static readonly RuleConditionType DEVICE_MANUFACTURER = new RuleConditionType("DEVICE_MANUFACTURER");
-		public static readonly RuleConditionType DEVICE_MODEL = new RuleConditionType("DEVICE_MODEL");
-		public static readonly RuleConditionType DEVICE_UDID_DYNAMIC_LIST = new RuleConditionType("DEVICE_UDID_DYNAMIC_LIST");
 
 		private RuleConditionType(string name) : base(name) { }
 	}

@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -41,18 +41,14 @@ namespace Kaltura.Types
 		public const string PRODUCT_ID = "productId";
 		public const string PRODUCT_TYPE = "productType";
 		public const string PRICE = "price";
-		public const string FULL_PRICE = "fullPrice";
 		public const string PURCHASE_STATUS = "purchaseStatus";
-		public const string PROMOTION_INFO = "promotionInfo";
 		#endregion
 
 		#region Private Fields
 		private string _ProductId = null;
 		private TransactionType _ProductType = null;
 		private Price _Price;
-		private Price _FullPrice;
 		private PurchaseStatus _PurchaseStatus = null;
-		private PromotionInfo _PromotionInfo;
 		#endregion
 
 		#region Properties
@@ -87,16 +83,6 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public Price FullPrice
-		{
-			get { return _FullPrice; }
-			set 
-			{ 
-				_FullPrice = value;
-				OnPropertyChanged("FullPrice");
-			}
-		}
-		[JsonProperty]
 		public PurchaseStatus PurchaseStatus
 		{
 			get { return _PurchaseStatus; }
@@ -104,16 +90,6 @@ namespace Kaltura.Types
 			{ 
 				_PurchaseStatus = value;
 				OnPropertyChanged("PurchaseStatus");
-			}
-		}
-		[JsonProperty]
-		public PromotionInfo PromotionInfo
-		{
-			get { return _PromotionInfo; }
-			set 
-			{ 
-				_PromotionInfo = value;
-				OnPropertyChanged("PromotionInfo");
 			}
 		}
 		#endregion
@@ -137,17 +113,9 @@ namespace Kaltura.Types
 			{
 				this._Price = ObjectFactory.Create<Price>(node["price"]);
 			}
-			if(node["fullPrice"] != null)
-			{
-				this._FullPrice = ObjectFactory.Create<Price>(node["fullPrice"]);
-			}
 			if(node["purchaseStatus"] != null)
 			{
 				this._PurchaseStatus = (PurchaseStatus)StringEnum.Parse(typeof(PurchaseStatus), node["purchaseStatus"].Value<string>());
-			}
-			if(node["promotionInfo"] != null)
-			{
-				this._PromotionInfo = ObjectFactory.Create<PromotionInfo>(node["promotionInfo"]);
 			}
 		}
 		#endregion
@@ -161,9 +129,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("productId", this._ProductId);
 			kparams.AddIfNotNull("productType", this._ProductType);
 			kparams.AddIfNotNull("price", this._Price);
-			kparams.AddIfNotNull("fullPrice", this._FullPrice);
 			kparams.AddIfNotNull("purchaseStatus", this._PurchaseStatus);
-			kparams.AddIfNotNull("promotionInfo", this._PromotionInfo);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -176,12 +142,8 @@ namespace Kaltura.Types
 					return "ProductType";
 				case PRICE:
 					return "Price";
-				case FULL_PRICE:
-					return "FullPrice";
 				case PURCHASE_STATUS:
 					return "PurchaseStatus";
-				case PROMOTION_INFO:
-					return "PromotionInfo";
 				default:
 					return base.getPropertyName(apiName);
 			}

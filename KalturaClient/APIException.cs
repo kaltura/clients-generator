@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -148,10 +148,6 @@ namespace Kaltura
 		public static string SubscriptionCancellationIsBlocked = "3074";
 		public static string UnknownPriceReason = "3077";
 		public static string SubscriptionDoesNotExist = "3081";
-		public static string OtherCouponIsAlreadyAppliedForSubscription = "3082";
-		public static string CampaignIsAlreadyAppliedForSubscription = "3085";
-		public static string PurchasePendingFailed = "3083";
-		public static string PendingEntitlement = "3084";
 		public static string MediaConcurrencyLimitation = "4000";
 		public static string ConcurrencyLimitation = "4001";
 		public static string BadSearchRequest = "4002";
@@ -243,12 +239,6 @@ namespace Kaltura
 		public static string ChildCategoryCannotBeTheCategoryItself = "4094";
 		public static string InvalidAssetStruct = "4098";
 		public static string NoNextEpisode = "4099";
-		public static string CannotDeleteAssetStruct = "4100";
-		public static string CategoryTypeNotExist = "4101";
-		public static string ExtendedTypeValueCannotBeChanged = "4102";
-		public static string InputFormatIsInvalid = "5078";
-		public static string DuplicateRegionChannel = "5076";
-		public static string ParentAlreadyContainsChannel = "5077";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -299,11 +289,6 @@ namespace Kaltura
 		public static string FileExceededMaxSize = "4095";
 		public static string FileExtensionNotSupported = "4096";
 		public static string FileMimeDifferentThanExpected = "4097";
-		public static string PermissionItemNotFound = "5071";
-		public static string PermissionReadOnly = "5072";
-		public static string PermissionPermissionItemNotFound = "5073";
-		public static string PermissionPermissionItemAlreadyExists = "5074";
-		public static string RoleReadOnly = "5075";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
@@ -350,7 +335,7 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentGatewaySuspended = "6051";
+		public static string PaymentMethodExternalIdRequired = "6051";
 		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
@@ -469,8 +454,6 @@ namespace Kaltura
 		public static string HttpMethodNotSupported = "500065";
 		public static string PropertyIsOpcSupported = "500082";
 		public static string KeyCannotBeEmptyOrNull = "500086";
-		public static string MissingMandatoryArgumentInProperty = "500087";
-		public static string MaxArguments = "500088";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";

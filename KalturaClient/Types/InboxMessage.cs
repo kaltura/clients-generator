@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -44,7 +44,6 @@ namespace Kaltura.Types
 		public const string TYPE = "type";
 		public const string CREATED_AT = "createdAt";
 		public const string URL = "url";
-		public const string CAMPAIGN_ID = "campaignId";
 		#endregion
 
 		#region Private Fields
@@ -54,7 +53,6 @@ namespace Kaltura.Types
 		private InboxMessageType _Type = null;
 		private long _CreatedAt = long.MinValue;
 		private string _Url = null;
-		private long _CampaignId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -118,16 +116,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Url");
 			}
 		}
-		[JsonProperty]
-		public long CampaignId
-		{
-			get { return _CampaignId; }
-			private set 
-			{ 
-				_CampaignId = value;
-				OnPropertyChanged("CampaignId");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -161,10 +149,6 @@ namespace Kaltura.Types
 			{
 				this._Url = node["url"].Value<string>();
 			}
-			if(node["campaignId"] != null)
-			{
-				this._CampaignId = ParseLong(node["campaignId"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -180,7 +164,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("createdAt", this._CreatedAt);
 			kparams.AddIfNotNull("url", this._Url);
-			kparams.AddIfNotNull("campaignId", this._CampaignId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -199,8 +182,6 @@ namespace Kaltura.Types
 					return "CreatedAt";
 				case URL:
 					return "Url";
-				case CAMPAIGN_ID:
-					return "CampaignId";
 				default:
 					return base.getPropertyName(apiName);
 			}

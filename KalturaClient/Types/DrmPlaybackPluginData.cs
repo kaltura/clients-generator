@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -40,13 +40,11 @@ namespace Kaltura.Types
 		#region Constants
 		public const string SCHEME = "scheme";
 		public const string LICENSE_URL = "licenseURL";
-		public const string DYNAMIC_DATA = "dynamicData";
 		#endregion
 
 		#region Private Fields
 		private DrmSchemeName _Scheme = null;
 		private string _LicenseURL = null;
-		private IDictionary<string, StringValue> _DynamicData;
 		#endregion
 
 		#region Properties
@@ -70,16 +68,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("LicenseURL");
 			}
 		}
-		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
-		{
-			get { return _DynamicData; }
-			set 
-			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -97,18 +85,6 @@ namespace Kaltura.Types
 			{
 				this._LicenseURL = node["licenseURL"].Value<string>();
 			}
-			if(node["dynamicData"] != null)
-			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
-			}
 		}
 		#endregion
 
@@ -120,7 +96,6 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaDrmPlaybackPluginData");
 			kparams.AddIfNotNull("scheme", this._Scheme);
 			kparams.AddIfNotNull("licenseURL", this._LicenseURL);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -131,8 +106,6 @@ namespace Kaltura.Types
 					return "Scheme";
 				case LICENSE_URL:
 					return "LicenseURL";
-				case DYNAMIC_DATA:
-					return "DynamicData";
 				default:
 					return base.getPropertyName(apiName);
 			}

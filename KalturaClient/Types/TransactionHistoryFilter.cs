@@ -8,7 +8,7 @@
 // to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
-// Copyright (C) 2006-2020  Kaltura Inc.
+// Copyright (C) 2006-2021  Kaltura Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as
@@ -41,10 +41,6 @@ namespace Kaltura.Types
 		public const string ENTITY_REFERENCE_EQUAL = "entityReferenceEqual";
 		public const string START_DATE_GREATER_THAN_OR_EQUAL = "startDateGreaterThanOrEqual";
 		public const string END_DATE_LESS_THAN_OR_EQUAL = "endDateLessThanOrEqual";
-		public const string ENTITLEMENT_ID_EQUAL = "entitlementIdEqual";
-		public const string EXTERNAL_ID_EQUAL = "externalIdEqual";
-		public const string BILLING_ITEMS_TYPE_EQUAL = "billingItemsTypeEqual";
-		public const string BILLING_ACTION_EQUAL = "billingActionEqual";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -52,10 +48,6 @@ namespace Kaltura.Types
 		private EntityReferenceBy _EntityReferenceEqual = null;
 		private int _StartDateGreaterThanOrEqual = Int32.MinValue;
 		private int _EndDateLessThanOrEqual = Int32.MinValue;
-		private long _EntitlementIdEqual = long.MinValue;
-		private string _ExternalIdEqual = null;
-		private BillingItemsType _BillingItemsTypeEqual = null;
-		private BillingAction _BillingActionEqual = null;
 		private TransactionHistoryOrderBy _OrderBy = null;
 		#endregion
 
@@ -91,46 +83,6 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public long EntitlementIdEqual
-		{
-			get { return _EntitlementIdEqual; }
-			set 
-			{ 
-				_EntitlementIdEqual = value;
-				OnPropertyChanged("EntitlementIdEqual");
-			}
-		}
-		[JsonProperty]
-		public string ExternalIdEqual
-		{
-			get { return _ExternalIdEqual; }
-			set 
-			{ 
-				_ExternalIdEqual = value;
-				OnPropertyChanged("ExternalIdEqual");
-			}
-		}
-		[JsonProperty]
-		public BillingItemsType BillingItemsTypeEqual
-		{
-			get { return _BillingItemsTypeEqual; }
-			set 
-			{ 
-				_BillingItemsTypeEqual = value;
-				OnPropertyChanged("BillingItemsTypeEqual");
-			}
-		}
-		[JsonProperty]
-		public BillingAction BillingActionEqual
-		{
-			get { return _BillingActionEqual; }
-			set 
-			{ 
-				_BillingActionEqual = value;
-				OnPropertyChanged("BillingActionEqual");
-			}
-		}
-		[JsonProperty]
 		public new TransactionHistoryOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -161,22 +113,6 @@ namespace Kaltura.Types
 			{
 				this._EndDateLessThanOrEqual = ParseInt(node["endDateLessThanOrEqual"].Value<string>());
 			}
-			if(node["entitlementIdEqual"] != null)
-			{
-				this._EntitlementIdEqual = ParseLong(node["entitlementIdEqual"].Value<string>());
-			}
-			if(node["externalIdEqual"] != null)
-			{
-				this._ExternalIdEqual = node["externalIdEqual"].Value<string>();
-			}
-			if(node["billingItemsTypeEqual"] != null)
-			{
-				this._BillingItemsTypeEqual = (BillingItemsType)StringEnum.Parse(typeof(BillingItemsType), node["billingItemsTypeEqual"].Value<string>());
-			}
-			if(node["billingActionEqual"] != null)
-			{
-				this._BillingActionEqual = (BillingAction)StringEnum.Parse(typeof(BillingAction), node["billingActionEqual"].Value<string>());
-			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (TransactionHistoryOrderBy)StringEnum.Parse(typeof(TransactionHistoryOrderBy), node["orderBy"].Value<string>());
@@ -193,10 +129,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("entityReferenceEqual", this._EntityReferenceEqual);
 			kparams.AddIfNotNull("startDateGreaterThanOrEqual", this._StartDateGreaterThanOrEqual);
 			kparams.AddIfNotNull("endDateLessThanOrEqual", this._EndDateLessThanOrEqual);
-			kparams.AddIfNotNull("entitlementIdEqual", this._EntitlementIdEqual);
-			kparams.AddIfNotNull("externalIdEqual", this._ExternalIdEqual);
-			kparams.AddIfNotNull("billingItemsTypeEqual", this._BillingItemsTypeEqual);
-			kparams.AddIfNotNull("billingActionEqual", this._BillingActionEqual);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -210,14 +142,6 @@ namespace Kaltura.Types
 					return "StartDateGreaterThanOrEqual";
 				case END_DATE_LESS_THAN_OR_EQUAL:
 					return "EndDateLessThanOrEqual";
-				case ENTITLEMENT_ID_EQUAL:
-					return "EntitlementIdEqual";
-				case EXTERNAL_ID_EQUAL:
-					return "ExternalIdEqual";
-				case BILLING_ITEMS_TYPE_EQUAL:
-					return "BillingItemsTypeEqual";
-				case BILLING_ACTION_EQUAL:
-					return "BillingActionEqual";
 				case ORDER_BY:
 					return "OrderBy";
 				default:
