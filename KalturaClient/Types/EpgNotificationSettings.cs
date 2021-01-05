@@ -35,87 +35,87 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class SubscriptionSetFilter : Filter
+	public class EpgNotificationSettings : ObjectBase
 	{
 		#region Constants
-		public const string ID_IN = "idIn";
-		public const string SUBSCRIPTION_ID_CONTAINS = "subscriptionIdContains";
-		public const string TYPE_EQUAL = "typeEqual";
-		public new const string ORDER_BY = "orderBy";
+		public const string ENABLED = "enabled";
+		public const string DEVICE_FAMILY_IDS = "deviceFamilyIds";
+		public const string LIVE_ASSET_IDS = "liveAssetIds";
+		public const string TIME_RANGE = "timeRange";
 		#endregion
 
 		#region Private Fields
-		private string _IdIn = null;
-		private string _SubscriptionIdContains = null;
-		private SubscriptionSetType _TypeEqual = null;
-		private SubscriptionSetOrderBy _OrderBy = null;
+		private bool? _Enabled = null;
+		private string _DeviceFamilyIds = null;
+		private string _LiveAssetIds = null;
+		private int _TimeRange = Int32.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public string IdIn
+		public bool? Enabled
 		{
-			get { return _IdIn; }
+			get { return _Enabled; }
 			set 
 			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
+				_Enabled = value;
+				OnPropertyChanged("Enabled");
 			}
 		}
 		[JsonProperty]
-		public string SubscriptionIdContains
+		public string DeviceFamilyIds
 		{
-			get { return _SubscriptionIdContains; }
+			get { return _DeviceFamilyIds; }
 			set 
 			{ 
-				_SubscriptionIdContains = value;
-				OnPropertyChanged("SubscriptionIdContains");
+				_DeviceFamilyIds = value;
+				OnPropertyChanged("DeviceFamilyIds");
 			}
 		}
 		[JsonProperty]
-		public SubscriptionSetType TypeEqual
+		public string LiveAssetIds
 		{
-			get { return _TypeEqual; }
+			get { return _LiveAssetIds; }
 			set 
 			{ 
-				_TypeEqual = value;
-				OnPropertyChanged("TypeEqual");
+				_LiveAssetIds = value;
+				OnPropertyChanged("LiveAssetIds");
 			}
 		}
 		[JsonProperty]
-		public new SubscriptionSetOrderBy OrderBy
+		public int TimeRange
 		{
-			get { return _OrderBy; }
+			get { return _TimeRange; }
 			set 
 			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_TimeRange = value;
+				OnPropertyChanged("TimeRange");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public SubscriptionSetFilter()
+		public EpgNotificationSettings()
 		{
 		}
 
-		public SubscriptionSetFilter(JToken node) : base(node)
+		public EpgNotificationSettings(JToken node) : base(node)
 		{
-			if(node["idIn"] != null)
+			if(node["enabled"] != null)
 			{
-				this._IdIn = node["idIn"].Value<string>();
+				this._Enabled = ParseBool(node["enabled"].Value<string>());
 			}
-			if(node["subscriptionIdContains"] != null)
+			if(node["deviceFamilyIds"] != null)
 			{
-				this._SubscriptionIdContains = node["subscriptionIdContains"].Value<string>();
+				this._DeviceFamilyIds = node["deviceFamilyIds"].Value<string>();
 			}
-			if(node["typeEqual"] != null)
+			if(node["liveAssetIds"] != null)
 			{
-				this._TypeEqual = (SubscriptionSetType)StringEnum.Parse(typeof(SubscriptionSetType), node["typeEqual"].Value<string>());
+				this._LiveAssetIds = node["liveAssetIds"].Value<string>();
 			}
-			if(node["orderBy"] != null)
+			if(node["timeRange"] != null)
 			{
-				this._OrderBy = (SubscriptionSetOrderBy)StringEnum.Parse(typeof(SubscriptionSetOrderBy), node["orderBy"].Value<string>());
+				this._TimeRange = ParseInt(node["timeRange"].Value<string>());
 			}
 		}
 		#endregion
@@ -125,25 +125,25 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSubscriptionSetFilter");
-			kparams.AddIfNotNull("idIn", this._IdIn);
-			kparams.AddIfNotNull("subscriptionIdContains", this._SubscriptionIdContains);
-			kparams.AddIfNotNull("typeEqual", this._TypeEqual);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaEpgNotificationSettings");
+			kparams.AddIfNotNull("enabled", this._Enabled);
+			kparams.AddIfNotNull("deviceFamilyIds", this._DeviceFamilyIds);
+			kparams.AddIfNotNull("liveAssetIds", this._LiveAssetIds);
+			kparams.AddIfNotNull("timeRange", this._TimeRange);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID_IN:
-					return "IdIn";
-				case SUBSCRIPTION_ID_CONTAINS:
-					return "SubscriptionIdContains";
-				case TYPE_EQUAL:
-					return "TypeEqual";
-				case ORDER_BY:
-					return "OrderBy";
+				case ENABLED:
+					return "Enabled";
+				case DEVICE_FAMILY_IDS:
+					return "DeviceFamilyIds";
+				case LIVE_ASSET_IDS:
+					return "LiveAssetIds";
+				case TIME_RANGE:
+					return "TimeRange";
 				default:
 					return base.getPropertyName(apiName);
 			}
