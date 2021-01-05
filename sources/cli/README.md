@@ -6,7 +6,7 @@ Kaltura API. The client is intended mostly for experimentation / small tasks, no
 applications.
 
 The following utilities are included in the package:
-1. kalcli - responsible for issuing Kaltura API calls, it builds the request URL and parses the 
+1. `kalcli` - responsible for issuing Kaltura API calls, it builds the request URL and parses the 
 	response to a format that can be easily processed by command line utilities such as grep / awk.
 	The client library contains an additional script (kalcliAutoComplete) that provides bash-autocompletion 
 	functionality to the kalcli utility, for example:
@@ -18,11 +18,11 @@ The following utilities are included in the package:
 	kalcli media list filter:objectType=KalturaMediaEntryFilter
 	...
 ```
-2. extractKs - parses a Kaltura session (KS) to its different fields.
-3. generateKs - generates a KS.
-4. renewKs - useful to renew expired Kaltura sessions, generates a KS identical to the input KS with a 1 day expiry.
-5. logToCli - Parse an API log entry array of params into a kalcli command
-6. genIpHeader - generates a signed HTTP header that can be used to simulate access to the Kaltura API from a different source IP.
+2. `extractKs` - decodes a Kaltura session (KS) and outputs its different fields.
+3. `generateKs` - generates a KS.
+4. `renewKs` - useful for renewing expired Kaltura sessions, generates a KS identical to the input KS with a 1 day expiry.
+5. `logToCli` - Parse an API log entry array of params into a `kalcli` command
+6. `genIpHeader` - generates a signed HTTP header that can be used to simulate access to the Kaltura API from a different source IP.
 
 *NOTE: when executing without arguments, all utilities display usage information including all available flags.*
 
@@ -59,16 +59,16 @@ $ ./tests/sanity.sh $BASE_DIR $PARTNER_ID
 ```
 Alternatively, you can follow these manual steps:
 
-* Replace the @BASEDIR@ token with the path to kalcliAutoComplete.php in:
+* Replace the `@BASEDIR@` token with the path to `kalcliAutoComplete.php` in:
 ```	
 	kalcliAliases.sh
 	kalcliAutoComplete
 	logToCli
 ```
-e.g. if kalcliAutoComplete was copied to /a/b/kalcliAutoComplete @BASEDIR@ should be set to /a/b
+e.g. if `kalcliAutoComplete` was copied to `/a/b/kalcliAutoComplete` `@BASEDIR@` should be set to /a/b
 
 If you have root privileges on the machine in question, you can also do the following to enjoy BASH's auto completion features:
-* Create a link to kalcliAutoComplete in /etc/bash_completion.d/
+* Create a link to `kalcliAutoComplete` in `/etc/bash_completion.d/`
 	ln -s @BASEDIR@/kalcliAutoComplete /etc/bash_completion.d/kalcliAutoComplete
 * Register the auto completion: 
 	source /etc/bash_completion.d/kalcliAutoComplete
@@ -77,23 +77,23 @@ If you have root privileges on the machine in question, you can also do the foll
 * Enable the aliases
 	source /etc/profile.d/kalcliAliases.sh
 
-*NOTE: If you do not have root privileges, you can still source kalcliAliases.sh in your user's ~/bashrc*
+*NOTE: If you do not have root privileges, you can still source `kalcliAliases.sh` in your user's ~/bashrc*
 
-* Copy config/config.template.ini to config/config.ini and fill out the parameters:
-	- Secret repositories - required for the extractKs / generateKs / renewKs utilities.
+* Copy `config/config.template.ini` to `config/config.ini` and fill out the parameters:
+	- Secret repositories - required for the `extractKs / generateKs / renewKs` utilities.
 		Two types of repositories can be configured:
 		- Preset repositories - contain a fixed list of (partner id, admin secret) pairs
 		- Database repositories - contain the connection details for a Kaltura server database, that can be used to pull the secrets of partner accounts.
 
 		*NOTE: The second option is only possible if you are hosting your own Kaltura ENV. For SaaS, only the first one is viable.*
-	- IP address salt - required for the genIpHeader utility.
+	- IP address salt - required for the `genIpHeader` utility.
 		The salt has to match the parameter 'remote_addr_header_salt' that is configured in configuration/local.ini on the Kaltura server.
 		
 		*NOTE: this is only relevant when hosting your own Kaltura ENV, otherwise, leave empty.*
 	- API Host - The default is www.kaltura.com if not defined
 		May be uncommented and modified in order to globally point to a different api host
 		The -u parameter may be used to override the api host via command line
-	- Log Dir - The log directory that contains kaltura_api_v3.log (typically /var/log or /opt/kaltura/log)
+	- Log Dir - The log directory that contains `kaltura_api_v3.log` (typically /var/log or /opt/kaltura/log)
 		
 		This is relevant to the --log flag, that makes kalcli print the API log instead of the API output. 
 		
@@ -101,7 +101,7 @@ If you have root privileges on the machine in question, you can also do the foll
 
 Windows
 --------
-To use kalcli on Windows you'll need to install:
+To use `kalcli` on Windows you'll need to install:
 
 - [Cygwin] (https://cygwin.com/install.html)- make sure to include the bash-completion package (not included by default)
 - [Xampp] (https://www.apachefriends.org/index.html) or any other platform that provides PHP CLI 5.3 and above with the CURL extension.
@@ -109,12 +109,12 @@ To use kalcli on Windows you'll need to install:
 
 Installation is the same as for Linux, but note the following:
 
-- Perform the steps from the Cygwin bash
-- The meaning of BASEDIR in step 2 is different than steps 3 & 5 - in step 2 you need to use a
+- Perform the steps from the `Cygwin` bash
+- The meaning of `BASEDIR` in step 2 is different than steps 3 & 5 - in step 2 you need to use a
 	path relative to the drive root while in steps 3 & 5 you need to use a path relative to Cygwin root. 
 	For example:
-	- If you install kalcli in C:\Cygwin\cli, you'll need to use /cygwin/cli in step 2, and use /cli in 3 & 5.
-	- If you install kalcli in C:\cli, you'll need to use /cli in step 2, and use /cygdrive/c/cli in 3 & 5.
+	- If you install `kalcli` in C:\Cygwin\cli, you'll need to use /cygwin/cli in step 2, and use /cli in 3 & 5.
+	- If you install `kalcli` in C:\cli, you'll need to use /cli in step 2, and use /cygdrive/c/cli in 3 & 5.
 
 Examples
 =========
@@ -145,7 +145,7 @@ Sample output:
 2
 ```
 
-4. Using a precreated session:
+4. Using a pre-created session:
 ```
 $ kalcli -x media list ks=MDQ2ZThjOTI0MTJmZGIxYTVlMWVhNDJlZDZhNDAyMDkyMWJhNzE0OXw0Mzc0ODE7NDM3NDgxOzEzNjI0OTI3Njc7MDsxMzYyNDA2MzY3Ljc3NzM7MDt3aWRnZXQ6MSx2aWV3Oio7Ow==
 ```

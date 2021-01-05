@@ -13,7 +13,7 @@ To generate one client run:
 $ php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml $CLIENT_NAME
 ```
 
-For example, to generate php53 run:
+For example, to generate a `php53` client run:
 ```
 php /opt/kaltura/clients-generator/exec.php -x/path-to-xml/KalturaClient.xml php53
 ```
