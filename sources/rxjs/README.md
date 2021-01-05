@@ -2,7 +2,7 @@
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org) [![Gitter chat](https://badges.gitter.im/kaltura-ng/kaltura-ng.png)](https://gitter.im/kaltura-ng/kaltura-ng) [![Build Status](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular.svg?branch=master)](https://travis-ci.org/kaltura/KalturaGeneratedAPIClientsAngular)
 
-> An easy-to-use facade to Kaltura server with rxjs support for action requests, classes and enums.
+> An easy-to-use facade to Kaltura server with `rxjs` support for action requests, classes and enums.
 
 
 ## Instructions
@@ -18,7 +18,7 @@ View list of features [here](features.md).
 
 
 ## Adding this library as a dependency to your project
-Since this library was designed to be consumed directly and not using npmjs repository, you will need to do the following steps to add it to your project:
+Since this library was designed to be consumed directly and not using `npmjs` repository, you will need to do the following steps to add it to your project:
 1. run the following to transpile the library:
 ```bash
 $ npm install
@@ -32,7 +32,7 @@ $ npm run deploy
  ```
 > make sure you prefix the path with `file:` as shown above.
 
-An example of a vaild command will be: `npm install file:libs/kaltura-ngx-client-v7.1.0-20173010-1053.tgz`
+An example of a valid command will be: `npm install file:libs/kaltura-ngx-client-v7.1.0-20173010-1053.tgz`
 
 5. if you already have older version, delete that file. You should do this only after you installed the new version.
 

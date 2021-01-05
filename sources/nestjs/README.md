@@ -27,7 +27,7 @@ View list of features [here](features.md).
 
 
 ## Adding this library as a dependency to your project
-Since this library was designed to be consumed directly and not using npmjs repository, you will need to do the following steps to add it to your project:
+Since this library was designed to be consumed directly and not using `NPMJS` repository, you will need to do the following steps to add it to your project:
 1. run the following to transpile the library:
 ```bash
 $ npm install
@@ -41,7 +41,7 @@ $ npm run deploy
  ```
 > make sure you prefix the path with `file:` as shown above.
 
-An example of a vaild command will be: `npm install file:libs/nestjs-ott-client-v7.1.0-20173010-1053.tgz`
+An example of a valid command will be: `npm install file:libs/nestjs-ott-client-v7.1.0-20173010-1053.tgz`
 
 5. if you already have older version, delete that file. You should do this only after you installed the new version.
 
@@ -59,4 +59,3 @@ All code in this project is released under the [AGPLv3 license](http://www.gnu.o
 Copyright © Kaltura Inc. All rights reserved.
 
 
-php exec.php -tott nestjs ./output
