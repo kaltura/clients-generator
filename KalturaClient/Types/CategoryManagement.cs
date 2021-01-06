@@ -35,87 +35,63 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class EpgNotificationSettings : ObjectBase
+	public class CategoryManagement : ObjectBase
 	{
 		#region Constants
-		public const string ENABLED = "enabled";
-		public const string DEVICE_FAMILY_IDS = "deviceFamilyIds";
-		public const string LIVE_ASSET_IDS = "liveAssetIds";
-		public const string TIME_RANGE = "timeRange";
+		public const string DEFAULT_TREE_ID = "defaultTreeId";
+		public const string DEVICE_FAMILY_TO_CATEGORY_TREE = "deviceFamilyToCategoryTree";
 		#endregion
 
 		#region Private Fields
-		private bool? _Enabled = null;
-		private string _DeviceFamilyIds = null;
-		private string _LiveAssetIds = null;
-		private int _TimeRange = Int32.MinValue;
+		private long _DefaultTreeId = long.MinValue;
+		private IDictionary<string, LongValue> _DeviceFamilyToCategoryTree;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? Enabled
+		public long DefaultTreeId
 		{
-			get { return _Enabled; }
+			get { return _DefaultTreeId; }
 			set 
 			{ 
-				_Enabled = value;
-				OnPropertyChanged("Enabled");
+				_DefaultTreeId = value;
+				OnPropertyChanged("DefaultTreeId");
 			}
 		}
 		[JsonProperty]
-		public string DeviceFamilyIds
+		public IDictionary<string, LongValue> DeviceFamilyToCategoryTree
 		{
-			get { return _DeviceFamilyIds; }
+			get { return _DeviceFamilyToCategoryTree; }
 			set 
 			{ 
-				_DeviceFamilyIds = value;
-				OnPropertyChanged("DeviceFamilyIds");
-			}
-		}
-		[JsonProperty]
-		public string LiveAssetIds
-		{
-			get { return _LiveAssetIds; }
-			set 
-			{ 
-				_LiveAssetIds = value;
-				OnPropertyChanged("LiveAssetIds");
-			}
-		}
-		[JsonProperty]
-		public int TimeRange
-		{
-			get { return _TimeRange; }
-			set 
-			{ 
-				_TimeRange = value;
-				OnPropertyChanged("TimeRange");
+				_DeviceFamilyToCategoryTree = value;
+				OnPropertyChanged("DeviceFamilyToCategoryTree");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public EpgNotificationSettings()
+		public CategoryManagement()
 		{
 		}
 
-		public EpgNotificationSettings(JToken node) : base(node)
+		public CategoryManagement(JToken node) : base(node)
 		{
-			if(node["enabled"] != null)
+			if(node["defaultTreeId"] != null)
 			{
-				this._Enabled = ParseBool(node["enabled"].Value<string>());
+				this._DefaultTreeId = ParseLong(node["defaultTreeId"].Value<string>());
 			}
-			if(node["deviceFamilyIds"] != null)
+			if(node["deviceFamilyToCategoryTree"] != null)
 			{
-				this._DeviceFamilyIds = node["deviceFamilyIds"].Value<string>();
-			}
-			if(node["liveAssetIds"] != null)
-			{
-				this._LiveAssetIds = node["liveAssetIds"].Value<string>();
-			}
-			if(node["timeRange"] != null)
-			{
-				this._TimeRange = ParseInt(node["timeRange"].Value<string>());
+				{
+					string key;
+					this._DeviceFamilyToCategoryTree = new Dictionary<string, LongValue>();
+					foreach(var arrayNode in node["deviceFamilyToCategoryTree"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._DeviceFamilyToCategoryTree[key] = ObjectFactory.Create<LongValue>(arrayNode.Value);
+					}
+				}
 			}
 		}
 		#endregion
@@ -125,25 +101,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaEpgNotificationSettings");
-			kparams.AddIfNotNull("enabled", this._Enabled);
-			kparams.AddIfNotNull("deviceFamilyIds", this._DeviceFamilyIds);
-			kparams.AddIfNotNull("liveAssetIds", this._LiveAssetIds);
-			kparams.AddIfNotNull("timeRange", this._TimeRange);
+				kparams.AddReplace("objectType", "KalturaCategoryManagement");
+			kparams.AddIfNotNull("defaultTreeId", this._DefaultTreeId);
+			kparams.AddIfNotNull("deviceFamilyToCategoryTree", this._DeviceFamilyToCategoryTree);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ENABLED:
-					return "Enabled";
-				case DEVICE_FAMILY_IDS:
-					return "DeviceFamilyIds";
-				case LIVE_ASSET_IDS:
-					return "LiveAssetIds";
-				case TIME_RANGE:
-					return "TimeRange";
+				case DEFAULT_TREE_ID:
+					return "DefaultTreeId";
+				case DEVICE_FAMILY_TO_CATEGORY_TREE:
+					return "DeviceFamilyToCategoryTree";
 				default:
 					return base.getPropertyName(apiName);
 			}

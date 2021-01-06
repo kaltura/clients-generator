@@ -35,55 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CatalogPartnerConfig : PartnerConfiguration
+	public class CategoryVersionFilter : CrudFilter
 	{
 		#region Constants
-		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
-		public const string CATEGORY_MANAGEMENT = "categoryManagement";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private bool? _SingleMultilingualMode = null;
-		private CategoryManagement _CategoryManagement;
+		private CategoryVersionOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? SingleMultilingualMode
+		public new CategoryVersionOrderBy OrderBy
 		{
-			get { return _SingleMultilingualMode; }
+			get { return _OrderBy; }
 			set 
 			{ 
-				_SingleMultilingualMode = value;
-				OnPropertyChanged("SingleMultilingualMode");
-			}
-		}
-		[JsonProperty]
-		public CategoryManagement CategoryManagement
-		{
-			get { return _CategoryManagement; }
-			set 
-			{ 
-				_CategoryManagement = value;
-				OnPropertyChanged("CategoryManagement");
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public CatalogPartnerConfig()
+		public CategoryVersionFilter()
 		{
 		}
 
-		public CatalogPartnerConfig(JToken node) : base(node)
+		public CategoryVersionFilter(JToken node) : base(node)
 		{
-			if(node["singleMultilingualMode"] != null)
+			if(node["orderBy"] != null)
 			{
-				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
-			}
-			if(node["categoryManagement"] != null)
-			{
-				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
+				this._OrderBy = (CategoryVersionOrderBy)StringEnum.Parse(typeof(CategoryVersionOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
-			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
-			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
+				kparams.AddReplace("objectType", "KalturaCategoryVersionFilter");
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SINGLE_MULTILINGUAL_MODE:
-					return "SingleMultilingualMode";
-				case CATEGORY_MANAGEMENT:
-					return "CategoryManagement";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

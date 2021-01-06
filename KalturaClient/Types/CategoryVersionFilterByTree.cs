@@ -35,55 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CatalogPartnerConfig : PartnerConfiguration
+	public class CategoryVersionFilterByTree : CategoryVersionFilter
 	{
 		#region Constants
-		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
-		public const string CATEGORY_MANAGEMENT = "categoryManagement";
+		public const string TREE_ID_EQUAL = "treeIdEqual";
+		public const string STATE_EQUAL = "stateEqual";
 		#endregion
 
 		#region Private Fields
-		private bool? _SingleMultilingualMode = null;
-		private CategoryManagement _CategoryManagement;
+		private long _TreeIdEqual = long.MinValue;
+		private CategoryVersionState _StateEqual = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? SingleMultilingualMode
+		public long TreeIdEqual
 		{
-			get { return _SingleMultilingualMode; }
+			get { return _TreeIdEqual; }
 			set 
 			{ 
-				_SingleMultilingualMode = value;
-				OnPropertyChanged("SingleMultilingualMode");
+				_TreeIdEqual = value;
+				OnPropertyChanged("TreeIdEqual");
 			}
 		}
 		[JsonProperty]
-		public CategoryManagement CategoryManagement
+		public CategoryVersionState StateEqual
 		{
-			get { return _CategoryManagement; }
+			get { return _StateEqual; }
 			set 
 			{ 
-				_CategoryManagement = value;
-				OnPropertyChanged("CategoryManagement");
+				_StateEqual = value;
+				OnPropertyChanged("StateEqual");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public CatalogPartnerConfig()
+		public CategoryVersionFilterByTree()
 		{
 		}
 
-		public CatalogPartnerConfig(JToken node) : base(node)
+		public CategoryVersionFilterByTree(JToken node) : base(node)
 		{
-			if(node["singleMultilingualMode"] != null)
+			if(node["treeIdEqual"] != null)
 			{
-				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
+				this._TreeIdEqual = ParseLong(node["treeIdEqual"].Value<string>());
 			}
-			if(node["categoryManagement"] != null)
+			if(node["stateEqual"] != null)
 			{
-				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
+				this._StateEqual = (CategoryVersionState)StringEnum.Parse(typeof(CategoryVersionState), node["stateEqual"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
-			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
-			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
+				kparams.AddReplace("objectType", "KalturaCategoryVersionFilterByTree");
+			kparams.AddIfNotNull("treeIdEqual", this._TreeIdEqual);
+			kparams.AddIfNotNull("stateEqual", this._StateEqual);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SINGLE_MULTILINGUAL_MODE:
-					return "SingleMultilingualMode";
-				case CATEGORY_MANAGEMENT:
-					return "CategoryManagement";
+				case TREE_ID_EQUAL:
+					return "TreeIdEqual";
+				case STATE_EQUAL:
+					return "StateEqual";
 				default:
 					return base.getPropertyName(apiName);
 			}
