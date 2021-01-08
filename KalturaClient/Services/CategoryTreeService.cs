@@ -124,45 +124,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class CategoryTreeGetByVersion RequestBuilder : RequestBuilder<CategoryTree>
-	{
-		#region Constants
-		public const string VERSION_ID = "versionId";
-		#endregion
-
-		public long VersionId { get; set; }
-
-		public CategoryTreeGetByVersion RequestBuilder()
-			: base("categorytree", "getByVersion ")
-		{
-		}
-
-		public CategoryTreeGetByVersion RequestBuilder(long versionId)
-			: this()
-		{
-			this.VersionId = versionId;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("versionId"))
-				kparams.AddIfNotNull("versionId", VersionId);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<CategoryTree>(result);
-		}
-	}
-
 
 	public class CategoryTreeService
 	{
@@ -178,11 +139,6 @@ namespace Kaltura.Services
 		public static CategoryTreeGetRequestBuilder Get(long categoryItemId, bool filter = false)
 		{
 			return new CategoryTreeGetRequestBuilder(categoryItemId, filter);
-		}
-
-		public static CategoryTreeGetByVersion RequestBuilder GetByVersion (long versionId = null)
-		{
-			return new CategoryTreeGetByVersion RequestBuilder(versionId);
 		}
 	}
 }

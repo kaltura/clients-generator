@@ -39,10 +39,12 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string INGEST_PROFILE_ID = "ingestProfileId";
+		public const string DISABLE_EPG_NOTIFICATION = "disableEpgNotification";
 		#endregion
 
 		#region Private Fields
 		private int _IngestProfileId = Int32.MinValue;
+		private bool? _DisableEpgNotification = null;
 		#endregion
 
 		#region Properties
@@ -54,6 +56,16 @@ namespace Kaltura.Types
 			{ 
 				_IngestProfileId = value;
 				OnPropertyChanged("IngestProfileId");
+			}
+		}
+		[JsonProperty]
+		public bool? DisableEpgNotification
+		{
+			get { return _DisableEpgNotification; }
+			set 
+			{ 
+				_DisableEpgNotification = value;
+				OnPropertyChanged("DisableEpgNotification");
 			}
 		}
 		#endregion
@@ -69,6 +81,10 @@ namespace Kaltura.Types
 			{
 				this._IngestProfileId = ParseInt(node["ingestProfileId"].Value<string>());
 			}
+			if(node["disableEpgNotification"] != null)
+			{
+				this._DisableEpgNotification = ParseBool(node["disableEpgNotification"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -79,6 +95,7 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaBulkUploadIngestJobData");
 			kparams.AddIfNotNull("ingestProfileId", this._IngestProfileId);
+			kparams.AddIfNotNull("disableEpgNotification", this._DisableEpgNotification);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -87,6 +104,8 @@ namespace Kaltura.Types
 			{
 				case INGEST_PROFILE_ID:
 					return "IngestProfileId";
+				case DISABLE_EPG_NOTIFICATION:
+					return "DisableEpgNotification";
 				default:
 					return base.getPropertyName(apiName);
 			}
