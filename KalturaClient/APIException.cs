@@ -100,6 +100,7 @@ namespace Kaltura
 		public static string ParentIdShouldNotPointToItself = "2041";
 		public static string ParentIdNotExist = "2059";
 		public static string UserFavoriteNotDeleted = "2060";
+		public static string UserSelfDeleteNotPermitted = "2062";
 		public static string InvalidPurchase = "3000";
 		public static string CancelationWindowPeriodExpired = "3001";
 		public static string SubscriptionNotRenewable = "3002";
