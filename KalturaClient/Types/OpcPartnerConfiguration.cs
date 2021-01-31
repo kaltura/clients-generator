@@ -35,55 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CatalogPartnerConfig : PartnerConfiguration
+	public class OpcPartnerConfiguration : PartnerConfiguration
 	{
 		#region Constants
-		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
-		public const string CATEGORY_MANAGEMENT = "categoryManagement";
+		public const string RESET_PASSWORD = "resetPassword";
 		#endregion
 
 		#region Private Fields
-		private bool? _SingleMultilingualMode = null;
-		private CategoryManagement _CategoryManagement;
+		private ResetPasswordPartnerConfig _ResetPassword;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? SingleMultilingualMode
+		public ResetPasswordPartnerConfig ResetPassword
 		{
-			get { return _SingleMultilingualMode; }
+			get { return _ResetPassword; }
 			set 
 			{ 
-				_SingleMultilingualMode = value;
-				OnPropertyChanged("SingleMultilingualMode");
-			}
-		}
-		[JsonProperty]
-		public CategoryManagement CategoryManagement
-		{
-			get { return _CategoryManagement; }
-			set 
-			{ 
-				_CategoryManagement = value;
-				OnPropertyChanged("CategoryManagement");
+				_ResetPassword = value;
+				OnPropertyChanged("ResetPassword");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public CatalogPartnerConfig()
+		public OpcPartnerConfiguration()
 		{
 		}
 
-		public CatalogPartnerConfig(JToken node) : base(node)
+		public OpcPartnerConfiguration(JToken node) : base(node)
 		{
-			if(node["singleMultilingualMode"] != null)
+			if(node["resetPassword"] != null)
 			{
-				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
-			}
-			if(node["categoryManagement"] != null)
-			{
-				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
+				this._ResetPassword = ObjectFactory.Create<ResetPasswordPartnerConfig>(node["resetPassword"]);
 			}
 		}
 		#endregion
@@ -93,19 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
-			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
-			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
+				kparams.AddReplace("objectType", "KalturaOpcPartnerConfiguration");
+			kparams.AddIfNotNull("resetPassword", this._ResetPassword);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SINGLE_MULTILINGUAL_MODE:
-					return "SingleMultilingualMode";
-				case CATEGORY_MANAGEMENT:
-					return "CategoryManagement";
+				case RESET_PASSWORD:
+					return "ResetPassword";
 				default:
 					return base.getPropertyName(apiName);
 			}

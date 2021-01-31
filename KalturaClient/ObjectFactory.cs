@@ -266,6 +266,8 @@ namespace Kaltura
 					return new ListResponse<Campaign>(jToken);
 				case "KalturaCategoryItemListResponse":
 					return new ListResponse<CategoryItem>(jToken);
+				case "KalturaCategoryVersionListResponse":
+					return new ListResponse<CategoryVersion>(jToken);
 				case "KalturaCouponListResponse":
 					return new ListResponse<Coupon>(jToken);
 				case "KalturaDeviceReferenceDataListResponse":

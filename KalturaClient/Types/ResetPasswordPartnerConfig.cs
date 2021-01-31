@@ -35,55 +35,59 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CatalogPartnerConfig : PartnerConfiguration
+	public class ResetPasswordPartnerConfig : ObjectBase
 	{
 		#region Constants
-		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
-		public const string CATEGORY_MANAGEMENT = "categoryManagement";
+		public const string TEMPLATE_LIST_LABEL = "templateListLabel";
+		public const string TEMPLATES = "templates";
 		#endregion
 
 		#region Private Fields
-		private bool? _SingleMultilingualMode = null;
-		private CategoryManagement _CategoryManagement;
+		private string _TemplateListLabel = null;
+		private IList<ResetPasswordPartnerConfigTemplate> _Templates;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? SingleMultilingualMode
+		public string TemplateListLabel
 		{
-			get { return _SingleMultilingualMode; }
+			get { return _TemplateListLabel; }
 			set 
 			{ 
-				_SingleMultilingualMode = value;
-				OnPropertyChanged("SingleMultilingualMode");
+				_TemplateListLabel = value;
+				OnPropertyChanged("TemplateListLabel");
 			}
 		}
 		[JsonProperty]
-		public CategoryManagement CategoryManagement
+		public IList<ResetPasswordPartnerConfigTemplate> Templates
 		{
-			get { return _CategoryManagement; }
+			get { return _Templates; }
 			set 
 			{ 
-				_CategoryManagement = value;
-				OnPropertyChanged("CategoryManagement");
+				_Templates = value;
+				OnPropertyChanged("Templates");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public CatalogPartnerConfig()
+		public ResetPasswordPartnerConfig()
 		{
 		}
 
-		public CatalogPartnerConfig(JToken node) : base(node)
+		public ResetPasswordPartnerConfig(JToken node) : base(node)
 		{
-			if(node["singleMultilingualMode"] != null)
+			if(node["templateListLabel"] != null)
 			{
-				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
+				this._TemplateListLabel = node["templateListLabel"].Value<string>();
 			}
-			if(node["categoryManagement"] != null)
+			if(node["templates"] != null)
 			{
-				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
+				this._Templates = new List<ResetPasswordPartnerConfigTemplate>();
+				foreach(var arrayNode in node["templates"].Children())
+				{
+					this._Templates.Add(ObjectFactory.Create<ResetPasswordPartnerConfigTemplate>(arrayNode));
+				}
 			}
 		}
 		#endregion
@@ -93,19 +97,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
-			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
-			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
+				kparams.AddReplace("objectType", "KalturaResetPasswordPartnerConfig");
+			kparams.AddIfNotNull("templateListLabel", this._TemplateListLabel);
+			kparams.AddIfNotNull("templates", this._Templates);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SINGLE_MULTILINGUAL_MODE:
-					return "SingleMultilingualMode";
-				case CATEGORY_MANAGEMENT:
-					return "CategoryManagement";
+				case TEMPLATE_LIST_LABEL:
+					return "TemplateListLabel";
+				case TEMPLATES:
+					return "Templates";
 				default:
 					return base.getPropertyName(apiName);
 			}

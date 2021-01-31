@@ -50,6 +50,8 @@ namespace Kaltura.Types
 		public const string START_DATE_IN_SECONDS = "startDateInSeconds";
 		public const string END_DATE_IN_SECONDS = "endDateInSeconds";
 		public const string TYPE = "type";
+		public const string VERSION_ID = "versionId";
+		public const string VIRTUAL_ASSET_ID = "virtualAssetId";
 		#endregion
 
 		#region Private Fields
@@ -65,6 +67,8 @@ namespace Kaltura.Types
 		private long _StartDateInSeconds = long.MinValue;
 		private long _EndDateInSeconds = long.MinValue;
 		private string _Type = null;
+		private long _VersionId = long.MinValue;
+		private long _VirtualAssetId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -188,6 +192,26 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
+		[JsonProperty]
+		public long VersionId
+		{
+			get { return _VersionId; }
+			private set 
+			{ 
+				_VersionId = value;
+				OnPropertyChanged("VersionId");
+			}
+		}
+		[JsonProperty]
+		public long VirtualAssetId
+		{
+			get { return _VirtualAssetId; }
+			private set 
+			{ 
+				_VirtualAssetId = value;
+				OnPropertyChanged("VirtualAssetId");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -261,6 +285,14 @@ namespace Kaltura.Types
 			{
 				this._Type = node["type"].Value<string>();
 			}
+			if(node["versionId"] != null)
+			{
+				this._VersionId = ParseLong(node["versionId"].Value<string>());
+			}
+			if(node["virtualAssetId"] != null)
+			{
+				this._VirtualAssetId = ParseLong(node["virtualAssetId"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -282,6 +314,8 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("startDateInSeconds", this._StartDateInSeconds);
 			kparams.AddIfNotNull("endDateInSeconds", this._EndDateInSeconds);
 			kparams.AddIfNotNull("type", this._Type);
+			kparams.AddIfNotNull("versionId", this._VersionId);
+			kparams.AddIfNotNull("virtualAssetId", this._VirtualAssetId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -312,6 +346,10 @@ namespace Kaltura.Types
 					return "EndDateInSeconds";
 				case TYPE:
 					return "Type";
+				case VERSION_ID:
+					return "VersionId";
+				case VIRTUAL_ASSET_ID:
+					return "VirtualAssetId";
 				default:
 					return base.getPropertyName(apiName);
 			}
