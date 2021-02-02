@@ -33,7 +33,6 @@ namespace Kaltura.Enums
 		public static readonly InboxMessageType FOLLOWED = new InboxMessageType("Followed");
 		public static readonly InboxMessageType ENGAGEMENT = new InboxMessageType("Engagement");
 		public static readonly InboxMessageType INTEREST = new InboxMessageType("Interest");
-		public static readonly InboxMessageType CAMPAIGN = new InboxMessageType("Campaign");
 
 		private InboxMessageType(string name) : base(name) { }
 	}
