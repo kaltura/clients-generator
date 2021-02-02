@@ -945,7 +945,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 	function writeAction($serviceId, $serviceName, DOMElement $actionNode)
 	{
-		$this->appendLine("// BEO-9522 csharp2 writeAction");
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action))
 			return;
@@ -1037,8 +1036,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					break;
 			}
 
-			$this->appendLine("// BEO-9522 csharp2 before comment");
-			KalturaLog::info("BEO-9522 csharp2 before");
 			$param = "$dotNetType ".$this->fixParamName($paramName);
 			$optional = $paramNode->getAttribute("optional");
 			if ($enableOptionals && $optional == "1")
@@ -1055,7 +1052,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				}
 				else if ($type == "int" && $paramNode->hasAttribute("enumType"))
 				{
-					KalturaLog::info("BEO-9522 csharp2 line 1056");
 					$value = $paramNode->getAttribute("default");
 					if ($value == "null")
 						$value = "Int32.MinValue";
@@ -1064,15 +1060,11 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				}
 				elseif ($type == "int" && $paramNode->getAttribute("default") == "null") // because Partner.GetUsage has an int field with empty default value
 				{
-					KalturaLog::info("BEO-9522 csharp2 line 1065");
 					$param .= "Int32.MinValue";
 				}
-				elseif ($type == "bigint") 
+				elseif ($type == "bigint" && $paramNode->getAttribute("default") == "null") 
 				{
-					$value = $paramNode->getAttribute("default");
-					KalturaLog::info("BEO-9522 csharp2 default value: $value");
-					if ($value == "null")
-						$param .= "long.MinValue";
+					$param .= "long.MinValue";
 				}	
 				else
 				{
