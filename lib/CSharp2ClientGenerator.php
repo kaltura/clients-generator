@@ -1036,6 +1036,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					break;
 			}
 
+			$this->appendLine("// BEO-9522 csharp2 before comment");
 			KalturaLog::info("BEO-9522 csharp2 before");
 			$param = "$dotNetType ".$this->fixParamName($paramName);
 			$optional = $paramNode->getAttribute("optional");
