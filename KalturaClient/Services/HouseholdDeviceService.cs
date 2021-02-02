@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceAddRequestBuilder : RequestBuilder<HouseholdDevice>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceAddByPinRequestBuilder : RequestBuilder<HouseholdDevice>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -164,8 +160,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceGeneratePinRequestBuilder : RequestBuilder<DevicePin>
 	{
 		#region Constants
@@ -210,7 +204,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceGetRequestBuilder : RequestBuilder<HouseholdDevice>
 	{
 		#region Constants
@@ -250,7 +243,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceListRequestBuilder : RequestBuilder<ListResponse<HouseholdDevice>>
 	{
 		#region Constants
@@ -290,9 +282,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceLoginWithPinRequestBuilder : RequestBuilder<LoginResponse>
 	{
 		#region Constants
@@ -342,8 +331,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceUpdateRequestBuilder : RequestBuilder<HouseholdDevice>
 	{
 		#region Constants
@@ -388,8 +375,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeviceUpdateStatusRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -442,70 +427,46 @@ namespace Kaltura.Services
 		private HouseholdDeviceService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceAddRequestBuilder Add(HouseholdDevice device)
 		{
 			return new HouseholdDeviceAddRequestBuilder(device);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceAddByPinRequestBuilder AddByPin(string deviceName, string pin)
 		{
 			return new HouseholdDeviceAddByPinRequestBuilder(deviceName, pin);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceDeleteRequestBuilder Delete(string udid)
 		{
 			return new HouseholdDeviceDeleteRequestBuilder(udid);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceGeneratePinRequestBuilder GeneratePin(string udid, int brandId)
 		{
 			return new HouseholdDeviceGeneratePinRequestBuilder(udid, brandId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceGetRequestBuilder Get(string udid = null)
 		{
 			return new HouseholdDeviceGetRequestBuilder(udid);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceListRequestBuilder List(HouseholdDeviceFilter filter = null)
 		{
 			return new HouseholdDeviceListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceLoginWithPinRequestBuilder LoginWithPin(int partnerId, string pin, string udid = null)
 		{
 			return new HouseholdDeviceLoginWithPinRequestBuilder(partnerId, pin, udid);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceUpdateRequestBuilder Update(string udid, HouseholdDevice device)
 		{
 			return new HouseholdDeviceUpdateRequestBuilder(udid, device);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeviceUpdateStatusRequestBuilder UpdateStatus(string udid, DeviceStatus status)
 		{

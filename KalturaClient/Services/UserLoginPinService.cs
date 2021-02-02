@@ -36,9 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class UserLoginPinAddRequestBuilder : RequestBuilder<UserLoginPin>
 	{
 		#region Constants
@@ -88,7 +85,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class UserLoginPinDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -161,10 +157,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class UserLoginPinUpdateRequestBuilder : RequestBuilder<UserLoginPin>
 	{
 		#region Constants
@@ -225,33 +217,21 @@ namespace Kaltura.Services
 		private UserLoginPinService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static UserLoginPinAddRequestBuilder Add(string secret = null, int pinUsages = Int32.MinValue, int pinDuration = Int32.MinValue)
 		{
 			return new UserLoginPinAddRequestBuilder(secret, pinUsages, pinDuration);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static UserLoginPinDeleteRequestBuilder Delete(string pinCode)
 		{
 			return new UserLoginPinDeleteRequestBuilder(pinCode);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static UserLoginPinDeleteAllRequestBuilder DeleteAll()
 		{
 			return new UserLoginPinDeleteAllRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static UserLoginPinUpdateRequestBuilder Update(string pinCode, string secret = null, int pinUsages = Int32.MinValue, int pinDuration = Int32.MinValue)
 		{

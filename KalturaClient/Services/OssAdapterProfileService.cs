@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class OssAdapterProfileAddRequestBuilder : RequestBuilder<OSSAdapterProfile>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class OssAdapterProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class OssAdapterProfileGenerateSharedSecretRequestBuilder : RequestBuilder<OSSAdapterProfile>
 	{
 		#region Constants
@@ -158,7 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class OssAdapterProfileGetRequestBuilder : RequestBuilder<OSSAdapterProfile>
 	{
 		#region Constants
@@ -227,8 +223,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class OssAdapterProfileUpdateRequestBuilder : RequestBuilder<OSSAdapterProfile>
 	{
 		#region Constants
@@ -279,43 +273,31 @@ namespace Kaltura.Services
 		private OssAdapterProfileService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static OssAdapterProfileAddRequestBuilder Add(OSSAdapterProfile ossAdapter)
 		{
 			return new OssAdapterProfileAddRequestBuilder(ossAdapter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static OssAdapterProfileDeleteRequestBuilder Delete(int ossAdapterId)
 		{
 			return new OssAdapterProfileDeleteRequestBuilder(ossAdapterId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static OssAdapterProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int ossAdapterId)
 		{
 			return new OssAdapterProfileGenerateSharedSecretRequestBuilder(ossAdapterId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static OssAdapterProfileGetRequestBuilder Get(int id)
 		{
 			return new OssAdapterProfileGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static OssAdapterProfileListRequestBuilder List()
 		{
 			return new OssAdapterProfileListRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static OssAdapterProfileUpdateRequestBuilder Update(int ossAdapterId, OSSAdapterProfile ossAdapter)
 		{

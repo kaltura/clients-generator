@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class DeviceReferenceDataAddRequestBuilder : RequestBuilder<DeviceReferenceData>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class DeviceReferenceDataUpdateRequestBuilder : RequestBuilder<DeviceReferenceData>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class DeviceReferenceDataDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -162,8 +158,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class DeviceReferenceDataListRequestBuilder : RequestBuilder<ListResponse<DeviceReferenceData>>
 	{
 		#region Constants
@@ -214,31 +208,21 @@ namespace Kaltura.Services
 		private DeviceReferenceDataService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static DeviceReferenceDataAddRequestBuilder Add(DeviceReferenceData objectToAdd)
 		{
 			return new DeviceReferenceDataAddRequestBuilder(objectToAdd);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static DeviceReferenceDataUpdateRequestBuilder Update(long id, DeviceReferenceData objectToUpdate)
 		{
 			return new DeviceReferenceDataUpdateRequestBuilder(id, objectToUpdate);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static DeviceReferenceDataDeleteRequestBuilder Delete(long id)
 		{
 			return new DeviceReferenceDataDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static DeviceReferenceDataListRequestBuilder List(DeviceReferenceDataFilter filter, FilterPager pager = null)
 		{

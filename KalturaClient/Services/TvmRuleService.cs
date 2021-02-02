@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class TvmRuleListRequestBuilder : RequestBuilder<ListResponse<TvmRule>>
 	{
 		#region Constants
@@ -82,8 +81,6 @@ namespace Kaltura.Services
 		private TvmRuleService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TvmRuleListRequestBuilder List(TvmRuleFilter filter = null)
 		{

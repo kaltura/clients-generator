@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class UserSegmentAddRequestBuilder : RequestBuilder<UserSegment>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class UserSegmentDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -124,8 +121,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class UserSegmentListRequestBuilder : RequestBuilder<ListResponse<UserSegment>>
 	{
 		#region Constants
@@ -176,24 +171,16 @@ namespace Kaltura.Services
 		private UserSegmentService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static UserSegmentAddRequestBuilder Add(UserSegment userSegment)
 		{
 			return new UserSegmentAddRequestBuilder(userSegment);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static UserSegmentDeleteRequestBuilder Delete(string userId, long segmentId)
 		{
 			return new UserSegmentDeleteRequestBuilder(userId, segmentId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static UserSegmentListRequestBuilder List(UserSegmentFilter filter, FilterPager pager = null)
 		{

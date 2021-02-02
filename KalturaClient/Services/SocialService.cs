@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class SocialGetRequestBuilder : RequestBuilder<Social>
 	{
 		#region Constants
@@ -76,9 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SocialGetByTokenRequestBuilder : RequestBuilder<Social>
 	{
 		#region Constants
@@ -128,8 +124,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SocialGetConfigurationRequestBuilder : RequestBuilder<SocialConfig>
 	{
 		#region Constants
@@ -174,10 +168,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SocialLoginRequestBuilder : RequestBuilder<LoginResponse>
 	{
 		#region Constants
@@ -232,8 +222,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SocialMergeRequestBuilder : RequestBuilder<Social>
 	{
 		#region Constants
@@ -278,10 +266,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SocialRegisterRequestBuilder : RequestBuilder<Social>
 	{
 		#region Constants
@@ -336,7 +320,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SocialUnmergeRequestBuilder : RequestBuilder<Social>
 	{
 		#region Constants
@@ -376,7 +359,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SocialUpdateConfigurationRequestBuilder : RequestBuilder<SocialConfig>
 	{
 		#region Constants
@@ -422,67 +404,41 @@ namespace Kaltura.Services
 		private SocialService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SocialGetRequestBuilder Get(SocialNetwork type)
 		{
 			return new SocialGetRequestBuilder(type);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SocialGetByTokenRequestBuilder GetByToken(int partnerId, string token, SocialNetwork type)
 		{
 			return new SocialGetByTokenRequestBuilder(partnerId, token, type);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SocialGetConfigurationRequestBuilder GetConfiguration(SocialNetwork type, int partnerId = Int32.MinValue)
 		{
 			return new SocialGetConfigurationRequestBuilder(type, partnerId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SocialLoginRequestBuilder Login(int partnerId, string token, SocialNetwork type, string udid = null)
 		{
 			return new SocialLoginRequestBuilder(partnerId, token, type, udid);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SocialMergeRequestBuilder Merge(string token, SocialNetwork type)
 		{
 			return new SocialMergeRequestBuilder(token, type);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SocialRegisterRequestBuilder Register(int partnerId, string token, SocialNetwork type, string email = null)
 		{
 			return new SocialRegisterRequestBuilder(partnerId, token, type, email);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SocialUnmergeRequestBuilder Unmerge(SocialNetwork type)
 		{
 			return new SocialUnmergeRequestBuilder(type);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SocialUpdateConfigurationRequestBuilder UpdateConfiguration(SocialConfig configuration)
 		{

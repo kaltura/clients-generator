@@ -71,7 +71,6 @@ namespace Kaltura.Services
 		private DrmProfileService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static DrmProfileListRequestBuilder List()
 		{

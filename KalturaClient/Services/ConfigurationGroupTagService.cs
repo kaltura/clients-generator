@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupTagAddRequestBuilder : RequestBuilder<ConfigurationGroupTag>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupTagDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupTagGetRequestBuilder : RequestBuilder<ConfigurationGroupTag>
 	{
 		#region Constants
@@ -158,7 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupTagListRequestBuilder : RequestBuilder<ListResponse<ConfigurationGroupTag>>
 	{
 		#region Constants
@@ -204,29 +200,21 @@ namespace Kaltura.Services
 		private ConfigurationGroupTagService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupTagAddRequestBuilder Add(ConfigurationGroupTag configurationGroupTag)
 		{
 			return new ConfigurationGroupTagAddRequestBuilder(configurationGroupTag);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupTagDeleteRequestBuilder Delete(string tag)
 		{
 			return new ConfigurationGroupTagDeleteRequestBuilder(tag);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupTagGetRequestBuilder Get(string tag)
 		{
 			return new ConfigurationGroupTagGetRequestBuilder(tag);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupTagListRequestBuilder List(ConfigurationGroupTagFilter filter)
 		{

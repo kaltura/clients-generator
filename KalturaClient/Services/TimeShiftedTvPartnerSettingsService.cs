@@ -65,7 +65,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TimeShiftedTvPartnerSettingsUpdateRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -113,14 +112,11 @@ namespace Kaltura.Services
 		private TimeShiftedTvPartnerSettingsService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static TimeShiftedTvPartnerSettingsGetRequestBuilder Get()
 		{
 			return new TimeShiftedTvPartnerSettingsGetRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TimeShiftedTvPartnerSettingsUpdateRequestBuilder Update(TimeShiftedTvPartnerSettings settings)
 		{

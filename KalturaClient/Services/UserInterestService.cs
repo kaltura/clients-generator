@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class UserInterestAddRequestBuilder : RequestBuilder<UserInterest>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class UserInterestDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,9 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class UserInterestDeleteWithTokenRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -205,30 +200,21 @@ namespace Kaltura.Services
 		private UserInterestService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static UserInterestAddRequestBuilder Add(UserInterest userInterest)
 		{
 			return new UserInterestAddRequestBuilder(userInterest);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static UserInterestDeleteRequestBuilder Delete(string id)
 		{
 			return new UserInterestDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static UserInterestDeleteWithTokenRequestBuilder DeleteWithToken(string id, string token, int partnerId)
 		{
 			return new UserInterestDeleteWithTokenRequestBuilder(id, token, partnerId);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static UserInterestListRequestBuilder List()
 		{

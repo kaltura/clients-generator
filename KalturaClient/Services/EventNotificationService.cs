@@ -36,8 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class EventNotificationUpdateRequestBuilder : RequestBuilder<EventNotification>
 	{
 		#region Constants
@@ -82,7 +80,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class EventNotificationListRequestBuilder : RequestBuilder<ListResponse<EventNotification>>
 	{
 		#region Constants
@@ -128,16 +125,11 @@ namespace Kaltura.Services
 		private EventNotificationService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static EventNotificationUpdateRequestBuilder Update(string id, EventNotification objectToUpdate)
 		{
 			return new EventNotificationUpdateRequestBuilder(id, objectToUpdate);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static EventNotificationListRequestBuilder List(EventNotificationFilter filter)
 		{

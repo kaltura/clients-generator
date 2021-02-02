@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AssetRuleAddRequestBuilder : RequestBuilder<AssetRule>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class AssetRuleDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class AssetRuleListRequestBuilder : RequestBuilder<ListResponse<AssetRule>>
 	{
 		#region Constants
@@ -158,8 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetRuleUpdateRequestBuilder : RequestBuilder<AssetRule>
 	{
 		#region Constants
@@ -210,30 +205,21 @@ namespace Kaltura.Services
 		private AssetRuleService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetRuleAddRequestBuilder Add(AssetRule assetRule)
 		{
 			return new AssetRuleAddRequestBuilder(assetRule);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetRuleDeleteRequestBuilder Delete(long id)
 		{
 			return new AssetRuleDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetRuleListRequestBuilder List(AssetRuleFilter filter = null)
 		{
 			return new AssetRuleListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetRuleUpdateRequestBuilder Update(long id, AssetRule assetRule)
 		{

@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class TopicDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -78,7 +77,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TopicGetRequestBuilder : RequestBuilder<Topic>
 	{
 		#region Constants
@@ -118,8 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TopicListRequestBuilder : RequestBuilder<ListResponse<Topic>>
 	{
 		#region Constants
@@ -164,8 +160,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TopicUpdateStatusRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -218,31 +212,21 @@ namespace Kaltura.Services
 		private TopicService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TopicDeleteRequestBuilder Delete(int id)
 		{
 			return new TopicDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TopicGetRequestBuilder Get(int id)
 		{
 			return new TopicGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TopicListRequestBuilder List(TopicFilter filter = null, FilterPager pager = null)
 		{
 			return new TopicListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TopicUpdateStatusRequestBuilder UpdateStatus(int id, TopicAutomaticIssueNotification automaticIssueNotification)
 		{

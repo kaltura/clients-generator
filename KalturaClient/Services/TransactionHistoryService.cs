@@ -36,8 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TransactionHistoryListRequestBuilder : RequestBuilder<ListResponse<BillingTransaction>>
 	{
 		#region Constants
@@ -88,9 +86,6 @@ namespace Kaltura.Services
 		private TransactionHistoryService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TransactionHistoryListRequestBuilder List(TransactionHistoryFilter filter = null, FilterPager pager = null)
 		{

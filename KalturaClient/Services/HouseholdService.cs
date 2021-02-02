@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class HouseholdAddRequestBuilder : RequestBuilder<Household>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdGetRequestBuilder : RequestBuilder<Household>
 	{
 		#region Constants
@@ -158,8 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HouseholdListRequestBuilder : RequestBuilder<ListResponse<Household>>
 	{
 		#region Constants
@@ -204,7 +199,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdPurgeRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -246,7 +240,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdResetFrequencyRequestBuilder : RequestBuilder<Household>
 	{
 		#region Constants
@@ -317,7 +310,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdSuspendRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -359,7 +351,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdUpdateRequestBuilder : RequestBuilder<Household>
 	{
 		#region Constants
@@ -405,64 +396,46 @@ namespace Kaltura.Services
 		private HouseholdService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdAddRequestBuilder Add(Household household)
 		{
 			return new HouseholdAddRequestBuilder(household);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdDeleteRequestBuilder Delete(int id = Int32.MinValue)
 		{
 			return new HouseholdDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdGetRequestBuilder Get(int id = Int32.MinValue)
 		{
 			return new HouseholdGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdListRequestBuilder List(HouseholdFilter filter, FilterPager pager = null)
 		{
 			return new HouseholdListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdPurgeRequestBuilder Purge(int id)
 		{
 			return new HouseholdPurgeRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdResetFrequencyRequestBuilder ResetFrequency(HouseholdFrequencyType frequencyType)
 		{
 			return new HouseholdResetFrequencyRequestBuilder(frequencyType);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static HouseholdResumeRequestBuilder Resume()
 		{
 			return new HouseholdResumeRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdSuspendRequestBuilder Suspend(int roleId = Int32.MinValue)
 		{
 			return new HouseholdSuspendRequestBuilder(roleId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdUpdateRequestBuilder Update(Household household)
 		{

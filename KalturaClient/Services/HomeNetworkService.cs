@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class HomeNetworkAddRequestBuilder : RequestBuilder<HomeNetwork>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HomeNetworkDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -147,8 +145,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class HomeNetworkUpdateRequestBuilder : RequestBuilder<HomeNetwork>
 	{
 		#region Constants
@@ -199,29 +195,21 @@ namespace Kaltura.Services
 		private HomeNetworkService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HomeNetworkAddRequestBuilder Add(HomeNetwork homeNetwork)
 		{
 			return new HomeNetworkAddRequestBuilder(homeNetwork);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HomeNetworkDeleteRequestBuilder Delete(string externalId)
 		{
 			return new HomeNetworkDeleteRequestBuilder(externalId);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static HomeNetworkListRequestBuilder List()
 		{
 			return new HomeNetworkListRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static HomeNetworkUpdateRequestBuilder Update(string externalId, HomeNetwork homeNetwork)
 		{

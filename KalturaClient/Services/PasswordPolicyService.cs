@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class PasswordPolicyAddRequestBuilder : RequestBuilder<PasswordPolicy>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PasswordPolicyUpdateRequestBuilder : RequestBuilder<PasswordPolicy>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PasswordPolicyDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -162,7 +158,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PasswordPolicyListRequestBuilder : RequestBuilder<ListResponse<PasswordPolicy>>
 	{
 		#region Constants
@@ -208,30 +203,21 @@ namespace Kaltura.Services
 		private PasswordPolicyService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PasswordPolicyAddRequestBuilder Add(PasswordPolicy objectToAdd)
 		{
 			return new PasswordPolicyAddRequestBuilder(objectToAdd);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PasswordPolicyUpdateRequestBuilder Update(long id, PasswordPolicy objectToUpdate)
 		{
 			return new PasswordPolicyUpdateRequestBuilder(id, objectToUpdate);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PasswordPolicyDeleteRequestBuilder Delete(long id)
 		{
 			return new PasswordPolicyDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PasswordPolicyListRequestBuilder List(PasswordPolicyFilter filter = null)
 		{

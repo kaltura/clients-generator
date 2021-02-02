@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AssetAddRequestBuilder : RequestBuilder<Asset>
 	{
 		#region Constants
@@ -76,9 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetAddFromBulkUploadRequestBuilder : RequestBuilder<BulkUpload>
 	{
 		#region Constants
@@ -128,7 +124,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class AssetCountRequestBuilder : RequestBuilder<AssetCount>
 	{
 		#region Constants
@@ -168,8 +163,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -216,8 +209,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetGetRequestBuilder : RequestBuilder<Asset>
 	{
 		#region Constants
@@ -262,9 +253,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetGetAdsContextRequestBuilder : RequestBuilder<AdsContext>
 	{
 		#region Constants
@@ -314,10 +302,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetGetPlaybackContextRequestBuilder : RequestBuilder<PlaybackContext>
 	{
 		#region Constants
@@ -372,10 +356,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetGetPlaybackManifestRequestBuilder : RequestBuilder<PlaybackContext>
 	{
 		#region Constants
@@ -430,8 +410,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetListRequestBuilder : RequestBuilder<ListResponse<Asset>>
 	{
 		#region Constants
@@ -476,9 +454,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetRemoveMetasAndTagsRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -530,8 +505,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetUpdateRequestBuilder : RequestBuilder<Asset>
 	{
 		#region Constants
@@ -582,94 +555,56 @@ namespace Kaltura.Services
 		private AssetService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetAddRequestBuilder Add(Asset asset)
 		{
 			return new AssetAddRequestBuilder(asset);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadJobData bulkUploadJobData, BulkUploadAssetData bulkUploadAssetData)
 		{
 			return new AssetAddFromBulkUploadRequestBuilder(fileData, bulkUploadJobData, bulkUploadAssetData);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetCountRequestBuilder Count(SearchAssetFilter filter = null)
 		{
 			return new AssetCountRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetDeleteRequestBuilder Delete(long id, AssetReferenceType assetReferenceType)
 		{
 			return new AssetDeleteRequestBuilder(id, assetReferenceType);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetGetRequestBuilder Get(string id, AssetReferenceType assetReferenceType)
 		{
 			return new AssetGetRequestBuilder(id, assetReferenceType);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetGetAdsContextRequestBuilder GetAdsContext(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams)
 		{
 			return new AssetGetAdsContextRequestBuilder(assetId, assetType, contextDataParams);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetGetPlaybackContextRequestBuilder GetPlaybackContext(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType = null)
 		{
 			return new AssetGetPlaybackContextRequestBuilder(assetId, assetType, contextDataParams, sourceType);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetGetPlaybackManifestRequestBuilder GetPlaybackManifest(string assetId, AssetType assetType, PlaybackContextOptions contextDataParams, string sourceType = null)
 		{
 			return new AssetGetPlaybackManifestRequestBuilder(assetId, assetType, contextDataParams, sourceType);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetListRequestBuilder List(AssetFilter filter = null, FilterPager pager = null)
 		{
 			return new AssetListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetRemoveMetasAndTagsRequestBuilder RemoveMetasAndTags(long id, AssetReferenceType assetReferenceType, string idIn)
 		{
 			return new AssetRemoveMetasAndTagsRequestBuilder(id, assetReferenceType, idIn);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetUpdateRequestBuilder Update(long id, Asset asset)
 		{

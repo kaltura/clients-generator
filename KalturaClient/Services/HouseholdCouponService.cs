@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class HouseholdCouponAddRequestBuilder : RequestBuilder<HouseholdCoupon>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdCouponDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -116,7 +114,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdCouponListRequestBuilder : RequestBuilder<ListResponse<HouseholdCoupon>>
 	{
 		#region Constants
@@ -162,22 +159,16 @@ namespace Kaltura.Services
 		private HouseholdCouponService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdCouponAddRequestBuilder Add(HouseholdCoupon objectToAdd)
 		{
 			return new HouseholdCouponAddRequestBuilder(objectToAdd);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdCouponDeleteRequestBuilder Delete(string id)
 		{
 			return new HouseholdCouponDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdCouponListRequestBuilder List(HouseholdCouponFilter filter = null)
 		{

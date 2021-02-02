@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class PurchaseSettingsGetRequestBuilder : RequestBuilder<PurchaseSettings>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PurchaseSettingsUpdateRequestBuilder : RequestBuilder<PurchaseSettings>
 	{
 		#region Constants
@@ -128,16 +125,11 @@ namespace Kaltura.Services
 		private PurchaseSettingsService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PurchaseSettingsGetRequestBuilder Get(EntityReferenceBy by)
 		{
 			return new PurchaseSettingsGetRequestBuilder(by);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PurchaseSettingsUpdateRequestBuilder Update(EntityReferenceBy entityReference, PurchaseSettings settings)
 		{

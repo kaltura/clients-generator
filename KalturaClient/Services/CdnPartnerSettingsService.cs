@@ -65,7 +65,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class CdnPartnerSettingsUpdateRequestBuilder : RequestBuilder<CDNPartnerSettings>
 	{
 		#region Constants
@@ -111,14 +110,11 @@ namespace Kaltura.Services
 		private CdnPartnerSettingsService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static CdnPartnerSettingsGetRequestBuilder Get()
 		{
 			return new CdnPartnerSettingsGetRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static CdnPartnerSettingsUpdateRequestBuilder Update(CDNPartnerSettings settings)
 		{

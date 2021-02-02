@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class ConfigurationsAddRequestBuilder : RequestBuilder<Configurations>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ConfigurationsDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ConfigurationsGetRequestBuilder : RequestBuilder<Configurations>
 	{
 		#region Constants
@@ -158,7 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ConfigurationsListRequestBuilder : RequestBuilder<ListResponse<Configurations>>
 	{
 		#region Constants
@@ -198,8 +194,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ConfigurationsUpdateRequestBuilder : RequestBuilder<Configurations>
 	{
 		#region Constants
@@ -250,38 +244,26 @@ namespace Kaltura.Services
 		private ConfigurationsService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationsAddRequestBuilder Add(Configurations configurations)
 		{
 			return new ConfigurationsAddRequestBuilder(configurations);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationsDeleteRequestBuilder Delete(string id)
 		{
 			return new ConfigurationsDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationsGetRequestBuilder Get(string id)
 		{
 			return new ConfigurationsGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationsListRequestBuilder List(ConfigurationsFilter filter)
 		{
 			return new ConfigurationsListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ConfigurationsUpdateRequestBuilder Update(string id, Configurations configurations)
 		{

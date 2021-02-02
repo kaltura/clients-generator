@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class UserAssetRuleListRequestBuilder : RequestBuilder<ListResponse<UserAssetRule>>
 	{
 		#region Constants
@@ -82,8 +81,6 @@ namespace Kaltura.Services
 		private UserAssetRuleService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static UserAssetRuleListRequestBuilder List(UserAssetRuleFilter filter)
 		{

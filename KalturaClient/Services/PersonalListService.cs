@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class PersonalListAddRequestBuilder : RequestBuilder<PersonalList>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PersonalListDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -116,8 +114,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PersonalListListRequestBuilder : RequestBuilder<ListResponse<PersonalList>>
 	{
 		#region Constants
@@ -168,23 +164,16 @@ namespace Kaltura.Services
 		private PersonalListService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PersonalListAddRequestBuilder Add(PersonalList personalList)
 		{
 			return new PersonalListAddRequestBuilder(personalList);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PersonalListDeleteRequestBuilder Delete(long personalListId)
 		{
 			return new PersonalListDeleteRequestBuilder(personalListId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PersonalListListRequestBuilder List(PersonalListFilter filter = null, FilterPager pager = null)
 		{

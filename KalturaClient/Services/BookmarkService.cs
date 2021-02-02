@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class BookmarkAddRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -78,7 +77,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class BookmarkListRequestBuilder : RequestBuilder<ListResponse<Bookmark>>
 	{
 		#region Constants
@@ -124,15 +122,11 @@ namespace Kaltura.Services
 		private BookmarkService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static BookmarkAddRequestBuilder Add(Bookmark bookmark)
 		{
 			return new BookmarkAddRequestBuilder(bookmark);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static BookmarkListRequestBuilder List(BookmarkFilter filter)
 		{

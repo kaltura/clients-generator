@@ -36,8 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SubscriptionListRequestBuilder : RequestBuilder<ListResponse<Subscription>>
 	{
 		#region Constants
@@ -82,8 +80,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SubscriptionValidateCouponRequestBuilder : RequestBuilder<Coupon>
 	{
 		#region Constants
@@ -134,17 +130,11 @@ namespace Kaltura.Services
 		private SubscriptionService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SubscriptionListRequestBuilder List(SubscriptionFilter filter = null, FilterPager pager = null)
 		{
 			return new SubscriptionListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SubscriptionValidateCouponRequestBuilder ValidateCoupon(int id, string code)
 		{

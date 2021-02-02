@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class CouponsGroupAddRequestBuilder : RequestBuilder<CouponsGroup>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class CouponsGroupDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,8 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class CouponsGroupGenerateRequestBuilder : RequestBuilder<StringValueArray>
 	{
 		#region Constants
@@ -164,7 +160,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class CouponsGroupGetRequestBuilder : RequestBuilder<CouponsGroup>
 	{
 		#region Constants
@@ -233,8 +228,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class CouponsGroupUpdateRequestBuilder : RequestBuilder<CouponsGroup>
 	{
 		#region Constants
@@ -285,44 +278,31 @@ namespace Kaltura.Services
 		private CouponsGroupService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static CouponsGroupAddRequestBuilder Add(CouponsGroup couponsGroup)
 		{
 			return new CouponsGroupAddRequestBuilder(couponsGroup);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static CouponsGroupDeleteRequestBuilder Delete(long id)
 		{
 			return new CouponsGroupDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static CouponsGroupGenerateRequestBuilder Generate(long id, CouponGenerationOptions couponGenerationOptions)
 		{
 			return new CouponsGroupGenerateRequestBuilder(id, couponGenerationOptions);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static CouponsGroupGetRequestBuilder Get(long id)
 		{
 			return new CouponsGroupGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static CouponsGroupListRequestBuilder List()
 		{
 			return new CouponsGroupListRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static CouponsGroupUpdateRequestBuilder Update(long id, CouponsGroup couponsGroup)
 		{

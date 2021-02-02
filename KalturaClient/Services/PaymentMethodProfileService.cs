@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class PaymentMethodProfileAddRequestBuilder : RequestBuilder<PaymentMethodProfile>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PaymentMethodProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PaymentMethodProfileListRequestBuilder : RequestBuilder<ListResponse<PaymentMethodProfile>>
 	{
 		#region Constants
@@ -158,8 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PaymentMethodProfileUpdateRequestBuilder : RequestBuilder<PaymentMethodProfile>
 	{
 		#region Constants
@@ -210,30 +205,21 @@ namespace Kaltura.Services
 		private PaymentMethodProfileService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PaymentMethodProfileAddRequestBuilder Add(PaymentMethodProfile paymentMethod)
 		{
 			return new PaymentMethodProfileAddRequestBuilder(paymentMethod);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PaymentMethodProfileDeleteRequestBuilder Delete(int paymentMethodId)
 		{
 			return new PaymentMethodProfileDeleteRequestBuilder(paymentMethodId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PaymentMethodProfileListRequestBuilder List(PaymentMethodProfileFilter filter)
 		{
 			return new PaymentMethodProfileListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PaymentMethodProfileUpdateRequestBuilder Update(int paymentMethodId, PaymentMethodProfile paymentMethod)
 		{

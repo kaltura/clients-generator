@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class InboxMessageGetRequestBuilder : RequestBuilder<InboxMessage>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class InboxMessageListRequestBuilder : RequestBuilder<ListResponse<InboxMessage>>
 	{
 		#region Constants
@@ -122,8 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class InboxMessageUpdateStatusRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -176,24 +171,16 @@ namespace Kaltura.Services
 		private InboxMessageService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static InboxMessageGetRequestBuilder Get(string id)
 		{
 			return new InboxMessageGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static InboxMessageListRequestBuilder List(InboxMessageFilter filter = null, FilterPager pager = null)
 		{
 			return new InboxMessageListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static InboxMessageUpdateStatusRequestBuilder UpdateStatus(string id, InboxMessageStatus status)
 		{

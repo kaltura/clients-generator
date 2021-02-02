@@ -100,13 +100,11 @@ namespace Kaltura.Services
 		private IotService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static IotGetClientConfigurationRequestBuilder GetClientConfiguration()
 		{
 			return new IotGetClientConfigurationRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static IotRegisterRequestBuilder Register()
 		{

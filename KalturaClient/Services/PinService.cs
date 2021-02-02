@@ -36,9 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PinGetRequestBuilder : RequestBuilder<Pin>
 	{
 		#region Constants
@@ -88,10 +85,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PinUpdateRequestBuilder : RequestBuilder<Pin>
 	{
 		#region Constants
@@ -146,9 +139,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PinValidateRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -206,29 +196,16 @@ namespace Kaltura.Services
 		private PinService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PinGetRequestBuilder Get(EntityReferenceBy by, PinType type, int ruleId = Int32.MinValue)
 		{
 			return new PinGetRequestBuilder(by, type, ruleId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PinUpdateRequestBuilder Update(EntityReferenceBy by, PinType type, Pin pin, int ruleId = Int32.MinValue)
 		{
 			return new PinUpdateRequestBuilder(by, type, pin, ruleId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PinValidateRequestBuilder Validate(string pin, PinType type, int ruleId = Int32.MinValue)
 		{

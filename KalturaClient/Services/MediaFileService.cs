@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class MediaFileAddRequestBuilder : RequestBuilder<MediaFile>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class MediaFileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class MediaFileListRequestBuilder : RequestBuilder<ListResponse<MediaFile>>
 	{
 		#region Constants
@@ -158,8 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class MediaFileUpdateRequestBuilder : RequestBuilder<MediaFile>
 	{
 		#region Constants
@@ -210,30 +205,21 @@ namespace Kaltura.Services
 		private MediaFileService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static MediaFileAddRequestBuilder Add(MediaFile mediaFile)
 		{
 			return new MediaFileAddRequestBuilder(mediaFile);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static MediaFileDeleteRequestBuilder Delete(long id)
 		{
 			return new MediaFileDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static MediaFileListRequestBuilder List(MediaFileFilter filter = null)
 		{
 			return new MediaFileListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static MediaFileUpdateRequestBuilder Update(long id, MediaFile mediaFile)
 		{

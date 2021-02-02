@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class ImageAddRequestBuilder : RequestBuilder<Image>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ImageDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ImageListRequestBuilder : RequestBuilder<ListResponse<Image>>
 	{
 		#region Constants
@@ -158,8 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ImageSetContentRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -210,30 +205,21 @@ namespace Kaltura.Services
 		private ImageService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ImageAddRequestBuilder Add(Image image)
 		{
 			return new ImageAddRequestBuilder(image);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ImageDeleteRequestBuilder Delete(long id)
 		{
 			return new ImageDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ImageListRequestBuilder List(ImageFilter filter)
 		{
 			return new ImageListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ImageSetContentRequestBuilder SetContent(long id, ContentResource content)
 		{

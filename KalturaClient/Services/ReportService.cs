@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class ReportGetRequestBuilder : RequestBuilder<Report>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ReportListRequestBuilder : RequestBuilder<ListResponse<Report>>
 	{
 		#region Constants
@@ -128,16 +125,11 @@ namespace Kaltura.Services
 		private ReportService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ReportGetRequestBuilder Get(string udid)
 		{
 			return new ReportGetRequestBuilder(udid);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ReportListRequestBuilder List(ReportFilter filter, FilterPager pager = null)
 		{

@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class ReminderAddRequestBuilder : RequestBuilder<Reminder>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ReminderDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -124,10 +121,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ReminderDeleteWithTokenRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -182,8 +175,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ReminderListRequestBuilder : RequestBuilder<ListResponse<Reminder>>
 	{
 		#region Constants
@@ -234,34 +225,21 @@ namespace Kaltura.Services
 		private ReminderService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ReminderAddRequestBuilder Add(Reminder reminder)
 		{
 			return new ReminderAddRequestBuilder(reminder);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ReminderDeleteRequestBuilder Delete(long id, ReminderType type)
 		{
 			return new ReminderDeleteRequestBuilder(id, type);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ReminderDeleteWithTokenRequestBuilder DeleteWithToken(long id, ReminderType type, string token, int partnerId)
 		{
 			return new ReminderDeleteWithTokenRequestBuilder(id, type, token, partnerId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ReminderListRequestBuilder List(ReminderFilter filter, FilterPager pager = null)
 		{

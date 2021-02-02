@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class TopicNotificationMessageAddRequestBuilder : RequestBuilder<TopicNotificationMessage>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TopicNotificationMessageDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -116,8 +114,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TopicNotificationMessageListRequestBuilder : RequestBuilder<ListResponse<TopicNotificationMessage>>
 	{
 		#region Constants
@@ -162,8 +158,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TopicNotificationMessageUpdateRequestBuilder : RequestBuilder<TopicNotificationMessage>
 	{
 		#region Constants
@@ -214,31 +208,21 @@ namespace Kaltura.Services
 		private TopicNotificationMessageService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationMessageAddRequestBuilder Add(TopicNotificationMessage topicNotificationMessage)
 		{
 			return new TopicNotificationMessageAddRequestBuilder(topicNotificationMessage);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationMessageDeleteRequestBuilder Delete(long id)
 		{
 			return new TopicNotificationMessageDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationMessageListRequestBuilder List(TopicNotificationMessageFilter filter = null, FilterPager pager = null)
 		{
 			return new TopicNotificationMessageListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationMessageUpdateRequestBuilder Update(int id, TopicNotificationMessage topicNotificationMessage)
 		{

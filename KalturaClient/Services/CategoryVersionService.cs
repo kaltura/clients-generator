@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class CategoryVersionAddRequestBuilder : RequestBuilder<CategoryVersion>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class CategoryVersionUpdateRequestBuilder : RequestBuilder<CategoryVersion>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class CategoryVersionDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -162,8 +158,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class CategoryVersionListRequestBuilder : RequestBuilder<ListResponse<CategoryVersion>>
 	{
 		#region Constants
@@ -208,9 +202,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class CategoryVersionCreateTreeRequestBuilder : RequestBuilder<CategoryVersion>
 	{
 		#region Constants
@@ -260,8 +251,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class CategoryVersionSetDefaultRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -312,48 +301,31 @@ namespace Kaltura.Services
 		private CategoryVersionService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static CategoryVersionAddRequestBuilder Add(CategoryVersion objectToAdd)
 		{
 			return new CategoryVersionAddRequestBuilder(objectToAdd);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static CategoryVersionUpdateRequestBuilder Update(long id, CategoryVersion objectToUpdate)
 		{
 			return new CategoryVersionUpdateRequestBuilder(id, objectToUpdate);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static CategoryVersionDeleteRequestBuilder Delete(long id)
 		{
 			return new CategoryVersionDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static CategoryVersionListRequestBuilder List(CategoryVersionFilter filter, FilterPager pager = null)
 		{
 			return new CategoryVersionListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static CategoryVersionCreateTreeRequestBuilder CreateTree(long categoryItemId, string name, string comment)
 		{
 			return new CategoryVersionCreateTreeRequestBuilder(categoryItemId, name, comment);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static CategoryVersionSetDefaultRequestBuilder SetDefault(long id, bool force = false)
 		{

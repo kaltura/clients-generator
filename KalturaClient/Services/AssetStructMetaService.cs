@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AssetStructMetaListRequestBuilder : RequestBuilder<ListResponse<AssetStructMeta>>
 	{
 		#region Constants
@@ -76,9 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetStructMetaUpdateRequestBuilder : RequestBuilder<AssetStructMeta>
 	{
 		#region Constants
@@ -134,17 +130,11 @@ namespace Kaltura.Services
 		private AssetStructMetaService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetStructMetaListRequestBuilder List(AssetStructMetaFilter filter)
 		{
 			return new AssetStructMetaListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetStructMetaUpdateRequestBuilder Update(long assetStructId, long metaId, AssetStructMeta assetStructMeta)
 		{

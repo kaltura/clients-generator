@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class DynamicListAddRequestBuilder : RequestBuilder<DynamicList>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class DynamicListUpdateRequestBuilder : RequestBuilder<DynamicList>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class DynamicListDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -162,8 +158,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class DynamicListListRequestBuilder : RequestBuilder<ListResponse<DynamicList>>
 	{
 		#region Constants
@@ -208,9 +202,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class DynamicListAddFromBulkUploadRequestBuilder : RequestBuilder<BulkUpload>
 	{
 		#region Constants
@@ -266,40 +257,26 @@ namespace Kaltura.Services
 		private DynamicListService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static DynamicListAddRequestBuilder Add(DynamicList objectToAdd)
 		{
 			return new DynamicListAddRequestBuilder(objectToAdd);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static DynamicListUpdateRequestBuilder Update(long id, DynamicList objectToUpdate)
 		{
 			return new DynamicListUpdateRequestBuilder(id, objectToUpdate);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static DynamicListDeleteRequestBuilder Delete(long id)
 		{
 			return new DynamicListDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static DynamicListListRequestBuilder List(DynamicListFilter filter, FilterPager pager = null)
 		{
 			return new DynamicListListRequestBuilder(filter, pager);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static DynamicListAddFromBulkUploadRequestBuilder AddFromBulkUpload(Stream fileData, BulkUploadExcelJobData jobData, BulkUploadDynamicListData bulkUploadData)
 		{

@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AssetStatisticsQueryRequestBuilder : RequestBuilder<ListResponse<AssetStatistics>>
 	{
 		#region Constants
@@ -82,8 +81,6 @@ namespace Kaltura.Services
 		private AssetStatisticsService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetStatisticsQueryRequestBuilder Query(AssetStatisticsQuery query)
 		{

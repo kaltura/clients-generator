@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class HouseholdUserAddRequestBuilder : RequestBuilder<HouseholdUser>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdUserDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class HouseholdUserListRequestBuilder : RequestBuilder<ListResponse<HouseholdUser>>
 	{
 		#region Constants
@@ -164,22 +161,16 @@ namespace Kaltura.Services
 		private HouseholdUserService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdUserAddRequestBuilder Add(HouseholdUser householdUser)
 		{
 			return new HouseholdUserAddRequestBuilder(householdUser);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdUserDeleteRequestBuilder Delete(string id)
 		{
 			return new HouseholdUserDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static HouseholdUserListRequestBuilder List(HouseholdUserFilter filter = null)
 		{

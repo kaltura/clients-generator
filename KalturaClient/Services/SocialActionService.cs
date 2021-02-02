@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class SocialActionAddRequestBuilder : RequestBuilder<UserSocialActionResponse>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SocialActionDeleteRequestBuilder : RequestBuilder<IList<NetworkActionStatus>>
 	{
 		#region Constants
@@ -122,8 +120,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SocialActionListRequestBuilder : RequestBuilder<ListResponse<SocialAction>>
 	{
 		#region Constants
@@ -174,23 +170,16 @@ namespace Kaltura.Services
 		private SocialActionService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SocialActionAddRequestBuilder Add(SocialAction socialAction)
 		{
 			return new SocialActionAddRequestBuilder(socialAction);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SocialActionDeleteRequestBuilder Delete(string id)
 		{
 			return new SocialActionDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SocialActionListRequestBuilder List(SocialActionFilter filter, FilterPager pager = null)
 		{

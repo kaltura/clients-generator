@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingAddRequestBuilder : RequestBuilder<SeriesRecording>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingCancelRequestBuilder : RequestBuilder<SeriesRecording>
 	{
 		#region Constants
@@ -116,8 +114,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingCancelByEpgIdRequestBuilder : RequestBuilder<SeriesRecording>
 	{
 		#region Constants
@@ -162,8 +158,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingCancelBySeasonNumberRequestBuilder : RequestBuilder<SeriesRecording>
 	{
 		#region Constants
@@ -208,7 +202,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingDeleteRequestBuilder : RequestBuilder<SeriesRecording>
 	{
 		#region Constants
@@ -248,8 +241,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingDeleteBySeasonNumberRequestBuilder : RequestBuilder<SeriesRecording>
 	{
 		#region Constants
@@ -294,7 +285,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SeriesRecordingListRequestBuilder : RequestBuilder<ListResponse<SeriesRecording>>
 	{
 		#region Constants
@@ -340,53 +330,36 @@ namespace Kaltura.Services
 		private SeriesRecordingService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingAddRequestBuilder Add(SeriesRecording recording)
 		{
 			return new SeriesRecordingAddRequestBuilder(recording);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingCancelRequestBuilder Cancel(long id)
 		{
 			return new SeriesRecordingCancelRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingCancelByEpgIdRequestBuilder CancelByEpgId(long id, long epgId)
 		{
 			return new SeriesRecordingCancelByEpgIdRequestBuilder(id, epgId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingCancelBySeasonNumberRequestBuilder CancelBySeasonNumber(long id, long seasonNumber)
 		{
 			return new SeriesRecordingCancelBySeasonNumberRequestBuilder(id, seasonNumber);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingDeleteRequestBuilder Delete(long id)
 		{
 			return new SeriesRecordingDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingDeleteBySeasonNumberRequestBuilder DeleteBySeasonNumber(long id, int seasonNumber)
 		{
 			return new SeriesRecordingDeleteBySeasonNumberRequestBuilder(id, seasonNumber);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SeriesRecordingListRequestBuilder List(SeriesRecordingFilter filter = null)
 		{

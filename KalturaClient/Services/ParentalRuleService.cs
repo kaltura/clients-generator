@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleAddRequestBuilder : RequestBuilder<ParentalRule>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,8 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleDisableRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -166,7 +162,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleDisableDefaultRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -208,8 +203,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleEnableRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -256,7 +249,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleGetRequestBuilder : RequestBuilder<ParentalRule>
 	{
 		#region Constants
@@ -296,7 +288,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleListRequestBuilder : RequestBuilder<ListResponse<ParentalRule>>
 	{
 		#region Constants
@@ -336,8 +327,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class ParentalRuleUpdateRequestBuilder : RequestBuilder<ParentalRule>
 	{
 		#region Constants
@@ -388,60 +377,41 @@ namespace Kaltura.Services
 		private ParentalRuleService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleAddRequestBuilder Add(ParentalRule parentalRule)
 		{
 			return new ParentalRuleAddRequestBuilder(parentalRule);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleDeleteRequestBuilder Delete(long id)
 		{
 			return new ParentalRuleDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleDisableRequestBuilder Disable(long ruleId, EntityReferenceBy entityReference)
 		{
 			return new ParentalRuleDisableRequestBuilder(ruleId, entityReference);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleDisableDefaultRequestBuilder DisableDefault(EntityReferenceBy entityReference)
 		{
 			return new ParentalRuleDisableDefaultRequestBuilder(entityReference);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleEnableRequestBuilder Enable(long ruleId, EntityReferenceBy entityReference)
 		{
 			return new ParentalRuleEnableRequestBuilder(ruleId, entityReference);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleGetRequestBuilder Get(long id)
 		{
 			return new ParentalRuleGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleListRequestBuilder List(ParentalRuleFilter filter)
 		{
 			return new ParentalRuleListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static ParentalRuleUpdateRequestBuilder Update(long id, ParentalRule parentalRule)
 		{

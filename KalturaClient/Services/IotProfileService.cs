@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class IotProfileAddRequestBuilder : RequestBuilder<IotProfile>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class IotProfileUpdateRequestBuilder : RequestBuilder<IotProfile>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class IotProfileGetRequestBuilder : RequestBuilder<IotProfile>
 	{
 		#region Constants
@@ -168,23 +164,16 @@ namespace Kaltura.Services
 		private IotProfileService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static IotProfileAddRequestBuilder Add(IotProfile objectToAdd)
 		{
 			return new IotProfileAddRequestBuilder(objectToAdd);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static IotProfileUpdateRequestBuilder Update(long id, IotProfile objectToUpdate)
 		{
 			return new IotProfileUpdateRequestBuilder(id, objectToUpdate);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static IotProfileGetRequestBuilder Get(long id)
 		{

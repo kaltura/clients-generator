@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AppTokenAddRequestBuilder : RequestBuilder<AppToken>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class AppTokenDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class AppTokenGetRequestBuilder : RequestBuilder<AppToken>
 	{
 		#region Constants
@@ -158,11 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AppTokenStartSessionRequestBuilder : RequestBuilder<SessionInfo>
 	{
 		#region Constants
@@ -228,33 +220,21 @@ namespace Kaltura.Services
 		private AppTokenService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AppTokenAddRequestBuilder Add(AppToken appToken)
 		{
 			return new AppTokenAddRequestBuilder(appToken);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AppTokenDeleteRequestBuilder Delete(string id)
 		{
 			return new AppTokenDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AppTokenGetRequestBuilder Get(string id)
 		{
 			return new AppTokenGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AppTokenStartSessionRequestBuilder StartSession(string id, string tokenHash, string userId = null, int expiry = Int32.MinValue, string udid = null)
 		{

@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class TransactionDowngradeRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TransactionGetPurchaseSessionIdRequestBuilder : RequestBuilder<long>
 	{
 		#region Constants
@@ -116,7 +114,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TransactionPurchaseRequestBuilder : RequestBuilder<Transaction>
 	{
 		#region Constants
@@ -156,8 +153,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TransactionSetWaiverRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -204,10 +199,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class TransactionUpdateStatusRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -262,7 +253,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TransactionUpgradeRequestBuilder : RequestBuilder<Transaction>
 	{
 		#region Constants
@@ -302,7 +292,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class TransactionValidateReceiptRequestBuilder : RequestBuilder<Transaction>
 	{
 		#region Constants
@@ -348,54 +337,36 @@ namespace Kaltura.Services
 		private TransactionService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TransactionDowngradeRequestBuilder Downgrade(Purchase purchase)
 		{
 			return new TransactionDowngradeRequestBuilder(purchase);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TransactionGetPurchaseSessionIdRequestBuilder GetPurchaseSessionId(PurchaseSession purchaseSession)
 		{
 			return new TransactionGetPurchaseSessionIdRequestBuilder(purchaseSession);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TransactionPurchaseRequestBuilder Purchase(Purchase purchase)
 		{
 			return new TransactionPurchaseRequestBuilder(purchase);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TransactionSetWaiverRequestBuilder SetWaiver(int assetId, TransactionType transactionType)
 		{
 			return new TransactionSetWaiverRequestBuilder(assetId, transactionType);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static TransactionUpdateStatusRequestBuilder UpdateStatus(string paymentGatewayId, string externalTransactionId, string signature, TransactionStatus status)
 		{
 			return new TransactionUpdateStatusRequestBuilder(paymentGatewayId, externalTransactionId, signature, status);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TransactionUpgradeRequestBuilder Upgrade(Purchase purchase)
 		{
 			return new TransactionUpgradeRequestBuilder(purchase);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static TransactionValidateReceiptRequestBuilder ValidateReceipt(ExternalReceipt externalReceipt)
 		{

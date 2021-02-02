@@ -36,8 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class SystemClearLocalServerCacheRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -171,7 +169,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SystemIncrementLayeredCacheGroupConfigVersionRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -244,7 +241,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class SystemSetLogLevelRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -292,47 +288,36 @@ namespace Kaltura.Services
 		private SystemService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static SystemClearLocalServerCacheRequestBuilder ClearLocalServerCache(string clearCacheAction = null, string key = null)
 		{
 			return new SystemClearLocalServerCacheRequestBuilder(clearCacheAction, key);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static SystemGetLogLevelRequestBuilder GetLogLevel()
 		{
 			return new SystemGetLogLevelRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static SystemGetTimeRequestBuilder GetTime()
 		{
 			return new SystemGetTimeRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static SystemGetVersionRequestBuilder GetVersion()
 		{
 			return new SystemGetVersionRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SystemIncrementLayeredCacheGroupConfigVersionRequestBuilder IncrementLayeredCacheGroupConfigVersion(int groupId = 0)
 		{
 			return new SystemIncrementLayeredCacheGroupConfigVersionRequestBuilder(groupId);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static SystemPingRequestBuilder Ping()
 		{
 			return new SystemPingRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static SystemSetLogLevelRequestBuilder SetLogLevel(LogLevel level)
 		{

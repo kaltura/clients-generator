@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class MetaAddRequestBuilder : RequestBuilder<Meta>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class MetaDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class MetaListRequestBuilder : RequestBuilder<ListResponse<Meta>>
 	{
 		#region Constants
@@ -158,8 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class MetaUpdateRequestBuilder : RequestBuilder<Meta>
 	{
 		#region Constants
@@ -210,30 +205,21 @@ namespace Kaltura.Services
 		private MetaService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static MetaAddRequestBuilder Add(Meta meta)
 		{
 			return new MetaAddRequestBuilder(meta);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static MetaDeleteRequestBuilder Delete(long id)
 		{
 			return new MetaDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static MetaListRequestBuilder List(MetaFilter filter = null)
 		{
 			return new MetaListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static MetaUpdateRequestBuilder Update(long id, Meta meta)
 		{

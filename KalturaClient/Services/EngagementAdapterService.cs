@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class EngagementAdapterAddRequestBuilder : RequestBuilder<EngagementAdapter>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class EngagementAdapterDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,7 +116,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class EngagementAdapterGenerateSharedSecretRequestBuilder : RequestBuilder<EngagementAdapter>
 	{
 		#region Constants
@@ -158,7 +155,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class EngagementAdapterGetRequestBuilder : RequestBuilder<EngagementAdapter>
 	{
 		#region Constants
@@ -227,8 +223,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class EngagementAdapterUpdateRequestBuilder : RequestBuilder<EngagementAdapter>
 	{
 		#region Constants
@@ -279,43 +273,31 @@ namespace Kaltura.Services
 		private EngagementAdapterService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static EngagementAdapterAddRequestBuilder Add(EngagementAdapter engagementAdapter)
 		{
 			return new EngagementAdapterAddRequestBuilder(engagementAdapter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static EngagementAdapterDeleteRequestBuilder Delete(int id)
 		{
 			return new EngagementAdapterDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static EngagementAdapterGenerateSharedSecretRequestBuilder GenerateSharedSecret(int id)
 		{
 			return new EngagementAdapterGenerateSharedSecretRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static EngagementAdapterGetRequestBuilder Get(int id)
 		{
 			return new EngagementAdapterGetRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static EngagementAdapterListRequestBuilder List()
 		{
 			return new EngagementAdapterListRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static EngagementAdapterUpdateRequestBuilder Update(int id, EngagementAdapter engagementAdapter)
 		{

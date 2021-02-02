@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AssetHistoryCleanRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -76,7 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class AssetHistoryGetNextEpisodeRequestBuilder : RequestBuilder<AssetHistory>
 	{
 		#region Constants
@@ -116,8 +114,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetHistoryListRequestBuilder : RequestBuilder<ListResponse<AssetHistory>>
 	{
 		#region Constants
@@ -168,23 +164,16 @@ namespace Kaltura.Services
 		private AssetHistoryService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetHistoryCleanRequestBuilder Clean(AssetHistoryFilter filter = null)
 		{
 			return new AssetHistoryCleanRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetHistoryGetNextEpisodeRequestBuilder GetNextEpisode(long assetId)
 		{
 			return new AssetHistoryGetNextEpisodeRequestBuilder(assetId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetHistoryListRequestBuilder List(AssetHistoryFilter filter = null, FilterPager pager = null)
 		{

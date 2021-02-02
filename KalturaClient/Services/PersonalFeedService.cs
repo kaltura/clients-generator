@@ -36,8 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PersonalFeedListRequestBuilder : RequestBuilder<ListResponse<PersonalFeed>>
 	{
 		#region Constants
@@ -88,9 +86,6 @@ namespace Kaltura.Services
 		private PersonalFeedService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PersonalFeedListRequestBuilder List(PersonalFeedFilter filter, FilterPager pager = null)
 		{

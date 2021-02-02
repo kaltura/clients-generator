@@ -36,8 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetFileGetContextRequestBuilder : RequestBuilder<AssetFileContext>
 	{
 		#region Constants
@@ -82,13 +80,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetFilePlayManifestRequestBuilder : RequestBuilder<AssetFile>
 	{
 		#region Constants
@@ -164,22 +155,11 @@ namespace Kaltura.Services
 		private AssetFileService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetFileGetContextRequestBuilder GetContext(string id, ContextType contextType)
 		{
 			return new AssetFileGetContextRequestBuilder(id, contextType);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetFilePlayManifestRequestBuilder PlayManifest(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks = null, string tokenizedUrl = null)
 		{

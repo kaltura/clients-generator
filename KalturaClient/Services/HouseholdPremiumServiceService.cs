@@ -71,7 +71,6 @@ namespace Kaltura.Services
 		private HouseholdPremiumServiceService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static HouseholdPremiumServiceListRequestBuilder List()
 		{

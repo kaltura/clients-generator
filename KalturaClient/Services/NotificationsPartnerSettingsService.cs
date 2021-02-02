@@ -65,7 +65,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class NotificationsPartnerSettingsUpdateRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -113,14 +112,11 @@ namespace Kaltura.Services
 		private NotificationsPartnerSettingsService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static NotificationsPartnerSettingsGetRequestBuilder Get()
 		{
 			return new NotificationsPartnerSettingsGetRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static NotificationsPartnerSettingsUpdateRequestBuilder Update(NotificationsPartnerSettings settings)
 		{

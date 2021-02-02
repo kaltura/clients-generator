@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class PermissionAddRequestBuilder : RequestBuilder<Permission>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PermissionAddPermissionItemRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -122,7 +119,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PermissionDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -191,7 +187,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
 	public class PermissionListRequestBuilder : RequestBuilder<ListResponse<Permission>>
 	{
 		#region Constants
@@ -231,8 +226,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class PermissionRemovePermissionItemRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -283,44 +276,31 @@ namespace Kaltura.Services
 		private PermissionService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PermissionAddRequestBuilder Add(Permission permission)
 		{
 			return new PermissionAddRequestBuilder(permission);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PermissionAddPermissionItemRequestBuilder AddPermissionItem(long permissionId, long permissionItemId)
 		{
 			return new PermissionAddPermissionItemRequestBuilder(permissionId, permissionItemId);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PermissionDeleteRequestBuilder Delete(long id)
 		{
 			return new PermissionDeleteRequestBuilder(id);
 		}
-// BEO-9522 csharp2 writeAction
 
 		public static PermissionGetCurrentPermissionsRequestBuilder GetCurrentPermissions()
 		{
 			return new PermissionGetCurrentPermissionsRequestBuilder();
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static PermissionListRequestBuilder List(PermissionFilter filter = null)
 		{
 			return new PermissionListRequestBuilder(filter);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static PermissionRemovePermissionItemRequestBuilder RemovePermissionItem(long permissionId, long permissionItemId)
 		{

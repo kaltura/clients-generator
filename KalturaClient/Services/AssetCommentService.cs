@@ -36,7 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-// BEO-9522 csharp2 before comment
 	public class AssetCommentAddRequestBuilder : RequestBuilder<AssetComment>
 	{
 		#region Constants
@@ -76,8 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 	public class AssetCommentListRequestBuilder : RequestBuilder<ListResponse<AssetComment>>
 	{
 		#region Constants
@@ -128,16 +125,11 @@ namespace Kaltura.Services
 		private AssetCommentService()
 		{
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
 
 		public static AssetCommentAddRequestBuilder Add(AssetComment comment)
 		{
 			return new AssetCommentAddRequestBuilder(comment);
 		}
-// BEO-9522 csharp2 writeAction
-// BEO-9522 csharp2 before comment
-// BEO-9522 csharp2 before comment
 
 		public static AssetCommentListRequestBuilder List(AssetCommentFilter filter, FilterPager pager = null)
 		{
