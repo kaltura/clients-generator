@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class PaymentGatewayProfileAddRequestBuilder : RequestBuilder<PaymentGatewayProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PaymentGatewayProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PaymentGatewayProfileGenerateSharedSecretRequestBuilder : RequestBuilder<PaymentGatewayProfile>
 	{
 		#region Constants
@@ -155,6 +158,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class PaymentGatewayProfileGetConfigurationRequestBuilder : RequestBuilder<PaymentGatewayConfiguration>
 	{
 		#region Constants
@@ -233,6 +239,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class PaymentGatewayProfileUpdateRequestBuilder : RequestBuilder<PaymentGatewayProfile>
 	{
 		#region Constants
@@ -283,31 +291,45 @@ namespace Kaltura.Services
 		private PaymentGatewayProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PaymentGatewayProfileAddRequestBuilder Add(PaymentGatewayProfile paymentGateway)
 		{
 			return new PaymentGatewayProfileAddRequestBuilder(paymentGateway);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PaymentGatewayProfileDeleteRequestBuilder Delete(int paymentGatewayId)
 		{
 			return new PaymentGatewayProfileDeleteRequestBuilder(paymentGatewayId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PaymentGatewayProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int paymentGatewayId)
 		{
 			return new PaymentGatewayProfileGenerateSharedSecretRequestBuilder(paymentGatewayId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static PaymentGatewayProfileGetConfigurationRequestBuilder GetConfiguration(string alias, string intent, IList<KeyValue> extraParameters)
 		{
 			return new PaymentGatewayProfileGetConfigurationRequestBuilder(alias, intent, extraParameters);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static PaymentGatewayProfileListRequestBuilder List()
 		{
 			return new PaymentGatewayProfileListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static PaymentGatewayProfileUpdateRequestBuilder Update(int paymentGatewayId, PaymentGatewayProfile paymentGateway)
 		{

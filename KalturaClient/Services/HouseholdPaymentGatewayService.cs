@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewayDisableRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -77,6 +78,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewayEnableRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,6 +120,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewayGetChargeIDRequestBuilder : RequestBuilder<string>
 	{
 		#region Constants
@@ -157,6 +160,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewayInvokeRequestBuilder : RequestBuilder<PaymentGatewayConfiguration>
 	{
 		#region Constants
@@ -235,6 +241,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewayResumeRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -279,6 +287,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewaySetChargeIDRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -325,6 +335,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentGatewaySuspendRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -375,41 +387,61 @@ namespace Kaltura.Services
 		private HouseholdPaymentGatewayService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewayDisableRequestBuilder Disable(int paymentGatewayId)
 		{
 			return new HouseholdPaymentGatewayDisableRequestBuilder(paymentGatewayId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewayEnableRequestBuilder Enable(int paymentGatewayId)
 		{
 			return new HouseholdPaymentGatewayEnableRequestBuilder(paymentGatewayId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewayGetChargeIDRequestBuilder GetChargeID(string paymentGatewayExternalId)
 		{
 			return new HouseholdPaymentGatewayGetChargeIDRequestBuilder(paymentGatewayExternalId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewayInvokeRequestBuilder Invoke(int paymentGatewayId, string intent, IList<KeyValue> extraParameters)
 		{
 			return new HouseholdPaymentGatewayInvokeRequestBuilder(paymentGatewayId, intent, extraParameters);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static HouseholdPaymentGatewayListRequestBuilder List()
 		{
 			return new HouseholdPaymentGatewayListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewayResumeRequestBuilder Resume(int paymentGatewayId, IList<KeyValue> adapterData = null)
 		{
 			return new HouseholdPaymentGatewayResumeRequestBuilder(paymentGatewayId, adapterData);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewaySetChargeIDRequestBuilder SetChargeID(string paymentGatewayExternalId, string chargeId)
 		{
 			return new HouseholdPaymentGatewaySetChargeIDRequestBuilder(paymentGatewayExternalId, chargeId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentGatewaySuspendRequestBuilder Suspend(int paymentGatewayId, SuspendSettings suspendSettings = null)
 		{

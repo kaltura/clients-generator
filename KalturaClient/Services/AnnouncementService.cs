@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class AnnouncementAddRequestBuilder : RequestBuilder<Announcement>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AnnouncementDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -147,6 +149,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AnnouncementListRequestBuilder : RequestBuilder<ListResponse<Announcement>>
 	{
 		#region Constants
@@ -191,6 +195,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AnnouncementUpdateRequestBuilder : RequestBuilder<Announcement>
 	{
 		#region Constants
@@ -235,6 +241,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AnnouncementUpdateStatusRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -287,31 +295,45 @@ namespace Kaltura.Services
 		private AnnouncementService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AnnouncementAddRequestBuilder Add(Announcement announcement)
 		{
 			return new AnnouncementAddRequestBuilder(announcement);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AnnouncementDeleteRequestBuilder Delete(long id)
 		{
 			return new AnnouncementDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static AnnouncementEnableSystemAnnouncementsRequestBuilder EnableSystemAnnouncements()
 		{
 			return new AnnouncementEnableSystemAnnouncementsRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AnnouncementListRequestBuilder List(AnnouncementFilter filter, FilterPager pager = null)
 		{
 			return new AnnouncementListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AnnouncementUpdateRequestBuilder Update(int announcementId, Announcement announcement)
 		{
 			return new AnnouncementUpdateRequestBuilder(announcementId, announcement);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AnnouncementUpdateStatusRequestBuilder UpdateStatus(long id, bool status)
 		{

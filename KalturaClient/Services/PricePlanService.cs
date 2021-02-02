@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class PricePlanListRequestBuilder : RequestBuilder<ListResponse<PricePlan>>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class PricePlanUpdateRequestBuilder : RequestBuilder<PricePlan>
 	{
 		#region Constants
@@ -125,11 +128,16 @@ namespace Kaltura.Services
 		private PricePlanService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PricePlanListRequestBuilder List(PricePlanFilter filter = null)
 		{
 			return new PricePlanListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static PricePlanUpdateRequestBuilder Update(long id, PricePlan pricePlan)
 		{

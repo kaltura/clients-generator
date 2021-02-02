@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class MessageTemplateGetRequestBuilder : RequestBuilder<MessageTemplate>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class MessageTemplateUpdateRequestBuilder : RequestBuilder<MessageTemplate>
 	{
 		#region Constants
@@ -125,11 +128,16 @@ namespace Kaltura.Services
 		private MessageTemplateService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static MessageTemplateGetRequestBuilder Get(MessageTemplateType messageType)
 		{
 			return new MessageTemplateGetRequestBuilder(messageType);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static MessageTemplateUpdateRequestBuilder Update(MessageTemplateType messageType, MessageTemplate template)
 		{

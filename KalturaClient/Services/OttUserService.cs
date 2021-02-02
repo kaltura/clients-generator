@@ -36,6 +36,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserActivateRequestBuilder : RequestBuilder<OTTUser>
 	{
 		#region Constants
@@ -85,6 +88,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class OttUserAddRoleRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -126,6 +130,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserAnonymousLoginRequestBuilder : RequestBuilder<LoginSession>
 	{
 		#region Constants
@@ -259,6 +265,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class OttUserListRequestBuilder : RequestBuilder<ListResponse<OTTUser>>
 	{
 		#region Constants
@@ -298,6 +305,11 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserLoginRequestBuilder : RequestBuilder<LoginResponse>
 	{
 		#region Constants
@@ -357,6 +369,10 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserLoginWithPinRequestBuilder : RequestBuilder<LoginResponse>
 	{
 		#region Constants
@@ -411,6 +427,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class OttUserLogoutRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -452,6 +469,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserRegisterRequestBuilder : RequestBuilder<OTTUser>
 	{
 		#region Constants
@@ -501,6 +521,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserResendActivationTokenRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -547,6 +569,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserResetPasswordRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -598,6 +623,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserSetInitialPasswordRequestBuilder : RequestBuilder<OTTUser>
 	{
 		#region Constants
@@ -647,6 +675,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserUpdateRequestBuilder : RequestBuilder<OTTUser>
 	{
 		#region Constants
@@ -691,6 +721,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserUpdateDynamicDataRequestBuilder : RequestBuilder<OTTUserDynamicData>
 	{
 		#region Constants
@@ -735,6 +767,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserUpdateLoginDataRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -786,6 +821,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class OttUserUpdatePasswordRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -836,91 +873,146 @@ namespace Kaltura.Services
 		private OttUserService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserActivateRequestBuilder Activate(int partnerId, string username, string activationToken)
 		{
 			return new OttUserActivateRequestBuilder(partnerId, username, activationToken);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static OttUserAddRoleRequestBuilder AddRole(long roleId)
 		{
 			return new OttUserAddRoleRequestBuilder(roleId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserAnonymousLoginRequestBuilder AnonymousLogin(int partnerId, string udid = null)
 		{
 			return new OttUserAnonymousLoginRequestBuilder(partnerId, udid);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static OttUserDeleteRequestBuilder Delete()
 		{
 			return new OttUserDeleteRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static OttUserGetRequestBuilder Get()
 		{
 			return new OttUserGetRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static OttUserGetEncryptedUserIdRequestBuilder GetEncryptedUserId()
 		{
 			return new OttUserGetEncryptedUserIdRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static OttUserListRequestBuilder List(OTTUserFilter filter = null)
 		{
 			return new OttUserListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserLoginRequestBuilder Login(int partnerId, string username = null, string password = null, IDictionary<string, StringValue> extraParams = null, string udid = null)
 		{
 			return new OttUserLoginRequestBuilder(partnerId, username, password, extraParams, udid);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserLoginWithPinRequestBuilder LoginWithPin(int partnerId, string pin, string udid = null, string secret = null)
 		{
 			return new OttUserLoginWithPinRequestBuilder(partnerId, pin, udid, secret);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static OttUserLogoutRequestBuilder Logout(IDictionary<string, StringValue> adapterData = null)
 		{
 			return new OttUserLogoutRequestBuilder(adapterData);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserRegisterRequestBuilder Register(int partnerId, OTTUser user, string password)
 		{
 			return new OttUserRegisterRequestBuilder(partnerId, user, password);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserResendActivationTokenRequestBuilder ResendActivationToken(int partnerId, string username)
 		{
 			return new OttUserResendActivationTokenRequestBuilder(partnerId, username);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserResetPasswordRequestBuilder ResetPassword(int partnerId, string username, string templateName = null)
 		{
 			return new OttUserResetPasswordRequestBuilder(partnerId, username, templateName);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserSetInitialPasswordRequestBuilder SetInitialPassword(int partnerId, string token, string password)
 		{
 			return new OttUserSetInitialPasswordRequestBuilder(partnerId, token, password);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserUpdateRequestBuilder Update(OTTUser user, string id = null)
 		{
 			return new OttUserUpdateRequestBuilder(user, id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserUpdateDynamicDataRequestBuilder UpdateDynamicData(string key, StringValue value)
 		{
 			return new OttUserUpdateDynamicDataRequestBuilder(key, value);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserUpdateLoginDataRequestBuilder UpdateLoginData(string username, string oldPassword, string newPassword)
 		{
 			return new OttUserUpdateLoginDataRequestBuilder(username, oldPassword, newPassword);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static OttUserUpdatePasswordRequestBuilder UpdatePassword(int userId, string password)
 		{

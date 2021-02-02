@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class ImageTypeAddRequestBuilder : RequestBuilder<ImageType>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ImageTypeDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ImageTypeListRequestBuilder : RequestBuilder<ListResponse<ImageType>>
 	{
 		#region Constants
@@ -155,6 +158,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ImageTypeUpdateRequestBuilder : RequestBuilder<ImageType>
 	{
 		#region Constants
@@ -205,21 +210,30 @@ namespace Kaltura.Services
 		private ImageTypeService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ImageTypeAddRequestBuilder Add(ImageType imageType)
 		{
 			return new ImageTypeAddRequestBuilder(imageType);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ImageTypeDeleteRequestBuilder Delete(long id)
 		{
 			return new ImageTypeDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ImageTypeListRequestBuilder List(ImageTypeFilter filter = null)
 		{
 			return new ImageTypeListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ImageTypeUpdateRequestBuilder Update(long id, ImageType imageType)
 		{

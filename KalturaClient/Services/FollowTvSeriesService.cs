@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class FollowTvSeriesAddRequestBuilder : RequestBuilder<FollowTvSeries>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class FollowTvSeriesDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class FollowTvSeriesDeleteWithTokenRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -165,6 +170,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class FollowTvSeriesListRequestBuilder : RequestBuilder<ListResponse<FollowTvSeries>>
 	{
 		#region Constants
@@ -215,21 +222,32 @@ namespace Kaltura.Services
 		private FollowTvSeriesService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static FollowTvSeriesAddRequestBuilder Add(FollowTvSeries followTvSeries)
 		{
 			return new FollowTvSeriesAddRequestBuilder(followTvSeries);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static FollowTvSeriesDeleteRequestBuilder Delete(int assetId)
 		{
 			return new FollowTvSeriesDeleteRequestBuilder(assetId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static FollowTvSeriesDeleteWithTokenRequestBuilder DeleteWithToken(int assetId, string token, int partnerId)
 		{
 			return new FollowTvSeriesDeleteWithTokenRequestBuilder(assetId, token, partnerId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static FollowTvSeriesListRequestBuilder List(FollowTvSeriesFilter filter, FilterPager pager = null)
 		{

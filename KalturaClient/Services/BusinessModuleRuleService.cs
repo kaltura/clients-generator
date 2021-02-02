@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class BusinessModuleRuleAddRequestBuilder : RequestBuilder<BusinessModuleRule>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class BusinessModuleRuleDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -114,6 +116,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class BusinessModuleRuleGetRequestBuilder : RequestBuilder<BusinessModuleRule>
 	{
 		#region Constants
@@ -153,6 +156,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class BusinessModuleRuleListRequestBuilder : RequestBuilder<ListResponse<BusinessModuleRule>>
 	{
 		#region Constants
@@ -192,6 +196,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class BusinessModuleRuleUpdateRequestBuilder : RequestBuilder<BusinessModuleRule>
 	{
 		#region Constants
@@ -242,26 +248,37 @@ namespace Kaltura.Services
 		private BusinessModuleRuleService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static BusinessModuleRuleAddRequestBuilder Add(BusinessModuleRule businessModuleRule)
 		{
 			return new BusinessModuleRuleAddRequestBuilder(businessModuleRule);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static BusinessModuleRuleDeleteRequestBuilder Delete(long id)
 		{
 			return new BusinessModuleRuleDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static BusinessModuleRuleGetRequestBuilder Get(long id)
 		{
 			return new BusinessModuleRuleGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static BusinessModuleRuleListRequestBuilder List(BusinessModuleRuleFilter filter = null)
 		{
 			return new BusinessModuleRuleListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static BusinessModuleRuleUpdateRequestBuilder Update(long id, BusinessModuleRule businessModuleRule)
 		{

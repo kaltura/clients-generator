@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class LicensedUrlGetRequestBuilder : RequestBuilder<LicensedUrl>
 	{
 		#region Constants
@@ -81,6 +82,8 @@ namespace Kaltura.Services
 		private LicensedUrlService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static LicensedUrlGetRequestBuilder Get(LicensedUrlBaseRequest request)
 		{

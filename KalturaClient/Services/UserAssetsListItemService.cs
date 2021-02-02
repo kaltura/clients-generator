@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class UserAssetsListItemAddRequestBuilder : RequestBuilder<UserAssetsListItem>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class UserAssetsListItemDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -121,6 +124,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class UserAssetsListItemGetRequestBuilder : RequestBuilder<UserAssetsListItem>
 	{
 		#region Constants
@@ -176,16 +182,25 @@ namespace Kaltura.Services
 		private UserAssetsListItemService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static UserAssetsListItemAddRequestBuilder Add(UserAssetsListItem userAssetsListItem)
 		{
 			return new UserAssetsListItemAddRequestBuilder(userAssetsListItem);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static UserAssetsListItemDeleteRequestBuilder Delete(string assetId, UserAssetsListType listType)
 		{
 			return new UserAssetsListItemDeleteRequestBuilder(assetId, listType);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static UserAssetsListItemGetRequestBuilder Get(string assetId, UserAssetsListType listType, UserAssetsListItemType itemType)
 		{

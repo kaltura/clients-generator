@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CurrencyListRequestBuilder : RequestBuilder<ListResponse<Currency>>
 	{
 		#region Constants
@@ -81,6 +82,8 @@ namespace Kaltura.Services
 		private CurrencyService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CurrencyListRequestBuilder List(CurrencyFilter filter)
 		{

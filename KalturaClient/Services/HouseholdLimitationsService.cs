@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class HouseholdLimitationsGetRequestBuilder : RequestBuilder<HouseholdLimitations>
 	{
 		#region Constants
@@ -110,11 +111,14 @@ namespace Kaltura.Services
 		private HouseholdLimitationsService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdLimitationsGetRequestBuilder Get(int id)
 		{
 			return new HouseholdLimitationsGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static HouseholdLimitationsListRequestBuilder List()
 		{

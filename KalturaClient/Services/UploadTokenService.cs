@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class UploadTokenAddRequestBuilder : RequestBuilder<UploadToken>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class UploadTokenUploadRequestBuilder : RequestBuilder<UploadToken>
 	{
 		#region Constants
@@ -125,11 +128,16 @@ namespace Kaltura.Services
 		private UploadTokenService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static UploadTokenAddRequestBuilder Add(UploadToken uploadToken = null)
 		{
 			return new UploadTokenAddRequestBuilder(uploadToken);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static UploadTokenUploadRequestBuilder Upload(string uploadTokenId, Stream fileData)
 		{

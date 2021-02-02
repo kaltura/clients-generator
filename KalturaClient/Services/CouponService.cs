@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CouponGetRequestBuilder : RequestBuilder<Coupon>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CouponListRequestBuilder : RequestBuilder<ListResponse<Coupon>>
 	{
 		#region Constants
@@ -120,11 +122,15 @@ namespace Kaltura.Services
 		private CouponService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CouponGetRequestBuilder Get(string code)
 		{
 			return new CouponGetRequestBuilder(code);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CouponListRequestBuilder List(CouponFilter filter)
 		{

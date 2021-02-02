@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class ExternalChannelProfileAddRequestBuilder : RequestBuilder<ExternalChannelProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ExternalChannelProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ExternalChannelProfileListRequestBuilder : RequestBuilder<ListResponse<ExternalChannelProfile>>
 	{
 		#region Constants
@@ -155,6 +158,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ExternalChannelProfileUpdateRequestBuilder : RequestBuilder<ExternalChannelProfile>
 	{
 		#region Constants
@@ -205,21 +210,30 @@ namespace Kaltura.Services
 		private ExternalChannelProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExternalChannelProfileAddRequestBuilder Add(ExternalChannelProfile externalChannel)
 		{
 			return new ExternalChannelProfileAddRequestBuilder(externalChannel);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExternalChannelProfileDeleteRequestBuilder Delete(int externalChannelId)
 		{
 			return new ExternalChannelProfileDeleteRequestBuilder(externalChannelId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExternalChannelProfileListRequestBuilder List(ExternalChannelProfileFilter filter = null)
 		{
 			return new ExternalChannelProfileListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ExternalChannelProfileUpdateRequestBuilder Update(int externalChannelId, ExternalChannelProfile externalChannel)
 		{

@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class PpvGetRequestBuilder : RequestBuilder<Ppv>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PpvListRequestBuilder : RequestBuilder<ListResponse<Ppv>>
 	{
 		#region Constants
@@ -120,11 +122,15 @@ namespace Kaltura.Services
 		private PpvService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PpvGetRequestBuilder Get(long id)
 		{
 			return new PpvGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PpvListRequestBuilder List(PpvFilter filter = null)
 		{

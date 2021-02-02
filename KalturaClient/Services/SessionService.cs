@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class SessionGetRequestBuilder : RequestBuilder<Session>
 	{
 		#region Constants
@@ -106,6 +107,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SessionSwitchUserRequestBuilder : RequestBuilder<LoginSession>
 	{
 		#region Constants
@@ -151,16 +153,21 @@ namespace Kaltura.Services
 		private SessionService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SessionGetRequestBuilder Get(string session = null)
 		{
 			return new SessionGetRequestBuilder(session);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static SessionRevokeRequestBuilder Revoke()
 		{
 			return new SessionRevokeRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SessionSwitchUserRequestBuilder SwitchUser(string userIdToSwitch)
 		{

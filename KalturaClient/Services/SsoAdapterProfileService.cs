@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class SsoAdapterProfileAddRequestBuilder : RequestBuilder<SSOAdapterProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SsoAdapterProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SsoAdapterProfileGenerateSharedSecretRequestBuilder : RequestBuilder<SSOAdapterProfile>
 	{
 		#region Constants
@@ -155,6 +158,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SsoAdapterProfileInvokeRequestBuilder : RequestBuilder<SSOAdapterProfileInvoke>
 	{
 		#region Constants
@@ -228,6 +233,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SsoAdapterProfileUpdateRequestBuilder : RequestBuilder<SSOAdapterProfile>
 	{
 		#region Constants
@@ -278,31 +285,44 @@ namespace Kaltura.Services
 		private SsoAdapterProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SsoAdapterProfileAddRequestBuilder Add(SSOAdapterProfile ssoAdapter)
 		{
 			return new SsoAdapterProfileAddRequestBuilder(ssoAdapter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SsoAdapterProfileDeleteRequestBuilder Delete(int ssoAdapterId)
 		{
 			return new SsoAdapterProfileDeleteRequestBuilder(ssoAdapterId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SsoAdapterProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int ssoAdapterId)
 		{
 			return new SsoAdapterProfileGenerateSharedSecretRequestBuilder(ssoAdapterId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SsoAdapterProfileInvokeRequestBuilder Invoke(string intent, IList<KeyValue> adapterData)
 		{
 			return new SsoAdapterProfileInvokeRequestBuilder(intent, adapterData);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static SsoAdapterProfileListRequestBuilder List()
 		{
 			return new SsoAdapterProfileListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SsoAdapterProfileUpdateRequestBuilder Update(int ssoAdapterId, SSOAdapterProfile ssoAdapter)
 		{

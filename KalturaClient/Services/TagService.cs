@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class TagAddRequestBuilder : RequestBuilder<Tag>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class TagDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class TagListRequestBuilder : RequestBuilder<ListResponse<Tag>>
 	{
 		#region Constants
@@ -160,6 +164,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class TagUpdateRequestBuilder : RequestBuilder<Tag>
 	{
 		#region Constants
@@ -210,21 +216,31 @@ namespace Kaltura.Services
 		private TagService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TagAddRequestBuilder Add(Tag tag)
 		{
 			return new TagAddRequestBuilder(tag);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TagDeleteRequestBuilder Delete(long id)
 		{
 			return new TagDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static TagListRequestBuilder List(TagFilter filter = null, FilterPager pager = null)
 		{
 			return new TagListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static TagUpdateRequestBuilder Update(long id, Tag tag)
 		{

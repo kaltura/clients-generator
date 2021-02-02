@@ -71,6 +71,7 @@ namespace Kaltura.Services
 		private DeviceBrandService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static DeviceBrandListRequestBuilder List()
 		{

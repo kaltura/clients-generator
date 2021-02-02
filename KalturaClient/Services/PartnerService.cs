@@ -71,6 +71,7 @@ namespace Kaltura.Services
 		private PartnerService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static PartnerExternalLoginRequestBuilder ExternalLogin()
 		{

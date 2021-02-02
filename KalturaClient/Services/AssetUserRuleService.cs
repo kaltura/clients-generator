@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class AssetUserRuleAddRequestBuilder : RequestBuilder<AssetUserRule>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetUserRuleAttachUserRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -114,6 +116,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetUserRuleDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -153,6 +156,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetUserRuleDetachUserRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -192,6 +196,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetUserRuleListRequestBuilder : RequestBuilder<ListResponse<AssetUserRule>>
 	{
 		#region Constants
@@ -231,6 +236,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AssetUserRuleUpdateRequestBuilder : RequestBuilder<AssetUserRule>
 	{
 		#region Constants
@@ -281,31 +288,44 @@ namespace Kaltura.Services
 		private AssetUserRuleService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetUserRuleAddRequestBuilder Add(AssetUserRule assetUserRule)
 		{
 			return new AssetUserRuleAddRequestBuilder(assetUserRule);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetUserRuleAttachUserRequestBuilder AttachUser(long ruleId)
 		{
 			return new AssetUserRuleAttachUserRequestBuilder(ruleId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetUserRuleDeleteRequestBuilder Delete(long id)
 		{
 			return new AssetUserRuleDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetUserRuleDetachUserRequestBuilder DetachUser(long ruleId)
 		{
 			return new AssetUserRuleDetachUserRequestBuilder(ruleId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetUserRuleListRequestBuilder List(AssetUserRuleFilter filter = null)
 		{
 			return new AssetUserRuleListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AssetUserRuleUpdateRequestBuilder Update(long id, AssetUserRule assetUserRule)
 		{

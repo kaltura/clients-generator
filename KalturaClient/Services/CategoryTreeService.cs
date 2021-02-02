@@ -36,6 +36,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CategoryTreeDuplicateRequestBuilder : RequestBuilder<CategoryTree>
 	{
 		#region Constants
@@ -80,6 +82,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CategoryTreeGetRequestBuilder : RequestBuilder<CategoryTree>
 	{
 		#region Constants
@@ -124,6 +128,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CategoryTreeGetByVersionRequestBuilder : RequestBuilder<CategoryTree>
 	{
 		#region Constants
@@ -169,18 +174,26 @@ namespace Kaltura.Services
 		private CategoryTreeService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CategoryTreeDuplicateRequestBuilder Duplicate(long categoryItemId, string name)
 		{
 			return new CategoryTreeDuplicateRequestBuilder(categoryItemId, name);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CategoryTreeGetRequestBuilder Get(long categoryItemId, bool filter = false)
 		{
 			return new CategoryTreeGetRequestBuilder(categoryItemId, filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
-		public static CategoryTreeGetByVersionRequestBuilder GetByVersion(long versionId = null)
+		public static CategoryTreeGetByVersionRequestBuilder GetByVersion(long versionId = long.MinValue)
 		{
 			return new CategoryTreeGetByVersionRequestBuilder(versionId);
 		}

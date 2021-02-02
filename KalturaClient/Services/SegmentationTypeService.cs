@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class SegmentationTypeAddRequestBuilder : RequestBuilder<SegmentationType>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SegmentationTypeDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SegmentationTypeListRequestBuilder : RequestBuilder<ListResponse<SegmentationType>>
 	{
 		#region Constants
@@ -160,6 +164,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SegmentationTypeUpdateRequestBuilder : RequestBuilder<SegmentationType>
 	{
 		#region Constants
@@ -210,21 +216,31 @@ namespace Kaltura.Services
 		private SegmentationTypeService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SegmentationTypeAddRequestBuilder Add(SegmentationType segmentationType)
 		{
 			return new SegmentationTypeAddRequestBuilder(segmentationType);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SegmentationTypeDeleteRequestBuilder Delete(long id)
 		{
 			return new SegmentationTypeDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SegmentationTypeListRequestBuilder List(BaseSegmentationTypeFilter filter = null, FilterPager pager = null)
 		{
 			return new SegmentationTypeListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SegmentationTypeUpdateRequestBuilder Update(long segmentationTypeId, SegmentationType segmentationType)
 		{

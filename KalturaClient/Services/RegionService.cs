@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class RegionAddRequestBuilder : RequestBuilder<Region>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RegionDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -114,6 +116,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class RegionListRequestBuilder : RequestBuilder<ListResponse<Region>>
 	{
 		#region Constants
@@ -158,6 +162,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class RegionUpdateRequestBuilder : RequestBuilder<Region>
 	{
 		#region Constants
@@ -208,21 +214,31 @@ namespace Kaltura.Services
 		private RegionService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RegionAddRequestBuilder Add(Region region)
 		{
 			return new RegionAddRequestBuilder(region);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RegionDeleteRequestBuilder Delete(int id)
 		{
 			return new RegionDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static RegionListRequestBuilder List(BaseRegionFilter filter, FilterPager pager = null)
 		{
 			return new RegionListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static RegionUpdateRequestBuilder Update(int id, Region region)
 		{

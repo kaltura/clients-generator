@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CountryListRequestBuilder : RequestBuilder<ListResponse<Country>>
 	{
 		#region Constants
@@ -81,6 +82,8 @@ namespace Kaltura.Services
 		private CountryService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CountryListRequestBuilder List(CountryFilter filter)
 		{

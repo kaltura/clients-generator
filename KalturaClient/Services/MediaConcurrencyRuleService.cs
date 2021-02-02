@@ -71,6 +71,7 @@ namespace Kaltura.Services
 		private MediaConcurrencyRuleService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static MediaConcurrencyRuleListRequestBuilder List()
 		{

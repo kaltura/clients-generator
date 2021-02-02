@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class SmsAdapterProfileAddRequestBuilder : RequestBuilder<SmsAdapterProfile>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SmsAdapterProfileUpdateRequestBuilder : RequestBuilder<SmsAdapterProfile>
 	{
 		#region Constants
@@ -119,6 +122,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SmsAdapterProfileGetRequestBuilder : RequestBuilder<SmsAdapterProfile>
 	{
 		#region Constants
@@ -158,6 +162,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SmsAdapterProfileListRequestBuilder : RequestBuilder<ListResponse<SmsAdapterProfile>>
 	{
 		#region Constants
@@ -197,6 +202,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SmsAdapterProfileDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -236,6 +242,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SmsAdapterProfileGenerateSharedSecretRequestBuilder : RequestBuilder<SmsAdapterProfile>
 	{
 		#region Constants
@@ -281,31 +288,44 @@ namespace Kaltura.Services
 		private SmsAdapterProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SmsAdapterProfileAddRequestBuilder Add(SmsAdapterProfile objectToAdd)
 		{
 			return new SmsAdapterProfileAddRequestBuilder(objectToAdd);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SmsAdapterProfileUpdateRequestBuilder Update(long id, SmsAdapterProfile objectToUpdate)
 		{
 			return new SmsAdapterProfileUpdateRequestBuilder(id, objectToUpdate);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SmsAdapterProfileGetRequestBuilder Get(long id)
 		{
 			return new SmsAdapterProfileGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SmsAdapterProfileListRequestBuilder List(SmsAdapterProfileFilter filter)
 		{
 			return new SmsAdapterProfileListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SmsAdapterProfileDeleteRequestBuilder Delete(long id)
 		{
 			return new SmsAdapterProfileDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SmsAdapterProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int smsAdapterId)
 		{

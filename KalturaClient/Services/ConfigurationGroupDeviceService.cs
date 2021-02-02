@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupDeviceAddRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -77,6 +78,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupDeviceDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,6 +120,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupDeviceGetRequestBuilder : RequestBuilder<ConfigurationGroupDevice>
 	{
 		#region Constants
@@ -157,6 +160,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupDeviceListRequestBuilder : RequestBuilder<ListResponse<ConfigurationGroupDevice>>
 	{
 		#region Constants
@@ -207,21 +212,30 @@ namespace Kaltura.Services
 		private ConfigurationGroupDeviceService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupDeviceAddRequestBuilder Add(ConfigurationGroupDevice configurationGroupDevice)
 		{
 			return new ConfigurationGroupDeviceAddRequestBuilder(configurationGroupDevice);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupDeviceDeleteRequestBuilder Delete(string udid)
 		{
 			return new ConfigurationGroupDeviceDeleteRequestBuilder(udid);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupDeviceGetRequestBuilder Get(string udid)
 		{
 			return new ConfigurationGroupDeviceGetRequestBuilder(udid);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupDeviceListRequestBuilder List(ConfigurationGroupDeviceFilter filter, FilterPager pager = null)
 		{

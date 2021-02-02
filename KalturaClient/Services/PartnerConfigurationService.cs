@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class PartnerConfigurationListRequestBuilder : RequestBuilder<ListResponse<PartnerConfiguration>>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PartnerConfigurationUpdateRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -122,11 +124,15 @@ namespace Kaltura.Services
 		private PartnerConfigurationService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PartnerConfigurationListRequestBuilder List(PartnerConfigurationFilter filter)
 		{
 			return new PartnerConfigurationListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PartnerConfigurationUpdateRequestBuilder Update(PartnerConfiguration configuration)
 		{

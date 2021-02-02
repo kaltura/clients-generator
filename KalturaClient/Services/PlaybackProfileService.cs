@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class PlaybackProfileAddRequestBuilder : RequestBuilder<PlaybackProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PlaybackProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PlaybackProfileGenerateSharedSecretRequestBuilder : RequestBuilder<PlaybackProfile>
 	{
 		#region Constants
@@ -155,6 +158,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class PlaybackProfileListRequestBuilder : RequestBuilder<ListResponse<PlaybackProfile>>
 	{
 		#region Constants
@@ -194,6 +198,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class PlaybackProfileUpdateRequestBuilder : RequestBuilder<PlaybackProfile>
 	{
 		#region Constants
@@ -244,26 +250,37 @@ namespace Kaltura.Services
 		private PlaybackProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PlaybackProfileAddRequestBuilder Add(PlaybackProfile playbackProfile)
 		{
 			return new PlaybackProfileAddRequestBuilder(playbackProfile);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PlaybackProfileDeleteRequestBuilder Delete(int id)
 		{
 			return new PlaybackProfileDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PlaybackProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int id)
 		{
 			return new PlaybackProfileGenerateSharedSecretRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static PlaybackProfileListRequestBuilder List(PlaybackProfileFilter filter = null)
 		{
 			return new PlaybackProfileListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static PlaybackProfileUpdateRequestBuilder Update(int id, PlaybackProfile playbackProfile)
 		{

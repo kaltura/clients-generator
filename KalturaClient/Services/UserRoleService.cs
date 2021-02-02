@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class UserRoleAddRequestBuilder : RequestBuilder<UserRole>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class UserRoleDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class UserRoleListRequestBuilder : RequestBuilder<ListResponse<UserRole>>
 	{
 		#region Constants
@@ -155,6 +158,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class UserRoleUpdateRequestBuilder : RequestBuilder<UserRole>
 	{
 		#region Constants
@@ -205,21 +210,30 @@ namespace Kaltura.Services
 		private UserRoleService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static UserRoleAddRequestBuilder Add(UserRole role)
 		{
 			return new UserRoleAddRequestBuilder(role);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static UserRoleDeleteRequestBuilder Delete(long id)
 		{
 			return new UserRoleDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static UserRoleListRequestBuilder List(UserRoleFilter filter = null)
 		{
 			return new UserRoleListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static UserRoleUpdateRequestBuilder Update(long id, UserRole role)
 		{

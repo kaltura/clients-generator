@@ -36,6 +36,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SocialCommentListRequestBuilder : RequestBuilder<ListResponse<SocialComment>>
 	{
 		#region Constants
@@ -86,6 +88,9 @@ namespace Kaltura.Services
 		private SocialCommentService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SocialCommentListRequestBuilder List(SocialCommentFilter filter, FilterPager pager = null)
 		{

@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class IngestProfileAddRequestBuilder : RequestBuilder<IngestProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class IngestProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -145,6 +147,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class IngestProfileUpdateRequestBuilder : RequestBuilder<IngestProfile>
 	{
 		#region Constants
@@ -195,21 +199,29 @@ namespace Kaltura.Services
 		private IngestProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static IngestProfileAddRequestBuilder Add(IngestProfile ingestProfile)
 		{
 			return new IngestProfileAddRequestBuilder(ingestProfile);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static IngestProfileDeleteRequestBuilder Delete(int ingestProfileId)
 		{
 			return new IngestProfileDeleteRequestBuilder(ingestProfileId);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static IngestProfileListRequestBuilder List()
 		{
 			return new IngestProfileListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static IngestProfileUpdateRequestBuilder Update(int ingestProfileId, IngestProfile ingestProfile)
 		{

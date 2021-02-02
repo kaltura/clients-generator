@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CDVRAdapterProfileAddRequestBuilder : RequestBuilder<CDVRAdapterProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CDVRAdapterProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CDVRAdapterProfileGenerateSharedSecretRequestBuilder : RequestBuilder<CDVRAdapterProfile>
 	{
 		#region Constants
@@ -184,6 +187,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CDVRAdapterProfileUpdateRequestBuilder : RequestBuilder<CDVRAdapterProfile>
 	{
 		#region Constants
@@ -234,26 +239,36 @@ namespace Kaltura.Services
 		private CDVRAdapterProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CDVRAdapterProfileAddRequestBuilder Add(CDVRAdapterProfile adapter)
 		{
 			return new CDVRAdapterProfileAddRequestBuilder(adapter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CDVRAdapterProfileDeleteRequestBuilder Delete(int adapterId)
 		{
 			return new CDVRAdapterProfileDeleteRequestBuilder(adapterId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CDVRAdapterProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int adapterId)
 		{
 			return new CDVRAdapterProfileGenerateSharedSecretRequestBuilder(adapterId);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static CDVRAdapterProfileListRequestBuilder List()
 		{
 			return new CDVRAdapterProfileListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CDVRAdapterProfileUpdateRequestBuilder Update(int adapterId, CDVRAdapterProfile adapter)
 		{

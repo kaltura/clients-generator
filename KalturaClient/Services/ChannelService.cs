@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class ChannelAddRequestBuilder : RequestBuilder<Channel>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ChannelDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ChannelGetRequestBuilder : RequestBuilder<Channel>
 	{
 		#region Constants
@@ -155,6 +158,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ChannelListRequestBuilder : RequestBuilder<ListResponse<Channel>>
 	{
 		#region Constants
@@ -199,6 +204,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ChannelUpdateRequestBuilder : RequestBuilder<Channel>
 	{
 		#region Constants
@@ -249,26 +256,38 @@ namespace Kaltura.Services
 		private ChannelService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ChannelAddRequestBuilder Add(Channel channel)
 		{
 			return new ChannelAddRequestBuilder(channel);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ChannelDeleteRequestBuilder Delete(int channelId)
 		{
 			return new ChannelDeleteRequestBuilder(channelId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ChannelGetRequestBuilder Get(int id)
 		{
 			return new ChannelGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ChannelListRequestBuilder List(ChannelsFilter filter = null, FilterPager pager = null)
 		{
 			return new ChannelListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ChannelUpdateRequestBuilder Update(int id, Channel channel)
 		{

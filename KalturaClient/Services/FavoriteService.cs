@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class FavoriteAddRequestBuilder : RequestBuilder<Favorite>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class FavoriteDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class FavoriteListRequestBuilder : RequestBuilder<ListResponse<Favorite>>
 	{
 		#region Constants
@@ -161,16 +164,22 @@ namespace Kaltura.Services
 		private FavoriteService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static FavoriteAddRequestBuilder Add(Favorite favorite)
 		{
 			return new FavoriteAddRequestBuilder(favorite);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static FavoriteDeleteRequestBuilder Delete(long id)
 		{
 			return new FavoriteDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static FavoriteListRequestBuilder List(FavoriteFilter filter = null)
 		{

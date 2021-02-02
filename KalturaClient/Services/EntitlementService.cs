@@ -36,6 +36,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementApplyCouponRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -80,6 +82,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementCancelRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -126,6 +130,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class EntitlementCancelRenewalRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -165,6 +170,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class EntitlementCancelScheduledSubscriptionRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -237,6 +243,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementForceCancelRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -283,6 +291,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class EntitlementGetNextRenewalRequestBuilder : RequestBuilder<EntitlementRenewal>
 	{
 		#region Constants
@@ -322,6 +331,10 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementGrantRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -378,6 +391,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementListRequestBuilder : RequestBuilder<ListResponse<Entitlement>>
 	{
 		#region Constants
@@ -422,6 +437,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementSwapRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -473,6 +491,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class EntitlementUpdateRequestBuilder : RequestBuilder<Entitlement>
 	{
 		#region Constants
@@ -523,56 +543,87 @@ namespace Kaltura.Services
 		private EntitlementService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementApplyCouponRequestBuilder ApplyCoupon(long purchaseId, string couponCode)
 		{
 			return new EntitlementApplyCouponRequestBuilder(purchaseId, couponCode);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementCancelRequestBuilder Cancel(int assetId, TransactionType productType)
 		{
 			return new EntitlementCancelRequestBuilder(assetId, productType);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementCancelRenewalRequestBuilder CancelRenewal(string subscriptionId)
 		{
 			return new EntitlementCancelRenewalRequestBuilder(subscriptionId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementCancelScheduledSubscriptionRequestBuilder CancelScheduledSubscription(long scheduledSubscriptionId)
 		{
 			return new EntitlementCancelScheduledSubscriptionRequestBuilder(scheduledSubscriptionId);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static EntitlementExternalReconcileRequestBuilder ExternalReconcile()
 		{
 			return new EntitlementExternalReconcileRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementForceCancelRequestBuilder ForceCancel(int assetId, TransactionType productType)
 		{
 			return new EntitlementForceCancelRequestBuilder(assetId, productType);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementGetNextRenewalRequestBuilder GetNextRenewal(int id)
 		{
 			return new EntitlementGetNextRenewalRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementGrantRequestBuilder Grant(int productId, TransactionType productType, bool history, int contentId = 0)
 		{
 			return new EntitlementGrantRequestBuilder(productId, productType, history, contentId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementListRequestBuilder List(EntitlementFilter filter, FilterPager pager = null)
 		{
 			return new EntitlementListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementSwapRequestBuilder Swap(int currentProductId, int newProductId, bool history)
 		{
 			return new EntitlementSwapRequestBuilder(currentProductId, newProductId, history);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static EntitlementUpdateRequestBuilder Update(int id, Entitlement entitlement)
 		{

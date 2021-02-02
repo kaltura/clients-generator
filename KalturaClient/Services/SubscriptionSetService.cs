@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class SubscriptionSetAddRequestBuilder : RequestBuilder<SubscriptionSet>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SubscriptionSetDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SubscriptionSetGetRequestBuilder : RequestBuilder<SubscriptionSet>
 	{
 		#region Constants
@@ -155,6 +158,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SubscriptionSetListRequestBuilder : RequestBuilder<ListResponse<SubscriptionSet>>
 	{
 		#region Constants
@@ -194,6 +198,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SubscriptionSetUpdateRequestBuilder : RequestBuilder<SubscriptionSet>
 	{
 		#region Constants
@@ -244,26 +250,37 @@ namespace Kaltura.Services
 		private SubscriptionSetService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SubscriptionSetAddRequestBuilder Add(SubscriptionSet subscriptionSet)
 		{
 			return new SubscriptionSetAddRequestBuilder(subscriptionSet);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SubscriptionSetDeleteRequestBuilder Delete(long id)
 		{
 			return new SubscriptionSetDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SubscriptionSetGetRequestBuilder Get(long id)
 		{
 			return new SubscriptionSetGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SubscriptionSetListRequestBuilder List(SubscriptionSetFilter filter = null)
 		{
 			return new SubscriptionSetListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SubscriptionSetUpdateRequestBuilder Update(long id, SubscriptionSet subscriptionSet)
 		{

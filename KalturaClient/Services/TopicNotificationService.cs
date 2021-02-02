@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class TopicNotificationAddRequestBuilder : RequestBuilder<TopicNotification>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class TopicNotificationDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -114,6 +116,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class TopicNotificationListRequestBuilder : RequestBuilder<ListResponse<TopicNotification>>
 	{
 		#region Constants
@@ -153,6 +156,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class TopicNotificationSubscribeRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -192,6 +196,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class TopicNotificationUnsubscribeRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -231,6 +236,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class TopicNotificationUpdateRequestBuilder : RequestBuilder<TopicNotification>
 	{
 		#region Constants
@@ -281,31 +288,44 @@ namespace Kaltura.Services
 		private TopicNotificationService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationAddRequestBuilder Add(TopicNotification topicNotification)
 		{
 			return new TopicNotificationAddRequestBuilder(topicNotification);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationDeleteRequestBuilder Delete(long id)
 		{
 			return new TopicNotificationDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationListRequestBuilder List(TopicNotificationFilter filter)
 		{
 			return new TopicNotificationListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationSubscribeRequestBuilder Subscribe(long topicNotificationId)
 		{
 			return new TopicNotificationSubscribeRequestBuilder(topicNotificationId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationUnsubscribeRequestBuilder Unsubscribe(long topicNotificationId)
 		{
 			return new TopicNotificationUnsubscribeRequestBuilder(topicNotificationId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static TopicNotificationUpdateRequestBuilder Update(int id, TopicNotification topicNotification)
 		{

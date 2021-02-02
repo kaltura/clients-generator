@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class BulkUploadGetRequestBuilder : RequestBuilder<BulkUpload>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class BulkUploadListRequestBuilder : RequestBuilder<ListResponse<BulkUpload>>
 	{
 		#region Constants
@@ -125,11 +128,16 @@ namespace Kaltura.Services
 		private BulkUploadService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static BulkUploadGetRequestBuilder Get(long id)
 		{
 			return new BulkUploadGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static BulkUploadListRequestBuilder List(BulkUploadFilter filter, FilterPager pager = null)
 		{

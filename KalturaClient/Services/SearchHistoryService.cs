@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class SearchHistoryCleanRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -77,6 +78,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class SearchHistoryDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -118,6 +120,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class SearchHistoryListRequestBuilder : RequestBuilder<ListResponse<SearchHistory>>
 	{
 		#region Constants
@@ -168,16 +172,23 @@ namespace Kaltura.Services
 		private SearchHistoryService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SearchHistoryCleanRequestBuilder Clean(SearchHistoryFilter filter = null)
 		{
 			return new SearchHistoryCleanRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static SearchHistoryDeleteRequestBuilder Delete(string id)
 		{
 			return new SearchHistoryDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static SearchHistoryListRequestBuilder List(SearchHistoryFilter filter = null, FilterPager pager = null)
 		{

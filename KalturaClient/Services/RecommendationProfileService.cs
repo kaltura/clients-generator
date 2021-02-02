@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class RecommendationProfileAddRequestBuilder : RequestBuilder<RecommendationProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RecommendationProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RecommendationProfileGenerateSharedSecretRequestBuilder : RequestBuilder<RecommendationProfile>
 	{
 		#region Constants
@@ -184,6 +187,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class RecommendationProfileUpdateRequestBuilder : RequestBuilder<RecommendationProfile>
 	{
 		#region Constants
@@ -234,26 +239,36 @@ namespace Kaltura.Services
 		private RecommendationProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecommendationProfileAddRequestBuilder Add(RecommendationProfile recommendationEngine)
 		{
 			return new RecommendationProfileAddRequestBuilder(recommendationEngine);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecommendationProfileDeleteRequestBuilder Delete(int id)
 		{
 			return new RecommendationProfileDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecommendationProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int recommendationEngineId)
 		{
 			return new RecommendationProfileGenerateSharedSecretRequestBuilder(recommendationEngineId);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static RecommendationProfileListRequestBuilder List()
 		{
 			return new RecommendationProfileListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static RecommendationProfileUpdateRequestBuilder Update(int recommendationEngineId, RecommendationProfile recommendationEngine)
 		{

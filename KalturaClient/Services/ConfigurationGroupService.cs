@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupAddRequestBuilder : RequestBuilder<ConfigurationGroup>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupGetRequestBuilder : RequestBuilder<ConfigurationGroup>
 	{
 		#region Constants
@@ -184,6 +187,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ConfigurationGroupUpdateRequestBuilder : RequestBuilder<ConfigurationGroup>
 	{
 		#region Constants
@@ -234,26 +239,36 @@ namespace Kaltura.Services
 		private ConfigurationGroupService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupAddRequestBuilder Add(ConfigurationGroup configurationGroup)
 		{
 			return new ConfigurationGroupAddRequestBuilder(configurationGroup);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupDeleteRequestBuilder Delete(string id)
 		{
 			return new ConfigurationGroupDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupGetRequestBuilder Get(string id)
 		{
 			return new ConfigurationGroupGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static ConfigurationGroupListRequestBuilder List()
 		{
 			return new ConfigurationGroupListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ConfigurationGroupUpdateRequestBuilder Update(string id, ConfigurationGroup configurationGroup)
 		{

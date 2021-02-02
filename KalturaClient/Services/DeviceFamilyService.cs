@@ -71,6 +71,7 @@ namespace Kaltura.Services
 		private DeviceFamilyService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static DeviceFamilyListRequestBuilder List()
 		{

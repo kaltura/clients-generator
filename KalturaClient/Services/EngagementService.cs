@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class EngagementAddRequestBuilder : RequestBuilder<Engagement>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class EngagementDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class EngagementGetRequestBuilder : RequestBuilder<Engagement>
 	{
 		#region Constants
@@ -155,6 +158,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class EngagementListRequestBuilder : RequestBuilder<ListResponse<Engagement>>
 	{
 		#region Constants
@@ -200,21 +204,29 @@ namespace Kaltura.Services
 		private EngagementService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EngagementAddRequestBuilder Add(Engagement engagement)
 		{
 			return new EngagementAddRequestBuilder(engagement);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EngagementDeleteRequestBuilder Delete(int id)
 		{
 			return new EngagementDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EngagementGetRequestBuilder Get(int id)
 		{
 			return new EngagementGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EngagementListRequestBuilder List(EngagementFilter filter)
 		{

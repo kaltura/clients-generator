@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class ExportTaskAddRequestBuilder : RequestBuilder<ExportTask>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ExportTaskDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ExportTaskGetRequestBuilder : RequestBuilder<ExportTask>
 	{
 		#region Constants
@@ -155,6 +158,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class ExportTaskListRequestBuilder : RequestBuilder<ListResponse<ExportTask>>
 	{
 		#region Constants
@@ -194,6 +198,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class ExportTaskUpdateRequestBuilder : RequestBuilder<ExportTask>
 	{
 		#region Constants
@@ -244,26 +250,37 @@ namespace Kaltura.Services
 		private ExportTaskService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExportTaskAddRequestBuilder Add(ExportTask task)
 		{
 			return new ExportTaskAddRequestBuilder(task);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExportTaskDeleteRequestBuilder Delete(long id)
 		{
 			return new ExportTaskDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExportTaskGetRequestBuilder Get(long id)
 		{
 			return new ExportTaskGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static ExportTaskListRequestBuilder List(ExportTaskFilter filter = null)
 		{
 			return new ExportTaskListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static ExportTaskUpdateRequestBuilder Update(long id, ExportTask task)
 		{

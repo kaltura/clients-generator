@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class AssetFilePpvAddRequestBuilder : RequestBuilder<AssetFilePpv>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AssetFilePpvDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -121,6 +124,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetFilePpvListRequestBuilder : RequestBuilder<ListResponse<AssetFilePpv>>
 	{
 		#region Constants
@@ -160,6 +164,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AssetFilePpvUpdateRequestBuilder : RequestBuilder<AssetFilePpv>
 	{
 		#region Constants
@@ -215,21 +222,32 @@ namespace Kaltura.Services
 		private AssetFilePpvService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetFilePpvAddRequestBuilder Add(AssetFilePpv assetFilePpv)
 		{
 			return new AssetFilePpvAddRequestBuilder(assetFilePpv);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AssetFilePpvDeleteRequestBuilder Delete(long assetFileId, long ppvModuleId)
 		{
 			return new AssetFilePpvDeleteRequestBuilder(assetFileId, ppvModuleId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetFilePpvListRequestBuilder List(AssetFilePpvFilter filter)
 		{
 			return new AssetFilePpvListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AssetFilePpvUpdateRequestBuilder Update(long assetFileId, long ppvModuleId, AssetFilePpv assetFilePpv)
 		{

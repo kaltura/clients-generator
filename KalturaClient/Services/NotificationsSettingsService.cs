@@ -65,6 +65,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class NotificationsSettingsUpdateRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -106,6 +107,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class NotificationsSettingsUpdateWithTokenRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -163,16 +167,23 @@ namespace Kaltura.Services
 		private NotificationsSettingsService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static NotificationsSettingsGetRequestBuilder Get()
 		{
 			return new NotificationsSettingsGetRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static NotificationsSettingsUpdateRequestBuilder Update(NotificationsSettings settings)
 		{
 			return new NotificationsSettingsUpdateRequestBuilder(settings);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static NotificationsSettingsUpdateWithTokenRequestBuilder UpdateWithToken(NotificationsSettings settings, string token, int partnerId)
 		{

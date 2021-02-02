@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentMethodAddRequestBuilder : RequestBuilder<HouseholdPaymentMethod>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentMethodForceRemoveRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -150,6 +153,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentMethodRemoveRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -196,6 +201,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class HouseholdPaymentMethodSetAsDefaultRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -248,26 +255,38 @@ namespace Kaltura.Services
 		private HouseholdPaymentMethodService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentMethodAddRequestBuilder Add(HouseholdPaymentMethod householdPaymentMethod)
 		{
 			return new HouseholdPaymentMethodAddRequestBuilder(householdPaymentMethod);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentMethodForceRemoveRequestBuilder ForceRemove(int paymentGatewayId, int paymentMethodId)
 		{
 			return new HouseholdPaymentMethodForceRemoveRequestBuilder(paymentGatewayId, paymentMethodId);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static HouseholdPaymentMethodListRequestBuilder List()
 		{
 			return new HouseholdPaymentMethodListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentMethodRemoveRequestBuilder Remove(int paymentGatewayId, int paymentMethodId)
 		{
 			return new HouseholdPaymentMethodRemoveRequestBuilder(paymentGatewayId, paymentMethodId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static HouseholdPaymentMethodSetAsDefaultRequestBuilder SetAsDefault(int paymentGatewayId, int paymentMethodId)
 		{

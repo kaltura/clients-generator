@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class RatioAddRequestBuilder : RequestBuilder<Ratio>
 	{
 		#region Constants
@@ -104,6 +105,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class RatioUpdateRequestBuilder : RequestBuilder<Ratio>
 	{
 		#region Constants
@@ -154,16 +157,22 @@ namespace Kaltura.Services
 		private RatioService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RatioAddRequestBuilder Add(Ratio ratio)
 		{
 			return new RatioAddRequestBuilder(ratio);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static RatioListRequestBuilder List()
 		{
 			return new RatioListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static RatioUpdateRequestBuilder Update(long id, Ratio ratio)
 		{

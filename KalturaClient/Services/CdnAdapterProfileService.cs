@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CdnAdapterProfileAddRequestBuilder : RequestBuilder<CDNAdapterProfile>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CdnAdapterProfileDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CdnAdapterProfileGenerateSharedSecretRequestBuilder : RequestBuilder<CDNAdapterProfile>
 	{
 		#region Constants
@@ -184,6 +187,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CdnAdapterProfileUpdateRequestBuilder : RequestBuilder<CDNAdapterProfile>
 	{
 		#region Constants
@@ -234,26 +239,36 @@ namespace Kaltura.Services
 		private CdnAdapterProfileService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CdnAdapterProfileAddRequestBuilder Add(CDNAdapterProfile adapter)
 		{
 			return new CdnAdapterProfileAddRequestBuilder(adapter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CdnAdapterProfileDeleteRequestBuilder Delete(int adapterId)
 		{
 			return new CdnAdapterProfileDeleteRequestBuilder(adapterId);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CdnAdapterProfileGenerateSharedSecretRequestBuilder GenerateSharedSecret(int adapterId)
 		{
 			return new CdnAdapterProfileGenerateSharedSecretRequestBuilder(adapterId);
 		}
+// BEO-9522 csharp2 writeAction
 
 		public static CdnAdapterProfileListRequestBuilder List()
 		{
 			return new CdnAdapterProfileListRequestBuilder();
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CdnAdapterProfileUpdateRequestBuilder Update(int adapterId, CDNAdapterProfile adapter)
 		{

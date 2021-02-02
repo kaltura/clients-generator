@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CompensationAddRequestBuilder : RequestBuilder<Compensation>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CompensationDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -114,6 +116,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CompensationGetRequestBuilder : RequestBuilder<Compensation>
 	{
 		#region Constants
@@ -159,16 +162,22 @@ namespace Kaltura.Services
 		private CompensationService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CompensationAddRequestBuilder Add(Compensation compensation)
 		{
 			return new CompensationAddRequestBuilder(compensation);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CompensationDeleteRequestBuilder Delete(long id)
 		{
 			return new CompensationDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CompensationGetRequestBuilder Get(long id)
 		{

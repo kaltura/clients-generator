@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CampaignAddRequestBuilder : RequestBuilder<Campaign>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CampaignUpdateRequestBuilder : RequestBuilder<Campaign>
 	{
 		#region Constants
@@ -119,6 +122,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CampaignDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -158,6 +162,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CampaignListRequestBuilder : RequestBuilder<ListResponse<Campaign>>
 	{
 		#region Constants
@@ -202,6 +208,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CampaignSetStateRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -252,26 +260,39 @@ namespace Kaltura.Services
 		private CampaignService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CampaignAddRequestBuilder Add(Campaign objectToAdd)
 		{
 			return new CampaignAddRequestBuilder(objectToAdd);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CampaignUpdateRequestBuilder Update(long id, Campaign objectToUpdate)
 		{
 			return new CampaignUpdateRequestBuilder(id, objectToUpdate);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CampaignDeleteRequestBuilder Delete(long id)
 		{
 			return new CampaignDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CampaignListRequestBuilder List(CampaignFilter filter, FilterPager pager = null)
 		{
 			return new CampaignListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CampaignSetStateRequestBuilder SetState(long campaignId, ObjectState newState)
 		{

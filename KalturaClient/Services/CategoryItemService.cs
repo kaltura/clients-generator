@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class CategoryItemAddRequestBuilder : RequestBuilder<CategoryItem>
 	{
 		#region Constants
@@ -75,6 +76,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CategoryItemUpdateRequestBuilder : RequestBuilder<CategoryItem>
 	{
 		#region Constants
@@ -119,6 +122,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class CategoryItemDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -158,6 +162,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class CategoryItemListRequestBuilder : RequestBuilder<ListResponse<CategoryItem>>
 	{
 		#region Constants
@@ -208,21 +214,31 @@ namespace Kaltura.Services
 		private CategoryItemService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CategoryItemAddRequestBuilder Add(CategoryItem objectToAdd)
 		{
 			return new CategoryItemAddRequestBuilder(objectToAdd);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CategoryItemUpdateRequestBuilder Update(long id, CategoryItem objectToUpdate)
 		{
 			return new CategoryItemUpdateRequestBuilder(id, objectToUpdate);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static CategoryItemDeleteRequestBuilder Delete(long id)
 		{
 			return new CategoryItemDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static CategoryItemListRequestBuilder List(CategoryItemFilter filter = null, FilterPager pager = null)
 		{

@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class AssetStructAddRequestBuilder : RequestBuilder<AssetStruct>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetStructDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -116,6 +118,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetStructGetRequestBuilder : RequestBuilder<AssetStruct>
 	{
 		#region Constants
@@ -155,6 +158,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class AssetStructListRequestBuilder : RequestBuilder<ListResponse<AssetStruct>>
 	{
 		#region Constants
@@ -194,6 +198,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class AssetStructUpdateRequestBuilder : RequestBuilder<AssetStruct>
 	{
 		#region Constants
@@ -244,26 +250,37 @@ namespace Kaltura.Services
 		private AssetStructService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetStructAddRequestBuilder Add(AssetStruct assetStruct)
 		{
 			return new AssetStructAddRequestBuilder(assetStruct);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetStructDeleteRequestBuilder Delete(long id)
 		{
 			return new AssetStructDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetStructGetRequestBuilder Get(long id)
 		{
 			return new AssetStructGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static AssetStructListRequestBuilder List(AssetStructFilter filter = null)
 		{
 			return new AssetStructListRequestBuilder(filter);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static AssetStructUpdateRequestBuilder Update(long id, AssetStruct assetStruct)
 		{

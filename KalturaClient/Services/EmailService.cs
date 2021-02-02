@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class EmailSendRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -83,6 +84,8 @@ namespace Kaltura.Services
 		private EmailService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static EmailSendRequestBuilder Send(EmailMessage emailMessage)
 		{

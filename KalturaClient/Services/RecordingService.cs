@@ -36,6 +36,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
 	public class RecordingAddRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -75,6 +76,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RecordingCancelRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -114,6 +116,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RecordingDeleteRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -153,6 +156,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RecordingGetRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -192,6 +196,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class RecordingListRequestBuilder : RequestBuilder<ListResponse<Recording>>
 	{
 		#region Constants
@@ -236,6 +242,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class RecordingProtectRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -275,6 +282,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class RecordingUpdateRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -325,36 +334,52 @@ namespace Kaltura.Services
 		private RecordingService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecordingAddRequestBuilder Add(Recording recording)
 		{
 			return new RecordingAddRequestBuilder(recording);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecordingCancelRequestBuilder Cancel(long id)
 		{
 			return new RecordingCancelRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecordingDeleteRequestBuilder Delete(long id)
 		{
 			return new RecordingDeleteRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecordingGetRequestBuilder Get(long id)
 		{
 			return new RecordingGetRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static RecordingListRequestBuilder List(RecordingFilter filter = null, FilterPager pager = null)
 		{
 			return new RecordingListRequestBuilder(filter, pager);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static RecordingProtectRequestBuilder Protect(long id)
 		{
 			return new RecordingProtectRequestBuilder(id);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static RecordingUpdateRequestBuilder Update(long id, Recording recording)
 		{

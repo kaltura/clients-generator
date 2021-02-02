@@ -36,6 +36,8 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class NotificationRegisterRequestBuilder : RequestBuilder<RegistryResponse>
 	{
 		#region Constants
@@ -80,6 +82,8 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class NotificationSendPushRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -126,6 +130,9 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 	public class NotificationSendSmsRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -177,6 +184,7 @@ namespace Kaltura.Services
 		}
 	}
 
+// BEO-9522 csharp2 before comment
 	public class NotificationSetDevicePushTokenRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -224,21 +232,33 @@ namespace Kaltura.Services
 		private NotificationService()
 		{
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static NotificationRegisterRequestBuilder Register(string identifier, NotificationType type)
 		{
 			return new NotificationRegisterRequestBuilder(identifier, type);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static NotificationSendPushRequestBuilder SendPush(int userId, PushMessage pushMessage)
 		{
 			return new NotificationSendPushRequestBuilder(userId, pushMessage);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
+// BEO-9522 csharp2 before comment
 
 		public static NotificationSendSmsRequestBuilder SendSms(string message, string phoneNumber = null, IDictionary<string, StringValue> adapterData = null)
 		{
 			return new NotificationSendSmsRequestBuilder(message, phoneNumber, adapterData);
 		}
+// BEO-9522 csharp2 writeAction
+// BEO-9522 csharp2 before comment
 
 		public static NotificationSetDevicePushTokenRequestBuilder SetDevicePushToken(string pushToken)
 		{
