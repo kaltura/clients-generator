@@ -945,6 +945,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 	function writeAction($serviceId, $serviceName, DOMElement $actionNode)
 	{
+		$this->appendLine("// BEO-9522 csharp2 writeAction");
 		$action = $actionNode->getAttribute("name");
 		if(!$this->shouldIncludeAction($serviceId, $action))
 			return;
