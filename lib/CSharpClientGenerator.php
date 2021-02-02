@@ -583,7 +583,7 @@ class CSharpClientGenerator extends ClientGeneratorFromXml
 					elseif ($type == "long") 
 					{
 						$value = $paramNode->getAttribute("default");
-						KalturaLog::info("BEO-9522 csharp default value: $value");
+						KalturaLog::info("123 BEO-9522 csharp default value: $value");
 						if ($value == "null")
 							$paramsStr .= "long.MinValue";
 					}	
