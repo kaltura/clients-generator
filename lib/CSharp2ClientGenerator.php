@@ -1053,6 +1053,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				}
 				else if ($type == "int" && $paramNode->hasAttribute("enumType"))
 				{
+					KalturaLog::info("BEO-9522 csharp2 line 1056");
 					$value = $paramNode->getAttribute("default");
 					if ($value == "null")
 						$value = "Int32.MinValue";
@@ -1061,9 +1062,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				}
 				elseif ($type == "int" && $paramNode->getAttribute("default") == "null") // because Partner.GetUsage has an int field with empty default value
 				{
+					KalturaLog::info("BEO-9522 csharp2 line 1065");
 					$param .= "Int32.MinValue";
 				}
-				elseif ($type == "long") 
+				elseif ($type == "bigint") 
 				{
 					$value = $paramNode->getAttribute("default");
 					KalturaLog::info("BEO-9522 csharp2 default value: $value");
