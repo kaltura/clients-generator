@@ -180,7 +180,7 @@ namespace Kaltura.Services
 			return new CategoryTreeGetRequestBuilder(categoryItemId, filter);
 		}
 
-		public static CategoryTreeGetByVersionRequestBuilder GetByVersion(long versionId = null)
+		public static CategoryTreeGetByVersionRequestBuilder GetByVersion(long versionId = long.MinValue)
 		{
 			return new CategoryTreeGetByVersionRequestBuilder(versionId);
 		}
