@@ -1036,7 +1036,6 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					break;
 			}
 
-
 			$param = "$dotNetType ".$this->fixParamName($paramName);
 			$optional = $paramNode->getAttribute("optional");
 			if ($enableOptionals && $optional == "1")
@@ -1063,6 +1062,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				{
 					$param .= "Int32.MinValue";
 				}
+				elseif ($type == "bigint" && $paramNode->getAttribute("default") == "null") 
+				{
+					$param .= "long.MinValue";
+				}	
 				else
 				{
 					$param .=  $paramNode->getAttribute("default");
