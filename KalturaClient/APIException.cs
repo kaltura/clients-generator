@@ -100,7 +100,6 @@ namespace Kaltura
 		public static string ParentIdShouldNotPointToItself = "2041";
 		public static string ParentIdNotExist = "2059";
 		public static string UserFavoriteNotDeleted = "2060";
-		public static string UserSelfDeleteNotPermitted = "2062";
 		public static string InvalidPurchase = "3000";
 		public static string CancelationWindowPeriodExpired = "3001";
 		public static string SubscriptionNotRenewable = "3002";
@@ -351,7 +350,7 @@ namespace Kaltura
 		public static string PaymentMethodNotSetForHousehold = "6048";
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
-		public static string PaymentMethodExternalIdRequired = "6051";
+		public static string PaymentGatewaySuspended = "6051";
 		public static string PaymentGatewayExternalVerification = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
