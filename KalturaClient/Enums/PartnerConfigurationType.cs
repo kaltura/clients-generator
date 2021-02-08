@@ -40,7 +40,6 @@ namespace Kaltura.Enums
 		public static readonly PartnerConfigurationType PAYMENT = new PartnerConfigurationType("Payment");
 		public static readonly PartnerConfigurationType CATALOG = new PartnerConfigurationType("Catalog");
 		public static readonly PartnerConfigurationType SECURITY = new PartnerConfigurationType("Security");
-		public static readonly PartnerConfigurationType OPC = new PartnerConfigurationType("Opc");
 
 		private PartnerConfigurationType(string name) : base(name) { }
 	}
