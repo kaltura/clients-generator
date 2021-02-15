@@ -262,6 +262,8 @@ namespace Kaltura
 					return new ListResponse<UserAssetRule>(jToken);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(jToken);
+				case "KalturaEpgListResponse":
+					return new ListResponse<Epg>(jToken);
 				case "KalturaCampaignListResponse":
 					return new ListResponse<Campaign>(jToken);
 				case "KalturaCategoryItemListResponse":
