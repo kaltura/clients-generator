@@ -25,17 +25,54 @@
 //
 // @ignore
 // ===================================================================================================
-namespace Kaltura.Enums
-{
-	public sealed class LogLevel : StringEnum
-	{
-		public static readonly LogLevel TRACE = new LogLevel("TRACE");
-		public static readonly LogLevel DEBUG = new LogLevel("DEBUG");
-		public static readonly LogLevel INFO = new LogLevel("INFO");
-		public static readonly LogLevel WARN = new LogLevel("WARN");
-		public static readonly LogLevel ERROR = new LogLevel("ERROR");
-		public static readonly LogLevel ALL = new LogLevel("ALL");
+using System;
+using System.Xml;
+using System.Collections.Generic;
+using Kaltura.Enums;
+using Kaltura.Request;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-		private LogLevel(string name) : base(name) { }
+namespace Kaltura.Types
+{
+	public class BasePermissionFilter : Filter
+	{
+		#region Constants
+		#endregion
+
+		#region Private Fields
+		#endregion
+
+		#region Properties
+		#endregion
+
+		#region CTor
+		public BasePermissionFilter()
+		{
+		}
+
+		public BasePermissionFilter(JToken node) : base(node)
+		{
+		}
+		#endregion
+
+		#region Methods
+		public override Params ToParams(bool includeObjectType = true)
+		{
+			Params kparams = base.ToParams(includeObjectType);
+			if (includeObjectType)
+				kparams.AddReplace("objectType", "KalturaBasePermissionFilter");
+			return kparams;
+		}
+		protected override string getPropertyName(string apiName)
+		{
+			switch(apiName)
+			{
+				default:
+					return base.getPropertyName(apiName);
+			}
+		}
+		#endregion
 	}
 }
+

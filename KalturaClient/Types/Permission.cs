@@ -110,7 +110,7 @@ namespace Kaltura.Types
 		public string PermissionItemsIds
 		{
 			get { return _PermissionItemsIds; }
-			private set 
+			set 
 			{ 
 				_PermissionItemsIds = value;
 				OnPropertyChanged("PermissionItemsIds");

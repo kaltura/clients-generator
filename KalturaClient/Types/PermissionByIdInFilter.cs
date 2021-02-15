@@ -35,71 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class PermissionFilter : BasePermissionFilter
+	public class PermissionByIdInFilter : BasePermissionFilter
 	{
 		#region Constants
-		public const string CURRENT_USER_PERMISSIONS_CONTAINS = "currentUserPermissionsContains";
-		public const string ROLE_ID_IN = "roleIdIn";
-		public new const string ORDER_BY = "orderBy";
+		public const string ID_IN = "idIn";
 		#endregion
 
 		#region Private Fields
-		private bool? _CurrentUserPermissionsContains = null;
-		private long _RoleIdIn = long.MinValue;
-		private PermissionOrderBy _OrderBy = null;
+		private string _IdIn = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? CurrentUserPermissionsContains
+		public string IdIn
 		{
-			get { return _CurrentUserPermissionsContains; }
+			get { return _IdIn; }
 			set 
 			{ 
-				_CurrentUserPermissionsContains = value;
-				OnPropertyChanged("CurrentUserPermissionsContains");
-			}
-		}
-		[JsonProperty]
-		public long RoleIdIn
-		{
-			get { return _RoleIdIn; }
-			set 
-			{ 
-				_RoleIdIn = value;
-				OnPropertyChanged("RoleIdIn");
-			}
-		}
-		[JsonProperty]
-		public new PermissionOrderBy OrderBy
-		{
-			get { return _OrderBy; }
-			set 
-			{ 
-				_OrderBy = value;
-				OnPropertyChanged("OrderBy");
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public PermissionFilter()
+		public PermissionByIdInFilter()
 		{
 		}
 
-		public PermissionFilter(JToken node) : base(node)
+		public PermissionByIdInFilter(JToken node) : base(node)
 		{
-			if(node["currentUserPermissionsContains"] != null)
+			if(node["idIn"] != null)
 			{
-				this._CurrentUserPermissionsContains = ParseBool(node["currentUserPermissionsContains"].Value<string>());
-			}
-			if(node["roleIdIn"] != null)
-			{
-				this._RoleIdIn = ParseLong(node["roleIdIn"].Value<string>());
-			}
-			if(node["orderBy"] != null)
-			{
-				this._OrderBy = (PermissionOrderBy)StringEnum.Parse(typeof(PermissionOrderBy), node["orderBy"].Value<string>());
+				this._IdIn = node["idIn"].Value<string>();
 			}
 		}
 		#endregion
@@ -109,22 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaPermissionFilter");
-			kparams.AddIfNotNull("currentUserPermissionsContains", this._CurrentUserPermissionsContains);
-			kparams.AddIfNotNull("roleIdIn", this._RoleIdIn);
-			kparams.AddIfNotNull("orderBy", this._OrderBy);
+				kparams.AddReplace("objectType", "KalturaPermissionByIdInFilter");
+			kparams.AddIfNotNull("idIn", this._IdIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case CURRENT_USER_PERMISSIONS_CONTAINS:
-					return "CurrentUserPermissionsContains";
-				case ROLE_ID_IN:
-					return "RoleIdIn";
-				case ORDER_BY:
-					return "OrderBy";
+				case ID_IN:
+					return "IdIn";
 				default:
 					return base.getPropertyName(apiName);
 			}
