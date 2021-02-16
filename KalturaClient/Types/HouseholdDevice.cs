@@ -48,10 +48,6 @@ namespace Kaltura.Types
 		public const string DRM = "drm";
 		public const string EXTERNAL_ID = "externalId";
 		public const string MAC_ADDRESS = "macAddress";
-		public const string MODEL = "model";
-		public const string MANUFACTURER = "manufacturer";
-		public const string MANUFACTURER_ID = "manufacturerId";
-		public const string LAST_ACTIVITY_TIME = "lastActivityTime";
 		#endregion
 
 		#region Private Fields
@@ -65,10 +61,6 @@ namespace Kaltura.Types
 		private CustomDrmPlaybackPluginData _Drm;
 		private string _ExternalId = null;
 		private string _MacAddress = null;
-		private string _Model = null;
-		private string _Manufacturer = null;
-		private long _ManufacturerId = long.MinValue;
-		private long _LastActivityTime = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -172,46 +164,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("MacAddress");
 			}
 		}
-		[JsonProperty]
-		public string Model
-		{
-			get { return _Model; }
-			set 
-			{ 
-				_Model = value;
-				OnPropertyChanged("Model");
-			}
-		}
-		[JsonProperty]
-		public string Manufacturer
-		{
-			get { return _Manufacturer; }
-			set 
-			{ 
-				_Manufacturer = value;
-				OnPropertyChanged("Manufacturer");
-			}
-		}
-		[JsonProperty]
-		public long ManufacturerId
-		{
-			get { return _ManufacturerId; }
-			private set 
-			{ 
-				_ManufacturerId = value;
-				OnPropertyChanged("ManufacturerId");
-			}
-		}
-		[JsonProperty]
-		public long LastActivityTime
-		{
-			get { return _LastActivityTime; }
-			private set 
-			{ 
-				_LastActivityTime = value;
-				OnPropertyChanged("LastActivityTime");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -261,22 +213,6 @@ namespace Kaltura.Types
 			{
 				this._MacAddress = node["macAddress"].Value<string>();
 			}
-			if(node["model"] != null)
-			{
-				this._Model = node["model"].Value<string>();
-			}
-			if(node["manufacturer"] != null)
-			{
-				this._Manufacturer = node["manufacturer"].Value<string>();
-			}
-			if(node["manufacturerId"] != null)
-			{
-				this._ManufacturerId = ParseLong(node["manufacturerId"].Value<string>());
-			}
-			if(node["lastActivityTime"] != null)
-			{
-				this._LastActivityTime = ParseLong(node["lastActivityTime"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -296,10 +232,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("drm", this._Drm);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("macAddress", this._MacAddress);
-			kparams.AddIfNotNull("model", this._Model);
-			kparams.AddIfNotNull("manufacturer", this._Manufacturer);
-			kparams.AddIfNotNull("manufacturerId", this._ManufacturerId);
-			kparams.AddIfNotNull("lastActivityTime", this._LastActivityTime);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -326,14 +258,6 @@ namespace Kaltura.Types
 					return "ExternalId";
 				case MAC_ADDRESS:
 					return "MacAddress";
-				case MODEL:
-					return "Model";
-				case MANUFACTURER:
-					return "Manufacturer";
-				case MANUFACTURER_ID:
-					return "ManufacturerId";
-				case LAST_ACTIVITY_TIME:
-					return "LastActivityTime";
 				default:
 					return base.getPropertyName(apiName);
 			}

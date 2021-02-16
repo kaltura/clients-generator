@@ -30,8 +30,6 @@ namespace Kaltura.Enums
 	public sealed class HouseholdDeviceOrderBy : StringEnum
 	{
 		public static readonly HouseholdDeviceOrderBy NONE = new HouseholdDeviceOrderBy("NONE");
-		public static readonly HouseholdDeviceOrderBy CREATED_DATE_ASC = new HouseholdDeviceOrderBy("CREATED_DATE_ASC");
-		public static readonly HouseholdDeviceOrderBy CREATED_DATE_DESC = new HouseholdDeviceOrderBy("CREATED_DATE_DESC");
 
 		private HouseholdDeviceOrderBy(string name) : base(name) { }
 	}
