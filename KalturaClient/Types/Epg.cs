@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class Epg : Asset
+	public class Epg : ProgramAsset
 	{
 		#region Constants
 		#endregion
