@@ -193,14 +193,14 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public BasePermissionFilter Filter { get; set; }
+		public PermissionFilter Filter { get; set; }
 
 		public PermissionListRequestBuilder()
 			: base("permission", "list")
 		{
 		}
 
-		public PermissionListRequestBuilder(BasePermissionFilter filter)
+		public PermissionListRequestBuilder(PermissionFilter filter)
 			: this()
 		{
 			this.Filter = filter;
@@ -270,50 +270,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class PermissionUpdateRequestBuilder : RequestBuilder<Permission>
-	{
-		#region Constants
-		public const string ID = "id";
-		public const string PERMISSION = "permission";
-		#endregion
-
-		public long Id { get; set; }
-		public Permission Permission { get; set; }
-
-		public PermissionUpdateRequestBuilder()
-			: base("permission", "update")
-		{
-		}
-
-		public PermissionUpdateRequestBuilder(long id, Permission permission)
-			: this()
-		{
-			this.Id = id;
-			this.Permission = permission;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("id"))
-				kparams.AddIfNotNull("id", Id);
-			if (!isMapped("permission"))
-				kparams.AddIfNotNull("permission", Permission);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<Permission>(result);
-		}
-	}
-
 
 	public class PermissionService
 	{
@@ -341,7 +297,7 @@ namespace Kaltura.Services
 			return new PermissionGetCurrentPermissionsRequestBuilder();
 		}
 
-		public static PermissionListRequestBuilder List(BasePermissionFilter filter = null)
+		public static PermissionListRequestBuilder List(PermissionFilter filter = null)
 		{
 			return new PermissionListRequestBuilder(filter);
 		}
@@ -349,11 +305,6 @@ namespace Kaltura.Services
 		public static PermissionRemovePermissionItemRequestBuilder RemovePermissionItem(long permissionId, long permissionItemId)
 		{
 			return new PermissionRemovePermissionItemRequestBuilder(permissionId, permissionItemId);
-		}
-
-		public static PermissionUpdateRequestBuilder Update(long id, Permission permission)
-		{
-			return new PermissionUpdateRequestBuilder(id, permission);
 		}
 	}
 }

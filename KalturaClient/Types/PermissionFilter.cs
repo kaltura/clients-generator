@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class PermissionFilter : BasePermissionFilter
+	public class PermissionFilter : Filter
 	{
 		#region Constants
 		public const string CURRENT_USER_PERMISSIONS_CONTAINS = "currentUserPermissionsContains";
