@@ -305,7 +305,7 @@ namespace Kaltura
 		public static string PermissionPermissionItemNotFound = "5073";
 		public static string PermissionPermissionItemAlreadyExists = "5074";
 		public static string RoleReadOnly = "5075";
-		public static string PartnerConfigurationDoesNotExist = "5070";
+		public static string CanModifyOnlyNormalPermission = "5079";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
