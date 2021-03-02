@@ -35,71 +35,71 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CatalogPartnerConfig : PartnerConfiguration
+	public class EpgFilter : Filter
 	{
 		#region Constants
-		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
-		public const string CATEGORY_MANAGEMENT = "categoryManagement";
-		public const string EPG_MULTILINGUAL_FALLBACK_SUPPORT = "epgMultilingualFallbackSupport";
+		public const string DATE_EQUAL = "dateEqual";
+		public const string LIVE_ASSET_ID_EQUAL = "liveAssetIdEqual";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private bool? _SingleMultilingualMode = null;
-		private CategoryManagement _CategoryManagement;
-		private bool? _EpgMultilingualFallbackSupport = null;
+		private long _DateEqual = long.MinValue;
+		private long _LiveAssetIdEqual = long.MinValue;
+		private EpgOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public bool? SingleMultilingualMode
+		public long DateEqual
 		{
-			get { return _SingleMultilingualMode; }
+			get { return _DateEqual; }
 			set 
 			{ 
-				_SingleMultilingualMode = value;
-				OnPropertyChanged("SingleMultilingualMode");
+				_DateEqual = value;
+				OnPropertyChanged("DateEqual");
 			}
 		}
 		[JsonProperty]
-		public CategoryManagement CategoryManagement
+		public long LiveAssetIdEqual
 		{
-			get { return _CategoryManagement; }
+			get { return _LiveAssetIdEqual; }
 			set 
 			{ 
-				_CategoryManagement = value;
-				OnPropertyChanged("CategoryManagement");
+				_LiveAssetIdEqual = value;
+				OnPropertyChanged("LiveAssetIdEqual");
 			}
 		}
 		[JsonProperty]
-		public bool? EpgMultilingualFallbackSupport
+		public new EpgOrderBy OrderBy
 		{
-			get { return _EpgMultilingualFallbackSupport; }
+			get { return _OrderBy; }
 			set 
 			{ 
-				_EpgMultilingualFallbackSupport = value;
-				OnPropertyChanged("EpgMultilingualFallbackSupport");
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public CatalogPartnerConfig()
+		public EpgFilter()
 		{
 		}
 
-		public CatalogPartnerConfig(JToken node) : base(node)
+		public EpgFilter(JToken node) : base(node)
 		{
-			if(node["singleMultilingualMode"] != null)
+			if(node["dateEqual"] != null)
 			{
-				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
+				this._DateEqual = ParseLong(node["dateEqual"].Value<string>());
 			}
-			if(node["categoryManagement"] != null)
+			if(node["liveAssetIdEqual"] != null)
 			{
-				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
+				this._LiveAssetIdEqual = ParseLong(node["liveAssetIdEqual"].Value<string>());
 			}
-			if(node["epgMultilingualFallbackSupport"] != null)
+			if(node["orderBy"] != null)
 			{
-				this._EpgMultilingualFallbackSupport = ParseBool(node["epgMultilingualFallbackSupport"].Value<string>());
+				this._OrderBy = (EpgOrderBy)StringEnum.Parse(typeof(EpgOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -109,22 +109,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
-			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
-			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
-			kparams.AddIfNotNull("epgMultilingualFallbackSupport", this._EpgMultilingualFallbackSupport);
+				kparams.AddReplace("objectType", "KalturaEpgFilter");
+			kparams.AddIfNotNull("dateEqual", this._DateEqual);
+			kparams.AddIfNotNull("liveAssetIdEqual", this._LiveAssetIdEqual);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case SINGLE_MULTILINGUAL_MODE:
-					return "SingleMultilingualMode";
-				case CATEGORY_MANAGEMENT:
-					return "CategoryManagement";
-				case EPG_MULTILINGUAL_FALLBACK_SUPPORT:
-					return "EpgMultilingualFallbackSupport";
+				case DATE_EQUAL:
+					return "DateEqual";
+				case LIVE_ASSET_ID_EQUAL:
+					return "LiveAssetIdEqual";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}
