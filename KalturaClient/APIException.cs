@@ -100,7 +100,6 @@ namespace Kaltura
 		public static string ParentIdShouldNotPointToItself = "2041";
 		public static string ParentIdNotExist = "2059";
 		public static string UserFavoriteNotDeleted = "2060";
-		public static string UserSelfDeleteNotPermitted = "2062";
 		public static string InvalidPurchase = "3000";
 		public static string CancelationWindowPeriodExpired = "3001";
 		public static string SubscriptionNotRenewable = "3002";
@@ -149,8 +148,6 @@ namespace Kaltura
 		public static string SubscriptionCancellationIsBlocked = "3074";
 		public static string UnknownPriceReason = "3077";
 		public static string SubscriptionDoesNotExist = "3081";
-		public static string OtherCouponIsAlreadyAppliedForSubscription = "3082";
-		public static string CampaignIsAlreadyAppliedForSubscription = "3085";
 		public static string PurchasePendingFailed = "3083";
 		public static string PendingEntitlement = "3084";
 		public static string MediaConcurrencyLimitation = "4000";
@@ -305,7 +302,6 @@ namespace Kaltura
 		public static string PermissionPermissionItemNotFound = "5073";
 		public static string PermissionPermissionItemAlreadyExists = "5074";
 		public static string RoleReadOnly = "5075";
-		public static string PartnerConfigurationDoesNotExist = "5070";
 		public static string IncorrectPrice = "6000";
 		public static string UnKnownPPVModule = "6001";
 		public static string ExpiredCard = "6002";
@@ -353,7 +349,7 @@ namespace Kaltura
 		public static string PaymentMethodNotExist = "6049";
 		public static string PaymentMethodIdRequired = "6050";
 		public static string PaymentMethodExternalIdRequired = "6051";
-		public static string PaymentGatewayExternalVerification = "6052";
+		public static string ErrorSavingPaymentGatewayHouseholdPaymentMethod = "6052";
 		public static string PaymentMethodAlreadySetToHouseholdPaymentGateway = "6054";
 		public static string PaymentMethodNameRequired = "6055";
 		public static string PaymentGatewayNotSupportPaymentMethod = "6056";
@@ -471,8 +467,6 @@ namespace Kaltura
 		public static string HttpMethodNotSupported = "500065";
 		public static string PropertyIsOpcSupported = "500082";
 		public static string KeyCannotBeEmptyOrNull = "500086";
-		public static string MissingMandatoryArgumentInProperty = "500087";
-		public static string MaxArguments = "500088";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";

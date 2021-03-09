@@ -196,8 +196,6 @@ namespace Kaltura
 					return new ListResponse<MediaFileType>(jToken);
 				case "KalturaRatioListResponse":
 					return new ListResponse<Ratio>(jToken);
-				case "KalturaStreamingDeviceListResponse":
-					return new ListResponse<StreamingDevice>(jToken);
 				case "KalturaTagListResponse":
 					return new ListResponse<Tag>(jToken);
 				case "KalturaAssetHistoryListResponse":
@@ -262,16 +260,10 @@ namespace Kaltura
 					return new ListResponse<UserAssetRule>(jToken);
 				case "KalturaUserRoleListResponse":
 					return new ListResponse<UserRole>(jToken);
-				case "KalturaCampaignListResponse":
-					return new ListResponse<Campaign>(jToken);
 				case "KalturaCategoryItemListResponse":
 					return new ListResponse<CategoryItem>(jToken);
-				case "KalturaCategoryVersionListResponse":
-					return new ListResponse<CategoryVersion>(jToken);
-				case "KalturaDeviceReferenceDataListResponse":
-					return new ListResponse<DeviceReferenceData>(jToken);
-				case "KalturaDynamicListListResponse":
-					return new ListResponse<DynamicList>(jToken);
+				case "KalturaCouponListResponse":
+					return new ListResponse<Coupon>(jToken);
 				case "KalturaEventNotificationListResponse":
 					return new ListResponse<EventNotification>(jToken);
 				case "KalturaHouseholdListResponse":

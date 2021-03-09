@@ -45,7 +45,6 @@ namespace Kaltura.Types
 		public const string VERSION = "version";
 		public const string ID = "id";
 		public const string IS_DEFAULT = "isDefault";
-		public const string IMAGE_TYPE_ID = "imageTypeId";
 		#endregion
 
 		#region Private Fields
@@ -56,7 +55,6 @@ namespace Kaltura.Types
 		private int _Version = Int32.MinValue;
 		private string _Id = null;
 		private bool? _IsDefault = null;
-		private long _ImageTypeId = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -130,16 +128,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsDefault");
 			}
 		}
-		[JsonProperty]
-		public long ImageTypeId
-		{
-			get { return _ImageTypeId; }
-			set 
-			{ 
-				_ImageTypeId = value;
-				OnPropertyChanged("ImageTypeId");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -177,10 +165,6 @@ namespace Kaltura.Types
 			{
 				this._IsDefault = ParseBool(node["isDefault"].Value<string>());
 			}
-			if(node["imageTypeId"] != null)
-			{
-				this._ImageTypeId = ParseLong(node["imageTypeId"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -197,7 +181,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("version", this._Version);
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("isDefault", this._IsDefault);
-			kparams.AddIfNotNull("imageTypeId", this._ImageTypeId);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -218,8 +201,6 @@ namespace Kaltura.Types
 					return "Id";
 				case IS_DEFAULT:
 					return "IsDefault";
-				case IMAGE_TYPE_ID:
-					return "ImageTypeId";
 				default:
 					return base.getPropertyName(apiName);
 			}

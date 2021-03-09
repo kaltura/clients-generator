@@ -25,54 +25,17 @@
 //
 // @ignore
 // ===================================================================================================
-using System;
-using System.Xml;
-using System.Collections.Generic;
-using Kaltura.Enums;
-using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Kaltura.Types
+namespace Kaltura.Enums
 {
-	public class CompensationEntitlementDiscountDetails : EntitlementDiscountDetailsIdentifier
+	public sealed class LogLevel : StringEnum
 	{
-		#region Constants
-		#endregion
+		public static readonly LogLevel TRACE = new LogLevel("TRACE");
+		public static readonly LogLevel DEBUG = new LogLevel("DEBUG");
+		public static readonly LogLevel INFO = new LogLevel("INFO");
+		public static readonly LogLevel WARN = new LogLevel("WARN");
+		public static readonly LogLevel ERROR = new LogLevel("ERROR");
+		public static readonly LogLevel ALL = new LogLevel("ALL");
 
-		#region Private Fields
-		#endregion
-
-		#region Properties
-		#endregion
-
-		#region CTor
-		public CompensationEntitlementDiscountDetails()
-		{
-		}
-
-		public CompensationEntitlementDiscountDetails(JToken node) : base(node)
-		{
-		}
-		#endregion
-
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
-		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaCompensationEntitlementDiscountDetails");
-			return kparams;
-		}
-		protected override string getPropertyName(string apiName)
-		{
-			switch(apiName)
-			{
-				default:
-					return base.getPropertyName(apiName);
-			}
-		}
-		#endregion
+		private LogLevel(string name) : base(name) { }
 	}
 }
-

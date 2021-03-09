@@ -39,12 +39,10 @@ namespace Kaltura.Types
 	{
 		#region Constants
 		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
-		public const string CATEGORY_MANAGEMENT = "categoryManagement";
 		#endregion
 
 		#region Private Fields
 		private bool? _SingleMultilingualMode = null;
-		private CategoryManagement _CategoryManagement;
 		#endregion
 
 		#region Properties
@@ -56,16 +54,6 @@ namespace Kaltura.Types
 			{ 
 				_SingleMultilingualMode = value;
 				OnPropertyChanged("SingleMultilingualMode");
-			}
-		}
-		[JsonProperty]
-		public CategoryManagement CategoryManagement
-		{
-			get { return _CategoryManagement; }
-			set 
-			{ 
-				_CategoryManagement = value;
-				OnPropertyChanged("CategoryManagement");
 			}
 		}
 		#endregion
@@ -81,10 +69,6 @@ namespace Kaltura.Types
 			{
 				this._SingleMultilingualMode = ParseBool(node["singleMultilingualMode"].Value<string>());
 			}
-			if(node["categoryManagement"] != null)
-			{
-				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
-			}
 		}
 		#endregion
 
@@ -95,7 +79,6 @@ namespace Kaltura.Types
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
 			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
-			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -104,8 +87,6 @@ namespace Kaltura.Types
 			{
 				case SINGLE_MULTILINGUAL_MODE:
 					return "SingleMultilingualMode";
-				case CATEGORY_MANAGEMENT:
-					return "CategoryManagement";
 				default:
 					return base.getPropertyName(apiName);
 			}
