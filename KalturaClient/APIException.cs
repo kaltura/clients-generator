@@ -474,6 +474,7 @@ namespace Kaltura
 		public static string KeyCannotBeEmptyOrNull = "500086";
 		public static string MissingMandatoryArgumentInProperty = "500087";
 		public static string MaxArguments = "500088";
+		public static string StartDateShouldBeLessThanEndDate = "500089";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";
