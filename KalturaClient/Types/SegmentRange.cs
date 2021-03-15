@@ -52,11 +52,11 @@ namespace Kaltura.Types
 		private long _Id = long.MinValue;
 		private string _SystematicName = null;
 		private string _Name = null;
-		private float _Gte = Single.MinValue;
-		private float _Gt = Single.MinValue;
-		private float _Lte = Single.MinValue;
-		private float _Lt = Single.MinValue;
-		private float _Equals = Single.MinValue;
+		private float _Gte = decimal.MinValue;
+		private float _Gt = decimal.MinValue;
+		private float _Lte = decimal.MinValue;
+		private float _Lt = decimal.MinValue;
+		private float _Equals = decimal.MinValue;
 		#endregion
 
 		#region Properties

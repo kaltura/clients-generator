@@ -57,7 +57,7 @@ namespace Kaltura.Types
 		private string _LanguagesCode = null;
 		private string _Currency = null;
 		private string _CurrencySign = null;
-		private float _VatPercent = Single.MinValue;
+		private float _VatPercent = decimal.MinValue;
 		private string _TimeZoneId = null;
 		#endregion
 

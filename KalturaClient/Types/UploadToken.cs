@@ -48,7 +48,7 @@ namespace Kaltura.Types
 		#region Private Fields
 		private string _Id = null;
 		private UploadTokenStatus _Status = null;
-		private float _FileSize = Single.MinValue;
+		private float _FileSize = decimal.MinValue;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
 		#endregion

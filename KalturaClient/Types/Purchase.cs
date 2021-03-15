@@ -47,7 +47,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private string _Currency = null;
-		private float _Price = Single.MinValue;
+		private float _Price = decimal.MinValue;
 		private int _PaymentMethodId = Int32.MinValue;
 		private int _PaymentGatewayId = Int32.MinValue;
 		private string _Coupon = null;

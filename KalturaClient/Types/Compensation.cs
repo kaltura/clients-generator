@@ -51,7 +51,7 @@ namespace Kaltura.Types
 		private long _Id = long.MinValue;
 		private long _SubscriptionId = long.MinValue;
 		private CompensationType _CompensationType = null;
-		private float _Amount = Single.MinValue;
+		private float _Amount = decimal.MinValue;
 		private int _TotalRenewalIterations = Int32.MinValue;
 		private int _AppliedRenewalIterations = Int32.MinValue;
 		private int _PurchaseId = Int32.MinValue;

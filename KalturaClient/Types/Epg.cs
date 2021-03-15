@@ -35,72 +35,24 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DiscountModule : ObjectBase
+	public class Epg : ProgramAsset
 	{
 		#region Constants
-		public const string PERCENT = "percent";
-		public const string START_DATE = "startDate";
-		public const string END_DATE = "endDate";
 		#endregion
 
 		#region Private Fields
-		private float _Percent = decimal.MinValue;
-		private long _StartDate = long.MinValue;
-		private long _EndDate = long.MinValue;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public float Percent
-		{
-			get { return _Percent; }
-			set 
-			{ 
-				_Percent = value;
-				OnPropertyChanged("Percent");
-			}
-		}
-		[JsonProperty]
-		public long StartDate
-		{
-			get { return _StartDate; }
-			set 
-			{ 
-				_StartDate = value;
-				OnPropertyChanged("StartDate");
-			}
-		}
-		[JsonProperty]
-		public long EndDate
-		{
-			get { return _EndDate; }
-			set 
-			{ 
-				_EndDate = value;
-				OnPropertyChanged("EndDate");
-			}
-		}
 		#endregion
 
 		#region CTor
-		public DiscountModule()
+		public Epg()
 		{
 		}
 
-		public DiscountModule(JToken node) : base(node)
+		public Epg(JToken node) : base(node)
 		{
-			if(node["percent"] != null)
-			{
-				this._Percent = ParseFloat(node["percent"].Value<string>());
-			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -109,22 +61,13 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDiscountModule");
-			kparams.AddIfNotNull("percent", this._Percent);
-			kparams.AddIfNotNull("startDate", this._StartDate);
-			kparams.AddIfNotNull("endDate", this._EndDate);
+				kparams.AddReplace("objectType", "KalturaEpg");
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case PERCENT:
-					return "Percent";
-				case START_DATE:
-					return "StartDate";
-				case END_DATE:
-					return "EndDate";
 				default:
 					return base.getPropertyName(apiName);
 			}

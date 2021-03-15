@@ -48,6 +48,7 @@ namespace Kaltura.Types
 		public const string DRM = "drm";
 		public const string EXTERNAL_ID = "externalId";
 		public const string MAC_ADDRESS = "macAddress";
+		public const string DYNAMIC_DATA = "dynamicData";
 		public const string MODEL = "model";
 		public const string MANUFACTURER = "manufacturer";
 		public const string MANUFACTURER_ID = "manufacturerId";
@@ -65,6 +66,7 @@ namespace Kaltura.Types
 		private CustomDrmPlaybackPluginData _Drm;
 		private string _ExternalId = null;
 		private string _MacAddress = null;
+		private IDictionary<string, StringValue> _DynamicData;
 		private string _Model = null;
 		private string _Manufacturer = null;
 		private long _ManufacturerId = long.MinValue;
@@ -173,6 +175,16 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
+		public IDictionary<string, StringValue> DynamicData
+		{
+			get { return _DynamicData; }
+			set 
+			{ 
+				_DynamicData = value;
+				OnPropertyChanged("DynamicData");
+			}
+		}
+		[JsonProperty]
 		public string Model
 		{
 			get { return _Model; }
@@ -261,6 +273,18 @@ namespace Kaltura.Types
 			{
 				this._MacAddress = node["macAddress"].Value<string>();
 			}
+			if(node["dynamicData"] != null)
+			{
+				{
+					string key;
+					this._DynamicData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
+			}
 			if(node["model"] != null)
 			{
 				this._Model = node["model"].Value<string>();
@@ -296,6 +320,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("drm", this._Drm);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("macAddress", this._MacAddress);
+			kparams.AddIfNotNull("dynamicData", this._DynamicData);
 			kparams.AddIfNotNull("model", this._Model);
 			kparams.AddIfNotNull("manufacturer", this._Manufacturer);
 			kparams.AddIfNotNull("manufacturerId", this._ManufacturerId);
@@ -326,6 +351,8 @@ namespace Kaltura.Types
 					return "ExternalId";
 				case MAC_ADDRESS:
 					return "MacAddress";
+				case DYNAMIC_DATA:
+					return "DynamicData";
 				case MODEL:
 					return "Model";
 				case MANUFACTURER:

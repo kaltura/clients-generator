@@ -153,7 +153,7 @@ namespace Kaltura.Request
         {
             this.Add(key, new Param(value));
         }
-        public void Add(string key, float value)
+        public void Add(string key, decimal value)
         {
             this.Add(key, new Param(value));
         }
@@ -171,9 +171,9 @@ namespace Kaltura.Request
         }
 
 
-        public void AddIfNotNull(string key, float value)
+        public void AddIfNotNull(string key, decimal value)
         {
-            if (value != Single.MinValue)
+            if (value != decimal.MinValue)
                 this.Add(key, value);
         }
 

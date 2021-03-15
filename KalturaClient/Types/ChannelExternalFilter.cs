@@ -45,7 +45,7 @@ namespace Kaltura.Types
 
 		#region Private Fields
 		private int _IdEqual = Int32.MinValue;
-		private float _UtcOffsetEqual = Single.MinValue;
+		private float _UtcOffsetEqual = decimal.MinValue;
 		private string _FreeText = null;
 		#endregion
 

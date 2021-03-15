@@ -44,9 +44,9 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private float _NormalizedAvgScore = Single.MinValue;
+		private float _NormalizedAvgScore = decimal.MinValue;
 		private long _UpdateDate = long.MinValue;
-		private float _AvgScore = Single.MinValue;
+		private float _AvgScore = decimal.MinValue;
 		#endregion
 
 		#region Properties

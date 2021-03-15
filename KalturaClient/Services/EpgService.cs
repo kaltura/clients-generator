@@ -28,70 +28,63 @@
 using System;
 using System.Xml;
 using System.Collections.Generic;
-using Kaltura.Enums;
+using System.IO;
 using Kaltura.Request;
-using Newtonsoft.Json;
+using Kaltura.Types;
+using Kaltura.Enums;
 using Newtonsoft.Json.Linq;
 
-namespace Kaltura.Types
+namespace Kaltura.Services
 {
-	public class DoubleValue : Value
+	public class EpgListRequestBuilder : RequestBuilder<ListResponse<Epg>>
 	{
 		#region Constants
-		public const string VALUE = "value";
+		public const string FILTER = "filter";
 		#endregion
 
-		#region Private Fields
-		private float _Value = decimal.MinValue;
-		#endregion
+		public EpgFilter Filter { get; set; }
 
-		#region Properties
-		[JsonProperty]
-		public float Value
-		{
-			get { return _Value; }
-			set 
-			{ 
-				_Value = value;
-				OnPropertyChanged("Value");
-			}
-		}
-		#endregion
-
-		#region CTor
-		public DoubleValue()
+		public EpgListRequestBuilder()
+			: base("epg", "list")
 		{
 		}
 
-		public DoubleValue(JToken node) : base(node)
+		public EpgListRequestBuilder(EpgFilter filter)
+			: this()
 		{
-			if(node["value"] != null)
-			{
-				this._Value = ParseFloat(node["value"].Value<string>());
-			}
+			this.Filter = filter;
 		}
-		#endregion
 
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
+		public override Params getParameters(bool includeServiceAndAction)
 		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDoubleValue");
-			kparams.AddIfNotNull("value", this._Value);
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
-		protected override string getPropertyName(string apiName)
+
+		public override Files getFiles()
 		{
-			switch(apiName)
-			{
-				case VALUE:
-					return "Value";
-				default:
-					return base.getPropertyName(apiName);
-			}
+			Files kfiles = base.getFiles();
+			return kfiles;
 		}
-		#endregion
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<ListResponse<Epg>>(result);
+		}
+	}
+
+
+	public class EpgService
+	{
+		private EpgService()
+		{
+		}
+
+		public static EpgListRequestBuilder List(EpgFilter filter = null)
+		{
+			return new EpgListRequestBuilder(filter);
+		}
 	}
 }
-

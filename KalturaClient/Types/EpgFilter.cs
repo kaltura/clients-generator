@@ -35,71 +35,71 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DiscountModule : ObjectBase
+	public class EpgFilter : Filter
 	{
 		#region Constants
-		public const string PERCENT = "percent";
-		public const string START_DATE = "startDate";
-		public const string END_DATE = "endDate";
+		public const string DATE_EQUAL = "dateEqual";
+		public const string LIVE_ASSET_ID_EQUAL = "liveAssetIdEqual";
+		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private float _Percent = decimal.MinValue;
-		private long _StartDate = long.MinValue;
-		private long _EndDate = long.MinValue;
+		private long _DateEqual = long.MinValue;
+		private long _LiveAssetIdEqual = long.MinValue;
+		private EpgOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public float Percent
+		public long DateEqual
 		{
-			get { return _Percent; }
+			get { return _DateEqual; }
 			set 
 			{ 
-				_Percent = value;
-				OnPropertyChanged("Percent");
+				_DateEqual = value;
+				OnPropertyChanged("DateEqual");
 			}
 		}
 		[JsonProperty]
-		public long StartDate
+		public long LiveAssetIdEqual
 		{
-			get { return _StartDate; }
+			get { return _LiveAssetIdEqual; }
 			set 
 			{ 
-				_StartDate = value;
-				OnPropertyChanged("StartDate");
+				_LiveAssetIdEqual = value;
+				OnPropertyChanged("LiveAssetIdEqual");
 			}
 		}
 		[JsonProperty]
-		public long EndDate
+		public new EpgOrderBy OrderBy
 		{
-			get { return _EndDate; }
+			get { return _OrderBy; }
 			set 
 			{ 
-				_EndDate = value;
-				OnPropertyChanged("EndDate");
+				_OrderBy = value;
+				OnPropertyChanged("OrderBy");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DiscountModule()
+		public EpgFilter()
 		{
 		}
 
-		public DiscountModule(JToken node) : base(node)
+		public EpgFilter(JToken node) : base(node)
 		{
-			if(node["percent"] != null)
+			if(node["dateEqual"] != null)
 			{
-				this._Percent = ParseFloat(node["percent"].Value<string>());
+				this._DateEqual = ParseLong(node["dateEqual"].Value<string>());
 			}
-			if(node["startDate"] != null)
+			if(node["liveAssetIdEqual"] != null)
 			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
+				this._LiveAssetIdEqual = ParseLong(node["liveAssetIdEqual"].Value<string>());
 			}
-			if(node["endDate"] != null)
+			if(node["orderBy"] != null)
 			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
+				this._OrderBy = (EpgOrderBy)StringEnum.Parse(typeof(EpgOrderBy), node["orderBy"].Value<string>());
 			}
 		}
 		#endregion
@@ -109,22 +109,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDiscountModule");
-			kparams.AddIfNotNull("percent", this._Percent);
-			kparams.AddIfNotNull("startDate", this._StartDate);
-			kparams.AddIfNotNull("endDate", this._EndDate);
+				kparams.AddReplace("objectType", "KalturaEpgFilter");
+			kparams.AddIfNotNull("dateEqual", this._DateEqual);
+			kparams.AddIfNotNull("liveAssetIdEqual", this._LiveAssetIdEqual);
+			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case PERCENT:
-					return "Percent";
-				case START_DATE:
-					return "StartDate";
-				case END_DATE:
-					return "EndDate";
+				case DATE_EQUAL:
+					return "DateEqual";
+				case LIVE_ASSET_ID_EQUAL:
+					return "LiveAssetIdEqual";
+				case ORDER_BY:
+					return "OrderBy";
 				default:
 					return base.getPropertyName(apiName);
 			}

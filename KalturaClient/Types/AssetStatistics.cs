@@ -51,7 +51,7 @@ namespace Kaltura.Types
 		private int _Likes = Int32.MinValue;
 		private int _Views = Int32.MinValue;
 		private int _RatingCount = Int32.MinValue;
-		private float _Rating = Single.MinValue;
+		private float _Rating = decimal.MinValue;
 		private BuzzScore _BuzzScore;
 		#endregion
 

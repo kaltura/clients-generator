@@ -44,7 +44,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private float _Amount = Single.MinValue;
+		private float _Amount = decimal.MinValue;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
 		#endregion

@@ -40,11 +40,13 @@ namespace Kaltura.Types
 		#region Constants
 		public const string SINGLE_MULTILINGUAL_MODE = "singleMultilingualMode";
 		public const string CATEGORY_MANAGEMENT = "categoryManagement";
+		public const string EPG_MULTILINGUAL_FALLBACK_SUPPORT = "epgMultilingualFallbackSupport";
 		#endregion
 
 		#region Private Fields
 		private bool? _SingleMultilingualMode = null;
 		private CategoryManagement _CategoryManagement;
+		private bool? _EpgMultilingualFallbackSupport = null;
 		#endregion
 
 		#region Properties
@@ -68,6 +70,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("CategoryManagement");
 			}
 		}
+		[JsonProperty]
+		public bool? EpgMultilingualFallbackSupport
+		{
+			get { return _EpgMultilingualFallbackSupport; }
+			set 
+			{ 
+				_EpgMultilingualFallbackSupport = value;
+				OnPropertyChanged("EpgMultilingualFallbackSupport");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -85,6 +97,10 @@ namespace Kaltura.Types
 			{
 				this._CategoryManagement = ObjectFactory.Create<CategoryManagement>(node["categoryManagement"]);
 			}
+			if(node["epgMultilingualFallbackSupport"] != null)
+			{
+				this._EpgMultilingualFallbackSupport = ParseBool(node["epgMultilingualFallbackSupport"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -96,6 +112,7 @@ namespace Kaltura.Types
 				kparams.AddReplace("objectType", "KalturaCatalogPartnerConfig");
 			kparams.AddIfNotNull("singleMultilingualMode", this._SingleMultilingualMode);
 			kparams.AddIfNotNull("categoryManagement", this._CategoryManagement);
+			kparams.AddIfNotNull("epgMultilingualFallbackSupport", this._EpgMultilingualFallbackSupport);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -106,6 +123,8 @@ namespace Kaltura.Types
 					return "SingleMultilingualMode";
 				case CATEGORY_MANAGEMENT:
 					return "CategoryManagement";
+				case EPG_MULTILINGUAL_FALLBACK_SUPPORT:
+					return "EpgMultilingualFallbackSupport";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -50,6 +50,7 @@ namespace Kaltura.Types
 		public const string PARENT_ID = "parentId";
 		public const string CREATE_DATE = "createDate";
 		public const string UPDATE_DATE = "updateDate";
+		public const string DYNAMIC_DATA = "dynamicData";
 		#endregion
 
 		#region Private Fields
@@ -65,6 +66,7 @@ namespace Kaltura.Types
 		private string _ParentId = null;
 		private long _CreateDate = long.MinValue;
 		private long _UpdateDate = long.MinValue;
+		private IDictionary<string, StringValue> _DynamicData;
 		#endregion
 
 		#region Properties
@@ -188,6 +190,16 @@ namespace Kaltura.Types
 				OnPropertyChanged("UpdateDate");
 			}
 		}
+		[JsonProperty]
+		public IDictionary<string, StringValue> DynamicData
+		{
+			get { return _DynamicData; }
+			set 
+			{ 
+				_DynamicData = value;
+				OnPropertyChanged("DynamicData");
+			}
+		}
 		#endregion
 
 		#region CTor
@@ -249,6 +261,18 @@ namespace Kaltura.Types
 			{
 				this._UpdateDate = ParseLong(node["updateDate"].Value<string>());
 			}
+			if(node["dynamicData"] != null)
+			{
+				{
+					string key;
+					this._DynamicData = new Dictionary<string, StringValue>();
+					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
+					{
+						key = arrayNode.Name;
+						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
+					}
+				}
+			}
 		}
 		#endregion
 
@@ -270,6 +294,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("parentId", this._ParentId);
 			kparams.AddIfNotNull("createDate", this._CreateDate);
 			kparams.AddIfNotNull("updateDate", this._UpdateDate);
+			kparams.AddIfNotNull("dynamicData", this._DynamicData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -300,6 +325,8 @@ namespace Kaltura.Types
 					return "CreateDate";
 				case UPDATE_DATE:
 					return "UpdateDate";
+				case DYNAMIC_DATA:
+					return "DynamicData";
 				default:
 					return base.getPropertyName(apiName);
 			}

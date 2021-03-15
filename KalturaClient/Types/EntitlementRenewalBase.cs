@@ -44,7 +44,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private float _Price = Single.MinValue;
+		private float _Price = decimal.MinValue;
 		private long _PurchaseId = long.MinValue;
 		private long _SubscriptionId = long.MinValue;
 		#endregion

@@ -45,7 +45,7 @@ namespace Kaltura.Types
 		#endregion
 
 		#region Private Fields
-		private float _Amount = Single.MinValue;
+		private float _Amount = decimal.MinValue;
 		private string _Currency = null;
 		private string _CurrencySign = null;
 		private long _CountryId = long.MinValue;

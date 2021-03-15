@@ -25,73 +25,11 @@
 //
 // @ignore
 // ===================================================================================================
-using System;
-using System.Xml;
-using System.Collections.Generic;
-using Kaltura.Enums;
-using Kaltura.Request;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
-namespace Kaltura.Types
+namespace Kaltura.Enums
 {
-	public class DoubleValue : Value
+	public sealed class EpgOrderBy : StringEnum
 	{
-		#region Constants
-		public const string VALUE = "value";
-		#endregion
 
-		#region Private Fields
-		private float _Value = decimal.MinValue;
-		#endregion
-
-		#region Properties
-		[JsonProperty]
-		public float Value
-		{
-			get { return _Value; }
-			set 
-			{ 
-				_Value = value;
-				OnPropertyChanged("Value");
-			}
-		}
-		#endregion
-
-		#region CTor
-		public DoubleValue()
-		{
-		}
-
-		public DoubleValue(JToken node) : base(node)
-		{
-			if(node["value"] != null)
-			{
-				this._Value = ParseFloat(node["value"].Value<string>());
-			}
-		}
-		#endregion
-
-		#region Methods
-		public override Params ToParams(bool includeObjectType = true)
-		{
-			Params kparams = base.ToParams(includeObjectType);
-			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDoubleValue");
-			kparams.AddIfNotNull("value", this._Value);
-			return kparams;
-		}
-		protected override string getPropertyName(string apiName)
-		{
-			switch(apiName)
-			{
-				case VALUE:
-					return "Value";
-				default:
-					return base.getPropertyName(apiName);
-			}
-		}
-		#endregion
+		private EpgOrderBy(string name) : base(name) { }
 	}
 }
-
