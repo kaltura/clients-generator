@@ -426,7 +426,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					$property["default"] = "null";
 					break;
 				case "float":
-					$property["default"] = "Single.MinValue";
+					$property["default"] = "decimal.MinValue";
 					break;
 			}
 
@@ -1197,7 +1197,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				break;
 
 			case 'float':
-				$null = 'float.MinValue';
+				$null = 'decimal.MinValue';
 				break;
 				
 			case 'bool':
@@ -1239,7 +1239,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				break;
 				
 			case 'float':
-			    $null = 'float.MinValue';
+			    $null = 'decimal.MinValue';
 			    break;
 			    
 			case 'bool':
