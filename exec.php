@@ -165,6 +165,14 @@ else
 	$outputPathBase = fixPath("$rootPath/web/content/clientlibs");
 }
 
+KalturaLog::info("testsDir: $testsDir");
+KalturaLog::info("gzip: $gzip");
+KalturaLog::info("rootPath: $rootPath");
+KalturaLog::info("schemaXmlPath: $schemaXmlPath");
+KalturaLog::info("generateSingle: $generateSingle");
+KalturaLog::info("outputPathBase: $outputPathBase");
+//php exec.php -tott -xC:\source_code\KalturaClient.xml go C:\source_code\client_libs\
+
 if(file_exists($outputPathBase))
 {
 	if(!$schemaXmlPath)
@@ -179,7 +187,7 @@ else
 {
 	mkdir($outputPathBase, 0755, true);
 }
-
+KalturaLog::info("Downloading ready-made schema from: $schemaXmlPath");
 if(!file_exists($schemaXmlPath))
 	die("XML file [$schemaXmlPath] not found\n");
 

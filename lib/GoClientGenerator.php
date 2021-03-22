@@ -135,11 +135,12 @@ class GoClientGenerator extends ClientGeneratorFromXml
         // class definition
 		$this->appendLine("type $className struct {");
 
-		$base = null;
+		$baseName = null;
 		if ($classNode->hasAttribute("base"))
 		{
 			$base = $classNode->getAttribute("base");
-			$this->appendLine($this->upperCaseFirstLetter("		".$this->getCSharpName($base)));
+			$baseName = $this->getCSharpName($base);
+			$this->appendLine($this->upperCaseFirstLetter("		".$baseName));
 		}
 
 		// we want to make the orderBy property strongly typed with the corresponding string enum
@@ -176,9 +177,12 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 			$propType = $propertyNode->getAttribute("type");
 			$propName = $propertyNode->getAttribute("name");
+			$property["apiName"] = $propName;
 			$isEnum = $propertyNode->hasAttribute("enumType");
 			$goPropName = $this->upperCaseFirstLetter($propName);
-			$property["apiName"] = $propName;
+			if ($baseName != null && $baseName == $goPropName){
+				$goPropName = $goPropName."Property";
+			}
 			$property["name"] = $goPropName;
 
 			// if ($isEnum)
@@ -267,7 +271,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$properties[] = $property;
 		}
 		
-
 		// constants
 		// $constants = array();
 
@@ -302,12 +305,12 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				}
 			}
 
-			$currName = $this->lowerCaseFirstLetter($property['name']);
-			$propertyLine = "{$property['name']} {$property['type']}	`json:\"$currName\"  bson:\"$currName\"`";
+			$currName = $this->lowerCaseFirstLetter($property['apiName']);
+			$propertyLine = "{$property['name']} {$property['type']}	`json:\"$currName\"`";
 
 			if($isNullable)
 			{
-				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName,omitempty\" bson:\"$currName\"`";
+				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName,omitempty\"`";
 			}
 			$isNullable = false;
             
@@ -345,7 +348,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		  $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
 		}
 		return implode('_', $ret);
-	  }
+	}
 
 	function writeService(DOMElement $serviceNode)
 	{
@@ -756,20 +759,21 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			if($isEnum && !$isAddedEnums)
 			{
 				// Importing enums to service
-				$prefixText .= "	\"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums\"\n";
+				//TODO AMIT
+				//$prefixText .= "	\"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums\"\n";
 				$isAddedEnums = true;
 			}
 
 			switch($paramType)
 			{
 				case "array":
-					$dotNetType = $this->getCSharpName($paramNode->getAttribute("arrayType"))."[]";
+					$dotNetType = "[]".$this->getCSharpName($paramNode->getAttribute("arrayType"));
 					break;
 				case "map":
 					$dotNetType = "map[string]" . $this->getCSharpName($paramNode->getAttribute("arrayType"));
 					break;
 				case "file":
-					$dotNetType = "byte[]";
+					$dotNetType = "[]byte";
 					break;
 				case "bigint":
 					$dotNetType = "int64";
