@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -51,7 +51,7 @@ namespace Kaltura.Types
 		private long _Id = long.MinValue;
 		private long _SubscriptionId = long.MinValue;
 		private CompensationType _CompensationType = null;
-		private float _Amount = decimal.MinValue;
+		private float _Amount = Single.MinValue;
 		private int _TotalRenewalIterations = Int32.MinValue;
 		private int _AppliedRenewalIterations = Int32.MinValue;
 		private int _PurchaseId = Int32.MinValue;
