@@ -58,6 +58,7 @@ require_once(__DIR__ . "/lib/ClientGeneratorFromXml.php");
 require_once(__DIR__ . "/lib/AjaxClientGenerator.php");
 require_once(__DIR__ . "/lib/JavaClientGenerator.php");
 require_once(__DIR__ . "/lib/Java2ClientGenerator.php");
+require_once(__DIR__ . "/lib/GoClientGenerator.php");
 require_once(__DIR__ . "/lib/AndroidClientGenerator.php");
 require_once(__DIR__ . "/lib/Android2ClientGenerator.php");
 require_once(__DIR__ . "/lib/BpmnClientGenerator.php");

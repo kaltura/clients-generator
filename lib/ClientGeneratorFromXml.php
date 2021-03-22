@@ -559,6 +559,11 @@ abstract class ClientGeneratorFromXml
 		return ucwords($str);
 	}
 
+	protected function lowerCaseFirstLetter($str)
+	{
+		return lcfirst($str);
+	}
+
 	protected function camelCaseToUnderscore($value)
 	{
 		$separator = '_';
