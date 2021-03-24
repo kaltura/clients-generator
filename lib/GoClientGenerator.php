@@ -129,14 +129,23 @@ class GoClientGenerator extends ClientGeneratorFromXml
     function writeClass(DOMElement $classNode)
 	{
 		$type = $classNode->getAttribute("name");
+
 		if(!$this->shouldIncludeType($type))
+		{
+			KalturaLog::info("$type first if");
 			return;
-
+		}
 		if($type == 'KalturaObject')
+		{
+			KalturaLog::info("$type second if");
 			return;
-
-		if ($this->isClassInherit($type, "KalturaListResponse") || $type == "KalturaListResponse")
-            return;
+		}
+		
+		// if ($this->isClassInherit($type, "KalturaListResponse") || $type == "KalturaListResponse")
+		// {
+		// 	KalturaLog::info("$type third if");
+		// 	return;
+		// }
             
 				
 		$className = $this->getCSharpName($type);
@@ -378,9 +387,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$prefixText .= "\n";
 		$prefixText .= "import (\n";
 		$prefixText .= " \"fmt\"\n";
+		$prefixText .= " \"context\"\n";
 		$prefixText .= " \"encoding/json\"\n";
-		$prefixText .= "\"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient\"\n";
-		$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types\"\n";
+		$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient\"\n";
+		//$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types\"\n";
 		
 		$serviceName = $serviceNode->getAttribute("name");
 
@@ -407,15 +417,21 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$s .= "		}\n";
 		$s .= "}\n";
 
+		$importedEnums = array();
+
 		$actionNodes = $serviceNode->childNodes;
 		foreach($actionNodes as $actionNode)
 		{
 			if ($actionNode->nodeType != XML_ELEMENT_NODE)
 				 continue;
 			$s .= "\n";
-			$s .= $this->writeAction($serviceId, $serviceName, $actionNode, $prefixText);
+			$s .= $this->writeAction($serviceId, $serviceName, $actionNode, $prefixText, $importedEnums);
 		}
 
+		if(str_contains($s, "types"))
+		{
+			$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types\"\n";
+		}
 		$prefixText .= ")\n";
 		$allFile = "$prefixText\n$s";
 		$fileName = $this->from_camel_case($serviceName);
@@ -643,7 +659,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		
 	// }
 
-	function writeAction($serviceId, $serviceName, DOMElement $actionNode, &$prefixText)
+	function writeAction($serviceId, $serviceName, DOMElement $actionNode, &$prefixText, &$importedEnums)
 	{
 		$text = "";
 		$action = $actionNode->getAttribute("name");
@@ -653,6 +669,9 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
 		$resultType = $resultNode->getAttribute("type");
 		$arrayObjectType = ($resultType == 'array') ? $resultNode->getAttribute("arrayType" ) : null;
+		$comaIfNeeded = ", ";
+		$nilIfNeeded = "nil, ";
+		$isKalturaType = false;
 
 		if($resultType == 'file')
 			return;
@@ -660,47 +679,62 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		switch($resultType)
 		{
 			case null:
+				$nilIfNeeded = "";
+				$comaIfNeeded = "";
 				$dotNetOutputType = "";
 				break;
 			case "array":
 				$arrayType = $resultNode->getAttribute("arrayType");
-				$dotNetOutputType = $arrayType."[]";
+				$newName = $arrayType;
+				if(str_contains($arrayType, 'Kaltura'))
+				{
+					$newName = "types.".$this->getCSharpName($arrayType);
+					$isKalturaType = true;
+				}
+				$dotNetOutputType = "[]".$newName;
 				break;
 			case "map":
 				$arrayType = $resultNode->getAttribute("arrayType");
 				$dotNetOutputType = "map[string]".$arrayType;
 				break;
 			case "bigint":
-				$dotNetOutputType = "int64";
+				$dotNetOutputType = "*int64";
 				break;
 			case "int":
-				$dotNetOutputType = "int32";
+				$dotNetOutputType = "*int32";
 				break;
 			case "float":
-				$dotNetOutputType = "float32";
+				$dotNetOutputType = "*float32";
+				break;
+			case "bool":
+				$dotNetOutputType = "*bool";
+				break;
+			case "string":
+				$dotNetOutputType = "*string";
+				break;
+			case "KalturaStringValue":
+				$dotNetOutputType = "*string";
 				break;
 			default:
-				$dotNetOutputType = $resultType;
+				$resultGo = $this->getCSharpName($resultType);
+				$dotNetOutputType = "*types.$resultGo";
+				$isKalturaType = true;
 				break;
 		}
-		$requestName = ucfirst($serviceName).'ListRequest';
+		$requestName = ucfirst($serviceName).'ListResponse';
 
 		$goServiceName = $this->upperCaseFirstLetter($serviceName)."Service";
 		$goActionName = $this->upperCaseFirstLetter($action);
-
-
-
 		$signaturePrefix = "func (s *$goServiceName) $goActionName";
-
 		$paramNodes = $actionNode->getElementsByTagName("param");
-		$signature = $this->getSignature($paramNodes, $prefixText);
+		$signature = $this->getSignature($paramNodes, $prefixText, $importedEnums);
 		array_push($signature[0], "extra ...kalturaclient.Param");
 		$signatureParamsWithTypes = implode (", ", $signature[0]);
 		$signatureParamsWithoutTypes = $signature[1];
 
 		// write the overload
 		$text .= "\n";
-		$text .= "$signaturePrefix(ctx context.Context, $signatureParamsWithTypes) (*types.".$goActionName."Response, error){\n";
+		$text .= "$signaturePrefix(ctx context.Context, $signatureParamsWithTypes) (".$dotNetOutputType.$comaIfNeeded."error){\n";
 		$text .= "	path := \"service/$serviceName/action/$action\"\n";
 		$text .= "	requestMap := map[string]interface{}{}\n";
 
@@ -716,7 +750,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			if(str_contains($currParam, '*'))
 			{
 				$withoutOptional = str_replace('*','',$currParam);
-				$text .= "	if $currParam != nil {\n";
+				$text .= "	if $withoutOptional != nil {\n";
 				$text .= "		requestMap[\"$withoutOptional\"] = ".$withoutOptional.$addedGetParams."\n";
 				$text .= "	}\n";
 			} else{
@@ -724,18 +758,31 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			}
 		}
 
-		$text .= "	byteResponse, err := t.client.Execute(ctx, path, requestMap, extra)\n";
+		$text .= "	byteResponse, err := s.client.Execute(ctx, path, requestMap, extra)\n";
 		$text .= "	if err != nil {\n";
-		$text .= "		return nil, err\n";
+		$text .= "		return ".$nilIfNeeded."err\n";
 		$text .= "	}\n";
-		$text .= "	var result struct {\n";
-		$text .= "      Result *types.".$goActionName."Response `json:\"result\"`\n";
-		$text .= "  }\n";
-		$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
-		$text .= "	if err != nil {\n";
-		$text .= "		return nil, fmt.Errorf(\"failed to parse json: %w\", err)\n";
-		$text .= "	}\n";
-		$text .= "	return result.Result, nil\n";
+		if($comaIfNeeded == "")
+		{
+			$text .= "	var result struct {\n";
+			$text .= "      Result string `json:\"result\"`\n";
+			$text .= "  }\n";
+			$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
+			$text .= "	if err != nil {\n";
+			$text .= "		return ".$nilIfNeeded."fmt.Errorf(\"failed to parse json: %w\", err)\n";
+			$text .= "	}\n";
+			$text .= "	return nil\n";
+		} else
+		{
+			$text .= "	var result struct {\n";
+			$text .= "      Result $dotNetOutputType `json:\"result\"`\n";
+			$text .= "  }\n";
+			$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
+			$text .= "	if err != nil {\n";
+			$text .= "		return ".$nilIfNeeded."fmt.Errorf(\"failed to parse json: %w\", err)\n";
+			$text .= "	}\n";
+			$text .= "	return result.Result, nil\n";
+		}
 		$text .= "}\n";
 
 		return $text;
@@ -761,7 +808,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		return $name;
 	}
 
-	function getSignature($paramNodes, &$prefixText)
+	function getSignature($paramNodes, &$prefixText, &$importedEnums)
 	{
 		// We need 2 strings, one with the types and one without them
 		$isAddedEnums = false;
@@ -774,22 +821,34 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$paramName = $paramNode->getAttribute("name");
 			$isEnum = $paramNode->hasAttribute("enumType");
 			$optional = $paramNode->getAttribute("optional");
+			$enumPackage = strtolower($this->getCSharpName($paramNode->getAttribute("enumType")));
 
-			if($isEnum && !$isAddedEnums)
+			if($isEnum && !in_array($enumPackage, $importedEnums))
 			{
 				// Importing enums to service
-				//TODO AMIT
-				//$prefixText .= "	\"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums\"\n";
-				$isAddedEnums = true;
+				$prefixText .= "	\"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/$enumPackage\"\n";
+				$importedEnums[] = $enumPackage;
 			}
 
 			switch($paramType)
 			{
 				case "array":
-					$dotNetType = "[]".$this->getCSharpName($paramNode->getAttribute("arrayType"));
+					$arrayType = $paramNode->getAttribute("arrayType");
+					$newName = $arrayType;
+					if(str_contains($arrayType, 'Kaltura'))
+					{
+						$newName = "types.".$this->getCSharpName($arrayType);
+					}
+					$dotNetType = "[]".$newName;
 					break;
 				case "map":
-					$dotNetType = "map[string]" . $this->getCSharpName($paramNode->getAttribute("arrayType"));
+					$arrayType = $paramNode->getAttribute("arrayType");
+					$newName = $arrayType;
+					if(str_contains($arrayType, 'Kaltura'))
+					{
+						$newName = "types.".$this->getCSharpName($arrayType);
+					}
+					$dotNetType = "map[string]" . $newName;
 					break;
 				case "file":
 					$dotNetType = "[]byte";
@@ -807,9 +866,12 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				case "float":
 					$dotNetType = "float32";
 						break;
+				case "KalturaStringValue":
+					$dotNetOutputType = "string";
+					break;
 				default:
 					if ($isEnum)
-						$dotNetType = $paramNode->getAttribute("enumType");
+						$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
 					else if(str_contains($paramType, 'Kaltura'))
 					{
 						$dotNetType = "types.".substr($paramType, 7);
@@ -820,6 +882,16 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					}
 						
 					break;
+			}
+
+			if($paramName == "type")
+			{
+				$paramName = $this->lowerCaseFirstLetter($dotNetType);
+			}
+
+			if($isEnum)
+			{
+				$dotNetType = $enumPackage.".".$dotNetType;
 			}
 
 			$param = "$paramName ";
@@ -937,6 +1009,17 @@ class GoClientGenerator extends ClientGeneratorFromXml
 	private function enumExists($enum)
 	{
 		return array_key_exists($enum, $this->_enums);
+	}
+
+	private function getListResponseType($name)
+	{
+		$xpath = new DOMXPath($this->_doc);
+		$propertyNodes = $xpath->query("/xml/classes/class[@name='$name']/property[@name='objects']");
+		$propertyNode = $propertyNodes->item(0);
+		if(!$propertyNode)
+			throw new Exception("Property [objects] not found for type [$name]");
+		
+		return $this->getCSharpName($propertyNode->getAttribute("arrayType"));
 	}
 
 	private function writeClient()
