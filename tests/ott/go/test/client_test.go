@@ -2,20 +2,21 @@ package test
 
 import (
 	"context"
-
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
+
 	ottcontext "github.com/kaltura/ott-lib-context"
 	log "github.com/kaltura/ott-lib-log"
-
-	"testing"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
 
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestLogin(t *testing.T) {
+	t.Parallel()
+
 	httpConfig := kalturaclient.Configuration{
-		ServiceUrl:                "localhost:5000",
+		ServiceUrl:                "tcm.service.consul",
 		TimeoutMs:                 30000,
 		MaxConnectionsPerHost:     100,
 		IdleConnectionTimeoutMs:   1000,
@@ -25,9 +26,9 @@ func TestLogin(t *testing.T) {
 	client := kalturaclient.NewClientFromConfig(httpConfig, HeadersMiddleware, ExtraParamsMiddleware, RequestLoggingMiddleware)
 	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
 
-	username := "manager_1483"
+	username := "automation_1483"
 	password := "123456"
-	loginResponse, err := services.NewOttUserService(client).Login(ctx, 1483, username, password)
+	loginResponse, err := services.NewOttUserService(client).Login(ctx, 1483, &username, &password, nil, nil)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, loginResponse.LoginSession.Ks)
 }

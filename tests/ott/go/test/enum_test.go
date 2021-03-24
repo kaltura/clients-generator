@@ -3,15 +3,14 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"testing"
-
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/metaorderby"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestSerialization(t *testing.T) {
 	t.Parallel()
-	order := enums.MetaOrderNameAsc
+	order := metaorderby.NAME_ASC
 	var testCases = []SomeStruct{
 		{OrderBy: &order},
 		{OrderBy: nil},
@@ -44,5 +43,5 @@ func TestDeserialization(t *testing.T) {
 }
 
 type SomeStruct struct {
-	OrderBy *enums.MetaOrderBy `json:"orderBy,omitempty"`
+	OrderBy *metaorderby.MetaOrderBy `json:"orderBy,omitempty"`
 }
