@@ -25,10 +25,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		// enumes $ types
 		$enumNodes = $xpath->query("/xml/enums/enum");
-		// foreach($enumNodes as $enumNode)
-		// {
-		// 	$this->writeEnum($enumNode);
-		// }
+		foreach($enumNodes as $enumNode)
+		{
+		 	$this->writeEnum($enumNode);
+		}
 
 		$classNodes = $xpath->query("/xml/classes/class");
 		foreach($classNodes as $classNode)
@@ -74,12 +74,23 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			return;
 		
 		$enumName = $this->getCSharpName($enumName);
+		$enumNameLower = strtolower($enumName);
 
 		$s = "";
-		$s .= "package enums"."\n";
-		$s .= "var $enumName struct {"."\n";
+		$s .= "package $enumNameLower\n";
+		$s .= "\n";
+		$s .= "import (\n";
+		$s .= "   \"encoding/json\"\n";
+		$s .= "   \"errors\"\n";
+		$s .= ")\n";
+		$s .= "\n";
+		$s .= "type $enumName string\n";
+		$s .= "\n";
+		$s .= "const (\n";
+		
 
 		$propertyType =  $enumNode->getAttribute("enumType");
+		$enumValues = array();
 
 		foreach($enumNode->childNodes as $constNode)
 		{
@@ -87,27 +98,32 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				continue;
 
 			$propertyName = $constNode->getAttribute("name");
-			$s .= "		$propertyName $propertyType"."\n";
+			$propertyValue = $constNode->getAttribute("value");
+			$enumValues[] = $propertyName;
+			$s .= "   $propertyName $enumName = \"$propertyValue\"\n";
 		}
+		$enumValuesString = implode (", ", $enumValues);
 
-		$s .= "} {\n";
-
-		foreach($enumNode->childNodes as $constNode)
-		{
-			if ($constNode->nodeType != XML_ELEMENT_NODE)
-				continue;
-
-			$propertyName = $constNode->getAttribute("name");
-			$name = $constNode->getAttribute("value");
-			$propertyValue = "\"$name\",";
-			$s .= "		$propertyName = $propertyValue"."\n";
-		}
+		$s .= ")\n";
 		$s .= "\n";
-		$s .= "}"."\n";
+		$s .= "func (e *$enumName) UnmarshalJSON(b []byte) error {\n";
+		$s .= "   var s string\n";
+		$s .= "   err := json.Unmarshal(b, &s)\n";
+		$s .= "   if err != nil {\n";
+		$s .= "      return err\n";
+		$s .= "   }\n";
+		$s .= "   enumValue := $enumName(s)\n";
+		$s .= "   switch enumValue {\n";
+		$s .= "   case $enumValuesString:\n";
+		$s .= "      *e = enumValue\n";
+		$s .= "      return nil\n";
+		$s .= "   }\n";
+		$s .= "   return errors.New(\"invalid enum value\")\n";
+		$s .= "}\n";
+		$s .= "\n";
 
-		$file = "enums/$enumName.go";
+		$file = "enums/$enumNameLower/enum.go";
 		$this->addFile("KalturaClient/".$file, $s);
-		//$this->_csprojIncludes[] = $file;
 	}
 
     function writeClass(DOMElement $classNode)
@@ -361,6 +377,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$prefixText .= "package services\n";
 		$prefixText .= "\n";
 		$prefixText .= "import (\n";
+		$prefixText .= " \"fmt\"\n";
 		$prefixText .= " \"encoding/json\"\n";
 		$prefixText .= "\"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient\"\n";
 		$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types\"\n";
@@ -683,7 +700,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		// write the overload
 		$text .= "\n";
-		$text .= "$signaturePrefix($signatureParamsWithTypes) (*types.".$goActionName."Response, error){\n";
+		$text .= "$signaturePrefix(ctx context.Context, $signatureParamsWithTypes) (*types.".$goActionName."Response, error){\n";
 		$text .= "	path := \"service/$serviceName/action/$action\"\n";
 		$text .= "	requestMap := map[string]interface{}{}\n";
 
@@ -707,14 +724,16 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			}
 		}
 
-		$text .= "	byteResponse, apiException := s.client.Execute(path, requestMap)\n";
-		$text .= "	if apiException != nil {\n";
-		$text .= "		return nil, apiException\n";
-		$text .= "	}\n";
-		$text .= "	var result struct{ Result *types.".$goActionName."Response `json:\"result\"`}\n";
-		$text .= "	err := json.Unmarshal(byteResponse, &result)\n";
+		$text .= "	byteResponse, err := t.client.Execute(ctx, path, requestMap, extra)\n";
 		$text .= "	if err != nil {\n";
-		$text .= "		return nil, kalturaclient.FailedToParseJson\n";
+		$text .= "		return nil, err\n";
+		$text .= "	}\n";
+		$text .= "	var result struct {\n";
+		$text .= "      Result *types.".$goActionName."Response `json:\"result\"`\n";
+		$text .= "  }\n";
+		$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
+		$text .= "	if err != nil {\n";
+		$text .= "		return nil, fmt.Errorf(\"failed to parse json: %w\", err)\n";
 		$text .= "	}\n";
 		$text .= "	return result.Result, nil\n";
 		$text .= "}\n";
