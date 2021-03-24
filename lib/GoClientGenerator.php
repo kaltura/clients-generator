@@ -132,12 +132,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		if(!$this->shouldIncludeType($type))
 		{
-			KalturaLog::info("$type first if");
 			return;
 		}
 		if($type == 'KalturaObject')
 		{
-			KalturaLog::info("$type second if");
 			return;
 		}
 		
@@ -322,6 +320,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		// properties
 		foreach($properties as $property)
 		{
+			
 			if(array_key_exists('nullable', $property))
 			{
 				if($property['nullable'] == "1")
@@ -338,6 +337,11 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName,omitempty\"`";
 			}
 			$isNullable = false;
+
+			if($className == $property['type'])
+			{
+				$propertyLine = "//".$propertyLine;
+			}
             
 			$this->appendLine("		" . $propertyLine);
 		}
