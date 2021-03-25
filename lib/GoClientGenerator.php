@@ -145,18 +145,20 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		// 	return;
 		// }
             
-				
+		$s = "";
+		$prefixText = "";		
 		$className = $this->getCSharpName($type);
 		$this->startNewTextBlock();
-		$this->appendLine("package types");
-		$this->appendLine();
+		$prefixText .= "package types\n";
+		$prefixText .= "\n";
+		$isImport = false;
 		// $this->appendLine("import (");
 		// //$this->appendLine(" \"strconv\" ");
 		// $this->appendLine(" \"encoding/json\" ");
 		// $this->appendLine(")");
 
-        // class definition
-		$this->appendLine("type $className struct {");
+		// class definition
+		$s .= "type $className struct {\n";
 
 		$baseName = null;
 		if ($classNode->hasAttribute("base"))
@@ -183,6 +185,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		}
 
 		$properties = array();
+		$enumsImported = array();
 		foreach($classNode->childNodes as $propertyNode)
 		{
 			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
@@ -208,11 +211,21 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			}
 			$property["name"] = $goPropName;
 
-			// if ($isEnum)
-			// {
-			// 	$dotNetPropType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-			// }
-			if ($propType == "array")
+			if ($isEnum)
+			{
+				$dotNetPropType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
+				$enumPackage = strtolower($dotNetPropType);
+				$dotNetPropType = $enumPackage.".".$dotNetPropType;
+				if(!$isImport){
+					$prefixText .= "import (\n";
+					$isImport = true;
+				}
+				if(!in_array($enumPackage, $enumsImported)){
+					$prefixText .= "  \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/$enumPackage\"\n";
+					$enumsImported[] = $enumPackage;
+				}
+			}
+			else if ($propType == "array")
 			{
 				$arrayObjectType = $propertyNode->getAttribute("arrayType");
 				if($arrayObjectType == 'KalturaObject')
@@ -342,12 +355,12 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			{
 				$propertyLine = "//".$propertyLine;
 			}
-            
-			$this->appendLine("		" . $propertyLine);
+
+            $s .= "		" . $propertyLine."\n";
 		}
 		
-		$this->appendLine("}");
-		$this->appendLine();
+		$s .= "}\n";
+		$s .= "\n";
 		// $this->appendLine("func(s *$className) GetParams() map[string]interface{}{");
 		// $this->appendLine("	params := map[string]interface{}{}");
 		// foreach($classNode->childNodes as $propertyNode)
@@ -364,9 +377,15 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		// }
 		// $this->appendLine("	return params");
 		// $this->appendLine("}");
+		if($isImport){
+			$prefixText .= ")\n";
+		}
+		$prefixText .= "\n";
+
 		$fileName = $this->from_camel_case($className);
 		$file = "types/$fileName.go";
-		$this->addFile("KalturaClient/".$file, $this->getTextBlock());
+		$allFile = $prefixText.$s;
+		$this->addFile("KalturaClient/".$file, $allFile);
 		//$this->_csprojIncludes[] = $file;
 	}
 
