@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -57,7 +57,7 @@ namespace Kaltura.Types
 		private string _LanguagesCode = null;
 		private string _Currency = null;
 		private string _CurrencySign = null;
-		private float _VatPercent = decimal.MinValue;
+		private float _VatPercent = Single.MinValue;
 		private string _TimeZoneId = null;
 		#endregion
 

@@ -129,10 +129,10 @@ namespace Kaltura.Types
             return i;
         }
 
-        protected decimal ParseFloat(string s)
+        protected Single ParseFloat(string s)
         {
-            decimal i = decimal.MinValue;
-            decimal.TryParse(s, out i);
+            Single i = Single.MinValue;
+            Single.TryParse(s, out i);
             return i;
         }
         

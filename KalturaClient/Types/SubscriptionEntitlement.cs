@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -47,7 +47,6 @@ namespace Kaltura.Types
 		public const string SCHEDULED_SUBSCRIPTION_ID = "scheduledSubscriptionId";
 		public const string UNIFIED_PAYMENT_ID = "unifiedPaymentId";
 		public const string IS_SUSPENDED = "isSuspended";
-		public const string PRICE_DETAILS = "priceDetails";
 		#endregion
 
 		#region Private Fields
@@ -60,7 +59,6 @@ namespace Kaltura.Types
 		private long _ScheduledSubscriptionId = long.MinValue;
 		private long _UnifiedPaymentId = long.MinValue;
 		private bool? _IsSuspended = null;
-		private EntitlementPriceDetails _PriceDetails;
 		#endregion
 
 		#region Properties
@@ -154,16 +152,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsSuspended");
 			}
 		}
-		[JsonProperty]
-		public EntitlementPriceDetails PriceDetails
-		{
-			get { return _PriceDetails; }
-			private set 
-			{ 
-				_PriceDetails = value;
-				OnPropertyChanged("PriceDetails");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -209,10 +197,6 @@ namespace Kaltura.Types
 			{
 				this._IsSuspended = ParseBool(node["isSuspended"].Value<string>());
 			}
-			if(node["priceDetails"] != null)
-			{
-				this._PriceDetails = ObjectFactory.Create<EntitlementPriceDetails>(node["priceDetails"]);
-			}
 		}
 		#endregion
 
@@ -231,7 +215,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("scheduledSubscriptionId", this._ScheduledSubscriptionId);
 			kparams.AddIfNotNull("unifiedPaymentId", this._UnifiedPaymentId);
 			kparams.AddIfNotNull("isSuspended", this._IsSuspended);
-			kparams.AddIfNotNull("priceDetails", this._PriceDetails);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -256,8 +239,6 @@ namespace Kaltura.Types
 					return "UnifiedPaymentId";
 				case IS_SUSPENDED:
 					return "IsSuspended";
-				case PRICE_DETAILS:
-					return "PriceDetails";
 				default:
 					return base.getPropertyName(apiName);
 			}

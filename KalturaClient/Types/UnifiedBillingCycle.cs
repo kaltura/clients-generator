@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -41,14 +41,12 @@ namespace Kaltura.Types
 		public const string NAME = "name";
 		public const string DURATION = "duration";
 		public const string PAYMENT_GATEWAY_ID = "paymentGatewayId";
-		public const string IGNORE_PARTIAL_BILLING = "ignorePartialBilling";
 		#endregion
 
 		#region Private Fields
 		private string _Name = null;
 		private Duration _Duration;
 		private int _PaymentGatewayId = Int32.MinValue;
-		private bool? _IgnorePartialBilling = null;
 		#endregion
 
 		#region Properties
@@ -82,16 +80,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("PaymentGatewayId");
 			}
 		}
-		[JsonProperty]
-		public bool? IgnorePartialBilling
-		{
-			get { return _IgnorePartialBilling; }
-			set 
-			{ 
-				_IgnorePartialBilling = value;
-				OnPropertyChanged("IgnorePartialBilling");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -113,10 +101,6 @@ namespace Kaltura.Types
 			{
 				this._PaymentGatewayId = ParseInt(node["paymentGatewayId"].Value<string>());
 			}
-			if(node["ignorePartialBilling"] != null)
-			{
-				this._IgnorePartialBilling = ParseBool(node["ignorePartialBilling"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -129,7 +113,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("duration", this._Duration);
 			kparams.AddIfNotNull("paymentGatewayId", this._PaymentGatewayId);
-			kparams.AddIfNotNull("ignorePartialBilling", this._IgnorePartialBilling);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -142,8 +125,6 @@ namespace Kaltura.Types
 					return "Duration";
 				case PAYMENT_GATEWAY_ID:
 					return "PaymentGatewayId";
-				case IGNORE_PARTIAL_BILLING:
-					return "IgnorePartialBilling";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -42,7 +42,7 @@ namespace Kaltura.Request
         private Nullable<bool> _BoolValue = null;
         private long _LongValue;
         private int _IntValue;
-        private decimal _FloatValue;
+        private float _FloatValue;
 
 
         private string _ParamType;
@@ -78,7 +78,7 @@ namespace Kaltura.Request
             _IntValue = value;
             _ParamType = PARAM_TYPE_INT;
         }
-        public Param(decimal value)
+        public Param(float value)
         {
             _FloatValue = value;
             _ParamType = PARAM_TYPE_FLOAT;

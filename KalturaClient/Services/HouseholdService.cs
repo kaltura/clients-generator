@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -152,50 +152,6 @@ namespace Kaltura.Services
 		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<Household>(result);
-		}
-	}
-
-	public class HouseholdListRequestBuilder : RequestBuilder<ListResponse<Household>>
-	{
-		#region Constants
-		public const string FILTER = "filter";
-		public const string PAGER = "pager";
-		#endregion
-
-		public HouseholdFilter Filter { get; set; }
-		public FilterPager Pager { get; set; }
-
-		public HouseholdListRequestBuilder()
-			: base("household", "list")
-		{
-		}
-
-		public HouseholdListRequestBuilder(HouseholdFilter filter, FilterPager pager)
-			: this()
-		{
-			this.Filter = filter;
-			this.Pager = pager;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("filter"))
-				kparams.AddIfNotNull("filter", Filter);
-			if (!isMapped("pager"))
-				kparams.AddIfNotNull("pager", Pager);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<ListResponse<Household>>(result);
 		}
 	}
 
@@ -410,11 +366,6 @@ namespace Kaltura.Services
 		public static HouseholdGetRequestBuilder Get(int id = Int32.MinValue)
 		{
 			return new HouseholdGetRequestBuilder(id);
-		}
-
-		public static HouseholdListRequestBuilder List(HouseholdFilter filter, FilterPager pager = null)
-		{
-			return new HouseholdListRequestBuilder(filter, pager);
 		}
 
 		public static HouseholdPurgeRequestBuilder Purge(int id)

@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -79,6 +79,35 @@ namespace Kaltura.Services
 			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
 				return true;
 			return false;
+		}
+	}
+
+	public class SystemGetLogLevelRequestBuilder : RequestBuilder<string>
+	{
+		#region Constants
+		#endregion
+
+
+		public SystemGetLogLevelRequestBuilder()
+			: base("system", "getLogLevel")
+		{
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return result.Value<string>();
 		}
 	}
 
@@ -212,6 +241,47 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class SystemSetLogLevelRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string LEVEL = "level";
+		#endregion
+
+		public LogLevel Level { get; set; }
+
+		public SystemSetLogLevelRequestBuilder()
+			: base("system", "setLogLevel")
+		{
+		}
+
+		public SystemSetLogLevelRequestBuilder(LogLevel level)
+			: this()
+		{
+			this.Level = level;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("level"))
+				kparams.AddIfNotNull("level", Level);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 
 	public class SystemService
 	{
@@ -222,6 +292,11 @@ namespace Kaltura.Services
 		public static SystemClearLocalServerCacheRequestBuilder ClearLocalServerCache(string clearCacheAction = null, string key = null)
 		{
 			return new SystemClearLocalServerCacheRequestBuilder(clearCacheAction, key);
+		}
+
+		public static SystemGetLogLevelRequestBuilder GetLogLevel()
+		{
+			return new SystemGetLogLevelRequestBuilder();
 		}
 
 		public static SystemGetTimeRequestBuilder GetTime()
@@ -242,6 +317,11 @@ namespace Kaltura.Services
 		public static SystemPingRequestBuilder Ping()
 		{
 			return new SystemPingRequestBuilder();
+		}
+
+		public static SystemSetLogLevelRequestBuilder SetLogLevel(LogLevel level)
+		{
+			return new SystemSetLogLevelRequestBuilder(level);
 		}
 	}
 }

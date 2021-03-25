@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -44,7 +44,6 @@ namespace Kaltura.Enums
 		public static readonly PurchaseStatus NOT_FOR_PURCHASE = new PurchaseStatus("not_for_purchase");
 		public static readonly PurchaseStatus INVALID_CURRENCY = new PurchaseStatus("invalid_currency");
 		public static readonly PurchaseStatus CURRENCY_NOT_DEFINED_ON_PRICE_CODE = new PurchaseStatus("currency_not_defined_on_price_code");
-		public static readonly PurchaseStatus PENDING_ENTITLEMENT = new PurchaseStatus("pending_entitlement");
 
 		private PurchaseStatus(string name) : base(name) { }
 	}

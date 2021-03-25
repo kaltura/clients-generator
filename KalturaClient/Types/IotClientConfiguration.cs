@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -42,7 +42,6 @@ namespace Kaltura.Types
 		public const string CREDENTIALS_PROVIDER = "credentialsProvider";
 		public const string COGNITO_USER_POOL = "cognitoUserPool";
 		public const string JSON = "json";
-		public const string TOPICS = "topics";
 		#endregion
 
 		#region Private Fields
@@ -50,7 +49,6 @@ namespace Kaltura.Types
 		private CredentialsProvider _CredentialsProvider;
 		private CognitoUserPool _CognitoUserPool;
 		private string _Json = null;
-		private string _Topics = null;
 		#endregion
 
 		#region Properties
@@ -94,16 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Json");
 			}
 		}
-		[JsonProperty]
-		public string Topics
-		{
-			get { return _Topics; }
-			set 
-			{ 
-				_Topics = value;
-				OnPropertyChanged("Topics");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -129,10 +117,6 @@ namespace Kaltura.Types
 			{
 				this._Json = node["json"].Value<string>();
 			}
-			if(node["topics"] != null)
-			{
-				this._Topics = node["topics"].Value<string>();
-			}
 		}
 		#endregion
 
@@ -146,7 +130,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("credentialsProvider", this._CredentialsProvider);
 			kparams.AddIfNotNull("cognitoUserPool", this._CognitoUserPool);
 			kparams.AddIfNotNull("json", this._Json);
-			kparams.AddIfNotNull("topics", this._Topics);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -161,8 +144,6 @@ namespace Kaltura.Types
 					return "CognitoUserPool";
 				case JSON:
 					return "Json";
-				case TOPICS:
-					return "Topics";
 				default:
 					return base.getPropertyName(apiName);
 			}

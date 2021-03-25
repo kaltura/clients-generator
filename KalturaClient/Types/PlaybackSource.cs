@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -42,8 +42,6 @@ namespace Kaltura.Types
 		public const string PROTOCOLS = "protocols";
 		public const string DRM = "drm";
 		public const string IS_TOKENIZED = "isTokenized";
-		public const string BUSINESS_MODULE_ID = "businessModuleId";
-		public const string BUSINESS_MODULE_TYPE = "businessModuleType";
 		#endregion
 
 		#region Private Fields
@@ -51,8 +49,6 @@ namespace Kaltura.Types
 		private string _Protocols = null;
 		private IList<DrmPlaybackPluginData> _Drm;
 		private bool? _IsTokenized = null;
-		private int _BusinessModuleId = Int32.MinValue;
-		private TransactionType _BusinessModuleType = null;
 		#endregion
 
 		#region Properties
@@ -96,26 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("IsTokenized");
 			}
 		}
-		[JsonProperty]
-		public int BusinessModuleId
-		{
-			get { return _BusinessModuleId; }
-			private set 
-			{ 
-				_BusinessModuleId = value;
-				OnPropertyChanged("BusinessModuleId");
-			}
-		}
-		[JsonProperty]
-		public TransactionType BusinessModuleType
-		{
-			get { return _BusinessModuleType; }
-			private set 
-			{ 
-				_BusinessModuleType = value;
-				OnPropertyChanged("BusinessModuleType");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -145,14 +121,6 @@ namespace Kaltura.Types
 			{
 				this._IsTokenized = ParseBool(node["isTokenized"].Value<string>());
 			}
-			if(node["businessModuleId"] != null)
-			{
-				this._BusinessModuleId = ParseInt(node["businessModuleId"].Value<string>());
-			}
-			if(node["businessModuleType"] != null)
-			{
-				this._BusinessModuleType = (TransactionType)StringEnum.Parse(typeof(TransactionType), node["businessModuleType"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -166,8 +134,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("protocols", this._Protocols);
 			kparams.AddIfNotNull("drm", this._Drm);
 			kparams.AddIfNotNull("isTokenized", this._IsTokenized);
-			kparams.AddIfNotNull("businessModuleId", this._BusinessModuleId);
-			kparams.AddIfNotNull("businessModuleType", this._BusinessModuleType);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -182,10 +148,6 @@ namespace Kaltura.Types
 					return "Drm";
 				case IS_TOKENIZED:
 					return "IsTokenized";
-				case BUSINESS_MODULE_ID:
-					return "BusinessModuleId";
-				case BUSINESS_MODULE_TYPE:
-					return "BusinessModuleType";
 				default:
 					return base.getPropertyName(apiName);
 			}

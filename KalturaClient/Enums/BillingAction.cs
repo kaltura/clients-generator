@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -35,7 +35,6 @@ namespace Kaltura.Enums
 		public static readonly BillingAction RENEW_CANCELED_SUBSCRIPTION = new BillingAction("renew_canceled_subscription");
 		public static readonly BillingAction CANCEL_SUBSCRIPTION_ORDER = new BillingAction("cancel_subscription_order");
 		public static readonly BillingAction SUBSCRIPTION_DATE_CHANGED = new BillingAction("subscription_date_changed");
-		public static readonly BillingAction PENDING = new BillingAction("pending");
 
 		private BillingAction(string name) : base(name) { }
 	}
