@@ -1,24 +1,26 @@
-
 package test
-/*
+
 import (
 	"encoding/json"
+	"testing"
+
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestPolySerialization(t *testing.T) {
 	t.Parallel()
 
-	groupByFilter := types.NewKalturaGroupByFilter()
-	groupByFilter.OrderBy = "name"
-	groupByFilter.GroupBy = "series_id"
-	assets := GetAssets(t, groupByFilter)
-	_ = castToProgramAssetArray(assets)
+	groupByFilter := types.KalturaFilterInterface{
+		KalturaGroupByFilter: &types.KalturaGroupByFilter{
+			OrderBy: "name",
+			GroupBy: "series_id",
+		},
+	}
+	_ = GetAssets(t, groupByFilter)
 }
 
-func GetAssets(t *testing.T, filter types.AssetFilterInterface) []types.AssetInterface {
+func GetAssets(t *testing.T, filter types.KalturaFilterInterface) []types.AssetContainer {
 	// request
 	bytes, err := json.Marshal(&filter)
 	assert.NoError(t, err)
@@ -26,26 +28,16 @@ func GetAssets(t *testing.T, filter types.AssetFilterInterface) []types.AssetInt
 	assert.Equal(t, `{"objectType":"KalturaGroupByFilter","orderBy":"name","groupBy":"series_id"}`, string(bytes))
 
 	// response
-	response := []byte(`{"objects": [{"objectType":"ProgramAsset", "id": 1, "ProgramId":1},{"objectType":"Asset", "id": 2}]}`)
-	var assetResponse types.Assetlistresponse
+	response := []byte(`{ "totalCount":2, "totalSize":{"size":5},  "objects": [{"objectType":"EpgAsset", "id": 1, "epgId":1},{"objectType":"MediaAsset", "id": 2, "mediaId":3}]}`)
+	var assetResponse types.AssetResponse
 	err = json.Unmarshal(response, &assetResponse)
 	assert.NoError(t, err)
 
 	objects := assetResponse.Objects
 	assert.Equal(t, 2, len(objects))
-	assert.Equal(t, &types.ProgramAsset {Asset: types.Asset{Id: 1}, ProgramId: 1, ObjectType: types.ObjectType{Type: "ProgramAsset"}}, objects[0])
-	assert.Equal(t, &types.Asset{Id: 2, ObjectType: types.ObjectType{Type: "Asset"}}, objects[1])
+	objects[0].Get().GetId()
+	assert.Equal(t, &types.EpgAsset{Id: 1, EpgId: 1}, objects[0].EpgAsset)
+	assert.Equal(t, &types.MediaAsset{Id: 2, MediaId: 3}, objects[1].MediaAsset)
 
 	return objects
 }
-
-func castToProgramAssetArray(array []types.AssetInterface) []*types.ProgramAsset {
-	var result []*types.ProgramAsset
-	for _, value := range array {
-		if t, ok := value.(*types.ProgramAsset); ok {
-			result = append(result, t)
-		}
-	}
-	return result
-}
-*/
