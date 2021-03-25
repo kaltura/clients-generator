@@ -80,47 +80,60 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$s .= "package $enumNameLower\n";
 		$s .= "\n";
 		$s .= "import (\n";
-		$s .= "   \"encoding/json\"\n";
 		$s .= "   \"errors\"\n";
-		$s .= ")\n";
-		$s .= "\n";
-		$s .= "type $enumName string\n";
-		$s .= "\n";
-		$s .= "const (\n";
-		
 
-		$propertyType =  $enumNode->getAttribute("enumType");
-		$enumValues = array();
-
-		foreach($enumNode->childNodes as $constNode)
+		if(count($enumNode->childNodes) > 0)
 		{
-			if ($constNode->nodeType != XML_ELEMENT_NODE)
-				continue;
+			$s .= "   \"encoding/json\"\n";
+			$s .= ")\n";
+			$s .= "\n";
+			$s .= "type $enumName string\n";
+			$s .= "\n";
+			$s .= "const (\n";
 
-			$propertyName = $constNode->getAttribute("name");
-			$propertyValue = $constNode->getAttribute("value");
-			$enumValues[] = $propertyName;
-			$s .= "   $propertyName $enumName = \"$propertyValue\"\n";
+			$propertyType =  $enumNode->getAttribute("enumType");
+			$enumValues = array();
+
+			foreach($enumNode->childNodes as $constNode)
+			{
+				if ($constNode->nodeType != XML_ELEMENT_NODE)
+					continue;
+
+				$propertyName = $constNode->getAttribute("name");
+				$propertyValue = $constNode->getAttribute("value");
+				$enumValues[] = $propertyName;
+				$s .= "   $propertyName $enumName = \"$propertyValue\"\n";
+			}
+			$enumValuesString = implode (", ", $enumValues);
+
+			$s .= ")\n";
+			$s .= "\n";
+			$s .= "func (e *$enumName) UnmarshalJSON(b []byte) error {\n";
+			$s .= "   var s string\n";
+			$s .= "   err := json.Unmarshal(b, &s)\n";
+			$s .= "   if err != nil {\n";
+			$s .= "      return err\n";
+			$s .= "   }\n";
+			$s .= "   enumValue := $enumName(s)\n";
+			$s .= "   switch enumValue {\n";
+			$s .= "   case $enumValuesString:\n";
+			$s .= "      *e = enumValue\n";
+			$s .= "      return nil\n";
+			$s .= "   }\n";
+			$s .= "   return errors.New(\"invalid enum value\")\n";
+			$s .= "}\n";
+			$s .= "\n";
+		} else
+		{
+			$s .= ")\n";
+			$s .= "\n";
+			$s .= "type $enumName string\n";
+			$s .= "func (e *$enumName) UnmarshalJSON(b []byte) error {\n";
+			$s .= "	return errors.New(\"invalid enum value\")\n";
+			$s .= "}\n";
 		}
-		$enumValuesString = implode (", ", $enumValues);
 
-		$s .= ")\n";
-		$s .= "\n";
-		$s .= "func (e *$enumName) UnmarshalJSON(b []byte) error {\n";
-		$s .= "   var s string\n";
-		$s .= "   err := json.Unmarshal(b, &s)\n";
-		$s .= "   if err != nil {\n";
-		$s .= "      return err\n";
-		$s .= "   }\n";
-		$s .= "   enumValue := $enumName(s)\n";
-		$s .= "   switch enumValue {\n";
-		$s .= "   case $enumValuesString:\n";
-		$s .= "      *e = enumValue\n";
-		$s .= "      return nil\n";
-		$s .= "   }\n";
-		$s .= "   return errors.New(\"invalid enum value\")\n";
-		$s .= "}\n";
-		$s .= "\n";
+		
 
 		$file = "enums/$enumNameLower/enum.go";
 		$this->addFile("KalturaClient/".$file, $s);
@@ -159,7 +172,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		// class definition
 		$s .= "type $className struct {\n";
-
+		
 		$s .= "		ObjectType\n";
 		$baseName = null;
 		if ($classNode->hasAttribute("base"))
@@ -199,7 +212,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				"default" => null,
 				"isReadOnly" => false,
 				"isWriteOnly" => false,
-				"isOrderBy" => false
+				"isOrderBy" => false,
+				"nullable" => null
 			);
 
 			$propType = $propertyNode->getAttribute("type");
@@ -209,6 +223,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$goPropName = $this->upperCaseFirstLetter($propName);
 			if ($baseName != null && $baseName == $goPropName){
 				$goPropName = $goPropName."Property";
+			}
+			if($propertyNode->hasAttribute("nullable"))
+			{
+				$property["nullable"] = $propertyNode->getAttribute("nullable");
 			}
 			$property["name"] = $goPropName;
 
@@ -334,14 +352,14 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		// properties
 		foreach($properties as $property)
 		{
-			
-			if(array_key_exists('nullable', $property))
-			{
+			//TODO : not working
+			// if(array_key_exists('nullable', $property))
+			// {
 				if($property['nullable'] == "1")
 				{
 					$isNullable = true;
 				}
-			}
+			// }
 
 			$currName = $this->lowerCaseFirstLetter($property['apiName']);
 			$propertyLine = "{$property['name']} {$property['type']}	`json:\"$currName\"`";
@@ -349,13 +367,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			if($isNullable)
 			{
 				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName,omitempty\"`";
+			}else if($className == $property['type']){
+				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName\"`";
 			}
 			$isNullable = false;
-
-			if($className == $property['type'])
-			{
-				$propertyLine = "//".$propertyLine;
-			}
 
             $s .= "		" . $propertyLine."\n";
 		}
