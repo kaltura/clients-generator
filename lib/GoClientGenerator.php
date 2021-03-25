@@ -160,12 +160,13 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		// class definition
 		$s .= "type $className struct {\n";
 
+		$s .= "		ObjectType\n";
 		$baseName = null;
 		if ($classNode->hasAttribute("base"))
 		{
 			$base = $classNode->getAttribute("base");
 			$baseName = $this->getCSharpName($base);
-			$this->appendLine($this->upperCaseFirstLetter("		".$baseName));
+			$s .= $this->upperCaseFirstLetter("		".$baseName)."\n";
 		}
 
 		// we want to make the orderBy property strongly typed with the corresponding string enum
@@ -377,6 +378,11 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		// }
 		// $this->appendLine("	return params");
 		// $this->appendLine("}");
+
+		$s .= "func New$className() *$className{\n";
+		$s .= "	   return &$className{ObjectType: ObjectType{Type: \"$type\"}}\n";
+		$s .= "}\n";
+
 		if($isImport){
 			$prefixText .= ")\n";
 		}
