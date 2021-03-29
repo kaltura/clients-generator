@@ -15,10 +15,10 @@ import (
 )
 
 const (
-	systemAdminUsername string = "systemAdmin_1483"
-	systemAdminPassword string = "oneboxMagic"
-	adminUsername       string = "automation_1483"
-	adminPassword       string = "123456"
+	systemAdminUsername string = "systemAdminUsername"
+	systemAdminPassword string = "systemAdminPassword"
+	adminUsername       string = "adminUsername"
+	adminPassword       string = "adminPassword"
 	partnerId           int32  = 1483
 )
 
