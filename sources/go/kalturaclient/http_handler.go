@@ -67,18 +67,32 @@ func (p *HttpHandler) Execute(request Request) ([]byte, error) {
 }
 
 func (p *HttpHandler) getAPIExceptionFromResponse(byteResponse []byte) error {
-	var apiExceptionResult APIExceptionResult
+	var apiExceptionResult map[string]interface{}
 	err := json.Unmarshal(byteResponse, &apiExceptionResult)
 	if err != nil {
 		return fmt.Errorf("failed to parse json: %w", err)
 	}
-	if apiExceptionResult.Result == nil {
-		return fmt.Errorf("failed to parse json: %w", err)
+	resultInterface, ok := apiExceptionResult["result"]
+	if !ok {
+		return fmt.Errorf("failed to parse result json: %w", err)
 	}
-	if apiExceptionResult.Result.Error != nil {
-		return apiExceptionResult.Result.Error
+	resultMap, ok := resultInterface.(map[string]interface{})
+	if !ok {
+		return nil
 	}
-	return nil
+	errorInterface, ok := resultMap["error"]
+	if !ok {
+		return nil
+	}
+	errorMap, ok := errorInterface.(map[string]interface{})
+	if !ok {
+		return nil
+	}
+	apiException := APIException{
+		Code:    errorMap["code"].(string),
+		Message: errorMap["message"].(string),
+	}
+	return &apiException
 }
 
 func (p *HttpHandler) closeIt(c io.Closer) {

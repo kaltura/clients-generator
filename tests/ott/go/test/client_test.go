@@ -2,21 +2,71 @@ package test
 
 import (
 	"context"
+
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient"
 
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
 	ottcontext "github.com/kaltura/ott-lib-context"
 	log "github.com/kaltura/ott-lib-log"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
+
+	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
-func TestLogin(t *testing.T) {
-	t.Parallel()
+const (
+	systemAdminUsername string = "systemAdmin_1483"
+	systemAdminPassword string = "oneboxMagic"
+	adminUsername       string = "automation_1483"
+	adminPassword       string = "123456"
+	partnerId           int32  = 1483
+)
 
+func TestErrorLogin(t *testing.T) {
+	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
+	_, ks, err := login(ctx, "nonexistingusername", "nopassword")
+	assert.Error(t, err)
+	assert.Empty(t, ks)
+}
+
+func TestPing(t *testing.T) {
+	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
+	client, ks, err := login(ctx, systemAdminUsername, systemAdminPassword)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, ks)
+	if err != nil {
+		return
+	}
+	pingResult, err := services.NewSystemService(client).Ping(ctx, kalturaclient.KS(ks))
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+	assert.NotEmpty(t, pingResult)
+	assert.Equal(t, true, *pingResult)
+}
+
+func TestMetaList(t *testing.T) {
+	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
+	client, ks, err := login(ctx, adminUsername, adminPassword)
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+	assert.NotEmpty(t, ks)
+	metaListResult, err := services.NewMetaService(client).List(ctx, nil, kalturaclient.KS(ks))
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+	assert.NotEmpty(t, metaListResult)
+	assert.GreaterOrEqual(t, int(metaListResult.TotalCount), 1)
+	assert.GreaterOrEqual(t, len(metaListResult.Objects), 1)
+}
+
+func login(ctx context.Context, username string, password string) (*kalturaclient.Client, string, error) {
 	httpConfig := kalturaclient.Configuration{
-		ServiceUrl:                "tcm.service.consul",
+		ServiceUrl:                "phoenix.service.consul",
 		TimeoutMs:                 30000,
 		MaxConnectionsPerHost:     100,
 		IdleConnectionTimeoutMs:   1000,
@@ -24,13 +74,12 @@ func TestLogin(t *testing.T) {
 		MaxIdleConnectionsPerHost: 100,
 	}
 	client := kalturaclient.NewClientFromConfig(httpConfig, HeadersMiddleware, ExtraParamsMiddleware, RequestLoggingMiddleware)
-	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
-
-	username := "automation_1483"
-	password := "123456"
-	loginResponse, err := services.NewOttUserService(client).Login(ctx, 1483, &username, &password, nil, nil)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, loginResponse.LoginSession.Ks)
+	loginResponse, err := services.NewOttUserService(client).Login(ctx, partnerId, &username, &password, nil, nil)
+	var ks string
+	if loginResponse != nil {
+		ks = loginResponse.LoginSession.Ks
+	}
+	return client, ks, err
 }
 
 func HeadersMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
