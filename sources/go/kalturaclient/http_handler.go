@@ -7,6 +7,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/errors"
 )
 
 const (
@@ -35,9 +37,11 @@ func NewHttpHandlerFromConfig(config Configuration) *HttpHandler {
 func (p *HttpHandler) Execute(request Request) ([]byte, error) {
 	var requestUrl = p.baseUrl + "/api_v3/" + request.path
 	requestBody, err := request.GetBodyBytes()
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
+
 	httpRequest, err := http.NewRequestWithContext(request.ctx, postMethod, requestUrl, bytes.NewBuffer(requestBody))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
@@ -50,13 +54,16 @@ func (p *HttpHandler) Execute(request Request) ([]byte, error) {
 		}
 	}
 
+	body := httpRequest.GetBody
+	print(body)
+
 	httpResponse, err := p.httpClient.Do(httpRequest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute HTTP request: %w", err)
 	}
 	defer p.closeIt(httpResponse.Body)
 	if httpResponse.StatusCode != 200 {
-		return nil, NewBadStatusCodeError(httpResponse.StatusCode, httpResponse.Status)
+		return nil, errors.NewBadStatusCodeError(httpResponse.StatusCode, httpResponse.Status)
 	}
 	byteResponse, err := ioutil.ReadAll(httpResponse.Body)
 	if err != nil {
@@ -88,7 +95,7 @@ func (p *HttpHandler) getAPIExceptionFromResponse(byteResponse []byte) error {
 	if !ok {
 		return nil
 	}
-	apiException := APIException{
+	apiException := errors.APIException{
 		Code:    errorMap["code"].(string),
 		Message: errorMap["message"].(string),
 	}

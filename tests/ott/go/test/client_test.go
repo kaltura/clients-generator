@@ -2,16 +2,16 @@ package test
 
 import (
 	"context"
-
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient"
-
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
-	ottcontext "github.com/kaltura/ott-lib-context"
-	log "github.com/kaltura/ott-lib-log"
-
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/metadatatype"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
+	ottcontext "github.com/kaltura/ott-lib-context"
+	log "github.com/kaltura/ott-lib-log"
 )
 
 const (
@@ -21,13 +21,6 @@ const (
 	adminPassword       string = "adminPassword"
 	partnerId           int32  = 1483
 )
-
-func TestErrorLogin(t *testing.T) {
-	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
-	_, ks, err := login(ctx, "nonexistingusername", "nopassword")
-	assert.Error(t, err)
-	assert.Empty(t, ks)
-}
 
 func TestPing(t *testing.T) {
 	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
@@ -54,7 +47,21 @@ func TestMetaList(t *testing.T) {
 		return
 	}
 	assert.NotEmpty(t, ks)
-	metaListResult, err := services.NewMetaService(client).List(ctx, nil, kalturaclient.KS(ks))
+
+	filter := types.MetaFilter{
+		DataTypeEqual: metadatatype.DATE,
+	}
+
+	metaListResult, err := services.NewMetaService(client).List(ctx, &filter, kalturaclient.KS(ks))
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+	assert.NotEmpty(t, metaListResult)
+	assert.GreaterOrEqual(t, int(metaListResult.TotalCount), 1)
+	assert.GreaterOrEqual(t, len(metaListResult.Objects), 1)
+
+	metaListResult, err = services.NewMetaService(client).List(ctx, nil, kalturaclient.KS(ks))
 	assert.NoError(t, err)
 	if err != nil {
 		return

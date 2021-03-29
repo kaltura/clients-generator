@@ -46,8 +46,9 @@ func (e *AdsPolicy) UnmarshalJSON(b []byte) error {
 
 ## Generation of types:
 1. all classes will include all of its properites + base class properites.
-   1.  if property in class is readOnly/insertOnly/writeOnly/optional/nullable so it will be a pointer with 'omitempty' in json.
-   2. if class contains property by the same name as it's base class it will contain only its own property (name and type)
+   1. all properties will include json serialization of name and omitempty.
+   2. if property in class is optional/nullable so it will be a pointer.
+   3. if class contains property by the same name as it's base class it will contain only its own property (name and type)
 ```go
 type Filter struct {
 	OrderBy string `json:"orderBy"`
@@ -156,11 +157,46 @@ func (b *AssetContainer) UnmarshalJSON(bytes []byte) error {
 1. all actions first param is ctx context.Context and last param is extra ...kalturaclient.Param - between then we add the real params of the action.
 2. if a param of an action in class of phoniex it will recive the interface of the class and not the class itself
 3. all action return 2 objects: pointer to result of the action and error
-4. if a param of an action can be null it will pass as pointer and will be set only if not nil
+4. if action's param is optional it will pass as pointer and will be set to requestMap only if not nil
+	1. unless this paran in an interface, in this case we pass it without a pointer and set it in to requestMap, nil check will be only for optional param
+	```go
+	// meta.list receives filter(MetaFilter) as param so we pass filter as MetaFilterInterface
+	// filter is optional so before set it to requestMap we check if it not nil
+	func (s *MetaService) List(ctx context.Context, filter types.MetaFilterInterface, extra ...kalturaclient.Param) (*types.MetaListResponse, error) {
+		requestMap := map[string]interface{}{}
+		if filter != nil {
+			requestMap["filter"] = filter
+		}
+		// more code ...
+	}
+
+	// ottUser.anonymousLogin receives partnerId int32, udid string -> builtin types so we pass them as they are
+	// udid is optional so we pass it as pointer and before set it to requestMap we check if it not nil
+	func (s *OttUserService) AnonymousLogin(ctx context.Context, partnerId int32, udid *string, extra ...kalturaclient.Param) (*types.LoginSession, error) {
+		requestMap := map[string]interface{}{}
+		requestMap["partnerId"] = partnerId
+		if udid != nil {
+			requestMap["udid"] = udid
+		}
+		// more code ...
+	}
+
+	// meta.list receives filter(MetaFilter) as param so we pass filter as MetaFilterInterface
+	// announcement.list receives filter(AnnouncementFilter), pager(FilterPager) -> both from types package so we pass their interfaces
+	// pager is optional so before set it to requestMap we check if it not nil
+	func (s *AnnouncementService) List(ctx context.Context, filter types.AnnouncementFilterInterface, pager types.FilterPagerInterface, extra ...kalturaclient.Param) (*types.AnnouncementListResponse, error) {
+		requestMap := map[string]interface{}{}
+		requestMap["filter"] = filter
+		if pager != nil {
+			requestMap["pager"] = pager
+		}
+		// more code ...
+	}
+	```
 5. if return type of an action has a contanier so the action will return the container and not the class
 ### exampels for service actions:
 ```go
-func (s *AssetService) List(ctx context.Context, filter *types.AssetFilterInterface, pager *types.FilterPager, extra ...kalturaclient.Param) 
+func (s *AssetService) List(ctx context.Context, filter types.AssetFilterInterface, pager *types.FilterPager, extra ...kalturaclient.Param) 
 (*types.AssetListResponse, error)
 
 func (s *AssetService) Add(ctx context.Context, asset types.AssetInterface, extra ...kalturaclient.Param) (*types.AssetContainer, error)
@@ -169,3 +205,6 @@ func (s *MetaService) Update(ctx context.Context, id int64, meta types.MetaInter
 
 func (s *MetaService) Delete(ctx context.Context, id int64, extra ...kalturaclient.Param) (*bool, error)
 ```
+
+## Generation of errors:
+1. for each error add const value in file errors/codes.go
