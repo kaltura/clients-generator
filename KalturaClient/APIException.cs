@@ -250,6 +250,7 @@ namespace Kaltura
 		public static string InputFormatIsInvalid = "5078";
 		public static string DuplicateRegionChannel = "5076";
 		public static string ParentAlreadyContainsChannel = "5077";
+		public static string StartDateShouldBeLessThanEndDate = "4111";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -474,7 +475,6 @@ namespace Kaltura
 		public static string KeyCannotBeEmptyOrNull = "500086";
 		public static string MissingMandatoryArgumentInProperty = "500087";
 		public static string MaxArguments = "500088";
-		public static string StartDateShouldBeLessThanEndDate = "500089";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";
