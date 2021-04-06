@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -79,6 +79,55 @@ namespace Kaltura.Services
 			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
 				return true;
 			return false;
+		}
+	}
+
+	public class SystemGetInvalidationKeyValueRequestBuilder : RequestBuilder<LongValue>
+	{
+		#region Constants
+		public const string INVALIDATION_KEY = "invalidationKey";
+		public const string LAYERED_CACHE_CONFIG_NAME = "layeredCacheConfigName";
+		public const string GROUP_ID = "groupId";
+		#endregion
+
+		public string InvalidationKey { get; set; }
+		public string LayeredCacheConfigName { get; set; }
+		public int GroupId { get; set; }
+
+		public SystemGetInvalidationKeyValueRequestBuilder()
+			: base("system", "getInvalidationKeyValue")
+		{
+		}
+
+		public SystemGetInvalidationKeyValueRequestBuilder(string invalidationKey, string layeredCacheConfigName, int groupId)
+			: this()
+		{
+			this.InvalidationKey = invalidationKey;
+			this.LayeredCacheConfigName = layeredCacheConfigName;
+			this.GroupId = groupId;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("invalidationKey"))
+				kparams.AddIfNotNull("invalidationKey", InvalidationKey);
+			if (!isMapped("layeredCacheConfigName"))
+				kparams.AddIfNotNull("layeredCacheConfigName", LayeredCacheConfigName);
+			if (!isMapped("groupId"))
+				kparams.AddIfNotNull("groupId", GroupId);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<LongValue>(result);
 		}
 	}
 
@@ -302,6 +351,11 @@ namespace Kaltura.Services
 		public static SystemClearLocalServerCacheRequestBuilder ClearLocalServerCache(string clearCacheAction = null, string key = null)
 		{
 			return new SystemClearLocalServerCacheRequestBuilder(clearCacheAction, key);
+		}
+
+		public static SystemGetInvalidationKeyValueRequestBuilder GetInvalidationKeyValue(string invalidationKey, string layeredCacheConfigName = null, int groupId = 0)
+		{
+			return new SystemGetInvalidationKeyValueRequestBuilder(invalidationKey, layeredCacheConfigName, groupId);
 		}
 
 		public static SystemGetLayeredCacheGroupConfigRequestBuilder GetLayeredCacheGroupConfig(int groupId = 0)

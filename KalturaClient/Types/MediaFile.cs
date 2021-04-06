@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -42,6 +42,7 @@ namespace Kaltura.Types
 		public const string ID = "id";
 		public const string TYPE = "type";
 		public const string TYPE_ID = "typeId";
+		public const string ALT_URL = "altUrl";
 		public const string DURATION = "duration";
 		public const string EXTERNAL_ID = "externalId";
 		public const string ALT_EXTERNAL_ID = "altExternalId";
@@ -68,6 +69,7 @@ namespace Kaltura.Types
 		private int _Id = Int32.MinValue;
 		private string _Type = null;
 		private int _TypeId = Int32.MinValue;
+		private string _AltUrl = null;
 		private long _Duration = long.MinValue;
 		private string _ExternalId = null;
 		private string _AltExternalId = null;
@@ -128,6 +130,16 @@ namespace Kaltura.Types
 			{ 
 				_TypeId = value;
 				OnPropertyChanged("TypeId");
+			}
+		}
+		[JsonProperty]
+		public string AltUrl
+		{
+			get { return _AltUrl; }
+			set 
+			{ 
+				_AltUrl = value;
+				OnPropertyChanged("AltUrl");
 			}
 		}
 		[JsonProperty]
@@ -345,6 +357,10 @@ namespace Kaltura.Types
 			{
 				this._TypeId = ParseInt(node["typeId"].Value<string>());
 			}
+			if(node["altUrl"] != null)
+			{
+				this._AltUrl = node["altUrl"].Value<string>();
+			}
 			if(node["duration"] != null)
 			{
 				this._Duration = ParseLong(node["duration"].Value<string>());
@@ -434,6 +450,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("typeId", this._TypeId);
+			kparams.AddIfNotNull("altUrl", this._AltUrl);
 			kparams.AddIfNotNull("duration", this._Duration);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("altExternalId", this._AltExternalId);
@@ -467,6 +484,8 @@ namespace Kaltura.Types
 					return "Type";
 				case TYPE_ID:
 					return "TypeId";
+				case ALT_URL:
+					return "AltUrl";
 				case DURATION:
 					return "Duration";
 				case EXTERNAL_ID:
