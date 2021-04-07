@@ -7,6 +7,7 @@ class Classes {
 }
 class Property {
 	public $type;
+	public $pureType;
 	public $name;
 	public $json;
 	public $isEnumImport = false;
@@ -20,6 +21,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 	private $_classInheritance = array();
 	private $_enums = array();
 	private $_allClasses = array();
+	private $_allContainers = array();
 
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "go")
 	{
@@ -53,11 +55,18 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$this->addClass($classNode);
 		}
 		
+		foreach($this->_allClasses as $classNode)
+		{
+			$this->_allContainers[$classNode->className] = $this->extractAllInheritanceClasses($classNode);
+		}
+
 		$classNodes = $xpath->query("/xml/classes/class");
 		foreach($classNodes as $classNode)
 		{
 			$this->writeClass($classNode);
 		}
+
+		
 
 		$serviceNodes = $xpath->query("/xml/services/service");
 
@@ -226,12 +235,21 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					$prefixText .= "import (\n";
 					$isImport = true;
 				}
+
 				if(!in_array($property->enumPackage, $enumsImported)){
 					$prefixText .= $property->enumImport;
 					$enumsImported[] = $property->enumPackage;
 				}
 			}
+
 			$propertyLine = $property->name." ".$property->type." ".$property->json;
+
+			if(array_filter($this->_allClasses, function($toCheck) use ($property) { 
+				return $toCheck->className == $property->pureType; 
+			}) && $this->isContainerByName($property->pureType))
+			{
+				$propertyLine = $property->name." ".$property->type."Container ".$property->json;
+			}
 			$s .= "		" . $propertyLine."\n";
 		}
 		
@@ -301,17 +319,32 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if(!$currentClass->isAbstract)
 		{
 			$textIfEnum = "";
+			$textIfPointer = "";
 			foreach($allInheritanceProperties as $currProperty)
 			{
+				//amitttt
 				$textIfEnum = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
+				if(array_filter($this->_allClasses, function($toCheck) use ($currProperty) { 
+					return $toCheck->className == $currProperty->pureType; 
+				}) && $this->isContainerByName($currProperty->pureType))
+				{
+					$textIfEnum = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type."Container {\n";
+				}
 				$textIfEnum .= "		return f.".$currProperty->name."\n";
+
 				if ($currProperty->enumPackage != null)
 				{
-					$textIfEnum = "func (f *$className) Get".$currProperty->name."() string {\n";
-					$textIfEnum .= "		return string(f.".$currProperty->name.")\n";
+					if (str_contains($currProperty->type, '*'))
+					{
+						$textIfPointer = "*";
+					}
+					$textIfEnum = "func (f $className) Get".$currProperty->name."() string {\n";
+					$textIfEnum .= "		return string($textIfPointer"."f.".$currProperty->name.")\n";
 				}
 				$s .= $textIfEnum;
 				$s .= "}\n";
+
+				$textIfPointer = "";
 			}
 		}
 		return $s;
@@ -321,8 +354,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 	{
 		$s = "";
 
-		$inheritanceClasses = $this->extractAllInheritanceClasses($currentClass);
-		if(count($inheritanceClasses) > 1)
+		$inheritanceClasses = $this->_allContainers[$currentClass->className];
+		if($this->isContainer($inheritanceClasses))
 		{
 			$isNeedJson = true;
 			$inheritanceClasses = array_unique($inheritanceClasses);
@@ -465,13 +498,27 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				if(str_contains($arrayType, 'Kaltura'))
 				{
 					$newName = "types.".$this->getCSharpName($arrayType);
+					if($this->isContainerByName($this->getCSharpName($arrayType)))
+					{
+						$newName = "types.".$this->getCSharpName($arrayType)."Container";
+					}
 					$isKalturaType = true;
 				}
 				$dotNetOutputType = "[]".$newName;
 				break;
 			case "map":
-				$arrayType = $resultNode->getAttribute("arrayType");
+				$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
+				if(str_contains($resultNode->getAttribute("arrayType"), 'Kaltura'))
+				{
+					$arrayType = "types.".$arrayType;
+					if($this->isContainerByName($arrayType))
+					{
+						$arrayType = "types.".$arrayType."Container";
+					}
+				}
+				
 				$dotNetOutputType = "map[string]".$arrayType;
+
 				break;
 			case "bigint":
 				$dotNetOutputType = "*int64";
@@ -494,6 +541,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			default:
 				$resultGo = $this->getCSharpName($resultType);
 				$dotNetOutputType = "*types.$resultGo";
+				if($this->isContainerByName($resultGo))
+				{
+					$dotNetOutputType = "*types.$resultGo"."Container";
+				}
 				$isKalturaType = true;
 				break;
 		}
@@ -613,7 +664,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					$newName = $arrayType;
 					if(str_contains($arrayType, 'Kaltura'))
 					{
-						$newName = "types.".$this->getCSharpName($arrayType);
+						$newName = "types.".$this->getCSharpName($arrayType)."Interface";
 					}
 					$dotNetType = "[]".$newName;
 					break;
@@ -622,7 +673,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					$newName = $arrayType;
 					if(str_contains($arrayType, 'Kaltura'))
 					{
-						$newName = "types.".$this->getCSharpName($arrayType);
+						$newName = "types.".$this->getCSharpName($arrayType)."Interface";
 					}
 					$dotNetType = "map[string]" . $newName;
 					break;
@@ -650,7 +701,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 						$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
 					else if(str_contains($paramType, 'Kaltura'))
 					{
-						$dotNetType = "types.".substr($paramType, 7);
+						$dotNetType = "types.".substr($paramType, 7)."Interface";
 					}
 					else
 					{
@@ -835,20 +886,20 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		}
 
 		// we want to make the orderBy property strongly typed with the corresponding string enum
-		$isFilter = false;
-		if ($this->isClassInherit($type, "KalturaFilter"))
-		{
-			$orderByType = str_replace("Filter", "OrderBy", $type);
-			if ($this->enumExists($orderByType))
-			{
-				$orderByElement = $classNode->ownerDocument->createElement("property");
-				$orderByElement->setAttribute("name", "orderBy");
-				$orderByElement->setAttribute("type", "string");
-				$orderByElement->setAttribute("enumType", $orderByType);
-				$classNode->appendChild($orderByElement);
-				$isFilter = true;
-			}
-		}
+		// $isFilter = false;
+		// if ($this->isClassInherit($type, "KalturaFilter"))
+		// {
+		// 	$orderByType = str_replace("Filter", "OrderBy", $type);
+		// 	if ($this->enumExists($orderByType))
+		// 	{
+		// 		$orderByElement = $classNode->ownerDocument->createElement("property");
+		// 		$orderByElement->setAttribute("name", "orderBy");
+		// 		$orderByElement->setAttribute("type", "string");
+		// 		$orderByElement->setAttribute("enumType", $orderByType);
+		// 		$classNode->appendChild($orderByElement);
+		// 		$isFilter = true;
+		// 	}
+		// }
 
 		$properties = array();
 		$enumsImported = array();
@@ -869,7 +920,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				"nullable" => null,
 				"enumPackageName" => null,
 				"enumImport" => null,
-				"isEnumImport" => false
+				"isEnumImport" => false,
+				"pureType" => null
 			);
 
 			$propType = $propertyNode->getAttribute("type");
@@ -896,13 +948,15 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					$property["enumImport"] = "  \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/$enumPackage\"\n";
 					$enumsImported[] = $enumPackage;
 				}
+				$property["pureType"] = "enum";
 			}
 			else if ($propType == "array")
 			{
 				$arrayObjectType = $propertyNode->getAttribute("arrayType");
 				if($arrayObjectType == 'KalturaObject')
                     $arrayObjectType = 'ObjectBase';
-                $dotNetPropType = "[]" . $this->getCSharpName($arrayObjectType);
+				$dotNetPropType = "[]" . $this->getCSharpName($arrayObjectType);
+				$property["pureType"] = $this->getCSharpName($arrayObjectType);
 			}
 			else if ($propType == "map")
 			{
@@ -910,30 +964,37 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				if($arrayObjectType == 'KalturaObject')
 					$arrayObjectType = 'ObjectBase';
 				$dotNetPropType = "map[string]" . $this->getCSharpName($arrayObjectType);
+				$property["pureType"] = $this->getCSharpName($arrayObjectType);
 			}
 			else if ($propType == "bool")
 			{
 				$dotNetPropType  = "bool";
+				$property["pureType"] = "bool"; 
 			}
 			else if ($propType == "bigint")
 			{
 				$dotNetPropType  = "int64";
+				$property["pureType"] = "int64"; 
 			}
 			else if ($propType == "time")
 			{
 				$dotNetPropType  = "int32";
+				$property["pureType"] = "int32"; 
 			}
 			else if ($propType == "int")
 			{
 				$dotNetPropType  = "int32";
+				$property["pureType"] = "int32"; 
 			}
 			else if ($propType == "float")
 			{
 				$dotNetPropType  = "float32";
+				$property["pureType"] = "float32"; 
 			}
 			else
 			{
 				$dotNetPropType = $this->getCSharpName($propType);
+				$property["pureType"] = $this->getCSharpName($propType); 
 			}
 
 			$property["type"] = $dotNetPropType;
@@ -989,6 +1050,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$propertyForClass->name = $property['name'];
 			$propertyForClass->type = $property['type'];
 			$propertyForClass->json = "`json:\"$currName\"`";
+			$propertyForClass->pureType = $property['pureType'];
 
 			if($property["isEnumImport"])
 			{
@@ -1063,6 +1125,15 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		}
 
 		return $calssesToAdd;
+	}
+
+	private function isContainerByName($className){
+		return $this->isContainer($this->_allContainers[$className]) ;
+	}
+
+
+	private function isContainer($classes){
+		return count($classes) > 1;
 	}
 
 	private function writeClient()
