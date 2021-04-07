@@ -2,16 +2,17 @@ package test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/householdsuspensionstate"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/metadatatype"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/userstate"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
-	ottcontext "github.com/kaltura/ott-lib-context"
-	log "github.com/kaltura/ott-lib-log"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/test/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 const (
@@ -23,7 +24,7 @@ const (
 )
 
 func TestPing(t *testing.T) {
-	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
+	ctx := utils.WithRequestId(context.Background(), "requestId")
 	client, ks, err := login(ctx, systemAdminUsername, systemAdminPassword)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, ks)
@@ -40,7 +41,7 @@ func TestPing(t *testing.T) {
 }
 
 func TestMetaList(t *testing.T) {
-	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
+	ctx := utils.WithRequestId(context.Background(), "requestId")
 	client, ks, err := login(ctx, adminUsername, adminPassword)
 	assert.NoError(t, err)
 	if err != nil {
@@ -72,15 +73,20 @@ func TestMetaList(t *testing.T) {
 }
 
 func login(ctx context.Context, username string, password string) (*kalturaclient.Client, string, error) {
-	httpConfig := kalturaclient.Configuration{
-		ServiceUrl:                "phoenix.service.consul",
+	//mockHttpServer := utils.NewMockHttpServer()
+	config := kalturaclient.Configuration{
+		ServiceUrl:                "test.com",
 		TimeoutMs:                 30000,
-		MaxConnectionsPerHost:     100,
-		IdleConnectionTimeoutMs:   1000,
-		MaxIdleConnections:        100,
-		MaxIdleConnectionsPerHost: 100,
+		MaxConnectionsPerHost:     1024,
+		IdleConnectionTimeoutMs:   30000,
+		MaxIdleConnections:        1024,
+		MaxIdleConnectionsPerHost: 1024,
 	}
-	client := kalturaclient.NewClientFromConfig(httpConfig, HeadersMiddleware, ExtraParamsMiddleware, RequestLoggingMiddleware)
+	mockHttpClient := utils.NewMockHttpClient()
+	httpHandler := kalturaclient.NewHttpHandler(kalturaclient.GetBaseUrl(config), mockHttpClient)
+	var client *kalturaclient.Client
+	client = kalturaclient.NewClient(httpHandler.Execute)
+	mockHttpClient.SetResponse("/api_v3/service/ottUser/action/login", loginResponseFromPhoenix(), 200)
 	loginResponse, err := services.NewOttUserService(client).Login(ctx, partnerId, &username, &password, nil, nil)
 	var ks string
 	if loginResponse != nil {
@@ -91,7 +97,7 @@ func login(ctx context.Context, username string, password string) (*kalturaclien
 
 func HeadersMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
 	return func(request kalturaclient.Request) ([]byte, error) {
-		if requestId, ok := ottcontext.GetRequestId(request.GetContext()); ok {
+		if requestId, ok := utils.GetRequestId(request.GetContext()); ok {
 			requestIdParam := kalturaclient.RequestId(requestId)
 			request, _ = request.WithParam(requestIdParam)
 		}
@@ -108,17 +114,35 @@ func ExtraParamsMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
 
 func RequestLoggingMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
 	return func(request kalturaclient.Request) ([]byte, error) {
-		logger, _ := log.GetOrCreateInContext(request.GetContext())
-		logger = logger.WithField("client", "phoenix")
+		logger := utils.GetLogFromContext(request.GetContext())
+		contextLogger := logger.WithField("client", "phoenix")
 		requestBytes, _ := request.GetBodyBytes()
-		logger.Infof("request. path:[%s],headers:[%v],body:[%s]", request.GetPath(), request.GetHeaders(), string(requestBytes))
+		contextLogger.Infof("request. path:[%s],headers:[%v],body:[%s]", request.GetPath(), request.GetHeaders(), string(requestBytes))
 		responseBytes, err := next(request)
 		if err != nil {
-			logger.Errorf("response. error: %v", err)
+			contextLogger.Errorf("response. error: %v", err)
 		} else {
-			logger.Infof("response. body:[%s]", string(responseBytes))
+			contextLogger.Infof("response. body:[%s]", string(responseBytes))
 		}
 
 		return responseBytes, err
 	}
+}
+
+func loginResponseFromPhoenix() []byte {
+	var result struct {
+		Result *types.LoginResponse `json:"result"`
+	}
+	loginResponse := types.LoginResponse{
+		LoginSession: types.LoginSession{
+			Ks: "sudfjksdfsjdgf",
+		},
+		User: types.OTTUser{
+			SuspensionState: householdsuspensionstate.NOT_SUSPENDED,
+			UserState:       userstate.OK,
+		},
+	}
+	result.Result = &loginResponse
+	resultBytes, _ := json.Marshal(result)
+	return resultBytes
 }

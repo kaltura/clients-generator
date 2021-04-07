@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/errors"
-	ottcontext "github.com/kaltura/ott-lib-context"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/test/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,7 +14,7 @@ func TestErrorWithArgs(t *testing.T) {
 }
 
 func TestErrorLogin(t *testing.T) {
-	ctx := ottcontext.WithRequestId(context.Background(), "requestId")
+	ctx := utils.WithRequestId(context.Background(), "requestId")
 	_, ks, err := login(ctx, "nonexistingusername", "nopassword")
 	assert.Error(t, err)
 	// TODO - i want to do this option without casting

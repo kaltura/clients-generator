@@ -3,10 +3,9 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"testing"
-
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/metaorderby"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestSerialization(t *testing.T) {

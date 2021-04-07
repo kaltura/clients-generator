@@ -152,6 +152,14 @@ func (b *AssetContainer) UnmarshalJSON(bytes []byte) error {
 	return nil
 }
 ```
+9. if a property in class has a container so the property will be the container and not the class itself.
+```go
+	// AssetListResponse contains Objects property which is an array of Asset which have Container, so it will actually have an array of AssetContainer.
+	type AssetListResponse struct {
+		Objects []AssetContainer `json:"objects"`
+		TotalCount int32 `json:"totalCount"`
+	}
+```
 
 ## Generation of services:
 1. all actions first param is ctx context.Context and last param is extra ...kalturaclient.Param - between then we add the real params of the action.
@@ -194,6 +202,13 @@ func (b *AssetContainer) UnmarshalJSON(bytes []byte) error {
 	}
 	```
 5. if return type of an action has a contanier so the action will return the container and not the class
+```go
+	// asset.get return Asset, becuase there is a Container for Asset the code should return AssetContainer instead.
+	func (s *AssetService) Get(ctx context.Context, id string, assetReferenceType assetreferencetype.AssetReferenceType, extra ...kalturaclient.Param) (*types.AssetContainer, error){
+		// func code ...
+	}
+```
+
 ### exampels for service actions:
 ```go
 func (s *AssetService) List(ctx context.Context, filter types.AssetFilterInterface, pager *types.FilterPager, extra ...kalturaclient.Param) 
