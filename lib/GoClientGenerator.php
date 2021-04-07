@@ -10,7 +10,7 @@ class Property {
 	public $name;
 	public $json;
 	public $isEnumImport = false;
-	public $enumPackage;
+	public $enumPackage = null;
 	public $enumImport;
 }
 class GoClientGenerator extends ClientGeneratorFromXml
@@ -300,10 +300,17 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		if(!$currentClass->isAbstract)
 		{
+			$textIfEnum = "";
 			foreach($allInheritanceProperties as $currProperty)
 			{
-				$s .= "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
-				$s .= "		return f.".$currProperty->name."\n";
+				$textIfEnum = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
+				$textIfEnum .= "		return f.".$currProperty->name."\n";
+				if ($currProperty->enumPackage != null)
+				{
+					$textIfEnum = "func (f *$className) Get".$currProperty->name."() string {\n";
+					$textIfEnum .= "		return string(f.".$currProperty->name.")\n";
+				}
+				$s .= $textIfEnum;
 				$s .= "}\n";
 			}
 		}
@@ -828,20 +835,20 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		}
 
 		// we want to make the orderBy property strongly typed with the corresponding string enum
-		// $isFilter = false;
-		// if ($this->isClassInherit($type, "KalturaFilter"))
-		// {
-		// 	$orderByType = str_replace("Filter", "OrderBy", $type);
-		// 	if ($this->enumExists($orderByType))
-		// 	{
-		// 		$orderByElement = $classNode->ownerDocument->createElement("property");
-		// 		$orderByElement->setAttribute("name", "orderBy");
-		// 		$orderByElement->setAttribute("type", "string");
-		// 		$orderByElement->setAttribute("enumType", $orderByType);
-		// 		$classNode->appendChild($orderByElement);
-		// 		$isFilter = true;
-		// 	}
-		// }
+		$isFilter = false;
+		if ($this->isClassInherit($type, "KalturaFilter"))
+		{
+			$orderByType = str_replace("Filter", "OrderBy", $type);
+			if ($this->enumExists($orderByType))
+			{
+				$orderByElement = $classNode->ownerDocument->createElement("property");
+				$orderByElement->setAttribute("name", "orderBy");
+				$orderByElement->setAttribute("type", "string");
+				$orderByElement->setAttribute("enumType", $orderByType);
+				$classNode->appendChild($orderByElement);
+				$isFilter = true;
+			}
+		}
 
 		$properties = array();
 		$enumsImported = array();
