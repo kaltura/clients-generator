@@ -322,7 +322,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$textIfPointer = "";
 			foreach($allInheritanceProperties as $currProperty)
 			{
-				//amitttt
 				$textIfEnum = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
 				if(array_filter($this->_allClasses, function($toCheck) use ($currProperty) { 
 					return $toCheck->className == $currProperty->pureType; 
