@@ -1,9 +1,25 @@
 <?php
+class Classes {
+	public $className;
+	public $parentClass;
+	public $isAbstract = false;
+	public $properties = array();
+}
+class Property {
+	public $type;
+	public $name;
+	public $json;
+	public $isEnumImport = false;
+	public $enumPackage;
+	public $enumImport;
+}
 class GoClientGenerator extends ClientGeneratorFromXml
 {
+	
 	private $_csprojIncludes = array();
 	private $_classInheritance = array();
 	private $_enums = array();
+	private $_allClasses = array();
 
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "go")
 	{
@@ -23,13 +39,20 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$this->loadClassInheritance($xpath->query("/xml/classes/class"));
 		$this->loadEnums($xpath->query("/xml/enums/enum"));
 
-		// enumes $ types
+		// enumes
 		$enumNodes = $xpath->query("/xml/enums/enum");
 		foreach($enumNodes as $enumNode)
 		{
 		 	$this->writeEnum($enumNode);
 		}
 
+		// types
+		$classNodes = $xpath->query("/xml/classes/class");
+		foreach($classNodes as $classNode)
+		{
+			$this->addClass($classNode);
+		}
+		
 		$classNodes = $xpath->query("/xml/classes/class");
 		foreach($classNodes as $classNode)
 		{
@@ -38,25 +61,32 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		$serviceNodes = $xpath->query("/xml/services/service");
 
-		//$this->startNewTextBlock();
 		foreach($serviceNodes as $serviceNode)
 		{
 			$this->writeService($serviceNode);
 		}
 
-		// $configurationNodes = $xpath->query("/xml/configurations/*");
-		// $this->writeClient();
-
 		$requestConfigurationNodes = $xpath->query("/xml/configurations/request/*");
-		//$this->writeRequestBuilderConfigurationClass($requestConfigurationNodes);
-		//$this->writeObjectFactory($classNodes);
 
-		$errorNodes = $xpath->query("/xml/errors/error");
+		$this->writeErrors($xpath->query("/xml/errors/error"));
+	}
 
-		// TODO write a client file like java
+	private function writeErrors(DOMNodeList $errors)
+	{
+		$s = "";
+		$s .= "package errors\n";
+		$s .= "\n";
+		$s .= "const (\n";
 		
-		//$this->writeApiException($errorNodes);
+		foreach($errors as $item)
+		{
+			$s .= "		".$item->getAttribute("name")." = \"".$item->getAttribute("code")."\"\n";
+		}
 
+		$s .= ")\n";
+
+		$file = "errors/codes.go";
+		$this->addFile("KalturaClient/".$file, $s);
 	}
 	
 	private function loadEnums(DOMNodeList $enums)
@@ -120,7 +150,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "      *e = enumValue\n";
 			$s .= "      return nil\n";
 			$s .= "   }\n";
-			$s .= "   return errors.New(\"invalid enum value\")\n";
+			$s .= "   return errors.New(\"invalid $enumName enum value\")\n";
 			$s .= "}\n";
 			$s .= "\n";
 		} else
@@ -129,7 +159,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "\n";
 			$s .= "type $enumName string\n";
 			$s .= "func (e *$enumName) UnmarshalJSON(b []byte) error {\n";
-			$s .= "	return errors.New(\"invalid enum value\")\n";
+			$s .= "	return errors.New(\"invalid $enumName enum value\")\n";
 			$s .= "}\n";
 		}
 
@@ -142,7 +172,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
     function writeClass(DOMElement $classNode)
 	{
 		$type = $classNode->getAttribute("name");
-
+		
 		if(!$this->shouldIncludeType($type))
 		{
 			return;
@@ -152,251 +182,79 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			return;
 		}
 		
-		// if ($this->isClassInherit($type, "KalturaListResponse") || $type == "KalturaListResponse")
-		// {
-		// 	KalturaLog::info("$type third if");
-		// 	return;
-		// }
-            
+		$className = $this->getCSharpName($type);
+		$currentClass = $this->findClassByName($className);
 		$s = "";
 		$prefixText = "";		
-		$className = $this->getCSharpName($type);
 		$this->startNewTextBlock();
 		$prefixText .= "package types\n";
 		$prefixText .= "\n";
 		$isImport = false;
-		// $this->appendLine("import (");
-		// //$this->appendLine(" \"strconv\" ");
-		// $this->appendLine(" \"encoding/json\" ");
-		// $this->appendLine(")");
+
+		if(!$currentClass->isAbstract)
+		{
+			$isImport = true;
+			$prefixText .= "import (\n";
+			$prefixText .= "  \"encoding/json\"\n";
+		}
 
 		// class definition
 		$s .= "type $className struct {\n";
 		
-		$s .= "		ObjectType\n";
-		$baseName = null;
+		//$s .= "		ObjectType\n";
+
+		$allInheritanceProperties = array();
+		$allInheritanceProperties = $this->extractAllInheritanceProperties($currentClass, $allInheritanceProperties);
+
+		$isHaveBase = false;
+		
 		if ($classNode->hasAttribute("base"))
 		{
-			$base = $classNode->getAttribute("base");
-			$baseName = $this->getCSharpName($base);
-			$s .= $this->upperCaseFirstLetter("		".$baseName)."\n";
-		}
-
-		// we want to make the orderBy property strongly typed with the corresponding string enum
-		$isFilter = false;
-		if ($this->isClassInherit($type, "KalturaFilter"))
-		{
-			$orderByType = str_replace("Filter", "OrderBy", $type);
-			if ($this->enumExists($orderByType))
-			{
-				$orderByElement = $classNode->ownerDocument->createElement("property");
-				$orderByElement->setAttribute("name", "orderBy");
-				$orderByElement->setAttribute("type", "string");
-				$orderByElement->setAttribute("enumType", $orderByType);
-				$classNode->appendChild($orderByElement);
-				$isFilter = true;
-			}
+			$isHaveBase = true;
 		}
 
 		$properties = array();
 		$enumsImported = array();
-		foreach($classNode->childNodes as $propertyNode)
+
+		$isNullable = false;
+		
+		foreach($allInheritanceProperties as $property)
 		{
-			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
-				continue;
-
-			$property = array(
-				"apiName" => null,
-				"name" => null,
-				"type" => null,
-				"default" => null,
-				"isReadOnly" => false,
-				"isWriteOnly" => false,
-				"isOrderBy" => false,
-				"nullable" => null
-			);
-
-			$propType = $propertyNode->getAttribute("type");
-			$propName = $propertyNode->getAttribute("name");
-			$property["apiName"] = $propName;
-			$isEnum = $propertyNode->hasAttribute("enumType");
-			$goPropName = $this->upperCaseFirstLetter($propName);
-			if ($baseName != null && $baseName == $goPropName){
-				$goPropName = $goPropName."Property";
-			}
-			if($propertyNode->hasAttribute("nullable"))
+			if ($property->isEnumImport)
 			{
-				$property["nullable"] = $propertyNode->getAttribute("nullable");
-			}
-			$property["name"] = $goPropName;
-
-			if ($isEnum)
-			{
-				$dotNetPropType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-				$enumPackage = strtolower($dotNetPropType);
-				$dotNetPropType = $enumPackage.".".$dotNetPropType;
 				if(!$isImport){
 					$prefixText .= "import (\n";
 					$isImport = true;
 				}
-				if(!in_array($enumPackage, $enumsImported)){
-					$prefixText .= "  \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/$enumPackage\"\n";
-					$enumsImported[] = $enumPackage;
+				if(!in_array($property->enumPackage, $enumsImported)){
+					$prefixText .= $property->enumImport;
+					$enumsImported[] = $property->enumPackage;
 				}
 			}
-			else if ($propType == "array")
-			{
-				$arrayObjectType = $propertyNode->getAttribute("arrayType");
-				if($arrayObjectType == 'KalturaObject')
-                    $arrayObjectType = 'ObjectBase';
-                $dotNetPropType = "[]" . $this->getCSharpName($arrayObjectType);
-			}
-			else if ($propType == "map")
-			{
-				$arrayObjectType = $propertyNode->getAttribute("arrayType");
-				if($arrayObjectType == 'KalturaObject')
-					$arrayObjectType = 'ObjectBase';
-				$dotNetPropType = "map[string]" . $this->getCSharpName($arrayObjectType);
-			}
-			else if ($propType == "bool")
-			{
-				$dotNetPropType  = "bool";
-			}
-			else if ($propType == "bigint")
-			{
-				$dotNetPropType  = "int64";
-			}
-			else if ($propType == "time")
-			{
-				$dotNetPropType  = "int32";
-			}
-			else if ($propType == "int")
-			{
-				$dotNetPropType  = "int32";
-			}
-			else if ($propType == "float")
-			{
-				$dotNetPropType  = "float32";
-			}
-			else
-			{
-				$dotNetPropType = $this->getCSharpName($propType);
-			}
-
-			$property["type"] = $dotNetPropType;
-
-			if ($isFilter && $goPropName == "OrderBy")
-				$property["isOrderBy"] = true;
-				
-			$property["arrayType"] = $propertyNode->getAttribute("arrayType");
-
-			if ($propertyNode->hasAttribute("readOnly"))
-			{
-				$property["readOnly"] = (bool)$propertyNode->getAttribute("readOnly");
-			}
-
-			if ($propertyNode->hasAttribute("writeOnly"))
-			{
-				$property["writeOnly"] = (bool)$propertyNode->getAttribute("writeOnly");
-			}
-
-			switch($propType)
-			{
-                // GO zero value of these types
-				// case "bigint":
-				// 	$property["default"] = "long.MinValue";
-				// 	break;
-				// case "int":
-				// 	if ($isEnum)
-				// 		$property["default"] = "($dotNetPropType)Int32.MinValue";
-				// 	else
-				// 		$property["default"] = "Int32.MinValue";
-				// 	break;
-				case "string":
-					$property["default"] = "nil";
-					break;
-				case "bool":
-					$property["default"] = "nil";
-					break;
-				// case "float":
-				// 	$property["default"] = "Single.MinValue";
-				// 	break;
-			}
-
-			$properties[] = $property;
-		}
-		
-		// constants
-		// $constants = array();
-
-		// if($properties){
-		// 	$this->appendLine("		const ( ");
-		// }
-
-		// foreach($properties as $property)
-		// {
-		// 	$constName = $this->camelCaseToUnderscoreAndUpper($property['name']);
-		// 	$constants[$constName] = $property['name'];
-		// 	//$new = ($property['isOrderBy'] || ($base && $this->classHasProperty($base, $property['apiName'], false))) ? 'new ' : '';
-		// 	$this->appendLine("		$constName = \"{$property['apiName']}\"");
-		// }
-
-		// if($properties){
-		// 	$this->appendLine(")");
-		// }
-		
-		// $this->appendLine("		//endregion");
-
-		$isNullable = false;
-
-		// properties
-		foreach($properties as $property)
-		{
-			//TODO : not working
-			// if(array_key_exists('nullable', $property))
-			// {
-				if($property['nullable'] == "1")
-				{
-					$isNullable = true;
-				}
-			// }
-
-			$currName = $this->lowerCaseFirstLetter($property['apiName']);
-			$propertyLine = "{$property['name']} {$property['type']}	`json:\"$currName\"`";
-
-			if($isNullable)
-			{
-				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName,omitempty\"`";
-			}else if($className == $property['type']){
-				$propertyLine = "{$property['name']} *{$property['type']}	`json:\"$currName\"`";
-			}
-			$isNullable = false;
-
-            $s .= "		" . $propertyLine."\n";
+			$propertyLine = $property->name." ".$property->type." ".$property->json;
+			$s .= "		" . $propertyLine."\n";
 		}
 		
 		$s .= "}\n";
 		$s .= "\n";
-		// $this->appendLine("func(s *$className) GetParams() map[string]interface{}{");
-		// $this->appendLine("	params := map[string]interface{}{}");
-		// foreach($classNode->childNodes as $propertyNode)
-		// {
-		// 	if ($propertyNode->nodeType != XML_ELEMENT_NODE)
-		// 		continue;
+		$s .= $this->writeInterfaces($isHaveBase, $currentClass, $allInheritanceProperties, $className, $type);
 
-		// 	$propName = $propertyNode->getAttribute("name");
-		// 	$lowerCaseProp = $this->lowerCaseFirstLetter($goPropName);
-		// 	$goPropName = $this->upperCaseFirstLetter($propName);
-		// 	$this->appendLine("	if s.$goPropName != nil {");
-		// 	$this->appendLine("		params[\"$lowerCaseProp\"]= s.$goPropName");
-		// 	$this->appendLine("	}");
-		// }
-		// $this->appendLine("	return params");
-		// $this->appendLine("}");
+		$isNeedJson = false;
+		$s .= $this->writeContainer($currentClass, $className, $isNeedJson);
 
-		$s .= "func New$className() *$className{\n";
-		$s .= "	   return &$className{ObjectType: ObjectType{Type: \"$type\"}}\n";
-		$s .= "}\n";
+		if($currentClass->isAbstract && $isNeedJson)
+		{
+			if(!$isImport)
+			{
+				$isImport = true;
+				$prefixText .= "import (\n";
+			}
+			$prefixText .= "  \"encoding/json\"\n";
+			$prefixText .= "  \"errors\"\n";
+		} else if($isNeedJson)
+		{
+			$prefixText .= "  \"errors\"\n";
+		}
 
 		if($isImport){
 			$prefixText .= ")\n";
@@ -407,8 +265,95 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$file = "types/$fileName.go";
 		$allFile = $prefixText.$s;
 		$this->addFile("KalturaClient/".$file, $allFile);
-		//$this->_csprojIncludes[] = $file;
 	}
+
+	function writeInterfaces($isHaveBase, $currentClass, $allInheritanceProperties, $className, $type)
+	{
+		$s = "";
+
+		if(!$currentClass->isAbstract)
+		{
+			$s .= "func (o *$className) MarshalJSON() ([]byte, error) {\n";
+			$s .= "	   type Alias $className\n";
+			$s .= "	   return json.Marshal(&struct {\n";
+			$s .= "	   		*Alias\n";
+			$s .= "	   		ObjectType string `json:\"objectType\"`\n";
+			$s .= "	   }{\n";
+			$s .= "	   Alias:      (*Alias)(o),\n";
+			$s .= "	   ObjectType: \"$type\",\n";
+			$s .= "	   })\n";
+			$s .= "}\n";
+		}
+
+		$s .= "type $className"."Interface interface {\n";
+
+		if($isHaveBase)
+		{
+			$s .= "		".$currentClass->parentClass."Interface\n";
+		}
+
+		foreach($currentClass->properties as $currProperty)
+		{
+			$s .= "		Get".$currProperty->name."() ".$currProperty->type."\n";
+		}
+		$s .= "}\n";
+
+		if(!$currentClass->isAbstract)
+		{
+			foreach($allInheritanceProperties as $currProperty)
+			{
+				$s .= "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
+				$s .= "		return f.".$currProperty->name."\n";
+				$s .= "}\n";
+			}
+		}
+		return $s;
+	}
+
+	function writeContainer($currentClass, $className, &$isNeedJson)
+	{
+		$s = "";
+
+		$inheritanceClasses = $this->extractAllInheritanceClasses($currentClass);
+		if(count($inheritanceClasses) > 1)
+		{
+			$isNeedJson = true;
+			$inheritanceClasses = array_unique($inheritanceClasses);
+			$s .= "type ".$className."Container struct {\n";
+	
+			foreach($inheritanceClasses as $currClassName)
+			{
+				$s .= "	".$currClassName."   *".$currClassName."\n";
+			}	
+			$s .= "}\n";
+
+			$s .= "func (b *".$className."Container) UnmarshalJSON(bytes []byte) error {\n";
+			$s .= "	var objectType ObjectType\n";
+			$s .= "	err := json.Unmarshal(bytes, &objectType)\n";
+			$s .= "	if err != nil {\n";
+			$s .= "		return err\n";
+			$s .= "	}\n";
+			$s .= "	switch objectType.Type {\n";
+			foreach($inheritanceClasses as $currClassName)
+			{
+				$s .= "	case \"Kaltura".$currClassName."\":\n";
+				$s .= "		a := &".$currClassName."{}\n";
+				$s .= "		err = json.Unmarshal(bytes, a)\n";
+				$s .= "	if err != nil {\n";
+				$s .= "		return err\n";
+				$s .= "	}\n";
+				$s .= "	b.".$currClassName." = a\n";
+			}	
+			$s .= "	default:\n";
+			$s .= "		return errors.New(\"unknown type\")\n";
+			$s .= "	}\n";
+			$s .= "	return nil\n";
+			$s .= "}\n";
+		}
+
+		return $s;
+	}
+
 
 	function from_camel_case($input) {
 		preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
@@ -482,226 +427,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$file = "services/".$fileName.".go";
 		$this->addFile("KalturaClient/".$file, $allFile);
 	}
-
-	// function writeRequestBuilder($serviceId, $serviceName, DOMElement $actionNode)
-	// {
-	// 	$actionName = $actionNode->getAttribute("name");
-	// 	if(!$this->shouldIncludeAction($serviceId, $actionName))
-	// 		return;
-
-	// 	$resultNode = $actionNode->getElementsByTagName("result")->item(0);
-	// 	$resultType = $resultNode->getAttribute("type");
-	// 	$arrayObjectType = ($resultType == 'array') ? $resultNode->getAttribute("arrayType" ) : null;
-
-	// 	if($resultType == 'file')
-	// 		return;
-
-	// 	$enableInMultiRequest = true;
-	// 	if($actionNode->hasAttribute("enableInMultiRequest"))
-	// 	{
-	// 		$enableInMultiRequest = intval($actionNode->getAttribute("enableInMultiRequest"));
-	// 	}
-
-	// 	switch($resultType)
-	// 	{
-	// 		case null:
-	// 			$dotNetOutputType = "";
-	// 			break;
-	// 		case "array":
-	// 			$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
-	// 			$dotNetOutputType = $arrayType."[]";
-	// 			break;
-	// 		case "map":
-	// 			$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
-	// 			$dotNetOutputType = "map[string]".$arrayType;
-	// 			break;
-	// 		case "bigint":
-	// 			$dotNetOutputType = "int64";
-    //             break;
-    //         case "bool":
-	// 			$dotNetOutputType = "bool";
-    //             break;
-    //         case "string":
-	// 			$dotNetOutputType = "string";
-	// 			break;
-	// 		default:
-	// 			$dotNetOutputType = $this->getCSharpName($resultType);
-	// 			break;
-	// 	}
-
-	// 	$requestBuilderName = ucfirst($serviceName) . ucfirst($actionName) . 'RequestBuilder';
-
-	// 	$paramNodes = $actionNode->getElementsByTagName("param");
-	// 	$signature = $this->getSignature($paramNodes, false);
-		
-	// 	$parentType = $enableInMultiRequest ? $dotNetOutputType."RequestBuilder" : $dotNetOutputType."RequestBuilder";
-	// 	$this->appendLine("	type $requestBuilderName struct (");
-	// 	$this->appendLine(" 	$parentType");
-		
-
-	// 	$this->appendLine("		//region Constants");
-	// 	$constants = array();
-	// 	$news = array();
-	// 	foreach($paramNodes as $paramNode)
-	// 	{
-	// 		$paramName = $paramNode->getAttribute("name");
-	// 		$new = '';
-			
-	// 		// TODO removeeeeeeeeeeeeeeeeeee
-	// 		// if($this->classHasProperty('KalturaRequestConfiguration', $paramName))
-	// 		// {
-	// 		// 	$news[$paramName] = true;
-	// 		// 	$new = 'new ';
-	// 		// }
-	// 		$constName = $this->camelCaseToUnderscoreAndUpper($paramName);
-	// 		$this->appendLine("		const $constName = \"$paramName\";");
-	// 	}
-	// 	$this->appendLine("		//endregion");
-	// 	$this->appendLine();
-		
-		
-	// 	$hasFiles = false;
-	// 	$params = array();
-	// 	foreach($paramNodes as $paramNode)
-	// 	{
-	// 		$paramType = $paramNode->getAttribute("type");
-	// 		$paramName = $paramNode->getAttribute("name");
-	// 		$isEnum = $paramNode->hasAttribute("enumType");
-	// 		$isFile = false;
-
-	// 		switch($paramType)
-	// 		{
-	// 			case "array":
-	// 				$dotNetType = $this->getCSharpName($paramNode->getAttribute("arrayType")) . "[]";
-	// 				break;
-	// 			case "map":
-	// 				$dotNetType = "map[string]" . $this->getCSharpName($paramNode->getAttribute("arrayType"));
-	// 				break;
-	// 				//TODO check stream in go 
-	// 			case "file":
-	// 				$dotNetType = "[]byte";
-	// 				$isFile = true;
-	// 				$hasFiles = true;
-	// 				break;
-	// 			case "bigint":
-	// 				$dotNetType = "int64";
-	// 				break;
-	// 			//TODO removeeeeeeeeee
-	// 			// case "int":
-	// 			// 	if ($isEnum)
-	// 			// 		$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
-	// 			// 	else
-	// 			// 		$dotNetType = $paramType;
-	// 			// 	break;
-	// 			default:
-	// 				$dotNetType = $paramType;
-					
-	// 				$dotNetType = $this->getCSharpName($dotNetType);
-	// 				break;
-	// 		}
-
-
-	// 		$param = $this->fixParamName($paramName);
-	// 		// TODO CHECK IF NEED TO ADD new
-	// 		//$new = isset($news[$paramName]) ? 'new ' : '';
-	// 		$paramName = ucfirst($param);
-	// 		//$this->appendLine("		public {$new}$dotNetType $paramName { get; set; }");
-	// 		$this->appendLine("		$paramName $dotNetType");
-    //         $params[$param] = $isFile;
-            
-    //         if ($isFile){
-    //             $this->appendLine("		{$paramName}_FileName string");
-    //         }
-	// 	}
-
-	// 	$this->appendLine();
-	// 	// $this->appendLine("		public $requestBuilderName()");
-	// 	// $this->appendLine("			: base(\"$serviceId\", \"$actionName\")");
-	// 	// $this->appendLine("		{");
-	// 	// $this->appendLine("		}");
-		
-	// 	if(count($params))
-	// 	{
-	// 		$this->appendLine();
-	// 		$this->appendLine("		func ($requestBuilderName *$requestBuilderName) New$requestBuilderName($signature) { ");
-	// 		// $this->appendLine("			: this()");
-	// 		foreach($params as $param => $isFile)
-	// 		{
-	// 			$paramName = ucfirst($param);
-	// 			$this->appendLine("			$requestBuilderName.$paramName = $param;");
-	// 		}
-	// 		$this->appendLine("		}");
-	// 	}
-		
-	// 	$this->appendLine();
-	// 	$this->appendLine("		func ($requestBuilderName *$requestBuilderName) getParameters(bool includeServiceAndAction) Params {");
-	// 	$this->appendLine("			kparams := $requestBuilderName.getParameters(includeServiceAndAction)");
-	// 	foreach($params as $param => $isFile)
-	// 	{
-	// 		if(!$isFile)
-	// 		{
-	// 			$paramName = ucfirst($param);
-	// 			$this->appendLine("			if !isMapped(\"$param\")");
-	// 			$this->appendLine("				kparams.AddIfNotNull(\"$param\", $paramName)");
-	// 		}
-	// 	}
-	// 	$this->appendLine("			return kparams");
-	// 	$this->appendLine("		}");
-		
-	// 	$this->appendLine();
-	// 	$this->appendLine("		func ($requestBuilderName *$requestBuilderName) getFiles() Files {");
-    //     $this->appendLine("			kfiles := base.getFiles()");
-	// 	foreach($params as $param => $isFile)
-	// 	{
-	// 		if($isFile)
-	// 		{
-	// 			$paramName = ucfirst($param);
-	// 			$this->appendLine("			kfiles.Add(\"$param\", new FileData($paramName, {$paramName}_FileName))");
-	// 		}
-	// 	}
-	// 	$this->appendLine("			return kfiles");
-	// 	$this->appendLine("		}");
-
-	// 	$this->appendLine();
-	// 	$this->appendLine("		func ($requestBuilderName *$requestBuilderName) Deserialize(byte[] result) object {");
-	// 	if ($resultType)
-	// 	{
-	// 		// TODO stopped here
-	// 		switch ($resultType)
-	// 		{
-	// 			case "bigint":
-	// 				$this->appendLine("			return result.Value<int64>();");
-	// 				break;
-	// 			case "int":
-	// 				$this->appendLine("			return result.Value<int>();");
-	// 				break;
-	// 			case "float":
-	// 				$this->appendLine("			return result.Value<float>();");
-	// 				break;
-	// 			case "bool":
-	// 				$this->appendLine("			if (result.Value<string>().Equals(\"1\") || result.Value<string>().ToLower().Equals(\"true\"))");
-	// 				$this->appendLine("				return true;");
-	// 				$this->appendLine("			return false;");
-	// 				break;
-	// 			case "string":
-	// 				$this->appendLine("			return result.Value<string>();");
-	// 				break;
-	// 			default:
-	// 				$resultType = $this->getCSharpName($resultType);
-	// 				$this->appendLine("			return ObjectFactory.Create<$resultType>(result);");
-	// 				break;
-	// 		}
-	// 	}
-	// 	else 
-	// 	{
-	// 		$this->appendLine("			return nil");
-	// 	}
-	// 	$this->appendLine("		}");
-		
-	// 	$this->appendLine("	}");
-	// 	$this->appendLine();
-		
-	// }
 
 	function writeAction($serviceId, $serviceName, DOMElement $actionNode, &$prefixText, &$importedEnums)
 	{
@@ -1064,6 +789,273 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			throw new Exception("Property [objects] not found for type [$name]");
 		
 		return $this->getCSharpName($propertyNode->getAttribute("arrayType"));
+	}
+
+	private function addClass(DOMElement $classNode)
+	{
+		$type = $classNode->getAttribute("name");
+		$isImport = false;
+
+		if(!$this->shouldIncludeType($type))
+		{
+			return;
+		}
+		if($type == 'KalturaObject')
+		{
+			return;
+		} 
+
+
+
+		$className = $this->getCSharpName($type);
+		$newClass = new Classes();
+
+		$newClass->className = $className;
+		$newClass->parentClass = "";
+
+		
+		if ($classNode->hasAttribute("abstract"))
+		{	
+			$newClass->isAbstract = (bool) $classNode->getAttribute("abstract");
+		}
+		$baseName = null;
+
+		if ($classNode->hasAttribute("base"))
+		{
+			$base = $classNode->getAttribute("base");
+			$baseName = $this->getCSharpName($base);
+			$newClass->parentClass = $baseName;
+		}
+
+		// we want to make the orderBy property strongly typed with the corresponding string enum
+		// $isFilter = false;
+		// if ($this->isClassInherit($type, "KalturaFilter"))
+		// {
+		// 	$orderByType = str_replace("Filter", "OrderBy", $type);
+		// 	if ($this->enumExists($orderByType))
+		// 	{
+		// 		$orderByElement = $classNode->ownerDocument->createElement("property");
+		// 		$orderByElement->setAttribute("name", "orderBy");
+		// 		$orderByElement->setAttribute("type", "string");
+		// 		$orderByElement->setAttribute("enumType", $orderByType);
+		// 		$classNode->appendChild($orderByElement);
+		// 		$isFilter = true;
+		// 	}
+		// }
+
+		$properties = array();
+		$enumsImported = array();
+		foreach($classNode->childNodes as $propertyNode)
+		{
+			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
+				continue;
+
+			$property = array(
+				"apiName" => null,
+				"name" => null,
+				"type" => null,
+				"default" => null,
+				"isReadOnly" => false,
+				"isWriteOnly" => false,
+				"isInsertOnly" => false,
+				"isOrderBy" => false,
+				"nullable" => null,
+				"enumPackageName" => null,
+				"enumImport" => null,
+				"isEnumImport" => false
+			);
+
+			$propType = $propertyNode->getAttribute("type");
+			$propName = $propertyNode->getAttribute("name");
+			$property["apiName"] = $propName;
+			$isEnum = $propertyNode->hasAttribute("enumType");
+			$goPropName = $this->upperCaseFirstLetter($propName);
+			if ($baseName != null && $baseName == $goPropName){
+				$goPropName = $goPropName."Property";
+			}
+			$property["name"] = $goPropName;
+
+			if ($isEnum)
+			{
+				$dotNetPropType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
+				$enumPackage = strtolower($dotNetPropType);
+				$dotNetPropType = $enumPackage.".".$dotNetPropType;
+				if(!$isImport){
+					$isImport = true;
+				}
+				if(!in_array($enumPackage, $enumsImported)){
+					$property["isEnumImport"] = true;
+					$property["enumPackageName"] = $enumPackage;
+					$property["enumImport"] = "  \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/$enumPackage\"\n";
+					$enumsImported[] = $enumPackage;
+				}
+			}
+			else if ($propType == "array")
+			{
+				$arrayObjectType = $propertyNode->getAttribute("arrayType");
+				if($arrayObjectType == 'KalturaObject')
+                    $arrayObjectType = 'ObjectBase';
+                $dotNetPropType = "[]" . $this->getCSharpName($arrayObjectType);
+			}
+			else if ($propType == "map")
+			{
+				$arrayObjectType = $propertyNode->getAttribute("arrayType");
+				if($arrayObjectType == 'KalturaObject')
+					$arrayObjectType = 'ObjectBase';
+				$dotNetPropType = "map[string]" . $this->getCSharpName($arrayObjectType);
+			}
+			else if ($propType == "bool")
+			{
+				$dotNetPropType  = "bool";
+			}
+			else if ($propType == "bigint")
+			{
+				$dotNetPropType  = "int64";
+			}
+			else if ($propType == "time")
+			{
+				$dotNetPropType  = "int32";
+			}
+			else if ($propType == "int")
+			{
+				$dotNetPropType  = "int32";
+			}
+			else if ($propType == "float")
+			{
+				$dotNetPropType  = "float32";
+			}
+			else
+			{
+				$dotNetPropType = $this->getCSharpName($propType);
+			}
+
+			$property["type"] = $dotNetPropType;
+
+			// if ($isFilter && $goPropName == "OrderBy")
+			// 	$property["isOrderBy"] = true;
+				
+			$property["arrayType"] = $propertyNode->getAttribute("arrayType");
+
+			if($propertyNode->hasAttribute("nullable"))
+			{
+				$property["nullable"] = (bool)$propertyNode->getAttribute("nullable");
+			}
+			if ($propertyNode->hasAttribute("readOnly"))
+			{
+				$property["isReadOnly"] = (bool)$propertyNode->getAttribute("readOnly");
+			}
+			if ($propertyNode->hasAttribute("writeOnly"))
+			{
+				$property["isWriteOnly"] = (bool)$propertyNode->getAttribute("writeOnly");
+			}
+			if ($propertyNode->hasAttribute("insertOnly"))
+			{
+				$property["isInsertOnly"] = (bool)$propertyNode->getAttribute("insertOnly");
+			}
+			
+			switch($propType)
+			{
+				case "string":
+					$property["default"] = "nil";
+					break;
+				case "bool":
+					$property["default"] = "nil";
+					break;
+			}
+
+			$properties[] = $property;
+		}
+
+		$isNullable = false;
+
+		// properties
+		foreach($properties as $property)
+		{
+			if($property['nullable'] || $property['isReadOnly'] || $property['isWriteOnly'] || $property['isInsertOnly'])
+			{
+				$isNullable = true;
+			}
+
+			$currName = $this->lowerCaseFirstLetter($property['apiName']);
+
+			$propertyForClass = new Property();
+			$propertyForClass->name = $property['name'];
+			$propertyForClass->type = $property['type'];
+			$propertyForClass->json = "`json:\"$currName\"`";
+
+			if($property["isEnumImport"])
+			{
+				$propertyForClass->isEnumImport = true;
+				$propertyForClass->enumPackage = $property["enumPackageName"];
+				$propertyForClass->enumImport = $property["enumImport"];
+			}
+
+			if($isNullable)
+			{
+				$propertyForClass->type = "*".$property['type'];
+				$propertyForClass->json = "`json:\"$currName,omitempty\"`";
+			} else if($className == $property['type'])
+			{
+				$propertyForClass->type = "*".$property['type'];
+			}
+			$isNullable = false;
+
+            $newClass->properties[] = $propertyForClass;
+		}
+		$this->_allClasses[] = $newClass;
+	}
+
+	private function findClassByName($name){
+		foreach ( $this->_allClasses as $class ) {
+			if ( strcasecmp($name, $class->className) == 0 ) {
+				return $class;
+			}
+		}
+
+		return false;
+	}
+
+	private function extractAllInheritanceProperties($currClass, $allInheritanceProperties){
+		$propertiesToAdd = array();
+		if($currClass)
+		{
+			foreach ($currClass->properties as $currProperty)
+			{
+				if(!array_filter($allInheritanceProperties, function($toCheck) use ($currProperty) { 
+					return $toCheck->name == $currProperty->name; 
+				}))
+				{
+					$propertiesToAdd[] = $currProperty;
+				}
+			}
+			$allInheritanceProperties = array_merge($allInheritanceProperties, $propertiesToAdd);
+
+			$propertiesToAdd = array_merge($propertiesToAdd, $this->extractAllInheritanceProperties($this->findClassByName($currClass->parentClass), $allInheritanceProperties));
+		}
+
+		return $propertiesToAdd;
+	}
+
+	private function extractAllInheritanceClasses($currClass){
+		$calssesToAdd = array();
+
+		if($currClass)
+		{
+			if(!$currClass->isAbstract)
+			{
+				$calssesToAdd[] = $currClass->className;
+			}
+
+			foreach($this->_allClasses as $currentClassObject)
+			{	
+				if($currentClassObject->parentClass == $currClass->className)
+				{
+					$calssesToAdd = array_merge($calssesToAdd, $this->extractAllInheritanceClasses($this->findClassByName($currentClassObject->className)));
+				}
+			}
+		}
+
+		return $calssesToAdd;
 	}
 
 	private function writeClient()
