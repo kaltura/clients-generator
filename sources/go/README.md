@@ -47,7 +47,7 @@ func (e *AdsPolicy) UnmarshalJSON(b []byte) error {
 ## Generation of types:
 1. all classes will include all of its properites + base class properites.
    1. all properties will include json serialization of name and omitempty.
-   2. if property in class is optional/nullable so it will be a pointer.
+   2. if property in class is Optional/Nullable/ReadOnly/InsertOnly/WriteOnly so it will be set as pointer.
    3. if class contains property by the same name as it's base class it will contain only its own property (name and type)
 ```go
 type Filter struct {
