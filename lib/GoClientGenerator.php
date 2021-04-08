@@ -322,10 +322,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$textIfEnumOrContainer = "		Get".$currProperty->name."() ".$currProperty->type."Container\n";
 			}
 
-			if ($currProperty->enumPackage != null)
-			{
-				$textIfEnumOrContainer = "		Get".$currProperty->name."() string\n";
-			}
+			// if ($currProperty->enumPackage != null)
+			// {
+			// 	$textIfEnumOrContainer = "		Get".$currProperty->name."() string\n";
+			// }
 			$s .= $textIfEnumOrContainer;
 		}
 		$s .= "}\n";
@@ -347,12 +347,12 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 				if ($currProperty->enumPackage != null)
 				{
-					if (str_contains($currProperty->type, '*'))
-					{
-						$textIfPointer = "*";
-					}
-					$textIfEnumOrContainer = "func (f *$className) Get".$currProperty->name."() string {\n";
-					$textIfEnumOrContainer .= "		return string($textIfPointer"."f.".$currProperty->name.")\n";
+					// if (str_contains($currProperty->type, '*'))
+					// {
+					// 	$textIfPointer = "*";
+					// }
+					// $textIfEnumOrContainer = "func (f *$className) Get".$currProperty->name."() string {\n";
+					// $textIfEnumOrContainer .= "		return string($textIfPointer"."f.".$currProperty->name.")\n";
 				}
 				$s .= $textIfEnumOrContainer;
 				$s .= "}\n";
@@ -1080,7 +1080,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$propertyForClass = new Property();
 			$propertyForClass->name = $property['name'];
 			$propertyForClass->type = $property['type'];
-			$propertyForClass->json = "`json:\"$currName\"`";
+			$propertyForClass->json = "`json:\"$currName,omitempty\"`";
 			$propertyForClass->pureType = $property['pureType'];
 
 			if($property["isEnumImport"])
