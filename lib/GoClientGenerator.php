@@ -310,26 +310,40 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "		".$currentClass->parentClass."Interface\n";
 		}
 
+		$textIfEnumOrContainer = "";
 		foreach($currentClass->properties as $currProperty)
 		{
-			$s .= "		Get".$currProperty->name."() ".$currProperty->type."\n";
+			$textIfEnumOrContainer = "		Get".$currProperty->name."() ".$currProperty->type."\n";
+
+			if(array_filter($this->_allClasses, function($toCheck) use ($currProperty) { 
+				return $toCheck->className == $currProperty->pureType; 
+			}) && $this->isContainerByName($currProperty->pureType))
+			{
+				$textIfEnumOrContainer = "		Get".$currProperty->name."() ".$currProperty->type."Container\n";
+			}
+
+			if ($currProperty->enumPackage != null)
+			{
+				$textIfEnumOrContainer = "		Get".$currProperty->name."() string\n";
+			}
+			$s .= $textIfEnumOrContainer;
 		}
 		$s .= "}\n";
 
 		if(!$currentClass->isAbstract)
 		{
-			$textIfEnum = "";
+			$textIfEnumOrContainer = "";
 			$textIfPointer = "";
 			foreach($allInheritanceProperties as $currProperty)
 			{
-				$textIfEnum = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
+				$textIfEnumOrContainer = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type." {\n";
 				if(array_filter($this->_allClasses, function($toCheck) use ($currProperty) { 
 					return $toCheck->className == $currProperty->pureType; 
 				}) && $this->isContainerByName($currProperty->pureType))
 				{
-					$textIfEnum = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type."Container {\n";
+					$textIfEnumOrContainer = "func (f *$className) Get".$currProperty->name."() ".$currProperty->type."Container {\n";
 				}
-				$textIfEnum .= "		return f.".$currProperty->name."\n";
+				$textIfEnumOrContainer .= "		return f.".$currProperty->name."\n";
 
 				if ($currProperty->enumPackage != null)
 				{
@@ -337,10 +351,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					{
 						$textIfPointer = "*";
 					}
-					$textIfEnum = "func (f $className) Get".$currProperty->name."() string {\n";
-					$textIfEnum .= "		return string($textIfPointer"."f.".$currProperty->name.")\n";
+					$textIfEnumOrContainer = "func (f *$className) Get".$currProperty->name."() string {\n";
+					$textIfEnumOrContainer .= "		return string($textIfPointer"."f.".$currProperty->name.")\n";
 				}
-				$s .= $textIfEnum;
+				$s .= $textIfEnumOrContainer;
 				$s .= "}\n";
 
 				$textIfPointer = "";
@@ -358,13 +372,25 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		{
 			$isNeedJson = true;
 			$inheritanceClasses = array_unique($inheritanceClasses);
+			$containerGetFunc = "";
+			$containerGetFunc .= "func (a *".$className."Container) Get() $className"."Interface {\n";
+
 			$s .= "type ".$className."Container struct {\n";
 	
 			foreach($inheritanceClasses as $currClassName)
 			{
+				// Container fields
 				$s .= "	".$currClassName."   *".$currClassName."\n";
+
+				// ContainerGet function
+				$containerGetFunc .= "	if a.".$currClassName." != nil {\n";
+				$containerGetFunc .= "		return a.".$currClassName."\n";
+				$containerGetFunc .= "	}\n";
 			}	
 			$s .= "}\n";
+
+			$containerGetFunc .= "	return nil\n";
+			$containerGetFunc .= "}\n";
 
 			$s .= "func (b *".$className."Container) UnmarshalJSON(bytes []byte) error {\n";
 			$s .= "	var objectType ObjectType\n";
@@ -384,15 +410,16 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$s .= "	b.".$currClassName." = a\n";
 			}	
 			$s .= "	default:\n";
-			$s .= "		return errors.New(\"unknown type\")\n";
+			$s .= "		return errors.New(\"unknown ".$className."Container type\")\n";
 			$s .= "	}\n";
 			$s .= "	return nil\n";
 			$s .= "}\n";
+
+			$s .= $containerGetFunc;
 		}
 
 		return $s;
 	}
-
 
 	function from_camel_case($input) {
 		preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
@@ -656,6 +683,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$importedEnums[] = $enumPackage;
 			}
 
+			$isInterface = false;
+
 			switch($paramType)
 			{
 				case "array":
@@ -664,6 +693,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					if(str_contains($arrayType, 'Kaltura'))
 					{
 						$newName = "types.".$this->getCSharpName($arrayType)."Interface";
+						$isInterface = true;
 					}
 					$dotNetType = "[]".$newName;
 					break;
@@ -673,6 +703,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					if(str_contains($arrayType, 'Kaltura'))
 					{
 						$newName = "types.".$this->getCSharpName($arrayType)."Interface";
+						$isInterface = true;
 					}
 					$dotNetType = "map[string]" . $newName;
 					break;
@@ -701,6 +732,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					else if(str_contains($paramType, 'Kaltura'))
 					{
 						$dotNetType = "types.".substr($paramType, 7)."Interface";
+						$isInterface = true;
 					}
 					else
 					{
@@ -723,7 +755,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$param = "$paramName ";
 
 			// If optional we need to add *
-			if ($optional == "1")
+			if ($optional == "1" && !$isInterface)
 			{
 				$param .= "*$dotNetType";
 				$paramsString[] = "*$paramName";
@@ -1073,7 +1105,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$this->_allClasses[] = $newClass;
 	}
 
-	private function findClassByName($name){
+	private function findClassByName($name)
+	{
 		foreach ( $this->_allClasses as $class ) {
 			if ( strcasecmp($name, $class->className) == 0 ) {
 				return $class;
@@ -1083,7 +1116,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		return false;
 	}
 
-	private function extractAllInheritanceProperties($currClass, $allInheritanceProperties){
+	private function extractAllInheritanceProperties($currClass, $allInheritanceProperties)
+	{
 		$propertiesToAdd = array();
 		if($currClass)
 		{
@@ -1104,7 +1138,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		return $propertiesToAdd;
 	}
 
-	private function extractAllInheritanceClasses($currClass){
+	private function extractAllInheritanceClasses($currClass)
+	{
 		$calssesToAdd = array();
 
 		if($currClass)
@@ -1129,7 +1164,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 	private function isContainerByName($className){
 		return $this->isContainer($this->_allContainers[$className]) ;
 	}
-
 
 	private function isContainer($classes){
 		return count($classes) > 1;

@@ -133,13 +133,17 @@ func loginResponseFromPhoenix() []byte {
 	var result struct {
 		Result *types.LoginResponse `json:"result"`
 	}
+
+	NOT_SUSPENDED := householdsuspensionstate.NOT_SUSPENDED
+	OK := userstate.OK
+
 	loginResponse := types.LoginResponse{
 		LoginSession: types.LoginSession{
 			Ks: "sudfjksdfsjdgf",
 		},
 		User: types.OTTUser{
-			SuspensionState: householdsuspensionstate.NOT_SUSPENDED,
-			UserState:       userstate.OK,
+			SuspensionState: &NOT_SUSPENDED,
+			UserState:       &OK,
 		},
 	}
 	result.Result = &loginResponse

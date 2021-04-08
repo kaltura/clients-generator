@@ -14,7 +14,7 @@ func TestPolySerialization(t *testing.T) {
 	t.Parallel()
 
 	channelFilter := &types.ChannelFilter{
-		OrderBy:      channelorderby.NAME_ASC,
+		OrderBy:      string(channelorderby.NAME_ASC),
 		GroupOrderBy: groupbyorder.COUNT_DESC,
 	}
 	_ = GetAssets(t, channelFilter)
@@ -36,8 +36,12 @@ func GetAssets(t *testing.T, filter types.AssetFilterInterface) []types.AssetCon
 	objects := assetListResponse.Objects
 	assert.Equal(t, 2, len(objects))
 	objects[0].Get().GetId()
-	assert.Equal(t, &types.ProgramAsset{Id: 1, EpgId: "1b"}, objects[0].ProgramAsset)
-	assert.Equal(t, &types.MediaAsset{Id: 2, EntryId: "a3"}, objects[1].MediaAsset)
+	helperId1 := int64(1)
+	helperEpgId := "1b"
+	helperId2 := int64(2)
+
+	assert.Equal(t, &types.ProgramAsset{Id: &helperId1, EpgId: &helperEpgId}, objects[0].ProgramAsset)
+	assert.Equal(t, &types.MediaAsset{Id: &helperId2, EntryId: "a3"}, objects[1].MediaAsset)
 
 	return objects
 }
