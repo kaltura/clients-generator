@@ -6,18 +6,15 @@ import (
 	"testing"
 
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/epgorderby"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/metaorderby"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/ruleActionType"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types/"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/ruleactiontype"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSerializationWithoutValues(t *testing.T) {
 	t.Parallel()
-	order := metaorderby.NAME_ASC
 
 	var testCases = []SomeStruct{
-		{OrderBy: &order},
 		{OrderBy: nil},
 	}
 	for _, before := range testCases {
@@ -37,13 +34,13 @@ func TestSerializationWithoutValues(t *testing.T) {
 
 func TestSerializationOfValues(t *testing.T) {
 	t.Parallel()
-	order := ruleActionType.START_DATE_OFFSET
+	order := ruleactiontype.START_DATE_OFFSET
 
 	var testCases = []types.AccessControlBlockAction{
-		{OrderBy: &order},
+		{Type: &order},
 	}
 	for _, before := range testCases {
-		t.Run(fmt.Sprintf("order: %v", before.OrderBy), func(t *testing.T) {
+		t.Run(fmt.Sprintf("order: %v", before.Type), func(t *testing.T) {
 			bytes, err := json.Marshal(before)
 			assert.NoError(t, err)
 			t.Log(string(bytes))
