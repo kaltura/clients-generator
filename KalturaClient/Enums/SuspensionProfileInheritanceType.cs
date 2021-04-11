@@ -27,12 +27,12 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class ScheduledRecordingAssetType : StringEnum
+	public sealed class SuspensionProfileInheritanceType : StringEnum
 	{
-		public static readonly ScheduledRecordingAssetType SINGLE = new ScheduledRecordingAssetType("single");
-		public static readonly ScheduledRecordingAssetType SERIES = new ScheduledRecordingAssetType("series");
-		public static readonly ScheduledRecordingAssetType ALL = new ScheduledRecordingAssetType("all");
+		public static readonly SuspensionProfileInheritanceType ALWAYS = new SuspensionProfileInheritanceType("ALWAYS");
+		public static readonly SuspensionProfileInheritanceType NEVER = new SuspensionProfileInheritanceType("NEVER");
+		public static readonly SuspensionProfileInheritanceType DEFAULT = new SuspensionProfileInheritanceType("DEFAULT");
 
-		private ScheduledRecordingAssetType(string name) : base(name) { }
+		private SuspensionProfileInheritanceType(string name) : base(name) { }
 	}
 }
