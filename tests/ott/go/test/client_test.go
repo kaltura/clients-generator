@@ -25,12 +25,13 @@ const (
 
 func TestPing(t *testing.T) {
 	ctx := utils.WithRequestId(context.Background(), "requestId")
-	client, ks, err := login(ctx, systemAdminUsername, systemAdminPassword)
+	client, ks, mockHttpClient, err := login(ctx, systemAdminUsername, systemAdminPassword)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, ks)
 	if err != nil {
 		return
 	}
+	mockHttpClient.SetResponse("/api_v3/service/system/action/ping", pingResponseFromPhoenix(), 200)
 	pingResult, err := services.NewSystemService(client).Ping(ctx, kalturaclient.KS(ks))
 	assert.NoError(t, err)
 	if err != nil {
@@ -42,7 +43,7 @@ func TestPing(t *testing.T) {
 
 func TestMetaList(t *testing.T) {
 	ctx := utils.WithRequestId(context.Background(), "requestId")
-	client, ks, err := login(ctx, adminUsername, adminPassword)
+	client, ks, mockHttpClient, err := login(ctx, adminUsername, adminPassword)
 	assert.NoError(t, err)
 	if err != nil {
 		return
@@ -52,8 +53,9 @@ func TestMetaList(t *testing.T) {
 	filter := types.MetaFilter{
 		DataTypeEqual: metadatatype.DATE,
 	}
-
-	metaListResult, err := services.NewMetaService(client).List(ctx, &filter, kalturaclient.KS(ks))
+	metaService := services.NewMetaService(client)
+	mockHttpClient.SetResponse("/api_v3/service/meta/action/list", metaListResponseFromPhoenix(), 200)
+	metaListResult, err := metaService.List(ctx, &filter, kalturaclient.KS(ks))
 	assert.NoError(t, err)
 	if err != nil {
 		return
@@ -62,7 +64,8 @@ func TestMetaList(t *testing.T) {
 	assert.GreaterOrEqual(t, int(metaListResult.TotalCount), 1)
 	assert.GreaterOrEqual(t, len(metaListResult.Objects), 1)
 
-	metaListResult, err = services.NewMetaService(client).List(ctx, nil, kalturaclient.KS(ks))
+	mockHttpClient.SetResponse("/api_v3/service/meta/action/list", metaListResponseFromPhoenix(), 200)
+	metaListResult, err = metaService.List(ctx, nil, kalturaclient.KS(ks))
 	assert.NoError(t, err)
 	if err != nil {
 		return
@@ -72,27 +75,15 @@ func TestMetaList(t *testing.T) {
 	assert.GreaterOrEqual(t, len(metaListResult.Objects), 1)
 }
 
-func login(ctx context.Context, username string, password string) (*kalturaclient.Client, string, error) {
-	//mockHttpServer := utils.NewMockHttpServer()
-	config := kalturaclient.Configuration{
-		ServiceUrl:                "test.com",
-		TimeoutMs:                 30000,
-		MaxConnectionsPerHost:     1024,
-		IdleConnectionTimeoutMs:   30000,
-		MaxIdleConnections:        1024,
-		MaxIdleConnectionsPerHost: 1024,
-	}
-	mockHttpClient := utils.NewMockHttpClient()
-	httpHandler := kalturaclient.NewHttpHandler(kalturaclient.GetBaseUrl(config), mockHttpClient)
-	var client *kalturaclient.Client
-	client = kalturaclient.NewClient(httpHandler.Execute)
+func login(ctx context.Context, username string, password string) (*kalturaclient.Client, string, *utils.MockHttpClient, error) {
+	client, mockHttpClient := utils.CreateClientAndMock()
 	mockHttpClient.SetResponse("/api_v3/service/ottUser/action/login", loginResponseFromPhoenix(), 200)
 	loginResponse, err := services.NewOttUserService(client).Login(ctx, partnerId, &username, &password, nil, nil)
 	var ks string
 	if loginResponse != nil {
 		ks = loginResponse.LoginSession.Ks
 	}
-	return client, ks, err
+	return client, ks, mockHttpClient, err
 }
 
 func HeadersMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
@@ -145,6 +136,54 @@ func loginResponseFromPhoenix() []byte {
 			SuspensionState: &NOT_SUSPENDED,
 			UserState:       &OK,
 		},
+	}
+	result.Result = &loginResponse
+	resultBytes, _ := json.Marshal(result)
+	return resultBytes
+}
+
+func pingResponseFromPhoenix() []byte {
+	var result struct {
+		Result bool `json:"result"`
+	}
+
+	result.Result = bool(true)
+	resultBytes, _ := json.Marshal(result)
+	return resultBytes
+}
+
+func metaListResponseFromPhoenix() []byte {
+	var result struct {
+		Result *types.MetaListResponse `json:"result"`
+	}
+
+	STRING := metadatatype.STRING
+	Id := "1234"
+	Name := "Amit meta"
+	SystemName := "SystemName Amit"
+	CreateDate := int64(77)
+	UpdateDate := int64(7777)
+	IsProtected := true
+
+	loginResponse := types.MetaListResponse{
+		Objects: []types.Meta{
+			{
+				Id:               &Id,
+				Name:             &Name,
+				MultilingualName: []types.TranslationToken{},
+				SystemName:       &SystemName,
+				DataType:         &STRING,
+				MultipleValue:    true,
+				IsProtected:      &IsProtected,
+				HelpText:         "Text that helps",
+				Features:         "Aamazing features",
+				ParentId:         "12345",
+				CreateDate:       &CreateDate,
+				UpdateDate:       &UpdateDate,
+				DynamicData:      nil,
+			},
+		},
+		TotalCount: 1,
 	}
 	result.Result = &loginResponse
 	resultBytes, _ := json.Marshal(result)

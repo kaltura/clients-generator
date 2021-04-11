@@ -759,7 +759,11 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			{
 				$param .= "*$dotNetType";
 				$paramsString[] = "*$paramName";
-			} else 
+			} else if($optional == "1" && $isInterface)
+			{
+				$param .= "$dotNetType";
+				$paramsString[] = "*$paramName";
+			} else
 			{
 				$param .= "$dotNetType";
 				$paramsString[] = "$paramName";
@@ -767,16 +771,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 							
 			$params[] = "$param";
 		}
-
-		// if(strlen($params) > 1)
-		// {
-		// 	$params = substr($params, 0, -2);
-		// }
-
-		// if(strlen($paramsString) > 1)
-		// {
-		// 	$paramsString = substr($paramsString, 0, -2);
-		// }
 
 		return array($params, $paramsString);
 	}

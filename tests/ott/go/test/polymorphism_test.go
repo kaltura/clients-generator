@@ -32,14 +32,22 @@ func GetAssets(t *testing.T, filter types.AssetFilterInterface) []types.AssetCon
 	err = json.Unmarshal(response, &assetListResponse)
 	assert.NoError(t, err)
 
-	assert.Equal(t, 2, len(assetListResponse.Objects))
+	assert.Equal(t, 5, len(assetListResponse.Objects))
 	mediaAsset := GetMediaAsset()
 	assert.Equal(t, mediaAsset, assetListResponse.Objects[0].MediaAsset)
 	assert.Equal(t, mediaAsset, assetListResponse.Objects[0].Get())
 	liveAsset := GeLiveAsset()
 	assert.Equal(t, liveAsset, assetListResponse.Objects[1].LiveAsset)
 	assert.Equal(t, liveAsset, assetListResponse.Objects[1].Get())
-	//TODO AMIT - ASSERT ALL TYPES
+	programAsset := GetProgramAsset()
+	assert.Equal(t, programAsset, assetListResponse.Objects[2].ProgramAsset)
+	assert.Equal(t, programAsset, assetListResponse.Objects[2].Get())
+	recordingAsset := GetRecordingAsset()
+	assert.Equal(t, recordingAsset, assetListResponse.Objects[3].RecordingAsset)
+	assert.Equal(t, recordingAsset, assetListResponse.Objects[3].Get())
+	epg := GetEpg()
+	assert.Equal(t, epg, assetListResponse.Objects[4].Epg)
+	assert.Equal(t, epg, assetListResponse.Objects[4].Get())
 	return assetListResponse.Objects
 }
 
@@ -72,7 +80,30 @@ func GeLiveAsset() *types.LiveAsset {
 	}
 }
 
-//TODO AMIT - ProgramAsset, RecordingAsset, Epg - set one property from each inheritence
+func GetProgramAsset() *types.ProgramAsset {
+	helperId3 := int64(3)
+	return &types.ProgramAsset{
+		Id:   &helperId3, // prop from Asset
+		Crid: "CridTest", // prop from ProgramAsset
+	}
+}
+
+func GetRecordingAsset() *types.RecordingAsset {
+	helperId4 := int64(4)
+	return &types.RecordingAsset{
+		Id:          &helperId4,        // prop from Asset
+		Crid:        "CridTest",        // prop from ProgramAsset
+		RecordingId: "RecordingIdTest", // prop from RecordingAsset
+	}
+}
+
+func GetEpg() *types.Epg {
+	helperId5 := int64(5)
+	return &types.Epg{
+		Id:   &helperId5, // prop from Asset
+		Crid: "CridTest", // prop from ProgramAsset
+	}
+}
 
 func GetChannelFilterString() string {
 	return `{
@@ -88,7 +119,6 @@ func GetChannelFilterString() string {
 	  }`
 }
 
-// TODO AMIT - ADD VALUES TO RESPONSE STRING
 func GetAssetListResponseString() string {
 	return `{
 		"totalCount": 2,
@@ -103,6 +133,24 @@ func GetAssetListResponseString() string {
 			"id": 2,
 			"entryId": "LiveEntryIdTest",
 			"externalCdvrId": "ExternalCdvrIdTest"
+		  },
+		  {
+			"objectType": "KalturaProgramAsset",
+			"id": 3,
+			"crid": "CridTest"
+		  },
+		  {
+			"objectType": "KalturaRecordingAsset",
+			"id": 4,
+			"crid": "CridTest",
+			"recordingId": "RecordingIdTest"
+
+		  },
+		  {
+			"objectType": "KalturaEpg",
+			"id": 5,
+			"crid": "CridTest"
+
 		  }
 		]
 	  }`
