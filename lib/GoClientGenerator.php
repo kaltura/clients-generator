@@ -64,9 +64,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		foreach($classNodes as $classNode)
 		{
 			$this->writeClass($classNode);
-		}
-
-		
+		}	
 
 		$serviceNodes = $xpath->query("/xml/services/service");
 
@@ -112,7 +110,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if(!$this->shouldIncludeType($enumName))
 			return;
 		
-		$enumName = $this->getCSharpName($enumName);
+		$enumName = $this->getGOName($enumName);
 		$enumNameLower = strtolower($enumName);
 
 		$s = "";
@@ -172,8 +170,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "}\n";
 		}
 
-		
-
 		$file = "enums/$enumNameLower/enum.go";
 		$this->addFile("KalturaClient/".$file, $s);
 	}
@@ -191,7 +187,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			return;
 		}
 		
-		$className = $this->getCSharpName($type);
+		$className = $this->getGOName($type);
 		$currentClass = $this->findClassByName($className);
 		$s = "";
 		$prefixText = "";		
@@ -209,8 +205,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		// class definition
 		$s .= "type $className struct {\n";
-		
-		//$s .= "		ObjectType\n";
 
 		$allInheritanceProperties = array();
 		$allInheritanceProperties = $this->extractAllInheritanceProperties($currentClass, $allInheritanceProperties);
@@ -224,7 +218,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		$properties = array();
 		$enumsImported = array();
-
 		$isNullable = false;
 		
 		foreach($allInheritanceProperties as $property)
@@ -256,7 +249,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$s .= "}\n";
 		$s .= "\n";
 		$s .= $this->writeInterfaces($isHaveBase, $currentClass, $allInheritanceProperties, $className, $type);
-
 		$isNeedJson = false;
 		$s .= $this->writeContainer($currentClass, $className, $isNeedJson);
 
@@ -322,10 +314,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$textIfEnumOrContainer = "		Get".$currProperty->name."() ".$currProperty->type."Container\n";
 			}
 
-			// if ($currProperty->enumPackage != null)
-			// {
-			// 	$textIfEnumOrContainer = "		Get".$currProperty->name."() string\n";
-			// }
 			$s .= $textIfEnumOrContainer;
 		}
 		$s .= "}\n";
@@ -345,15 +333,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				}
 				$textIfEnumOrContainer .= "		return f.".$currProperty->name."\n";
 
-				if ($currProperty->enumPackage != null)
-				{
-					// if (str_contains($currProperty->type, '*'))
-					// {
-					// 	$textIfPointer = "*";
-					// }
-					// $textIfEnumOrContainer = "func (f *$className) Get".$currProperty->name."() string {\n";
-					// $textIfEnumOrContainer .= "		return string($textIfPointer"."f.".$currProperty->name.")\n";
-				}
 				$s .= $textIfEnumOrContainer;
 				$s .= "}\n";
 
@@ -445,29 +424,20 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$prefixText .= " \"context\"\n";
 		$prefixText .= " \"encoding/json\"\n";
 		$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient\"\n";
-		//$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types\"\n";
 		
 		$serviceName = $serviceNode->getAttribute("name");
 
-		// TODO : check if needs to change from uppercase
-		$dotNetServiceName = $this->upperCaseFirstLetter($serviceName)."Service";
+		$goServiceName = $this->upperCaseFirstLetter($serviceName)."Service";
 
 		$actionNodes = $serviceNode->childNodes;
-		foreach($actionNodes as $actionNode)
-		{
-			if ($actionNode->nodeType != XML_ELEMENT_NODE)
-				continue;
-		
-				//$this->writeRequestBuilder($serviceId, $serviceName, $actionNode);
-		}
 
 		$s = "";
-		$s .= "type $dotNetServiceName struct {\n";
+		$s .= "type $goServiceName struct {\n";
 		$s .= "	client *kalturaclient.Client\n";
 		$s .= "}\n";
 		$s .= "\n";
-		$s .= "func New$dotNetServiceName(client *kalturaclient.Client) *$dotNetServiceName {\n";
-		$s .= "		return &$dotNetServiceName{\n";
+		$s .= "func New$goServiceName(client *kalturaclient.Client) *$goServiceName {\n";
+		$s .= "		return &$goServiceName{\n";
 		$s .= "			   client:	client,\n";
 		$s .= "		}\n";
 		$s .= "}\n";
@@ -516,24 +486,24 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			case null:
 				$nilIfNeeded = "";
 				$comaIfNeeded = "";
-				$dotNetOutputType = "";
+				$goOutputType = "";
 				break;
 			case "array":
 				$arrayType = $resultNode->getAttribute("arrayType");
 				$newName = $arrayType;
 				if(str_contains($arrayType, 'Kaltura'))
 				{
-					$newName = "types.".$this->getCSharpName($arrayType);
-					if($this->isContainerByName($this->getCSharpName($arrayType)))
+					$newName = "types.".$this->getGOName($arrayType);
+					if($this->isContainerByName($this->getGOName($arrayType)))
 					{
-						$newName = "types.".$this->getCSharpName($arrayType)."Container";
+						$newName = "types.".$this->getGOName($arrayType)."Container";
 					}
 					$isKalturaType = true;
 				}
-				$dotNetOutputType = "[]".$newName;
+				$goOutputType = "[]".$newName;
 				break;
 			case "map":
-				$arrayType = $this->getCSharpName($resultNode->getAttribute("arrayType"));
+				$arrayType = $this->getGOName($resultNode->getAttribute("arrayType"));
 				if(str_contains($resultNode->getAttribute("arrayType"), 'Kaltura'))
 				{
 					$arrayType = "types.".$arrayType;
@@ -543,39 +513,38 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					}
 				}
 				
-				$dotNetOutputType = "map[string]".$arrayType;
-
+				$goOutputType = "map[string]".$arrayType;
 				break;
 			case "bigint":
-				$dotNetOutputType = "*int64";
+				$goOutputType = "*int64";
 				break;
 			case "int":
-				$dotNetOutputType = "*int32";
+				$goOutputType = "*int32";
 				break;
 			case "float":
-				$dotNetOutputType = "*float32";
+				$goOutputType = "*float32";
 				break;
 			case "bool":
-				$dotNetOutputType = "*bool";
+				$goOutputType = "*bool";
 				break;
 			case "string":
-				$dotNetOutputType = "*string";
+				$goOutputType = "*string";
 				break;
 			case "KalturaStringValue":
-				$dotNetOutputType = "*string";
+				$goOutputType = "*string";
 				break;
 			default:
-				$resultGo = $this->getCSharpName($resultType);
-				$dotNetOutputType = "*types.$resultGo";
+				$resultGo = $this->getGOName($resultType);
+				$goOutputType = "*types.$resultGo";
 				if($this->isContainerByName($resultGo))
 				{
-					$dotNetOutputType = "*types.$resultGo"."Container";
+					$goOutputType = "*types.$resultGo"."Container";
 				}
 				$isKalturaType = true;
 				break;
 		}
+		
 		$requestName = ucfirst($serviceName).'ListResponse';
-
 		$goServiceName = $this->upperCaseFirstLetter($serviceName)."Service";
 		$goActionName = $this->upperCaseFirstLetter($action);
 		$signaturePrefix = "func (s *$goServiceName) $goActionName";
@@ -587,18 +556,13 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		// write the overload
 		$text .= "\n";
-		$text .= "$signaturePrefix(ctx context.Context, $signatureParamsWithTypes) (".$dotNetOutputType.$comaIfNeeded."error){\n";
+		$text .= "$signaturePrefix(ctx context.Context, $signatureParamsWithTypes) (".$goOutputType.$comaIfNeeded."error){\n";
 		$text .= "	path := \"service/$serviceName/action/$action\"\n";
 		$text .= "	requestMap := map[string]interface{}{}\n";
 
 		foreach($signatureParamsWithoutTypes as $currParam)
 		{
 			$addedGetParams = ""	;
-
-			// if(stripos($signatureParamsWithTypes, "$currParam types.".$serviceName) || stripos($signatureParamsWithTypes, "$currParam *types.".$serviceName))
-			// {
-			// 	$addedGetParams = ".GetParams()";
-			// }
 
 			if(str_contains($currParam, '*'))
 			{
@@ -628,7 +592,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		} else
 		{
 			$text .= "	var result struct {\n";
-			$text .= "      Result $dotNetOutputType `json:\"result\"`\n";
+			$text .= "      Result $goOutputType `json:\"result\"`\n";
 			$text .= "  }\n";
 			$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
 			$text .= "	if err != nil {\n";
@@ -641,7 +605,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		return $text;
 	}
 
-    private function getCSharpName($name)
+    private function getGOName($name)
 	{
 		if($name === 'KalturaObject')
 			return 'ObjectBase';
@@ -674,7 +638,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$paramName = $paramNode->getAttribute("name");
 			$isEnum = $paramNode->hasAttribute("enumType");
 			$optional = $paramNode->getAttribute("optional");
-			$enumPackage = strtolower($this->getCSharpName($paramNode->getAttribute("enumType")));
+			$enumPackage = strtolower($this->getGOName($paramNode->getAttribute("enumType")));
 
 			if($isEnum && !in_array($enumPackage, $importedEnums))
 			{
@@ -692,64 +656,62 @@ class GoClientGenerator extends ClientGeneratorFromXml
 					$newName = $arrayType;
 					if(str_contains($arrayType, 'Kaltura'))
 					{
-						$newName = "types.".$this->getCSharpName($arrayType)."Interface";
+						$newName = "types.".$this->getGOName($arrayType)."Interface";
 						$isInterface = true;
 					}
-					$dotNetType = "[]".$newName;
+					$goType = "[]".$newName;
 					break;
 				case "map":
 					$arrayType = $paramNode->getAttribute("arrayType");
 					$newName = $arrayType;
 					if(str_contains($arrayType, 'Kaltura'))
 					{
-						$newName = "types.".$this->getCSharpName($arrayType)."Interface";
+						$newName = "types.".$this->getGOName($arrayType)."Interface";
 						$isInterface = true;
 					}
-					$dotNetType = "map[string]" . $newName;
+					$goType = "map[string]" . $newName;
 					break;
 				case "file":
-					$dotNetType = "[]byte";
+					$goType = "[]byte";
 					break;
 				case "bigint":
-					$dotNetType = "int64";
+					$goType = "int64";
 					break;
 				case "int":
-					// TODO : ADD ENUM REPRESENTATION TO FUNC
 					if ($isEnum)
-						$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
+						$goType = $this->getGOName($paramNode->getAttribute("enumType"));
 					else
-						$dotNetType = "int32";
+						$goType = "int32";
 					break;
 				case "float":
-					$dotNetType = "float32";
+					$goType = "float32";
 						break;
 				case "KalturaStringValue":
-					$dotNetOutputType = "string";
+					$goOutputType = "string";
 					break;
 				default:
 					if ($isEnum)
-						$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
+						$goType = $this->getGOName($paramNode->getAttribute("enumType"));
 					else if(str_contains($paramType, 'Kaltura'))
 					{
-						$dotNetType = "types.".substr($paramType, 7)."Interface";
+						$goType = "types.".substr($paramType, 7)."Interface";
 						$isInterface = true;
 					}
 					else
 					{
-						$dotNetType = "$paramType";
+						$goType = "$paramType";
 					}
-						
 					break;
 			}
 
 			if($paramName == "type")
 			{
-				$paramName = $this->lowerCaseFirstLetter($dotNetType);
+				$paramName = $this->lowerCaseFirstLetter($goType);
 			}
 
 			if($isEnum)
 			{
-				$dotNetType = $enumPackage.".".$dotNetType;
+				$goType = $enumPackage.".".$goType;
 			}
 
 			$param = "$paramName ";
@@ -757,15 +719,15 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			// If optional we need to add *
 			if ($optional == "1" && !$isInterface)
 			{
-				$param .= "*$dotNetType";
+				$param .= "*$goType";
 				$paramsString[] = "*$paramName";
 			} else if($optional == "1" && $isInterface)
 			{
-				$param .= "$dotNetType";
+				$param .= "$goType";
 				$paramsString[] = "*$paramName";
 			} else
 			{
-				$param .= "$dotNetType";
+				$param .= "$goType";
 				$paramsString[] = "$paramName";
 			}
 							
@@ -871,7 +833,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if(!$propertyNode)
 			throw new Exception("Property [objects] not found for type [$name]");
 		
-		return $this->getCSharpName($propertyNode->getAttribute("arrayType"));
+		return $this->getGOName($propertyNode->getAttribute("arrayType"));
 	}
 
 	private function addClass(DOMElement $classNode)
@@ -888,14 +850,10 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			return;
 		} 
 
-
-
-		$className = $this->getCSharpName($type);
+		$className = $this->getGOName($type);
 		$newClass = new Classes();
-
 		$newClass->className = $className;
 		$newClass->parentClass = "";
-
 		
 		if ($classNode->hasAttribute("abstract"))
 		{	
@@ -906,25 +864,9 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if ($classNode->hasAttribute("base"))
 		{
 			$base = $classNode->getAttribute("base");
-			$baseName = $this->getCSharpName($base);
+			$baseName = $this->getGOName($base);
 			$newClass->parentClass = $baseName;
 		}
-
-		// we want to make the orderBy property strongly typed with the corresponding string enum
-		// $isFilter = false;
-		// if ($this->isClassInherit($type, "KalturaFilter"))
-		// {
-		// 	$orderByType = str_replace("Filter", "OrderBy", $type);
-		// 	if ($this->enumExists($orderByType))
-		// 	{
-		// 		$orderByElement = $classNode->ownerDocument->createElement("property");
-		// 		$orderByElement->setAttribute("name", "orderBy");
-		// 		$orderByElement->setAttribute("type", "string");
-		// 		$orderByElement->setAttribute("enumType", $orderByType);
-		// 		$classNode->appendChild($orderByElement);
-		// 		$isFilter = true;
-		// 	}
-		// }
 
 		$properties = array();
 		$enumsImported = array();
@@ -961,9 +903,9 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 			if ($isEnum)
 			{
-				$dotNetPropType = $this->getCSharpName($propertyNode->getAttribute("enumType"));
-				$enumPackage = strtolower($dotNetPropType);
-				$dotNetPropType = $enumPackage.".".$dotNetPropType;
+				$goPropType = $this->getGOName($propertyNode->getAttribute("enumType"));
+				$enumPackage = strtolower($goPropType);
+				$goPropType = $enumPackage.".".$goPropType;
 				if(!$isImport){
 					$isImport = true;
 				}
@@ -980,53 +922,49 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$arrayObjectType = $propertyNode->getAttribute("arrayType");
 				if($arrayObjectType == 'KalturaObject')
                     $arrayObjectType = 'ObjectBase';
-				$dotNetPropType = "[]" . $this->getCSharpName($arrayObjectType);
-				$property["pureType"] = $this->getCSharpName($arrayObjectType);
+				$goPropType = "[]" . $this->getGOName($arrayObjectType);
+				$property["pureType"] = $this->getGOName($arrayObjectType);
 			}
 			else if ($propType == "map")
 			{
 				$arrayObjectType = $propertyNode->getAttribute("arrayType");
 				if($arrayObjectType == 'KalturaObject')
 					$arrayObjectType = 'ObjectBase';
-				$dotNetPropType = "map[string]" . $this->getCSharpName($arrayObjectType);
-				$property["pureType"] = $this->getCSharpName($arrayObjectType);
+				$goPropType = "map[string]" . $this->getGOName($arrayObjectType);
+				$property["pureType"] = $this->getGOName($arrayObjectType);
 			}
 			else if ($propType == "bool")
 			{
-				$dotNetPropType  = "bool";
+				$goPropType  = "bool";
 				$property["pureType"] = "bool"; 
 			}
 			else if ($propType == "bigint")
 			{
-				$dotNetPropType  = "int64";
+				$goPropType  = "int64";
 				$property["pureType"] = "int64"; 
 			}
 			else if ($propType == "time")
 			{
-				$dotNetPropType  = "int32";
+				$goPropType  = "int32";
 				$property["pureType"] = "int32"; 
 			}
 			else if ($propType == "int")
 			{
-				$dotNetPropType  = "int32";
+				$goPropType  = "int32";
 				$property["pureType"] = "int32"; 
 			}
 			else if ($propType == "float")
 			{
-				$dotNetPropType  = "float32";
+				$goPropType  = "float32";
 				$property["pureType"] = "float32"; 
 			}
 			else
 			{
-				$dotNetPropType = $this->getCSharpName($propType);
-				$property["pureType"] = $this->getCSharpName($propType); 
+				$goPropType = $this->getGOName($propType);
+				$property["pureType"] = $this->getGOName($propType); 
 			}
 
-			$property["type"] = $dotNetPropType;
-
-			// if ($isFilter && $goPropName == "OrderBy")
-			// 	$property["isOrderBy"] = true;
-				
+			$property["type"] = $goPropType;
 			$property["arrayType"] = $propertyNode->getAttribute("arrayType");
 
 			if($propertyNode->hasAttribute("nullable"))
@@ -1161,231 +1099,5 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 	private function isContainer($classes){
 		return count($classes) > 1;
-	}
-
-	private function writeClient()
-	{
-		$version = $this->_doc->documentElement->getAttribute('apiVersion'); //located at input file top
-		$date = date('d-m-y');
-		$text = 'package kalturaclient
-		
-		import (
-			"bytes"
-			"encoding/json"
-			"io"
-			"io/ioutil"
-			"net/http"
-			"net/url"
-			"time"
-			"context"
-		)
-		
-		const (
-			postMethod        = "POST"
-			contentTypeHeader = "Content-Type"
-			contentTypeJSON   = "application/json"
-		)
-		
-		type HTTPClient interface {
-			Do(request *http.Request) (response *http.Response, err error)
-		}
-		
-		type Middleware interface {
-			Execute(path string, request map[string]interface{}, extraParams []Param, headers []Header) ([]byte, error)
-			SetNext(m Middleware)
-		}
-		
-		// start ContextMiddleware ----------------------------------------
-		type ContextMiddleware struct {
-			Next Middleware
-			ctx context.Context
-		}
-		func NewContextMiddleware(ctx context.Context) *ContextMiddleware{
-			return &ContextMiddleware{
-				ctx: ctx,
-			}
-		}
-		func (p *ContextMiddleware) SetNext(m Middleware){
-			p.Next = m
-		}
-		func (p *ContextMiddleware) Execute(path string, request map[string]interface{}, extraParams []Param, headers []Header) ([]byte, error) {
-			requestId := p.ctx.Value(RequestIdHeader).(string)
-			requestIdHeader := RequestId(requestId)
-			headers = append(headers, requestIdHeader)
-			return p.Next.Execute(path , request, extraParams, headers)
-		}
-		// end ContextMiddleware ----------------------------------------
-		
-		// start KSMiddleware ----------------------------------------
-		// note: shared variable watch out - not thread safe! ???
-		type KSMiddleware struct {
-			Next Middleware
-			ks string
-		}
-		func NewKSMiddleware(ks string) *KSMiddleware{
-			return &KSMiddleware{
-				ks: ks,
-			}
-		}
-		func (p *KSMiddleware) SetNext(m Middleware){
-			p.Next = m
-		}
-		func (p *KSMiddleware) Execute(path string, request map[string]interface{}, extraParams []Param, headers []Header) ([]byte, error) {
-			ksParam := KS(p.ks)
-			extraParams = append(extraParams, ksParam)
-			return p.Next.Execute(path , request, extraParams, headers)
-		}
-		// end KSMiddleware ----------------------------------------
-		
-		type Client struct {
-			middleware Middleware
-		}
-		
-		func NewClient(config Configuration, logger Logger) *Client {
-			return &Client{
-				middleware: NewClientMiddleware(config, logger),
-			}
-		}
-		
-		// LoggingMiddl -> AuthenticationMiddle -> RequestIdAdder -> RealExecute
-		func (p *Client) AddMiddleware(m Middleware) {
-			m.SetNext(p.middleware)
-			p.middleware = m
-		}
-		
-		func (p *Client) Execute(path string, request map[string]interface{}, extraParams []Param) ([]byte, error) {
-			return p.middleware.Execute(path, request, extraParams, nil)
-		}
-		
-		// start ClientMiddleware ----------------------------------------
-		type ClientMiddleware struct {
-			Config        Configuration
-			httpClient    HTTPClient
-			baseUrl       string
-			logger        Logger
-			defaultParams map[string]interface{}
-		}
-		
-		func NewClientMiddleware(config Configuration, logger Logger) *ClientMiddleware {
-			var scheme string
-			if config.UseHttps {
-				scheme = "https"
-			} else {
-				scheme = "http"
-			}
-			var baseUrl = url.URL{
-				Scheme: scheme,
-				Host:   config.ServiceUrl,
-			}
-		
-			return &ClientMiddleware{
-				Config:     config,
-				httpClient: newHttpClientFromConfig(config),
-				logger:     logger,
-				baseUrl:    baseUrl.String(),
-				defaultParams: map[string]interface{}{
-					"clientTag":  "go:'.$date.'",
-					"apiVersion": "'.$version.'",
-					"format":     "1",
-					"language":   "*",
-				},
-			}
-		}
-		
-		func newHttpClientFromConfig(config Configuration) HTTPClient {
-			tr := &http.Transport{
-				MaxConnsPerHost:     config.MaxConnectionsPerHost,
-				MaxIdleConns:        config.MaxIdleConnections,
-				MaxIdleConnsPerHost: config.MaxConnectionsPerHost,
-				IdleConnTimeout:     time.Duration(config.IdleConnectionTimeoutMs) * time.Millisecond,
-			}
-			var httpClient HTTPClient = &http.Client{
-				Transport: tr,
-				Timeout:   time.Duration(config.TimeoutMs) * time.Millisecond,
-			}
-			return httpClient
-		}
-		
-		func (p *ClientMiddleware) Execute(path string, request map[string]interface{}, extraParams []Param, headers []Header) ([]byte, error) {
-			var requestUrl = p.baseUrl + "/api_v3/" + path
-			requestBody := p.getRequestBodyBytes(request, extraParams)
-			httpRequest, err := http.NewRequest(postMethod, requestUrl, bytes.NewBuffer(requestBody))
-			if err != nil {
-				p.logger.Errorf("[phoenix] create httpRequest error: %s", err.Error())
-				return nil, FailedToCreateHttpRequest
-			}
-		
-			httpRequest.Header.Set(contentTypeHeader, contentTypeJSON)
-			if headers != nil {
-				for _, v := range headers{
-					httpRequest.Header.Set(v.key, v.value)
-				}
-			}
-		
-			httpResponse, err := p.httpClient.Do(httpRequest)
-			if err != nil {
-				p.logger.Errorf("[kaltura] httpRequest error: %s", err.Error())
-				return nil, FailedToExecuteHttpRequest
-			}
-			defer p.closeIt(httpResponse.Body)
-			if httpResponse.StatusCode != 200 {
-		
-				p.logger.Errorf("[kaltura] status code error: %d", httpResponse.StatusCode)
-				return nil, NewBadStatusCodeError(httpResponse.StatusCode, httpResponse.Status)
-			}
-			byteResponse, err := ioutil.ReadAll(httpResponse.Body)
-			if err != nil {
-				p.logger.Errorf("[kaltura] read httpResponse error: %s", err.Error())
-				return nil, FailedToReadResponseBody
-			}
-			apiException := p.getAPIExceptionFromResponse(byteResponse)
-			return byteResponse, apiException
-		}
-		
-		func (p *ClientMiddleware) SetNext(m Middleware){
-		}
-		
-		func (p *ClientMiddleware) getAPIExceptionFromResponse(byteResponse []byte) error {
-			var apiExceptionResult APIExceptionResult
-			err := json.Unmarshal(byteResponse, &apiExceptionResult)
-			if err != nil {
-				p.logger.Errorf("[kaltura] parse json error: %s", err.Error())
-				return FailedToParseJson
-			}
-			if apiExceptionResult.Result == nil {
-				p.logger.Error("[kaltura] json without `result` field")
-				return FailedToParseJson
-			}
-			if apiExceptionResult.Result.Error != nil {
-				errorMessage := apiExceptionResult.Result.Error
-				p.logger.Errorf("[kaltura] error response. code: %s, message: %s", errorMessage.Code, errorMessage.Message)
-				return apiExceptionResult.Result.Error
-			}
-			return nil
-		}
-		
-		func (p *ClientMiddleware) getRequestBodyBytes(request map[string]interface{}, extraParams []Param) []byte {
-			for key, value := range p.defaultParams {
-				request[key] = value
-			}
-			if extraParams != nil {
-				for _, param := range extraParams {
-					if param.wasCreatedUsingConstructor {
-						request[param.key] = param.value
-					}
-				}
-			}
-			bytes, _ := json.Marshal(request)
-			return bytes
-		}
-		
-		func (p *ClientMiddleware) closeIt(c io.Closer) {
-			if err := c.Close(); err != nil {
-				p.logger.Error(err)
-			}
-		}';
-
-		$file = "kalturaclient/client.go";
-		$this->addFile($file, $text);
 	}
 }
