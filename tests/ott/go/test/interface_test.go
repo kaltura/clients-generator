@@ -16,8 +16,8 @@ func TestAnnouncementInterface(t *testing.T) {
 	status := announcementstatus.NOTSENT
 	id := int32(12345)
 	var announcement = types.Announcement{
-		Name:         "amit Announcement",
-		Message:      "amit message",
+		Name:         "Name Announcement",
+		Message:      "Message Announcement",
 		Enabled:      true,
 		StartTime:    77,
 		Timezone:     "UTC",
@@ -55,7 +55,7 @@ func TestApplyDiscountModuleActionInterface(t *testing.T) {
 	var applyDiscountModuleAction = types.ApplyDiscountModuleAction{
 		DiscountModuleId: 1234,
 		Type:             &Type,
-		Description:      "amit",
+		Description:      "applyDiscountModuleAction Description",
 	}
 	ValidateApplyDiscountModuleActionInterface(t, applyDiscountModuleAction, &applyDiscountModuleAction)
 }
@@ -70,11 +70,11 @@ func TestChannelFilterInterface(t *testing.T) {
 	var channelFilter = types.ChannelFilter{
 		IdEqual:        1234,
 		ExcludeWatched: true,
-		KSql:           "amit",
+		KSql:           "KSql test",
 		GroupBy:        []types.AssetGroupByContainer{},
 		GroupOrderBy:   groupbyorder.COUNT_ASC,
 		DynamicOrderBy: types.DynamicOrderBy{},
-		Name:           "amit test",
+		Name:           "Name test",
 		OrderBy:        "orderby",
 	}
 	ValidateChannelFilter(t, channelFilter, &channelFilter)

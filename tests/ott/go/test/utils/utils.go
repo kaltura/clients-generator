@@ -30,7 +30,17 @@ func WithRequestId(c context.Context, requestId string) context.Context {
 }
 
 func CreateClientAndMock() (*kalturaclient.Client, *MockHttpClient) {
-	config := kalturaclient.Configuration{
+	config := CreateTestConfig()
+	mockHttpClient := NewMockHttpClient()
+	httpHandler := kalturaclient.NewHttpHandler(kalturaclient.GetBaseUrl(config), mockHttpClient)
+	var client *kalturaclient.Client
+	client = kalturaclient.NewClient(httpHandler.Execute)
+
+	return client, mockHttpClient
+}
+
+func CreateTestConfig() kalturaclient.Configuration {
+	return kalturaclient.Configuration{
 		ServiceUrl:                "test.com",
 		TimeoutMs:                 30000,
 		MaxConnectionsPerHost:     1024,
@@ -38,10 +48,4 @@ func CreateClientAndMock() (*kalturaclient.Client, *MockHttpClient) {
 		MaxIdleConnections:        1024,
 		MaxIdleConnectionsPerHost: 1024,
 	}
-	mockHttpClient := NewMockHttpClient()
-	httpHandler := kalturaclient.NewHttpHandler(kalturaclient.GetBaseUrl(config), mockHttpClient)
-	var client *kalturaclient.Client
-	client = kalturaclient.NewClient(httpHandler.Execute)
-
-	return client, mockHttpClient
 }

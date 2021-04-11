@@ -23,8 +23,6 @@ func TestSerializationNoValues(t *testing.T) {
 		t.Run(fmt.Sprintf("order: %v", before.OrderBy), func(t *testing.T) {
 			bytes, err := json.Marshal(before)
 			assert.NoError(t, err)
-			t.Log(string(bytes))
-
 			after := SomeStruct{}
 			err = json.Unmarshal(bytes, &after)
 			assert.NoError(t, err)
