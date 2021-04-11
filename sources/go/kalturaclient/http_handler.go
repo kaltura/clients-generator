@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
+
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/errors"
 )
 
@@ -98,6 +100,20 @@ func (p *HttpHandler) getAPIExceptionFromResponse(byteResponse []byte) error {
 	apiException := errors.APIException{
 		Code:    errorMap["code"].(string),
 		Message: errorMap["message"].(string),
+	}
+	argsInterface, ok := errorMap["args"]
+	if ok {
+		argsInterfaceList := argsInterface.([]interface{})
+		for _, arg := range argsInterfaceList {
+			argMap, ok := arg.(map[string]interface{})
+			if ok {
+				apiExceptionArg := types.ApiExceptionArg{
+					Name:  argMap["name"].(string),
+					Value: argMap["value"].(string),
+				}
+				apiException.Args = append(apiException.Args, apiExceptionArg)
+			}
+		}
 	}
 	return &apiException
 }

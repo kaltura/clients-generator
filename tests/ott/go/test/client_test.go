@@ -78,6 +78,8 @@ func TestErrorWithArgs(t *testing.T) {
 	// TODO - i want to do this option without casting
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.ArgumentCannotBeEmpty)
 	assert.Empty(t, setInitialPasswordResponse)
+	expectedError := getAPIExceptionWithArgs()
+	assert.Equal(t, &expectedError, err)
 }
 
 func TestErrorLogin(t *testing.T) {
@@ -93,9 +95,11 @@ func TestErrorLogin(t *testing.T) {
 		ks = loginResponse.LoginSession.Ks
 	}
 	assert.Error(t, err)
+	expectedError := getAPIException()
 	// TODO - i want to do this option without casting
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.WrongPasswordOrUserName)
 	assert.Empty(t, ks)
+	assert.Equal(t, &expectedError, err)
 }
 
 func loginResponseFromPhoenix() []byte {
@@ -126,16 +130,7 @@ func errorWithArgsResponseFromPhoenix() []byte {
 			Error *errors.APIException `json:"error"`
 		}) `json:"result"`
 	}
-	apiException := errors.APIException{
-		Code:    "50027",
-		Message: "Argument [token] cannot be empty",
-		Args: []types.ApiExceptionArg{
-			{
-				Name:  "argument",
-				Value: "token",
-			},
-		},
-	}
+	apiException := getAPIExceptionWithArgs()
 	result.Result.Error = &apiException
 	resultBytes, _ := json.Marshal(result)
 	return resultBytes
@@ -147,13 +142,30 @@ func errorResponseFromPhoenix() []byte {
 			Error *errors.APIException `json:"error"`
 		}) `json:"result"`
 	}
-	apiException := errors.APIException{
-		Code:    "1011",
-		Message: "The username or password is not correct",
-	}
+	apiException := getAPIException()
 	result.Result.Error = &apiException
 	resultBytes, _ := json.Marshal(result)
 	return resultBytes
+}
+
+func getAPIException() errors.APIException {
+	return errors.APIException{
+		Code:    "1011",
+		Message: "The username or password is not correct",
+	}
+}
+
+func getAPIExceptionWithArgs() errors.APIException {
+	return errors.APIException{
+		Code:    "50027",
+		Message: "Argument [token] cannot be empty",
+		Args: []types.ApiExceptionArg{
+			{
+				Name:  "argument",
+				Value: "token",
+			},
+		},
+	}
 }
 
 func pingResponseFromPhoenix() []byte {
