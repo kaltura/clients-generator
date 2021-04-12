@@ -190,7 +190,7 @@ func metaListResponseFromPhoenix() []byte {
 	CreateDate := int64(77)
 	UpdateDate := int64(7777)
 	IsProtected := true
-
+	parentId := "12345"
 	loginResponse := types.MetaListResponse{
 		Objects: []types.Meta{
 			{
@@ -203,7 +203,7 @@ func metaListResponseFromPhoenix() []byte {
 				IsProtected:      &IsProtected,
 				HelpText:         "Text that helps",
 				Features:         "Aamazing features",
-				ParentId:         "12345",
+				ParentId:         &parentId,
 				CreateDate:       &CreateDate,
 				UpdateDate:       &UpdateDate,
 				DynamicData:      nil,
