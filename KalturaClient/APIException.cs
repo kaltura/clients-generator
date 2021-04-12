@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -250,6 +250,7 @@ namespace Kaltura
 		public static string InputFormatIsInvalid = "5078";
 		public static string DuplicateRegionChannel = "5076";
 		public static string ParentAlreadyContainsChannel = "5077";
+		public static string StartDateShouldBeLessThanEndDate = "4111";
 		public static string NoPinDefined = "5001";
 		public static string PinMismatch = "5002";
 		public static string RuleNotExists = "5003";
@@ -474,7 +475,6 @@ namespace Kaltura
 		public static string KeyCannotBeEmptyOrNull = "500086";
 		public static string MissingMandatoryArgumentInProperty = "500087";
 		public static string MaxArguments = "500088";
-		public static string StartDateShouldBeLessThanEndDate = "500089";
 		public static string HouseholdForbidden = "500028";
 		public static string SwitchingUsersIsNotAllowedForPartner = "50024";
 		public static string NotActiveAppToken = "50023";
