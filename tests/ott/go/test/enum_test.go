@@ -3,7 +3,6 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"testing"
 
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/epgorderby"
@@ -66,18 +65,17 @@ func TestDeserializationNoValues(t *testing.T) {
 
 func TestDeserializationValues(t *testing.T) {
 	t.Parallel()
-	space := regexp.MustCompile(`\s+`)
 	deserialized := types.UserRole{}
-	userRoleEmptyString := space.ReplaceAllString(GetUserRoleEmptyString(), "")
+	userRoleEmptyString := GetUserRoleEmptyString()
 	err := json.Unmarshal([]byte(userRoleEmptyString), &deserialized)
 	assert.Error(t, err)
 
-	userRoleNullString := space.ReplaceAllString(GetUserRoleNullString(), "")
+	userRoleNullString := GetUserRoleNullString()
 	err = json.Unmarshal([]byte(userRoleNullString), &deserialized)
 	assert.NoError(t, err)
 	assert.Equal(t, types.UserRole{Profile: userroleprofile.USER}, deserialized)
 
-	userRoleValuesString := space.ReplaceAllString(GetUserRoleValuesString(), "")
+	userRoleValuesString := GetUserRoleValuesString()
 	err = json.Unmarshal([]byte(userRoleValuesString), &deserialized)
 	assert.NoError(t, err)
 	userroleType := userroletype.CUSTOM

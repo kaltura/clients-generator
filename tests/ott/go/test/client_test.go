@@ -2,13 +2,11 @@ package test
 
 import (
 	"context"
-	"encoding/json"
+	"log"
 	"testing"
 
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/householdsuspensionstate"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/metadatatype"
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/userstate"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/errors"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/services"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
@@ -21,7 +19,11 @@ func TestPing(t *testing.T) {
 	mockHttpClient.SetResponse("/api_v3/service/system/action/ping", pingResponseFromPhoenix(), 200)
 	ctx := utils.WithRequestId(context.Background(), "requestId")
 	pingResult, err := services.NewSystemService(client).Ping(ctx)
-	assert.NoError(t, err)
+	if assert.NoError(t, err) {
+		if assert.NotEmpty(t, pingResult) {
+			assert.Equal(t, true, *pingResult)
+		}
+	}
 	if err != nil {
 		return
 	}
@@ -62,8 +64,8 @@ func TestMetaListWithMiddlewares(t *testing.T) {
 		return
 	}
 	assert.NotEmpty(t, metaListResult)
-	assert.GreaterOrEqual(t, int(metaListResult.TotalCount), 1)
-	assert.GreaterOrEqual(t, len(metaListResult.Objects), 1)
+	assert.Equal(t, int(metaListResult.TotalCount), 1)
+	assert.Equal(t, len(metaListResult.Objects), 1)
 }
 
 func TestErrorWithArgs(t *testing.T) {
@@ -103,58 +105,43 @@ func TestErrorLogin(t *testing.T) {
 }
 
 func loginResponseFromPhoenix() []byte {
-	var result struct {
-		Result *types.LoginResponse `json:"result"`
-	}
-
-	NOT_SUSPENDED := householdsuspensionstate.NOT_SUSPENDED
-	OK := userstate.OK
-
-	loginResponse := types.LoginResponse{
-		LoginSession: types.LoginSession{
-			Ks: "sudfjksdfsjdgf",
+	return []byte(`{"result": {
+		"loginSession": {
+		  "expiry": 0,
+		  "ks": "sudfjksdfsjdgf"
 		},
-		User: types.OTTUser{
-			SuspensionState: &NOT_SUSPENDED,
-			UserState:       &OK,
-		},
-	}
-	result.Result = &loginResponse
-	resultBytes, _ := json.Marshal(result)
-	return resultBytes
+		"user": {
+		  "firstName": "",
+		  "id": "",
+		  "lastName": "",
+		  "objectType": "KalturaBaseOTTUser",
+		  "username": "",
+		  "suspensionState": "NOT_SUSPENDED",
+		  "userState": "ok",
+		  "userType": {
+			"description": "",
+			"id": 0
+		  }
+		}
+	  }}`)
 }
 
 func errorWithArgsResponseFromPhoenix() []byte {
-	var result struct {
-		Result (struct {
-			Error *errors.APIException `json:"error"`
-		}) `json:"result"`
+	return []byte(`{ "result": {
+		"error": {
+			"code": "50027",
+			"message": "Argument [token] cannot be empty",
+			"args": [
+						{
+							"name":  "argument",
+							"value": "token"
+						}
+					]
+			}
+		}
 	}
-	apiException := getAPIExceptionWithArgs()
-	result.Result.Error = &apiException
-	resultBytes, _ := json.Marshal(result)
-	return resultBytes
+	`)
 }
-
-func errorResponseFromPhoenix() []byte {
-	var result struct {
-		Result (struct {
-			Error *errors.APIException `json:"error"`
-		}) `json:"result"`
-	}
-	apiException := getAPIException()
-	result.Result.Error = &apiException
-	resultBytes, _ := json.Marshal(result)
-	return resultBytes
-}
-
-func getAPIException() errors.APIException {
-	return errors.APIException{
-		Code:    "1011",
-		Message: "The username or password is not correct",
-	}
-}
-
 func getAPIExceptionWithArgs() errors.APIException {
 	return errors.APIException{
 		Code:    "50027",
@@ -168,52 +155,48 @@ func getAPIExceptionWithArgs() errors.APIException {
 	}
 }
 
-func pingResponseFromPhoenix() []byte {
-	var result struct {
-		Result bool `json:"result"`
+func errorResponseFromPhoenix() []byte {
+	return []byte(`{ "result": {
+		"error": {
+			"code": "1011",
+			"message": "The username or password is not correct"
+			}
+		}
 	}
+	`)
+}
 
-	result.Result = bool(true)
-	resultBytes, _ := json.Marshal(result)
-	return resultBytes
+func getAPIException() errors.APIException {
+	return errors.APIException{
+		Code:    "1011",
+		Message: "The username or password is not correct",
+	}
+}
+
+func pingResponseFromPhoenix() []byte {
+	return []byte(`{"result": true
+	  }`)
 }
 
 func metaListResponseFromPhoenix() []byte {
-	var result struct {
-		Result *types.MetaListResponse `json:"result"`
-	}
-
-	STRING := metadatatype.STRING
-	Id := "1234"
-	Name := "Amit meta"
-	SystemName := "SystemName Amit"
-	CreateDate := int64(77)
-	UpdateDate := int64(7777)
-	IsProtected := true
-	parentId := "12345"
-	loginResponse := types.MetaListResponse{
-		Objects: []types.Meta{
+	return []byte(`{"result": {
+		"objects": [
 			{
-				Id:               &Id,
-				Name:             &Name,
-				MultilingualName: []types.TranslationToken{},
-				SystemName:       &SystemName,
-				DataType:         &STRING,
-				MultipleValue:    true,
-				IsProtected:      &IsProtected,
-				HelpText:         "Text that helps",
-				Features:         "Aamazing features",
-				ParentId:         &parentId,
-				CreateDate:       &CreateDate,
-				UpdateDate:       &UpdateDate,
-				DynamicData:      nil,
-			},
-		},
-		TotalCount: 1,
-	}
-	result.Result = &loginResponse
-	resultBytes, _ := json.Marshal(result)
-	return resultBytes
+				"id": "1234",
+				"name": "Amit meta",
+				"systemname": "SystemName Amit",
+				"datatype": "STRING",
+				"multiplevalue": true,
+				"isprotected": true,
+				"helptext": "Text that helps",
+				"features": "Aamazing features",
+				"parentid": "12345",
+				"createdate": 77,
+				"updatedate": 7777
+			}
+		],
+		"totalcount": 1
+	  }}`)
 }
 
 func HeadersMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
@@ -235,15 +218,13 @@ func ExtraParamsMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
 
 func RequestLoggingMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
 	return func(request kalturaclient.Request) ([]byte, error) {
-		logger := utils.GetLogFromContext(request.GetContext())
-		contextLogger := logger.WithField("client", "phoenix")
 		requestBytes, _ := request.GetBodyBytes()
-		contextLogger.Infof("request. path:[%s],headers:[%v],body:[%s]", request.GetPath(), request.GetHeaders(), string(requestBytes))
+		log.Printf("INFO - request. path:[%s],headers:[%v],body:[%s]", request.GetPath(), request.GetHeaders(), string(requestBytes))
 		responseBytes, err := next(request)
 		if err != nil {
-			contextLogger.Errorf("response. error: %v", err)
+			log.Printf("Error - response. error: %v", err)
 		} else {
-			contextLogger.Infof("response. body:[%s]", string(responseBytes))
+			log.Printf("INFO - response. body:[%s]", string(responseBytes))
 		}
 
 		return responseBytes, err

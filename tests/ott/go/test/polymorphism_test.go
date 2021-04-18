@@ -9,6 +9,7 @@ import (
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/groupbyorder"
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPolySerialization(t *testing.T) {
@@ -23,10 +24,10 @@ func GetAssets(t *testing.T, filter types.AssetFilterInterface) []types.AssetCon
 	assert.NoError(t, err)
 	space := regexp.MustCompile(`\s+`)
 	channelFilterString := space.ReplaceAllString(GetChannelFilterString(), "")
-	assert.Equal(t, channelFilterString, string(bytes))
+	require.JSONEq(t, channelFilterString, string(bytes))
 
 	// response
-	assetListResponseString := space.ReplaceAllString(GetAssetListResponseString(), "")
+	assetListResponseString := GetAssetListResponseString()
 	response := []byte(assetListResponseString)
 	var assetListResponse types.AssetListResponse
 	err = json.Unmarshal(response, &assetListResponse)
