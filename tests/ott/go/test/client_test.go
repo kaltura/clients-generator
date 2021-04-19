@@ -77,7 +77,7 @@ func TestErrorWithArgs(t *testing.T) {
 	mockHttpClient.SetResponse("/api_v3/service/ottUser/action/setInitialPassword", errorWithArgsResponseFromPhoenix(), 200)
 	setInitialPasswordResponse, err := services.NewOttUserService(client).SetInitialPassword(ctx, partnerId, token, password)
 	assert.Error(t, err)
-	// TODO - i want to do this option without casting
+
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.ArgumentCannotBeEmpty)
 	assert.Empty(t, setInitialPasswordResponse)
 	expectedError := getAPIExceptionWithArgs()
@@ -98,7 +98,7 @@ func TestErrorLogin(t *testing.T) {
 	}
 	assert.Error(t, err)
 	expectedError := getAPIException()
-	// TODO - i want to do this option without casting
+
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.WrongPasswordOrUserName)
 	assert.Empty(t, ks)
 	assert.Equal(t, &expectedError, err)
