@@ -84,7 +84,6 @@ func TestDeserializationValues(t *testing.T) {
 	}, deserialized)
 }
 
-// TODO USE types.EpgCache instead of SomeStruct (need to delete SomeStruct)
 type SomeStruct struct {
 	OrderBy *epgorderby.EpgOrderBy `json:"orderBy,omitempty"`
 }
