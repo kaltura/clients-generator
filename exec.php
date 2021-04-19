@@ -171,6 +171,7 @@ KalturaLog::info("rootPath: $rootPath");
 KalturaLog::info("schemaXmlPath: $schemaXmlPath");
 KalturaLog::info("generateSingle: $generateSingle");
 KalturaLog::info("outputPathBase: $outputPathBase");
+KalturaLog::info("php version:" . phpversion());
 //php exec.php -tott --dont-gzip -xC:\source_code\KalturaClient.xml go C:\source_code\client_libs\
 
 if(file_exists($outputPathBase))
