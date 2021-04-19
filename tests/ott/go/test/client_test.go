@@ -80,6 +80,7 @@ func TestErrorWithArgs(t *testing.T) {
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.ArgumentCannotBeEmpty)
 	assert.Empty(t, setInitialPasswordResponse)
 	assert.Equal(t, &expectedError, err)
+	t.Log("End of TestErrorWithArgs")
 }
 
 func TestErrorLogin(t *testing.T) {
@@ -101,6 +102,7 @@ func TestErrorLogin(t *testing.T) {
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.WrongPasswordOrUserName)
 	assert.Empty(t, ks)
 	assert.Equal(t, &expectedError, err)
+	t.Log("End of TestErrorLogin")
 }
 
 func loginResponseFromPhoenix() []byte {

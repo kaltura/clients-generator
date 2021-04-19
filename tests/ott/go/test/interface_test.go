@@ -13,6 +13,7 @@ import (
 )
 
 func TestAnnouncementInterface(t *testing.T) {
+	t.Parallel()
 	status := announcementstatus.NOTSENT
 	id := int32(12345)
 	var announcement = types.Announcement{
@@ -51,6 +52,7 @@ func ValidateAnnouncementInterface(t *testing.T, announcement types.Announcement
 }
 
 func TestApplyDiscountModuleActionInterface(t *testing.T) {
+	t.Parallel()
 	Type := ruleactiontype.BLOCK
 	var applyDiscountModuleAction = types.ApplyDiscountModuleAction{
 		DiscountModuleId: 1234,
@@ -67,6 +69,7 @@ func ValidateApplyDiscountModuleActionInterface(t *testing.T, applyDiscountModul
 }
 
 func TestChannelFilterInterface(t *testing.T) {
+	t.Parallel()
 	var channelFilter = types.ChannelFilter{
 		IdEqual:        1234,
 		ExcludeWatched: true,

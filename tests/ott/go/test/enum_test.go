@@ -82,6 +82,7 @@ func TestDeserializationValues(t *testing.T) {
 	assert.Equal(t, types.UserRole{Profile: userroleprofile.PARTNER,
 		Type: &userroleType,
 	}, deserialized)
+	t.Log("End of TestDeserializationValues")
 }
 
 type SomeStruct struct {
