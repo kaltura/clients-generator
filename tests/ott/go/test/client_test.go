@@ -15,6 +15,7 @@ import (
 )
 
 func TestPing(t *testing.T) {
+	t.Parallel()
 	client, mockHttpClient := utils.CreateClientAndMock()
 	mockHttpClient.SetResponse("/api_v3/service/system/action/ping", pingResponseFromPhoenix(), 200)
 	ctx := utils.WithRequestId(context.Background(), "requestId")
@@ -24,14 +25,10 @@ func TestPing(t *testing.T) {
 			assert.Equal(t, true, *pingResult)
 		}
 	}
-	if err != nil {
-		return
-	}
-	assert.NotEmpty(t, pingResult)
-	assert.Equal(t, true, *pingResult)
 }
 
 func TestMetaListWithMiddlewares(t *testing.T) {
+	t.Parallel()
 	ctx := utils.WithRequestId(context.Background(), "requestId")
 	config := utils.CreateTestConfig()
 	mockHttpClient := utils.NewMockHttpClient()
@@ -69,6 +66,7 @@ func TestMetaListWithMiddlewares(t *testing.T) {
 }
 
 func TestErrorWithArgs(t *testing.T) {
+	t.Parallel()
 	client, mockHttpClient := utils.CreateClientAndMock()
 	ctx := utils.WithRequestId(context.Background(), "requestId")
 	password := "nopassword"
@@ -85,6 +83,7 @@ func TestErrorWithArgs(t *testing.T) {
 }
 
 func TestErrorLogin(t *testing.T) {
+	t.Parallel()
 	client, mockHttpClient := utils.CreateClientAndMock()
 	ctx := utils.WithRequestId(context.Background(), "requestId")
 	username := "nonexistingusername"
