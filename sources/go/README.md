@@ -1,5 +1,5 @@
 # Kaltura GO API Client Library.
-Compatible with Kaltura server version 6.3.0 and above.
+Compatible with Kaltura server version @VERSION@ and above.
 * [Examples of API](./test)
 
 To re-generate GO API Client Library use this [jenkins job](https://jenkins.rnd.ott.kaltura.com/job/OTT-Generate-ClientLibs/)
