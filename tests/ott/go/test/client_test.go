@@ -71,14 +71,14 @@ func TestErrorWithArgs(t *testing.T) {
 	ctx := utils.WithRequestId(context.Background(), "requestId")
 	password := "nopassword"
 	token := ""
-	partnerId := int32(1483)
 	mockHttpClient.SetResponse("/api_v3/service/ottUser/action/setInitialPassword", errorWithArgsResponseFromPhoenix(), 200)
+	partnerId := int32(1483)
 	setInitialPasswordResponse, err := services.NewOttUserService(client).SetInitialPassword(ctx, partnerId, token, password)
 	assert.Error(t, err)
+	expectedError := getAPIExceptionWithArgs()
 
 	assert.Equal(t, (err).(*errors.APIException).Code, errors.ArgumentCannotBeEmpty)
 	assert.Empty(t, setInitialPasswordResponse)
-	expectedError := getAPIExceptionWithArgs()
 	assert.Equal(t, &expectedError, err)
 }
 
