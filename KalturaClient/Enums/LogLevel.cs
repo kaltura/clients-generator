@@ -27,10 +27,15 @@
 // ===================================================================================================
 namespace Kaltura.Enums
 {
-	public sealed class IotOrderBy : StringEnum
+	public sealed class LogLevel : StringEnum
 	{
-		public static readonly IotOrderBy NONE = new IotOrderBy("NONE");
+		public static readonly LogLevel TRACE = new LogLevel("TRACE");
+		public static readonly LogLevel DEBUG = new LogLevel("DEBUG");
+		public static readonly LogLevel INFO = new LogLevel("INFO");
+		public static readonly LogLevel WARN = new LogLevel("WARN");
+		public static readonly LogLevel ERROR = new LogLevel("ERROR");
+		public static readonly LogLevel ALL = new LogLevel("ALL");
 
-		private IotOrderBy(string name) : base(name) { }
+		private LogLevel(string name) : base(name) { }
 	}
 }

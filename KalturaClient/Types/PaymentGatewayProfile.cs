@@ -51,7 +51,6 @@ namespace Kaltura.Types
 		public const string RENEW_INTERVAL_MINUTES = "renewIntervalMinutes";
 		public const string RENEW_START_MINUTES = "renewStartMinutes";
 		public const string EXTERNAL_VERIFICATION = "externalVerification";
-		public const string IS_ASYNC_POLICY = "isAsyncPolicy";
 		#endregion
 
 		#region Private Fields
@@ -68,7 +67,6 @@ namespace Kaltura.Types
 		private int _RenewIntervalMinutes = Int32.MinValue;
 		private int _RenewStartMinutes = Int32.MinValue;
 		private bool? _ExternalVerification = null;
-		private bool? _IsAsyncPolicy = null;
 		#endregion
 
 		#region Properties
@@ -202,16 +200,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalVerification");
 			}
 		}
-		[JsonProperty]
-		public bool? IsAsyncPolicy
-		{
-			get { return _IsAsyncPolicy; }
-			set 
-			{ 
-				_IsAsyncPolicy = value;
-				OnPropertyChanged("IsAsyncPolicy");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -281,10 +269,6 @@ namespace Kaltura.Types
 			{
 				this._ExternalVerification = ParseBool(node["externalVerification"].Value<string>());
 			}
-			if(node["isAsyncPolicy"] != null)
-			{
-				this._IsAsyncPolicy = ParseBool(node["isAsyncPolicy"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -307,7 +291,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("renewIntervalMinutes", this._RenewIntervalMinutes);
 			kparams.AddIfNotNull("renewStartMinutes", this._RenewStartMinutes);
 			kparams.AddIfNotNull("externalVerification", this._ExternalVerification);
-			kparams.AddIfNotNull("isAsyncPolicy", this._IsAsyncPolicy);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -340,8 +323,6 @@ namespace Kaltura.Types
 					return "RenewStartMinutes";
 				case EXTERNAL_VERIFICATION:
 					return "ExternalVerification";
-				case IS_ASYNC_POLICY:
-					return "IsAsyncPolicy";
 				default:
 					return base.getPropertyName(apiName);
 			}

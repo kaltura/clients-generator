@@ -38,26 +38,14 @@ namespace Kaltura.Types
 	public class AnnouncementFilter : Filter
 	{
 		#region Constants
-		public const string ID_IN = "idIn";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
 		#region Private Fields
-		private string _IdIn = null;
 		private AnnouncementOrderBy _OrderBy = null;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public string IdIn
-		{
-			get { return _IdIn; }
-			set 
-			{ 
-				_IdIn = value;
-				OnPropertyChanged("IdIn");
-			}
-		}
 		[JsonProperty]
 		public new AnnouncementOrderBy OrderBy
 		{
@@ -77,10 +65,6 @@ namespace Kaltura.Types
 
 		public AnnouncementFilter(JToken node) : base(node)
 		{
-			if(node["idIn"] != null)
-			{
-				this._IdIn = node["idIn"].Value<string>();
-			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (AnnouncementOrderBy)StringEnum.Parse(typeof(AnnouncementOrderBy), node["orderBy"].Value<string>());
@@ -94,7 +78,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaAnnouncementFilter");
-			kparams.AddIfNotNull("idIn", this._IdIn);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -102,8 +85,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case ID_IN:
-					return "IdIn";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

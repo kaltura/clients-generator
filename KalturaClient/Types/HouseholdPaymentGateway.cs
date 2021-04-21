@@ -42,7 +42,6 @@ namespace Kaltura.Types
 		public const string NAME = "name";
 		public const string IS_DEFAULT = "isDefault";
 		public const string SELECTED_BY = "selectedBy";
-		public const string SUSPEND_SETTINGS = "suspendSettings";
 		#endregion
 
 		#region Private Fields
@@ -50,7 +49,6 @@ namespace Kaltura.Types
 		private string _Name = null;
 		private bool? _IsDefault = null;
 		private HouseholdPaymentGatewaySelectedBy _SelectedBy = null;
-		private SuspendSettings _SuspendSettings;
 		#endregion
 
 		#region Properties
@@ -94,16 +92,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("SelectedBy");
 			}
 		}
-		[JsonProperty]
-		public SuspendSettings SuspendSettings
-		{
-			get { return _SuspendSettings; }
-			private set 
-			{ 
-				_SuspendSettings = value;
-				OnPropertyChanged("SuspendSettings");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -129,10 +117,6 @@ namespace Kaltura.Types
 			{
 				this._SelectedBy = (HouseholdPaymentGatewaySelectedBy)StringEnum.Parse(typeof(HouseholdPaymentGatewaySelectedBy), node["selectedBy"].Value<string>());
 			}
-			if(node["suspendSettings"] != null)
-			{
-				this._SuspendSettings = ObjectFactory.Create<SuspendSettings>(node["suspendSettings"]);
-			}
 		}
 		#endregion
 
@@ -146,7 +130,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("name", this._Name);
 			kparams.AddIfNotNull("isDefault", this._IsDefault);
 			kparams.AddIfNotNull("selectedBy", this._SelectedBy);
-			kparams.AddIfNotNull("suspendSettings", this._SuspendSettings);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -161,8 +144,6 @@ namespace Kaltura.Types
 					return "IsDefault";
 				case SELECTED_BY:
 					return "SelectedBy";
-				case SUSPEND_SETTINGS:
-					return "SuspendSettings";
 				default:
 					return base.getPropertyName(apiName);
 			}

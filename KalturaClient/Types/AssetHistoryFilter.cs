@@ -42,7 +42,6 @@ namespace Kaltura.Types
 		public const string ASSET_ID_IN = "assetIdIn";
 		public const string STATUS_EQUAL = "statusEqual";
 		public const string DAYS_LESS_THAN_OR_EQUAL = "daysLessThanOrEqual";
-		public const string KSQL = "kSql";
 		public new const string ORDER_BY = "orderBy";
 		#endregion
 
@@ -51,7 +50,6 @@ namespace Kaltura.Types
 		private string _AssetIdIn = null;
 		private WatchStatus _StatusEqual = null;
 		private int _DaysLessThanOrEqual = Int32.MinValue;
-		private string _KSql = null;
 		private AssetHistoryOrderBy _OrderBy = null;
 		#endregion
 
@@ -97,16 +95,6 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public string KSql
-		{
-			get { return _KSql; }
-			set 
-			{ 
-				_KSql = value;
-				OnPropertyChanged("KSql");
-			}
-		}
-		[JsonProperty]
 		public new AssetHistoryOrderBy OrderBy
 		{
 			get { return _OrderBy; }
@@ -141,10 +129,6 @@ namespace Kaltura.Types
 			{
 				this._DaysLessThanOrEqual = ParseInt(node["daysLessThanOrEqual"].Value<string>());
 			}
-			if(node["kSql"] != null)
-			{
-				this._KSql = node["kSql"].Value<string>();
-			}
 			if(node["orderBy"] != null)
 			{
 				this._OrderBy = (AssetHistoryOrderBy)StringEnum.Parse(typeof(AssetHistoryOrderBy), node["orderBy"].Value<string>());
@@ -162,7 +146,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("assetIdIn", this._AssetIdIn);
 			kparams.AddIfNotNull("statusEqual", this._StatusEqual);
 			kparams.AddIfNotNull("daysLessThanOrEqual", this._DaysLessThanOrEqual);
-			kparams.AddIfNotNull("kSql", this._KSql);
 			kparams.AddIfNotNull("orderBy", this._OrderBy);
 			return kparams;
 		}
@@ -178,8 +161,6 @@ namespace Kaltura.Types
 					return "StatusEqual";
 				case DAYS_LESS_THAN_OR_EQUAL:
 					return "DaysLessThanOrEqual";
-				case KSQL:
-					return "KSql";
 				case ORDER_BY:
 					return "OrderBy";
 				default:

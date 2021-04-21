@@ -47,12 +47,6 @@ namespace Kaltura.Types
 		public const string DEVICE_FAMILY_ID = "deviceFamilyId";
 		public const string DRM = "drm";
 		public const string EXTERNAL_ID = "externalId";
-		public const string MAC_ADDRESS = "macAddress";
-		public const string DYNAMIC_DATA = "dynamicData";
-		public const string MODEL = "model";
-		public const string MANUFACTURER = "manufacturer";
-		public const string MANUFACTURER_ID = "manufacturerId";
-		public const string LAST_ACTIVITY_TIME = "lastActivityTime";
 		#endregion
 
 		#region Private Fields
@@ -65,12 +59,6 @@ namespace Kaltura.Types
 		private long _DeviceFamilyId = long.MinValue;
 		private CustomDrmPlaybackPluginData _Drm;
 		private string _ExternalId = null;
-		private string _MacAddress = null;
-		private IDictionary<string, StringValue> _DynamicData;
-		private string _Model = null;
-		private string _Manufacturer = null;
-		private long _ManufacturerId = long.MinValue;
-		private long _LastActivityTime = long.MinValue;
 		#endregion
 
 		#region Properties
@@ -164,66 +152,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ExternalId");
 			}
 		}
-		[JsonProperty]
-		public string MacAddress
-		{
-			get { return _MacAddress; }
-			set 
-			{ 
-				_MacAddress = value;
-				OnPropertyChanged("MacAddress");
-			}
-		}
-		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
-		{
-			get { return _DynamicData; }
-			set 
-			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
-			}
-		}
-		[JsonProperty]
-		public string Model
-		{
-			get { return _Model; }
-			set 
-			{ 
-				_Model = value;
-				OnPropertyChanged("Model");
-			}
-		}
-		[JsonProperty]
-		public string Manufacturer
-		{
-			get { return _Manufacturer; }
-			set 
-			{ 
-				_Manufacturer = value;
-				OnPropertyChanged("Manufacturer");
-			}
-		}
-		[JsonProperty]
-		public long ManufacturerId
-		{
-			get { return _ManufacturerId; }
-			private set 
-			{ 
-				_ManufacturerId = value;
-				OnPropertyChanged("ManufacturerId");
-			}
-		}
-		[JsonProperty]
-		public long LastActivityTime
-		{
-			get { return _LastActivityTime; }
-			private set 
-			{ 
-				_LastActivityTime = value;
-				OnPropertyChanged("LastActivityTime");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -269,38 +197,6 @@ namespace Kaltura.Types
 			{
 				this._ExternalId = node["externalId"].Value<string>();
 			}
-			if(node["macAddress"] != null)
-			{
-				this._MacAddress = node["macAddress"].Value<string>();
-			}
-			if(node["dynamicData"] != null)
-			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
-			}
-			if(node["model"] != null)
-			{
-				this._Model = node["model"].Value<string>();
-			}
-			if(node["manufacturer"] != null)
-			{
-				this._Manufacturer = node["manufacturer"].Value<string>();
-			}
-			if(node["manufacturerId"] != null)
-			{
-				this._ManufacturerId = ParseLong(node["manufacturerId"].Value<string>());
-			}
-			if(node["lastActivityTime"] != null)
-			{
-				this._LastActivityTime = ParseLong(node["lastActivityTime"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -319,12 +215,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("deviceFamilyId", this._DeviceFamilyId);
 			kparams.AddIfNotNull("drm", this._Drm);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
-			kparams.AddIfNotNull("macAddress", this._MacAddress);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
-			kparams.AddIfNotNull("model", this._Model);
-			kparams.AddIfNotNull("manufacturer", this._Manufacturer);
-			kparams.AddIfNotNull("manufacturerId", this._ManufacturerId);
-			kparams.AddIfNotNull("lastActivityTime", this._LastActivityTime);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -349,18 +239,6 @@ namespace Kaltura.Types
 					return "Drm";
 				case EXTERNAL_ID:
 					return "ExternalId";
-				case MAC_ADDRESS:
-					return "MacAddress";
-				case DYNAMIC_DATA:
-					return "DynamicData";
-				case MODEL:
-					return "Model";
-				case MANUFACTURER:
-					return "Manufacturer";
-				case MANUFACTURER_ID:
-					return "ManufacturerId";
-				case LAST_ACTIVITY_TIME:
-					return "LastActivityTime";
 				default:
 					return base.getPropertyName(apiName);
 			}

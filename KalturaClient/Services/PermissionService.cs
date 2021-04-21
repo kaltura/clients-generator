@@ -75,50 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class PermissionAddPermissionItemRequestBuilder : RequestBuilder<VoidResponse>
-	{
-		#region Constants
-		public const string PERMISSION_ID = "permissionId";
-		public const string PERMISSION_ITEM_ID = "permissionItemId";
-		#endregion
-
-		public long PermissionId { get; set; }
-		public long PermissionItemId { get; set; }
-
-		public PermissionAddPermissionItemRequestBuilder()
-			: base("permission", "addPermissionItem")
-		{
-		}
-
-		public PermissionAddPermissionItemRequestBuilder(long permissionId, long permissionItemId)
-			: this()
-		{
-			this.PermissionId = permissionId;
-			this.PermissionItemId = permissionItemId;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("permissionId"))
-				kparams.AddIfNotNull("permissionId", PermissionId);
-			if (!isMapped("permissionItemId"))
-				kparams.AddIfNotNull("permissionItemId", PermissionItemId);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return null;
-		}
-	}
-
 	public class PermissionDeleteRequestBuilder : RequestBuilder<VoidResponse>
 	{
 		#region Constants
@@ -193,14 +149,14 @@ namespace Kaltura.Services
 		public const string FILTER = "filter";
 		#endregion
 
-		public BasePermissionFilter Filter { get; set; }
+		public PermissionFilter Filter { get; set; }
 
 		public PermissionListRequestBuilder()
 			: base("permission", "list")
 		{
 		}
 
-		public PermissionListRequestBuilder(BasePermissionFilter filter)
+		public PermissionListRequestBuilder(PermissionFilter filter)
 			: this()
 		{
 			this.Filter = filter;
@@ -226,94 +182,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class PermissionRemovePermissionItemRequestBuilder : RequestBuilder<VoidResponse>
-	{
-		#region Constants
-		public const string PERMISSION_ID = "permissionId";
-		public const string PERMISSION_ITEM_ID = "permissionItemId";
-		#endregion
-
-		public long PermissionId { get; set; }
-		public long PermissionItemId { get; set; }
-
-		public PermissionRemovePermissionItemRequestBuilder()
-			: base("permission", "removePermissionItem")
-		{
-		}
-
-		public PermissionRemovePermissionItemRequestBuilder(long permissionId, long permissionItemId)
-			: this()
-		{
-			this.PermissionId = permissionId;
-			this.PermissionItemId = permissionItemId;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("permissionId"))
-				kparams.AddIfNotNull("permissionId", PermissionId);
-			if (!isMapped("permissionItemId"))
-				kparams.AddIfNotNull("permissionItemId", PermissionItemId);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return null;
-		}
-	}
-
-	public class PermissionUpdateRequestBuilder : RequestBuilder<Permission>
-	{
-		#region Constants
-		public const string ID = "id";
-		public const string PERMISSION = "permission";
-		#endregion
-
-		public long Id { get; set; }
-		public Permission Permission { get; set; }
-
-		public PermissionUpdateRequestBuilder()
-			: base("permission", "update")
-		{
-		}
-
-		public PermissionUpdateRequestBuilder(long id, Permission permission)
-			: this()
-		{
-			this.Id = id;
-			this.Permission = permission;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("id"))
-				kparams.AddIfNotNull("id", Id);
-			if (!isMapped("permission"))
-				kparams.AddIfNotNull("permission", Permission);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<Permission>(result);
-		}
-	}
-
 
 	public class PermissionService
 	{
@@ -326,11 +194,6 @@ namespace Kaltura.Services
 			return new PermissionAddRequestBuilder(permission);
 		}
 
-		public static PermissionAddPermissionItemRequestBuilder AddPermissionItem(long permissionId, long permissionItemId)
-		{
-			return new PermissionAddPermissionItemRequestBuilder(permissionId, permissionItemId);
-		}
-
 		public static PermissionDeleteRequestBuilder Delete(long id)
 		{
 			return new PermissionDeleteRequestBuilder(id);
@@ -341,19 +204,9 @@ namespace Kaltura.Services
 			return new PermissionGetCurrentPermissionsRequestBuilder();
 		}
 
-		public static PermissionListRequestBuilder List(BasePermissionFilter filter = null)
+		public static PermissionListRequestBuilder List(PermissionFilter filter = null)
 		{
 			return new PermissionListRequestBuilder(filter);
-		}
-
-		public static PermissionRemovePermissionItemRequestBuilder RemovePermissionItem(long permissionId, long permissionItemId)
-		{
-			return new PermissionRemovePermissionItemRequestBuilder(permissionId, permissionItemId);
-		}
-
-		public static PermissionUpdateRequestBuilder Update(long id, Permission permission)
-		{
-			return new PermissionUpdateRequestBuilder(id, permission);
 		}
 	}
 }

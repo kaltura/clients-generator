@@ -130,25 +130,19 @@ namespace Kaltura.Services
 	{
 		#region Constants
 		public const string MESSAGE = "message";
-		public const string PHONE_NUMBER = "phoneNumber";
-		public const string ADAPTER_DATA = "adapterData";
 		#endregion
 
 		public string Message { get; set; }
-		public string PhoneNumber { get; set; }
-		public IDictionary<string, StringValue> AdapterData { get; set; }
 
 		public NotificationSendSmsRequestBuilder()
 			: base("notification", "sendSms")
 		{
 		}
 
-		public NotificationSendSmsRequestBuilder(string message, string phoneNumber, IDictionary<string, StringValue> adapterData)
+		public NotificationSendSmsRequestBuilder(string message)
 			: this()
 		{
 			this.Message = message;
-			this.PhoneNumber = phoneNumber;
-			this.AdapterData = adapterData;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -156,10 +150,6 @@ namespace Kaltura.Services
 			Params kparams = base.getParameters(includeServiceAndAction);
 			if (!isMapped("message"))
 				kparams.AddIfNotNull("message", Message);
-			if (!isMapped("phoneNumber"))
-				kparams.AddIfNotNull("phoneNumber", PhoneNumber);
-			if (!isMapped("adapterData"))
-				kparams.AddIfNotNull("adapterData", AdapterData);
 			return kparams;
 		}
 
@@ -235,9 +225,9 @@ namespace Kaltura.Services
 			return new NotificationSendPushRequestBuilder(userId, pushMessage);
 		}
 
-		public static NotificationSendSmsRequestBuilder SendSms(string message, string phoneNumber = null, IDictionary<string, StringValue> adapterData = null)
+		public static NotificationSendSmsRequestBuilder SendSms(string message)
 		{
-			return new NotificationSendSmsRequestBuilder(message, phoneNumber, adapterData);
+			return new NotificationSendSmsRequestBuilder(message);
 		}
 
 		public static NotificationSetDevicePushTokenRequestBuilder SetDevicePushToken(string pushToken)

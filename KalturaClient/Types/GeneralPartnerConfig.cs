@@ -50,9 +50,6 @@ namespace Kaltura.Types
 		public const string HOUSEHOLD_LIMITATION_MODULE = "householdLimitationModule";
 		public const string ENABLE_REGION_FILTERING = "enableRegionFiltering";
 		public const string DEFAULT_REGION = "defaultRegion";
-		public const string ROLLING_DEVICE_DATA = "rollingDeviceData";
-		public const string FINISHED_PERCENT_THRESHOLD = "finishedPercentThreshold";
-		public const string SUSPENSION_PROFILE_INHERITANCE_TYPE = "suspensionProfileInheritanceType";
 		#endregion
 
 		#region Private Fields
@@ -68,9 +65,6 @@ namespace Kaltura.Types
 		private int _HouseholdLimitationModule = Int32.MinValue;
 		private bool? _EnableRegionFiltering = null;
 		private int _DefaultRegion = Int32.MinValue;
-		private RollingDeviceRemovalData _RollingDeviceData;
-		private int _FinishedPercentThreshold = Int32.MinValue;
-		private SuspensionProfileInheritanceType _SuspensionProfileInheritanceType = null;
 		#endregion
 
 		#region Properties
@@ -194,36 +188,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("DefaultRegion");
 			}
 		}
-		[JsonProperty]
-		public RollingDeviceRemovalData RollingDeviceData
-		{
-			get { return _RollingDeviceData; }
-			set 
-			{ 
-				_RollingDeviceData = value;
-				OnPropertyChanged("RollingDeviceData");
-			}
-		}
-		[JsonProperty]
-		public int FinishedPercentThreshold
-		{
-			get { return _FinishedPercentThreshold; }
-			set 
-			{ 
-				_FinishedPercentThreshold = value;
-				OnPropertyChanged("FinishedPercentThreshold");
-			}
-		}
-		[JsonProperty]
-		public SuspensionProfileInheritanceType SuspensionProfileInheritanceType
-		{
-			get { return _SuspensionProfileInheritanceType; }
-			set 
-			{ 
-				_SuspensionProfileInheritanceType = value;
-				OnPropertyChanged("SuspensionProfileInheritanceType");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -281,18 +245,6 @@ namespace Kaltura.Types
 			{
 				this._DefaultRegion = ParseInt(node["defaultRegion"].Value<string>());
 			}
-			if(node["rollingDeviceData"] != null)
-			{
-				this._RollingDeviceData = ObjectFactory.Create<RollingDeviceRemovalData>(node["rollingDeviceData"]);
-			}
-			if(node["finishedPercentThreshold"] != null)
-			{
-				this._FinishedPercentThreshold = ParseInt(node["finishedPercentThreshold"].Value<string>());
-			}
-			if(node["suspensionProfileInheritanceType"] != null)
-			{
-				this._SuspensionProfileInheritanceType = (SuspensionProfileInheritanceType)StringEnum.Parse(typeof(SuspensionProfileInheritanceType), node["suspensionProfileInheritanceType"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -314,9 +266,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("householdLimitationModule", this._HouseholdLimitationModule);
 			kparams.AddIfNotNull("enableRegionFiltering", this._EnableRegionFiltering);
 			kparams.AddIfNotNull("defaultRegion", this._DefaultRegion);
-			kparams.AddIfNotNull("rollingDeviceData", this._RollingDeviceData);
-			kparams.AddIfNotNull("finishedPercentThreshold", this._FinishedPercentThreshold);
-			kparams.AddIfNotNull("suspensionProfileInheritanceType", this._SuspensionProfileInheritanceType);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -347,12 +296,6 @@ namespace Kaltura.Types
 					return "EnableRegionFiltering";
 				case DEFAULT_REGION:
 					return "DefaultRegion";
-				case ROLLING_DEVICE_DATA:
-					return "RollingDeviceData";
-				case FINISHED_PERCENT_THRESHOLD:
-					return "FinishedPercentThreshold";
-				case SUSPENSION_PROFILE_INHERITANCE_TYPE:
-					return "SuspensionProfileInheritanceType";
 				default:
 					return base.getPropertyName(apiName);
 			}

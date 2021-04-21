@@ -35,24 +35,56 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class TrailEntitlementDiscountDetails : EntitlementDiscountDetailsIdentifier
+	public class RegionChannelNumber : ObjectBase
 	{
 		#region Constants
+		public const string REGION_ID = "regionId";
+		public const string CHANNEL_NUMBER = "channelNumber";
 		#endregion
 
 		#region Private Fields
+		private int _RegionId = Int32.MinValue;
+		private int _ChannelNumber = Int32.MinValue;
 		#endregion
 
 		#region Properties
+		[JsonProperty]
+		public int RegionId
+		{
+			get { return _RegionId; }
+			set 
+			{ 
+				_RegionId = value;
+				OnPropertyChanged("RegionId");
+			}
+		}
+		[JsonProperty]
+		public int ChannelNumber
+		{
+			get { return _ChannelNumber; }
+			set 
+			{ 
+				_ChannelNumber = value;
+				OnPropertyChanged("ChannelNumber");
+			}
+		}
 		#endregion
 
 		#region CTor
-		public TrailEntitlementDiscountDetails()
+		public RegionChannelNumber()
 		{
 		}
 
-		public TrailEntitlementDiscountDetails(JToken node) : base(node)
+		public RegionChannelNumber(JToken node) : base(node)
 		{
+			if(node["regionId"] != null)
+			{
+				this._RegionId = ParseInt(node["regionId"].Value<string>());
+			}
+			if(node["channelNumber"] != null)
+			{
+				this._ChannelNumber = ParseInt(node["channelNumber"].Value<string>());
+			}
 		}
 		#endregion
 
@@ -61,13 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaTrailEntitlementDiscountDetails");
+				kparams.AddReplace("objectType", "KalturaRegionChannelNumber");
+			kparams.AddIfNotNull("regionId", this._RegionId);
+			kparams.AddIfNotNull("channelNumber", this._ChannelNumber);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
+				case REGION_ID:
+					return "RegionId";
+				case CHANNEL_NUMBER:
+					return "ChannelNumber";
 				default:
 					return base.getPropertyName(apiName);
 			}

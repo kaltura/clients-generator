@@ -35,7 +35,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class CrudObject : OTTObjectSupportNullable
+	public class CrudObject : ObjectBase
 	{
 		#region Constants
 		#endregion

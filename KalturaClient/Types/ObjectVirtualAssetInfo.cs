@@ -41,14 +41,12 @@ namespace Kaltura.Types
 		public const string ASSET_STRUCT_ID = "assetStructId";
 		public const string META_ID = "metaId";
 		public const string TYPE = "type";
-		public const string EXTENDED_TYPES = "extendedTypes";
 		#endregion
 
 		#region Private Fields
 		private int _AssetStructId = Int32.MinValue;
 		private int _MetaId = Int32.MinValue;
 		private ObjectVirtualAssetInfoType _Type = null;
-		private IDictionary<string, LongValue> _ExtendedTypes;
 		#endregion
 
 		#region Properties
@@ -82,16 +80,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("Type");
 			}
 		}
-		[JsonProperty]
-		public IDictionary<string, LongValue> ExtendedTypes
-		{
-			get { return _ExtendedTypes; }
-			set 
-			{ 
-				_ExtendedTypes = value;
-				OnPropertyChanged("ExtendedTypes");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -113,18 +101,6 @@ namespace Kaltura.Types
 			{
 				this._Type = (ObjectVirtualAssetInfoType)StringEnum.Parse(typeof(ObjectVirtualAssetInfoType), node["type"].Value<string>());
 			}
-			if(node["extendedTypes"] != null)
-			{
-				{
-					string key;
-					this._ExtendedTypes = new Dictionary<string, LongValue>();
-					foreach(var arrayNode in node["extendedTypes"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._ExtendedTypes[key] = ObjectFactory.Create<LongValue>(arrayNode.Value);
-					}
-				}
-			}
 		}
 		#endregion
 
@@ -137,7 +113,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("assetStructId", this._AssetStructId);
 			kparams.AddIfNotNull("metaId", this._MetaId);
 			kparams.AddIfNotNull("type", this._Type);
-			kparams.AddIfNotNull("extendedTypes", this._ExtendedTypes);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -150,8 +125,6 @@ namespace Kaltura.Types
 					return "MetaId";
 				case TYPE:
 					return "Type";
-				case EXTENDED_TYPES:
-					return "ExtendedTypes";
 				default:
 					return base.getPropertyName(apiName);
 			}

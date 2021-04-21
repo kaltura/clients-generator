@@ -42,7 +42,6 @@ namespace Kaltura.Types
 		public const string ID = "id";
 		public const string TYPE = "type";
 		public const string TYPE_ID = "typeId";
-		public const string ALT_URL = "altUrl";
 		public const string DURATION = "duration";
 		public const string EXTERNAL_ID = "externalId";
 		public const string ALT_EXTERNAL_ID = "altExternalId";
@@ -60,8 +59,6 @@ namespace Kaltura.Types
 		public const string CDN_ADAPATER_PROFILE_ID = "cdnAdapaterProfileId";
 		public const string STATUS = "status";
 		public const string CATALOG_END_DATE = "catalogEndDate";
-		public const string OPL = "opl";
-		public const string BUSINESS_MODULE_DETAILS = "businessModuleDetails";
 		#endregion
 
 		#region Private Fields
@@ -69,7 +66,6 @@ namespace Kaltura.Types
 		private int _Id = Int32.MinValue;
 		private string _Type = null;
 		private int _TypeId = Int32.MinValue;
-		private string _AltUrl = null;
 		private long _Duration = long.MinValue;
 		private string _ExternalId = null;
 		private string _AltExternalId = null;
@@ -87,8 +83,6 @@ namespace Kaltura.Types
 		private long _CdnAdapaterProfileId = long.MinValue;
 		private bool? _Status = null;
 		private long _CatalogEndDate = long.MinValue;
-		private string _Opl = null;
-		private BusinessModuleDetails _BusinessModuleDetails;
 		#endregion
 
 		#region Properties
@@ -130,16 +124,6 @@ namespace Kaltura.Types
 			{ 
 				_TypeId = value;
 				OnPropertyChanged("TypeId");
-			}
-		}
-		[JsonProperty]
-		public string AltUrl
-		{
-			get { return _AltUrl; }
-			set 
-			{ 
-				_AltUrl = value;
-				OnPropertyChanged("AltUrl");
 			}
 		}
 		[JsonProperty]
@@ -312,26 +296,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("CatalogEndDate");
 			}
 		}
-		[JsonProperty]
-		public string Opl
-		{
-			get { return _Opl; }
-			set 
-			{ 
-				_Opl = value;
-				OnPropertyChanged("Opl");
-			}
-		}
-		[JsonProperty]
-		public BusinessModuleDetails BusinessModuleDetails
-		{
-			get { return _BusinessModuleDetails; }
-			set 
-			{ 
-				_BusinessModuleDetails = value;
-				OnPropertyChanged("BusinessModuleDetails");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -356,10 +320,6 @@ namespace Kaltura.Types
 			if(node["typeId"] != null)
 			{
 				this._TypeId = ParseInt(node["typeId"].Value<string>());
-			}
-			if(node["altUrl"] != null)
-			{
-				this._AltUrl = node["altUrl"].Value<string>();
 			}
 			if(node["duration"] != null)
 			{
@@ -429,14 +389,6 @@ namespace Kaltura.Types
 			{
 				this._CatalogEndDate = ParseLong(node["catalogEndDate"].Value<string>());
 			}
-			if(node["opl"] != null)
-			{
-				this._Opl = node["opl"].Value<string>();
-			}
-			if(node["businessModuleDetails"] != null)
-			{
-				this._BusinessModuleDetails = ObjectFactory.Create<BusinessModuleDetails>(node["businessModuleDetails"]);
-			}
 		}
 		#endregion
 
@@ -450,7 +402,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("type", this._Type);
 			kparams.AddIfNotNull("typeId", this._TypeId);
-			kparams.AddIfNotNull("altUrl", this._AltUrl);
 			kparams.AddIfNotNull("duration", this._Duration);
 			kparams.AddIfNotNull("externalId", this._ExternalId);
 			kparams.AddIfNotNull("altExternalId", this._AltExternalId);
@@ -468,8 +419,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("cdnAdapaterProfileId", this._CdnAdapaterProfileId);
 			kparams.AddIfNotNull("status", this._Status);
 			kparams.AddIfNotNull("catalogEndDate", this._CatalogEndDate);
-			kparams.AddIfNotNull("opl", this._Opl);
-			kparams.AddIfNotNull("businessModuleDetails", this._BusinessModuleDetails);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -484,8 +433,6 @@ namespace Kaltura.Types
 					return "Type";
 				case TYPE_ID:
 					return "TypeId";
-				case ALT_URL:
-					return "AltUrl";
 				case DURATION:
 					return "Duration";
 				case EXTERNAL_ID:
@@ -520,10 +467,6 @@ namespace Kaltura.Types
 					return "Status";
 				case CATALOG_END_DATE:
 					return "CatalogEndDate";
-				case OPL:
-					return "Opl";
-				case BUSINESS_MODULE_DETAILS:
-					return "BusinessModuleDetails";
 				default:
 					return base.getPropertyName(apiName);
 			}

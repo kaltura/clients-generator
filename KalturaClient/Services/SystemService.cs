@@ -82,40 +82,20 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class SystemGetInvalidationKeyValueRequestBuilder : RequestBuilder<LongValue>
+	public class SystemGetLogLevelRequestBuilder : RequestBuilder<string>
 	{
 		#region Constants
-		public const string INVALIDATION_KEY = "invalidationKey";
-		public const string LAYERED_CACHE_CONFIG_NAME = "layeredCacheConfigName";
-		public const string GROUP_ID = "groupId";
 		#endregion
 
-		public string InvalidationKey { get; set; }
-		public string LayeredCacheConfigName { get; set; }
-		public int GroupId { get; set; }
 
-		public SystemGetInvalidationKeyValueRequestBuilder()
-			: base("system", "getInvalidationKeyValue")
+		public SystemGetLogLevelRequestBuilder()
+			: base("system", "getLogLevel")
 		{
-		}
-
-		public SystemGetInvalidationKeyValueRequestBuilder(string invalidationKey, string layeredCacheConfigName, int groupId)
-			: this()
-		{
-			this.InvalidationKey = invalidationKey;
-			this.LayeredCacheConfigName = layeredCacheConfigName;
-			this.GroupId = groupId;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("invalidationKey"))
-				kparams.AddIfNotNull("invalidationKey", InvalidationKey);
-			if (!isMapped("layeredCacheConfigName"))
-				kparams.AddIfNotNull("layeredCacheConfigName", LayeredCacheConfigName);
-			if (!isMapped("groupId"))
-				kparams.AddIfNotNull("groupId", GroupId);
 			return kparams;
 		}
 
@@ -127,46 +107,7 @@ namespace Kaltura.Services
 
 		public override object Deserialize(JToken result)
 		{
-			return ObjectFactory.Create<LongValue>(result);
-		}
-	}
-
-	public class SystemGetLayeredCacheGroupConfigRequestBuilder : RequestBuilder<StringValue>
-	{
-		#region Constants
-		public const string GROUP_ID = "groupId";
-		#endregion
-
-		public int GroupId { get; set; }
-
-		public SystemGetLayeredCacheGroupConfigRequestBuilder()
-			: base("system", "getLayeredCacheGroupConfig")
-		{
-		}
-
-		public SystemGetLayeredCacheGroupConfigRequestBuilder(int groupId)
-			: this()
-		{
-			this.GroupId = groupId;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("groupId"))
-				kparams.AddIfNotNull("groupId", GroupId);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<StringValue>(result);
+			return result.Value<string>();
 		}
 	}
 
@@ -269,47 +210,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class SystemInvalidateLayeredCacheInvalidationKeyRequestBuilder : RequestBuilder<bool>
-	{
-		#region Constants
-		public const string KEY = "key";
-		#endregion
-
-		public string Key { get; set; }
-
-		public SystemInvalidateLayeredCacheInvalidationKeyRequestBuilder()
-			: base("system", "invalidateLayeredCacheInvalidationKey")
-		{
-		}
-
-		public SystemInvalidateLayeredCacheInvalidationKeyRequestBuilder(string key)
-			: this()
-		{
-			this.Key = key;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("key"))
-				kparams.AddIfNotNull("key", Key);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
-				return true;
-			return false;
-		}
-	}
-
 	public class SystemPingRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
@@ -341,6 +241,47 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class SystemSetLogLevelRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string LEVEL = "level";
+		#endregion
+
+		public LogLevel Level { get; set; }
+
+		public SystemSetLogLevelRequestBuilder()
+			: base("system", "setLogLevel")
+		{
+		}
+
+		public SystemSetLogLevelRequestBuilder(LogLevel level)
+			: this()
+		{
+			this.Level = level;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("level"))
+				kparams.AddIfNotNull("level", Level);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 
 	public class SystemService
 	{
@@ -353,14 +294,9 @@ namespace Kaltura.Services
 			return new SystemClearLocalServerCacheRequestBuilder(clearCacheAction, key);
 		}
 
-		public static SystemGetInvalidationKeyValueRequestBuilder GetInvalidationKeyValue(string invalidationKey, string layeredCacheConfigName = null, int groupId = 0)
+		public static SystemGetLogLevelRequestBuilder GetLogLevel()
 		{
-			return new SystemGetInvalidationKeyValueRequestBuilder(invalidationKey, layeredCacheConfigName, groupId);
-		}
-
-		public static SystemGetLayeredCacheGroupConfigRequestBuilder GetLayeredCacheGroupConfig(int groupId = 0)
-		{
-			return new SystemGetLayeredCacheGroupConfigRequestBuilder(groupId);
+			return new SystemGetLogLevelRequestBuilder();
 		}
 
 		public static SystemGetTimeRequestBuilder GetTime()
@@ -378,14 +314,14 @@ namespace Kaltura.Services
 			return new SystemIncrementLayeredCacheGroupConfigVersionRequestBuilder(groupId);
 		}
 
-		public static SystemInvalidateLayeredCacheInvalidationKeyRequestBuilder InvalidateLayeredCacheInvalidationKey(string key)
-		{
-			return new SystemInvalidateLayeredCacheInvalidationKeyRequestBuilder(key);
-		}
-
 		public static SystemPingRequestBuilder Ping()
 		{
 			return new SystemPingRequestBuilder();
+		}
+
+		public static SystemSetLogLevelRequestBuilder SetLogLevel(LogLevel level)
+		{
+			return new SystemSetLogLevelRequestBuilder(level);
 		}
 	}
 }
