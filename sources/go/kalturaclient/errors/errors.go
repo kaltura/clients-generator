@@ -29,5 +29,5 @@ type APIException struct {
 }
 
 func (a *APIException) Error() string {
-	return fmt.Sprintf("got an error from kaltura : code: %s, nessage: %s", a.Code, a.Message)
+	return fmt.Sprintf("got an error from kaltura : code: %s, message: %s", a.Code, a.Message)
 }
