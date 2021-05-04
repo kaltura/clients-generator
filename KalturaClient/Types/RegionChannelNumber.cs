@@ -35,55 +35,55 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class SingleSegmentValue : BaseSegmentValue
+	public class RegionChannelNumber : ObjectBase
 	{
 		#region Constants
-		public const string ID = "id";
-		public const string AFFECTED_USERS = "affectedUsers";
+		public const string REGION_ID = "regionId";
+		public const string CHANNEL_NUMBER = "channelNumber";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
-		private int _AffectedUsers = Int32.MinValue;
+		private int _RegionId = Int32.MinValue;
+		private int _ChannelNumber = Int32.MinValue;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long Id
+		public int RegionId
 		{
-			get { return _Id; }
-			private set 
+			get { return _RegionId; }
+			set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
+				_RegionId = value;
+				OnPropertyChanged("RegionId");
 			}
 		}
 		[JsonProperty]
-		public int AffectedUsers
+		public int ChannelNumber
 		{
-			get { return _AffectedUsers; }
-			private set 
+			get { return _ChannelNumber; }
+			set 
 			{ 
-				_AffectedUsers = value;
-				OnPropertyChanged("AffectedUsers");
+				_ChannelNumber = value;
+				OnPropertyChanged("ChannelNumber");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public SingleSegmentValue()
+		public RegionChannelNumber()
 		{
 		}
 
-		public SingleSegmentValue(JToken node) : base(node)
+		public RegionChannelNumber(JToken node) : base(node)
 		{
-			if(node["id"] != null)
+			if(node["regionId"] != null)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				this._RegionId = ParseInt(node["regionId"].Value<string>());
 			}
-			if(node["affectedUsers"] != null)
+			if(node["channelNumber"] != null)
 			{
-				this._AffectedUsers = ParseInt(node["affectedUsers"].Value<string>());
+				this._ChannelNumber = ParseInt(node["channelNumber"].Value<string>());
 			}
 		}
 		#endregion
@@ -93,19 +93,19 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaSingleSegmentValue");
-			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("affectedUsers", this._AffectedUsers);
+				kparams.AddReplace("objectType", "KalturaRegionChannelNumber");
+			kparams.AddIfNotNull("regionId", this._RegionId);
+			kparams.AddIfNotNull("channelNumber", this._ChannelNumber);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
-				case AFFECTED_USERS:
-					return "AffectedUsers";
+				case REGION_ID:
+					return "RegionId";
+				case CHANNEL_NUMBER:
+					return "ChannelNumber";
 				default:
 					return base.getPropertyName(apiName);
 			}

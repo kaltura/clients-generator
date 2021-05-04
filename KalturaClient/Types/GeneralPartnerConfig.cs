@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -52,7 +52,6 @@ namespace Kaltura.Types
 		public const string DEFAULT_REGION = "defaultRegion";
 		public const string ROLLING_DEVICE_DATA = "rollingDeviceData";
 		public const string FINISHED_PERCENT_THRESHOLD = "finishedPercentThreshold";
-		public const string SUSPENSION_PROFILE_INHERITANCE_TYPE = "suspensionProfileInheritanceType";
 		#endregion
 
 		#region Private Fields
@@ -70,7 +69,6 @@ namespace Kaltura.Types
 		private int _DefaultRegion = Int32.MinValue;
 		private RollingDeviceRemovalData _RollingDeviceData;
 		private int _FinishedPercentThreshold = Int32.MinValue;
-		private SuspensionProfileInheritanceType _SuspensionProfileInheritanceType = null;
 		#endregion
 
 		#region Properties
@@ -214,16 +212,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("FinishedPercentThreshold");
 			}
 		}
-		[JsonProperty]
-		public SuspensionProfileInheritanceType SuspensionProfileInheritanceType
-		{
-			get { return _SuspensionProfileInheritanceType; }
-			set 
-			{ 
-				_SuspensionProfileInheritanceType = value;
-				OnPropertyChanged("SuspensionProfileInheritanceType");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -289,10 +277,6 @@ namespace Kaltura.Types
 			{
 				this._FinishedPercentThreshold = ParseInt(node["finishedPercentThreshold"].Value<string>());
 			}
-			if(node["suspensionProfileInheritanceType"] != null)
-			{
-				this._SuspensionProfileInheritanceType = (SuspensionProfileInheritanceType)StringEnum.Parse(typeof(SuspensionProfileInheritanceType), node["suspensionProfileInheritanceType"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -316,7 +300,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("defaultRegion", this._DefaultRegion);
 			kparams.AddIfNotNull("rollingDeviceData", this._RollingDeviceData);
 			kparams.AddIfNotNull("finishedPercentThreshold", this._FinishedPercentThreshold);
-			kparams.AddIfNotNull("suspensionProfileInheritanceType", this._SuspensionProfileInheritanceType);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -351,8 +334,6 @@ namespace Kaltura.Types
 					return "RollingDeviceData";
 				case FINISHED_PERCENT_THRESHOLD:
 					return "FinishedPercentThreshold";
-				case SUSPENSION_PROFILE_INHERITANCE_TYPE:
-					return "SuspensionProfileInheritanceType";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -90,7 +90,6 @@ namespace Kaltura.Services
 		public const string CONTEXT_TYPE = "contextType";
 		public new const string KS = "ks";
 		public const string TOKENIZED_URL = "tokenizedUrl";
-		public const string IS_ALT_URL = "isAltUrl";
 		#endregion
 
 		public new int PartnerId { get; set; }
@@ -100,14 +99,13 @@ namespace Kaltura.Services
 		public PlaybackContextType ContextType { get; set; }
 		public new string Ks { get; set; }
 		public string TokenizedUrl { get; set; }
-		public bool IsAltUrl { get; set; }
 
 		public AssetFilePlayManifestRequestBuilder()
 			: base("assetfile", "playManifest")
 		{
 		}
 
-		public AssetFilePlayManifestRequestBuilder(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks, string tokenizedUrl, bool isAltUrl)
+		public AssetFilePlayManifestRequestBuilder(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks, string tokenizedUrl)
 			: this()
 		{
 			this.PartnerId = partnerId;
@@ -117,7 +115,6 @@ namespace Kaltura.Services
 			this.ContextType = contextType;
 			this.Ks = ks;
 			this.TokenizedUrl = tokenizedUrl;
-			this.IsAltUrl = isAltUrl;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
@@ -137,8 +134,6 @@ namespace Kaltura.Services
 				kparams.AddIfNotNull("ks", Ks);
 			if (!isMapped("tokenizedUrl"))
 				kparams.AddIfNotNull("tokenizedUrl", TokenizedUrl);
-			if (!isMapped("isAltUrl"))
-				kparams.AddIfNotNull("isAltUrl", IsAltUrl);
 			return kparams;
 		}
 
@@ -166,9 +161,9 @@ namespace Kaltura.Services
 			return new AssetFileGetContextRequestBuilder(id, contextType);
 		}
 
-		public static AssetFilePlayManifestRequestBuilder PlayManifest(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks = null, string tokenizedUrl = null, bool isAltUrl = false)
+		public static AssetFilePlayManifestRequestBuilder PlayManifest(int partnerId, string assetId, AssetType assetType, long assetFileId, PlaybackContextType contextType, string ks = null, string tokenizedUrl = null)
 		{
-			return new AssetFilePlayManifestRequestBuilder(partnerId, assetId, assetType, assetFileId, contextType, ks, tokenizedUrl, isAltUrl);
+			return new AssetFilePlayManifestRequestBuilder(partnerId, assetId, assetType, assetFileId, contextType, ks, tokenizedUrl);
 		}
 	}
 }
