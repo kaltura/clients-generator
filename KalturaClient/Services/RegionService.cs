@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -72,6 +72,98 @@ namespace Kaltura.Services
 		public override object Deserialize(JToken result)
 		{
 			return ObjectFactory.Create<Region>(result);
+		}
+	}
+
+	public class RegionLinearchannelbulkaddRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string LINEAR_CHANNEL_ID = "linearChannelId";
+		public const string REGION_CHANNEL_NUMBERS = "regionChannelNumbers";
+		#endregion
+
+		public long LinearChannelId { get; set; }
+		public IList<RegionChannelNumber> RegionChannelNumbers { get; set; }
+
+		public RegionLinearchannelbulkaddRequestBuilder()
+			: base("region", "linearchannelbulkadd")
+		{
+		}
+
+		public RegionLinearchannelbulkaddRequestBuilder(long linearChannelId, IList<RegionChannelNumber> regionChannelNumbers)
+			: this()
+		{
+			this.LinearChannelId = linearChannelId;
+			this.RegionChannelNumbers = regionChannelNumbers;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("linearChannelId"))
+				kparams.AddIfNotNull("linearChannelId", LinearChannelId);
+			if (!isMapped("regionChannelNumbers"))
+				kparams.AddIfNotNull("regionChannelNumbers", RegionChannelNumbers);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
+	public class RegionLinearchannelbulkdeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string LINEAR_CHANNEL_ID = "linearChannelId";
+		public const string REGION_IDS = "regionIds";
+		#endregion
+
+		public long LinearChannelId { get; set; }
+		public string RegionIds { get; set; }
+
+		public RegionLinearchannelbulkdeleteRequestBuilder()
+			: base("region", "linearchannelbulkdelete")
+		{
+		}
+
+		public RegionLinearchannelbulkdeleteRequestBuilder(long linearChannelId, string regionIds)
+			: this()
+		{
+			this.LinearChannelId = linearChannelId;
+			this.RegionIds = regionIds;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("linearChannelId"))
+				kparams.AddIfNotNull("linearChannelId", LinearChannelId);
+			if (!isMapped("regionIds"))
+				kparams.AddIfNotNull("regionIds", RegionIds);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+				return true;
+			return false;
 		}
 	}
 
@@ -212,6 +304,16 @@ namespace Kaltura.Services
 		public static RegionAddRequestBuilder Add(Region region)
 		{
 			return new RegionAddRequestBuilder(region);
+		}
+
+		public static RegionLinearchannelbulkaddRequestBuilder Linearchannelbulkadd(long linearChannelId, IList<RegionChannelNumber> regionChannelNumbers)
+		{
+			return new RegionLinearchannelbulkaddRequestBuilder(linearChannelId, regionChannelNumbers);
+		}
+
+		public static RegionLinearchannelbulkdeleteRequestBuilder Linearchannelbulkdelete(long linearChannelId, string regionIds)
+		{
+			return new RegionLinearchannelbulkdeleteRequestBuilder(linearChannelId, regionIds);
 		}
 
 		public static RegionDeleteRequestBuilder Delete(int id)

@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -33,6 +33,7 @@ namespace Kaltura.Enums
 		public static readonly MediaFileStreamerType MPEG_DASH = new MediaFileStreamerType("MPEG_DASH");
 		public static readonly MediaFileStreamerType URL = new MediaFileStreamerType("URL");
 		public static readonly MediaFileStreamerType SMOOTH_STREAMING = new MediaFileStreamerType("SMOOTH_STREAMING");
+		public static readonly MediaFileStreamerType MULTICAST = new MediaFileStreamerType("MULTICAST");
 		public static readonly MediaFileStreamerType NONE = new MediaFileStreamerType("NONE");
 
 		private MediaFileStreamerType(string name) : base(name) { }

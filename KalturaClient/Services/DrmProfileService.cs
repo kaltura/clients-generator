@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platforms allow them to do with
+// to do with audio, video, and animation what Wiki platfroms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -36,6 +36,86 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+	public class DrmProfileAddRequestBuilder : RequestBuilder<DrmProfile>
+	{
+		#region Constants
+		public const string DRM_PROFILE = "drmProfile";
+		#endregion
+
+		public DrmProfile DrmProfile { get; set; }
+
+		public DrmProfileAddRequestBuilder()
+			: base("drmprofile", "add")
+		{
+		}
+
+		public DrmProfileAddRequestBuilder(DrmProfile drmProfile)
+			: this()
+		{
+			this.DrmProfile = drmProfile;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("drmProfile"))
+				kparams.AddIfNotNull("drmProfile", DrmProfile);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<DrmProfile>(result);
+		}
+	}
+
+	public class DrmProfileDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id { get; set; }
+
+		public DrmProfileDeleteRequestBuilder()
+			: base("drmprofile", "delete")
+		{
+		}
+
+		public DrmProfileDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class DrmProfileListRequestBuilder : RequestBuilder<ListResponse<DrmProfile>>
 	{
 		#region Constants
@@ -70,6 +150,16 @@ namespace Kaltura.Services
 	{
 		private DrmProfileService()
 		{
+		}
+
+		public static DrmProfileAddRequestBuilder Add(DrmProfile drmProfile)
+		{
+			return new DrmProfileAddRequestBuilder(drmProfile);
+		}
+
+		public static DrmProfileDeleteRequestBuilder Delete(long id)
+		{
+			return new DrmProfileDeleteRequestBuilder(id);
 		}
 
 		public static DrmProfileListRequestBuilder List()
