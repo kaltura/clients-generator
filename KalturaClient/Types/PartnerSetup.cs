@@ -35,87 +35,71 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DiscountModule : ObjectBase
+	public class PartnerSetup : ObjectBase
 	{
 		#region Constants
-		public const string ID = "id";
-		public const string PERCENT = "percent";
-		public const string START_DATE = "startDate";
-		public const string END_DATE = "endDate";
+		public const string ADMIN_USERNAME = "adminUsername";
+		public const string ADMIN_PASSWORD = "adminPassword";
+		public const string BASE_PARTNER_CONFIGURATION = "basePartnerConfiguration";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
-		private float _Percent = Single.MinValue;
-		private long _StartDate = long.MinValue;
-		private long _EndDate = long.MinValue;
+		private string _AdminUsername = null;
+		private string _AdminPassword = null;
+		private BasePartnerConfiguration _BasePartnerConfiguration;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long Id
+		public string AdminUsername
 		{
-			get { return _Id; }
+			get { return _AdminUsername; }
 			set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
+				_AdminUsername = value;
+				OnPropertyChanged("AdminUsername");
 			}
 		}
 		[JsonProperty]
-		public float Percent
+		public string AdminPassword
 		{
-			get { return _Percent; }
+			get { return _AdminPassword; }
 			set 
 			{ 
-				_Percent = value;
-				OnPropertyChanged("Percent");
+				_AdminPassword = value;
+				OnPropertyChanged("AdminPassword");
 			}
 		}
 		[JsonProperty]
-		public long StartDate
+		public BasePartnerConfiguration BasePartnerConfiguration
 		{
-			get { return _StartDate; }
+			get { return _BasePartnerConfiguration; }
 			set 
 			{ 
-				_StartDate = value;
-				OnPropertyChanged("StartDate");
-			}
-		}
-		[JsonProperty]
-		public long EndDate
-		{
-			get { return _EndDate; }
-			set 
-			{ 
-				_EndDate = value;
-				OnPropertyChanged("EndDate");
+				_BasePartnerConfiguration = value;
+				OnPropertyChanged("BasePartnerConfiguration");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DiscountModule()
+		public PartnerSetup()
 		{
 		}
 
-		public DiscountModule(JToken node) : base(node)
+		public PartnerSetup(JToken node) : base(node)
 		{
-			if(node["id"] != null)
+			if(node["adminUsername"] != null)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
+				this._AdminUsername = node["adminUsername"].Value<string>();
 			}
-			if(node["percent"] != null)
+			if(node["adminPassword"] != null)
 			{
-				this._Percent = ParseFloat(node["percent"].Value<string>());
+				this._AdminPassword = node["adminPassword"].Value<string>();
 			}
-			if(node["startDate"] != null)
+			if(node["basePartnerConfiguration"] != null)
 			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
+				this._BasePartnerConfiguration = ObjectFactory.Create<BasePartnerConfiguration>(node["basePartnerConfiguration"]);
 			}
 		}
 		#endregion
@@ -125,25 +109,22 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDiscountModule");
-			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("percent", this._Percent);
-			kparams.AddIfNotNull("startDate", this._StartDate);
-			kparams.AddIfNotNull("endDate", this._EndDate);
+				kparams.AddReplace("objectType", "KalturaPartnerSetup");
+			kparams.AddIfNotNull("adminUsername", this._AdminUsername);
+			kparams.AddIfNotNull("adminPassword", this._AdminPassword);
+			kparams.AddIfNotNull("basePartnerConfiguration", this._BasePartnerConfiguration);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
-				case PERCENT:
-					return "Percent";
-				case START_DATE:
-					return "StartDate";
-				case END_DATE:
-					return "EndDate";
+				case ADMIN_USERNAME:
+					return "AdminUsername";
+				case ADMIN_PASSWORD:
+					return "AdminPassword";
+				case BASE_PARTNER_CONFIGURATION:
+					return "BasePartnerConfiguration";
 				default:
 					return base.getPropertyName(apiName);
 			}

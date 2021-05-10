@@ -36,6 +36,50 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+	public class PartnerAddRequestBuilder : RequestBuilder<Partner>
+	{
+		#region Constants
+		public const string PARTNER = "partner";
+		public const string PARTNER_SETUP = "partnerSetup";
+		#endregion
+
+		public Partner Partner { get; set; }
+		public PartnerSetup PartnerSetup { get; set; }
+
+		public PartnerAddRequestBuilder()
+			: base("partner", "add")
+		{
+		}
+
+		public PartnerAddRequestBuilder(Partner partner, PartnerSetup partnerSetup)
+			: this()
+		{
+			this.Partner = partner;
+			this.PartnerSetup = partnerSetup;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("partner"))
+				kparams.AddIfNotNull("partner", Partner);
+			if (!isMapped("partnerSetup"))
+				kparams.AddIfNotNull("partnerSetup", PartnerSetup);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<Partner>(result);
+		}
+	}
+
 	public class PartnerExternalLoginRequestBuilder : RequestBuilder<LoginSession>
 	{
 		#region Constants
@@ -65,6 +109,45 @@ namespace Kaltura.Services
 		}
 	}
 
+	public class PartnerListRequestBuilder : RequestBuilder<ListResponse<Partner>>
+	{
+		#region Constants
+		public const string FILTER = "filter";
+		#endregion
+
+		public PartnerFilter Filter { get; set; }
+
+		public PartnerListRequestBuilder()
+			: base("partner", "list")
+		{
+		}
+
+		public PartnerListRequestBuilder(PartnerFilter filter)
+			: this()
+		{
+			this.Filter = filter;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("filter"))
+				kparams.AddIfNotNull("filter", Filter);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<ListResponse<Partner>>(result);
+		}
+	}
+
 
 	public class PartnerService
 	{
@@ -72,9 +155,19 @@ namespace Kaltura.Services
 		{
 		}
 
+		public static PartnerAddRequestBuilder Add(Partner partner, PartnerSetup partnerSetup)
+		{
+			return new PartnerAddRequestBuilder(partner, partnerSetup);
+		}
+
 		public static PartnerExternalLoginRequestBuilder ExternalLogin()
 		{
 			return new PartnerExternalLoginRequestBuilder();
+		}
+
+		public static PartnerListRequestBuilder List(PartnerFilter filter = null)
+		{
+			return new PartnerListRequestBuilder(filter);
 		}
 	}
 }

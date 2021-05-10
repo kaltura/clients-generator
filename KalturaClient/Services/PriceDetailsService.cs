@@ -36,6 +36,86 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
+	public class PriceDetailsAddRequestBuilder : RequestBuilder<PriceDetails>
+	{
+		#region Constants
+		public const string PRICE_DETAILS = "priceDetails";
+		#endregion
+
+		public PriceDetails PriceDetails { get; set; }
+
+		public PriceDetailsAddRequestBuilder()
+			: base("pricedetails", "add")
+		{
+		}
+
+		public PriceDetailsAddRequestBuilder(PriceDetails priceDetails)
+			: this()
+		{
+			this.PriceDetails = priceDetails;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("priceDetails"))
+				kparams.AddIfNotNull("priceDetails", PriceDetails);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			return ObjectFactory.Create<PriceDetails>(result);
+		}
+	}
+
+	public class PriceDetailsDeleteRequestBuilder : RequestBuilder<bool>
+	{
+		#region Constants
+		public const string ID = "id";
+		#endregion
+
+		public long Id { get; set; }
+
+		public PriceDetailsDeleteRequestBuilder()
+			: base("pricedetails", "delete")
+		{
+		}
+
+		public PriceDetailsDeleteRequestBuilder(long id)
+			: this()
+		{
+			this.Id = id;
+		}
+
+		public override Params getParameters(bool includeServiceAndAction)
+		{
+			Params kparams = base.getParameters(includeServiceAndAction);
+			if (!isMapped("id"))
+				kparams.AddIfNotNull("id", Id);
+			return kparams;
+		}
+
+		public override Files getFiles()
+		{
+			Files kfiles = base.getFiles();
+			return kfiles;
+		}
+
+		public override object Deserialize(JToken result)
+		{
+			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
+				return true;
+			return false;
+		}
+	}
+
 	public class PriceDetailsListRequestBuilder : RequestBuilder<ListResponse<PriceDetails>>
 	{
 		#region Constants
@@ -80,6 +160,16 @@ namespace Kaltura.Services
 	{
 		private PriceDetailsService()
 		{
+		}
+
+		public static PriceDetailsAddRequestBuilder Add(PriceDetails priceDetails)
+		{
+			return new PriceDetailsAddRequestBuilder(priceDetails);
+		}
+
+		public static PriceDetailsDeleteRequestBuilder Delete(long id)
+		{
+			return new PriceDetailsDeleteRequestBuilder(id);
 		}
 
 		public static PriceDetailsListRequestBuilder List(PriceDetailsFilter filter = null)

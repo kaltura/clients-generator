@@ -35,87 +35,39 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Types
 {
-	public class DiscountModule : ObjectBase
+	public class PartnerFilter : Filter
 	{
 		#region Constants
-		public const string ID = "id";
-		public const string PERCENT = "percent";
-		public const string START_DATE = "startDate";
-		public const string END_DATE = "endDate";
+		public const string ID_IN = "idIn";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
-		private float _Percent = Single.MinValue;
-		private long _StartDate = long.MinValue;
-		private long _EndDate = long.MinValue;
+		private string _IdIn = null;
 		#endregion
 
 		#region Properties
 		[JsonProperty]
-		public long Id
+		public string IdIn
 		{
-			get { return _Id; }
+			get { return _IdIn; }
 			set 
 			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
-		}
-		[JsonProperty]
-		public float Percent
-		{
-			get { return _Percent; }
-			set 
-			{ 
-				_Percent = value;
-				OnPropertyChanged("Percent");
-			}
-		}
-		[JsonProperty]
-		public long StartDate
-		{
-			get { return _StartDate; }
-			set 
-			{ 
-				_StartDate = value;
-				OnPropertyChanged("StartDate");
-			}
-		}
-		[JsonProperty]
-		public long EndDate
-		{
-			get { return _EndDate; }
-			set 
-			{ 
-				_EndDate = value;
-				OnPropertyChanged("EndDate");
+				_IdIn = value;
+				OnPropertyChanged("IdIn");
 			}
 		}
 		#endregion
 
 		#region CTor
-		public DiscountModule()
+		public PartnerFilter()
 		{
 		}
 
-		public DiscountModule(JToken node) : base(node)
+		public PartnerFilter(JToken node) : base(node)
 		{
-			if(node["id"] != null)
+			if(node["idIn"] != null)
 			{
-				this._Id = ParseLong(node["id"].Value<string>());
-			}
-			if(node["percent"] != null)
-			{
-				this._Percent = ParseFloat(node["percent"].Value<string>());
-			}
-			if(node["startDate"] != null)
-			{
-				this._StartDate = ParseLong(node["startDate"].Value<string>());
-			}
-			if(node["endDate"] != null)
-			{
-				this._EndDate = ParseLong(node["endDate"].Value<string>());
+				this._IdIn = node["idIn"].Value<string>();
 			}
 		}
 		#endregion
@@ -125,25 +77,16 @@ namespace Kaltura.Types
 		{
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
-				kparams.AddReplace("objectType", "KalturaDiscountModule");
-			kparams.AddIfNotNull("id", this._Id);
-			kparams.AddIfNotNull("percent", this._Percent);
-			kparams.AddIfNotNull("startDate", this._StartDate);
-			kparams.AddIfNotNull("endDate", this._EndDate);
+				kparams.AddReplace("objectType", "KalturaPartnerFilter");
+			kparams.AddIfNotNull("idIn", this._IdIn);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
-				case PERCENT:
-					return "Percent";
-				case START_DATE:
-					return "StartDate";
-				case END_DATE:
-					return "EndDate";
+				case ID_IN:
+					return "IdIn";
 				default:
 					return base.getPropertyName(apiName);
 			}

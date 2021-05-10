@@ -66,7 +66,7 @@ namespace Kaltura.Types
 		public long Id
 		{
 			get { return _Id; }
-			private set 
+			set 
 			{ 
 				_Id = value;
 				OnPropertyChanged("Id");
@@ -76,7 +76,7 @@ namespace Kaltura.Types
 		public string Name
 		{
 			get { return _Name; }
-			private set 
+			set 
 			{ 
 				_Name = value;
 				OnPropertyChanged("Name");
@@ -86,7 +86,7 @@ namespace Kaltura.Types
 		public int MaxViewsNumber
 		{
 			get { return _MaxViewsNumber; }
-			private set 
+			set 
 			{ 
 				_MaxViewsNumber = value;
 				OnPropertyChanged("MaxViewsNumber");
@@ -96,7 +96,7 @@ namespace Kaltura.Types
 		public int ViewLifeCycle
 		{
 			get { return _ViewLifeCycle; }
-			private set 
+			set 
 			{ 
 				_ViewLifeCycle = value;
 				OnPropertyChanged("ViewLifeCycle");
@@ -106,7 +106,7 @@ namespace Kaltura.Types
 		public int FullLifeCycle
 		{
 			get { return _FullLifeCycle; }
-			private set 
+			set 
 			{ 
 				_FullLifeCycle = value;
 				OnPropertyChanged("FullLifeCycle");

@@ -36,30 +36,30 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-	public class DiscountDetailsAddRequestBuilder : RequestBuilder<DiscountDetails>
+	public class PreviewModuleAddRequestBuilder : RequestBuilder<PreviewModule>
 	{
 		#region Constants
-		public const string DISCOUNT_DETAILS = "discountDetails";
+		public const string PREVIEW_MODULE = "previewModule";
 		#endregion
 
-		public DiscountDetails DiscountDetails { get; set; }
+		public PreviewModule PreviewModule { get; set; }
 
-		public DiscountDetailsAddRequestBuilder()
-			: base("discountdetails", "add")
+		public PreviewModuleAddRequestBuilder()
+			: base("previewmodule", "add")
 		{
 		}
 
-		public DiscountDetailsAddRequestBuilder(DiscountDetails discountDetails)
+		public PreviewModuleAddRequestBuilder(PreviewModule previewModule)
 			: this()
 		{
-			this.DiscountDetails = discountDetails;
+			this.PreviewModule = previewModule;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("discountDetails"))
-				kparams.AddIfNotNull("discountDetails", DiscountDetails);
+			if (!isMapped("previewModule"))
+				kparams.AddIfNotNull("previewModule", PreviewModule);
 			return kparams;
 		}
 
@@ -71,11 +71,11 @@ namespace Kaltura.Services
 
 		public override object Deserialize(JToken result)
 		{
-			return ObjectFactory.Create<DiscountDetails>(result);
+			return ObjectFactory.Create<PreviewModule>(result);
 		}
 	}
 
-	public class DiscountDetailsDeleteRequestBuilder : RequestBuilder<bool>
+	public class PreviewModuleDeleteRequestBuilder : RequestBuilder<bool>
 	{
 		#region Constants
 		public const string ID = "id";
@@ -83,12 +83,12 @@ namespace Kaltura.Services
 
 		public long Id { get; set; }
 
-		public DiscountDetailsDeleteRequestBuilder()
-			: base("discountdetails", "delete")
+		public PreviewModuleDeleteRequestBuilder()
+			: base("previewmodule", "delete")
 		{
 		}
 
-		public DiscountDetailsDeleteRequestBuilder(long id)
+		public PreviewModuleDeleteRequestBuilder(long id)
 			: this()
 		{
 			this.Id = id;
@@ -116,30 +116,20 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class DiscountDetailsListRequestBuilder : RequestBuilder<ListResponse<DiscountDetails>>
+	public class PreviewModuleListRequestBuilder : RequestBuilder<ListResponse<PreviewModule>>
 	{
 		#region Constants
-		public const string FILTER = "filter";
 		#endregion
 
-		public DiscountDetailsFilter Filter { get; set; }
 
-		public DiscountDetailsListRequestBuilder()
-			: base("discountdetails", "list")
+		public PreviewModuleListRequestBuilder()
+			: base("previewmodule", "list")
 		{
-		}
-
-		public DiscountDetailsListRequestBuilder(DiscountDetailsFilter filter)
-			: this()
-		{
-			this.Filter = filter;
 		}
 
 		public override Params getParameters(bool includeServiceAndAction)
 		{
 			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("filter"))
-				kparams.AddIfNotNull("filter", Filter);
 			return kparams;
 		}
 
@@ -151,30 +141,30 @@ namespace Kaltura.Services
 
 		public override object Deserialize(JToken result)
 		{
-			return ObjectFactory.Create<ListResponse<DiscountDetails>>(result);
+			return ObjectFactory.Create<ListResponse<PreviewModule>>(result);
 		}
 	}
 
 
-	public class DiscountDetailsService
+	public class PreviewModuleService
 	{
-		private DiscountDetailsService()
+		private PreviewModuleService()
 		{
 		}
 
-		public static DiscountDetailsAddRequestBuilder Add(DiscountDetails discountDetails)
+		public static PreviewModuleAddRequestBuilder Add(PreviewModule previewModule)
 		{
-			return new DiscountDetailsAddRequestBuilder(discountDetails);
+			return new PreviewModuleAddRequestBuilder(previewModule);
 		}
 
-		public static DiscountDetailsDeleteRequestBuilder Delete(long id)
+		public static PreviewModuleDeleteRequestBuilder Delete(long id)
 		{
-			return new DiscountDetailsDeleteRequestBuilder(id);
+			return new PreviewModuleDeleteRequestBuilder(id);
 		}
 
-		public static DiscountDetailsListRequestBuilder List(DiscountDetailsFilter filter = null)
+		public static PreviewModuleListRequestBuilder List()
 		{
-			return new DiscountDetailsListRequestBuilder(filter);
+			return new PreviewModuleListRequestBuilder();
 		}
 	}
 }
