@@ -43,8 +43,6 @@ namespace Kaltura.Types
 		public const string MULTI_CURRENCY_DISCOUNT = "multiCurrencyDiscount";
 		public const string START_DATE = "startDate";
 		public const string END_DATE = "endDate";
-		public const string WHEN_ALGO_TIMES = "whenAlgoTimes";
-		public const string WHEN_ALGO_TYPE = "whenAlgoType";
 		#endregion
 
 		#region Private Fields
@@ -53,8 +51,6 @@ namespace Kaltura.Types
 		private IList<Discount> _MultiCurrencyDiscount;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
-		private int _WhenAlgoTimes = Int32.MinValue;
-		private int _WhenAlgoType = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -108,26 +104,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("EndDate");
 			}
 		}
-		[JsonProperty]
-		public int WhenAlgoTimes
-		{
-			get { return _WhenAlgoTimes; }
-			set 
-			{ 
-				_WhenAlgoTimes = value;
-				OnPropertyChanged("WhenAlgoTimes");
-			}
-		}
-		[JsonProperty]
-		public int WhenAlgoType
-		{
-			get { return _WhenAlgoType; }
-			set 
-			{ 
-				_WhenAlgoType = value;
-				OnPropertyChanged("WhenAlgoType");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -161,14 +137,6 @@ namespace Kaltura.Types
 			{
 				this._EndDate = ParseLong(node["endDate"].Value<string>());
 			}
-			if(node["whenAlgoTimes"] != null)
-			{
-				this._WhenAlgoTimes = ParseInt(node["whenAlgoTimes"].Value<string>());
-			}
-			if(node["whenAlgoType"] != null)
-			{
-				this._WhenAlgoType = ParseInt(node["whenAlgoType"].Value<string>());
-			}
 		}
 		#endregion
 
@@ -183,8 +151,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("multiCurrencyDiscount", this._MultiCurrencyDiscount);
 			kparams.AddIfNotNull("startDate", this._StartDate);
 			kparams.AddIfNotNull("endDate", this._EndDate);
-			kparams.AddIfNotNull("whenAlgoTimes", this._WhenAlgoTimes);
-			kparams.AddIfNotNull("whenAlgoType", this._WhenAlgoType);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -201,10 +167,6 @@ namespace Kaltura.Types
 					return "StartDate";
 				case END_DATE:
 					return "EndDate";
-				case WHEN_ALGO_TIMES:
-					return "WhenAlgoTimes";
-				case WHEN_ALGO_TYPE:
-					return "WhenAlgoType";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -36,86 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-	public class DiscountDetailsAddRequestBuilder : RequestBuilder<DiscountDetails>
-	{
-		#region Constants
-		public const string DISCOUNT_DETAILS = "discountDetails";
-		#endregion
-
-		public DiscountDetails DiscountDetails { get; set; }
-
-		public DiscountDetailsAddRequestBuilder()
-			: base("discountdetails", "add")
-		{
-		}
-
-		public DiscountDetailsAddRequestBuilder(DiscountDetails discountDetails)
-			: this()
-		{
-			this.DiscountDetails = discountDetails;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("discountDetails"))
-				kparams.AddIfNotNull("discountDetails", DiscountDetails);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<DiscountDetails>(result);
-		}
-	}
-
-	public class DiscountDetailsDeleteRequestBuilder : RequestBuilder<bool>
-	{
-		#region Constants
-		public const string ID = "id";
-		#endregion
-
-		public long Id { get; set; }
-
-		public DiscountDetailsDeleteRequestBuilder()
-			: base("discountdetails", "delete")
-		{
-		}
-
-		public DiscountDetailsDeleteRequestBuilder(long id)
-			: this()
-		{
-			this.Id = id;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("id"))
-				kparams.AddIfNotNull("id", Id);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
-				return true;
-			return false;
-		}
-	}
-
 	public class DiscountDetailsListRequestBuilder : RequestBuilder<ListResponse<DiscountDetails>>
 	{
 		#region Constants
@@ -160,16 +80,6 @@ namespace Kaltura.Services
 	{
 		private DiscountDetailsService()
 		{
-		}
-
-		public static DiscountDetailsAddRequestBuilder Add(DiscountDetails discountDetails)
-		{
-			return new DiscountDetailsAddRequestBuilder(discountDetails);
-		}
-
-		public static DiscountDetailsDeleteRequestBuilder Delete(long id)
-		{
-			return new DiscountDetailsDeleteRequestBuilder(id);
 		}
 
 		public static DiscountDetailsListRequestBuilder List(DiscountDetailsFilter filter = null)

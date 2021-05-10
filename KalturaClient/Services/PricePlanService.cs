@@ -36,86 +36,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Kaltura.Services
 {
-	public class PricePlanAddRequestBuilder : RequestBuilder<PricePlan>
-	{
-		#region Constants
-		public const string PRICE_PLAN = "pricePlan";
-		#endregion
-
-		public PricePlan PricePlan { get; set; }
-
-		public PricePlanAddRequestBuilder()
-			: base("priceplan", "add")
-		{
-		}
-
-		public PricePlanAddRequestBuilder(PricePlan pricePlan)
-			: this()
-		{
-			this.PricePlan = pricePlan;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("pricePlan"))
-				kparams.AddIfNotNull("pricePlan", PricePlan);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			return ObjectFactory.Create<PricePlan>(result);
-		}
-	}
-
-	public class PricePlanDeleteRequestBuilder : RequestBuilder<bool>
-	{
-		#region Constants
-		public const string ID = "id";
-		#endregion
-
-		public long Id { get; set; }
-
-		public PricePlanDeleteRequestBuilder()
-			: base("priceplan", "delete")
-		{
-		}
-
-		public PricePlanDeleteRequestBuilder(long id)
-			: this()
-		{
-			this.Id = id;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("id"))
-				kparams.AddIfNotNull("id", Id);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			if (result.Value<string>().Equals("1") || result.Value<string>().ToLower().Equals("true"))
-				return true;
-			return false;
-		}
-	}
-
 	public class PricePlanListRequestBuilder : RequestBuilder<ListResponse<PricePlan>>
 	{
 		#region Constants
@@ -204,16 +124,6 @@ namespace Kaltura.Services
 	{
 		private PricePlanService()
 		{
-		}
-
-		public static PricePlanAddRequestBuilder Add(PricePlan pricePlan)
-		{
-			return new PricePlanAddRequestBuilder(pricePlan);
-		}
-
-		public static PricePlanDeleteRequestBuilder Delete(long id)
-		{
-			return new PricePlanDeleteRequestBuilder(id);
 		}
 
 		public static PricePlanListRequestBuilder List(PricePlanFilter filter = null)

@@ -38,30 +38,18 @@ namespace Kaltura.Types
 	public class DiscountModule : ObjectBase
 	{
 		#region Constants
-		public const string ID = "id";
 		public const string PERCENT = "percent";
 		public const string START_DATE = "startDate";
 		public const string END_DATE = "endDate";
 		#endregion
 
 		#region Private Fields
-		private long _Id = long.MinValue;
 		private float _Percent = Single.MinValue;
 		private long _StartDate = long.MinValue;
 		private long _EndDate = long.MinValue;
 		#endregion
 
 		#region Properties
-		[JsonProperty]
-		public long Id
-		{
-			get { return _Id; }
-			set 
-			{ 
-				_Id = value;
-				OnPropertyChanged("Id");
-			}
-		}
 		[JsonProperty]
 		public float Percent
 		{
@@ -101,10 +89,6 @@ namespace Kaltura.Types
 
 		public DiscountModule(JToken node) : base(node)
 		{
-			if(node["id"] != null)
-			{
-				this._Id = ParseLong(node["id"].Value<string>());
-			}
 			if(node["percent"] != null)
 			{
 				this._Percent = ParseFloat(node["percent"].Value<string>());
@@ -126,7 +110,6 @@ namespace Kaltura.Types
 			Params kparams = base.ToParams(includeObjectType);
 			if (includeObjectType)
 				kparams.AddReplace("objectType", "KalturaDiscountModule");
-			kparams.AddIfNotNull("id", this._Id);
 			kparams.AddIfNotNull("percent", this._Percent);
 			kparams.AddIfNotNull("startDate", this._StartDate);
 			kparams.AddIfNotNull("endDate", this._EndDate);
@@ -136,8 +119,6 @@ namespace Kaltura.Types
 		{
 			switch(apiName)
 			{
-				case ID:
-					return "Id";
 				case PERCENT:
 					return "Percent";
 				case START_DATE:

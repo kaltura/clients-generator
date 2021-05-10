@@ -56,7 +56,7 @@ namespace Kaltura.Types
 		public bool? IsRenewable
 		{
 			get { return _IsRenewable; }
-			set 
+			private set 
 			{ 
 				_IsRenewable = value;
 				OnPropertyChanged("IsRenewable");
@@ -66,7 +66,7 @@ namespace Kaltura.Types
 		public int RenewalsNumber
 		{
 			get { return _RenewalsNumber; }
-			set 
+			private set 
 			{ 
 				_RenewalsNumber = value;
 				OnPropertyChanged("RenewalsNumber");
@@ -76,7 +76,7 @@ namespace Kaltura.Types
 		public long DiscountId
 		{
 			get { return _DiscountId; }
-			set 
+			private set 
 			{ 
 				_DiscountId = value;
 				OnPropertyChanged("DiscountId");

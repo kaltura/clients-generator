@@ -76,8 +76,6 @@ namespace Kaltura
 					return new ListResponse<Favorite>(jToken);
 				case "KalturaOTTUserListResponse":
 					return new ListResponse<OTTUser>(jToken);
-				case "KalturaPartnerListResponse":
-					return new ListResponse<Partner>(jToken);
 				case "KalturaSSOAdapterProfileListResponse":
 					return new ListResponse<SSOAdapterProfile>(jToken);
 				case "KalturaUserInterestListResponse":
@@ -104,8 +102,6 @@ namespace Kaltura
 					return new ListResponse<DiscountDetails>(jToken);
 				case "KalturaPpvListResponse":
 					return new ListResponse<Ppv>(jToken);
-				case "KalturaPreviewModuleListResponse":
-					return new ListResponse<PreviewModule>(jToken);
 				case "KalturaPriceDetailsListResponse":
 					return new ListResponse<PriceDetails>(jToken);
 				case "KalturaPricePlanListResponse":
@@ -118,8 +114,6 @@ namespace Kaltura
 					return new ListResponse<Subscription>(jToken);
 				case "KalturaSubscriptionSetListResponse":
 					return new ListResponse<SubscriptionSet>(jToken);
-				case "KalturaUsageModuleListResponse":
-					return new ListResponse<UsageModule>(jToken);
 				case "KalturaPartnerConfigurationListResponse":
 					return new ListResponse<PartnerConfiguration>(jToken);
 				case "KalturaPersonalListListResponse":

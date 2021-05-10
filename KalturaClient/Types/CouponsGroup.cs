@@ -66,7 +66,7 @@ namespace Kaltura.Types
 		public string Id
 		{
 			get { return _Id; }
-			set 
+			private set 
 			{ 
 				_Id = value;
 				OnPropertyChanged("Id");
