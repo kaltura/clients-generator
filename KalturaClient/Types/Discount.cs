@@ -50,7 +50,7 @@ namespace Kaltura.Types
 		public int Percentage
 		{
 			get { return _Percentage; }
-			set 
+			private set 
 			{ 
 				_Percentage = value;
 				OnPropertyChanged("Percentage");
