@@ -397,6 +397,14 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "	return nil\n";
 			$s .= "}\n";
 
+			$s .= "func (o *".$className."Container) MarshalJSON() ([]byte, error) {\n";
+			$s .= "	realObject := o.Get()\n";
+			$s .= "	if realObject != nil {\n";
+			$s .= "		return json.Marshal(realObject)\n";
+			$s .= "	}\n";
+			$s .= "	return nil, errors.New(\"Error while marshaling container: ".$className."Container.\")\n";
+			$s .= "}\n";
+
 			$s .= $containerGetFunc;
 		}
 
@@ -531,7 +539,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$goOutputType = "*bool";
 				break;
 			case "string":
-				$goOutputType = "*string";
+				$goOutputType = "*string";	
 				break;
 			case "KalturaStringValue":
 				$goOutputType = "*string";
