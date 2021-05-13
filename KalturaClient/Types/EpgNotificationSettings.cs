@@ -5,7 +5,7 @@
 //                          |_|\_\__,_|_|\__|\_,_|_| \__,_|
 //
 // This file is part of the Kaltura Collaborative Media Suite which allows users
-// to do with audio, video, and animation what Wiki platfroms allow them to do with
+// to do with audio, video, and animation what Wiki platforms allow them to do with
 // text.
 //
 // Copyright (C) 2006-2021  Kaltura Inc.
@@ -41,16 +41,14 @@ namespace Kaltura.Types
 		public const string ENABLED = "enabled";
 		public const string DEVICE_FAMILY_IDS = "deviceFamilyIds";
 		public const string LIVE_ASSET_IDS = "liveAssetIds";
-		public const string BACKWARD_TIME_RANGE = "backwardTimeRange";
-		public const string FORWARD_TIME_RANGE = "forwardTimeRange";
+		public const string TIME_RANGE = "timeRange";
 		#endregion
 
 		#region Private Fields
 		private bool? _Enabled = null;
 		private string _DeviceFamilyIds = null;
 		private string _LiveAssetIds = null;
-		private int _BackwardTimeRange = Int32.MinValue;
-		private int _ForwardTimeRange = Int32.MinValue;
+		private int _TimeRange = Int32.MinValue;
 		#endregion
 
 		#region Properties
@@ -85,23 +83,13 @@ namespace Kaltura.Types
 			}
 		}
 		[JsonProperty]
-		public int BackwardTimeRange
+		public int TimeRange
 		{
-			get { return _BackwardTimeRange; }
+			get { return _TimeRange; }
 			set 
 			{ 
-				_BackwardTimeRange = value;
-				OnPropertyChanged("BackwardTimeRange");
-			}
-		}
-		[JsonProperty]
-		public int ForwardTimeRange
-		{
-			get { return _ForwardTimeRange; }
-			set 
-			{ 
-				_ForwardTimeRange = value;
-				OnPropertyChanged("ForwardTimeRange");
+				_TimeRange = value;
+				OnPropertyChanged("TimeRange");
 			}
 		}
 		#endregion
@@ -125,13 +113,9 @@ namespace Kaltura.Types
 			{
 				this._LiveAssetIds = node["liveAssetIds"].Value<string>();
 			}
-			if(node["backwardTimeRange"] != null)
+			if(node["timeRange"] != null)
 			{
-				this._BackwardTimeRange = ParseInt(node["backwardTimeRange"].Value<string>());
-			}
-			if(node["forwardTimeRange"] != null)
-			{
-				this._ForwardTimeRange = ParseInt(node["forwardTimeRange"].Value<string>());
+				this._TimeRange = ParseInt(node["timeRange"].Value<string>());
 			}
 		}
 		#endregion
@@ -145,8 +129,7 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("enabled", this._Enabled);
 			kparams.AddIfNotNull("deviceFamilyIds", this._DeviceFamilyIds);
 			kparams.AddIfNotNull("liveAssetIds", this._LiveAssetIds);
-			kparams.AddIfNotNull("backwardTimeRange", this._BackwardTimeRange);
-			kparams.AddIfNotNull("forwardTimeRange", this._ForwardTimeRange);
+			kparams.AddIfNotNull("timeRange", this._TimeRange);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -159,10 +142,8 @@ namespace Kaltura.Types
 					return "DeviceFamilyIds";
 				case LIVE_ASSET_IDS:
 					return "LiveAssetIds";
-				case BACKWARD_TIME_RANGE:
-					return "BackwardTimeRange";
-				case FORWARD_TIME_RANGE:
-					return "ForwardTimeRange";
+				case TIME_RANGE:
+					return "TimeRange";
 				default:
 					return base.getPropertyName(apiName);
 			}
