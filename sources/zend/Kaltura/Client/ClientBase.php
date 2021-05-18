@@ -340,7 +340,8 @@ class Kaltura_Client_ClientBase
 
 		$params = $this->jsonEncode($params);
 
-		if (!is_null($this->config->internalServiceUrl)) {
+		if (!is_null($this->config->internalServiceUrl))
+		{
 			// internal service URL configured - change 
 			$url = str_replace($this->config->serviceUrl, $this->config->internalServiceUrl, $url);
 			// add original service URL hostname as Host header in request
@@ -348,15 +349,17 @@ class Kaltura_Client_ClientBase
 			$requestHeaders[] = "Host: $serviceUrlOriginalHost";
 			
 			// check if internal URL is "downgraded" to HTTP 
-			$serviceUrlScheme = parse_url($this->config->serviceUrl, PHP_URL_SCHEME);
-			$internalServiceUrlScheme = parse_url($this->config->internalServiceUrl, PHP_URL_SCHEME);
-			$shouldOffloadSsl = ($serviceUrlScheme == 'https' && $internalServiceUrlScheme == 'http');
+			$serviceUrlScheme = parse_url(strtolower($this->config->serviceUrl), PHP_URL_SCHEME);
+			$internalServiceUrlScheme = parse_url(strtolower($this->config->internalServiceUrl), PHP_URL_SCHEME);
+			$shouldOffloadSsl = ($serviceUrlScheme === 'https' && $internalServiceUrlScheme === 'http');
 
 			// add necessary headers if original service URL is HTTPS but internal is HTTP
-			if($shouldOffloadSsl && !in_array('X-KALTURA-F5-HTTPS: ON', $requestHeaders)) {
+			if($shouldOffloadSsl && !in_array('X-KALTURA-F5-HTTPS: ON', $requestHeaders))
+			{
         			$requestHeaders[] = 'X-KALTURA-F5-HTTPS: ON';
 			}
-			if($shouldOffloadSsl && !in_array('X-FORWARDED-PROTO: https', $requestHeaders)) {
+			if($shouldOffloadSsl && !in_array('X-FORWARDED-PROTO: https', $requestHeaders))
+			{
 				$requestHeaders[] = 'X-FORWARDED-PROTO: https';
 			}
 		}
