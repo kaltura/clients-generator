@@ -51,7 +51,6 @@ namespace Kaltura.Types
 		public const string PARENT_ID = "parentId";
 		public const string CONNECTING_META_ID = "connectingMetaId";
 		public const string CONNECTED_PARENT_META_ID = "connectedParentMetaId";
-		public const string DYNAMIC_DATA = "dynamicData";
 		#endregion
 
 		#region Private Fields
@@ -68,7 +67,6 @@ namespace Kaltura.Types
 		private long _ParentId = long.MinValue;
 		private long _ConnectingMetaId = long.MinValue;
 		private long _ConnectedParentMetaId = long.MinValue;
-		private IDictionary<string, StringValue> _DynamicData;
 		#endregion
 
 		#region Properties
@@ -202,16 +200,6 @@ namespace Kaltura.Types
 				OnPropertyChanged("ConnectedParentMetaId");
 			}
 		}
-		[JsonProperty]
-		public IDictionary<string, StringValue> DynamicData
-		{
-			get { return _DynamicData; }
-			set 
-			{ 
-				_DynamicData = value;
-				OnPropertyChanged("DynamicData");
-			}
-		}
 		#endregion
 
 		#region CTor
@@ -277,18 +265,6 @@ namespace Kaltura.Types
 			{
 				this._ConnectedParentMetaId = ParseLong(node["connectedParentMetaId"].Value<string>());
 			}
-			if(node["dynamicData"] != null)
-			{
-				{
-					string key;
-					this._DynamicData = new Dictionary<string, StringValue>();
-					foreach(var arrayNode in node["dynamicData"].Children<JProperty>())
-					{
-						key = arrayNode.Name;
-						this._DynamicData[key] = ObjectFactory.Create<StringValue>(arrayNode.Value);
-					}
-				}
-			}
 		}
 		#endregion
 
@@ -311,7 +287,6 @@ namespace Kaltura.Types
 			kparams.AddIfNotNull("parentId", this._ParentId);
 			kparams.AddIfNotNull("connectingMetaId", this._ConnectingMetaId);
 			kparams.AddIfNotNull("connectedParentMetaId", this._ConnectedParentMetaId);
-			kparams.AddIfNotNull("dynamicData", this._DynamicData);
 			return kparams;
 		}
 		protected override string getPropertyName(string apiName)
@@ -344,8 +319,6 @@ namespace Kaltura.Types
 					return "ConnectingMetaId";
 				case CONNECTED_PARENT_META_ID:
 					return "ConnectedParentMetaId";
-				case DYNAMIC_DATA:
-					return "DynamicData";
 				default:
 					return base.getPropertyName(apiName);
 			}

@@ -75,51 +75,6 @@ namespace Kaltura.Services
 		}
 	}
 
-	public class RecordingBulkdeleteRequestBuilder : RequestBuilder<IList<ActionResult>>
-	{
-		#region Constants
-		public const string RECORDING_IDS = "recordingIds";
-		#endregion
-
-		public string RecordingIds { get; set; }
-
-		public RecordingBulkdeleteRequestBuilder()
-			: base("recording", "bulkdelete")
-		{
-		}
-
-		public RecordingBulkdeleteRequestBuilder(string recordingIds)
-			: this()
-		{
-			this.RecordingIds = recordingIds;
-		}
-
-		public override Params getParameters(bool includeServiceAndAction)
-		{
-			Params kparams = base.getParameters(includeServiceAndAction);
-			if (!isMapped("recordingIds"))
-				kparams.AddIfNotNull("recordingIds", RecordingIds);
-			return kparams;
-		}
-
-		public override Files getFiles()
-		{
-			Files kfiles = base.getFiles();
-			return kfiles;
-		}
-
-		public override object Deserialize(JToken result)
-		{
-			IList<ActionResult> list = new List<ActionResult>();
-			foreach(var node in result.Children())
-			{
-				//TODO: Deserilize Array;
-				list.Add(ObjectFactory.Create<ActionResult>(node));
-			}
-			return list;
-		}
-	}
-
 	public class RecordingCancelRequestBuilder : RequestBuilder<Recording>
 	{
 		#region Constants
@@ -374,11 +329,6 @@ namespace Kaltura.Services
 		public static RecordingAddRequestBuilder Add(Recording recording)
 		{
 			return new RecordingAddRequestBuilder(recording);
-		}
-
-		public static RecordingBulkdeleteRequestBuilder Bulkdelete(string recordingIds)
-		{
-			return new RecordingBulkdeleteRequestBuilder(recordingIds);
 		}
 
 		public static RecordingCancelRequestBuilder Cancel(long id)
