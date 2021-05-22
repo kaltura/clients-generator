@@ -76,8 +76,6 @@ namespace Kaltura
 					return new ListResponse<Favorite>(jToken);
 				case "KalturaOTTUserListResponse":
 					return new ListResponse<OTTUser>(jToken);
-				case "KalturaPartnerListResponse":
-					return new ListResponse<Partner>(jToken);
 				case "KalturaSSOAdapterProfileListResponse":
 					return new ListResponse<SSOAdapterProfile>(jToken);
 				case "KalturaUserInterestListResponse":
