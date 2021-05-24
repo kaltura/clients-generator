@@ -37,7 +37,7 @@ describe("Add media", () => {
 
     	let entry = new kaltura.objects.MediaEntry({
     		mediaType: kaltura.enums.MediaType.VIDEO,
-    		name: 'test'
+    		name: 'test עברית عربيه हिन्दू'
     	});
 
     	let uploadToken = new kaltura.objects.UploadToken({
