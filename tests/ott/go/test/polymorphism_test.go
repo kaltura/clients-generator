@@ -53,12 +53,20 @@ func GetAssets(t *testing.T, filter types.AssetFilterInterface) []types.AssetCon
 }
 
 func GetChannelFilter() *types.ChannelFilter {
+	groupBy := make([]types.AssetGroupByContainer, 1)
+	groupBy[0] = types.AssetGroupByContainer { // prop from AssetFilter
+		AssetMetaOrTagGroupBy: &types.AssetMetaOrTagGroupBy{
+			Value: "4",
+		},
+	}
+
 	return &types.ChannelFilter{
 		OrderBy: string(channelorderby.NAME_ASC), // prop from Filter
 		Name:    "NameTest",                      // prop from PersistedFilter
 		DynamicOrderBy: types.DynamicOrderBy{ // prop from AssetFilter
 			Name: "DynamicOrderByNameTest",
 		},
+		GroupBy: groupBy,
 		GroupOrderBy:   groupbyorder.COUNT_DESC, // prop from BaseSearchAssetFilter
 		ExcludeWatched: true,                    // prop from ChannelFilter
 	}
@@ -114,6 +122,12 @@ func GetChannelFilterString() string {
 			"name": "DynamicOrderByNameTest",
 			"objectType": "KalturaDynamicOrderBy"
 		},
+		"groupBy": [
+			{
+		  		"objectType": "KalturaAssetMetaOrTagGroupBy",
+		  		"value": "4"
+			}
+	    ],
 		"name": "NameTest",
 		"orderBy": "NAME_ASC",
 		"objectType": "KalturaChannelFilter"
