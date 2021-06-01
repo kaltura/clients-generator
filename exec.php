@@ -58,6 +58,7 @@ require_once(__DIR__ . "/lib/ClientGeneratorFromXml.php");
 require_once(__DIR__ . "/lib/AjaxClientGenerator.php");
 require_once(__DIR__ . "/lib/JavaClientGenerator.php");
 require_once(__DIR__ . "/lib/Java2ClientGenerator.php");
+require_once(__DIR__ . "/lib/GoClientGenerator.php");
 require_once(__DIR__ . "/lib/AndroidClientGenerator.php");
 require_once(__DIR__ . "/lib/Android2ClientGenerator.php");
 require_once(__DIR__ . "/lib/BpmnClientGenerator.php");
@@ -164,6 +165,15 @@ else
 	$outputPathBase = fixPath("$rootPath/web/content/clientlibs");
 }
 
+KalturaLog::info("testsDir: $testsDir");
+KalturaLog::info("gzip: $gzip");
+KalturaLog::info("rootPath: $rootPath");
+KalturaLog::info("schemaXmlPath: $schemaXmlPath");
+KalturaLog::info("generateSingle: $generateSingle");
+KalturaLog::info("outputPathBase: $outputPathBase");
+KalturaLog::info("php version:" . phpversion());
+//php exec.php -tott --dont-gzip -xC:\source_code\KalturaClient.xml go C:\source_code\client_libs\
+
 if(file_exists($outputPathBase))
 {
 	if(!$schemaXmlPath)
@@ -178,7 +188,7 @@ else
 {
 	mkdir($outputPathBase, 0755, true);
 }
-
+KalturaLog::info("Downloading ready-made schema from: $schemaXmlPath");
 if(!file_exists($schemaXmlPath))
 	die("XML file [$schemaXmlPath] not found\n");
 
