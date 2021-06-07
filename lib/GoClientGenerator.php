@@ -402,7 +402,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "	if realObject != nil {\n";
 			$s .= "		return json.Marshal(realObject)\n";
 			$s .= "	}\n";
-			$s .= "	return nil, errors.New(\"Error while marshaling container: ".$className."Container.\")\n";
+			$s .= "	return nil, nil\n";
 			$s .= "}\n";
 
 			$s .= $containerGetFunc;
