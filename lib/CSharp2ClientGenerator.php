@@ -1135,6 +1135,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				{
 					$param .= "Int32.MinValue";
 				}
+				elseif ($type == "bigint" && $paramNode->getAttribute("default") == "null") 
+				{
+					$param .= "long.MinValue";
+				}
 				else
 				{
 					$param .=  $paramNode->getAttribute("default");
