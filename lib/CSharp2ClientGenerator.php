@@ -454,19 +454,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		// private fields
 		$this->appendLine("		#region Private Fields");
 		foreach($properties as $property)
-		{
-			$propertyLine = "private {$property['type']} _{$property['name']}";
-
-			if (!is_null($property["default"]))
-				$propertyLine .= " = {$property['default']}";
-
-			$propertyLine .= ";";
-
-			$this->appendLine("		" . $propertyLine);
-
+		{			
 			//BEO-9746
 			if( $property['type']=="float"){
-				$doubleLine ="private double _{$property['name']}AsDouble";
+				$doubleLine ="private double _{$property['name']}";
 
 				if (!is_null($property["default"]))
 					$doubleLine .= " = Double.MinValue";
@@ -474,6 +465,16 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				
 				$doubleLine.=";";
 				$this->appendLine("		" .$doubleLine);
+			}
+			else{
+				$propertyLine = "private {$property['type']} _{$property['name']}";
+
+				if (!is_null($property["default"]))
+					$propertyLine .= " = {$property['default']}";
+	
+				$propertyLine .= ";";
+	
+				$this->appendLine("		" . $propertyLine);
 			}
 			
 			
@@ -500,12 +501,23 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				$propertyLine .= 'Value';
             
             $this->appendLine("		[JsonProperty]");		
+			//BEO-9746
+			if( $property['type']=="float"){
+				$this->appendLine("		[Obsolete(\"use the AsDouble Property instead\")]");		
+			}
+
 			$this->appendLine("		" . $propertyLine);
 			$this->appendLine("		{");
 
 			if (!isset($property['writeOnly']) || !$property['writeOnly'])
 			{
-				$this->appendLine("			get { return _{$property['name']}; }");
+				//BEO-9746
+				if( $property['type']=="float"){
+					$this->appendLine("			get { return (float)_{$property['name']}; }");
+				}
+				else{				
+					$this->appendLine("			get { return _{$property['name']}; }");
+				}
 			}
 
 			if (!isset($property['readOnly']) || !$property['readOnly'])
@@ -518,10 +530,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
             }
             
             $this->appendLine("			{ ");
-			$this->appendLine("				_{$property['name']} = value;");
-			if( $property['type']=="float"){
-				$this->appendLine("				_{$property['name']}AsDouble = (double)value;");
-			}
+			$this->appendLine("				_{$property['name']} = value;");			
 			$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
 			$this->appendLine("			}");
 
@@ -541,13 +550,14 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				if($property['name'] === $className)
 					$propertyLine .= 'ValueAsDouble';
 				
-				$this->appendLine("		[JsonProperty]");		
+				$this->appendLine("		[JsonProperty]");
+				$this->appendLine("		//Use this property []AsDouble instead of the float property version");
 				$this->appendLine("		" . $propertyLine);
 				$this->appendLine("		{");
 	
 				if (!isset($property['writeOnly']) || !$property['writeOnly'])
 				{
-					$this->appendLine("			get { return _{$property['name']}AsDouble; }");
+					$this->appendLine("			get { return _{$property['name']}; }");
 				}
 	
 				if (!isset($property['readOnly']) || !$property['readOnly'])
@@ -559,9 +569,8 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					$this->appendLine("			private set ");
 				}
 				
-				$this->appendLine("			{ ");
-				$this->appendLine("				_{$property['name']} = (float)value;");
-				$this->appendLine("				_{$property['name']}AsDouble = value;");
+				$this->appendLine("			{ ");				
+				$this->appendLine("				_{$property['name']} = value;");
 				$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
 				$this->appendLine("			}");
 	
@@ -569,6 +578,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 
 
 			}
+			
 
 
 
@@ -628,10 +638,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 						$this->appendLine("				this._$dotNetPropName = ParseBool(node[\"$propName\"].Value<string>());");
 						break;
 					case "float":
-						$this->appendLine("				this._$dotNetPropName = ParseFloat(node[\"$propName\"].Value<string>());");						
-						
-						//BEO-9746
-						$this->appendLine("				this._{$dotNetPropName}AsDouble  = ParseDouble(node[\"$propName\"].Value<string>());");
+						$this->appendLine("				this._$dotNetPropName = ParseDouble(node[\"$propName\"].Value<string>());");																								
 						break;
 					case "array":
 						$arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
