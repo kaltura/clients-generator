@@ -500,10 +500,13 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			if($property['name'] === $className)
 				$propertyLine .= 'Value';
             
+			$this->appendLine("		/// <summary>");
+			$this->appendLine("		/// Use {$property['name']}AsDouble property instead");
+			$this->appendLine("		/// </summary>");
             $this->appendLine("		[JsonProperty]");		
 			//BEO-9746
 			if( $property['type']=="float"){
-				$this->appendLine("		[Obsolete(\"use {$property['name']}AsDouble Property instead\")]");		
+				$this->appendLine("		[Obsolete(\"Use {$property['name']}AsDouble property instead\")]");		
 			}
 
 			$this->appendLine("		" . $propertyLine);
@@ -550,8 +553,11 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				if($property['name'] === $className)
 					$propertyLine .= 'ValueAsDouble';
 				
+				
+				$this->appendLine("		///<summary>");
+				$this->appendLine("		///Use this property {$property['name']}AsDouble instead of the float {$property['name']} property version");
+				$this->appendLine("		///</summary>");
 				$this->appendLine("		[JsonProperty]");
-				$this->appendLine("		//Use this property {$property['name']}AsDouble instead of the float {$property['name']} property version");
 				$this->appendLine("		" . $propertyLine);
 				$this->appendLine("		{");
 	
