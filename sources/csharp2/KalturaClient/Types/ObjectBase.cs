@@ -132,10 +132,16 @@ namespace Kaltura.Types
         protected Single ParseFloat(string s)
         {
             Single i = Single.MinValue;
-            Single.TryParse(s, out i);
+            Single.TryParse(s, out i);            
             return i;
         }
-        
+        protected double ParseDouble(string s)
+        {
+            double i = Double.MinValue;
+            Double.TryParse(s, out i);
+            return i;
+        }
+
         protected long ParseLong(string s)
         {
             long l = long.MinValue;

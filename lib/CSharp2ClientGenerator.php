@@ -631,7 +631,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 						$this->appendLine("				this._$dotNetPropName = ParseFloat(node[\"$propName\"].Value<string>());");						
 						
 						//BEO-9746
-						$this->appendLine("				this._{$dotNetPropName}AsDouble  = ParseFloat(node[\"$propName\"].Value<string>());");
+						$this->appendLine("				this._{$dotNetPropName}AsDouble  = ParseDouble(node[\"$propName\"].Value<string>());");
 						break;
 					case "array":
 						$arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
