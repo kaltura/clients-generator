@@ -234,7 +234,7 @@ namespace Kaltura.Request
             parameters.Add("kalsig", Signature(parameters));
 
             var json = parameters.ToJson();
-            this.Log(string.Format("full reqeust data: [{0}]", json));
+            this.Log(string.Format("full request data: [{0}]", json));
 
             requestBody = json;
 
