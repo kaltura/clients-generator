@@ -43,6 +43,7 @@ namespace Kaltura.Request
         private long _LongValue;
         private int _IntValue;
         private float _FloatValue;
+        private double _DoubleValue; 
 
 
         private string _ParamType;
@@ -51,6 +52,7 @@ namespace Kaltura.Request
         private const string PARAM_TYPE_LONG = "long";
         private const string PARAM_TYPE_INT = "int";
         private const string PARAM_TYPE_FLOAT = "float";
+        private const string PARAM_TYPE_DOUBLE = "double";    
 
 
         #endregion
@@ -82,6 +84,13 @@ namespace Kaltura.Request
         {
             _FloatValue = value;
             _ParamType = PARAM_TYPE_FLOAT;
+        } 
+        
+        
+        public Param(double value)
+        {
+            _DoubleValue = value;
+            _ParamType = PARAM_TYPE_DOUBLE;
         }
 
         #endregion
@@ -97,7 +106,9 @@ namespace Kaltura.Request
                 case PARAM_TYPE_LONG:
                     return _LongValue.ToString();
                 case PARAM_TYPE_FLOAT:
-                    return String.Format(Math.Round((decimal)_FloatValue, 20).ToString(CultureInfo.InvariantCulture));
+                    return String.Format(Math.Round((decimal)_FloatValue, 20).ToString(CultureInfo.InvariantCulture));  
+                case PARAM_TYPE_DOUBLE:
+                    return String.Format(Math.Round((decimal)_DoubleValue, 20).ToString(CultureInfo.InvariantCulture));
                 case PARAM_TYPE_STRING:
                 default:
                     return "\"" + _Value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "").Replace("\t", "\\t").Replace("\n", "\\n") + "\"";
