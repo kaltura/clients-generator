@@ -339,6 +339,32 @@ class Kaltura_Client_ClientBase
 		$requestHeaders = $this->config->requestHeaders;
 
 		$params = $this->jsonEncode($params);
+
+		if (!is_null($this->config->internalServiceUrl))
+		{
+			// internal service URL configured - change 
+			$url = str_replace($this->config->serviceUrl, $this->config->internalServiceUrl, $url);
+			// add original service URL hostname as Host header in request
+			$serviceUrlOriginalHost = parse_url($this->config->serviceUrl, PHP_URL_HOST);
+			$requestHeaders[] = "Host: $serviceUrlOriginalHost";
+			
+			// check if internal URL is "downgraded" to HTTP 
+			$serviceUrlScheme = parse_url(strtolower($this->config->serviceUrl), PHP_URL_SCHEME);
+			$internalServiceUrlScheme = parse_url(strtolower($this->config->internalServiceUrl), PHP_URL_SCHEME);
+			$shouldOffloadSsl = ($serviceUrlScheme === 'https' && $internalServiceUrlScheme === 'http');
+
+			// add necessary headers if original service URL is HTTPS but internal is HTTP
+			if($shouldOffloadSsl && !in_array('X-KALTURA-F5-HTTPS: ON', $requestHeaders))
+			{
+        			$requestHeaders[] = 'X-KALTURA-F5-HTTPS: ON';
+			}
+			if($shouldOffloadSsl && !in_array('X-FORWARDED-PROTO: https', $requestHeaders))
+			{
+				$requestHeaders[] = 'X-FORWARDED-PROTO: https';
+			}
+		}
+
+			
 		$this->log("curl: $url");
 		$this->log("post: $params");
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
@@ -427,6 +453,7 @@ class Kaltura_Client_ClientBase
 		$result = curl_exec($ch);
 		$curlError = curl_error($ch);
 		$curlErrorCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$this->log("times: ".$this->config->userAgent. ' ' . json_encode(curl_getinfo($ch)));
 		curl_close($ch);
 		return array($result, $curlErrorCode, $curlError);
 	}
