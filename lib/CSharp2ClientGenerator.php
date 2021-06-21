@@ -427,6 +427,9 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					break;
 				case "float":
 					$property["default"] = "Single.MinValue";
+					
+
+
 					break;
 			}
 
@@ -451,17 +454,35 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 		// private fields
 		$this->appendLine("		#region Private Fields");
 		foreach($properties as $property)
-		{
-			$propertyLine = "private {$property['type']} _{$property['name']}";
+		{			
+			//BEO-9746
+			if( $property['type']=="float"){
+				$doubleLine ="private double _{$property['name']}";
 
-			if (!is_null($property["default"]))
-				$propertyLine .= " = {$property['default']}";
+				if (!is_null($property["default"]))
+					$doubleLine .= " = Double.MinValue";
+				
+				
+				$doubleLine.=";";
+				$this->appendLine("		" .$doubleLine);
+			}
+			else{
+				$propertyLine = "private {$property['type']} _{$property['name']}";
 
-			$propertyLine .= ";";
+				if (!is_null($property["default"]))
+					$propertyLine .= " = {$property['default']}";
+	
+				$propertyLine .= ";";
+	
+				$this->appendLine("		" . $propertyLine);
+			}
+			
+			
 
-			$this->appendLine("		" . $propertyLine);
 		}
 		$this->appendLine("		#endregion");
+
+		
 		$this->appendLine();
 
 		
@@ -479,13 +500,27 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			if($property['name'] === $className)
 				$propertyLine .= 'Value';
             
-            $this->appendLine("		[JsonProperty]");
+			$this->appendLine("		/// <summary>");
+			$this->appendLine("		/// Use {$property['name']}AsDouble property instead");
+			$this->appendLine("		/// </summary>");
+            $this->appendLine("		[JsonProperty]");		
+			//BEO-9746
+			if( $property['type']=="float"){
+				$this->appendLine("		[Obsolete(\"Use {$property['name']}AsDouble property instead\")]");		
+			}
+
 			$this->appendLine("		" . $propertyLine);
 			$this->appendLine("		{");
 
 			if (!isset($property['writeOnly']) || !$property['writeOnly'])
 			{
-				$this->appendLine("			get { return _{$property['name']}; }");
+				//BEO-9746
+				if( $property['type']=="float"){
+					$this->appendLine("			get { return (float)_{$property['name']}; }");
+				}
+				else{				
+					$this->appendLine("			get { return _{$property['name']}; }");
+				}
 			}
 
 			if (!isset($property['readOnly']) || !$property['readOnly'])
@@ -498,11 +533,61 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
             }
             
             $this->appendLine("			{ ");
-			$this->appendLine("				_{$property['name']} = value;");
+			$this->appendLine("				_{$property['name']} = value;");			
 			$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
 			$this->appendLine("			}");
 
 			$this->appendLine("		}");
+
+
+			//BEO-9746
+			if( $property['type']=="float"){
+
+				$propertyLine = "public";
+
+				if ($property['isOrderBy'] || $base && $this->classHasProperty($base, $property['apiName']))
+					$propertyLine .= " new";
+	
+				$propertyLine .= " double {$property['name']}AsDouble";
+				
+				if($property['name'] === $className)
+					$propertyLine .= 'ValueAsDouble';
+				
+				
+				$this->appendLine("		///<summary>");
+				$this->appendLine("		///Use this property {$property['name']}AsDouble instead of the float {$property['name']} property version");
+				$this->appendLine("		///</summary>");
+				$this->appendLine("		[JsonProperty]");
+				$this->appendLine("		" . $propertyLine);
+				$this->appendLine("		{");
+	
+				if (!isset($property['writeOnly']) || !$property['writeOnly'])
+				{
+					$this->appendLine("			get { return _{$property['name']}; }");
+				}
+	
+				if (!isset($property['readOnly']) || !$property['readOnly'])
+				{
+					$this->appendLine("			set ");
+				}
+				else
+				{
+					$this->appendLine("			private set ");
+				}
+				
+				$this->appendLine("			{ ");				
+				$this->appendLine("				_{$property['name']} = value;");
+				$this->appendLine("				OnPropertyChanged(\"{$property['name']}\");");
+				$this->appendLine("			}");
+	
+				$this->appendLine("		}");
+
+
+			}
+			
+
+
+
 		}
 		$this->appendLine("		#endregion");
 		$this->appendLine();
@@ -559,7 +644,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 						$this->appendLine("				this._$dotNetPropName = ParseBool(node[\"$propName\"].Value<string>());");
 						break;
 					case "float":
-						$this->appendLine("				this._$dotNetPropName = ParseFloat(node[\"$propName\"].Value<string>());");
+						$this->appendLine("				this._$dotNetPropName = ParseDouble(node[\"$propName\"].Value<string>());");																								
 						break;
 					case "array":
 						$arrayType = $this->getCSharpName($propertyNode->getAttribute("arrayType"));
@@ -1036,6 +1121,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					break;
 			}
 
+
 			$param = "$dotNetType ".$this->fixParamName($paramName);
 			$optional = $paramNode->getAttribute("optional");
 			if ($enableOptionals && $optional == "1")
@@ -1065,7 +1151,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				elseif ($type == "bigint" && $paramNode->getAttribute("default") == "null") 
 				{
 					$param .= "long.MinValue";
-				}	
+				}
 				else
 				{
 					$param .=  $paramNode->getAttribute("default");

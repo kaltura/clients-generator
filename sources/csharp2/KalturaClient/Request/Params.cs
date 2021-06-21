@@ -158,6 +158,12 @@ namespace Kaltura.Request
             this.Add(key, new Param(value));
         }
 
+        
+        public void Add(string key, double value)
+        {
+            this.Add(key, new Param(value));
+        }
+
         public void AddIfNotNull(string key, string value)
         {
             if (value != null)
@@ -174,6 +180,13 @@ namespace Kaltura.Request
         public void AddIfNotNull(string key, float value)
         {
             if (value != Single.MinValue)
+                this.Add(key, value);
+        } 
+
+        
+        public void AddIfNotNull(string key, double value)
+        {
+            if (value != Double.MinValue)
                 this.Add(key, value);
         }
 
