@@ -30,7 +30,7 @@ func RequestId(value string) Param {
 	}
 }
 
-func Currency (value string) Param {
+func Currency(value string) Param {
 	return Param{
 		key:    "currency",
 		value:  value,
