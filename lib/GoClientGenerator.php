@@ -17,7 +17,7 @@ class Property {
 class GoClientGenerator extends ClientGeneratorFromXml
 {
 	
-	private $_csprojIncludes = array();
+	private $_csprojIncludes = array(); 
 	private $_classInheritance = array();
 	private $_enums = array();
 	private $_allClasses = array();
