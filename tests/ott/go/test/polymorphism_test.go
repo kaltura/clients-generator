@@ -60,11 +60,12 @@ func GetChannelFilter() *types.ChannelFilter {
 		},
 	}
 
+	dynamicOrderByName := "DynamicOrderByNameTest"
 	return &types.ChannelFilter{
 		OrderBy: string(channelorderby.NAME_ASC), // prop from Filter
 		Name:    "NameTest",                      // prop from PersistedFilter
 		DynamicOrderBy: types.DynamicOrderBy{ // prop from AssetFilter
-			Name: "DynamicOrderByNameTest",
+			Name: &dynamicOrderByName,
 		},
 		GroupBy:        groupBy,
 		GroupOrderBy:   groupbyorder.COUNT_DESC, // prop from BaseSearchAssetFilter
@@ -169,4 +170,41 @@ func GetAssetListResponseString() string {
 		  }
 		]
 	  }`
+}
+
+func TestPolySerialization2(t *testing.T) {
+	t.Parallel()
+	valueContainer := getValueContainerMap()
+	valueContainerBytes, err := json.Marshal(&valueContainer)
+	assert.NoError(t, err)
+	space := regexp.MustCompile(`\s+`)
+	valueContainerString := space.ReplaceAllString(getValueContainerString(), "")
+	require.JSONEq(t, valueContainerString, string(valueContainerBytes))
+}
+func getValueContainerMap() *map[string]types.ValueContainer {
+	mapValue := map[string]types.ValueContainer{
+		"CatalogStartDateTime": {LongValue: &types.LongValue{ValueProperty: 1615106991}},
+		"CategoryId":           {DoubleValue: &types.DoubleValue{ValueProperty: 4357}},
+		"background_color":     {StringValue: &types.StringValue{ValueProperty: "#565656"}},
+	}
+	return &mapValue
+}
+
+func getValueContainerString() string {
+	return `
+		{
+  "CatalogStartDateTime": {
+    "value": 1615106991,
+    "objectType": "KalturaLongValue"
+  },
+  "CategoryId": {
+    "value": 4357,
+    "objectType": "KalturaDoubleValue"
+  },
+  "background_color": {
+    "value": "#565656",
+    "objectType": "KalturaStringValue"
+  }
+}	
+`
 }
