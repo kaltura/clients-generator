@@ -29,8 +29,7 @@ func RequestId(value string) Param {
 		inBody: false,
 	}
 }
-
-func Currency(value string) Param {
+func Currency (value string) Param {
 	return Param{
 		key:    "currency",
 		value:  value,
