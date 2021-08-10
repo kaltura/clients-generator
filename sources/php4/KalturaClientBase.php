@@ -94,7 +94,7 @@ class KalturaClientBase
 		$this->addParam($params, "ks", $this->ks);
 		
 		$url = $this->config->serviceUrl."/api_v3/service/$service/action/$action";
-		$this->log("full reqeust url: [" . $url . "]");
+		$this->log("full request url: [" . $url . "]");
 		
 		// flatten sub arrays (the objects)
 		$newParams = array();
