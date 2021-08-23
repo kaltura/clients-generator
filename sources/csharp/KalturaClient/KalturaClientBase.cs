@@ -175,8 +175,8 @@ namespace Kaltura
             kparams.Add("kalsig", this.Signature(kparams));
             string json = kparams.ToJson();
 
-            this.Log("full reqeust url: [" + url + "]");
-            this.Log("full reqeust data: [" + json + "]");
+            this.Log("full request url: [" + url + "]");
+            this.Log("full request data: [" + json + "]");
 
             // build request
             HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
