@@ -1,4 +1,4 @@
-# Kaltura Client Generator
+#  Kaltura Client Generator
 The code in this repo is used to auto generate the Kaltura client libraries for each supported language.
 
 [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
