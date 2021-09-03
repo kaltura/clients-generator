@@ -29,6 +29,7 @@ The API client depends on the following python modules that are not included by 
  - requests (2.4.2 or above) - can be downloaded from https://pypi.python.org/pypi/requests/
  - requests-toolbelt - https://pypi.python.org/pypi/requests-toolbelt
  - six - https://pypi.python.org/pypi/six
+ - pycryptodome - optional - needed for V2 sessions keys
 
 requests is used to handle API calls to Kaltura. This means that if you want
 to do multi part file uploads, you should pass through the file path rather
@@ -36,7 +37,8 @@ than an open file handle.
 
 == INSTALLATION ==
 
-Make sure you have the modules listed under the 'external dependencies' installed.
+
+Make sure you have the modules listed under the 'external dependencies' installed (e.g. pip install -r requirements.txt).
 Install the Kaltura client by running 'python setup.py install' in the client's root directory.
 
 == TESTING THE CLIENT LIBRARY ==
