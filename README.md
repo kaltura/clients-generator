@@ -46,3 +46,6 @@ All code in this project is released under the [AGPLv3 license](http://www.gnu.o
 
 Copyright © Kaltura Inc. All rights reserved.   
 Authors and contributors: See [GitHub contributors list](https://github.com/kaltura/clients-generator/graphs/contributors).  
+
+# Kaltura C# OTT API Client Library.
+Compatible with Kaltura OTT server version 6.1.0.28931 and above.
