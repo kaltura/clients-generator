@@ -6,11 +6,11 @@ import { CancelableAction } from '../cancelable-action';
 
 
 export class KalturaFileRequestAdapter {
-    public transmit(request: KalturaFileRequest, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<{ url: string }> {
-        const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
-        const { service, action, ...queryparams } = parameters;
-        const endpointUrl = createEndpoint(request, clientOptions, service, action, queryparams);
+  public transmit(request: KalturaFileRequest, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<{ url: string }> {
+    const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
+    const { service, action, ...queryparams } = parameters;
+    const endpointUrl = createEndpoint(request, clientOptions, service, action, queryparams);
 
-        return CancelableAction.resolve({url: endpointUrl});
-    }
+    return CancelableAction.resolve({ url: endpointUrl });
+  }
 }

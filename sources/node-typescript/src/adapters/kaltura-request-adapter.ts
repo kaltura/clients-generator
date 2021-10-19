@@ -8,38 +8,38 @@ import { CancelableAction } from '../cancelable-action';
 
 export class KalturaRequestAdapter {
 
-    constructor() {}
+  constructor() { }
 
-    public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<T> {
+  public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<T> {
 
-        const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
+    const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
 
-        const { service, action, ...body } = parameters;
+    const { service, action, ...body } = parameters;
 
-        const endpoint = createEndpoint(request, clientOptions, service, action);
+    const endpoint = createEndpoint(request, clientOptions, service, action);
 
-        return <any>createCancelableAction<T>({endpoint, headers: getHeaders(), body})
-            .then(result => {
-                    try {
-                        const response = request.handleResponse(result);
+    return <any>createCancelableAction<T>({ endpoint, headers: getHeaders(), body })
+      .then(result => {
+        try {
+          const response = request.handleResponse(result);
 
-                        if (response.error) {
-                            throw response.error;
-                        } else {
-                            return response.result;
-                        }
-                    } catch (error) {
-                        if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
-                            throw error;
-                        } else {
-                            const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-                            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response');
-                        }
-                    }
-                },
-                error => {
-                    const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-                    throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
-                });
-    }
+          if (response.error) {
+            throw response.error;
+          } else {
+            return response.result;
+          }
+        } catch (error) {
+          if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
+            throw error;
+          } else {
+            const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
+            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response');
+          }
+        }
+      },
+        error => {
+          const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
+          throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
+        });
+  }
 }
