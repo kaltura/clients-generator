@@ -593,7 +593,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if($comaIfNeeded == "")
 		{
 			$text .= "	var result struct {\n";
-			$text .= "      Result string `json:\"result\"`\n";
+			$text .= "      Result interface{} `json:\"result\"`\n";
 			$text .= "  }\n";
 			$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
 			$text .= "	if err != nil {\n";
