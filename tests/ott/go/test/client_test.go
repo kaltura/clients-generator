@@ -27,6 +27,15 @@ func TestPing(t *testing.T) {
 	}
 }
 
+func TestVoid(t *testing.T) {
+	t.Parallel()
+	client, mockHttpClient := utils.CreateClientAndMock()
+	mockHttpClient.SetResponse("/api_v3/service/permission/action/delete", voidResponseFromPhoenix(), 200)
+	ctx := utils.WithRequestId(context.Background(), "requestId")
+	err := services.NewPermissionService(client).Delete(ctx, 1)
+	assert.NoError(t, err)
+}
+
 func TestMetaListWithMiddlewares(t *testing.T) {
 	t.Parallel()
 	ctx := utils.WithRequestId(context.Background(), "requestId")
@@ -176,6 +185,11 @@ func getAPIException() errors.APIException {
 
 func pingResponseFromPhoenix() []byte {
 	return []byte(`{"result": true
+	  }`)
+}
+
+func voidResponseFromPhoenix() []byte {
+	return []byte(`{"result": {}
 	  }`)
 }
 
