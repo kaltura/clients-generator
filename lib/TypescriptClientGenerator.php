@@ -218,7 +218,13 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		else {
 		  $out .= str_repeat($indent_string, $indent + 1);
 		}
-		if ((is_object($value) || is_array($value)) && (!count($value))) {
+		$objectVars = is_object($value) ? get_object_vars($value): null;
+		if (is_object($value) && (!count($objectVars)))
+		{
+				$out .= "[]";
+		}
+		elseif (is_array($value) && (!count($value)))
+		{
 		    $out .= "[]";
 		}
 		elseif (is_object($value) || is_array($value))
