@@ -55,7 +55,6 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$this->addClass($classNode);
 		}
 		
-		ini_set("memory_limit", "512M");
 		foreach($this->_allClasses as $classNode)
 		{
 			$this->_allContainers[$classNode->className] = $this->extractAllInheritanceClasses($classNode);
@@ -1097,9 +1096,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			{	
 				if($currentClassObject->parentClass == $currClass->className)
 				{
-					$classByName = $this->findClassByName($currentClassObject->className);
-					$AllInheritanceClasses = $this->extractAllInheritanceClasses($classByName);
-					$calssesToAdd = array_merge($calssesToAdd, $AllInheritanceClasses);
+					$calssesToAdd = array_merge($calssesToAdd, $this->extractAllInheritanceClasses($this->findClassByName($currentClassObject->className)));
 				}
 			}
 		}
