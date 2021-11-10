@@ -386,6 +386,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			{
 				$dotNetPropType  = "int";
 			}
+			else if ($propType == "float")
+                        {
+                                $dotNetPropType  = "double";
+                        }
 			else
 			{
 				$dotNetPropType = $this->getCSharpName($propType);
@@ -426,10 +430,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					$property["default"] = "null";
 					break;
 				case "float":
-					$property["default"] = "Single.MinValue";
-					
-
-
+					$property["default"] = "Double.MinValue";
 					break;
 			}
 
@@ -516,7 +517,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			{
 				//BEO-9746
 				if( $property['type']=="float"){
-					$this->appendLine("			get { return (float)_{$property['name']}; }");
+					$this->appendLine("			get { return (double)_{$property['name']}; }");
 				}
 				else{				
 					$this->appendLine("			get { return _{$property['name']}; }");
@@ -819,13 +820,17 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				break;
 			case "bigint":
 				$dotNetOutputType = "long";
-                break;
-            case "bool":
+				break;
+			case "bool":
 				$dotNetOutputType = "bool";
-                break;
-            case "string":
+				break;
+			case "string":
 				$dotNetOutputType = "string";
 				break;
+			case "float":
+                                $dotNetOutputType = "double";
+                                break;
+
 			default:
 				$dotNetOutputType = $this->getCSharpName($resultType);
 				break;
@@ -886,6 +891,9 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				case "bigint":
 					$dotNetType = "long";
 					break;
+				case "float":
+                                        $dotNetType = "double";
+                                        break;
 				case "int":
 					if ($isEnum)
 						$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
@@ -1001,7 +1009,7 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 					$this->appendLine("			return result.Value<int>();");
 					break;
 				case "float":
-					$this->appendLine("			return result.Value<float>();");
+					$this->appendLine("			return result.Value<double>();");
 					break;
 				case "bool":
 					$this->appendLine("			if (result.Value<string>().Equals(\"1\") || result.Value<string>().ToLower().Equals(\"true\"))");
@@ -1057,6 +1065,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 			case "bigint":
 				$dotNetOutputType = "long";
 				break;
+			case "float":
+                                $dotNetOutputType = "double";
+                                break;
+
 			default:
 				$dotNetOutputType = $resultType;
 				break;
@@ -1106,6 +1118,9 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				case "bigint":
 					$dotNetType = "long";
 					break;
+				case "float":
+                                        $dotNetType = "double";
+                                        break;
 				case "int":
 					if ($isEnum)
 						$dotNetType = $this->getCSharpName($paramNode->getAttribute("enumType"));
@@ -1152,6 +1167,10 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				{
 					$param .= "long.MinValue";
 				}
+				elseif ($type == "float" && $paramNode->getAttribute("default") == "null")
+                                {
+                                        $param .= "Double.MinValue";
+                                }
 				else
 				{
 					$param .=  $paramNode->getAttribute("default");
@@ -1283,7 +1302,8 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				break;
 
 			case 'float':
-				$null = 'float.MinValue';
+				$type = 'double';
+				$null = 'double.MinValue';
 				break;
 				
 			case 'bool':
@@ -1325,8 +1345,9 @@ class CSharp2ClientGenerator extends ClientGeneratorFromXml
 				break;
 				
 			case 'float':
-			    $null = 'float.MinValue';
-			    break;
+				$type = 'double';
+				$null = 'double.MinValue';
+				break;
 			    
 			case 'bool':
 			    $type = 'bool?';
