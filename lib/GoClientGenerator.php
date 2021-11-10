@@ -55,6 +55,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$this->addClass($classNode);
 		}
 		
+		ini_set("memory_limit", "512M");
 		foreach($this->_allClasses as $classNode)
 		{
 			$this->_allContainers[$classNode->className] = $this->extractAllInheritanceClasses($classNode);
@@ -593,7 +594,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if($comaIfNeeded == "")
 		{
 			$text .= "	var result struct {\n";
-			$text .= "      Result string `json:\"result\"`\n";
+			$text .= "      Result interface{} `json:\"result\"`\n";
 			$text .= "  }\n";
 			$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
 			$text .= "	if err != nil {\n";
@@ -1096,7 +1097,9 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			{	
 				if($currentClassObject->parentClass == $currClass->className)
 				{
-					$calssesToAdd = array_merge($calssesToAdd, $this->extractAllInheritanceClasses($this->findClassByName($currentClassObject->className)));
+					$classByName = $this->findClassByName($currentClassObject->className);
+					$allInheritanceClasses = $this->extractAllInheritanceClasses($classByName);
+					$calssesToAdd = array_merge($calssesToAdd, $allInheritanceClasses);
 				}
 			}
 		}
