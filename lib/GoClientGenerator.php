@@ -593,7 +593,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		if($comaIfNeeded == "")
 		{
 			$text .= "	var result struct {\n";
-			$text .= "      Result string `json:\"result\"`\n";
+			$text .= "      Result interface{} `json:\"result\"`\n";
 			$text .= "  }\n";
 			$text .= "	err = json.Unmarshal(byteResponse, &result)\n";
 			$text .= "	if err != nil {\n";
@@ -1051,7 +1051,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 	private function findClassByName($name)
 	{
 		foreach ( $this->_allClasses as $class ) {
-			if ( strcasecmp($name, $class->className) == 0 ) {
+			if (strcasecmp($name, $class->className) == 0) {
 				return $class;
 			}
 		}
@@ -1092,11 +1092,13 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$calssesToAdd[] = $currClass->className;
 			}
 
-			foreach($this->_allClasses as $currentClassObject)
+			foreach($this->_allClasses as $otherClass)
 			{	
-				if($currentClassObject->parentClass == $currClass->className)
+				if ($otherClass->className != $currClass->className &&
+					$otherClass->parentClass == $currClass->className)
 				{
-					$calssesToAdd = array_merge($calssesToAdd, $this->extractAllInheritanceClasses($this->findClassByName($currentClassObject->className)));
+					$allInheritanceClasses = $this->extractAllInheritanceClasses($otherClass);
+					$calssesToAdd = array_merge($calssesToAdd, $allInheritanceClasses);
 				}
 			}
 		}
