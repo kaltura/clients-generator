@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>serverURL</key>
+	<string>@SERVICE_URL@</string>
+	<key>partnerId</key>
+	<integer>@YOUR_PARTNER_ID@</integer>
+	<key>username</key>
+	<string>@USERNAME@</string>
+	<key>password</key>
+	<string>@PASSWORD@</string>
+	<key>operatorUsername</key>
+	<string>@OPERATOR_USERNAME@</string>
+	<key>operatorPassword</key>
+	<string>@OPERATOR_PASSWORD@</string>
+	<key>assetId</key>
+	<string>@ASSET_ID@</string>
+	<key>userId</key>
+	<integer>@USER_ID@</integer>
+	<key>udid</key>
+	<string>@UDID@</string>
+</dict>
+</plist>

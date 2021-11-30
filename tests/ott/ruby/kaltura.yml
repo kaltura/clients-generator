@@ -1,0 +1,8 @@
+test:
+    partner_id: @YOUR_PARTNER_ID@
+    username: '@USERNAME@'
+    password: '@PASSWORD@'
+    service_url: @SERVICE_URL@
+    timeout: 120
+    
+    media_asset_id: @MEDIA_ASSET_ID@

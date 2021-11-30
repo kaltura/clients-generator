@@ -1,0 +1,36 @@
+Kaltura Ruby API Client Library.
+Compatible with Kaltura server version @VERSION@ and above.
+
+This source contains:
+ - The Kaltura client library (kaltura_client_base.rb)
+ - Auto generated core APIs (kaltura_client.rb)
+ - Auto generated plugin APIs (kaltura_plugins/*.rb)
+ - Ruby library test code and data files (test/*)
+ 
+== DEPENDENCIES ==
+
+RAKE			(http://rake.rubyforge.org/)
+Shoulda			(gem install shoulda)
+Rest_client		(gem install rest-client)
+
+== RUNNING THE CLIENT LIBRARY TESTS ==
+
+IMPORTANT: never run the tests of the client library against a production account - 
+	these tests perform modifications to account profiles.
+	
+Update kaltura.yml with your account information
+Change directory to kaltura/ruby
+Execute the command: rake test
+
+== HTTP[s] proxy support ==
+This client respects both the `https_proxy` and `http_proxy` ENV vars (https_proxy takes precedence).
+`http_proxy` should be set like so: proxy_hostname:proxy_port, for example:
+http_proxy='my_proxy:3128' 
+
+When initialising the Kaltura::KalturaConfiguration object, you may also set a proxy host, like so:
+ 
+    config = Kaltura::KalturaConfiguration.new()
+    config.http_proxy = http_proxy
+
+Doing that will override the values set in either ENV var.
+

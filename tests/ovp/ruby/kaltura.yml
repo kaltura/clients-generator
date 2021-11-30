@@ -1,0 +1,9 @@
+test:
+    user_name: testUser
+    partner_id: @YOUR_PARTNER_ID@
+    administrator_secret: @YOUR_ADMIN_SECRET@
+    secret: @YOUR_USER_SECRET@
+    service_url: @SERVICE_URL@
+    # uncomment and set to point to your HTTP[s] proxy if needed
+    # http_proxy: http://localhost:3128
+    timeout: 120

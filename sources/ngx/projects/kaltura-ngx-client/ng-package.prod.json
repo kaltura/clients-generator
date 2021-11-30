@@ -1,0 +1,7 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/kaltura-ngx-client",
+  "lib": {
+    "entryFile": "src/public_api.ts"
+  }
+}

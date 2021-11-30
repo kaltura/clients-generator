@@ -1,0 +1,41 @@
+{
+  "name": "kaltura-client",
+  "version": "@VERSION@",
+  "description": "Kaltura NodeJS client library (new implementation)",
+  "main": "KalturaClient.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --timeout 60000"
+  },
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsNodeJS"
+  },
+  "keywords": [
+    "Kaltura",
+    "API",
+    "clientlibs"
+  ],
+  "author": {
+    "name": "Kaltura Community",
+    "email": "community@kaltura.com"
+  },
+  "license": "AGPLv3",
+  "bugs": {
+    "url": "https://github.com/kaltura/clients-generator/issues"
+  },
+  "dependencies": {
+    "md5": "*",
+    "path": "*",
+    "http": "*",
+    "https": "*",
+    "request": "~2.88.0"
+  },
+  "devDependencies": {
+    "shortid": "^2.2.8",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  }
+}
