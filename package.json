@@ -1,0 +1,27 @@
+{
+  "name": "clients-generator",
+  "version": "1.0.0",
+  "description": "The code in this repo is used to auto generate the Kaltura client libraries for each supported language.",
+  "main": "copyAndPush.js",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaltura/clients-generator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaltura/clients-generator/issues"
+  },
+  "homepage": "https://github.com/kaltura/clients-generator#readme",
+  "dependencies": {
+    "copy-dir": "^0.4.0",
+    "rimraf": "^2.6.3"
+  }
+}

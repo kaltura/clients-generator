@@ -1,0 +1,2 @@
+include ':DemoApplication'
+include ':KalturaClient'

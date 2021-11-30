@@ -1,0 +1,87 @@
+{
+  "name": "@kaltura-ng/kaltura-ott-client",
+  "version": "@VERSION_JS@",
+  "description": "Kaltura OTT Angular based client",
+  "keywords": [
+    "Kaltura"
+  ],
+  "license": "AGPL-3.0",
+  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "contributors": [
+    {
+      "name": "Eran Sakal",
+      "email": "eran@sakalim.com"
+    },
+    {
+      "name": "Amir Chervinsky",
+      "email": "amir.chr@gmail.com"
+    }
+  ],
+  "scripts": {
+    "build": "ng build && node ./scripts/update-dist-package-json.js",
+    "lint": "tslint src/**/*.ts",
+    "deploy": "rm -rf dist && npm run build && cd dist/kaltura-ngx-client && npm pack && npm link",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaltura/KalturaOttGeneratedAPIClientsTypescript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kaltura/KalturaOttGeneratedAPIClientsTypescript/issues"
+  },
+  "main": "./index.js",
+  "dependencies": {
+    "@angular/common": "^6.0.3",
+    "@angular/compiler": "^6.0.3",
+    "@angular/core": "^6.0.3",
+    "@angular/forms": "^6.0.3",
+    "@angular/http": "^6.0.3",
+    "@angular/platform-browser": "^6.0.3",
+    "@angular/platform-browser-dynamic": "^6.0.3",
+    "@angular/router": "^6.0.3",
+    "core-js": "^2.5.4",
+    "rxjs": "^6.0.0",
+    "zone.js": "^0.8.26"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~0.6.8",
+    "@angular-devkit/build-ng-packagr": "~0.6.8",
+    "@angular/cli": "~6.0.8",
+    "@angular/compiler-cli": "^6.0.3",
+    "@angular/language-service": "^6.0.3",
+    "@types/jasmine": "~2.8.6",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
+    "codelyzer": "~4.2.1",
+    "jasmine-core": "~2.99.1",
+    "jasmine-spec-reporter": "~4.2.1",
+    "load-json-file": "^5.0.0",
+    "ng-packagr": "^3.0.0-rc.2",
+    "protractor": "~5.3.0",
+    "ts-node": "~5.0.1",
+    "tsickle": ">=0.25.5",
+    "tslint": "~5.9.1",
+    "typescript": "~2.7.2",
+    "write-json-file": "^2.3.0"
+  },
+  "engines": {
+    "node": ">= 8.9.0",
+    "npm": ">= 5.5.1"
+  },
+  "jest": {
+    "preset": "jest-preset-angular",
+    "setupTestFrameworkScriptFile": "<rootDir>/src/tests/setup-jest.ts",
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "/src/tests/.+[.]spec[.].+$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
+    ]
+  }
+}
