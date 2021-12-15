@@ -46,7 +46,7 @@ class TypescriptClientGenerator extends ClientGeneratorFromXml
 		$this->serverMetadata = $this->extractData($xpath);
 
 		$classesGenerator = new ClassesGenerator($this->serverMetadata, $this->_framework, $this->_disableDateParsing, $this->_targetKalturaServer);
-		$indexFilesGenerator = new IndexFilesGenerator($this->serverMetadata);
+		$indexFilesGenerator = new IndexFilesGenerator($this->serverMetadata, $this->_framework);
 		$enumsGenerator = new EnumsGenerator($this->serverMetadata);
 		$files = array_merge(
 			$classesGenerator->generate(),

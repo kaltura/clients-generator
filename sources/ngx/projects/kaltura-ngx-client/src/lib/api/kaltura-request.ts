@@ -141,7 +141,7 @@ export abstract class KalturaRequest<T> extends KalturaRequestBase {
       this.toRequestObject()
     );
 
-    if (environment.request.avoidQueryString) {
+    if (environment.request.ottMode) {
       result['clientTag'] = createClientTag(this, clientTag);
     }
 
