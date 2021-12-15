@@ -122,12 +122,12 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
     {
         $nestedResponse = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
         $requestFileFormat = $this->targetKalturaServer === 'ott' ? '20' : '1';
-        $avoidQueryString = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
+        $ottMode = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
         $customErrorInHttp500 = $this->targetKalturaServer === 'ott' ? 'true' : 'false';
         $fileContent = "export interface Environment {
     request: {
         apiVersion: string,
-        avoidQueryString: boolean,
+        ottMode: boolean,
         fileFormatValue: number
     }
     response: {
@@ -139,7 +139,7 @@ export const KALTURA_CLIENT_DEFAULT_REQUEST_OPTIONS: InjectionToken<KalturaReque
 export const environment: Environment = {
     request: {
         apiVersion: '{$this->serverMetadata->apiVersion}',
-        avoidQueryString: {$avoidQueryString},
+        ottMode: {$ottMode},
         fileFormatValue: {$requestFileFormat}
     },
     response: {

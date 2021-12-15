@@ -14,7 +14,7 @@ export class KalturaFileRequestAdapter {
       ...clientOptions,
       service: parameters['service'],
       action: parameters['action'],
-      avoidClientTag: environment.request.avoidQueryString
+      avoidClientTag: environment.request.ottMode
     }
     const endpointUrl = createEndpoint(request, endpointOptions);
     delete parameters['service'];
