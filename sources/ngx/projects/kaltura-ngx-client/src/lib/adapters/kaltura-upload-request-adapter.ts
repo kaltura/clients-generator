@@ -179,12 +179,12 @@ export class KalturaUploadRequestAdapter {
         parameters.finalChunk = uploadChunkData.finalChunk;
 
         data = this._getFormData(propertyName, file.name, file.slice(fileStart, fileEnd, file.type), parameters);
-
-        if (ks) {
-          data.append('ks', ks);
-        }
       } else {
         console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
+      }
+
+      if (ks) {
+        data.append('ks', ks);
       }
 
       // As ottMode was added by patch monkey this method to suite the needs. Once re-written please consolidate all the patches
