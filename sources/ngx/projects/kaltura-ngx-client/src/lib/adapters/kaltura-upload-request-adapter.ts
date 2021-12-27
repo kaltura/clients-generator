@@ -102,7 +102,7 @@ export class KalturaUploadRequestAdapter {
   private _getFormData(filePropertyName: string, fileName: string, fileChunk: File | Blob, parameters: any): FormData {
     const result = new FormData();
 
-    if (environment.request.avoidQueryString) {
+    if (environment.request.ottMode) {
       // NOTICE: workaround to OTT Server 5.2.0 that will break if the `json` property is not the first appended property
       // should have been added at line 178
       result.append("json", JSON.stringify(parameters));
@@ -137,6 +137,14 @@ export class KalturaUploadRequestAdapter {
       let endpointUrl = createEndpoint(request, endpointOptions);
       delete parameters['service'];
       delete parameters['action'];
+
+
+      let ks = null;
+      if (!environment.request.ottMode) {
+        // The KS should always be transmitted to the OVP server as part of the body
+        ks = parameters['ks'];
+        delete parameters['ks'];
+      }
 
       let isComplete = false;
       const {propertyName, file} = request.getFileInfo();
@@ -175,7 +183,13 @@ export class KalturaUploadRequestAdapter {
         console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
       }
 
-      if (environment.request.avoidQueryString) {
+      if (ks) {
+        data.append('ks', ks);
+      }
+
+      // As ottMode was added by patch monkey this method to suite the needs. Once re-written please consolidate all the patches
+      // handled once environment.request.ottMode is set to true
+      if (environment.request.ottMode) {
         data.append('clientTag',createClientTag(request, this.clientOptions.clientTag));
       } else {
         endpointUrl = buildUrl(endpointUrl, parameters);

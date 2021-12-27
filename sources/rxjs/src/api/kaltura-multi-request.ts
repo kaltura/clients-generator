@@ -24,7 +24,7 @@ export class KalturaMultiRequest extends KalturaRequestBase {
     buildRequest(defaultRequestOptions: KalturaRequestOptions | null, clientTag?: string): {} {
         const result = super.toRequestObject();
 
-      if (environment.request.avoidQueryString) {
+      if (environment.request.ottMode) {
         result['clientTag'] = createClientTag(this, clientTag);
       }
 

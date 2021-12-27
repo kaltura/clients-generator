@@ -6,13 +6,16 @@ require_once (__DIR__. '/GeneratedFileData.php');
 class IndexFilesGenerator extends TypescriptGeneratorBase
 {
 
-    function __construct($serverMetadata)
+    function __construct($serverMetadata, $framework)
     {
         parent::__construct($serverMetadata);
+
+        $this->framework = $framework;
     }
 
     public function generate()
     {
+        $isAngularFramework = $this->framework === 'ngx';
         $result = array();
 
         $classIndex = $this->classIndexFile();
@@ -21,9 +24,11 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
 
         $fileContent = $classIndex->content . $enumIndex->content . $actionIndex->content;
 
+        if (!$isAngularFramework) {
         $fileContent .= "
 
 console.warn('Notice! Your application bundle the whole package of kaltura-xxx-client (either rxjs/ngx/typescript), please refer to the library `readme.md` to reduce app bundle size.')";
+        }
 
         $file = new GeneratedFileData();
         $file->path = "./types/index.ts";

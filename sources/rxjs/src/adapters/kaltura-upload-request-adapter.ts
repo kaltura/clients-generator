@@ -102,7 +102,7 @@
 //   private _getFormData(filePropertyName: string, fileName: string, fileChunk: File | Blob, parameters: any): FormData {
 //     const result = new FormData();
 //
-//     if (environment.request.avoidQueryString) {
+//     if (environment.request.ottMode) {
 //       // NOTICE: workaround to OTT Server 5.2.0 that will break if the `json` property is not the first appended property
 //       // should have been added at line 178
 //       result.append("json", JSON.stringify(parameters));
@@ -175,7 +175,7 @@
 //         console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
 //       }
 //
-//       if (environment.request.avoidQueryString) {
+//       if (environment.request.ottMode) {
 //         data.append('clientTag',createClientTag(request, this.clientOptions.clientTag));
 //       } else {
 //         endpointUrl = buildUrl(endpointUrl, parameters);
