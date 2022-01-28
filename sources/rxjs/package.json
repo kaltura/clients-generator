@@ -30,7 +30,7 @@
   "dependencies": {
     "@types/node": "^8.0.47",
     "rxjs": "^6.5.4",
-    "tslib": "^1.10.0"
+    "tslib": "^1.14.1"
   },
   "devDependencies": {
     "@types/core-js": "^0.9.37",
