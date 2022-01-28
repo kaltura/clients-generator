@@ -28,7 +28,7 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "@types/node": "^8.0.47",
+    "@types/node": "^8.10.66",
     "rxjs": "^6.5.4",
     "tslib": "^1.10.0"
   },
