@@ -81,6 +81,17 @@ class ClassesGenerator extends TypescriptGeneratorBase
         $customProperties = array();
         $customProperties[] = $acceptedTypes;
 
+        if ($this->framework === 'node-typescript') {
+          $customHeaders = new stdClass();
+          $customHeaders->name = "customHeaders";
+          $customHeaders->localProperty = true;
+          $customHeaders->customDeclaration = "{ [headerKey: string]: string }";
+          $customHeaders->optional = true;
+          $customHeaders->type = KalturaServerTypes::Object;
+          $customHeaders->typeClassName = "KalturaObjectBase";
+          $customProperties[] = $customHeaders;
+        }
+
         $createClassArgs->properties = array_merge(
             $customProperties,
             $this->serverMetadata->requestSharedParameters
@@ -544,6 +555,9 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                     case "string":
                         $result->type = 's';
                         break;
+                    case "pojo":
+                      $result->type = 's';
+                      break;
                     default:
                         throw new Exception("toApplicationType: Unknown simple type {$typeClassName}");
                 }

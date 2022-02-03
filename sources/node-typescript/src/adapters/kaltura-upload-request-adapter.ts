@@ -1,5 +1,5 @@
 import { KalturaUploadRequest } from '../api/kaltura-upload-request';
-import { buildQuerystring, createEndpoint, prepareParameters } from './utils';
+import { createEndpoint, prepareParameters } from './utils';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaClientOptions } from '../kaltura-client-options';

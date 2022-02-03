@@ -75,15 +75,16 @@ export function buildQuerystring(data: {}, prefix?: string) {
 
 }
 
-export function getHeaders(): any {
-  return {
+export function getHeaders(customHeaders = {}): any {
+  const headers = {
     "Accept": "application/json",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    ...customHeaders
   };
+  return headers
 }
 
 export function prepareParameters(request: KalturaRequest<any> | KalturaMultiRequest | KalturaFileRequest, options: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): any {
-
   return Object.assign(
     {},
     request.buildRequest(defaultRequestOptions),

@@ -10,9 +10,10 @@ export class KalturaRequestAdapter {
   public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<T> {
     const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
     const { service, action, ...body } = parameters;
+    const { customHeaders } = defaultRequestOptions;
     const endpoint = createEndpoint(request, clientOptions, service, action);
 
-    return <any>createCancelableAction<T>({ endpoint, headers: getHeaders(), body })
+    return <any>createCancelableAction<T>({ endpoint, headers: getHeaders(customHeaders), body })
       .then(result => {
         try {
           const response = request.handleResponse(result);
