@@ -444,7 +444,7 @@ class KalturaClientBase
 	 * @param int $flags
 	 * @return boolean
 	 */
-	protected function ksortRecursive(&$array, $flags = null) 
+	protected function ksortRecursive(&$array, $flags = SORT_REGULAR) 
 	{
 		ksort($array, $flags);
 		foreach($array as &$arr) {
