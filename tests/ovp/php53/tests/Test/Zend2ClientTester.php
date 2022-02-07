@@ -134,7 +134,7 @@ class Zend2ClientTester
 	{
 		// add image entry
     	$imageEntry = $this->addImageEntry();
-    	
+	sleep(5); // wait for the status to update	
     	// execute playlist from filters
     	$playlistFilter = new MediaEntryFilterForPlaylist();
     	$playlistFilter->idEqual = $imageEntry->id;
