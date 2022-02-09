@@ -9,6 +9,15 @@ const {secret, partnerId, serviceUrl} = testConfig;
 let config = new kaltura.Configuration();
 config.serviceUrl = serviceUrl;
 
+// Uncomment if proxy is needed
+/*
+const proxyUrl = new URL('http://127.0.0.1:3128');
+proxyUrl.username = 'user';
+proxyUrl.password = 'pass';
+    
+config.proxy = proxyUrl.toString();
+*/
+
 const client = new kaltura.Client(config);
 
 
