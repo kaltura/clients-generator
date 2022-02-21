@@ -27,6 +27,19 @@
 # =============================================================================
 from __future__ import absolute_import
 
+import binascii
+import hashlib
+import mimetypes
+import random
+import base64
+import types
+import time
+import os
+import xml.etree.ElementTree as etree
+
+import requests
+from requests_toolbelt.multipart.encoder import MultipartEncoder
+import six
 
 from KalturaClient.Base import (
     IKalturaClientPlugin,
@@ -44,19 +57,6 @@ from KalturaClient.exceptions import (
 from KalturaClient.Plugins.Core import (
     API_VERSION, KalturaClientConfiguration, KalturaRequestConfiguration)
 
-import binascii
-import hashlib
-import mimetypes
-import random
-import base64
-import types
-import time
-import os
-import xml.etree.ElementTree as etree
-
-import requests
-from requests_toolbelt.multipart.encoder import MultipartEncoder
-import six
 
 try:
     from Crypto import Random
@@ -124,7 +124,7 @@ class KalturaClient(object):
 
         self.config = config
         logger = self.config.getLogger()
-        if (logger):
+        if logger:
             self.shouldLog = True
 
         KalturaObjectFactory.registerObjects(
@@ -230,7 +230,7 @@ class KalturaClient(object):
                 params.put(param, self.requestConfiguration[param])
 
         call = KalturaServiceActionCall(service, action, params, files)
-        if (self.multiRequestReturnType is not None):
+        if self.multiRequestReturnType is not None:
             self.multiRequestReturnType.append(returnType)
         self.callsQueue.append(call)
 
@@ -241,7 +241,7 @@ class KalturaClient(object):
             params.put(param, self.clientConfiguration[param])
         params.put("format", self.config.format)
         url = self.config.serviceUrl + "/api_v3"
-        if (self.multiRequestReturnType is not None):
+        if self.multiRequestReturnType is not None:
             url += "/service/multirequest"
             for i, call in enumerate(self.callsQueue):
                 callParams = call.getParamsForMultiRequest(i)
@@ -349,7 +349,7 @@ class KalturaClient(object):
 
         if self.config.format != KALTURA_SERVICE_FORMAT_XML:
             raise KalturaClientException(
-                "unsupported format: %s" % (postResult),
+                'unsupported format; Only KALTURA_SERVICE_FORMAT_XML is supported.',
                 KalturaClientException.ERROR_FORMAT_NOT_SUPPORTED)
 
         startTime = time.time()
@@ -436,7 +436,7 @@ class KalturaClient(object):
         return result
 
     def isMultiRequest(self):
-        return (self.multiRequestReturnType is not None)
+        return self.multiRequestReturnType is not None
 
     def getMultiRequestResult(self):
         return MultiRequestSubResult('%s:result' % len(self.callsQueue))
