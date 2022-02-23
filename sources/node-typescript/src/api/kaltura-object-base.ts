@@ -252,9 +252,9 @@ export abstract class KalturaObjectBase {
     }
 
     if (usedFallbackType && result) {
-      debug(`[kaltura-client]: Could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
+      debug(`could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
     } else if (!result) {
-      debug(`[kaltura-client]: Could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
+      debug(`could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
     }
 
     return result;

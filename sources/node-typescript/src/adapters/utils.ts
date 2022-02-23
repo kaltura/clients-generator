@@ -4,10 +4,13 @@ import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaMultiRequest } from '../api/kaltura-multi-request';
 import { KalturaRequest } from '../api/kaltura-request';
 import { KalturaFileRequest } from '../api/kaltura-file-request';
-import { CancelableAction } from '../cancelable-action';
+import { CancelableAction, ResolveFn } from '../cancelable-action';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { environment } from '../environment';
 import got from 'got';
+import * as dbg from 'debug'
+
+const debug = dbg('kaltura:utils')
 
 export function createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryparams?: {}): string {
   const endpoint = options.endpointUrl;
@@ -95,16 +98,19 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
   );
 }
 
-export function createCancelableAction<T>(data: { endpoint: string, headers: any, body: any }): CancelableAction<T> {
+export function createCancelableAction<T>(
+  data: { endpoint: string, headers: any, body: any },
+  responseType: 'json'|'text' = 'json'
+): CancelableAction<T> {
   const result = new CancelableAction<T>((resolve, reject) => {
     const cancelableRequest = got.post(data.endpoint, {
       json: data.body,
       headers: data.headers
     })
-    cancelableRequest
-      .json()
-      .then(resolve)
+    cancelableRequest[responseType]()
+      .then(<ResolveFn<any>>resolve)
       .catch(e => {
+        debug(`request failed for ${data?.endpoint} error: ${e?.message || e}`)
         const error = e.response?.statusCode === 200
           ? new Error(e.response?.body)
           : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request');

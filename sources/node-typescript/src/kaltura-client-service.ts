@@ -77,8 +77,8 @@ export class KalturaClient {
   }
 
   public request<T>(request: KalturaRequest<T>): CancelableAction<T>;
-  public request<T>(request: KalturaFileRequest): CancelableAction<{ url: string }>;
-  public request<T>(request: KalturaRequest<T> | KalturaFileRequest): CancelableAction<T | { url: string }> {
+  public request<T>(request: KalturaFileRequest): CancelableAction<string>;
+  public request<T>(request: KalturaRequest<T> | KalturaFileRequest): CancelableAction<T|string> {
 
     const optionsViolationError = this._validateOptions();
 
