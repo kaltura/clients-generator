@@ -338,6 +338,14 @@ class Kaltura_Client_ClientBase
 		$this->responseHeaders = array();
 		$requestHeaders = $this->config->requestHeaders;
 
+    $logParams = $params;
+    if (array_key_exists('password', $logParams)) {
+      unset($logParams['password']);
+    }
+    if (array_key_exists('newPassword', $logParams)) {
+      unset($logParams['newPassword']);
+    }
+    $logParams = $this->jsonEncode($logParams);
 		$params = $this->jsonEncode($params);
 
 		if (!is_null($this->config->internalServiceUrl))
@@ -366,7 +374,7 @@ class Kaltura_Client_ClientBase
 
 			
 		$this->log("curl: $url");
-		$this->log("post: $params");
+		$this->log("post: $logParams");
 		if($this->config->format == self::KALTURA_SERVICE_FORMAT_JSON)
 		{
 			$requestHeaders[] = 'Accept: application/json';
