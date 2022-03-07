@@ -397,7 +397,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "	}\n";
 			$s .= "	return nil\n";
 			$s .= "}\n";
-			$s .= "func (o *".$className."Container) MarshalJSON() ([]byte, error) {\n";
+			$s .= "func (o ".$className."Container) MarshalJSON() ([]byte, error) {\n";
 			$s .= "	realObject := o.Get()\n";
 			$s .= "	if realObject != nil {\n";
 			$s .= "		return json.Marshal(realObject)\n";

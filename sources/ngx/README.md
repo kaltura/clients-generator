@@ -35,7 +35,7 @@ $ npm run deploy
  ```
 > make sure you prefix the path with `file:` as shown above.
 
-An example of a vaild command will be: `npm install file:libs/kaltura-ngx-client-v7.1.0-20173010-1053.tgz`
+An example of a valid command will be: `npm install file:libs/kaltura-ngx-client-v7.1.0-20173010-1053.tgz`
 
 5. if you already have older version, delete that file. You should do this only after you installed the new version.
 
