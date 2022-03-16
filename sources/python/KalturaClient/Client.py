@@ -450,7 +450,8 @@ class KalturaClient(object):
                         expiry=86400, privileges=''):
         rand = random.randint(0, 0x10000)
         expiry = int(time.time()) + expiry
-        fields = [partnerId, expiry, type_, rand, userId, privileges]
+        fields = [
+            partnerId, partnerId, expiry, type_, rand, userId, privileges]
         fields = [
             x if isinstance(x, six.binary_type)
             else six.text_type(x).encode(KalturaClient.ENCODING)
