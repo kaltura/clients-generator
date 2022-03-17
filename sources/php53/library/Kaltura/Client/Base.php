@@ -232,9 +232,9 @@ class Base
 			foreach ($this->responseHeaders as $curHeader)
 			{
 				$splittedHeader = explode(':', $curHeader, 2);
-				if ($splittedHeader[0] == 'X-Me')
+				if (strtolower($splittedHeader[0]) == 'x-me')
 					$serverName = trim($splittedHeader[1]);
-				else if ($splittedHeader[0] == 'X-Kaltura-Session')
+				else if (strtolower($splittedHeader[0]) == 'x-kaltura-session')
 					$serverSession = trim($splittedHeader[1]);
 			}
 			if (!is_null($serverName) || !is_null($serverSession))
