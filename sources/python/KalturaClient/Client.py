@@ -35,9 +35,15 @@ import base64
 import types
 import time
 import os
-import xml.etree.ElementTree as etree
+from lxml import etree
 
 import requests
+import logging
+import contextlib
+try:
+    from http.client import HTTPConnection # py3
+except ImportError:
+    from httplib import HTTPConnection # py2
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 import six
 
@@ -64,6 +70,26 @@ try:
 except ImportError:
     pass            # PyCrypto is required only for creating KS V2
 
+def debug_requests_on():
+    '''Switches on logging of the requests module.'''
+    HTTPConnection.debuglevel = 1
+
+    logging.basicConfig()
+    logging.getLogger().setLevel(logging.DEBUG)
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.DEBUG)
+    requests_log.propagate = True
+
+def debug_requests_off():
+    '''Switches off logging of the requests module, might be some side-effects'''
+    HTTPConnection.debuglevel = 0
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.WARNING)
+    root_logger.handlers = []
+    requests_log = logging.getLogger("requests.packages.urllib3")
+    requests_log.setLevel(logging.WARNING)
+    requests_log.propagate = False
 
 def _get_file_params(files):
     """Return the full parameters needed for uploading files - name, file
@@ -321,7 +347,8 @@ class KalturaClient(object):
     def parsePostResult(self, postResult):
         self.log("result (xml): %s" % postResult)
         try:
-            resultXml = etree.fromstring(postResult)
+            parser = etree.XMLParser(encoding='ISO-8859-1', ns_clean=True, recover=True)
+            resultXml = etree.fromstring(postResult, parser=parser)
         except etree.ParseError as e:
             raise KalturaClientException(
                 e, KalturaClientException.ERROR_INVALID_XML)
@@ -418,7 +445,7 @@ class KalturaClient(object):
         if resultXml is None:
             return []
         result = []
-        for i, childNode in enumerate(resultXml.getchildren()):
+        for i, childNode in enumerate(list(resultXml)):
             exceptionObj = self.getExceptionIfError(childNode)
             if exceptionObj is not None:
                 result.append(exceptionObj)
