@@ -35,18 +35,18 @@ import base64
 import types
 import time
 import os
-from lxml import etree
 
-import requests
 import logging
-import contextlib
+import requests
 try:
     from http.client import HTTPConnection # py3
 except ImportError:
     from httplib import HTTPConnection # py2
 from requests_toolbelt.multipart.encoder import MultipartEncoder
+
 import six
 
+from lxml import etree
 from KalturaClient.Base import (
     IKalturaClientPlugin,
     IKalturaLogger,
