@@ -445,7 +445,7 @@ class KalturaClient(object):
         if resultXml is None:
             return []
         result = []
-        for i, childNode in enumerate(list(resultXml)):
+        for i, childNode in enumerate(resultXml):
             exceptionObj = self.getExceptionIfError(childNode)
             if exceptionObj is not None:
                 result.append(exceptionObj)
