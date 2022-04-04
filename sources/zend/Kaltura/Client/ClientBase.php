@@ -789,12 +789,13 @@ class Kaltura_Client_ClientBase
 		$i = 0;
 		foreach($items as $item) {
 			$error = $this->checkIfError($item, false);
+			$fallbackType = isset($this->multiRequestReturnType[$i]) ? $this->multiRequestReturnType[$i] : null;
 			if($error)
 				$ret[] = $error;
 			else if($item->objectType)
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalObject($item, $this->multiRequestReturnType[$i]);
+				$ret[] = Kaltura_Client_ParseUtils::unmarshalObject($item, $fallbackType);
 			else if($item->item)
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalArray($item, $this->multiRequestReturnType[$i]);
+				$ret[] = Kaltura_Client_ParseUtils::unmarshalArray($item, $fallbackType);
 			else
 				$ret[] = Kaltura_Client_ParseUtils::unmarshalSimpleType($item);
 			$i++;
