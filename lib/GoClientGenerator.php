@@ -143,7 +143,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$propertyName = $constNode->getAttribute("name");
 				$propertyValue = $constNode->getAttribute("value");
 				$enumValues[] = $propertyName;
-				$s .= "   $propertyName $enumName = \"$propertyValue\"\n";
+				$s .= "   $propertyName = $enumName(\"$propertyValue\")\n";
 			}
 			$enumValuesString = implode (", ", $enumValues);
 
@@ -156,22 +156,35 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			$s .= "      return err\n";
 			$s .= "   }\n";
 			$s .= "   enumValue := $enumName(s)\n";
-			$s .= "   switch enumValue {\n";
+			$s .= "   *e = enumValue\n";
+			$s .= "   return nil\n";
+			$s .= "}\n";
+			$s .= "\n";
+
+			$s .= "\n";
+			$s .= "func (e $enumName) IsValid() error {\n";
+			$s .= "   switch e {\n";
 			$s .= "   case $enumValuesString:\n";
-			$s .= "      *e = enumValue\n";
 			$s .= "      return nil\n";
 			$s .= "   }\n";
 			$s .= "   return errors.New(\"invalid $enumName enum value\")\n";
 			$s .= "}\n";
 			$s .= "\n";
+
 		} else
 		{
 			$s .= ")\n";
 			$s .= "\n";
 			$s .= "type $enumName string\n";
 			$s .= "func (e *$enumName) UnmarshalJSON(b []byte) error {\n";
-			$s .= "	return errors.New(\"invalid $enumName enum value\")\n";
+			$s .= "	return nil\n";
 			$s .= "}\n";
+
+			$s .= "\n";
+			$s .= "func (e $enumName) IsValid() error {\n";
+			$s .= "   return errors.New(\"invalid $enumName enum value\")\n";
+			$s .= "}\n";
+			$s .= "\n";
 		}
 
 		$file = "enums/$enumNameLower/enum.go";
