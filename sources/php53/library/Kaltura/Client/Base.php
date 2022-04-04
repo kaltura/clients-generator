@@ -661,12 +661,13 @@ class Base
 		$i = 0;
 		foreach($items as $item) {
 			$error = $this->checkIfError($item, false);
+			$fallbackType = isset($this->multiRequestReturnType[$i]) ? $this->multiRequestReturnType[$i] : null;
 			if($error)
 				$ret[] = $error;
 			else if($item->objectType)
-				$ret[] = ParseUtils::unmarshalObject($item, $this->multiRequestReturnType[$i]);
+				$ret[] = ParseUtils::unmarshalObject($item, $fallbackType);
 			else if($item->item)
-				$ret[] = ParseUtils::unmarshalArray($item, $this->multiRequestReturnType[$i]);
+				$ret[] = ParseUtils::unmarshalArray($item, $fallbackType);
 			else
 				$ret[] = ParseUtils::unmarshalSimpleType($item);
 			$i++;
