@@ -265,8 +265,6 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 //		$serviceNodes = $xpath->query("/xml/plugins/plugin[@name = '$pluginName']/pluginService");
 		foreach($serviceNodes as $serviceNode)
 		{
-			if(!$this->shouldIncludeService($serviceNode->getAttribute("id")))
-				continue;
 			$serviceAttribute = $serviceNode->getAttribute("name");
 			$serviceClass = $this->getServiceClass($serviceNode);
 			$this->appendLine('	/**');
@@ -281,8 +279,6 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		parent::__construct($client);');
 		foreach($serviceNodes as $serviceNode)
 		{
-			if(!$this->shouldIncludeService($serviceNode->getAttribute("id")))
-				continue;
 			$serviceAttribute = $serviceNode->getAttribute("name");
 			$serviceClass = $this->getServiceClass($serviceNode);
 			$this->appendLine("		\$this->$serviceAttribute = new $serviceClass(\$client);");
@@ -305,8 +301,6 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('		$services = array(');
 		foreach($serviceNodes as $serviceNode)
 		{
-			if(!$this->shouldIncludeService($serviceNode->getAttribute("id")))
-				continue;
 			$serviceAttribute = $serviceNode->getAttribute("name");
 			$this->appendLine("			'$serviceAttribute' => \$this->$serviceAttribute,");
 		}
