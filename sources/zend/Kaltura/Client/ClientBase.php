@@ -256,9 +256,9 @@ class Kaltura_Client_ClientBase
 			foreach ($this->responseHeaders as $curHeader)
 			{
 				$splittedHeader = explode(':', $curHeader, 2);
-				if ($splittedHeader[0] == 'X-Me')
+				if (strtolower($splittedHeader[0]) == 'x-me')
 					$serverName = trim($splittedHeader[1]);
-				else if ($splittedHeader[0] == 'X-Kaltura-Session')
+				else if (strtolower($splittedHeader[0]) == 'x-kaltura-session')
 					$serverSession = trim($splittedHeader[1]);
 			}
 			if (!is_null($serverName) || !is_null($serverSession))
@@ -789,12 +789,13 @@ class Kaltura_Client_ClientBase
 		$i = 0;
 		foreach($items as $item) {
 			$error = $this->checkIfError($item, false);
+			$fallbackType = isset($this->multiRequestReturnType[$i]) ? $this->multiRequestReturnType[$i] : null;
 			if($error)
 				$ret[] = $error;
 			else if($item->objectType)
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalObject($item, $this->multiRequestReturnType[$i]);
+				$ret[] = Kaltura_Client_ParseUtils::unmarshalObject($item, $fallbackType);
 			else if($item->item)
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalArray($item, $this->multiRequestReturnType[$i]);
+				$ret[] = Kaltura_Client_ParseUtils::unmarshalArray($item, $fallbackType);
 			else
 				$ret[] = Kaltura_Client_ParseUtils::unmarshalSimpleType($item);
 			$i++;

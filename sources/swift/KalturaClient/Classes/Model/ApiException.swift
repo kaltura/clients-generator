@@ -33,7 +33,10 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-public class ApiException : ObjectBase, Error{
+public class ApiException : ObjectBase, Error, @unchecked Sendable {
+    // These properties were changed to read-only when `@unchecked Sendable` was added for
+    // Xcode 13.3. If you make them publicly writable or alter their values within the class
+    // you will need to do so with thread-safety in mind.
     public var message: String?
     public var code: String?
     public var args: [ApiExceptionArg]?
