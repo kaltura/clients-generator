@@ -273,7 +273,9 @@ class Kaltura_Client_ClientBase
 			}
 		}
 
-		$this->resetRequest();
+		if(!$this->isMultiRequest()) {
+			$this->resetRequest();
+		}
 
 		$endTime = microtime (true);
 

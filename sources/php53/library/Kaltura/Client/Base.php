@@ -249,7 +249,9 @@ class Base
 			}
 		}
 
-		$this->resetRequest();
+		if (!$this->isMultiRequest()) {
+			$this->resetRequest();
+		}
 
 		$endTime = microtime (true);
 
