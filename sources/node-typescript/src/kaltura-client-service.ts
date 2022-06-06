@@ -60,6 +60,10 @@ export class KalturaClient {
     this._defaultRequestOptions = new KalturaRequestOptions(args);
   }
 
+  public getDefaultRequestOptions(): KalturaRequestOptions {
+    return this._defaultRequestOptions;
+  }
+
   private _validateOptions(): Error | null {
     if (!this._options) {
       return new KalturaClientException('client::missing_options', 'cannot transmit request, missing client options (did you forgot to provide options manually?)');
