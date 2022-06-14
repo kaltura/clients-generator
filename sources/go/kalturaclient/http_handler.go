@@ -56,9 +56,6 @@ func (p *HttpHandler) Execute(request Request) ([]byte, error) {
 		}
 	}
 
-	body := httpRequest.GetBody
-	print(body)
-
 	httpResponse, err := p.httpClient.Do(httpRequest)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute HTTP request: %w", err)
