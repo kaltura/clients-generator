@@ -192,9 +192,11 @@ public class RequestBuilder<T: Any, U: BaseTokenizedObject, G:BaseTokenizedObjec
         var url: URL = client.configuration.endPoint
         let urlComponents = NSURLComponents()
         urlComponents.host = url.host
-        urlComponents.port = url.port! as NSNumber
         urlComponents.scheme = url.scheme
         urlComponents.path = url.path + "/api_v3" + self.getUrlTail()
+        if let port = url.port as NSNumber? {
+            urlComponents.port = port
+        }
         
         if let params = self.urlParams, params.count > 0 {
                         var queryItems = [URLQueryItem]()
