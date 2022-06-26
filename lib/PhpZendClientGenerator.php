@@ -129,7 +129,8 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach($serviceNodes as $serviceNode)
 		{
-			if(!$this->shouldIncludeService($serviceNode->getAttribute("id"))){
+			if(!$this->shouldIncludeService($serviceNode->getAttribute("id")))
+			{
 				continue;
 			}
 				

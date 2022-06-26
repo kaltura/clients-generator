@@ -52,7 +52,8 @@ class ZendClientTester
 		echo "\nFinished running client library tests\n";
 	}
 	
-	public function testSyncFlow(){
+	public function testSyncFlow()
+	{
 	    // add upload token
 	    $uploadToken = new Kaltura_Client_Type_UploadToken();
 	    $uploadToken->fileName = self::UPLOAD_VIDEO_FILENAME;
