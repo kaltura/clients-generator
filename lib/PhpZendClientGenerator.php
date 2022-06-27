@@ -129,9 +129,10 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$serviceNodes = $xpath->query("/xml/services/service");
 		foreach($serviceNodes as $serviceNode)
 		{
-			if(!$this->shouldIncludeService($serviceNode->getAttribute("id")))
+			if(!$this->shouldIncludeService($serviceNode->getAttribute("id"))){
+
 				continue;
-				
+			}
 	    	$this->startNewTextBlock();
 			$this->appendLine('<?php');
 		    $this->writeService($serviceNode);
@@ -262,8 +263,15 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('{');
 	
 		$serviceNodes = $xpath->query("/xml/services/service[@plugin = '$pluginName']");
-//		$serviceNodes = $xpath->query("/xml/plugins/plugin[@name = '$pluginName']/pluginService");
+		// See https://kaltura.atlassian.net/browse/SUP-29816 
+		$serviceNodesRefined = array();
 		foreach($serviceNodes as $serviceNode)
+		{
+			if($this->shouldIncludeService($serviceNode->getAttribute("id")))
+				$serviceNodesRefined[] = $serviceNode;
+		}
+//		$serviceNodes = $xpath->query("/xml/plugins/plugin[@name = '$pluginName']/pluginService");
+		foreach($serviceNodesRefined as $serviceNode)
 		{
 			$serviceAttribute = $serviceNode->getAttribute("name");
 			$serviceClass = $this->getServiceClass($serviceNode);
@@ -277,7 +285,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('	protected function __construct(Kaltura_Client_Client $client)');
 		$this->appendLine('	{');
 		$this->appendLine('		parent::__construct($client);');
-		foreach($serviceNodes as $serviceNode)
+		foreach($serviceNodesRefined as $serviceNode)
 		{
 			$serviceAttribute = $serviceNode->getAttribute("name");
 			$serviceClass = $this->getServiceClass($serviceNode);
@@ -299,7 +307,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('	public function getServices()');
 		$this->appendLine('	{');
 		$this->appendLine('		$services = array(');
-		foreach($serviceNodes as $serviceNode)
+		foreach($serviceNodesRefined as $serviceNode)
 		{
 			$serviceAttribute = $serviceNode->getAttribute("name");
 			$this->appendLine("			'$serviceAttribute' => \$this->$serviceAttribute,");
