@@ -86,7 +86,8 @@
         
         var task: URLSessionDataTask? = nil
         // settings headers:
-        task = session.dataTask(with: request) { (data, response, error) in
+        task = session.dataTask(with: request) { [weak self] (data, response, error) in
+            guard let self = self else { return }
 
             self.remove(id: r.requestId)
         
@@ -96,7 +97,7 @@
                         // cancel3ed
                         logger.debug("request has been canceled")
                     } else {
-                        let result = Result<Any>(data: nil, error: ApiClientException(message: error.localizedDescription, code: ApiClientException.ErrorCode.httpError))
+                        let result = Result<Any>(data: nil, error: ApiClientException(message: error.localizedDescription, code: ApiClientException.ErrorCode.httpError.rawValue))
                         r.completion(result)
                         // some other error
                     }
@@ -160,11 +161,9 @@
     
     public func cancel(id requestId: String) {
         let taskID = self.taskIdByRequestID[requestId]
-        let taskIndex = self.tasks.index { (
-            task) -> Bool in
-            return task.taskIdentifier == taskID
-        }
         
+        let taskIndex = self.tasks.firstIndex { $0.taskIdentifier == taskID }
+
         if let index = taskIndex {
             let task = self.tasks[index]
             task.cancel()
@@ -173,10 +172,7 @@
     
     public func remove(id requestId: String) {
         let taskID = self.taskIdByRequestID[requestId]
-        let taskIndex = self.tasks.index { (
-            task) -> Bool in
-            return task.taskIdentifier == taskID
-        }
+        let taskIndex = self.tasks.firstIndex { $0.taskIdentifier == taskID }
         
         if let index = taskIndex {
             self.taskIdByRequestID.removeValue(forKey: requestId)

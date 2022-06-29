@@ -101,12 +101,29 @@ internal class JSONParser{
         return ret
     }
     
+    // parse API Exception
+    internal static func parseException(object: [String: Any]) -> ApiException {
+        let message = object["message"] as? String
+        let code = object["code"] as? String
+        
+        var exceptionArgs: [ApiExceptionArg]?
+        
+        if let args = object["args"] as? [[String: Any]] {
+            do {
+                exceptionArgs = try self.parse(array: args) as [ApiExceptionArg]
+            } catch {
+                return ApiClientException(message: message, code: code)
+            }
+        }
+        return ApiClientException(message: message, code: code, args: exceptionArgs)
+    }
+    
     // parse dictinoary of object
     internal static func parse<T>(object: [String: Any]) throws -> T where T: ObjectBase {
         return try parse(object: object, type: T.self)
     }
     
-    // parse response 
+    // parse response
     internal static func parse<T>(object: [String: Any], type: ObjectBase.Type) throws -> T where T: ObjectBase {
         
         var classType: ObjectBase.Type = type
@@ -118,7 +135,7 @@ internal class JSONParser{
                 return try self.parse(object: result, type: type)
             }
             else if let error = object["error"] as? [String: Any] {
-                throw try parse(object: error) as ApiException
+                throw self.parseException(object: error)
             }
         }
 
@@ -135,7 +152,8 @@ internal class JSONParser{
             return json
         }
         catch {
-            throw ApiClientException(message: "Failed to deserialize JSON", code: ApiClientException.ErrorCode.invalidJson)
+            throw ApiClientException(message: "Failed to deserialize JSON",
+                                     code: ApiClientException.ErrorCode.invalidJson.rawValue)
         }
     }
     
@@ -159,11 +177,12 @@ internal class JSONParser{
                 return try self.parse(primitive: result, type: type)
             }
             else if let error = dict["error"] as? [String: Any] {
-                throw try parse(object: error) as ApiException
+                throw self.parseException(object: error)
             }
         }
         
-        throw ApiClientException(message: "Type not found", code: ApiClientException.ErrorCode.typeNotFound)
+        throw ApiClientException(message: "Type not found",
+                                 code: ApiClientException.ErrorCode.typeNotFound.rawValue)
     }
     
     
@@ -171,7 +190,7 @@ internal class JSONParser{
     internal static func parse<T>(array: Any) throws -> [T]? {
         if let dict = array as? [String: Any] {
             if dict["objectType"] as? String == "KalturaAPIException" {
-                throw try parse(object: dict) as ApiException
+                throw self.parseException(object: dict)
             }
             
             if let result = dict["result"] {
@@ -180,14 +199,16 @@ internal class JSONParser{
             else if let error = dict["error"] {
                 return try parse(array: error)
             }else{
-                throw ApiClientException(message: "JSON is not valid object", code: ApiClientException.ErrorCode.invalidJsonObject)
+                throw ApiClientException(message: "JSON is not valid object",
+                                         code: ApiClientException.ErrorCode.invalidJsonObject.rawValue)
             }
         }
         else if let arr = array as? [Any] {
             return try parse(array: arr) as? [T]
         }
         else{
-            throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
+            throw ApiClientException(message: "JSON is not of object",
+                                     code: ApiClientException.ErrorCode.invalidJsonObject.rawValue)
         }
         
         
@@ -195,17 +216,25 @@ internal class JSONParser{
     internal static func parse<T>(json: Any) throws -> T? {
         
         if let dict = json as? [String: Any], dict["objectType"] as? String == "KalturaAPIException" {
-            throw try parse(object: dict) as ApiException
+            throw self.parseException(object: dict)
         }
         if let type: ObjectBase.Type = T.self as? ObjectBase.Type {
             if let dict = json as? [String: Any] {
                 return try parse(object: dict, type: type) as? T
             }
             else {
-                throw ApiClientException(message: "JSON is not of object", code: ApiClientException.ErrorCode.invalidJsonObject)
+                throw ApiClientException(message: "JSON is not of object",
+                                         code: ApiClientException.ErrorCode.invalidJsonObject.rawValue)
             }
         }
         else if let _ = T.self as? Void.Type {
+            if let dict = json as? [String: Any],
+                let result = dict["result"] as? [String: Any],
+                let error = result["error"] as? [String: Any],
+                error["objectType"] as? String == "KalturaAPIException" {
+                throw self.parseException(object: dict)
+            }
+
             return nil
         }
         else {

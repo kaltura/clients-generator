@@ -33,6 +33,21 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-public class NullRequestBuilder<G:BaseTokenizedObject>: RequestBuilder<Void, BaseTokenizedObject, G> {
+public class NullRequestBuilder<G: BaseTokenizedObject>: RequestBuilder<Void, BaseTokenizedObject, G> {
     
+    public var completionWitError: ((_ error: ApiException?) -> Void)?
+    
+    public override func complete(data: Any?, exception: ApiException?)  {
+        super.complete(data: data, exception: exception)
+        
+        if let block = completionWitError {
+            block(exception)
+        }
+    }
+    
+    @discardableResult
+    public func set(completionWitError: @escaping (_ error: ApiException?) -> Void) -> Self {
+        self.completionWitError = completionWitError
+        return self
+    }
 }

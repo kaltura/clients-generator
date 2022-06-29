@@ -51,8 +51,8 @@ open class ObjectBase {
     }
     
     internal func populate(_ dict: [String: Any]) throws {
-        if dict["relatedObjects"] != nil {
-            relatedObjects = try JSONParser.parse(map: dict["relatedObjects"] as! [String: Any])
+        if let objects = dict["relatedObjects"] as? [String: Any] {
+            relatedObjects = try JSONParser.parse(map: objects)
         }
     }
     

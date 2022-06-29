@@ -33,48 +33,14 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-public class ApiException : ObjectBase, Error, @unchecked Sendable {
-    // These properties were changed to read-only when `@unchecked Sendable` was added for
-    // Xcode 13.3. If you make them publicly writable or alter their values within the class
-    // you will need to do so with thread-safety in mind.
-    public var message: String?
-    public var code: String?
-    public var args: [ApiExceptionArg]?
-    
-    public required init() {
-        super.init()
-    }
-    
-    public convenience init(message: String, code: String, args: [ApiExceptionArg]) {
-        self.init()
-        
-        self.message = message
-        self.code = code
-        self.args = args
-    }
-    
-    public convenience init(message: String, code: String) {
-        self.init(message: message, code: code, args: [])
-    }
-    
-    internal override func populate(_ dict: [String: Any]) throws {
-        try super.populate(dict);
-        // set members values:
-        message = dict["message"] as? String
-        code = dict["code"] as? String
-        if let argsDict = dict["args"] as? [String: String] {
-            args = []
-            for (key, value) in argsDict {
-                let arg = ApiExceptionArg()
-                arg.name = key
-                arg.value = value
-            }
-        }
-    }
+public protocol ApiException: Error {
+    var message: String? { get }
+    var code: String? { get }
+    var args: [ApiExceptionArg]? { get }
 }
 
-public class ApiClientException : ApiException {
-    
+public struct ApiClientException: ApiException {
+
     public enum ErrorCode: String {
         case typeNotFound = "TYPE_NOT_FOUND"
         case invalidJson = "INVALID_JSON"
@@ -82,7 +48,13 @@ public class ApiClientException : ApiException {
         case httpError = "HTTP_ERROR"
     }
     
-    public convenience init(message: String, code: ErrorCode) {
-        self.init(message: message, code: code.rawValue)
+    public let message: String?
+    public let code: String?
+    public let args: [ApiExceptionArg]?
+    
+    init(message: String? = nil, code: String? = nil, args: [ApiExceptionArg]? = nil) {
+        self.message = message
+        self.code = code
+        self.args = args
     }
 }

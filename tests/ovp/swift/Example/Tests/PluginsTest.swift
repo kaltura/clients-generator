@@ -41,12 +41,15 @@ class PluginsTest: BaseTest {
     
     override func spec() {
         let config: ConnectionConfiguration = ConnectionConfiguration()
+        if let endPoint = URL(string: serverUrl) {
+            config.endPoint = endPoint
+        }
         client = Client(config)
         
         describe("metadata") {
             
             beforeEach {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -59,7 +62,7 @@ class PluginsTest: BaseTest {
                 metadataProfile.metadataObjectType = MetadataObjectType.ENTRY
                 metadataProfile.name = "Plugins Test - \(BaseTest.uniqueTag)"
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = MetadataProfileService.add(metadataProfile: metadataProfile, xsdData: "<xml></xml>")
                     requestBuilder.set(completion: {(createdMetadataProfile: MetadataProfile?, error: ApiException?) in
                         
