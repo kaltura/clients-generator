@@ -35,7 +35,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		foreach($pluginNodes as $pluginNode) {
 			$this->pluginName = $pluginNode->getAttribute("name");
 			$pluginName = ucfirst($this->pluginName);
-			$this->_baseClientPath = "KalturaClient/plugins/{$pluginName}";
+			// $this->_baseClientPath = "KalturaClient/plugins/{$pluginName}";
 			$this->generatePlugin();
 		}
 
@@ -259,10 +259,10 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         $this->writeDefaultSubSpec($defaultSubSpecName);
 
         //3. adding subspecs
-        $pluginNodes = $this->xpath->query("/xml/plugins/plugin");
-        foreach($pluginNodes as $pluginNode) {
-            $this->writeSubSpec($pluginNode,$defaultSubSpecName);
-        }
+        // $pluginNodes = $this->xpath->query("/xml/plugins/plugin");
+        // foreach($pluginNodes as $pluginNode) {
+        //     $this->writeSubSpec($pluginNode,$defaultSubSpecName);
+        // }
 		$this->appendLine("s.default_subspec = '$defaultSubSpecName'");
         $this->appendLine("end");
         $file = "$specName.podspec";
