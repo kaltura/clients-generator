@@ -5,6 +5,6 @@
 	<key>secret</key>
 	<string>MY_API_SECRET</string>
 	<key>partnerId</key>
-	<integer>0</integer>
+	<integer>-1</integer>
 </dict>
 </plist>
