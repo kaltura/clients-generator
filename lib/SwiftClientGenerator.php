@@ -35,6 +35,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		foreach($pluginNodes as $pluginNode) {
 			$this->pluginName = $pluginNode->getAttribute("name");
 			$pluginName = ucfirst($this->pluginName);
+			// This part of the script was removed in order to generate all Plugins as part of the Core module.
 			// $this->_baseClientPath = "KalturaClient/plugins/{$pluginName}";
 			$this->generatePlugin();
 		}
@@ -258,6 +259,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         //2. adding core subspec ( default )
         $this->writeDefaultSubSpec($defaultSubSpecName);
 
+        // This part of the script was removed in order to generate all Plugins as part of the Core module.
         //3. adding subspecs
         // $pluginNodes = $this->xpath->query("/xml/plugins/plugin");
         // foreach($pluginNodes as $pluginNode) {
