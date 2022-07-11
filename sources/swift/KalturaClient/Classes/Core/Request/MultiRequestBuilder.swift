@@ -140,30 +140,30 @@ extension Dictionary where Key == String {
     
     func sortedJsonData() -> Data? {
         
-        var result = ""
-        let prefix = "{"
-        let suffix = "}"
+        if isEmpty {
+            return "{}".data(using: .utf8)
+        }
         
+        var result = "{"
         
-        result.append(prefix)
-        let sortedKeys = self.keys.sorted {$0.localizedStandardCompare($1) == .orderedAscending}
+        let sortedKeys = self.keys.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+        
         for key in sortedKeys {
             
             let jsonObject = self[key]!
             var jsonObjectString: String? = nil
-            if ( JSONSerialization.isValidJSONObject(jsonObject)){
+            if (JSONSerialization.isValidJSONObject(jsonObject)) {
                 do {
                     let jsonData = try JSONSerialization.data(withJSONObject: jsonObject)
                     jsonObjectString = String(data: jsonData, encoding: String.Encoding.utf8)
-                }catch{
+                } catch {
                     
                 }
-            }else if let object = jsonObject as? String {
+            } else if let object = jsonObject as? String {
                 jsonObjectString = "\"\(object)\""
-            }else if let object = jsonObject as? Int {
+            } else if let object = jsonObject as? Int {
                 jsonObjectString = String(object)
             }
-            
             
             if let value = jsonObjectString  {
                 result.append("\"\(key)\":")
@@ -172,11 +172,11 @@ extension Dictionary where Key == String {
             }
         }
         
-        result = result.substring(to: result.index(before: result.endIndex))
-        result.append(suffix)
+        // Remove the trailing comma
+        result.removeLast()
+        result.append("}")
         
-        let data = result.data(using: String.Encoding.utf8)
-        return data
+        return result.data(using: String.Encoding.utf8)
     }
 }
 

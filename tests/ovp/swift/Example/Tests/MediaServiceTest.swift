@@ -42,12 +42,15 @@ class MediaServiceTest: BaseTest {
     
     override func spec() {
         let config: ConnectionConfiguration = ConnectionConfiguration()
+        if let endPoint = URL(string: serverUrl) {
+            config.endPoint = endPoint
+        }
         client = Client(config)
         
         describe("upload token") {
             
             beforeEach {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -57,7 +60,7 @@ class MediaServiceTest: BaseTest {
             
             afterEach {
                 for entryId in self.entryIds {
-                    waitUntil(timeout: 500) { done in
+                    waitUntil(timeout: .seconds(15)) { done in
                         self.deleteEntry(entryId: entryId) { error in
                             expect(error).to(beNil())
                             done()
@@ -90,7 +93,7 @@ class MediaServiceTest: BaseTest {
                     return
                 }
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.createEntry(fileElement: fileElement!, fileSize: fileSize!) { createdEntry in
                         done()
                     }
@@ -111,7 +114,7 @@ class MediaServiceTest: BaseTest {
                     return
                 }
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.createEntry(fileElement: fileElement!, fileSize: fileSize!) { createdEntry in
                         done()
                     }
@@ -123,7 +126,7 @@ class MediaServiceTest: BaseTest {
                 
                 let name: String = UUID().uuidString
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.createMediaEntry(prefix: "Media Update Test") { entry, error in
                         expect(error).to(beNil())
                         
@@ -154,7 +157,7 @@ class MediaServiceTest: BaseTest {
             
             it("get") {
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.createMediaEntry(prefix: "Media Get Test") { entry, error in
                         expect(error).to(beNil())
                         
@@ -182,7 +185,7 @@ class MediaServiceTest: BaseTest {
             
             it("bad get") {
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let mediaGetRequestBuilder = MediaService.get(entryId: "bad-id")
                     mediaGetRequestBuilder.set(completion: {(getEntry: MediaEntry?, error: ApiException?) in
                         
@@ -206,7 +209,7 @@ class MediaServiceTest: BaseTest {
                 filter.tagsMultiLikeOr = BaseTest.uniqueTag
                 filter.statusIn = EntryStatus.NO_CONTENT.rawValue
                 
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.createMediaEntries(prefix: "Media List Test", count: count) { createdEntries in
                     
                         let mediaListRequestBuilder = MediaService.list(filter: filter)

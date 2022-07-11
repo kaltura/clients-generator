@@ -54,85 +54,86 @@ class ZendClientTester
 	
 	public function testSyncFlow()
 	{
-		// add upload token
-		$uploadToken = new Kaltura_Client_Type_UploadToken();
-		$uploadToken->fileName = self::UPLOAD_VIDEO_FILENAME;
-		$uploadToken = $this->_client->uploadToken->add($uploadToken);
-		$this->assertTrue(strlen($uploadToken->id) > 0);
-    	$this->assertEqual($uploadToken->fileName, self::UPLOAD_VIDEO_FILENAME);
-    	$this->assertEqual($uploadToken->status, Kaltura_Client_Enum_UploadTokenStatus::PENDING);
-    	$this->assertEqual($uploadToken->partnerId, $this->_partnerId);
-    	$this->assertEqual($uploadToken->fileSize, null);
-    	
-    	// add media entry
-    	$entry = new Kaltura_Client_Type_MediaEntry();
-    	$entry->name = self::ENTRY_NAME;
-    	$entry->mediaType = Kaltura_Client_Enum_MediaType::VIDEO;
-    	$entry = $this->_client->media->add($entry);
-    	$this->assertTrue(strlen($entry->id) > 0);
-    	$this->assertTrue($entry->status === Kaltura_Client_Enum_EntryStatus::NO_CONTENT);
-    	$this->assertTrue($entry->name === self::ENTRY_NAME);
-    	$this->assertTrue($entry->partnerId === $this->_partnerId);
-    	
-    	// add uploaded token as resource
-    	$resource = new Kaltura_Client_Type_UploadedFileTokenResource();
-    	$resource->token = $uploadToken->id;
-    	$entry = $this->_client->media->addContent($entry->id, $resource);
-    	$this->assertTrue($entry->status === Kaltura_Client_Enum_EntryStatus::IMPORT);
-    	
-    	// upload file using the upload token
-    	$uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_VIDEO_FILENAME;
-    	$uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
-    	$this->assertTrue($uploadToken->status === Kaltura_Client_Enum_UploadTokenStatus::CLOSED);
-    	
-    	// get flavor by entry
-    	$flavorArray = $this->_client->flavorAsset->getByEntryId($entry->id);
-    	$this->assertTrue(count($flavorArray) > 0);
-    	$foundSource = false;
-    	foreach($flavorArray as $flavor)
-    	{
-    		if ($flavor->flavorParamsId !== 0)
-    			continue;
-    			
-    		$this->assertTrue($flavor->isOriginal);
-    		$this->assertTrue($flavor->entryId === $entry->id);
-    		$foundSource = true;
-    	}
-    	$this->assertTrue($foundSource);
-    	
-    	// count media entries
-    	$mediaFilter = new Kaltura_Client_Type_MediaEntryFilter();
-    	$mediaFilter->idEqual = $entry->id;
-    	$mediaFilter->statusNotEqual = Kaltura_Client_Enum_EntryStatus::DELETED;
-    	$entryCount = $this->_client->media->count($mediaFilter);
-    	$this->assertTrue($entryCount == 1);
-    	
-    	// delete media entry
-    	$this->_client->media->delete($entry->id);
-    	
-    	sleep(5); // wait for the status to update
+	    // add upload token
+	    $uploadToken = new Kaltura_Client_Type_UploadToken();
+	    $uploadToken->fileName = self::UPLOAD_VIDEO_FILENAME;
+	    $uploadToken = $this->_client->uploadToken->add($uploadToken);
+	    $this->assertTrue(strlen($uploadToken->id) > 0);
+	    $this->assertEqual($uploadToken->fileName, self::UPLOAD_VIDEO_FILENAME);
+	    $this->assertEqual($uploadToken->status, Kaltura_Client_Enum_UploadTokenStatus::PENDING);
+	    $this->assertEqual($uploadToken->partnerId, $this->_partnerId);
+	    $this->assertEqual($uploadToken->fileSize, null);
+	    
+	    // add media entry
+	    $entry = new Kaltura_Client_Type_MediaEntry();
+	    $entry->name = self::ENTRY_NAME;
+	    $entry->mediaType = Kaltura_Client_Enum_MediaType::VIDEO;
+	    $entry = $this->_client->media->add($entry);
+	    $this->assertTrue(strlen($entry->id) > 0);
+	    $this->assertTrue($entry->status === Kaltura_Client_Enum_EntryStatus::NO_CONTENT);
+	    $this->assertTrue($entry->name === self::ENTRY_NAME);
+	    $this->assertTrue($entry->partnerId === $this->_partnerId);
+	    
+	    // add uploaded token as resource
+	    $resource = new Kaltura_Client_Type_UploadedFileTokenResource();
+	    $resource->token = $uploadToken->id;
+	    $entry = $this->_client->media->addContent($entry->id, $resource);
+	    $this->assertTrue($entry->status === Kaltura_Client_Enum_EntryStatus::IMPORT);
+	    
+	    // upload file using the upload token
+	    $uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_VIDEO_FILENAME;
+	    $uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
+	    $this->assertTrue($uploadToken->status === Kaltura_Client_Enum_UploadTokenStatus::CLOSED);
+	    
+	    // get flavor by entry
+	    $flavorArray = $this->_client->flavorAsset->getByEntryId($entry->id);
+	    $this->assertTrue(count($flavorArray) > 0);
+	    $foundSource = false;
+	    foreach($flavorArray as $flavor)
+	    {
+		    if ($flavor->flavorParamsId !== 0)
+			    continue;
+			    
+		    $this->assertTrue($flavor->isOriginal);
+		    $this->assertTrue($flavor->entryId === $entry->id);
+		    $foundSource = true;
+	    }
+	    $this->assertTrue($foundSource);
+	    
+	    // count media entries
+	    $mediaFilter = new Kaltura_Client_Type_MediaEntryFilter();
+	    $mediaFilter->idEqual = $entry->id;
+	    $mediaFilter->statusNotEqual = Kaltura_Client_Enum_EntryStatus::DELETED;
+	    $entryCount = $this->_client->media->count($mediaFilter);
+	    $this->assertTrue($entryCount == 1);
+	    
+	    // delete media entry
+	    $this->_client->media->delete($entry->id);
+	    
+	    sleep(5); // wait for the status to update
     	
     	// count media entries again
-		$entryCount = $this->_client->media->count($mediaFilter);
-    	$this->assertTrue($entryCount == 0);
+	    $entryCount = $this->_client->media->count($mediaFilter);
+	    $this->assertTrue($entryCount == 0);
 	}
 	
 	public function testReturnedArrayObjectUsingPlaylistExecute()
 	{
-		// add image entry
-    	$imageEntry = $this->addImageEntry();
-    	
-    	// execute playlist from filters
-    	$playlistFilter = new Kaltura_Client_Type_MediaEntryFilterForPlaylist();
-    	$playlistFilter->tagsLike = $imageEntry->tags;
-    	$filterArray = array();
-    	$filterArray[] = $playlistFilter;
-    	$playlistExecute = $this->_client->playlist->executeFromFilters($filterArray, 10);
-    	$this->assertEqual(count($playlistExecute), 1);
-    	$firstPlaylistEntry = $playlistExecute[0];
-    	$this->assertEqual($firstPlaylistEntry->id, $imageEntry->id);
-    	
-    	$this->_client->media->delete($imageEntry->id);
+	    // add image entry
+	    $imageEntry = $this->addImageEntry();
+	    sleep(5); // wait for the status to update
+	    
+	    // execute playlist from filters
+	    $playlistFilter = new Kaltura_Client_Type_MediaEntryFilterForPlaylist();
+	    $playlistFilter->tagsLike = $imageEntry->tags;
+	    $filterArray = array();
+	    $filterArray[] = $playlistFilter;
+	    $playlistExecute = $this->_client->playlist->executeFromFilters($filterArray, 10);
+	    $this->assertEqual(count($playlistExecute), 1);
+	    $firstPlaylistEntry = $playlistExecute[0];
+	    $this->assertEqual($firstPlaylistEntry->id, $imageEntry->id);
+	    
+	    $this->_client->media->delete($imageEntry->id);
 	}
 
 	public function testServeUrl()
@@ -167,24 +168,24 @@ class ZendClientTester
 	
 	public function addImageEntry()
 	{
-		$entry = new Kaltura_Client_Type_MediaEntry();
-    	$entry->name = self::ENTRY_NAME;
-    	$entry->mediaType = Kaltura_Client_Enum_MediaType::IMAGE;
-    	$entry->tags = uniqid('test_');
-    	$entry = $this->_client->media->add($entry);
-    	
-    	$uploadToken = new Kaltura_Client_Type_UploadToken();
-		$uploadToken->fileName = self::UPLOAD_IMAGE_FILENAME;
-		$uploadToken = $this->_client->uploadToken->add($uploadToken);
+	    $entry = new Kaltura_Client_Type_MediaEntry();
+	    $entry->name = self::ENTRY_NAME;
+	    $entry->mediaType = Kaltura_Client_Enum_MediaType::IMAGE;
+	    $entry->tags = uniqid('test_');
+	    $entry = $this->_client->media->add($entry);
+	    
+	    $uploadToken = new Kaltura_Client_Type_UploadToken();
+	    $uploadToken->fileName = self::UPLOAD_IMAGE_FILENAME;
+	    $uploadToken = $this->_client->uploadToken->add($uploadToken);
 
-    	$uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_IMAGE_FILENAME;
-    	$uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
-    	
-		$resource = new Kaltura_Client_Type_UploadedFileTokenResource();
-    	$resource->token = $uploadToken->id;
-    	$entry = $this->_client->media->addContent($entry->id, $resource);
-    	
-    	return $entry;
+	    $uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_IMAGE_FILENAME;
+	    $uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
+	    
+		    $resource = new Kaltura_Client_Type_UploadedFileTokenResource();
+	    $resource->token = $uploadToken->id;
+	    $entry = $this->_client->media->addContent($entry->id, $resource);
+	    
+	    return $entry;
 	}
 	
 	protected function assertTrue($v)

@@ -33,7 +33,7 @@
  * MANUAL CHANGES TO THIS CLASS WILL BE OVERWRITTEN.
  */
 
-public protocol RequestExecutor: class {
+public protocol RequestExecutor: AnyObject {
     
     func send(request: Request)
     func cancel(request: Request)

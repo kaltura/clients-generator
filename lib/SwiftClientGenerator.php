@@ -35,7 +35,8 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		foreach($pluginNodes as $pluginNode) {
 			$this->pluginName = $pluginNode->getAttribute("name");
 			$pluginName = ucfirst($this->pluginName);
-			$this->_baseClientPath = "KalturaClient/plugins/{$pluginName}";
+			// This part of the script was removed in order to generate all Plugins as part of the Core module.
+			// $this->_baseClientPath = "KalturaClient/plugins/{$pluginName}";
 			$this->generatePlugin();
 		}
 
@@ -258,11 +259,12 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         //2. adding core subspec ( default )
         $this->writeDefaultSubSpec($defaultSubSpecName);
 
+        // This part of the script was removed in order to generate all Plugins as part of the Core module.
         //3. adding subspecs
-        $pluginNodes = $this->xpath->query("/xml/plugins/plugin");
-        foreach($pluginNodes as $pluginNode) {
-            $this->writeSubSpec($pluginNode,$defaultSubSpecName);
-        }
+        // $pluginNodes = $this->xpath->query("/xml/plugins/plugin");
+        // foreach($pluginNodes as $pluginNode) {
+        //     $this->writeSubSpec($pluginNode,$defaultSubSpecName);
+        // }
 		$this->appendLine("s.default_subspec = '$defaultSubSpecName'");
         $this->appendLine("end");
         $file = "$specName.podspec";
@@ -277,7 +279,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
         $this->append(" 
 s.subspec '$name' do |sp|
     sp.source_files = 'KalturaClient/Classes/**/*'
-    sp.dependency 'Log', '1.0'
+    sp.dependency 'Log', '2.0'
 end
 ");
     }
@@ -455,7 +457,7 @@ end
 	public function generatePopulate($classNode)
 	{
 		$type = $this->getSwiftTypeName($classNode->getAttribute("name"));
-		$this->appendLine("	internal override func populate(_ dict: [String: Any]) throws {");
+		$this->appendLine("	public override func populate(_ dict: [String: Any]) throws {");
 		$this->appendLine("		try super.populate(dict);");
 
 		if($classNode->childNodes->length)
@@ -1243,17 +1245,25 @@ end
 	
 	public function getSwiftTypeName($type)
 	{
-		if($type === 'KalturaNullableBoolean'){
-			return 'Bool';
+		switch ($type) {
+			case 'KalturaNullableBoolean':
+				return 'Bool';
+			
+			case 'KalturaString':
+				return 'StringHolder';
+				
+			case 'KalturaObject':
+				return 'ObjectBase';
+			
+			case 'KalturaLogLevel':
+				return 'KalturaLogLevel';
+			
+			case 'KalturaDictionary':
+				return 'KalturaDictionary';
+			
+			default:
+				return preg_replace('/^Kaltura/', '', $type);
 		}
-		if($type === 'KalturaString'){
-			$type = 'KalturaStringHolder';
-		}
-		elseif($type === 'KalturaObject'){
-			$type = 'KalturaObjectBase';
-		}
-		
-		return preg_replace('/^Kaltura/', '', $type);
 	}
 	
 	public function getObjectType($type)
