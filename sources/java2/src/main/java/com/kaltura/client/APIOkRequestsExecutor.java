@@ -62,10 +62,12 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
         private InputStream inputStream;
         private MediaType mediaType;
+		private long size;
 
-        public InputStreamRequestBody(MediaType mediaType, InputStream inputStream) {
+        public InputStreamRequestBody(MediaType mediaType, InputStream inputStream, long size) {
             this.mediaType = mediaType;
             this.inputStream = inputStream;
+            this.size=size;
         }
 
         @Override
@@ -75,11 +77,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
 
         @Override
         public long contentLength() {
-            try {
-                return inputStream.available();
-            } catch (IOException e) {
-                return 0;
-            }
+            return size;
         }
 
         @Override
@@ -521,7 +519,7 @@ public class APIOkRequestsExecutor implements RequestQueue {
     				bodyBuilder.addFormDataPart(fieldName, fileHolder.getName(), RequestBody.create(mediaType, fileHolder.getFile()));
     			}
     			else if(fileHolder.getInputStream() != null) {
-    				bodyBuilder.addFormDataPart(fieldName, fileHolder.getName(), new InputStreamRequestBody(mediaType, fileHolder.getInputStream()));
+    				bodyBuilder.addFormDataPart(fieldName, fileHolder.getName(), new InputStreamRequestBody(mediaType, fileHolder.getInputStream(),fileHolder.getSize()));
     			}
     		}
     		body = bodyBuilder.build();
