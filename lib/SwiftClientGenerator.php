@@ -108,7 +108,7 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		else {
 			// $str .= "public enum $enumName {\n";
 
-			// In this case we are considering that avery enum which does not have a type should be String type.
+			// In this case we are considering that every enum which does not have a type should be String type.
 			// It will help to fix empty enum init(rawValue: ) issue.
 			$str .= "public enum $enumName: String {\n";
 		}
