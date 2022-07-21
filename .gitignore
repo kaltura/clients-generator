@@ -18,7 +18,7 @@ tests/config.ini
 
 #Xcode
 xcuserdata/
-Pods/
+tests/ovp/swift/Example/Tests/Pods/
 
 
 **/.DS_Store
