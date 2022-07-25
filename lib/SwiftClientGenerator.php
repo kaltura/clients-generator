@@ -106,7 +106,11 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 			$str .= "public enum $enumName: $baseInterface {\n";
 		}
 		else {
-			$str .= "public enum $enumName {\n";
+			// $str .= "public enum $enumName {\n";
+
+			// In this case we are considering that every enum which does not have a type should be String type.
+			// It will help to fix empty enum init(rawValue: ) issue.
+			$str .= "public enum $enumName: String {\n";
 		}
 		
 		// Print enum values
@@ -144,7 +148,10 @@ class SwiftClientGenerator extends ClientGeneratorFromXml
 		}
 		
 		if(count($enumValues) == 0)
-			$str .= "	/** Place holder for future values */";
+			// $str .= "	/** Place holder for future values */";
+
+			// Empty enum init(rawValue: ) issue fixes.
+			$str .= "	case NONE = \"NONE\"";
 		else  {
 			$enums = implode("\n	", $enumValues);
 			$str .= "	$enums";
