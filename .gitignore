@@ -5,7 +5,7 @@ tests/ovp/python/KalturaClient/tests/config.ini
 tests/ovp/ajax/test/config.js
 tests/ovp/php53/tests/config.ini
 tests/ovp/zend/tests/config.ini
-tests/ovp/swift/Example/Tests/Info.plist
+tests/ovp/swift/Example/Tests/TestsConfig.plist
 tests/ovp/java2/src/test/resources/test.properties
 tests/ott/node2/config.json
 tests/ott/zend/tests/config.ini
@@ -15,6 +15,11 @@ tests/config.ini
 
 # IDE
 .idea
+
+#Xcode
+xcuserdata/
+tests/ovp/swift/Example/Tests/Pods/
+
 
 **/.DS_Store
 

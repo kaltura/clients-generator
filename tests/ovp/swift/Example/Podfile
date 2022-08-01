@@ -1,14 +1,14 @@
 use_frameworks!
 
+platform :ios, '10.0'
+
 target 'KalturaClient_Example' do
   pod 'KalturaClient', :path => '../'
 
   target 'KalturaClient_Tests' do
     inherit! :search_paths
 
-    pod 'KalturaClient', :path => '../'
-    pod 'KalturaClient/Metadata', :path => '../'
-    pod 'Quick', '~> 1.0.0'
-    pod 'Nimble', '~> 7.0.3'
+    pod 'Quick', '~> 5.0.1'
+    pod 'Nimble', '~> 10.0.0'
   end
 end
