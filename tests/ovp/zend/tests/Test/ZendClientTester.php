@@ -237,7 +237,7 @@ class ZendClientTester
 			}
 			curl_setopt($ch, CURLOPT_POSTFIELDS, array_merge($params, $files));
 		} else {
-			$opt = http_build_query($params, null, "&");
+			$opt = http_build_query($params, '', "&");
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $opt);
 		}
 		curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');

@@ -549,7 +549,7 @@ class KalturaClientBase
 
 		if (count($cookies) > 0)
 		{
-			$cookiesStr = http_build_query($cookies, null, '; ');
+			$cookiesStr = http_build_query($cookies, '', '; ');
 			curl_setopt($ch, CURLOPT_COOKIE, $cookiesStr);
 		}
 
