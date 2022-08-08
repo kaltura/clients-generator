@@ -42,7 +42,7 @@ class BaseTest: QuickSpec {
     var secret: String? = BaseTest.getConfig(key: "secret") as? String
     var partnerId: Int? = BaseTest.getConfig(key: "partnerId") as? Int
     
-    let serverUrl: String = "https://cdnapisec.kaltura.com/"
+    var serverUrl: String =  BaseTest.getConfig(key: "serverUrl") as? String ?? ""
     
     static var config: NSDictionary? = nil
     static var uniqueTag: String = uniqueString()
@@ -58,7 +58,7 @@ class BaseTest: QuickSpec {
         
         if config == nil {
             let testBundle = Bundle(for: BaseTest.self)
-            if let filePath = testBundle.path(forResource: "Config", ofType: "plist") {
+            if let filePath = testBundle.path(forResource: "TestsConfig", ofType: "plist") {
                 config = NSDictionary(contentsOfFile: filePath)
             }
         }

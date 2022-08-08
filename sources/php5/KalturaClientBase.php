@@ -48,20 +48,24 @@ class MultiRequestSubResult implements ArrayAccess
         return new MultiRequestSubResult($this->value . ':' . $name);
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetExists($offset)
 	{
 		return true;
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetGet($offset)
 	{
-        return new MultiRequestSubResult($this->value . ':' . $offset);
+	    return new MultiRequestSubResult($this->value . ':' . $offset);
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetSet($offset, $value)
 	{
 	}
 
+	#[\ReturnTypeWillChange]
 	public function offsetUnset($offset)
 	{
 	}
@@ -545,7 +549,7 @@ class KalturaClientBase
 
 		if (count($cookies) > 0)
 		{
-			$cookiesStr = http_build_query($cookies, null, '; ');
+			$cookiesStr = http_build_query($cookies, '', '; ');
 			curl_setopt($ch, CURLOPT_COOKIE, $cookiesStr);
 		}
 

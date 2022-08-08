@@ -2,9 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>serverUrl</key>
+	<string>@SERVER_URL@</string>
 	<key>secret</key>
-	<string>MY_API_SECRET</string>
+	<string>@YOUR_ADMIN_SECRET@</string>
 	<key>partnerId</key>
-	<integer>-1</integer>
+	<integer>@YOUR_PARTNER_ID@</integer>
 </dict>
 </plist>
