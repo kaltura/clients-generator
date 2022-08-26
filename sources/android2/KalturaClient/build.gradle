@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: '../version.gradle'
 apply plugin: 'kotlin-android'
 
 android {
@@ -51,3 +52,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.awaitility:awaitility:3.0.0'
 }
+
+apply from: './gradle-mvn-push.gradle'
