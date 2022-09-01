@@ -1,5 +1,12 @@
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 
+ext["nexusUserName"] = System.getenv('NEXUS_USERNAME')
+ext["nexusPassword"] = System.getenv('NEXUS_PASSWORD')
+ext["signingKeyId"] = System.getenv('SIGNING_KEYID')
+ext["signingPassword"] = System.getenv('SIGNING_PASSWORD')
+ext["GROUP"] = 'com.kaltura'
+
+
 buildscript {
     ext.kotlin_version = '1.5.20'
     repositories {
@@ -24,4 +31,16 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+nexusPublishing {
+    repositories {
+        sonaType {
+            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+            packageGroup = GROUP
+            username = nexusUserName
+            password = nexusPassword
+        }
+    }
 }

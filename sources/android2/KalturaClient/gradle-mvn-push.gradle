@@ -1,39 +1,26 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-def getReleaseRepositoryUrl() {
-    return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
-            : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+task androidSourcesJar(type: Jar) {
+    classifier 'sources'
+    from android.sourceSets.main.java.sourceFiles
 }
 
-def getRepositoryUsername() {
-    return System.getenv("NEXUS_USERNAME")
-}
-
-def getRepositoryPassword() {
-    return System.getenv("NEXUS_PASSWORD")
+artifacts {
+    archives androidSourcesJar
 }
 
 afterEvaluate { project ->
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                from components.release
                 groupId = GROUP
                 artifactId = POM_ARTIFACT_ID
                 VERSION_NAME = kalturaClientVersion
                 version = VERSION_NAME
 
-                repositories {
-                    maven {
-                        def releasesRepoUrl = getReleaseRepositoryUrl()
-                        url = releasesRepoUrl
-                        credentials {
-                            username getRepositoryUsername()
-                            password getRepositoryPassword()
-                        }
-                    }
-                }
+                from components.release
+                artifact androidSourcesJar
 
                 pom {
                     name = POM_NAME
@@ -65,19 +52,9 @@ afterEvaluate { project ->
     }
 
     signing {
-        allprojects { ext."signing.keyId" = System.getenv("MAVEN_KEYID") }
-        allprojects { ext."signing.password" = System.getenv("MAVEN_PASSWORD") }
-        allprojects { ext."signing.secretKeyRingFile" = System.getenv("MAVEN_SECRING_PATH") } // TODO SIGNING_KEY 
-
-        sign publishing.publications.mavenJava
-    }
-
-    task androidSourcesJar(type: Jar) {
-        classifier 'sources'
-        from android.sourceSets.main.java.sourceFiles
-    }
-
-    artifacts {
-        archives androidSourcesJar
+        allprojects { ext."signing.keyId" = rootProject.ext["signingKeyId"] }
+        allprojects { ext."signing.password" = rootProject.ext["signingPassword"] }
+        allprojects { ext."signing.secretKeyRingFile" = SECRING_PATH }
+        sign publishing.publications
     }
 }
