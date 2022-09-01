@@ -4,14 +4,14 @@ android {
     compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 30
         multiDexEnabled  true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     buildTypes {
