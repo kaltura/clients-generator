@@ -1112,7 +1112,7 @@ public class VideoCategories extends TemplateActivity implements Observer, ListV
         if (largeScreen) {
             Category mp = new Category();
             mp.setName("Most Popular");
-            mp.setId(1);
+            //mp.setId(1); // Not sure what to add here
             listCategory.add(0, mp);
         }
 
