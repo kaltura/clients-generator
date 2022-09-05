@@ -30,16 +30,16 @@ class Android2ClientGenerator extends Java2ClientGenerator
 	
 	public function generate() 
 	{
-        $this->addFiles("sources/java2/src", "KalturaClient/src/");
-        $this->addFiles('tests/'. $this->_testsDir .'/java2/src', "KalturaClient/src/");
         parent::generate();
+
+		    $this->addFiles("sources/java2/src", "KalturaClient/src/");
+        $this->addFiles('tests/'. $this->_testsDir .'/java2/src', "KalturaClient/src/");
 	}
 
     protected function addFile($fileName, $fileContents, $addLicense = true)
     {
         $excludePaths = array(
             "KalturaClient/src/main/java/com/kaltura/client/LoggerLog4j.java",
-            "KalturaClient/src/main/resources",
         );
 
         foreach($excludePaths as $excludePath)

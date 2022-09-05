@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.apache.commons.codec.binary.Base64;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -14,7 +15,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build.VERSION;
-import android.util.Base64;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.View;
@@ -458,7 +458,7 @@ public class ViewPlayer implements Observer, OnClickListener, SeekBar.OnSeekBarC
 
         String url;
         String host = (ApiHelper.getCdnHost() != null ) ? ApiHelper.getCdnHost() : ApiHelper.getHost();
-        String appName64 = new String(Base64.encode(activity.getString(R.string.app_name).getBytes(), Base64.DEFAULT));
+        String appName64 = new String(Base64.encodeBase64(activity.getString(R.string.app_name).getBytes()));
         Log.w(TAG, "versionName: " + VERSION.SDK_INT);
         if (flavor instanceof WidevineFlavorAsset) {
         	WidevineHandler wvHandler = new WidevineHandler(activity, partnerId, entryId, flavorId);
