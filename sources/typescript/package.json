@@ -35,12 +35,12 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "@types/node": "^8.0.47",
-    "tslib": "^1.5.0"
+    "@types/node": "^14.14.33",
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
     "@types/core-js": "^0.9.37",
-    "@types/jest": "^21.1.5",
+    "@types/jest": "^27.0.3",
     "@types/jquery": "^2.0.40",
     "@types/ramda": "0.0.3",
     "awesome-typescript-loader": "^5.2.1",
@@ -52,15 +52,15 @@
     "gulp-load-plugins": "^1.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-tslint": "~7.1.0",
-    "gulp-typescript": "^5.0.0-alpha.3",
+    "gulp-typescript": "^5.0.1",
     "gulp-util": "^3.0.7",
-    "jest": "^21.2.1",
+    "jest": "^27.0.3",
     "merge2": "^1.0.2",
     "rimraf": "^2.5.1",
-    "ts-jest": "^21.2.4",
+    "ts-jest": "^27.0.3",
     "tslint": "4.3.1",
     "tslint-loader": "3.2.1",
-    "typescript": "^2.4.0",
+    "typescript": "^3.8.3",
     "yargs": "^5.0.0"
   },
   "engines": {
