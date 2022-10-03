@@ -67,7 +67,7 @@ class ConfigurationTest < Test::Unit::TestCase
     @client = Kaltura::KalturaClient.new( config )
     assert_equal @client.ks, Kaltura::KalturaNotImplemented
     
-    session = @client.session_service.start( administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id)
+    session = @client.generate_session_v2(administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id )
     @client.ks = session
     
     assert_not_nil @client.ks
@@ -134,7 +134,7 @@ class ConfigurationTest < Test::Unit::TestCase
     
       assert_equal @client.ks, Kaltura::KalturaNotImplemented
     
-      @client.generate_session(administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id)
+      @client.generate_session_v2(administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id )
       
       assert_not_nil @client.ks
       

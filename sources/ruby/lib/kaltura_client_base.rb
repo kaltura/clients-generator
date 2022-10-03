@@ -36,11 +36,19 @@ require 'digest/sha1'
 require 'base64'
 require 'date'
 require 'yaml'
+require 'pry'
+require 'uri'
 
 module Kaltura
 	class KalturaNotImplemented; end
 
 	class KalturaClientBase
+
+                # KS V2 constants
+                FIELD_EXPIRY =              '_e';
+                FIELD_TYPE =                '_t';
+                FIELD_USER =                '_u';
+
 		attr_accessor 	:config
 		attr_reader 	:is_multirequest
 		attr_reader 	:responseHeaders
@@ -387,6 +395,62 @@ module Kaltura
 
 			self.ks = cleaned
 		end
+
+                def generate_session_v2(admin_secret, user_id, kaltura_session_type, partner_id, expiry=86400, privileges=nil)
+                  fields = {} 
+                  if privileges !=nil 
+                    privileges.split(',').each do |privilege|
+                      privilege.strip!
+                      if !privilege
+                        next 
+                      end
+                      if (privilege == '*')
+                          privilege = 'all:*';
+                      end
+                      splittedPrivilege = privilege.split(':', 2);
+                      if (splittedPrivilege.count > 1)
+                              fields[splittedPrivilege[0]] = splittedPrivilege[1];
+                      else
+                              fields[splittedPrivilege[0]] = '';
+                      end
+                    end
+                  end
+                  fields[KalturaClientBase::FIELD_EXPIRY] = (Time.now.to_i + expiry.to_i);
+                  fields[KalturaClientBase::FIELD_TYPE] = kaltura_session_type;
+                  fields[KalturaClientBase::FIELD_USER] = user_id;
+
+                  # build fields string
+                  fieldsStr = URI.encode_www_form(fields);
+                  rand = '';
+                  for i in 0..15 do
+                    rand += rand(0..0xff).chr;
+                  end
+                  fieldsStr = rand + fieldsStr;
+                  fieldsStr = Digest::SHA1.digest(fieldsStr) + fieldsStr;
+
+                  # encrypt and encode
+                  encryptedFields = aes_encrypt(admin_secret, fieldsStr);
+                  decodedKs = "v2|#{partner_id}|" + encryptedFields;
+                  # in other clients, we do not set the ks on the client object here, only return it; however, because
+                  # this was done in generate_session(), I added it for compatibility reasons.
+		  self.ks = Base64.urlsafe_encode64(decodedKs).gsub('+','-').gsub('/','_') 
+                  return self.ks 
+                end
+
+                def aes_encrypt(key, data)
+                    iv = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";	# no need for an IV since we add a random string to the message anyway
+                    key = Digest::SHA1.digest(key)[0..15];
+                    cipher = OpenSSL::Cipher::AES.new(128, :CBC)
+                    cipher.encrypt
+
+                    cipher.padding = 0 # we must disable native padding.
+                    cipher.key = key
+                    cipher.iv = iv
+                    block_size = cipher.block_size
+                    # this is needed to maintain compatibility with the legacy mcrypt extension, see https://github.com/kaltura/server/blob/Rigel-18.16.0/infra/general/KCryptoWrapper.class.php#L79
+                    data = data + "\0" * (block_size - data.bytesize % block_size)
+                    return cipher.update(data) + cipher.final
+                end
 	end
 
 	class KalturaServiceActionCall

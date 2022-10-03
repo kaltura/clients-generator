@@ -55,7 +55,7 @@ class Test::Unit::TestCase
     config.timeout = timeout
     
     @client = Kaltura::KalturaClient.new( config )
-    @client.generate_session(administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id )
+    @client.generate_session_v2(administrator_secret, '', Kaltura::KalturaSessionType::ADMIN, partner_id )
   end
 
 end
