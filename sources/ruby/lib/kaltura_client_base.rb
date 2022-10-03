@@ -36,7 +36,6 @@ require 'digest/sha1'
 require 'base64'
 require 'date'
 require 'yaml'
-require 'pry'
 require 'uri'
 
 module Kaltura
