@@ -404,41 +404,41 @@ module Kaltura
                         next 
                       end
                       if (privilege == '*')
-                          privilege = 'all:*';
+                          privilege = 'all:*'
                       end
-                      splittedPrivilege = privilege.split(':', 2);
-                      if (splittedPrivilege.count > 1)
-                              fields[splittedPrivilege[0]] = splittedPrivilege[1];
+                      splitted_privilege = privilege.split(':', 2)
+                      if (splitted_privilege.count > 1)
+                              fields[splitted_privilege[0]] = splitted_privilege[1]
                       else
-                              fields[splittedPrivilege[0]] = '';
+                              fields[splitted_privilege[0]] = ''
                       end
                     end
                   end
-                  fields[KalturaClientBase::FIELD_EXPIRY] = (Time.now.to_i + expiry.to_i);
-                  fields[KalturaClientBase::FIELD_TYPE] = kaltura_session_type;
-                  fields[KalturaClientBase::FIELD_USER] = user_id;
+                  fields[KalturaClientBase::FIELD_EXPIRY] = (Time.now.to_i + expiry.to_i)
+                  fields[KalturaClientBase::FIELD_TYPE] = kaltura_session_type
+                  fields[KalturaClientBase::FIELD_USER] = user_id
 
                   # build fields string
-                  fieldsStr = URI.encode_www_form(fields);
-                  rand = '';
+                  fields_str = URI.encode_www_form(fields)
+                  rand = ''
                   for i in 0..15 do
-                    rand += rand(0..0xff).chr;
+                    rand += rand(0..0xff).chr
                   end
-                  fieldsStr = rand + fieldsStr;
-                  fieldsStr = Digest::SHA1.digest(fieldsStr) + fieldsStr;
+                  fields_str = rand + fields_str
+                  fields_str = Digest::SHA1.digest(fields_str) + fields_str
 
                   # encrypt and encode
-                  encryptedFields = aes_encrypt(admin_secret, fieldsStr);
-                  decodedKs = "v2|#{partner_id}|" + encryptedFields;
+                  encrypted_fields = aes_encrypt(admin_secret, fields_str)
+                  decoded_ks = "v2|#{partner_id}|" + encrypted_fields
                   # in other clients, we do not set the ks on the client object here, only return it; however, because
                   # this was done in generate_session(), I added it for compatibility reasons.
-		  self.ks = Base64.urlsafe_encode64(decodedKs).gsub('+','-').gsub('/','_') 
+		  self.ks = Base64.urlsafe_encode64(decoded_ks).gsub('+','-').gsub('/','_') 
                   return self.ks 
                 end
 
                 def aes_encrypt(key, data)
-                    iv = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";	# no need for an IV since we add a random string to the message anyway
-                    key = Digest::SHA1.digest(key)[0..15];
+                    iv = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"	# no need for an IV since we add a random string to the message anyway
+                    key = Digest::SHA1.digest(key)[0..15]
                     cipher = OpenSSL::Cipher::AES.new(128, :CBC)
                     cipher.encrypt
 
