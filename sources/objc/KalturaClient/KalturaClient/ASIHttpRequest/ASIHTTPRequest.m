@@ -4712,17 +4712,33 @@ static NSOperationQueue *sharedQueue = nil;
 	[connectionsLock unlock];
 }
 
+void runOnMainQueueWithoutDeadlocking(void (^block)(void))
+ {
+     if ([NSThread isMainThread])
+     {
+         block();
+     }
+     else
+     {
+         dispatch_sync(dispatch_get_main_queue(), block);
+     }
+ }
+
 + (void)showNetworkActivityIndicator
 {
 #if TARGET_OS_IPHONE
-	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    runOnMainQueueWithoutDeadlocking(^{
+        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    });
 #endif
 }
 
 + (void)hideNetworkActivityIndicator
 {
 #if TARGET_OS_IPHONE
-	[[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];	
+    runOnMainQueueWithoutDeadlocking(^{
+        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    });
 #endif
 }
 
