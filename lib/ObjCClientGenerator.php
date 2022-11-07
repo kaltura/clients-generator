@@ -28,20 +28,21 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		case "bool" :
 			return "KALTURA_BOOL";
 		case "bigint" :
+            return "long long int";
 		case "int" :
 			return "int";
 		case "float" :
 			return "double";
 		case "string" :
-			return "NSString*";
+			return "NSString *";
 		case "array" :
-			return "NSMutableArray*";
+			return "NSMutableArray *";
 		case "map":
-			return "NSMutableDictionary*";
+			return "NSMutableDictionary *";
 		case "file" :
-			return 'NSString*';
+			return 'NSString *';
 		default : // object
-			return "$propType*";
+			return "$propType *";
 		}
 	}
 	
@@ -88,6 +89,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		case "bool" :
 			return "Bool";
 		case "bigint":
+            return "LongLongInt";
 		case "int" :
 			return "Int";
 		case "float" :
@@ -258,9 +260,9 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			$propertyValue = $constNode->getAttribute("value");
 			if ($enumNode->getAttribute("enumType") == "string")
 			{
-				$this->appendHLine("+ (NSString*)$propertyName;");
+				$this->appendHLine("+ (NSString *)$propertyName;");
 				
-				$this->appendMLine("+ (NSString*)$propertyName");
+				$this->appendMLine("+ (NSString *)$propertyName");
 				$this->appendMLine('{');
 				$this->appendMLine("    return @\"$propertyValue\";");
 				$this->appendMLine('}');
@@ -291,6 +293,8 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			$this->appendHLine("// @package $this->package");
 			$this->appendHLine("// @subpackage $this->subpackage");
 		}
+        
+        $this->handleAliasProperties($classNode->childNodes);
 		
 		if ($classNode->hasAttribute("base"))
 			$baseClass = $classNode->getAttribute("base");
@@ -321,6 +325,21 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		$this->appendHLine("@end\n");
 		$this->appendMLine("@end\n");
 	}
+    
+    function handleAliasProperties($propertyNodes)
+    {
+        foreach($propertyNodes as $propertyNode)
+        {
+            if ($propertyNode->nodeType != XML_ELEMENT_NODE)
+                continue;
+            
+            $propertyType = $propertyNode->getAttribute('type');
+            if($this->getTypeName($propertyType) == 'Object')
+            {
+                $this->appendHLine("@class $propertyType;");
+            }
+        }
+    }
 	
 	function getClassExtProperties(DOMElement $classNode)
 	{
@@ -341,8 +360,15 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			
 			$modifiers = array('nonatomic', $this->getPropertyMemModifier($propType));
 			$modifiers = implode(',', $modifiers);
+            
+            // Checking for a primitive type
+            if($this->getPropertyMemModifier($propType)== 'assign') {
+                $whitespace = ' ';
+            } else {
+                $whitespace = '';
+            }
 			
-			$result .= "@property ($modifiers) $objcPropType $propName;\n";
+			$result .= "@property ($modifiers) $objcPropType$whitespace$propName;\n";
 		}
 		
 		return $result;
@@ -438,8 +464,15 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 				$comments = "\t// " . implode(', ', $comments);
 			else
 				$comments = '';
+            
+            // Checking for a primitive type
+            if($this->getPropertyMemModifier($propType)== 'assign') {
+                $whitespace = ' ';
+            } else {
+                $whitespace = '';
+            }
 				
-			$this->appendHLine("@property ($modifiers) $objcPropType $propName;$comments");
+			$this->appendHLine("@property ($modifiers) $objcPropType$whitespace$propName;$comments");
 			$this->appendMLine("@synthesize $propName = _$propName;");
 			$hasProps = true;
 		}
@@ -480,8 +513,8 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			
 			if ($objectType)
 			{
-				$this->appendHLine("- (NSString*)getObjectTypeOf$propName;");
-				$this->appendMLine("- (NSString*)getObjectTypeOf$propName");
+				$this->appendHLine("- (NSString *)getObjectTypeOf$propName;");
+				$this->appendMLine("- (NSString *)getObjectTypeOf$propName");
 				$this->appendMLine("{");
 				$this->appendMLine("    return @\"$objectType\";");
 				$this->appendMLine("}\n");
@@ -506,8 +539,8 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			$propName = $this->renameReservedProperties($propName);
 			$propValue = "[KalturaSimpleTypeParser parse$propType:aPropVal]";
 			
-			$this->appendHLine("- (void)set{$ucPropName}FromString:(NSString*)aPropVal;");
-			$this->appendMLine("- (void)set{$ucPropName}FromString:(NSString*)aPropVal");
+			$this->appendHLine("- (void)set{$ucPropName}FromString:(NSString *)aPropVal;");
+			$this->appendMLine("- (void)set{$ucPropName}FromString:(NSString *)aPropVal");
 			$this->appendMLine("{");
 			$this->appendMLine("    self.$propName = $propValue;");
 			$this->appendMLine("}\n");
@@ -518,7 +551,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 	{
 		$type = $classNode->getAttribute ( "name" );
 		
-		$this->appendMLine( "- (void)toParams:(KalturaParams*)aParams isSuper:(BOOL)aIsSuper" );
+		$this->appendMLine( "- (void)toParams:(KalturaParams *)aParams isSuper:(BOOL)aIsSuper" );
 		$this->appendMLine( "{" );
 		$this->appendMLine( "    [super toParams:aParams isSuper:YES];" );
 		$this->appendMLine( "    if (!aIsSuper)" );
@@ -752,9 +785,9 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			$paramType = $paramNode->getAttribute("type");
 
 			if ($paramType == 'array')
-				$paramType = "NSArray*";
+				$paramType = "NSArray *";
 			else if ($paramType == 'map')
-				$paramType = "NSDictionary*";
+				$paramType = "NSDictionary *";
 			else
 				$paramType = $this->getObjCType($paramType);
 			
@@ -829,7 +862,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		foreach ($services as $serviceName)
 		{
 			$serviceClassName = "Kaltura".$this->upperCaseFirstLetter($serviceName)."Service";
-			$this->appendHLine("	$serviceClassName* _$serviceName;");
+			$this->appendHLine("	$serviceClassName *_$serviceName;");
 		}
 		$this->appendHLine("}");	
 		$this->appendHLine("");	
@@ -838,27 +871,27 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		// properties
 		if ($pluginClassName != "KalturaClient")
 		{
-			$this->appendHLine("@property (nonatomic, assign) KalturaClientBase* client;");
+			$this->appendHLine("@property (nonatomic, assign) KalturaClientBase *client;");
 			$this->appendMLine("@synthesize client = _client;");
 		}
 		
 		foreach ($services as $serviceName)
 		{
 			$serviceClassName = "Kaltura".$this->upperCaseFirstLetter($serviceName)."Service";
-			$this->appendHLine("@property (nonatomic, readonly) $serviceClassName* $serviceName;");
+			$this->appendHLine("@property (nonatomic, readonly) $serviceClassName *$serviceName;");
 		}
 		$this->appendMLine();
 		
 		// init
 		if ($pluginClassName == "KalturaClient")
 		{
-			$initParams = "WithConfig:(KalturaConfiguration*)aConfig";
+			$initParams = "WithConfig:(KalturaConfiguration *)aConfig";
 			$initSuperParams = "WithConfig:aConfig";
 			$clientVar = "self";
 		}
 		else
 		{
-			$initParams = "WithClient:(KalturaClient*)aClient";
+			$initParams = "WithClient:(KalturaClient *)aClient";
 			$initSuperParams = "";
 			$clientVar = "self.client";
 		}
@@ -883,7 +916,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		foreach ($services as $serviceName)
 		{
 			$serviceClassName = "Kaltura".$this->upperCaseFirstLetter($serviceName)."Service";
-			$this->appendMLine("- ($serviceClassName*)$serviceName");
+			$this->appendMLine("- ($serviceClassName *)$serviceName");
 			$this->appendMLine("{");
 			$this->appendMLine("    if (self->_$serviceName == nil)");
 			$this->appendMLine("    	self->_$serviceName = [[$serviceClassName alloc] initWithClient:$clientVar];");
