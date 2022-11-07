@@ -4713,16 +4713,16 @@ static NSOperationQueue *sharedQueue = nil;
 }
 
 void runOnMainQueueWithoutDeadlocking(void (^block)(void))
- {
-     if ([NSThread isMainThread])
-     {
-         block();
-     }
-     else
-     {
-         dispatch_sync(dispatch_get_main_queue(), block);
-     }
- }
+{
+    if ([NSThread isMainThread])
+    {
+        block();
+    }
+    else
+    {
+        dispatch_sync(dispatch_get_main_queue(), block);
+    }
+}
 
 + (void)showNetworkActivityIndicator
 {
