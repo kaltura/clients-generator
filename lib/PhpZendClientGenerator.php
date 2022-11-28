@@ -1,8 +1,6 @@
 <?php
 class PhpZendClientGenerator extends ClientGeneratorFromXml
 {
-	const MULTILINGUAL_PREFIX = 'multiLingual_';
-
 	private $cacheTypes = array();
 	
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "zend")
@@ -434,17 +432,17 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 					
 				case "string" :
 					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$multiLingualPropName = self::MULTILINGUAL_PREFIX . $propName;
-					$arrayType = $propertyNode->getAttribute ( "arrayType" );
 					$this->appendLine("		{");
 					$this->appendLine("			if(isset(\$xml->{$propName}->item) && count(\$xml->{$propName}->item))");
-					$this->appendLine("				\$this->$multiLingualPropName = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, \"$arrayType\");");
+					$this->appendLine("				\$this->multiLingual_{$propName} = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, '');");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = ($propType)\$xml->$propName;");
 					$this->appendLine("		}");
 					break;
 					
 				case "array" :
+					if (substr($propName,0, strlen('multiLingual_')) === 'multiLingual_')
+						break;
 					$arrayType = $propertyNode->getAttribute ( "arrayType" );
 					$this->appendLine("		if(count(\$xml->{$propName}))");
 					$this->appendLine("		{");
