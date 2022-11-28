@@ -441,8 +441,6 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 					break;
 					
 				case "array" :
-					if (substr($propName,0, strlen('multiLingual_')) === 'multiLingual_')
-						break;
 					$arrayType = $propertyNode->getAttribute ( "arrayType" );
 					$this->appendLine("		if(count(\$xml->{$propName}))");
 					$this->appendLine("		{");
