@@ -437,7 +437,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 					$multiLingualPropName = self::MULTILINGUAL_PREFIX . $propName;
 					$arrayType = $propertyNode->getAttribute ( "arrayType" );
 					$this->appendLine("		{");
-					$this->appendLine("			if(count(\$xml->{$propName}->item))");
+					$this->appendLine("			if(isset(\$xml->{$propName}->item) && count(\$xml->{$propName}->item))");
 					$this->appendLine("				\$this->$multiLingualPropName = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, \"$arrayType\");");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = ($propType)\$xml->$propName;");
