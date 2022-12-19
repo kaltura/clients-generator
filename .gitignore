@@ -15,7 +15,7 @@ tests/config.ini
 
 # IDE
 .idea
-
+.vscode
 **/.DS_Store
 
 # Development files/folders

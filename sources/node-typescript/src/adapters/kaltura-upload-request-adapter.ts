@@ -6,9 +6,7 @@ import { KalturaClientOptions } from '../kaltura-client-options';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { CancelableAction } from '../cancelable-action';
 import got from 'got';
-import * as dbg from 'debug'
-
-const debug = dbg('kaltura:adapter:upload')
+import { Logger } from "../api/kaltura-logger";
 
 /*
  * WE DONT SUPPORT UPLOAD YET
@@ -36,7 +34,7 @@ export class KalturaUploadRequestAdapter {
 
   constructor(public clientOptions: KalturaClientOptions, public defaultRequestOptions: KalturaRequestOptions) {
     // Need to catch outer client.request() for this, so logging also..
-    debug('"node-typescript-client" does not yet support uploading, you can use Kaltura typescript client (Web) or Kaltura node client for this.')
+    Logger.debug('"node-typescript-client" does not yet support uploading, you can use Kaltura typescript client (Web) or Kaltura node client for this.')
     throw new Error('"node-typescript-client" does not yet support uploading, you can use Kaltura typescript client (Web) or Kaltura node client for this.')
   }
 
@@ -120,14 +118,14 @@ export class KalturaUploadRequestAdapter {
 
         if (userChunkFileSize && Number.isFinite(userChunkFileSize) && !Number.isNaN(userChunkFileSize)) {
           if (userChunkFileSize < 1e5) {
-            debug(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`);
+            Logger.debug(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`);
             actualChunkFileSize = 1e5;
           } else {
-            debug(`using user requested chunk size '${userChunkFileSize}'`);
+            Logger.debug(`using user requested chunk size '${userChunkFileSize}'`);
             actualChunkFileSize = userChunkFileSize;
           }
         } else {
-          debug(`using default chunk size 5Mb`);
+          Logger.debug(`using default chunk size 5Mb`);
           actualChunkFileSize = 5e6; // default
         }
 
@@ -142,7 +140,7 @@ export class KalturaUploadRequestAdapter {
         parameters.resumeAt = uploadChunkData.resumeAt;
         parameters.finalChunk = uploadChunkData.finalChunk;
       } else {
-        debug(`chunk upload not supported by browser or by request. Uploading the file as-is`);
+        Logger.debug(`chunk upload not supported by browser or by request. Uploading the file as-is`);
       }
 
       const { service, action, ...queryparams } = parameters;

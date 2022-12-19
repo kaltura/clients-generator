@@ -1,6 +1,6 @@
 import { KalturaClientUtils } from "./kaltura-client-utils";
 import { KalturaTypesFactory } from './kaltura-types-factory';
-import * as dbg from 'debug'
+import { Logger } from './kaltura-logger'
 
 export type DependentProperty = { property: string, request: number, targetPath?: string[] };
 
@@ -20,8 +20,6 @@ export interface KalturaObjectBaseArgs {
   relatedObjects?: { [key: string]: KalturaObjectBase };
 }
 
-const debug = dbg('kaltura:base:object')
-
 export abstract class KalturaObjectBase {
 
   private _allowedEmptyArray: string[] = [];
@@ -34,9 +32,9 @@ export abstract class KalturaObjectBase {
     for (const property of properties) {
       const metadataProperty = metadata[property];
       if (!metadataProperty) {
-        debug(`ignore property '${property}' flagged to allow empty array as it doesn't not exists on type (did you set the right property in method 'allowEmptyArray'?)`);
+        Logger.debug(`ignore property '${property}' flagged to allow empty array as it doesn't not exists on type (did you set the right property in method 'allowEmptyArray'?)`)
       } else if (metadataProperty.type !== 'a') {
-        debug(`ignore property '${property}' flagged to allow empty array as it is not of type array (did you set the right property in method 'allowEmptyArray'?)`);
+        Logger.debug(`ignore property '${property}' flagged to allow empty array as it is not of type array (did you set the right property in method 'allowEmptyArray'?)`)
       } else {
         this._allowedEmptyArray.push(property);
       }
@@ -102,7 +100,7 @@ export abstract class KalturaObjectBase {
       });
     } catch (err) {
       // TODO [kaltura] should use logHandler
-      debug(err.message);
+      Logger.error(err.message)
       throw err;
     }
 
@@ -124,7 +122,7 @@ export abstract class KalturaObjectBase {
       });
     } catch (err) {
       // TODO [kaltura] should use logHandler
-      debug(err.message);
+      Logger.error(err.message)
       throw err;
     }
 
@@ -252,9 +250,9 @@ export abstract class KalturaObjectBase {
     }
 
     if (usedFallbackType && result) {
-      debug(`could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
+      Logger.debug(`could not find object type '${objectType}', Falling back to '${fallbackObjectType}' object type. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`)
     } else if (!result) {
-      debug(`could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`);
+      Logger.debug(`could not find object type '${objectType}'. (Did you remember to set your accepted object types in the request “config.acceptedTypes” attribute?)`)
     }
 
     return result;
