@@ -101,29 +101,27 @@ export function createCancelableAction<T>(
   responseType: 'json'|'text' = 'json'
 ): CancelableAction<T> {
   const result = new CancelableAction<T>((resolve, reject) => {
-    let responseHeaders
     const cancelableRequest = got.post(data.endpoint, {
       json: data.body,
       headers: data.headers
-    }).then((response) => {
+    })
+
+    cancelableRequest.then((response) => {
       Logger.debug(`Kaltura BE response x-me: ${response?.headers?.['x-me']} x-kaltura-session: ${response?.headers?.['x-kaltura-session']}`)
-      return response
     }).catch(e => {
-      responseHeaders = e.response?.headers
-      throw e
+      const responseHeaders = e.response?.headers
+      Logger.error(`request failed for ${data?.endpoint} error: ${e?.message || e} x-me: ${responseHeaders?.['x-me']} x-kaltura-session: ${responseHeaders?.['x-kaltura-session']}`)
     })
 
     cancelableRequest[responseType]()
       .then(<ResolveFn<any>>resolve)
       .catch(e => {
-        Logger.error(`request failed for ${data?.endpoint} error: ${e?.message || e} x-me: ${responseHeaders?.['x-me']} x-kaltura-session: ${responseHeaders?.['x-kaltura-session']}`)
         const error = e.response?.statusCode === 200
           ? new Error(e.response?.body)
           : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request');
         reject(error)
       })
-    return () => (<any>cancelableRequest).cancel()
+    return () => cancelableRequest.cancel()
   });
-
   return result;
 }

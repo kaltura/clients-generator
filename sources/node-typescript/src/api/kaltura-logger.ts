@@ -12,7 +12,7 @@ const ClientLogger = {
     if(!Levels.includes(prop)) {
       throw new Error('Invalid usage of Kaltura Logger')
     }
-    return target?.[prop] || (() => {})
+    return target.logger?.[prop] || (() => {})
   }
 }
 
