@@ -107,10 +107,10 @@ export function createCancelableAction<T>(
     })
 
     cancelableRequest.then((response) => {
-      Logger.debug(`Kaltura BE response x-me: ${response?.headers?.['x-me']} x-kaltura-session: ${response?.headers?.['x-kaltura-session']}`)
+      Logger.debug(`Kaltura BE response x-me: ${response?.headers?.['x-me'] || ''} x-kaltura-session: ${response?.headers?.['x-kaltura-session'] || ''}`)
     }).catch(e => {
       const responseHeaders = e.response?.headers
-      Logger.error(`request failed for ${data?.endpoint} error: ${e?.message || e} x-me: ${responseHeaders?.['x-me']} x-kaltura-session: ${responseHeaders?.['x-kaltura-session']}`)
+      Logger.error(`request failed for ${data?.endpoint} error: ${e?.message || e} x-me: ${responseHeaders?.['x-me'] || ''} x-kaltura-session: ${responseHeaders?.['x-kaltura-session'] || ''}`)
     })
 
     cancelableRequest[responseType]()
