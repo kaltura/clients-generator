@@ -405,6 +405,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			
 			$propName = $propertyNode->getAttribute("name");
 			$isEnum = $propertyNode->hasAttribute("enumType");
+			$isMultiLingual = $propertyNode->getAttribute("multiLingual") == 1;
 			$propType = $this->getTypeClass($propertyNode->getAttribute("type"));
 		
 			switch ($propType) 
@@ -431,7 +432,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 					break;
 					
 				case "string" :
-					if($propertyNode->getAttribute("multiLingual") == 1)
+					if($isMultiLingual)
 					{
 						$this->appendLine("		if(count(\$xml->{$propName}))");
 						$this->appendLine("		{");
