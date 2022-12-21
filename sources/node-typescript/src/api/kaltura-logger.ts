@@ -17,4 +17,4 @@ const ClientLogger = {
 }
 
 export const Logger = new Proxy(hostLogger, ClientLogger);
-export const initializeLogger = (logger: Record<TLevel, (msg:string) => any>): void => { hostLogger.logger = logger}
+export const initializeLogger = (logger: Partial<Record<TLevel, (msg:string) => any>>): void => { hostLogger.logger = logger}

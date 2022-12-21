@@ -100,6 +100,10 @@ export function createCancelableAction<T>(
   data: { endpoint: string, headers: any, body: any },
   responseType: 'json'|'text' = 'json'
 ): CancelableAction<T> {
+  const endPoint = data?.endpoint || ''
+  const service = endPoint?.match('service/([^\/]+)')?.[1] || ''
+  const action = endPoint?.match('action/([^\?]+)')?.[1] || ''
+
   const result = new CancelableAction<T>((resolve, reject) => {
     const cancelableRequest = got.post(data.endpoint, {
       json: data.body,
@@ -107,10 +111,14 @@ export function createCancelableAction<T>(
     })
 
     cancelableRequest.then((response) => {
-      Logger.debug(`Kaltura BE response x-me: ${response?.headers?.['x-me'] || ''} x-kaltura-session: ${response?.headers?.['x-kaltura-session'] || ''}`)
+      const xMe = response?.headers?.['x-me'] || ''
+      const xKalturaSession = response?.headers?.['x-kaltura-session'] || ''
+      // TODO - change to 'debug' level once we are able to print headers for BE Application Errors.
+      Logger.error(`Kaltura BE response for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
     }).catch(e => {
-      const responseHeaders = e.response?.headers
-      Logger.error(`request failed for ${data?.endpoint} error: ${e?.message || e} x-me: ${responseHeaders?.['x-me'] || ''} x-kaltura-session: ${responseHeaders?.['x-kaltura-session'] || ''}`)
+      const xMe = e?.response?.headers?.['x-me'] || ''
+      const xKalturaSession = e?.response?.headers?.['x-kaltura-session'] || ''
+      Logger.error(`Kaltura BE failed for: ${service}/${action} error: ${e?.message || e} x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
     })
 
     cancelableRequest[responseType]()
