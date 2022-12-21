@@ -405,6 +405,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			
 			$propName = $propertyNode->getAttribute("name");
 			$isEnum = $propertyNode->hasAttribute("enumType");
+			$isMultiLingual = $propertyNode->getAttribute("multiLingual") == 1;
 			$propType = $this->getTypeClass($propertyNode->getAttribute("type"));
 		
 			switch ($propType) 
@@ -431,13 +432,21 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 					break;
 					
 				case "string" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
-					$this->appendLine("		{");
-					$this->appendLine("			if(isset(\$xml->{$propName}->item) && count(\$xml->{$propName}->item))");
-					$this->appendLine("				\$this->multiLingual_{$propName} = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, '');");
-					$this->appendLine("			else");
-					$this->appendLine("				\$this->$propName = ($propType)\$xml->$propName;");
-					$this->appendLine("		}");
+					if($isMultiLingual)
+					{
+						$this->appendLine("		if(count(\$xml->{$propName}))");
+						$this->appendLine("		{");
+						$this->appendLine("			if(isset(\$xml->{$propName}->item) && count(\$xml->{$propName}->item))");
+						$this->appendLine("				\$this->multiLingual_{$propName} = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, '');");
+						$this->appendLine("			else");
+						$this->appendLine("				\$this->$propName = ($propType)\$xml->$propName;");
+						$this->appendLine("		}");
+					}
+					else
+					{
+						$this->appendLine("		if(count(\$xml->{$propName}))");
+						$this->appendLine("			\$this->$propName = ($propType)\$xml->$propName;");
+					}
 					break;
 					
 				case "array" :
