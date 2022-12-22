@@ -119,7 +119,6 @@ export function createCancelableAction<T>(
     }).catch(e => {
       xMe = e?.response?.headers?.['x-me'] || ''
       xKalturaSession = e?.response?.headers?.['x-kaltura-session'] || ''
-      Logger.error(`Kaltura API ERROR ${e?.message || e}, for: ${service}/${action} x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
     })
 
     cancelableRequest[responseType]()
@@ -131,9 +130,11 @@ export function createCancelableAction<T>(
       })
       .then(<ResolveFn<any>>resolve)
       .catch(e => {
+        Logger.error(`Kaltura Error: '${e.message}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+        const args = xMe || xKalturaSession ? { xMe, xKalturaSession } : undefined 
         const error = e.response?.statusCode === 200
           ? new Error(e.response?.body)
-          : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request', { xMe, xKalturaSession });
+          : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request', args);
         reject(error)
       })
     return () => cancelableRequest.cancel()
