@@ -115,6 +115,7 @@ export function createCancelableAction<T>(
     cancelableRequest.then((response) => {
       xMe = response?.headers?.['x-me'] || ''
       xKalturaSession = response?.headers?.['x-kaltura-session'] || ''
+      Logger.debug(`Kaltura response completed for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
     }).catch(e => {
       xMe = e?.response?.headers?.['x-me'] || ''
       xKalturaSession = e?.response?.headers?.['x-kaltura-session'] || ''
