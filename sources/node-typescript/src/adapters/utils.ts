@@ -124,7 +124,7 @@ export function createCancelableAction<T>(
 
     cancelableRequest[responseType]()
       .then(function (response) {
-        if (response.objectType === 'KalturaAPIException') {
+        if (response?.objectType === 'KalturaAPIException') {
           Logger.error(`Kaltura API Exception: '${response.message || ''}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
         }
         return response
