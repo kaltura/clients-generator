@@ -107,26 +107,32 @@ export function createCancelableAction<T>(
   const result = new CancelableAction<T>((resolve, reject) => {
     const cancelableRequest = got.post(data.endpoint, {
       json: data.body,
-      headers: data.headers
+      headers: data.headers,
+      timeout: { response: 60_000 }
     })
 
+    let xMe, xKalturaSession
     cancelableRequest.then((response) => {
-      const xMe = response?.headers?.['x-me'] || ''
-      const xKalturaSession = response?.headers?.['x-kaltura-session'] || ''
-      // TODO - change to 'debug' level once we are able to print headers for BE Application Errors.
-      Logger.error(`Kaltura BE response for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+      xMe = response?.headers?.['x-me'] || ''
+      xKalturaSession = response?.headers?.['x-kaltura-session'] || ''
     }).catch(e => {
-      const xMe = e?.response?.headers?.['x-me'] || ''
-      const xKalturaSession = e?.response?.headers?.['x-kaltura-session'] || ''
-      Logger.error(`Kaltura BE failed for: ${service}/${action} error: ${e?.message || e} x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+      xMe = e?.response?.headers?.['x-me'] || ''
+      xKalturaSession = e?.response?.headers?.['x-kaltura-session'] || ''
+      Logger.error(`Kaltura API ERROR ${e?.message || e}, for: ${service}/${action} x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
     })
 
     cancelableRequest[responseType]()
+      .then(function (response) {
+        if (response.objectType === 'KalturaAPIException') {
+          Logger.error(`Kaltura API Exception: '${response.message || ''}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+        }
+        return response
+      })
       .then(<ResolveFn<any>>resolve)
       .catch(e => {
         const error = e.response?.statusCode === 200
           ? new Error(e.response?.body)
-          : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request');
+          : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request', { xMe, xKalturaSession });
         reject(error)
       })
     return () => cancelableRequest.cancel()

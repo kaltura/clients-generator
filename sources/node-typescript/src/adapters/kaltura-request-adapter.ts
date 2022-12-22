@@ -27,17 +27,20 @@ export class KalturaRequestAdapter {
             return response.result;
           }
         } catch (error) {
-          if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
-            throw error;
+          if (error instanceof KalturaClientException) {
+            throw new KalturaClientException(error.message, error.code, {...(error.args || {}), service, action});
+          } else if (error instanceof KalturaAPIException) {
+            throw new KalturaAPIException(error.message, error.code, {...(error.args || {}), service, action});
           } else {
             const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response');
+            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response', { service, action });
           }
         }
       },
         error => {
           const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-          throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
+          const args = { ...((<any>error).args || {}), service, action }
+          throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server', args);
         });
   }
 }
