@@ -2,13 +2,11 @@ package kalturaclient
 
 import (
 	"bytes"
-	"encoding/json"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
-
-	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/types"
 
 	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/errors"
 )
@@ -19,10 +17,20 @@ const (
 	contentTypeJSON   = "application/json"
 )
 
+var (
+	errorPart = []byte("\"error\"")
+)
+
 type HttpHandler struct {
 	httpClient        HttpClient
 	baseUrl           string
 	defaultBodyParams map[string]interface{}
+}
+
+type errorResponse struct {
+	Result struct {
+		Error *errors.APIException `json:"error"`
+	} `json:"result"`
 }
 
 func NewHttpHandler(baseUrl string, client HttpClient) *HttpHandler {
@@ -73,46 +81,22 @@ func (p *HttpHandler) Execute(request Request) ([]byte, error) {
 }
 
 func (p *HttpHandler) getAPIExceptionFromResponse(byteResponse []byte) error {
-	var apiExceptionResult map[string]interface{}
+	var bytesCountToSearchIn = 500
+	if len(byteResponse) < bytesCountToSearchIn {
+		bytesCountToSearchIn = len(byteResponse)
+	}
+	if !bytes.Contains(byteResponse[:bytesCountToSearchIn], errorPart) {
+		return nil
+	}
+	var apiExceptionResult errorResponse
 	err := json.Unmarshal(byteResponse, &apiExceptionResult)
 	if err != nil {
 		return fmt.Errorf("failed to parse json: %w", err)
 	}
-	resultInterface, ok := apiExceptionResult["result"]
-	if !ok {
-		return fmt.Errorf("failed to parse result json: %w", err)
-	}
-	resultMap, ok := resultInterface.(map[string]interface{})
-	if !ok {
+	if apiExceptionResult.Result.Error == nil {
 		return nil
 	}
-	errorInterface, ok := resultMap["error"]
-	if !ok {
-		return nil
-	}
-	errorMap, ok := errorInterface.(map[string]interface{})
-	if !ok {
-		return nil
-	}
-	apiException := errors.APIException{
-		Code:    errorMap["code"].(string),
-		Message: errorMap["message"].(string),
-	}
-	argsInterface, ok := errorMap["args"]
-	if ok {
-		argsInterfaceList := argsInterface.([]interface{})
-		for _, arg := range argsInterfaceList {
-			argMap, ok := arg.(map[string]interface{})
-			if ok {
-				apiExceptionArg := types.ApiExceptionArg{
-					Name:  argMap["name"].(string),
-					Value: argMap["value"].(string),
-				}
-				apiException.Args = append(apiException.Args, apiExceptionArg)
-			}
-		}
-	}
-	return &apiException
+	return apiExceptionResult.Result.Error
 }
 
 func (p *HttpHandler) closeIt(c io.Closer) {

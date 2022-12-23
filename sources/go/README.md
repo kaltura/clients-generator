@@ -19,7 +19,7 @@ To re-generate GO API Client Library use this [jenkins job](https://jenkins.rnd.
 package adspolicy
 
 import (
-   "encoding/json"
+   "github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json"
    "errors"
 )
 
