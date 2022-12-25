@@ -4,10 +4,10 @@ import (
 	json_ "encoding/json"
 )
 
-func Marshal(v interface{}) ([]byte, error) {
-	return json_.Marshal(v)
-}
+type MarshalFn func(v interface{}) ([]byte, error)
+type UnmarshalFn func(data []byte, v interface{}) error
 
-func Unmarshal(data []byte, v interface{}) error {
-	return json_.Unmarshal(data, v)
-}
+var (
+	Marshal   MarshalFn   = json_.Marshal
+	Unmarshal UnmarshalFn = json_.Unmarshal
+)

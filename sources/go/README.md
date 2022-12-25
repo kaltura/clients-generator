@@ -4,8 +4,82 @@ Compatible with Kaltura server version @VERSION@ and above.
 
 To re-generate GO API Client Library use this [jenkins job](https://jenkins.rnd.ott.kaltura.com/job/OTT-Generate-ClientLibs/)
 
+## Usage
+```go
+httpConfig := kalturaclient.Configuration{...}
 
-## Generation of enums:
+kalturaClient := kalturaclient.NewClientFromConfig(
+	httpConfig,
+	/* custom middlewares, e.g. Logging, Auth(get KS from context and put to request) */
+)
+
+response, err := services.NewAssetService(kalturaClient).List(
+	ctx,
+	&types.SearchAssetListFilter{...},
+	&types.FilterPager{...},
+	/* optional parameters Language, Currency, etc. */
+)
+if err != nil {...}
+for i, object := range response.Objects {...}
+```
+Real examples:
+- [ott-service-graphql](https://github.com/kaltura/ott-service-graphql/tree/master/logic/clients/phoenix)
+- [ott-service-partner-accounts-setup](https://github.com/kaltura/ott-service-partner-accounts-setup/tree/master/logic/clients/phoenix)
+- [ott-service-epgcache](https://github.com/kaltura/ott-service-epgcache/blob/master/logic/clients/phoenix_client.go)
+
+### customization examples
+#### http client
+```go
+kalturaClient := kalturaclient.NewClient(
+    kalturaclient.Middlewares(middlewares)(
+        kalturaclient.NewHttpHandler("url.com", customHttpClient),
+    ),
+)
+```
+#### json marshaller
+```go
+import (
+    jsonIterator "github.com/json-iterator/go"
+    "github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json"
+)
+
+func init() {
+	json.Marshal = jsonIterator.Marshal
+	json.Unmarshal = jsonIterator.Unmarshal
+}
+```
+#### middleware
+```go
+func AuthMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
+	return func(request kalturaclient.Request) ([]byte, error) {
+		if ks, ok := ottcontext.GetKsToken(request.GetContext()); ok && ks != "" {
+			request, _ = request.WithParam(kalturaclient.KS(ks))
+		}
+		return next(request)
+	}
+}
+
+func RequestLoggingMiddleware(next kalturaclient.Handler) kalturaclient.Handler {
+    return func(request kalturaclient.Request) ([]byte, error) {
+        startRequestTime := time.Now()
+        responseBytes, err := next(request)
+        duration := time.Since(startRequestTime)
+        
+        logger := log.MustGetFromContext(request.GetContext()).WithFields(logs.Component("phoenix"))
+        requestBytes, _ := request.GetBodyBytes()
+        if err != nil {
+            logger.Errorf("Request: path:[%s],headers:[%v],body:[%s]. Duration: %f. Error: %v", request.GetPath(), request.GetHeaders(), string(requestBytes), duration.Seconds(), err)
+        } else {
+            logger.Tracef("Request: path:[%s],headers:[%v],body:[%s]. Duration: %f. Response:[%s]", request.GetPath(), request.GetHeaders(), string(requestBytes), duration.Seconds(), string(responseBytes))
+        }
+        
+        return responseBytes, err
+    }
+}
+```
+
+## Contributing
+### Generation of enums
 1. for each enum object code is generating package by the enum name (lower case).
 2. each package will contain 1 file named "enum.go" with enum type as string.
 3. file location KalturaOttGeneratedAPIClientsGo/kalturaclient/enums/{package}/enum.go
@@ -14,7 +88,7 @@ To re-generate GO API Client Library use this [jenkins job](https://jenkins.rnd.
 6. in enum.go code generate UnmarshalJSON for this enum type and throw an error if someone tryies to set invalid enum value.
 7. if enum does not contain any value, UnmarshalJSON will throw an error (no option to creta an instance of it)
 
-### example for generated enum:
+#### example for generated enum:
 ```go
 package adspolicy
 
@@ -36,18 +110,14 @@ func (e *AdsPolicy) UnmarshalJSON(b []byte) error {
    if err != nil {
       return err
    }
-   enumValue := AdsPolicy(s)
-   switch enumValue {
-   case NO_ADS, KEEP_ADS:
-      *e = enumValue
-      return nil
-   }
-   return errors.New("invalid enum value")
+   enumValue := AdsPolicy(s)  
+  *e = enumValue
+   return nil
 }
 ```
 
-## Generation of types:
-1. all classes will include all of its properites + base class properites.
+### Generation of types
+1. all classes will include all of its properties + base class properties.
    1. all properties will include json serialization of name and omitempty.
    2. if property in class is Optional/Nullable/ReadOnly/InsertOnly/WriteOnly so it will be set as pointer.
    3. if class contains property by the same name as it's base class it will contain only its own property (name and type)
@@ -163,7 +233,7 @@ func (b *AssetContainer) UnmarshalJSON(bytes []byte) error {
 	}
 ```
 
-## Generation of services:
+### Generation of services
 1. all actions first param is ctx context.Context and last param is extra ...kalturaclient.Param - between then we add the real params of the action.
 2. if a param of an action in class of phoniex it will recive the interface of the class and not the class itself
 3. all action return 2 objects: pointer to result of the action and error
@@ -211,7 +281,7 @@ func (b *AssetContainer) UnmarshalJSON(bytes []byte) error {
 	}
 ```
 
-### exampels for service actions:
+#### examples for service actions
 ```go
 func (s *AssetService) List(ctx context.Context, filter types.AssetFilterInterface, pager *types.FilterPager, extra ...kalturaclient.Param) 
 (*types.AssetListResponse, error)
@@ -223,5 +293,5 @@ func (s *MetaService) Update(ctx context.Context, id int64, meta types.MetaInter
 func (s *MetaService) Delete(ctx context.Context, id int64, extra ...kalturaclient.Param) (*bool, error)
 ```
 
-## Generation of errors:
+### Generation of errors
 1. for each error add const value in file errors/codes.go
