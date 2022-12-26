@@ -108,7 +108,6 @@ export function createCancelableAction<T>(
     const cancelableRequest = got.post(data.endpoint, {
       json: data.body,
       headers: data.headers,
-      timeout: { response: 60_000 }
     })
 
     let xMe, xKalturaSession
