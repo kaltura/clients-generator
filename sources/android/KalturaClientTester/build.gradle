@@ -2,8 +2,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 31
+
+    defaultConfig {
+        minSdkVersion 17
+        targetSdkVersion 30
+    }
 
     defaultConfig {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -15,13 +19,13 @@ android {
 }
 
 dependencies {
-    compile project(':KalturaClient')
-	
-    androidTestCompile 'com.android.support.test:runner:0.4'
+    implementation project(':KalturaClient')
+
+    testImplementation 'com.android.support.test:runner:0.4'
     // Set this dependency to use JUnit 4 rules
-    androidTestCompile 'com.android.support.test:rules:0.4'
+    testImplementation 'com.android.support.test:rules:0.4'
     // Set this dependency to build and run Espresso tests
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    testImplementation 'com.android.support.test.espresso:espresso-core:2.2.1'
     // Set this dependency to build and run UI Automator tests
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    testImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 }

@@ -165,7 +165,7 @@ export const environment: Environment = {
 	    return $file;
 	}
 
-    function createClassFile(ClassType $class)
+    function createClassFile(ClassType $class) //TODO
     {
         // TODO we need to figure out why those frameworks are using different factory implementation
         $useTypesMapping = $this->framework === 'ngx' || $this->framework === 'nestjs' || $this->framework === 'rxjs';
@@ -444,6 +444,8 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 $default = $this->toNG2DefaultByType($property->type, $property->typeClassName, isset($property->default) ? $property->default : null);
                 $readOnly = isset($property->readOnly) && $property->readOnly;
                 $localProperty = isset($property->localProperty) && $property->localProperty;
+                $multiLingual = isset($property->multiLingual) && $property->multiLingual;
+
 
                 // update the properties declaration
                 if (!$readOnly) {
@@ -456,6 +458,11 @@ export class {$classTypeName} extends {$this->utils->ifExp($base, $base,'')} {
                 if ($default)
                 {
                     $result->assignPropertiesDefault[] = "if (typeof this.{$property->name} === 'undefined') this.{$property->name} = {$default};";
+                }
+                
+                if($multiLingual)
+                {
+                    $result->assignPropertiesDefault[] = "if (typeof this.{$property->name} === 'array') this.multiLingual_{$property->name} = this.{$property->name};";
                 }
 
                 if (!$localProperty) {

@@ -29,9 +29,26 @@ func RequestId(value string) Param {
 		inBody: false,
 	}
 }
+
 func Currency (value string) Param {
 	return Param{
 		key:    "currency",
+		value:  value,
+		inBody: true,
+	}
+}
+
+func UserId(value string) Param {
+	return Param{
+		key:    "userId",
+		value:  value,
+		inBody: true,
+	}
+}
+
+func ResponseProfile(value interface{}) Param {
+	return Param{
+		key:    "responseProfile",
 		value:  value,
 		inBody: true,
 	}

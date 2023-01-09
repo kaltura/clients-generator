@@ -41,12 +41,15 @@ class ResponseProfileTest: BaseTest {
     
     override func spec() {
         let config: ConnectionConfiguration = ConnectionConfiguration()
+        if let endPoint = URL(string: serverUrl) {
+            config.endPoint = endPoint
+        }
         client = Client(config)
         
         describe("response profile") {
             
             beforeEach {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -130,7 +133,7 @@ class ResponseProfileTest: BaseTest {
                 categoryEntryMapping.filterProperty = "entryIdEqual"
                 categoryEntryMapping.parentProperty = "id"
                 
-                waitUntil(timeout: 5000) { done in
+                waitUntil(timeout: .seconds(60)) { done in
                     entryRequest.set(completion: {(createdEntry: MediaEntry?, error: ApiException?) in
                         
                         expect(error).to(beNil())

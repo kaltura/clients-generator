@@ -125,7 +125,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 		if(count($enumNode->childNodes) > 0)
 		{
-			$s .= "   \"encoding/json\"\n";
+			$s .= "   \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json\"\n";
 			$s .= ")\n";
 			$s .= "\n";
 			$s .= "type $enumName string\n";
@@ -217,7 +217,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		{
 			$isImport = true;
 			$prefixText .= "import (\n";
-			$prefixText .= "  \"encoding/json\"\n";
+			$prefixText .= "  \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json\"\n";
 		}
 
 		// class definition
@@ -276,7 +276,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$isImport = true;
 				$prefixText .= "import (\n";
 			}
-			$prefixText .= "  \"encoding/json\"\n";
+			$prefixText .= "  \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json\"\n";
 			$prefixText .= "  \"errors\"\n";
 		} else if($isNeedJson)
 		{
@@ -446,7 +446,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 		$prefixText .= "import (\n";
 		$prefixText .= " \"fmt\"\n";
 		$prefixText .= " \"context\"\n";
-		$prefixText .= " \"encoding/json\"\n";
+		$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json\"\n";
 		$prefixText .= " \"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient\"\n";
 		
 		$serviceName = $serviceNode->getAttribute("name");
@@ -1134,7 +1134,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 
 import (
 	"context"
-	"encoding/json"
+	"github.com/kaltura/KalturaOttGeneratedAPIClientsGo/kalturaclient/json"
 	"errors"
 )
 

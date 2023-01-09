@@ -1,13 +1,18 @@
-
 apply plugin: 'com.android.library'
+apply from: '../version.gradle'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion 17
+        targetSdkVersion 30
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     buildTypes {
@@ -37,13 +42,15 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'commons-codec:commons-codec:1.4'
-    compile 'org.codeartisans:org.json:20130603'
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.squareup.okio:okio:1.12.0'
-    compile 'com.android.support:appcompat-v7:25.4.0'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.awaitility:awaitility:3.0.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'commons-codec:commons-codec:1.10'
+    implementation 'org.codeartisans:org.json:20130603'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+    implementation 'com.squareup.okio:okio:2.9.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.awaitility:awaitility:3.0.0'
 }
+
+apply from: './gradle-mvn-push.gradle'

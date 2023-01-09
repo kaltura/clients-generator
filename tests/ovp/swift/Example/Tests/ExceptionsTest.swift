@@ -41,11 +41,14 @@ class ExceptionsTest: BaseTest {
     
     override func spec() {
         let config: ConnectionConfiguration = ConnectionConfiguration()
+        if let endPoint = URL(string: serverUrl) {
+            config.endPoint = endPoint
+        }
         client = Client(config)
         
         describe("list response") {
             it("asset get") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = FlavorAssetService.list()
                     requestBuilder.set(completion: {(list: FlavorAssetListResponse?, error: ApiException?) in
                         
@@ -64,7 +67,7 @@ class ExceptionsTest: BaseTest {
         
         describe("object response") {
             it("media get") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = MediaService.get(entryId: "bad-id")
                     requestBuilder.set(completion: {(getEntry: MediaEntry?, error: ApiException?) in
                         
@@ -83,7 +86,7 @@ class ExceptionsTest: BaseTest {
         
         describe("empty response") {
             it("media delete") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = MediaService.delete(entryId: "bad-id")
                     requestBuilder.set(completion: {(void: Void?, error: ApiException?) in
                         
@@ -103,7 +106,7 @@ class ExceptionsTest: BaseTest {
         
         describe("array response") {
             it("flavorAsset getByEntryId") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = FlavorAssetService.getByEntryId(entryId: "bad-id")
                     requestBuilder.set(completion: {(assets: [FlavorAsset]?, error: ApiException?) in
                         
@@ -123,7 +126,7 @@ class ExceptionsTest: BaseTest {
         describe("primitive response") {
             
             it("login") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = SessionService.start(secret: "bad-secret", userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
                     
                     requestBuilder.set(completion: {(ks: String?, error: ApiException?) in

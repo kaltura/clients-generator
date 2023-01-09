@@ -41,12 +41,15 @@ class PrimitiveResponsesTest: BaseTest {
     
     override func spec() {
         let config: ConnectionConfiguration = ConnectionConfiguration()
+        if let endPoint = URL(string: serverUrl) {
+            config.endPoint = endPoint
+        }
         client = Client(config)
         
         describe("primitive responses") {
             
             beforeEach {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         done()
@@ -55,7 +58,7 @@ class PrimitiveResponsesTest: BaseTest {
             }
             
             it("int") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = SystemService.getTime()
                     requestBuilder.set(completion: {(time: Int?, error: ApiException?) in
                         
@@ -70,7 +73,7 @@ class PrimitiveResponsesTest: BaseTest {
             }
             
             it("string") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = SystemService.getVersion()
                     requestBuilder.set(completion: {(version: String?, error: ApiException?) in
                         
@@ -85,7 +88,7 @@ class PrimitiveResponsesTest: BaseTest {
             }
             
             it("boolean") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     let requestBuilder = SystemService.ping()
                     requestBuilder.set(completion: {(ok: Bool?, error: ApiException?) in
                         

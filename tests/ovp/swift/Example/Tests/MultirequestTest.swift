@@ -42,13 +42,16 @@ class MultirequestTest: BaseTest {
     
     override func spec() {
         let config: ConnectionConfiguration = ConnectionConfiguration()
+        if let endPoint = URL(string: serverUrl) {
+            config.endPoint = endPoint
+        }
         client = Client(config)
         
         describe("multirequest") {
             
             afterEach {
                 for entryId in self.entryIds {
-                    waitUntil(timeout: 500) { done in
+                    waitUntil(timeout: .seconds(15)) { done in
                         self.deleteEntry(entryId: entryId) { error in
                             expect(error).to(beNil())
                             done()
@@ -79,7 +82,7 @@ class MultirequestTest: BaseTest {
             }
             
             it("login") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     
                     let entryRequestBuilder = MediaService.list();
                     entryRequestBuilder.ks = "{2:result}"
@@ -109,7 +112,7 @@ class MultirequestTest: BaseTest {
             }
             
             it("login with tokenizer") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     
                     let loginRequestBuilder = SessionService.start(secret: self.secret!, userId: nil, type: SessionType.ADMIN, partnerId: self.partnerId)
                     
@@ -117,7 +120,7 @@ class MultirequestTest: BaseTest {
                     
                     let requestBuilder = SystemService.ping()
                         .add(request: loginRequestBuilder)
-                        .add(request: entryRequestBuilder)                    
+                        .add(request: entryRequestBuilder)
                         .link(tokenFromRespose: loginRequestBuilder.responseTokenizer, tokenToRequest: entryRequestBuilder.requestTokenizer.ks)
                         .set(completion: {(response: Array<Any?>?, error: ApiException?) in
                             
@@ -141,7 +144,7 @@ class MultirequestTest: BaseTest {
             }
             
             it("file upload") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         
@@ -203,7 +206,7 @@ class MultirequestTest: BaseTest {
             }
             
             it("file upload with tokenizer") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         
@@ -272,7 +275,7 @@ class MultirequestTest: BaseTest {
             }
             
             it("multi completions") {
-                waitUntil(timeout: 500) { done in
+                waitUntil(timeout: .seconds(15)) { done in
                     self.login() { error in
                         expect(error).to(beNil())
                         

@@ -232,6 +232,14 @@ class KalturaClient(object):
     def addCoreService(self, serviceName, serviceClass):
         setattr(self, serviceName, serviceClass)
 
+    def flattenParams(self, data, out, base=''):
+        for key, value in data.items():
+            outKey = key if base == '' else '%s[%s]' % (base, key)
+            if type(value) == dict:
+                self.flattenParams(value, out, outKey)
+            else:
+                out[outKey] = value
+
     def getServeUrl(self):
         if len(self.callsQueue) != 1:
             return None
@@ -242,7 +250,9 @@ class KalturaClient(object):
         self.callsQueue = []
 
         if params is not None:
-            result += '?' + six.moves.urllib.parse.urlencode(params.get())
+            paramsFlattened = {}
+            self.flattenParams(params.get(),paramsFlattened)
+            result += '?' + six.moves.urllib.parse.urlencode(paramsFlattened)
         self.log("Returned url [%s]" % result)
         return result
 

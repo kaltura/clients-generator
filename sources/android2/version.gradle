@@ -1,0 +1,3 @@
+// Library Version
+ext.kalturaClientVersion = '@VERSION@'
+

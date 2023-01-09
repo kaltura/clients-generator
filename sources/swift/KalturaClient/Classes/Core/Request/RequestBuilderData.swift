@@ -37,20 +37,18 @@
     public var params: [String: Any] = [:]
     
     @discardableResult
-    public func setParam(key: String, value:Any?) -> Self {
+    public func setParam(key: String, value: Any?) -> Self {
         
-        guard value != nil else {
-            return self
+        guard let value = value else { return self }
+        
+        if let value = value as? ObjectBase {
+            self.params[key] = value.toDictionary()
+        } else if let value = value as? [ObjectBase] {
+            self.params[key] = value.map { $0.toDictionary() }
+        } else {
+            self.params[key] = value
         }
         
-        var val: Any;
-        if value is ObjectBase {
-            val = (value as! ObjectBase).toDictionary()
-        }
-        else {
-            val = value!
-        }
-        self.params[key] = val
         return self
     }
 }

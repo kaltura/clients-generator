@@ -36,7 +36,7 @@ class Kaltura_Client_ParseUtils
 	
 	public static function unmarshalObject(\SimpleXMLElement $xml, $fallbackType = null) 
 	{
-		$objectType = reset($xml->objectType);
+		$objectType = (string)$xml->objectType;
 		$type = Kaltura_Client_TypeMap::getZendType($objectType);
 		if(!class_exists($type)) {
 			$type = Kaltura_Client_TypeMap::getZendType($fallbackType);
