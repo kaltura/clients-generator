@@ -10,7 +10,7 @@ import { environment } from '../environment';
 import got from 'got';
 import { Logger } from "../api/kaltura-logger";
 
-export function createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryparams?: {}): string {
+export function createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryParams?: {}): string {
   const endpoint = options.endpointUrl;
   const clientTag = createClientTag(request, options);
   let url = `${endpoint}/api_v3/service/${service}`;
@@ -19,12 +19,12 @@ export function createEndpoint(request: KalturaRequestBase, options: KalturaClie
     url += `/action/${action}`;
   }
 
-  const queryparams = {
-    ...(additionalQueryparams || {}),
+  const queryParams = {
+    ...(additionalQueryParams || {}),
     ...(clientTag ? { clientTag } : {})
   };
 
-  return buildUrl(url, queryparams);
+  return buildUrl(url, queryParams);
 }
 
 export function buildUrl(url: string, querystring?: {}) {

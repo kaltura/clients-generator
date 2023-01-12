@@ -6,86 +6,67 @@ import { KalturaClientOptions } from '../kaltura-client-options';
 import { KalturaAPIException } from '../api/kaltura-api-exception';
 import { CancelableAction } from '../cancelable-action';
 import got from 'got';
+import * as FormData from 'form-data';
 import { Logger } from "../api/kaltura-logger";
 
-/*
- * WE DONT SUPPORT UPLOAD YET
- */
 interface UploadByChunksData {
-  enabled: boolean;
   resume: boolean;
   resumeAt: number;
   finalChunk: boolean;
 }
+
+const serviceStr = 'uploadtoken' as const
+const actionStr = 'upload' as const
+
 export class KalturaUploadRequestAdapter {
-  private _chunkUploadSupported(request: KalturaUploadRequest<any>): boolean {
-    // SUPPORTED BY BROWSER?
-    // Check if these features are support by the browser:
-    // - File object type
-    // - Blob object type
-    // - FileList object type
-    // - slicing files
-    const supportedByBrowser = false;
-    const supportedByRequest = request.supportChunkUpload();
-    const enabledInClient = !this.clientOptions.chunkFileDisabled;
-
-    return enabledInClient && supportedByBrowser && supportedByRequest;
-  }
-
   constructor(public clientOptions: KalturaClientOptions, public defaultRequestOptions: KalturaRequestOptions) {
-    // Need to catch outer client.request() for this, so logging also..
-    Logger.debug('"node-typescript-client" does not yet support uploading, you can use Kaltura typescript client (Web) or Kaltura node client for this.')
-    throw new Error('"node-typescript-client" does not yet support uploading, you can use Kaltura typescript client (Web) or Kaltura node client for this.')
+    /* noop */
   }
 
   transmit(request: KalturaUploadRequest<any>): CancelableAction<any> {
     return new CancelableAction((resolve, reject, action) => {
-      const uploadedFileSize = !isNaN(request.uploadedFileSize) && isFinite(request.uploadedFileSize) && request.uploadedFileSize > 0 ? request.uploadedFileSize : 0;
+      const uploadedFileSize = !isNaN(request.uploadedFileSize) && isFinite(request.uploadedFileSize) && request.uploadedFileSize > 0
+        ? request.uploadedFileSize
+        : 0;
       const data: UploadByChunksData = {
-        enabled: this._chunkUploadSupported(request),
         resume: !!uploadedFileSize,
         finalChunk: false,
         resumeAt: uploadedFileSize
       };
-
       let activeAction: CancelableAction<any>;
 
-      const handleChunkUploadError = reason => {
+      const handleChunkUploadError = (reason) => {
         activeAction = null;
         reject(reason);
-      };
+      }
 
-      const handleChunkUploadSuccess = result => {
-        if (!data.enabled || data.finalChunk) {
-          activeAction = null;
-
-          try {
-            const response = request.handleResponse(result);
-
-            if (response.error) {
-              reject(response.error);
-            } else {
-              resolve(response.result);
-            }
-          } catch (error) {
-            if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
-              reject(error);
-            } else {
-              const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-              reject(new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response'));
-            }
-          }
-
-
-        } else {
+      const handleChunkUploadSuccess = (result) => {
+        if (!data.finalChunk) {
           activeAction = this._chunkUpload(request, data).then(handleChunkUploadSuccess, handleChunkUploadError);
+          return;
         }
-      };
 
-      activeAction = this._chunkUpload(request, data)
-        .then(handleChunkUploadSuccess, handleChunkUploadError);
+        activeAction = null;
+        try {
+          const response = request.handleResponse(result);
+          if (response.error) {
+            throw response.error;
+          } else {
+            resolve(response.result);
+          }
+        } catch (error) {
+          if (error instanceof KalturaClientException) {
+            reject(new KalturaClientException(error.message, error.code, { ...(error.args || {}), service: serviceStr, action: actionStr }));
+          } else if (error instanceof KalturaAPIException) {
+            reject(new KalturaAPIException(error.message, error.code, { ...(error.args || {}), service: serviceStr, action: actionStr }))
+          } else {
+            const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
+            reject(new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response', { service: serviceStr, action: actionStr }));
+          }
+        }
+      }
 
-
+      activeAction = this._chunkUpload(request, data).then(handleChunkUploadSuccess, handleChunkUploadError);
       return () => {
         if (activeAction) {
           activeAction.cancel();
@@ -95,121 +76,116 @@ export class KalturaUploadRequestAdapter {
     });
   }
 
-  private _getFormData(filePropertyName: string, fileName: string, fileChunk: File | Blob): FormData {
-    const result = new FormData();
-    result.append("fileName", fileName);
-    result.append(filePropertyName, fileChunk);
-    return result;
+  private async _getFormData(
+    { fileName, fileData, ks }: { fileName: string, fileData: Blob, ks:string }
+  ): Promise<FormData> {
+    const form = new FormData();
+    form.append('fileName', fileName)
+    form.append('ks', ks)
+    const ab = await fileData.arrayBuffer();
+    const buffer = Buffer.from(ab);
+    form.append('fileData', buffer, { contentType: fileData.type, filename: fileName })
+    return form;
   }
 
-  private _chunkUpload(request: KalturaUploadRequest<any>, uploadChunkData: UploadByChunksData): CancelableAction<any> {
-    return new CancelableAction((resolve, reject) => {
-      const parameters = prepareParameters(request, this.clientOptions, this.defaultRequestOptions);
-
-      let isComplete = false;
-      const { propertyName, file } = request.getFileInfo();
-      let data = this._getFormData(propertyName, file.name, file);
-
-      let fileStart = 0;
-
-      if (uploadChunkData.enabled) {
-        let actualChunkFileSize: number = null;
-        const userChunkFileSize = this.clientOptions ? this.clientOptions.chunkFileSize : null;
-
-        if (userChunkFileSize && Number.isFinite(userChunkFileSize) && !Number.isNaN(userChunkFileSize)) {
-          if (userChunkFileSize < 1e5) {
-            Logger.debug(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`);
-            actualChunkFileSize = 1e5;
-          } else {
-            Logger.debug(`using user requested chunk size '${userChunkFileSize}'`);
-            actualChunkFileSize = userChunkFileSize;
-          }
-        } else {
-          Logger.debug(`using default chunk size 5Mb`);
-          actualChunkFileSize = 5e6; // default
-        }
-
-        uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= actualChunkFileSize;
-
-        fileStart = uploadChunkData.resumeAt;
-        const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + actualChunkFileSize;
-
-        data = this._getFormData(propertyName, file.name, file.slice(fileStart, fileEnd, file.type));
-
-        parameters.resume = uploadChunkData.resume;
-        parameters.resumeAt = uploadChunkData.resumeAt;
-        parameters.finalChunk = uploadChunkData.finalChunk;
+  private _getChunkFileSize(): number {
+    const userChunkFileSize = this.clientOptions ? this.clientOptions.chunkFileSize : null;
+    let actualChunkFileSize = 5e6; // default 5 mb
+    if (userChunkFileSize && Number.isFinite(userChunkFileSize) && !Number.isNaN(userChunkFileSize)) {
+      if (userChunkFileSize < 1e5) {
+        Logger.warn(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`)
+        actualChunkFileSize = 1e5;
       } else {
-        Logger.debug(`chunk upload not supported by browser or by request. Uploading the file as-is`);
+        actualChunkFileSize = userChunkFileSize;
       }
+    }
+    Logger.info(`using chunk size of ${userChunkFileSize} bytes`)
+    return actualChunkFileSize
+  }
 
-      const { service, action, ...queryparams } = parameters;
-      const endpointUrl = createEndpoint(request, this.clientOptions, service, action, queryparams);
+  private async _prepareRequest(
+    request: KalturaUploadRequest<any>,
+    uploadChunkData: UploadByChunksData
+  ): Promise<{ endpointUrl: string, form: FormData, searchParams: URLSearchParams }> {
+    const actualChunkFileSize = this._getChunkFileSize();
+    const { file } = request.getFileInfo();
+    uploadChunkData.finalChunk = (file.size - uploadChunkData.resumeAt) <= actualChunkFileSize;
+    const fileStart = uploadChunkData.resumeAt;
+    const fileEnd = uploadChunkData.finalChunk ? file.size : fileStart + actualChunkFileSize;
 
-      const promWithData = got.post('https://httpbin.org/anything', {
-        json: {
-          hello: 'world'
-        }
-      }).json();
+    const form = await this._getFormData({
+      fileName: file.name,
+      fileData: file.slice(fileStart, fileEnd, file.type),
+      ks: this.defaultRequestOptions.ks
+    })
+    const { service, action, ks, ...params } = prepareParameters(request, this.clientOptions, this.defaultRequestOptions);
+    const endpointUrl = createEndpoint(request, this.clientOptions, service, action);
+    const searchParams = new URLSearchParams({
+      ...params,
+      resume: uploadChunkData.resume,
+      resumeAt: uploadChunkData.resumeAt,
+      finalChunk: uploadChunkData.finalChunk
+    })
+    return { endpointUrl, form, searchParams }
+  }
 
-      const xhr = new XMLHttpRequest();
+  private _chunkUpload(
+    request: KalturaUploadRequest<any>,
+    uploadChunkData: UploadByChunksData
+  ): CancelableAction<any> {
+    return new CancelableAction((resolve, reject) => {
+      let isComplete = false, isAborted = false
+      let xMe, xKalturaSession
+      let gotRequest
 
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4) {
-          if (isComplete) {
-            return;
+      this._prepareRequest(request, uploadChunkData).then((
+        { endpointUrl, form, searchParams }:{ endpointUrl: string, form: FormData, searchParams: URLSearchParams }
+      ) => {
+        if (isAborted) { return }
+        gotRequest = got.post(endpointUrl, { body: form, searchParams })
+        // save headers and parse response:
+        gotRequest.then(response => {
+          isComplete = true
+          xMe = response?.headers?.['x-me'] || ''
+          xKalturaSession = response?.headers?.['x-kaltura-session'] || ''
+          Logger.debug(`Kaltura response completed for: ${serviceStr}/${actionStr}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}`)
+          return gotRequest.json()
+        })
+        // handle parsed response:
+        .then((parsedResponse: any) => {
+          if (parsedResponse?.objectType === 'KalturaAPIException') {
+            reject(new KalturaAPIException(parsedResponse.message, parsedResponse.code, { ...(parsedResponse.args || {}), service: serviceStr, action: actionStr }))
+            return
           }
-          isComplete = true;
-          let resp;
-
-          try {
-            if (xhr.status === 200) {
-              resp = JSON.parse(xhr.response);
-            } else {
-              resp = new KalturaClientException('client::upload-failure', xhr.responseText || 'failed to upload file');
-            }
-          } catch (e) {
-            resp = new KalturaClientException('client::upload-failure', e.message || 'failed to upload file')
+          if (parsedResponse.uploadedFileSize === undefined || parsedResponse.uploadedFileSize === null) {
+            reject(new KalturaClientException('client::upload-failure', `uploaded chunk of file failed, expected response with property 'uploadedFileSize'`, { service: serviceStr, action: actionStr }))
+            return
           }
-
-          if (resp instanceof Error) {
-            reject(resp);
-          } else {
-            if (uploadChunkData.enabled) {
-              if (typeof resp.uploadedFileSize === "undefined" || resp.uploadedFileSize === null) {
-                reject(new KalturaClientException('client::upload-failure', `uploaded chunk of file failed, expected response with property 'uploadedFileSize'`));
-                return;
-              } else if (!uploadChunkData.finalChunk) {
-                uploadChunkData.resumeAt = Number(resp.uploadedFileSize);
-                uploadChunkData.resume = true;
-              }
-            }
-
-            resolve(resp);
+          if (!uploadChunkData.finalChunk) {
+            uploadChunkData.resumeAt = Number(parsedResponse.uploadedFileSize)
+            uploadChunkData.resume = true
           }
-        }
-      };
-
-      const progressCallback = request._getProgressCallback();
-      if (progressCallback) {
-        xhr.upload.addEventListener("progress", e => {
-          if (e.lengthComputable) {
-            progressCallback.apply(request, [e.loaded + fileStart, file.size]);
-          } else {
-            // Unable to compute progress information since the total size is unknown
-          }
-        }, false);
-      }
-
-      xhr.open("POST", endpointUrl);
-      xhr.send(data);
+          resolve(parsedResponse);
+        })
+        // handle errors:
+        .catch(e => {
+          isComplete = true
+          xMe ||= e.response?.headers?.['x-me'] || ''
+          xKalturaSession ||= e.response?.headers?.['x-kaltura-session'] || ''
+          const msg = e.response?.body || e.message || 'failed to upload file'
+          const err = new KalturaClientException('client::upload-failure', msg);
+          Logger.error(`Kaltura response error: '${msg || ''}', for: ${serviceStr}/${actionStr}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}`)
+          reject(err)
+        })
+      })
 
       return () => {
         if (!isComplete) {
           isComplete = true;
-          xhr.abort();
+          isAborted = true
+          gotRequest?.cancel();
         }
-      };
-    });
+      }
+    })
   }
 }
