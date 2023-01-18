@@ -7,33 +7,40 @@ import { createCancelableAction, createEndpoint, getHeaders, prepareParameters }
 import { CancelableAction } from '../cancelable-action';
 
 export class KalturaRequestAdapter {
-  public transmit<T>(request: KalturaRequest<T>, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<T> {
+  public transmit<T>(
+    request: KalturaRequest<T>, 
+    clientOptions: KalturaClientOptions, 
+    defaultRequestOptions: KalturaRequestOptions
+  ): CancelableAction<T> {
     const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
     const { service, action, ...body } = parameters;
+    const { customHeaders } = defaultRequestOptions;
     const endpoint = createEndpoint(request, clientOptions, service, action);
 
-    return <any>createCancelableAction<T>({ endpoint, headers: getHeaders(), body })
+    return createCancelableAction<T>({ endpoint, headers: getHeaders(customHeaders), body })
       .then(result => {
         try {
           const response = request.handleResponse(result);
-
           if (response.error) {
             throw response.error;
           } else {
             return response.result;
           }
         } catch (error) {
-          if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
-            throw error;
+          if (error instanceof KalturaClientException) {
+            throw new KalturaClientException(error.message, error.code, { ...(error.args || {}), service, action });
+          } else if (error instanceof KalturaAPIException) {
+            throw new KalturaAPIException(error.message, error.code, { ...(error.args || {}), service, action });
           } else {
             const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response');
+            throw new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response', { service, action });
           }
         }
       },
         error => {
           const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-          throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server');
+          const args = { ...((<any>error).args || {}), service, action }
+          throw new KalturaClientException("client::request-network-error", errorMessage || 'Error connecting to server', args);
         });
   }
 }

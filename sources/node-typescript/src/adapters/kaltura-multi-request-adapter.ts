@@ -11,9 +11,10 @@ export class KalturaMultiRequestAdapter {
   transmit(request: KalturaMultiRequest, clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): CancelableAction<KalturaMultiResponse> {
     const parameters = prepareParameters(request, clientOptions, defaultRequestOptions);
     const { service, action, ...body } = parameters;
+    const { customHeaders } = defaultRequestOptions;
     const endpoint = createEndpoint(request, clientOptions, service, action);
 
-    return <any>(createCancelableAction<KalturaMultiResponse>({ endpoint, headers: getHeaders(), body })
+    return <any>(createCancelableAction<KalturaMultiResponse>({ endpoint, headers: getHeaders(customHeaders), body })
       .then(result => {
         try {
           return request.handleResponse(result);

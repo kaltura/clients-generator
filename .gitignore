@@ -15,8 +15,9 @@ tests/config.ini
 
 # IDE
 .idea
+.vscode
 
-#Xcode
+# Xcode
 xcuserdata/
 tests/ovp/swift/Example/Tests/Pods/
 

@@ -60,6 +60,7 @@ function compileTS(opt) {
     .pipe($.sourcemaps.init()) // sourcemaps will be generated
     .pipe(opt.tsProject($.typescript.reporter.fullReporter(true)))
     .on('error', function (error) {
+      console.log('Gulp error:', error)
       process.exit(1);
     });
 
