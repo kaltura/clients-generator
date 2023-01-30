@@ -4,12 +4,13 @@ import { KalturaRequestOptions } from '../api/kaltura-request-options';
 import { KalturaMultiRequest } from '../api/kaltura-multi-request';
 import { KalturaRequest } from '../api/kaltura-request';
 import { KalturaFileRequest } from '../api/kaltura-file-request';
-import { CancelableAction } from '../cancelable-action';
+import { CancelableAction, ResolveFn } from '../cancelable-action';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { environment } from '../environment';
 import got from 'got';
+import { Logger } from "../api/kaltura-logger";
 
-export function createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryparams?: {}): string {
+export function createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryParams?: {}): string {
   const endpoint = options.endpointUrl;
   const clientTag = createClientTag(request, options);
   let url = `${endpoint}/api_v3/service/${service}`;
@@ -18,12 +19,12 @@ export function createEndpoint(request: KalturaRequestBase, options: KalturaClie
     url += `/action/${action}`;
   }
 
-  const queryparams = {
-    ...(additionalQueryparams || {}),
+  const queryParams = {
+    ...(additionalQueryParams || {}),
     ...(clientTag ? { clientTag } : {})
   };
 
-  return buildUrl(url, queryparams);
+  return buildUrl(url, queryParams);
 }
 
 export function buildUrl(url: string, querystring?: {}) {
@@ -75,15 +76,16 @@ export function buildQuerystring(data: {}, prefix?: string) {
 
 }
 
-export function getHeaders(): any {
-  return {
+export function getHeaders(customHeaders = {}): any {
+  const headers = {
     "Accept": "application/json",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    ...customHeaders
   };
+  return headers
 }
 
 export function prepareParameters(request: KalturaRequest<any> | KalturaMultiRequest | KalturaFileRequest, options: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions): any {
-
   return Object.assign(
     {},
     request.buildRequest(defaultRequestOptions),
@@ -94,23 +96,47 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
   );
 }
 
-export function createCancelableAction<T>(data: { endpoint: string, headers: any, body: any }): CancelableAction<T> {
+export function createCancelableAction<T>(
+  data: { endpoint: string, headers: any, body: any },
+  responseType: 'json'|'text' = 'json'
+): CancelableAction<T> {
+  const endPoint = data?.endpoint || ''
+  const service = endPoint?.match('service/([^\/]+)')?.[1] || ''
+  const action = endPoint?.match('action/([^\?]+)')?.[1] || ''
+
   const result = new CancelableAction<T>((resolve, reject) => {
     const cancelableRequest = got.post(data.endpoint, {
       json: data.body,
-      headers: data.headers
+      headers: data.headers,
     })
-    cancelableRequest
-      .json()
-      .then(resolve)
+
+    let xMe, xKalturaSession
+    cancelableRequest.then((response) => {
+      xMe = response?.headers?.['x-me'] || ''
+      xKalturaSession = response?.headers?.['x-kaltura-session'] || ''
+      Logger.debug(`Kaltura response completed for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+    }).catch(e => {
+      xMe = e?.response?.headers?.['x-me'] || ''
+      xKalturaSession = e?.response?.headers?.['x-kaltura-session'] || ''
+    })
+
+    cancelableRequest[responseType]()
+      .then(function (response) {
+        if (response?.objectType === 'KalturaAPIException') {
+          Logger.error(`Kaltura API Exception: '${response.message || ''}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+        }
+        return response
+      })
+      .then(<ResolveFn<any>>resolve)
       .catch(e => {
+        Logger.error(`Kaltura Error: '${e.message}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
+        const args = xMe || xKalturaSession ? { xMe, xKalturaSession } : undefined 
         const error = e.response?.statusCode === 200
           ? new Error(e.response?.body)
-          : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request');
+          : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request', args);
         reject(error)
       })
     return () => cancelableRequest.cancel()
   });
-
   return result;
 }

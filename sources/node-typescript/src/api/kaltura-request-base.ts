@@ -1,8 +1,7 @@
 import { KalturaObjectBase, KalturaObjectBaseArgs } from './kaltura-object-base';
-import * as dbg from 'debug'
+import { Logger } from "./kaltura-logger";
 
 export interface KalturaRequestBaseArgs extends KalturaObjectBaseArgs { }
-const debug = dbg('kaltura:base:request')
 
 export class KalturaRequestBase extends KalturaObjectBase {
 
@@ -10,7 +9,7 @@ export class KalturaRequestBase extends KalturaObjectBase {
 
   setNetworkTag(tag: string): this {
     if (!tag || tag.length > 10) {
-      debug(`cannot set network tag longer than 10 characters. ignoring tag '${tag}`);
+      Logger.debug(`cannot set network tag longer than 10 characters. ignoring tag '${tag}`);
     } else {
       this._networkTag = tag;
     }
