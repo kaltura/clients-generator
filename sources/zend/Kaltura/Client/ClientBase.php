@@ -774,6 +774,11 @@ class Kaltura_Client_ClientBase
 
 	public function doMultiRequest()
 	{
+		if(count($this->callsQueue) === 0) {
+			// no requests within multi-request, reset and return null
+			$this->resetRequest();
+			return null;
+		}
 		if($this->config->format === self::KALTURA_SERVICE_FORMAT_XML) {
 			$xmlData = $this->doQueue();
 			if(is_null($xmlData))
