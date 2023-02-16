@@ -487,7 +487,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	public function getPropertyValue($propName, $propType, $propertyNode) {
 		$propEnumType = null;
 		$primitiveType = "";
-
+		if ($propertyNode->hasAttribute("isTime"))
+			$propType = "time";
 		switch($propType) {
 			case "bigint":
 			case "time":
@@ -500,12 +501,6 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				$primitiveType = "double";
 				break;
 			case "int":
-				$isTime = $propertyNode->hasAttribute("isTime");
-				if ($isTime)
-				{
-					$primitiveType = "long";
-					break;
-				}
 			case "string":
 				$primitiveType = $propType;
 				$propEnumType = $propertyNode->hasAttribute("enumType") ? $this->getJavaTypeName($propertyNode->getAttribute("enumType")): null;
@@ -555,7 +550,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$propType = $this->getJavaTypeName($propertyNode->getAttribute("type"));
 		$propName = $propertyNode->getAttribute("name");
 		$isEnum = $propertyNode->hasAttribute("enumType");
-		$isTime = $propertyNode->hasAttribute("isTime");
+		if ($propertyNode->hasAttribute("isTime"))
+			$propType = "time";
 		$propBlock .= "this.$propName = ";
 		
 		switch($propType) 
@@ -570,7 +566,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				{
 					$propType = "double";
 				}
-				if($propType == "time" || $isTime)
+				if($propType == "time")
 				{
 					$propType = "long";//"bigint";
 				}
@@ -685,8 +681,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		$builderName = ucfirst($action) . ucfirst($serviceName) . 'Builder';
 
 		$resultNode = $actionNode->getElementsByTagName("result")->item(0);
-		$resultType = $this->getJavaTypeName($resultNode->getAttribute("type"));
-		$isTime = $resultNode->hasAttribute("isTime");	
+		$resultType = $this->getJavaTypeName($resultNode->getAttribute("type"));	
 		$arrayType = '';
 		$fallbackClass = null;
 		
@@ -715,7 +710,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				$fallbackClass = $arrayType;
 	    	}
     	}
-		if($isTime)
+		if($resultNode->hasAttribute("isTime"))
 			$resultType = "time";
 		$javaOutputType = $this->getResultType($resultType, $arrayType, $builderName, $serviceImports);
 
@@ -1208,6 +1203,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	public function getInitialPropertyValue($propertyNode)
 	{
 		$propType = $propertyNode->getAttribute("type");
+		if ($propertyNode->hasAttribute("isTime"))
+			$propType = "time";
 		switch($propType) 
 		{
 		case "float":
@@ -1217,9 +1214,6 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		case "time":
 			return "Long.MIN_VALUE";
 		case "int":
-			$isTime = $propertyNode->hasAttribute("isTime");
-			if($isTime)
-				return "Long.MIN_VALUE";
 			if($propertyNode->hasAttribute("enumType")) 
 				return ""; // we do not want to initialize enums
 			else 
@@ -1256,7 +1250,8 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	{
 		$type = $paramNode->getAttribute("type");
 		$defaultValue = $paramNode->getAttribute("default");
-		
+		if ($paramNode->hasAttribute("isTime"))
+			$type = "time";
 		switch($type)
 		{
 		case "string": 
@@ -1270,16 +1265,10 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			if($value == 'null')
 				$value = "Long.MIN_VALUE";
 			return $value;
-		case "int":
-			$isTime = $paramNode->hasAttribute("isTime"); 
+		case "int": 
 			$value = trim($defaultValue);
 			if($value == 'null')
-			{
-				if($isTime)
-					$value = "Long.MIN_VALUE";
-				else
-					$value = "Integer.MIN_VALUE";
-			}	
+				$value = "Integer.MIN_VALUE";	
 			if($paramNode->hasAttribute("enumType")) 
 			{
 				$enumType = $this->getJavaTypeName($paramNode->getAttribute("enumType"));
@@ -1403,13 +1392,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	{
 		$propType = $propertyNode->getAttribute("type");
 		$isEnum = $propertyNode->hasAttribute("enumType");
-		
+		if ($propertyNode->hasAttribute("isTime"))
+			$propType = "time";	
 		switch($propType) 
 		{
 		case "int":
-			$isTime = $propertyNode->hasAttribute("isTime");
-                        if($isTime)
-                                $propType = "time";
 			if($isEnum) 
 				return $this->getJavaTypeName($propertyNode->getAttribute("enumType"));
 			else 
