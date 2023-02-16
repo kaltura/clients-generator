@@ -166,6 +166,29 @@ class ZendClientTester
 		$this->_client->media->delete($imageEntry->id);
 	}
 	
+	public function testMultiRequest()
+	{
+		$this->_client->startMultiRequest();
+		$entry = new Kaltura_Client_Type_BaseEntry();
+		$entry->name = "test entry 1";
+		$entry->tags = "test1";
+		$this->_client->baseEntry->add($entry);
+		$user = new Kaltura_Client_Type_User();
+		$user->id = "test1".rand(0, 10000000);
+		$user->type = Kaltura_Client_Enum_UserType::USER;
+		$this->_client->user->add($user);
+
+		$badUser = new Kaltura_Client_Type_User();
+		$badUser->id = "  test  1".rand(0, 10000000); // spaces in user ID not allowed, expected error
+		$badUser->type = Kaltura_Client_Enum_UserType::USER;
+		$this->_client->user->add($badUser);
+
+		$results = $this->_client->doMultiRequest();
+		$this->assertTrue($results[0]->name === $entry->name);
+		$this->assertTrue($results[1]->id === $user->id);
+		$this->assertTrue($results[2] instanceof Kaltura_Client_Exception);
+	}
+	
 	public function addImageEntry()
 	{
 	    $entry = new Kaltura_Client_Type_MediaEntry();
