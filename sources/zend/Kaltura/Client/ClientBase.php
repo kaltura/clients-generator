@@ -109,6 +109,14 @@ class Kaltura_Client_ClientBase
 	private $responseHeaders = array();
 
 	/**
+	 * @var array
+	 */
+	private $supportedFormats = array(
+		self::KALTURA_SERVICE_FORMAT_JSON,
+		self::KALTURA_SERVICE_FORMAT_JSON
+	);
+
+	/**
 	 * Kaltura client constructor
 	 *
 	 * @param Kaltura_Client_Configuration $config
@@ -265,6 +273,11 @@ class Kaltura_Client_ClientBase
 				$this->log("server: [{$serverName}], session: [{$serverSession}]");
 
 			$this->log("result (serialized): " . $postResult);
+			if (!in_array($this->config->format, $this->supportedFormats))
+			{
+				$this->resetRequest();
+				throw $this->getKalturaClientException("unsupported format: $postResult", Kaltura_Client_ClientException::ERROR_FORMAT_NOT_SUPPORTED);
+			}
 
 		}
 
