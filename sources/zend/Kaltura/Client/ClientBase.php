@@ -112,7 +112,7 @@ class Kaltura_Client_ClientBase
 	 * @var array
 	 */
 	private $supportedFormats = array(
-		self::KALTURA_SERVICE_FORMAT_JSON,
+		self::KALTURA_SERVICE_FORMAT_XML,
 		self::KALTURA_SERVICE_FORMAT_JSON
 	);
 
