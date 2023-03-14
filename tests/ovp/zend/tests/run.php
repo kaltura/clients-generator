@@ -15,6 +15,7 @@ $config = new Kaltura_Client_Configuration();
 $config->serviceUrl = $testerConfig['serviceUrl'];
 $config->curlTimeout = 120;
 $config->setLogger(new SampleLoggerImplementation());
+$config->format = 1;
 
 // init kaltura client
 $client = new Kaltura_Client_Client($config);

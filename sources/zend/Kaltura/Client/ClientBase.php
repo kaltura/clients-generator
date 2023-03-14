@@ -109,6 +109,14 @@ class Kaltura_Client_ClientBase
 	private $responseHeaders = array();
 
 	/**
+	 * @var array
+	 */
+	private $supportedFormats = array(
+		self::KALTURA_SERVICE_FORMAT_XML,
+		self::KALTURA_SERVICE_FORMAT_JSON
+	);
+
+	/**
 	 * Kaltura client constructor
 	 *
 	 * @param Kaltura_Client_Configuration $config
@@ -187,7 +195,7 @@ class Kaltura_Client_ClientBase
 	/**
 	 * Call all API service that are in queue
 	 *
-	 * @return unknown
+	 * @return mixed
 	 */
 	public function doQueue()
 	{
@@ -265,12 +273,12 @@ class Kaltura_Client_ClientBase
 				$this->log("server: [{$serverName}], session: [{$serverSession}]");
 
 			$this->log("result (serialized): " . $postResult);
-
-			if ($this->config->format != self::KALTURA_SERVICE_FORMAT_XML)
+			if (!in_array($this->config->format, $this->supportedFormats))
 			{
 				$this->resetRequest();
 				throw $this->getKalturaClientException("unsupported format: $postResult", Kaltura_Client_ClientException::ERROR_FORMAT_NOT_SUPPORTED);
 			}
+
 		}
 
 		$this->resetRequest();
@@ -779,26 +787,47 @@ class Kaltura_Client_ClientBase
 
 	public function doMultiRequest()
 	{
-		$xmlData = $this->doQueue();
-		if(is_null($xmlData))
+		if(count($this->callsQueue) === 0) {
+			// no requests within multi-request, reset and return null
+			$this->resetRequest();
 			return null;
-
-		$xml = new SimpleXMLElement($xmlData);
-		$items = $xml->result->children();
-		$ret = array();
-		$i = 0;
-		foreach($items as $item) {
-			$error = $this->checkIfError($item, false);
-			$fallbackType = isset($this->multiRequestReturnType[$i]) ? $this->multiRequestReturnType[$i] : null;
-			if($error)
-				$ret[] = $error;
-			else if($item->objectType)
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalObject($item, $fallbackType);
-			else if($item->item)
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalArray($item, $fallbackType);
-			else
-				$ret[] = Kaltura_Client_ParseUtils::unmarshalSimpleType($item);
-			$i++;
+		}
+		if($this->config->format === self::KALTURA_SERVICE_FORMAT_XML) {
+			$xmlData = $this->doQueue();
+			if(is_null($xmlData))
+				return null;
+	
+			$xml = new SimpleXMLElement($xmlData);
+			$items = $xml->result->children();
+			$ret = array();
+			$i = 0;
+			foreach($items as $item) {
+				$error = $this->checkIfError($item, false);
+				$fallbackType = isset($this->multiRequestReturnType[$i]) ? $this->multiRequestReturnType[$i] : null;
+				if($error)
+					$ret[] = $error;
+				else if($item->objectType)
+					$ret[] = Kaltura_Client_ParseUtils::unmarshalObject($item, $fallbackType);
+				else if($item->item)
+					$ret[] = Kaltura_Client_ParseUtils::unmarshalArray($item, $fallbackType);
+				else
+					$ret[] = Kaltura_Client_ParseUtils::unmarshalSimpleType($item);
+				$i++;
+			}	
+		} else if($this->config->format === self::KALTURA_SERVICE_FORMAT_JSON) {
+			$postResult = $this->doQueue();
+			$result = json_decode($postResult);
+			if(is_null($result) && strtolower($postResult) !== 'null') {
+				$this->resetRequest();
+				throw $this->getKalturaClientException("failed to unserialize server result\n$postResult", Kaltura_Client_ClientException::ERROR_UNSERIALIZE_FAILED);
+			}
+			
+			Kaltura_Client_ParseUtils::$isMultiRequest = true;
+			$ret = Kaltura_Client_ParseUtils::jsObjectToClientObject($result);
+			Kaltura_Client_ParseUtils::$isMultiRequest = false;
+		} else {
+			$this->resetRequest();
+			throw $this->getKalturaClientException("unsupported format: ".$this->config->format, Kaltura_Client_ClientException::ERROR_FORMAT_NOT_SUPPORTED);
 		}
 
 		$this->resetRequest();
