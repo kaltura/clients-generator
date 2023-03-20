@@ -136,7 +136,7 @@ class Kaltura_Client_ParseUtils
 				}
 
 				if($attribute === 'relatedObjects') {
-					$object->relatedObjects = [];
+					$object->relatedObjects = array();
 					$objectVars = get_object_vars($attributeValue);
 					foreach($objectVars as $key => $relatedObject) {
 						$object->relatedObjects[$key] = self::jsObjectToClientObject($relatedObject);
@@ -155,7 +155,7 @@ class Kaltura_Client_ParseUtils
 
 	private static function exceptionArgsArrayToObject($args)
 	{
-		$objectArgs = [];
+		$objectArgs = array();
 		foreach($args as $argName => $argValue) {
 			$argumentsObject = new stdClass();
 			$argumentsObject->name = $argName;
