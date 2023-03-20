@@ -195,18 +195,18 @@ class ZendClientTester
 		$filter = new Kaltura_Client_Type_ThumbAssetFilter();
 		$userFilter = new Kaltura_Client_Type_UserFilter();
 
-        $resourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
-        $resourceMapping->filterProperty = 'entryIdEqual';
-        $resourceMapping->parentProperty = 'id';
+		$resourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+		$resourceMapping->filterProperty = 'entryIdEqual';
+		$resourceMapping->parentProperty = 'id';
         
 		$userResourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
-        $userResourceMapping->filterProperty = 'idEqual';
-        $userResourceMapping->parentProperty = 'userId';
+		$userResourceMapping->filterProperty = 'idEqual';
+		$userResourceMapping->parentProperty = 'userId';
 
-        $thumbListResponseProfile = new Kaltura_Client_Type_ResponseProfile();
-        $thumbListResponseProfile->name = "thumbsOfEntry";
-        $thumbListResponseProfile->filter = $filter;
-        $thumbListResponseProfile->mappings = array($resourceMapping);
+		$thumbListResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$thumbListResponseProfile->name = "thumbsOfEntry";
+		$thumbListResponseProfile->filter = $filter;
+		$thumbListResponseProfile->mappings = array($resourceMapping);
 
 		$userResponseProfile = new Kaltura_Client_Type_ResponseProfile();
 		$userResponseProfile->name = "entryOwner";
