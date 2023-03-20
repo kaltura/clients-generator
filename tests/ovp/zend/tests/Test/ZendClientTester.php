@@ -188,6 +188,44 @@ class ZendClientTester
 		$this->assertTrue($results[1]->id === $user->id);
 		$this->assertTrue($results[2] instanceof Kaltura_Client_Exception);
 	}
+
+	public function testResponseProfile() {
+		$entry = $this->addImageEntry();
+
+		$filter = new Kaltura_Client_Type_ThumbAssetFilter();
+		$userFilter = new Kaltura_Client_Type_UserFilter();
+
+        $resourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+        $resourceMapping->filterProperty = 'entryIdEqual';
+        $resourceMapping->parentProperty = 'id';
+        
+		$userResourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+        $userResourceMapping->filterProperty = 'idEqual';
+        $userResourceMapping->parentProperty = 'userId';
+
+        $thumbListResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+        $thumbListResponseProfile->name = "thumbsOfEntry";
+        $thumbListResponseProfile->filter = $filter;
+        $thumbListResponseProfile->mappings = array($resourceMapping);
+
+		$userResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$userResponseProfile->name = "entryOwner";
+		$userResponseProfile->filter = $userFilter;
+		$userResponseProfile->mappings = [$userResourceMapping];
+
+		$responseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$responseProfile->name = 'entry';
+		$responseProfile->relatedProfiles = [
+			$thumbListResponseProfile,
+			$userResponseProfile
+		];
+
+		$this->_client->setResponseProfile($responseProfile);
+		$result = $this->_client->media->get($entry->id);
+		$this->assertTrue(isset($result->relatedObjects['thumbsOfEntry']));
+		$this->assertTrue(isset($result->relatedObjects['entryOwner']));
+		$this->assertTrue($result->relatedObjects['entryOwner']->objects[0]->id === $entry->userId);
+	}
 	
 	public function addImageEntry()
 	{
