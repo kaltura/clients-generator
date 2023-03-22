@@ -137,7 +137,11 @@ class Kaltura_Client_ParseUtils
 
 				if($attribute === 'relatedObjects') {
 					$object->relatedObjects = array();
-					$objectVars = get_object_vars($attributeValue);
+					if(is_object($attributeValue)) {
+						$objectVars = get_object_vars($attributeValue);
+					} else {
+						$objectVars = $attributeValue;
+					}
 					foreach($objectVars as $key => $relatedObject) {
 						$object->relatedObjects[$key] = self::jsObjectToClientObject($relatedObject);
 					}
