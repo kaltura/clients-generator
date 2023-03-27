@@ -166,6 +166,104 @@ class ZendClientTester
 		$this->_client->media->delete($imageEntry->id);
 	}
 	
+	public function testMultiRequest()
+	{
+		$this->_client->startMultiRequest();
+		$entry = new Kaltura_Client_Type_BaseEntry();
+		$entry->name = "test entry 1";
+		$entry->tags = "test1";
+		$this->_client->baseEntry->add($entry);
+		$user = new Kaltura_Client_Type_User();
+		$user->id = "test1".rand(0, 10000000);
+		$user->type = Kaltura_Client_Enum_UserType::USER;
+		$this->_client->user->add($user);
+
+		$badUser = new Kaltura_Client_Type_User();
+		$badUser->id = "  test  1".rand(0, 10000000); // spaces in user ID not allowed, expected error
+		$badUser->type = Kaltura_Client_Enum_UserType::USER;
+		$this->_client->user->add($badUser);
+
+		$results = $this->_client->doMultiRequest();
+		$this->assertTrue($results[0]->name === $entry->name);
+		$this->assertTrue($results[1]->id === $user->id);
+		$this->assertTrue($results[2] instanceof Kaltura_Client_Exception);
+	}
+
+	public function testResponseProfile() {
+		$entry = $this->addImageEntry();
+
+		$filter = new Kaltura_Client_Type_ThumbAssetFilter();
+		$userFilter = new Kaltura_Client_Type_UserFilter();
+
+		$resourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+		$resourceMapping->filterProperty = 'entryIdEqual';
+		$resourceMapping->parentProperty = 'id';
+        
+		$userResourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+		$userResourceMapping->filterProperty = 'idEqual';
+		$userResourceMapping->parentProperty = 'userId';
+
+		$thumbListResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$thumbListResponseProfile->name = "thumbsOfEntry";
+		$thumbListResponseProfile->filter = $filter;
+		$thumbListResponseProfile->mappings = array($resourceMapping);
+
+		$userResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$userResponseProfile->name = "entryOwner";
+		$userResponseProfile->filter = $userFilter;
+		$userResponseProfile->mappings = [$userResourceMapping];
+
+		$responseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$responseProfile->name = 'entry';
+		$responseProfile->relatedProfiles = [
+			$thumbListResponseProfile,
+			$userResponseProfile
+		];
+
+		$this->_client->setResponseProfile($responseProfile);
+		$result = $this->_client->media->get($entry->id);
+		$this->assertTrue(count($result->relatedObjects) > 0);
+		$this->assertTrue(isset($result->relatedObjects['thumbsOfEntry']));
+		$this->assertTrue(isset($result->relatedObjects['entryOwner']));
+		$this->assertTrue($result->relatedObjects['entryOwner']->objects[0]->id === $entry->userId);
+	}
+
+	public function testResponseProfileUnNamed() {
+		$entry = $this->addImageEntry();
+
+		$filter = new Kaltura_Client_Type_ThumbAssetFilter();
+		$userFilter = new Kaltura_Client_Type_UserFilter();
+
+		$resourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+		$resourceMapping->filterProperty = 'entryIdEqual';
+		$resourceMapping->parentProperty = 'id';
+        
+		$userResourceMapping = new Kaltura_Client_Type_ResponseProfileMapping();
+		$userResourceMapping->filterProperty = 'idEqual';
+		$userResourceMapping->parentProperty = 'userId';
+
+		$thumbListResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$thumbListResponseProfile->filter = $filter;
+		$thumbListResponseProfile->mappings = array($resourceMapping);
+
+		$userResponseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$userResponseProfile->filter = $userFilter;
+		$userResponseProfile->mappings = [$userResourceMapping];
+
+		$responseProfile = new Kaltura_Client_Type_ResponseProfile();
+		$responseProfile->relatedProfiles = [
+			$userResponseProfile,
+			$thumbListResponseProfile,
+		];
+
+		$this->_client->setResponseProfile($responseProfile);
+		$result = $this->_client->media->get($entry->id);
+		$this->assertTrue(count($result->relatedObjects) > 0);
+		$this->assertTrue(isset($result->relatedObjects[0]));
+		$this->assertTrue(isset($result->relatedObjects[1]));
+		$this->assertTrue($result->relatedObjects[0]->objects[0]->id === $entry->userId);
+	}
+	
 	public function addImageEntry()
 	{
 	    $entry = new Kaltura_Client_Type_MediaEntry();

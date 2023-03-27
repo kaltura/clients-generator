@@ -390,11 +390,14 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("	}");
 		$this->appendLine("	");
 	
-		$this->appendLine('	public function __construct(SimpleXMLElement $xml = null)');
+		$this->appendLine('	public function __construct(SimpleXMLElement $xml = null, $jsonObject = null)');
 		$this->appendLine('	{');
-		$this->appendLine('		parent::__construct($xml);');
+		$this->appendLine('		parent::__construct($xml, $jsonObject);');
 		$this->appendLine('		');
-		$this->appendLine('		if(is_null($xml))');
+		$this->appendLine('		if(!is_null($xml) && !is_null($jsonObject))');
+		$this->appendLine('			throw new Kaltura_Client_ClientException("construct with either XML or JSON object, not both", Kaltura_Client_ClientException::ERROR_CONSTRUCT_ARGS_CONFLICT);');
+		$this->appendLine('		');
+		$this->appendLine('		if(is_null($xml) && is_null($jsonObject))');
 		$this->appendLine('			return;');
 		$this->appendLine('		');
 		
@@ -412,19 +415,30 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			{
 				case "int" :
 				case "float" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
+					$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 					$this->appendLine("			\$this->$propName = ($propType)\$xml->$propName;");
+					$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+					$this->appendLine("			\$this->$propName = ($propType)\$jsonObject->$propName;");
 					break;
 					
 				case "bigint" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
+					$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 					$this->appendLine("			\$this->$propName = (string)\$xml->$propName;");
+					$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+					$this->appendLine("			\$this->$propName = (string)\$jsonObject->$propName;");
 					break;
 					
 				case "bool" :
-					$this->appendLine("		if(count(\$xml->{$propName}))");
+					$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 					$this->appendLine("		{");
 					$this->appendLine("			if(!empty(\$xml->{$propName}) && ((int) \$xml->{$propName} === 1 || strtolower((string)\$xml->{$propName}) === 'true'))");
+					$this->appendLine("				\$this->$propName = true;");
+					$this->appendLine("			else");
+					$this->appendLine("				\$this->$propName = false;");
+					$this->appendLine("		}");
+					$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+					$this->appendLine("		{");
+					$this->appendLine("			if(!empty(\$jsonObject->{$propName}) && ((int) \$jsonObject->{$propName} === 1 || strtolower((string)\$jsonObject->{$propName}) === 'true'))");
 					$this->appendLine("				\$this->$propName = true;");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = false;");
@@ -434,47 +448,72 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 				case "string" :
 					if($isMultiLingual)
 					{
-						$this->appendLine("		if(count(\$xml->{$propName}))");
+						$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 						$this->appendLine("		{");
 						$this->appendLine("			if(isset(\$xml->{$propName}->item) && count(\$xml->{$propName}->item))");
 						$this->appendLine("				\$this->multiLingual_{$propName} = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, '');");
 						$this->appendLine("			else");
 						$this->appendLine("				\$this->$propName = ($propType)\$xml->$propName;");
 						$this->appendLine("		}");
+						$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+						$this->appendLine("		{");
+						$this->appendLine("			if(isset(\$jsonObject->{$propName}->item) && count(\$jsonObject->{$propName}->item))");
+						$this->appendLine("				\$this->multiLingual_{$propName} = Kaltura_Client_ParseUtils::jsObjectToClientObject(\$jsonObject->$propName, '');");
+						$this->appendLine("			else");
+						$this->appendLine("				\$this->$propName = ($propType)\$jsonObject->$propName;");
+						$this->appendLine("		}");
 					}
 					else
 					{
-						$this->appendLine("		if(count(\$xml->{$propName}))");
+						$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 						$this->appendLine("			\$this->$propName = ($propType)\$xml->$propName;");
+						$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+						$this->appendLine("			\$this->$propName = ($propType)\$jsonObject->$propName;");
 					}
 					break;
 					
 				case "array" :
 					$arrayType = $propertyNode->getAttribute ( "arrayType" );
-					$this->appendLine("		if(count(\$xml->{$propName}))");
+					$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 					$this->appendLine("		{");
 					$this->appendLine("			if(empty(\$xml->{$propName}))");
 					$this->appendLine("				\$this->$propName = array();");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = Kaltura_Client_ParseUtils::unmarshalArray(\$xml->$propName, \"$arrayType\");");
 					$this->appendLine("		}");
+					$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+					$this->appendLine("		{");
+					$this->appendLine("			if(empty(\$jsonObject->{$propName}))");
+					$this->appendLine("				\$this->$propName = array();");
+					$this->appendLine("			else");
+					$this->appendLine("				\$this->$propName = Kaltura_Client_ParseUtils::jsObjectToClientObject(\$jsonObject->$propName, \"$arrayType\");");
+					$this->appendLine("		}");
 					break;
 					
 				case "map" :
 					$arrayType = $propertyNode->getAttribute ( "arrayType" );
-					$this->appendLine("		if(count(\$xml->{$propName}))");
+					$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}))");
 					$this->appendLine("		{");
 					$this->appendLine("			if(empty(\$xml->{$propName}))");
 					$this->appendLine("				\$this->$propName = array();");
 					$this->appendLine("			else");
 					$this->appendLine("				\$this->$propName = Kaltura_Client_ParseUtils::unmarshalMap(\$xml->$propName, \"$arrayType\");");
 					$this->appendLine("		}");
+					$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
+					$this->appendLine("		{");
+					$this->appendLine("			if(empty(\$jsonObject->{$propName}))");
+					$this->appendLine("				\$this->$propName = array();");
+					$this->appendLine("			else");
+					$this->appendLine("				\$this->$propName = Kaltura_Client_ParseUtils::jsObjectToClientObject(\$jsonObject->$propName, \"$arrayType\");");
+					$this->appendLine("		}");
 					break;
 					
 				default : // sub object
 					$fallback = $propertyNode->getAttribute("type");
-					$this->appendLine("		if(count(\$xml->{$propName}) && !empty(\$xml->{$propName}))");
+					$this->appendLine("		if(!is_null(\$xml) && count(\$xml->{$propName}) && !empty(\$xml->{$propName}))");
 					$this->appendLine("			\$this->$propName = Kaltura_Client_ParseUtils::unmarshalObject(\$xml->$propName, \"$fallback\");");
+					$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}) && !empty(\$jsonObject->{$propName}))");
+					$this->appendLine("			\$this->$propName = Kaltura_Client_ParseUtils::jsObjectToClientObject(\$jsonObject->$propName, \"$fallback\");");
 					break;
 			}
 			
@@ -700,44 +739,48 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 				$this->appendLine("		if (\$this->client->isMultiRequest())");
 				$this->appendLine("			return \$this->client->getMultiRequestResult();");
 			}
-			
-			$this->appendLine("		\$resultXml = \$this->client->doQueue();");
-			$this->appendLine("		\$resultXmlObject = new \\SimpleXMLElement(\$resultXml);");
-			$this->appendLine("		\$this->client->checkIfError(\$resultXmlObject->result);");
-			
+			$this->appendLine("		\$rawResult = \$this->client->doQueue();");			
+			$this->appendLine("		if (\$this->client->getConfig()->format === Kaltura_Client_ClientBase::KALTURA_SERVICE_FORMAT_JSON) {");
+			$this->appendLine("			\$jsObject = json_decode(\$rawResult);");
+			$this->appendLine("			\$resultObject = Kaltura_Client_ParseUtils::jsObjectToClientObject(\$jsObject);");
+			$this->appendLine("			return \$resultObject;");
+			$this->appendLine("		} else {");
+			$this->appendLine("			\$resultXmlObject = new \\SimpleXMLElement(\$rawResult);");
+			$this->appendLine("			\$this->client->checkIfError(\$resultXmlObject->result);");
 			switch($resultType)
 			{
 				case 'int':
-					$this->appendLine("		\$resultObject = (int)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
+					$this->appendLine("			\$resultObject = (int)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
 					break;
 				
 				case 'bool':
-					$this->appendLine("		\$resultObject = (bool)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
+					$this->appendLine("			\$resultObject = (bool)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
 					break;
 				case 'bigint':
 				case 'string':
-					$this->appendLine("		\$resultObject = (string)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
+					$this->appendLine("			\$resultObject = (string)Kaltura_Client_ParseUtils::unmarshalSimpleType(\$resultXmlObject->result);");
 					break;
 				case 'array':
-					$this->appendLine("		\$resultObject = Kaltura_Client_ParseUtils::unmarshalArray(\$resultXmlObject->result, \"$arrayObjectType\");");
+					$this->appendLine("			\$resultObject = Kaltura_Client_ParseUtils::unmarshalArray(\$resultXmlObject->result, \"$arrayObjectType\");");
 					$arrayObjectType = $this->getTypeClass($arrayObjectType);
-					$this->appendLine("		foreach(\$resultObject as \$resultObjectItem){");
-					$this->appendLine("			\$this->client->validateObjectType(\$resultObjectItem, \"$arrayObjectType\");");
-					$this->appendLine("		}");
+					$this->appendLine("			foreach(\$resultObject as \$resultObjectItem){");
+					$this->appendLine("				\$this->client->validateObjectType(\$resultObjectItem, \"$arrayObjectType\");");
+					$this->appendLine("			}");
 					break;
 				
 				default:
 					if ($resultType)
 					{
-						$this->appendLine("		\$resultObject = Kaltura_Client_ParseUtils::unmarshalObject(\$resultXmlObject->result, \"$resultType\");");
-						$this->appendLine("		\$this->client->validateObjectType(\$resultObject, \"$returnType\");");
+						$this->appendLine("			\$resultObject = Kaltura_Client_ParseUtils::unmarshalObject(\$resultXmlObject->result, \"$resultType\");");
+						$this->appendLine("			\$this->client->validateObjectType(\$resultObject, \"$returnType\");");
 					}
 			}
+			$this->appendLine("		}");
 	    }
 			
 		if($resultType && $resultType != 'null')
 		{
-			$this->appendLine("		return \$resultObject;");
+			$this->appendLine("			return \$resultObject;");
 		}
 		
 		$this->appendLine("	}");
