@@ -263,6 +263,52 @@ class ZendClientTester
 		$this->assertTrue(isset($result->relatedObjects[1]));
 		$this->assertTrue($result->relatedObjects[0]->objects[0]->id === $entry->userId);
 	}
+
+	public function testMultiLingualObject() {
+		$this->_client->setLanguage('multi');
+		$entry = new Kaltura_Client_Type_BaseEntry();
+		$entry->description = "test multiling";
+		$entry->tags = "testmulti";
+		$nameEn = new Kaltura_Client_Type_MultiLingualString();
+		$nameEn->language = 'EN';
+		$nameEn->value = "Test Entry";
+		$nameEs = new Kaltura_Client_Type_MultiLingualString();
+		$nameEs->language = 'ES';
+		$nameEs->value = "Entrada de prueba";
+		$entry->multiLingual_name = [
+			$nameEn,
+			$nameEs,
+		];
+		
+		$newEntry = $this->_client->baseEntry->add($entry, Kaltura_Client_Enum_EntryType::MEDIA_CLIP);
+
+		$this->assertTrue(empty($newEntry->name));
+		$this->assertTrue(is_array($newEntry->multiLingual_name));
+		$this->assertTrue(empty($newEntry->description));
+		$this->assertTrue(is_array($newEntry->multiLingual_description));
+		foreach($newEntry->multiLingual_name as $multiLangName) {
+			if($multiLangName->language == 'EN') {
+				$this->assertEqual($multiLangName->value , $nameEn->value);
+			}
+			if($multiLangName->language == 'ES') {
+				$this->assertEqual($multiLangName->value , $nameEs->value);
+			}
+		}
+		
+		$this->_client->setLanguage(null);
+		$entryNotMultiLang = $this->_client->baseEntry->get($newEntry->id);
+		$this->assertTrue(!is_array($entryNotMultiLang->name));
+		$this->assertTrue(empty($entryNotMultiLang->multiLingual_name));
+
+		$this->_client->setLanguage('ES');
+
+		$entryNotMultiLang = $this->_client->baseEntry->get($newEntry->id);
+		$this->assertTrue(!is_array($entryNotMultiLang->name));
+		$this->assertEqual($entryNotMultiLang->name, $nameEs->value);
+		$this->assertTrue(empty($entryNotMultiLang->multiLingual_name));
+
+		$this->_client->setLanguage(null);
+	}
 	
 	public function addImageEntry()
 	{
