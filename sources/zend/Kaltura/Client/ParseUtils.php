@@ -148,6 +148,10 @@ class Kaltura_Client_ParseUtils
 					continue;
 				}
 				
+				$multiLingualAttribute = 'multiLingual_' . $attribute;
+				if(isset($object->{$multiLingualAttribute})) {
+					continue;
+				}
 				$object->$attribute = self::jsObjectToClientObject($attributeValue);
 			}
 			

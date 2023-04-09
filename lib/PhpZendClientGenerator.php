@@ -457,7 +457,7 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 						$this->appendLine("		}");
 						$this->appendLine("		if(!is_null(\$jsonObject) && isset(\$jsonObject->{$propName}))");
 						$this->appendLine("		{");
-						$this->appendLine("			if(isset(\$jsonObject->{$propName}->item) && count(\$jsonObject->{$propName}->item))");
+						$this->appendLine("			if(is_array(\$jsonObject->{$propName}))");
 						$this->appendLine("				\$this->multiLingual_{$propName} = Kaltura_Client_ParseUtils::jsObjectToClientObject(\$jsonObject->$propName, '');");
 						$this->appendLine("			else");
 						$this->appendLine("				\$this->$propName = ($propType)\$jsonObject->$propName;");
