@@ -1,10 +1,10 @@
-import { KalturaUploadRequest } from '../api/kaltura-upload-request';
-import { buildQuerystring, createEndpoint, prepareParameters } from './utils';
-import { KalturaClientException } from '../api/kaltura-client-exception';
-import { KalturaRequestOptions } from '../api/kaltura-request-options';
-import { KalturaClientOptions } from '../kaltura-client-options';
-import { KalturaAPIException } from '../api/kaltura-api-exception';
-import { CancelableAction } from '../cancelable-action';
+import { KalturaUploadRequest } from "../api/kaltura-upload-request";
+import { createEndpoint, prepareParameters } from "./utils";
+import { KalturaClientException } from "../api/kaltura-client-exception";
+import { KalturaRequestOptions } from "../api/kaltura-request-options";
+import { KalturaClientOptions } from "../kaltura-client-options";
+import { KalturaAPIException } from "../api/kaltura-api-exception";
+import { CancelableAction } from "../cancelable-action";
 
 interface UploadByChunksData {
     enabled: boolean;
@@ -12,6 +12,7 @@ interface UploadByChunksData {
     resumeAt: number;
     finalChunk: boolean;
 }
+
 export class KalturaUploadRequestAdapter {
     private _chunkUploadSupported(request: KalturaUploadRequest<any>): boolean {
         // SUPPORTED BY BROWSER?
@@ -21,13 +22,13 @@ export class KalturaUploadRequestAdapter {
         // - FileList object type
         // - slicing files
         const supportedByBrowser = (
-            (typeof(File) !== 'undefined')
+            (typeof(File) !== "undefined")
             &&
-            (typeof(Blob) !== 'undefined')
+            (typeof(Blob) !== "undefined")
             &&
-            (typeof(FileList) !== 'undefined')
+            (typeof(FileList) !== "undefined")
             &&
-            (!!(<any>Blob.prototype)['webkitSlice'] || !!(<any>Blob.prototype)['mozSlice'] || !!(<any>Blob.prototype).slice || false)
+            (!!(<any>Blob.prototype)["webkitSlice"] || !!(<any>Blob.prototype)["mozSlice"] || !!(<any>Blob.prototype).slice || false)
         );
         const supportedByRequest = request.supportChunkUpload();
         const enabledInClient = !this.clientOptions.chunkFileDisabled;
@@ -35,8 +36,7 @@ export class KalturaUploadRequestAdapter {
         return enabledInClient && supportedByBrowser && supportedByRequest;
     }
 
-    constructor(public clientOptions: KalturaClientOptions, public defaultRequestOptions: KalturaRequestOptions)
-    {
+    constructor(public clientOptions: KalturaClientOptions, public defaultRequestOptions: KalturaRequestOptions) {
 
     }
 
@@ -73,8 +73,8 @@ export class KalturaUploadRequestAdapter {
                         if (error instanceof KalturaClientException || error instanceof KalturaAPIException) {
                             reject(error);
                         } else {
-                            const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
-                            reject(new KalturaClientException('client::response-unknown-error', errorMessage || 'Failed to parse response'));
+                            const errorMessage = error instanceof Error ? error.message : typeof error === "string" ? error : null;
+                            reject(new KalturaClientException("client::response-unknown-error", errorMessage || "Failed to parse response"));
                         }
                     }
 
@@ -88,8 +88,7 @@ export class KalturaUploadRequestAdapter {
                 .then(handleChunkUploadSuccess, handleChunkUploadError);
 
 
-            return() =>
-            {
+            return () => {
                 if (activeAction) {
                     activeAction.cancel();
                     activeAction = null;
@@ -116,14 +115,14 @@ export class KalturaUploadRequestAdapter {
             let fileStart = 0;
 
             if (uploadChunkData.enabled) {
-	            let actualChunkFileSize: number = null;
+                let actualChunkFileSize: number = null;
                 const userChunkFileSize = this.clientOptions ? this.clientOptions.chunkFileSize : null;
 
                 if (userChunkFileSize && Number.isFinite(userChunkFileSize) && !Number.isNaN(userChunkFileSize)) {
-	                if (userChunkFileSize < 1e5) {
-		                console.warn(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`);
-		                actualChunkFileSize = 1e5;
-	                } else {
+                    if (userChunkFileSize < 1e5) {
+                        console.warn(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`);
+                        actualChunkFileSize = 1e5;
+                    } else {
                         console.log(`using user requetsed chunk size '${userChunkFileSize}'`);
                         actualChunkFileSize = userChunkFileSize;
                     }
@@ -146,12 +145,12 @@ export class KalturaUploadRequestAdapter {
                 console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
             }
 
-            //const { service, action, ks, ...queryparams } = parameters;
-            const { service, action, ...queryparams } = parameters;
+            // const { service, action, ks, ...queryparams } = parameters;
+            const {service, action, ...queryparams} = parameters;
             const endpointUrl = createEndpoint(request, this.clientOptions, service, action, queryparams);
 
             // TODO should uncomment this part and verify that upload sends the ks as part of the body and not in the query param. see https://kaltura.atlassian.net/browse/KMCNG-2401
-            //data.append('ks', ks);
+            // data.append('ks', ks);
 
             const xhr = new XMLHttpRequest();
 
@@ -167,10 +166,10 @@ export class KalturaUploadRequestAdapter {
                         if (xhr.status === 200) {
                             resp = JSON.parse(xhr.response);
                         } else {
-                            resp = new KalturaClientException('client::upload-failure', xhr.responseText || 'failed to upload file');
+                            resp = new KalturaClientException("client::upload-failure", xhr.responseText || "failed to upload file");
                         }
                     } catch (e) {
-                        resp = new KalturaClientException('client::upload-failure', e.message || 'failed to upload file')
+                        resp = new KalturaClientException("client::upload-failure", e.message || "failed to upload file");
                     }
 
                     if (resp instanceof Error) {
@@ -178,7 +177,7 @@ export class KalturaUploadRequestAdapter {
                     } else {
                         if (uploadChunkData.enabled) {
                             if (typeof resp.uploadedFileSize === "undefined" || resp.uploadedFileSize === null) {
-                                reject(new KalturaClientException('client::upload-failure', `uploaded chunk of file failed, expected response with property 'uploadedFileSize'`));
+                                reject(new KalturaClientException("client::upload-failure", `uploaded chunk of file failed, expected response with property 'uploadedFileSize'`));
                                 return;
                             } else if (!uploadChunkData.finalChunk) {
                                 uploadChunkData.resumeAt = Number(resp.uploadedFileSize);
