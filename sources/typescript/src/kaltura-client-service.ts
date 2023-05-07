@@ -14,6 +14,8 @@ import {
     KalturaRequestOptionsArgs
 } from './api/kaltura-request-options';
 import { CancelableAction } from './cancelable-action';
+import { KalturaSequenceUploadRequestAdapter } from "./adapters/kaltura-sequence-upload-request-adapter";
+import { KalturaParallelUploadRequestAdapter } from "./adapters/kaltura-parallel-upload-request-adapter";
 
 export class KalturaClient {
 
@@ -90,7 +92,11 @@ export class KalturaClient {
             return new KalturaFileRequestAdapter().transmit(request, this._options, this._defaultRequestOptions);
 
         } else if (request instanceof KalturaUploadRequest) {
-            return new KalturaUploadRequestAdapter(this._options, this._defaultRequestOptions).transmit(request);
+            if (this._options.parallelUploadsDisabled) {
+                return new KalturaSequenceUploadRequestAdapter(this._options, this._defaultRequestOptions).transmit(request);
+            }
+            return new KalturaParallelUploadRequestAdapter(this._options, this._defaultRequestOptions).transmit(request);
+
         }
         else if (request instanceof KalturaRequest) {
             return new KalturaRequestAdapter().transmit(request, this._options, this._defaultRequestOptions);
