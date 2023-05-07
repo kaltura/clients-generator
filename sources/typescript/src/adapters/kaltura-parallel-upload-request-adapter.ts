@@ -69,14 +69,12 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
 
             const tryUpload = (waitIfNoConnections = true) => {
                 if (KalturaUploadConnectionsManager.retrieveConnection()) {
-                    console.log("tryUpload - got connection");
                     activeAction = this._uploadChunk(request, data, data.nextChunkIndex)
                         .then(handleChunkUploadSuccess, handleChunkUploadError);
                     data.nextChunkIndex += 1;
                     return true;
                 }
                 else if (waitIfNoConnections) {
-                    console.log("tryUpload - no connections, waiting");
                     KalturaUploadConnectionsManager.addAvailableConnectionsCallback(handleAvailableConnectionNotification);
                     hasListenerRegistered = true;
                 }
@@ -89,7 +87,6 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
             };
 
             const handleChunkUploadSuccess = result => {
-                console.log("handleChunkUploadSuccess");
                 // "clean up":
                 activeAction = null;
                 data.chunksUploaded += 1;
@@ -117,7 +114,6 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                             // only add listener if the adapter doesn't have one yet
                             break;
                         }
-                        console.log("chunk added");
                     }
                 }
             };
@@ -156,7 +152,6 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
             let isComplete = false;
             const {propertyName, file} = request.getFileInfo();
             let data = this._getFormData(propertyName, file.name, file);
-            console.log("_uploadChunk, chunkIndex ", chunkIndex, file.name);
             let fileStart = 0;
             let chunkBytesLoaded = 0;
 
