@@ -36,6 +36,9 @@ interface UploadByParallelChunksData {
     nextChunkIndex: number;
 }
 
+/**
+ * Request adapter to allow uploading files in parallel chunks
+ */
 export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAdapter {
 
     constructor(clientOptions: KalturaClientOptions, defaultRequestOptions: KalturaRequestOptions) {

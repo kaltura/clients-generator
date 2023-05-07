@@ -13,6 +13,9 @@ interface UploadBySequentialChunksData {
     finalChunk: boolean;
 }
 
+/**
+ * Request adapter to allow uploading files chunk after chunk
+ */
 export class KalturaSequenceUploadRequestAdapter extends KalturaUploadRequestAdapter {
 
 
