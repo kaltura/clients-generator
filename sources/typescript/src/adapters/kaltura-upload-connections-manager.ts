@@ -37,8 +37,10 @@ export class KalturaUploadConnectionsManager {
         if (this._availableConnections === 1) {
             // if we got here, previously there were no available connections,
             // and now there is now - notify the first item in the queue and remove it.
-            const cb = this._callbacks.shift();
-            cb();
+            if (this._callbacks.length) {
+                const cb = this._callbacks.shift();
+                cb();
+            }
         }
     }
 
