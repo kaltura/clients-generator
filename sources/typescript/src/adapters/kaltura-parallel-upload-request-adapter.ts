@@ -13,7 +13,7 @@ interface UploadByParallelChunksData {
     /**
      * bytes uploaded so far
      */
-    loaded: number;
+    uploaded: number;
 
     /**
      * total number of chunks in the current file
@@ -56,7 +56,7 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
 
             const data: UploadByParallelChunksData = {
                 chunkUploadEnabled: this._chunkUploadSupported(request),
-                loaded: 0,
+                uploaded: 0,
                 totalChunks: Math.ceil(file.size / chunkSize),
                 chunkSize: chunkSize,
                 chunksUploaded: 0,
@@ -106,9 +106,6 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                     this._handleFinalChunkResponse(request, result, reject, resolve);
                 }
                 else if (hasMoreChunks) {
-                    // tryUpload();
-                    // TODO if we add as many parts as possible here?
-
                     // add as many chunks as possible
                     while (true) {
                         if (data.nextChunkIndex >= data.totalChunks) {
@@ -134,51 +131,6 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                 }
             };
 
-            // // TODO upload first chunk, only after it is done, upload the rest in parallel
-            // const uploadFirstChunk = () => {
-            //     return new CancelableAction((resolve, reject) => {
-            //         if (KalturaUploadConnectionsManager.retrieveConnection()) {
-            //             console.log("upload first chunk - got connection");
-            //             activeAction = this._uploadChunk(request, data, data.nextChunkIndex);
-            //                 // .then(handleChunkUploadSuccess, handleChunkUploadError);
-            //             data.nextChunkIndex += 1;
-            //             return activeAction;
-            //         }
-            //         else {
-            //             console.log("upload first chunk - no connections, waiting");
-            //             KalturaUploadConnectionsManager.addAvailableConnectionsCallback(handleAvailableConnectionNotification);
-            //         }
-            //     });
-            // };
-            //
-            // uploadFirstChunk().then(() => {
-            //     //TODO we actually want the same as the success handler, but with adding all possible chunks
-            //     //TODO add as many chunks as possible
-            //     while (true) {
-            //         if (data.nextChunkIndex >= data.totalChunks) {
-            //             // all chunks are uploaded / uploading
-            //             break;
-            //         }
-            //         if (!tryUpload(false)) {
-            //             // no more available connections, listener was not added
-            //             break;
-            //         }
-            //         console.log("chunk added");
-            //     }
-            // }, handleChunkUploadError)
-
-            // // add as many chunks as possible
-            // while (true) {
-            //     if (data.nextChunkIndex >= data.totalChunks) {
-            //         // all chunks are uploaded / uploading
-            //         break;
-            //     }
-            //     if (!tryUpload(false)) {
-            //         // no more available connections, listener was not added
-            //         break;
-            //     }
-            //     console.log("chunk added");
-            // }
             tryUpload();
 
             return () => {
@@ -206,6 +158,7 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
             let data = this._getFormData(propertyName, file.name, file);
             console.log("_uploadChunk, chunkIndex ", chunkIndex, file.name);
             let fileStart = 0;
+            let chunkBytesLoaded = 0;
 
             if (uploadChunkData.chunkUploadEnabled) {
                 const chunkSize = uploadChunkData.chunkSize;
@@ -263,16 +216,20 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                 }
             };
 
-            // const progressCallback = request._getProgressCallback();
-            // if (progressCallback) {
-            //     xhr.upload.addEventListener("progress", e => {
-            //         if (e.lengthComputable) {
-            //             progressCallback.apply(request, [e.loaded + fileStart, file.size]);
-            //         } else {
-            //             // Unable to compute progress information since the total size is unknown
-            //         }
-            //     }, false);
-            // }
+            const progressCallback = request._getProgressCallback();
+            if (progressCallback) {
+                xhr.upload.addEventListener("progress", e => {
+                    if (e.lengthComputable) {
+                        // update the "global" counter: add only what was added on the current "progress"
+                        uploadChunkData.uploaded += (e.loaded - chunkBytesLoaded);
+                        chunkBytesLoaded = e.loaded;
+                        // report
+                        progressCallback.apply(request, [uploadChunkData.uploaded, file.size]);
+                    } else {
+                        // Unable to compute progress information since the total size is unknown
+                    }
+                }, false);
+            }
 
             xhr.open("POST", endpointUrl);
             xhr.send(data);
