@@ -87,6 +87,7 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
             const handleChunkUploadError = reason => {
                 activeAction = null;
                 reject(reason);
+                KalturaUploadConnectionsManager.releaseConnection();
             };
 
             const handleChunkUploadSuccess = result => {
