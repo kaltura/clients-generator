@@ -66,12 +66,13 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
 
             let hasListenerRegistered = false;
 
-            let activeAction: CancelableAction<any>;
+            let activeActions: Record<string, CancelableAction<any>> = {};
 
             const tryUpload = (waitIfNoConnections = true) => {
                 if (KalturaUploadConnectionsManager.retrieveConnection()) {
-                    activeAction = this._uploadChunk(request, data, data.nextChunkIndex)
-                        .then(handleChunkUploadSuccess, handleChunkUploadError);
+                    activeActions[data.nextChunkIndex] = this._uploadChunk(request, data, data.nextChunkIndex)
+                        .then(handleChunkUploadSuccess(data.nextChunkIndex), handleChunkUploadError(data.nextChunkIndex));
+                    // success and error are bound to chunk index
                     data.nextChunkIndex += 1;
                     return true;
                 }
@@ -82,18 +83,26 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                 return false;
             };
 
-            const handleChunkUploadError = reason => {
-                activeAction = null;
+            const handleChunkUploadError = (chunkIndex: number) => reason => {
+                delete activeActions[chunkIndex];
+                // cancel all ongoing chunks
+                for (let i in activeActions) {
+                    activeActions[i].cancel();
+                    delete activeActions[i];
+                }
+
                 reject(reason);
-                KalturaUploadConnectionsManager.releaseConnection();
+
+                // free connections
                 if (hasListenerRegistered) {
                     KalturaUploadConnectionsManager.removeAvailableConnectionsCallback(handleAvailableConnectionNotification);
                 }
+                KalturaUploadConnectionsManager.releaseConnection();
             };
 
-            const handleChunkUploadSuccess = result => {
+            const handleChunkUploadSuccess = (chunkIndex: number) => result => {
                 // "clean up":
-                activeAction = null;
+                delete activeActions[chunkIndex];
                 data.chunksUploaded += 1;
                 KalturaUploadConnectionsManager.releaseConnection();
 
@@ -126,8 +135,9 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
             const handleAvailableConnectionNotification = () => {
                 hasListenerRegistered = false;
                 if (KalturaUploadConnectionsManager.retrieveConnection()) {
-                    activeAction = this._uploadChunk(request, data, data.nextChunkIndex)
-                        .then(handleChunkUploadSuccess, handleChunkUploadError);
+                    activeActions[data.nextChunkIndex] = this._uploadChunk(request, data, data.nextChunkIndex)
+                        .then(handleChunkUploadSuccess(data.nextChunkIndex), handleChunkUploadError(data.nextChunkIndex));
+                    // success, error are bound to chunk index
                     data.nextChunkIndex += 1;
                 }
             };
@@ -135,9 +145,9 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
             tryUpload();
 
             return () => {
-                if (activeAction) {
-                    activeAction.cancel();
-                    activeAction = null;
+                for (let i in activeActions) {
+                    activeActions[i].cancel();
+                    delete activeActions[i];
                 }
             };
         });
