@@ -1,20 +1,22 @@
 export class KalturaUploadConnectionsManager {
-     private static _availableConnections: number;
-     private static _callbacks: (() => void)[];
-     public static _totalConnections: number = -1; // -1 as in not initialized
+    private static _availableConnections: number;
+    private static _callbacks: (() => void)[];
+    private static _totalConnections: number = -1; // -1 as in not initialized
+    private static _initialized = false;
 
-    public static setTotalConnections(n: number): void {
+    /**
+     * initialize the manager. will only do something if not yet initialized.
+     * @param maxConnections  max number of concurrent connections
+     */
+    public static init(maxConnections: number) {
         // only if not yet initialized
-        if (this._totalConnections === -1) {
-            this._totalConnections = n;
-            this._availableConnections = n;
+        if (!this._initialized) {
+            this._totalConnections = maxConnections;
+            this._availableConnections = maxConnections;
             // this is a fine opportunity to initialize this as well:
             this._callbacks = [];
+            this._initialized = true;
         }
-    }
-
-    public static getTotalConnections(): number {
-        return this._totalConnections;
     }
 
     /**
@@ -36,7 +38,7 @@ export class KalturaUploadConnectionsManager {
         this._availableConnections += 1;
         if (this._availableConnections === 1) {
             // if we got here, previously there were no available connections,
-            // and now there is now - notify the first item in the queue and remove it.
+            // and now there is one - notify the first item in the queue and remove it.
             if (this._callbacks.length) {
                 const cb = this._callbacks.shift();
                 cb();

@@ -46,10 +46,8 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
         if (clientOptions.parallelUploadsDisabled) {
             return;
         }
-        if (KalturaUploadConnectionsManager.getTotalConnections() === -1) {
-            // initialize manager
-            KalturaUploadConnectionsManager.setTotalConnections(clientOptions.maxConcurrentUploadConnections || 6);
-        }
+        // initialize manager
+        KalturaUploadConnectionsManager.init(clientOptions.maxConcurrentUploadConnections || 6);
     }
 
     transmit(request: KalturaUploadRequest<any>): CancelableAction<any> {
