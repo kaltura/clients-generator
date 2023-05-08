@@ -86,6 +86,9 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                 activeAction = null;
                 reject(reason);
                 KalturaUploadConnectionsManager.releaseConnection();
+                if (hasListenerRegistered) {
+                    KalturaUploadConnectionsManager.removeAvailableConnectionsCallback(handleAvailableConnectionNotification);
+                }
             };
 
             const handleChunkUploadSuccess = result => {
