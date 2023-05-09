@@ -56,6 +56,26 @@ export class KalturaUploadRequestAdapter {
         return result;
     }
 
+    protected _prependParametersToFormData(formData: FormData, parameters: Record<string, any>): FormData {
+        const result = new FormData();
+        for (let key in parameters) {
+            result.append(key, parameters[key]);
+        }
+
+        // @ts-ignore
+        const it = formData.entries();
+        let val;
+        while (true) {
+            val = it.next();
+            if (val.done) {
+                break;
+            }
+            result.append(val.value[0], val.value[1]);
+        }
+
+        return result;
+    }
+
     protected _getChunkSize() {
         const userChunkFileSize = this.clientOptions ? this.clientOptions.chunkFileSize : null;
 
