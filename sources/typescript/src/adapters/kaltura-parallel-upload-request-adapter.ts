@@ -148,6 +148,8 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
                 for (let i in activeActions) {
                     activeActions[i].cancel();
                     delete activeActions[i];
+                    // for each, free a connection
+                    KalturaUploadConnectionsManager.releaseConnection();
                 }
             };
         });
