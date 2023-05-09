@@ -191,7 +191,10 @@ export class KalturaParallelUploadRequestAdapter extends KalturaUploadRequestAda
 
             // const { service, action, ks, ...queryparams } = parameters;
             const {service, action, ...queryparams} = parameters;
-            const endpointUrl = createEndpoint(request, this.clientOptions, service, action, queryparams);
+            const endpointUrl = createEndpoint(request, this.clientOptions, service, action);
+
+            // "prepend" queryparams before file data
+            data = this._prependParametersToFormData(data, queryparams);
 
             const xhr = new XMLHttpRequest();
 
