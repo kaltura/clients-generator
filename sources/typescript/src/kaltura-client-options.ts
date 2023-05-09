@@ -3,4 +3,6 @@ export interface KalturaClientOptions {
     endpointUrl: string;
     chunkFileSize?: number;
     chunkFileDisabled?: boolean;
+    parallelUploadsDisabled?: boolean;
+    maxConcurrentUploadConnections?: number;
 }
