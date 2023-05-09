@@ -96,12 +96,11 @@ export class KalturaSequenceUploadRequestAdapter extends KalturaUploadRequestAda
                 console.log(`chunk upload not supported by browser or by request. Uploading the file as-is`);
             }
 
-            // const { service, action, ks, ...queryparams } = parameters;
             const {service, action, ...queryparams} = parameters;
-            const endpointUrl = createEndpoint(request, this.clientOptions, service, action, queryparams);
+            const endpointUrl = createEndpoint(request, this.clientOptions, service, action);
 
-            // TODO should uncomment this part and verify that upload sends the ks as part of the body and not in the query param. see https://kaltura.atlassian.net/browse/KMCNG-2401
-            // data.append('ks', ks);
+            // "prepend" queryparams before file data
+            data = this._prependParametersToFormData(data, queryparams);
 
             const xhr = new XMLHttpRequest();
 
