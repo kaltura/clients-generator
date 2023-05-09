@@ -1,7 +1,7 @@
 export class KalturaUploadConnectionsManager {
     private static _availableConnections: number;
     private static _callbacks: (() => void)[];
-    private static _totalConnections: number = -1; // -1 as in not initialized
+    private static _totalConnections: number;
     private static _initialized = false;
 
     /**
@@ -36,6 +36,10 @@ export class KalturaUploadConnectionsManager {
      */
     public static releaseConnection(): void {
         this._availableConnections += 1;
+        if (this._availableConnections > this._totalConnections) {
+            console.warn("Note: available connections: ", this._availableConnections, " is higher than total connections: ", this._totalConnections, ". resetting value.");
+            this._availableConnections = this._totalConnections;
+        }
         if (this._availableConnections === 1) {
             // if we got here, previously there were no available connections,
             // and now there is one - notify the first item in the queue and remove it.
