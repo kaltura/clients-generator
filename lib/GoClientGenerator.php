@@ -546,7 +546,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$goOutputType = "*int32";
 				break;
 			case "float":
-				$goOutputType = "*float32";
+				$goOutputType = "*float64";
 				break;
 			case "bool":
 				$goOutputType = "*bool";
@@ -708,7 +708,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 						$goType = "int32";
 					break;
 				case "float":
-					$goType = "float32";
+					$goType = "float64";
 						break;
 				case "KalturaStringValue":
 					$goOutputType = "string";
@@ -979,8 +979,8 @@ class GoClientGenerator extends ClientGeneratorFromXml
 			}
 			else if ($propType == "float")
 			{
-				$goPropType  = "float32";
-				$property["pureType"] = "float32"; 
+				$goPropType  = "float64";
+				$property["pureType"] = "float64"; 
 			}
 			else
 			{
