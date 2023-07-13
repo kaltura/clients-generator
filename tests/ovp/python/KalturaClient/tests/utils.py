@@ -62,7 +62,8 @@ class KalturaBaseTest(unittest.TestCase):
                                              KalturaSessionType.ADMIN, PARTNER_ID, 
                                              86400, "disableentitlement")
         assert self.ks
-        self.client.setKs(self.ks)     
+        self.client.setKs(self.ks)
+        assert self.ks == self.client.getKs()
         assert self.ks == self.client.ks
             
             
