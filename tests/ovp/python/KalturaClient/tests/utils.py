@@ -57,10 +57,13 @@ class KalturaBaseTest(unittest.TestCase):
         #(client session is enough when we do operations in a users scope)
         self.config = GetConfig()
         self.client = KalturaClient(self.config)
+        assert hasattr(self.client, "ks"), "New KalturaClients do not have a .ks attribute."
         self.ks = generateSessionFunction(ADMIN_SECRET, USER_NAME, 
                                              KalturaSessionType.ADMIN, PARTNER_ID, 
                                              86400, "disableentitlement")
-        self.client.setKs(self.ks)            
+        assert self.ks
+        self.client.setKs(self.ks)     
+        assert self.ks == self.client.ks
             
             
     def tearDown(self):
