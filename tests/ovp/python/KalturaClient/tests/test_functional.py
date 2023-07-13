@@ -223,6 +223,7 @@ class MultiRequestTests(KalturaBaseTest):
         ks = self.client.session.start(ADMIN_SECRET, USER_NAME,
                                        KalturaSessionType.ADMIN,
                                        PARTNER_ID, 86400, "")
+        assert ks
         self.client.setKs(ks)
 
         listResult = self.client.baseEntry.list()
@@ -245,6 +246,7 @@ class MultiRequestTests(KalturaBaseTest):
         ks = self.client.session.start(
             ADMIN_SECRET, USER_NAME, KalturaSessionType.ADMIN, PARTNER_ID,
             86400, "")
+        assert ks
         self.client.setKs(ks)
 
         mediaEntry = self.client.media.get('invalid entry id')
