@@ -388,13 +388,14 @@ class KalturaClient(object):
     def parsePostResult(self, postResult):
         self.log("result (xml): %s" % postResult)
         try:
-            #parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True, huge_tree=True)
-            #resultXml = etree.fromstring(postResult, parser=parser)
+            # expect potentially large tree, attempt parsing while being forgiving and use utf-8 for encoding
             parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True, huge_tree=True)
-            postResult = postResult.decode('utf-8', 'ignore')
-            # due to potential utf-8 decoding issues with binary data, if dataContent field exist, remove its contents:
+            # first decode ignoring decoding issues to remove dataContent
+            postResult = postResult.decode('utf-8', 'ignore') 
+            # due to potential utf-8 decoding issues with binary data, if dataContent field exist, remove its contents
             if '<dataContent>' in postResult:
                 postResult = re.sub(r'<dataContent>(.*?)</dataContent>', '<dataContent></dataContent>', postResult)
+            # encode the respose back, and then return the parsed result:
             postResult = postResult.encode('utf-8')
             resultXml = etree.fromstring(postResult, parser=parser)
         except etree.ParseError as e:
