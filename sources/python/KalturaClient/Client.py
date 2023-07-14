@@ -35,7 +35,7 @@ import base64
 import types
 import time
 import os
-
+import re
 import logging
 import requests
 try:
@@ -69,6 +69,35 @@ try:
     from Crypto.Cipher import AES
 except ImportError:
     pass            # PyCrypto is required only for creating KS V2
+
+def retry_on_exception(max_retries=3, delay=1, backoff=2, exceptions=(Exception,)):
+    """
+    A decorator for retrying a function call with a specified delay in case of a specific set of exceptions
+
+    Args:
+        max_retries (int): The maximum number of retries before giving up. Default is 3.
+        delay (int/float): The initial delay between retries in seconds. Default is 1.
+        backoff (int): The multiplier applied to delay between retries. Default is 2.
+        exceptions (tuple): A tuple of exceptions on which to retry. Default is (Exception,), i.e., all exceptions.
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            mtries, mdelay = max_retries, delay
+            while mtries > 1:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as error:
+                    self = args[0]  # Assume that the function is a method of a class
+                    msg = f"{str(error)}, Kaltura API retrying request in {mdelay} seconds..."
+                    context = f'Function "{func.__name__}" failed on attempt {max_retries - mtries + 1} with args {args} and kwargs {kwargs}.'
+                    self.logger.critical(f'retrying function due to error: {msg} Context: {context}')
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return func(*args, **kwargs)  # retry one final time, if it fails again let the exception bubble up
+        return wrapper
+    return decorator
+
 
 def debug_requests_on():
     '''Switches on logging of the requests module.'''
@@ -143,7 +172,7 @@ class KalturaClient(object):
         self.callsQueue = []
         self.requestHeaders = {}
         self.clientConfiguration = {
-            'clientTag': 'python-@DATE@',
+            'clientTag': 'python-23-02-27',
             'apiVersion': API_VERSION,
         }
         self.requestConfiguration = {}
@@ -342,6 +371,7 @@ class KalturaClient(object):
                 e, KalturaClientException.ERROR_READ_FAILED)
 
     # Send http request
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(Exception, KalturaException, KalturaClientException))
     def doHttpRequest(self, url, params=KalturaParams(), files=None):
         if not files:
             requestTimeout = self.config.requestTimeout
@@ -354,10 +384,18 @@ class KalturaClient(object):
         self.responseHeaders = r.headers
         return data
 
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(Exception, KalturaException, KalturaClientException))
     def parsePostResult(self, postResult):
         self.log("result (xml): %s" % postResult)
         try:
-            parser = etree.XMLParser(encoding='ISO-8859-1', ns_clean=True, recover=True)
+            #parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True, huge_tree=True)
+            #resultXml = etree.fromstring(postResult, parser=parser)
+            parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True, huge_tree=True)
+            postResult = postResult.decode('utf-8', 'ignore')
+            # due to potential utf-8 decoding issues with binary data, if dataContent field exist, remove its contents:
+            if '<dataContent>' in postResult:
+                postResult = re.sub(r'<dataContent>(.*?)</dataContent>', '<dataContent></dataContent>', postResult)
+            postResult = postResult.encode('utf-8')
             resultXml = etree.fromstring(postResult, parser=parser)
         except etree.ParseError as e:
             raise KalturaClientException(
