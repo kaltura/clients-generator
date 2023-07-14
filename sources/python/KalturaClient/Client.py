@@ -90,7 +90,7 @@ def retry_on_exception(max_retries=3, delay=1, backoff=2, exceptions=(Exception,
                     self = args[0]  # Assume that the function is a method of a class
                     msg = f"{str(error)}, Kaltura API retrying request in {mdelay} seconds..."
                     context = f'Function "{func.__name__}" failed on attempt {max_retries - mtries + 1} with args {args} and kwargs {kwargs}.'
-                    self.logger.critical(f'retrying function due to error: {msg} Context: {context}')
+                    self.log(f'retrying function due to error: {msg} Context: {context}')
                     time.sleep(mdelay)
                     mtries -= 1
                     mdelay *= backoff
