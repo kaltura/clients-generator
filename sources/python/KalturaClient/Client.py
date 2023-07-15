@@ -176,10 +176,13 @@ class KalturaClient(object):
             'apiVersion': API_VERSION,
         }
         self.requestConfiguration = {}
-        self.DATA_CONTENT_REGEX = rb'<dataContent>.*?</dataContent>'
-        self.parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True)
-        self.remove_data_content = remove_data_content
 
+        # greedy match for all dataContent nodes in order to drop them in parsePostResult
+        self.remove_data_content = remove_data_content # indicates if dataContent should be dropped from data responses
+        self.DATA_CONTENT_REGEX = rb'(?s)<dataContent>.*?</dataContent>' 
+        
+        self.parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True)
+        
         self.config = config
         logger = self.config.getLogger()
         if logger:
@@ -374,7 +377,7 @@ class KalturaClient(object):
                 e, KalturaClientException.ERROR_READ_FAILED)
 
     # Send http request
-    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(Exception, KalturaException, KalturaClientException))
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(UnicodeDecodeError, UnicodeEncodeError, requests.exceptions.RequestException))
     def doHttpRequest(self, url, params=KalturaParams(), files=None):
         if not files:
             requestTimeout = self.config.requestTimeout
@@ -387,7 +390,7 @@ class KalturaClient(object):
         self.responseHeaders = r.headers
         return data
 
-    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(Exception, KalturaException, KalturaClientException))
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(UnicodeDecodeError, UnicodeEncodeError, requests.exceptions.RequestException))
     def parsePostResult(self, postResult):
         try:
             # Remove the content within <dataContent> tags to avoid utf8 decoding issues with binary data inside the xml
