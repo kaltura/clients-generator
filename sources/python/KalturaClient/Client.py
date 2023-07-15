@@ -165,7 +165,7 @@ class KalturaClient(object):
     FIELD_USER = '_u'
     ENCODING = 'utf8'
 
-    def __init__(self, config):
+    def __init__(self, config, remove_data_content:bool = False):
         self.config = None
         self.shouldLog = False
         self.multiRequestReturnType = None
@@ -176,6 +176,9 @@ class KalturaClient(object):
             'apiVersion': API_VERSION,
         }
         self.requestConfiguration = {}
+        self.DATA_CONTENT_REGEX = rb'<dataContent>.*?</dataContent>'
+        self.parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True)
+        self.remove_data_content = remove_data_content
 
         self.config = config
         logger = self.config.getLogger()
@@ -386,33 +389,35 @@ class KalturaClient(object):
 
     @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(Exception, KalturaException, KalturaClientException))
     def parsePostResult(self, postResult):
-        self.log("result (xml): %s" % postResult)
         try:
-            # expect potentially large tree, attempt parsing while being forgiving and use utf-8 for encoding
-            parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True, huge_tree=True)
-            # first decode ignoring decoding issues to remove dataContent
-            postResult = postResult.decode('utf-8', 'ignore') 
-            # due to potential utf-8 decoding issues with binary data, if dataContent field exist, remove its contents
-            if '<dataContent>' in postResult:
-                postResult = re.sub(r'<dataContent>(.*?)</dataContent>', '<dataContent></dataContent>', postResult)
-            # encode the respose back, and then return the parsed result:
-            postResult = postResult.encode('utf-8')
-            resultXml = etree.fromstring(postResult, parser=parser)
+            # Remove the content within <dataContent> tags to avoid utf8 decoding issues with binary data inside the xml
+            if self.remove_data_content:
+                postResult = re.sub(self.DATA_CONTENT_REGEX, b'<dataContent></dataContent>', postResult)
+                self.log("removing dataContent tags to avoid utf8 decoding issues")
+            
+            self.log("result (xml): %s" % postResult)
+            # Parse the postResult as utf8 XML
+            resultXml = etree.fromstring(postResult, parser=self.parser)
         except etree.ParseError as e:
             raise KalturaClientException(
-                e, KalturaClientException.ERROR_INVALID_XML)
-
+                f"Failed to parse XML: {str(e)}",
+                KalturaClientException.ERROR_INVALID_XML)
+            
+        # Check for 'result' node in the XML
         resultNode = resultXml.find('result')
         if resultNode is None:
             raise KalturaClientException(
                 'Could not find result node in response xml',
                 KalturaClientException.ERROR_RESULT_NOT_FOUND)
 
+        # Extract execution time from the XML
         execTime = resultXml.find('executionTime')
         if execTime is not None:
             self.executionTime = getXmlNodeFloat(execTime)
 
+        # Check for any error within resultNode
         self.throwExceptionIfError(resultNode)
+        
         return resultNode
 
     # Call all API services that are in queue
