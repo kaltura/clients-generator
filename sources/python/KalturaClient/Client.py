@@ -176,7 +176,7 @@ class KalturaClient(object):
             'apiVersion': API_VERSION,
         }
         self.requestConfiguration = {}
-
+        
         # greedy match for all dataContent nodes in order to drop them in parsePostResult
         self.remove_data_content = remove_data_content # indicates if dataContent should be dropped from data responses
         self.DATA_CONTENT_REGEX = rb'(?s)<dataContent>.*?</dataContent>' 
@@ -390,7 +390,7 @@ class KalturaClient(object):
         self.responseHeaders = r.headers
         return data
 
-    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(UnicodeDecodeError, UnicodeEncodeError, requests.exceptions.RequestException))
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(KalturaException, KalturaClientException, UnicodeDecodeError, UnicodeEncodeError, requests.exceptions.RequestException))
     def parsePostResult(self, postResult):
         try:
             # Remove the content within <dataContent> tags to avoid utf8 decoding issues with binary data inside the xml
@@ -451,17 +451,13 @@ class KalturaClient(object):
         self.log("execution time for [%s]: [%s]" % (url, endTime - startTime))
 
         # print server debug info to log
-        serverName = None
-        serverSession = None
-        for curHeader in self.responseHeaders:
-            if curHeader.startswith('X-Me:'):
-                serverName = curHeader.split(':', 1)[1].strip()
-            elif curHeader.startswith('X-Kaltura-Session:'):
-                serverSession = curHeader.split(':', 1)[1].strip()
-        if serverName is not None or serverSession is not None:
-            self.log(
-                "server: [%s], session [%s]" % (serverName, serverSession))
-
+        serverName = self.responseHeaders.get('X-Me', 'N/A').strip()
+        serverSession = self.responseHeaders.get('X-Kaltura-Session', 'N/A').strip()
+        proxyMe = self.responseHeaders.get('X-Proxy-Me', 'N/A').strip()
+        proxySession = self.responseHeaders.get('X-Proxy-Session', 'N/A').strip()
+        connection = self.responseHeaders.get('Connection', 'N/A').strip()
+        self.log("Response headers  - server: [{0}], session: [{1}], proxy me: [{2}], proxy session: [{3}], connection: [{4}]".format(serverName, serverSession, proxyMe, proxySession, connection))
+        
         # parse the result
         resultNode = self.parsePostResult(postResult)
 
