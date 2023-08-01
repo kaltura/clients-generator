@@ -147,6 +147,7 @@ class KalturaClient(object):
             'apiVersion': API_VERSION,
         }
         self.requestConfiguration = {}
+        self.ks = None
 
         self.config = config
         logger = self.config.getLogger()
