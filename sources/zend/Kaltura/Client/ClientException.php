@@ -45,4 +45,5 @@ class Kaltura_Client_ClientException extends Exception
 	const ERROR_DOWNLOAD_IN_MULTIREQUEST = -11;
 	const ERROR_ACTION_IN_MULTIREQUEST = -12;
 	const ERROR_INVALID_ENUM_VALUE = -13;
+	const ERROR_CONSTRUCT_ARGS_CONFLICT = -14;
 }

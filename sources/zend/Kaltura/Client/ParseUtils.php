@@ -29,6 +29,8 @@
 
 class Kaltura_Client_ParseUtils 
 {
+	public static $isMultiRequest = false;
+
 	public static function unmarshalSimpleType(\SimpleXMLElement $xml) 
 	{
 		return "$xml";
@@ -75,6 +77,101 @@ class Kaltura_Client_ParseUtils
 		}
 			
 		return $ret;
+	}
+
+	/**
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	public static function jsObjectToClientObject($value, $fallbackType = null)
+	{
+		if(is_array($value))
+		{
+			foreach($value as &$item)
+			{
+				$item = self::jsObjectToClientObject($item);
+			}
+		}
+		
+		if(is_object($value))
+		{
+			if(isset($value->message) && isset($value->code))
+			{
+				if(self::$isMultiRequest)
+				{
+					
+					return new Kaltura_Client_Exception($value->message, $value->code, self::exceptionArgsArrayToObject($value->args));
+				}
+				throw new Kaltura_Client_Exception($value->message, $value->code, self::exceptionArgsArrayToObject($value->args));
+			}
+			
+			if(!isset($value->objectType))
+			{
+				if (isset($value->result))
+				{
+					$value = self::jsObjectToClientObject($value->result);
+				}
+				else if (isset($value->error))
+				{
+					self::jsObjectToClientObject($value->error);
+				}
+				else
+				{
+					throw new Kaltura_Client_Exception("Response format not supported - objectType is required for all objects", Kaltura_Client_Exception::ERROR_FORMAT_NOT_SUPPORTED);
+				}
+			}
+			
+			$objectType = $value->objectType;
+			$zendClientClass = Kaltura_Client_TypeMap::getZendType($objectType);
+			if(!$zendClientClass && !is_null($fallbackType)) {
+				$zendClientClass = Kaltura_Client_TypeMap::getZendType($fallbackType);
+			}
+			$object = new $zendClientClass(null, $value);
+			$attributes = get_object_vars($value);
+			foreach($attributes as $attribute => $attributeValue)
+			{
+				if($attribute === 'objectType' || (!is_array($attributeValue) && !is_object($attributeValue)) )
+				{
+					continue;
+				}
+
+				if($attribute === 'relatedObjects') {
+					$object->relatedObjects = array();
+					if(is_object($attributeValue)) {
+						$objectVars = get_object_vars($attributeValue);
+					} else {
+						$objectVars = $attributeValue;
+					}
+					foreach($objectVars as $key => $relatedObject) {
+						$object->relatedObjects[$key] = self::jsObjectToClientObject($relatedObject);
+					}
+					continue;
+				}
+				
+				$multiLingualAttribute = 'multiLingual_' . $attribute;
+				if(isset($object->{$multiLingualAttribute})) {
+					continue;
+				}
+				$object->$attribute = self::jsObjectToClientObject($attributeValue);
+			}
+			
+			$value = $object;
+		}
+		
+		return $value;
+	}
+
+	private static function exceptionArgsArrayToObject($args)
+	{
+		$objectArgs = array();
+		foreach($args as $argName => $argValue) {
+			$argumentsObject = new stdClass();
+			$argumentsObject->name = $argName;
+			$argumentsObject->value = $argValue;
+			$objectArgs[] = $argumentsObject;
+		}
+
+		return $objectArgs;
 	}
 
 }
