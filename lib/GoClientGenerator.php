@@ -954,7 +954,7 @@ class GoClientGenerator extends ClientGeneratorFromXml
 				$arrayObjectType = $propertyNode->getAttribute("arrayType");
 				if($arrayObjectType == 'KalturaObject')
 					$arrayObjectType = 'ObjectBase';
-				$goPropType = "map[string]" . $this->getGOName($arrayObjectType);
+				$goPropType = "map[string]*" . $this->getGOName($arrayObjectType);
 				$property["pureType"] = $this->getGOName($arrayObjectType);
 			}
 			else if ($propType == "bool")
