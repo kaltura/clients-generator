@@ -30,8 +30,6 @@
 const md5 = require('md5');
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
-const https = require('https');
 const axios = require('axios');
 const url = require('url'); 
 
