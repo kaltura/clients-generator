@@ -96,6 +96,12 @@ export function prepareParameters(request: KalturaRequest<any> | KalturaMultiReq
   );
 }
 
+export function safeJsonParse(obj: string): object {
+  try {
+    return JSON.parse(obj)
+  } catch (e) {/* noop */}
+}
+
 export function createCancelableAction<T>(
   data: { endpoint: string, headers: any, body: any },
   responseType: 'json'|'text' = 'json'
@@ -122,6 +128,9 @@ export function createCancelableAction<T>(
 
     cancelableRequest[responseType]()
       .then(function (response) {
+        if (typeof response === 'string' && response.includes('KalturaAPIException')) {
+          response = safeJsonParse(response) || response
+        }
         if (response?.objectType === 'KalturaAPIException') {
           Logger.error(`Kaltura API Exception: '${response.message || ''}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
         }
