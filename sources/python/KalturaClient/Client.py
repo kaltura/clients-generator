@@ -35,7 +35,7 @@ import base64
 import types
 import time
 import os
-
+import re
 import logging
 import requests
 try:
@@ -69,6 +69,35 @@ try:
     from Crypto.Cipher import AES
 except ImportError:
     pass            # PyCrypto is required only for creating KS V2
+
+def retry_on_exception(max_retries=3, delay=1, backoff=2, exceptions=(Exception,)):
+    """
+    A decorator for retrying a function call with a specified delay in case of a specific set of exceptions
+
+    Args:
+        max_retries (int): The maximum number of retries before giving up. Default is 3.
+        delay (int/float): The initial delay between retries in seconds. Default is 1.
+        backoff (int): The multiplier applied to delay between retries. Default is 2.
+        exceptions (tuple): A tuple of exceptions on which to retry. Default is (Exception,), i.e., all exceptions.
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            mtries, mdelay = max_retries, delay
+            while mtries > 1:
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as error:
+                    self = args[0]  # Assume that the function is a method of a class
+                    msg = f"{str(error)}, Kaltura API retrying request in {mdelay} seconds..."
+                    context = f'Function "{func.__name__}" failed on attempt {max_retries - mtries + 1} with args {args} and kwargs {kwargs}.'
+                    self.log(f'retrying function due to error: {msg} Context: {context}')
+                    time.sleep(mdelay)
+                    mtries -= 1
+                    mdelay *= backoff
+            return func(*args, **kwargs)  # retry one final time, if it fails again let the exception bubble up
+        return wrapper
+    return decorator
+
 
 def debug_requests_on():
     '''Switches on logging of the requests module.'''
@@ -136,7 +165,7 @@ class KalturaClient(object):
     FIELD_USER = '_u'
     ENCODING = 'utf8'
 
-    def __init__(self, config):
+    def __init__(self, config, remove_data_content:bool = False):
         self.config = None
         self.shouldLog = False
         self.multiRequestReturnType = None
@@ -147,7 +176,13 @@ class KalturaClient(object):
             'apiVersion': API_VERSION,
         }
         self.requestConfiguration = {}
-
+        
+        # greedy match for all dataContent nodes in order to drop them in parsePostResult
+        self.remove_data_content = remove_data_content # indicates if dataContent should be dropped from data responses
+        self.DATA_CONTENT_REGEX = rb'(?s)<dataContent>.*?</dataContent>' 
+        
+        self.parser = etree.XMLParser(encoding='UTF-8', ns_clean=True, recover=True)
+        
         self.config = config
         logger = self.config.getLogger()
         if logger:
@@ -342,6 +377,7 @@ class KalturaClient(object):
                 e, KalturaClientException.ERROR_READ_FAILED)
 
     # Send http request
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(UnicodeDecodeError, UnicodeEncodeError, requests.exceptions.RequestException))
     def doHttpRequest(self, url, params=KalturaParams(), files=None):
         if not files:
             requestTimeout = self.config.requestTimeout
@@ -354,26 +390,37 @@ class KalturaClient(object):
         self.responseHeaders = r.headers
         return data
 
+    @retry_on_exception(max_retries=5, delay=5, backoff=2, exceptions=(KalturaException, KalturaClientException, UnicodeDecodeError, UnicodeEncodeError, requests.exceptions.RequestException))
     def parsePostResult(self, postResult):
-        self.log("result (xml): %s" % postResult)
         try:
-            parser = etree.XMLParser(encoding='ISO-8859-1', ns_clean=True, recover=True)
-            resultXml = etree.fromstring(postResult, parser=parser)
+            # Remove the content within <dataContent> tags to avoid utf8 decoding issues with binary data inside the xml
+            if self.remove_data_content:
+                postResult = re.sub(self.DATA_CONTENT_REGEX, b'<dataContent></dataContent>', postResult)
+                self.log("removing dataContent tags to avoid utf8 decoding issues")
+            
+            self.log("result (xml): %s" % postResult)
+            # Parse the postResult as utf8 XML
+            resultXml = etree.fromstring(postResult, parser=self.parser)
         except etree.ParseError as e:
             raise KalturaClientException(
-                e, KalturaClientException.ERROR_INVALID_XML)
-
+                f"Failed to parse XML: {str(e)}",
+                KalturaClientException.ERROR_INVALID_XML)
+            
+        # Check for 'result' node in the XML
         resultNode = resultXml.find('result')
         if resultNode is None:
             raise KalturaClientException(
                 'Could not find result node in response xml',
                 KalturaClientException.ERROR_RESULT_NOT_FOUND)
 
+        # Extract execution time from the XML
         execTime = resultXml.find('executionTime')
         if execTime is not None:
             self.executionTime = getXmlNodeFloat(execTime)
 
+        # Check for any error within resultNode
         self.throwExceptionIfError(resultNode)
+        
         return resultNode
 
     # Call all API services that are in queue
@@ -404,17 +451,13 @@ class KalturaClient(object):
         self.log("execution time for [%s]: [%s]" % (url, endTime - startTime))
 
         # print server debug info to log
-        serverName = None
-        serverSession = None
-        for curHeader in self.responseHeaders:
-            if curHeader.startswith('X-Me:'):
-                serverName = curHeader.split(':', 1)[1].strip()
-            elif curHeader.startswith('X-Kaltura-Session:'):
-                serverSession = curHeader.split(':', 1)[1].strip()
-        if serverName is not None or serverSession is not None:
-            self.log(
-                "server: [%s], session [%s]" % (serverName, serverSession))
-
+        serverName = self.responseHeaders.get('X-Me', 'N/A').strip()
+        serverSession = self.responseHeaders.get('X-Kaltura-Session', 'N/A').strip()
+        proxyMe = self.responseHeaders.get('X-Proxy-Me', 'N/A').strip()
+        proxySession = self.responseHeaders.get('X-Proxy-Session', 'N/A').strip()
+        connection = self.responseHeaders.get('Connection', 'N/A').strip()
+        self.log("Response headers  - server: [{0}], session: [{1}], proxy me: [{2}], proxy session: [{3}], connection: [{4}]".format(serverName, serverSession, proxyMe, proxySession, connection))
+        
         # parse the result
         resultNode = self.parsePostResult(postResult)
 
