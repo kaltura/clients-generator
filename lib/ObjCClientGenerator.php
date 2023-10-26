@@ -28,7 +28,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		case "bool" :
 			return "KALTURA_BOOL";
 		case "bigint" :
-            return "long long int";
+			return "long long int";
 		case "int" :
 			return "int";
 		case "float" :
@@ -89,7 +89,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		case "bool" :
 			return "Bool";
 		case "bigint":
-            return "LongLongInt";
+			return "LongLongInt";
 		case "int" :
 			return "Int";
 		case "float" :
@@ -294,7 +294,7 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			$this->appendHLine("// @subpackage $this->subpackage");
 		}
         
-        $this->handleAliasProperties($classNode->childNodes);
+		$this->handleAliasProperties($classNode->childNodes);
 		
 		if ($classNode->hasAttribute("base"))
 			$baseClass = $classNode->getAttribute("base");
@@ -326,20 +326,19 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 		$this->appendMLine("@end\n");
 	}
     
-    function handleAliasProperties($propertyNodes)
-    {
-        foreach($propertyNodes as $propertyNode)
-        {
-            if ($propertyNode->nodeType != XML_ELEMENT_NODE)
-                continue;
-            
-            $propertyType = $propertyNode->getAttribute('type');
-            if($this->getTypeName($propertyType) == 'Object')
-            {
-                $this->appendHLine("@class $propertyType;");
-            }
-        }
-    }
+	function handleAliasProperties($propertyNodes)
+	{
+		foreach($propertyNodes as $propertyNode)
+		{
+			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
+				continue;
+			
+			$propertyType = $propertyNode->getAttribute('type');
+			if($this->getTypeName($propertyType) == 'Object') {
+				$this->appendHLine("@class $propertyType;");
+			}
+		}
+	}
 	
 	function getClassExtProperties(DOMElement $classNode)
 	{
@@ -360,14 +359,14 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 			
 			$modifiers = array('nonatomic', $this->getPropertyMemModifier($propType));
 			$modifiers = implode(',', $modifiers);
-            
-            // Checking for a primitive type
-            if($this->getPropertyMemModifier($propType)== 'assign') {
-                $whitespace = ' ';
-            } else {
-                $whitespace = '';
-            }
-			
+
+			// Checking for a primitive type
+			if($this->getPropertyMemModifier($propType)== 'assign') {
+				$whitespace = ' ';
+			} else {
+				$whitespace = '';
+			}
+
 			$result .= "@property ($modifiers) $objcPropType$whitespace$propName;\n";
 		}
 		
@@ -464,13 +463,13 @@ class ObjCClientGenerator extends ClientGeneratorFromXml
 				$comments = "\t// " . implode(', ', $comments);
 			else
 				$comments = '';
-            
-            // Checking for a primitive type
-            if($this->getPropertyMemModifier($propType)== 'assign') {
-                $whitespace = ' ';
-            } else {
-                $whitespace = '';
-            }
+
+			// Checking for a primitive type
+			if($this->getPropertyMemModifier($propType)== 'assign') {
+				$whitespace = ' ';
+			} else {
+				$whitespace = '';
+			}
 				
 			$this->appendHLine("@property ($modifiers) $objcPropType$whitespace$propName;$comments");
 			$this->appendMLine("@synthesize $propName = _$propName;");
