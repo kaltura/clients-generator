@@ -86,6 +86,13 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
     return [aStr intValue];
 }
 
++ (long long int)parseLongLongInt:(NSString*)aStr
+{
+    if (aStr == nil)
+        return 0;
+    return [aStr longLongValue];
+}
+
 + (double)parseFloat:(NSString*)aStr
 {
     if (aStr == nil)
@@ -364,6 +371,21 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
     else
     {
         [self putKey:aKey withString:@"0"];
+    }
+}
+
+- (void)addIfDefinedKey:(NSString*)aKey withLongLongInt:(long long int)aVal
+{
+    if (aVal == KALTURA_UNDEF_INT)
+        return;
+    
+    if (aVal == KALTURA_NULL_INT)
+    {
+        [self putNullKey:aKey];
+    }
+    else
+    {
+        [self putKey:aKey withString:[NSString stringWithFormat:@"%ld", aVal]];
     }
 }
 
@@ -887,6 +909,14 @@ NSString* const KalturaClientErrorDomain = @"KalturaClientErrorDomain";
     id result = [self queueService:aService withAction:aAction withParser:parser];
     [parser release];
     return [KalturaSimpleTypeParser parseBool:result];
+}
+
+- (long long int)queueLongLongIntService:(NSString*)aService withAction:(NSString*)aAction
+{
+    KalturaXmlParserSimpleType* parser = [[KalturaXmlParserSimpleType alloc] init];
+    id result = [self queueService:aService withAction:aAction withParser:parser];
+    [parser release];
+    return [KalturaSimpleTypeParser parseLongLongInt:result];
 }
 
 - (int)queueIntService:(NSString*)aService withAction:(NSString*)aAction

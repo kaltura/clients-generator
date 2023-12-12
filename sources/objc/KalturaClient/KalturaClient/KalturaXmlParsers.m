@@ -585,6 +585,7 @@ static void XMLCDECL saxCallbackError (void *ctx,
     switch (self->_lastPropType)
     {
         case KFT_Int:
+        case KFT_LongLongInt:
         case KFT_Bool:
         case KFT_Float:
             [self setObjectPropertyWithValue:aString isSimple:YES];

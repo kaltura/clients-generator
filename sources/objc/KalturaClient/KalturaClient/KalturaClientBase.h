@@ -70,6 +70,7 @@ typedef enum
     KFT_Invalid,
     KFT_Bool,
     KFT_Int,
+    KFT_LongLongInt,
     KFT_Float,
     KFT_String,
     KFT_Object,
@@ -110,6 +111,7 @@ typedef enum
 
 + (KALTURA_BOOL)parseBool:(NSString*)aStr;
 + (int)parseInt:(NSString*)aStr;
++ (long long int)parseLongLongInt:(NSString*)aStr;
 + (double)parseFloat:(NSString*)aStr;
 
 @end
@@ -160,6 +162,7 @@ typedef enum
 - (void)putNullKey:(NSString*)aKey;
 - (void)addIfDefinedKey:(NSString*)aKey withFileName:(NSString*)aFileName;
 - (void)addIfDefinedKey:(NSString*)aKey withBool:(KALTURA_BOOL)aVal;
+- (void)addIfDefinedKey:(NSString*)aKey withLongLongInt:(long long int)aVal;
 - (void)addIfDefinedKey:(NSString*)aKey withInt:(int)aVal;
 - (void)addIfDefinedKey:(NSString*)aKey withFloat:(double)aVal;
 - (void)addIfDefinedKey:(NSString*)aKey withString:(NSString*)aVal;
@@ -263,6 +266,7 @@ typedef enum
 - (NSString*)queueServeService:(NSString*)aService withAction:(NSString*)aAction;
 - (void)queueVoidService:(NSString*)aService withAction:(NSString*)aAction;
 - (KALTURA_BOOL)queueBoolService:(NSString*)aService withAction:(NSString*)aAction;
+- (long long int)queueLongLongIntService:(NSString*)aService withAction:(NSString*)aAction;
 - (int)queueIntService:(NSString*)aService withAction:(NSString*)aAction;
 - (double)queueFloatService:(NSString*)aService withAction:(NSString*)aAction;
 - (NSString*)queueStringService:(NSString*)aService withAction:(NSString*)aAction;
