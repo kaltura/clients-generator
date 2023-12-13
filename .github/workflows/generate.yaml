@@ -93,7 +93,7 @@ jobs:
               fi
               mv -f web/content/clientlibs/$generateClient web/content/temp/
               ls -l web/content/temp/$generateClient
-              tar czf web/content/temp/$generateClient.tar.gz web/content/temp/$generateClient
+              tar czf web/content/temp/$generateClient.tar.gz -C web/content/temp/$generateClient .
           done
 
           echo -e "${colorGreen}Copying generated clients ..."
@@ -105,4 +105,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: server-saas-clients/web_clients
+          path: server-saas-clients/web_clients/*.tar.gz
