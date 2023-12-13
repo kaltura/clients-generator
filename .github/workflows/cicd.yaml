@@ -45,6 +45,6 @@ jobs:
       with:
         name: dist
     - run: |
-      ls -l 
-      tar xzf dist.tgz
-      ls -lR dist
+        ls -l 
+        tar xzf dist.tgz
+        ls -lR dist
