@@ -84,7 +84,7 @@ jobs:
               echo -e "${colorPurple}Generating client: ${colorYellow}$generateClient"
               rm -rf web/content/temp/$generateClient
               mkdir -p web/content/clientlibs/$generateClient
-              php $workDir/clients-generator/exec.php -r$workDir/server -x$workDir/web/content/clientlibs/KalturaClient.xml $generateClient $workDir/web/content/clientlibs
+              php $workDir/exec.php -r$workDir/server -x$workDir/web/content/clientlibs/KalturaClient.xml $generateClient $workDir/web/content/clientlibs
               if [ $? -eq 1 ]
               then    
                   echo "Error Generating client $generateClient"
