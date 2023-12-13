@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: dist.tgz
+          path: dist.tar.gz
 
   build:
     runs-on: ubuntu-latest
@@ -46,5 +46,5 @@ jobs:
         name: dist
     - run: |
         ls -l 
-        tar xzf dist.tgz
+        tar xzf dist.tar.gz
         ls -lR dist
