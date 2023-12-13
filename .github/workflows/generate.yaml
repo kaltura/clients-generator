@@ -17,23 +17,13 @@ env:
   # web_client_dirs: cli ruby java node objc php5 php53 php5Zend python android js csharp ajax swift typescript ngx
 
 jobs:
-  start_workflow:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Start Workflow
-        id: start_workflow
-        run: |
-          echo "# Client Generation :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "work_dir=$(pwd)" >> $GITHUB_ENV
-
   generate_clients:
-    runs-on: self-hosted
-    needs: start_workflow
+    runs-on: ubuntu-latest
     # strategy:
     #   matrix:
     #     client_type: [saas, web]
-    outputs:
-      web_output: ${{ steps.push_clients.outputs.web_output }}
+    # outputs:
+    #   web_output: ${{ steps.push_clients.outputs.web_output }}
     steps:
       - name: Setup PHP
         id: setup_php
@@ -44,10 +34,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Start Workflow
+        run: |
+          echo "# Client Generation :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "work_dir=$(pwd)" >> $GITHUB_ENV
+
       - name: Prepare Clients List
         id: clients_list
         run: |
           # clientName=${{ inputs.client_name }}
+          clientName=$client_name
           clientsList=$web_client_list
           if [ $clientName != "all" ]; then
             clientsList="$clientsList $clientName"
