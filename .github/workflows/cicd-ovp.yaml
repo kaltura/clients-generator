@@ -23,7 +23,7 @@ jobs:
 
       - name: Generate Clients
         run: |
-          ./.github/workflows/gen.sh
+          ./gen-ovp.sh
           tar czf dist.tar.gz dist
 
       - name: Archive artifacts
