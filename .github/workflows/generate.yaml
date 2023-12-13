@@ -1,9 +1,9 @@
 name: Clients Generation
 on:
-  push:
-    branches:
-      - cicd
-  # workflow_dispatch:
+  # push:
+  #   branches:
+  #     - cicd
+  workflow_dispatch:
   #   inputs:
   #     client_name:
   #       description: "Client name to generate"
@@ -11,20 +11,11 @@ on:
   #       default: "all"
 
 env:
-  web_client_list: node
   client_name: all
-  schema_url: https://www.kaltura.com/api_v3/api_schema.php
-  # web_client_list: php5 php53 php5Zend node nodePlayServer java android js flex35 ajax as3FlexClient cli pojoOld bpmn typescript swift ngx python nodeTypescript
-  # web_client_dirs: cli ruby java node objc php5 php53 php5Zend python android js csharp ajax swift typescript ngx
 
 jobs:
   generate_clients:
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     client_type: [saas, web]
-    # outputs:
-    #   web_output: ${{ steps.push_clients.outputs.web_output }}
     steps:
       - name: Setup PHP
         id: setup_php
