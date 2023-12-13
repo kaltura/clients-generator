@@ -1,14 +1,18 @@
 name: Clients Generation
 on:
-  workflow_dispatch:
-    inputs:
-      client_name:
-        description: "Client name to generate"
-        required: true
-        default: "all"
+  push:
+    branches:
+      - cicd
+  # workflow_dispatch:
+  #   inputs:
+  #     client_name:
+  #       description: "Client name to generate"
+  #       required: true
+  #       default: "all"
 
 env:
   web_client_list: node
+  client_name: all
   # web_client_list: php5 php53 php5Zend node nodePlayServer java android js flex35 ajax as3FlexClient cli pojoOld bpmn typescript swift ngx python nodeTypescript
   # web_client_dirs: cli ruby java node objc php5 php53 php5Zend python android js csharp ajax swift typescript ngx
 
@@ -43,7 +47,7 @@ jobs:
       - name: Prepare Clients List
         id: clients_list
         run: |
-          clientName=${{ inputs.client_name }}
+          # clientName=${{ inputs.client_name }}
           clientsList=$web_client_list
           if [ $clientName != "all" ]; then
             clientsList="$clientsList $clientName"
