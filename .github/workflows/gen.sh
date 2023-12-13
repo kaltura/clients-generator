@@ -1,10 +1,16 @@
 #!/bin/bash -e
 
+# Make sure we're running from the root of the repo
+cd $(dirname $0)/../..
+
 # Input env vars:
-# client_name
+client_name=all
+outdir=$PWD/web/content
+distdir=$PWD/dist
 
 schema_url="https://www.kaltura.com/api_v3/api_schema.php"
 clientsList="php5 php53 php5Zend node nodePlayServer java android js flex35 ajax as3FlexClient cli pojoOld bpmn typescript swift ngx python nodeTypescript"
+# clientsList="php5 node" 
 
 # Prepare Clients List
 clientName=$client_name
@@ -18,35 +24,36 @@ workDir="$PWD"
 
 colorDefault="\033[0m"
 colorPurple="\033[0;35m"
-colorYellow="\033[1;33m"
 colorGreen="\033[0;32m"
 
 echo -e "${colorGreen}Creating required folders ..."
-mkdir -p web/content/clientlibs
-mkdir -p web/content/clientlibs/php5
-mkdir -p web/content/temp
+mkdir -p $outdir/clientlibs
+mkdir -p $outdir/temp
 
 echo -e "${colorGreen}Getting XML ..."
-curl -o "$workDir/web/content/clientlibs/KalturaClient.xml" "$schema_url"
+curl -o "$outdir/clientlibs/KalturaClient.xml" "$schema_url"
 
 for generateClient in $clients
 do
     echo -e "-----------------------------------------------\n"
-    echo -e "${colorPurple}Generating client: ${colorYellow}$generateClient"
-    rm -rf web/content/temp/$generateClient
-    mkdir -p web/content/clientlibs/$generateClient
-    php $workDir/exec.php -r$workDir/server -x$workDir/web/content/clientlibs/KalturaClient.xml $generateClient $workDir/web/content/clientlibs
+    echo -e "${colorPurple}Generating client: $generateClient"
+    rm -rf $outdir/temp/$generateClient
+    mkdir -p $outdir/clientlibs/$generateClient
+    echo -e "$colorDefault"
+    php exec.php -rserver -x$outdir/clientlibs/KalturaClient.xml $generateClient $outdir/clientlibs
     if [ $? -eq 1 ]
     then    
         echo "Error Generating client $generateClient"
         echo "exit 1"
     fi
-    mv -f web/content/clientlibs/$generateClient web/content/temp/
-    ls -l web/content/temp/$generateClient
-    tar czf web/content/temp/$generateClient.tar.gz -C web/content/temp/$generateClient .
+    mv -f $outdir/clientlibs/$generateClient $outdir/temp/
+    ls -l $outdir/temp/$generateClient
+    tar czf $outdir/temp/$generateClient.tar.gz -C $outdir/temp/$generateClient .
 done
 
 echo -e "${colorGreen}Copying generated clients ..."
-mkdir -p server-saas-clients/web_clients
-mv -f web/content/temp/* server-saas-clients/web_clients
-mv -f $workDir/web/content/clientlibs/KalturaClient.xml server-saas-clients/web_clients/
+rm -rf "$distdir"
+mkdir -p "$distdir"
+mv -f $outdir/temp/* "$distdir"
+mv -f $outdir/clientlibs/KalturaClient.xml "$distdir"
+rm -rf server web

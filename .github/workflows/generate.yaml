@@ -1,8 +1,8 @@
 name: Clients Generation
 on:
-  # push:
-  #   branches:
-  #     - cicd
+  push:
+    branches:
+      - cicd
   workflow_dispatch:
   #   inputs:
   #     client_name:
@@ -26,74 +26,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Start Workflow
+      - name: Generate Clients
         run: |
-          echo "# Client Generation :rocket:" >> $GITHUB_STEP_SUMMARY
-          echo "work_dir=$(pwd)" >> $GITHUB_ENV
+          ./.github/workflows/gen.sh
 
-      - name: Prepare Clients List
-        id: clients_list
-        run: |
-          # clientName=${{ inputs.client_name }}
-          clientName=$client_name
-          clientsList=$web_client_list
-          if [ $clientName != "all" ]; then
-            clientsList="$clientsList $clientName"
-          fi
-          echo "clients=$clientsList" >> $GITHUB_ENV
-
-          echo "### List of clients to generate:" >> $GITHUB_STEP_SUMMARY
-          for client in $clientsList
-          do
-            echo "- $client" >> $GITHUB_STEP_SUMMARY
-          done
-
-      - name: Generate New Clients
-        id: generate_clients
-        run: |
-          clients="${{ env.clients }}"
-          workDir="${{ env.work_dir }}"
-
-          colorDefault="\033[0m"
-          colorPurple="\033[0;35m"
-          colorYellow="\033[1;33m"
-          colorGreen="\033[0;32m"
-
-          echo -e "${colorGreen}Creating required folders ..."
-          mkdir -p web/content/clientlibs
-          mkdir -p web/content/clientlibs/php5
-          mkdir -p web/content/temp
-          # mkdir -p server/cache/api_v3
-          # mkdir -p server/clients/php5
-          # rm -rf web/content/clientlibs/KalturaClient.xml
-
-          echo -e "${colorGreen}Getting XML ..."
-          curl -o "$workDir/web/content/clientlibs/KalturaClient.xml" "$schema_url"
-
-          for generateClient in $clients
-          do
-              echo -e "-----------------------------------------------\n"
-              echo -e "${colorPurple}Generating client: ${colorYellow}$generateClient"
-              rm -rf web/content/temp/$generateClient
-              mkdir -p web/content/clientlibs/$generateClient
-              php $workDir/exec.php -r$workDir/server -x$workDir/web/content/clientlibs/KalturaClient.xml $generateClient $workDir/web/content/clientlibs
-              if [ $? -eq 1 ]
-              then    
-                  echo "Error Generating client $generateClient"
-                  echo "exit 1"
-              fi
-              mv -f web/content/clientlibs/$generateClient web/content/temp/
-              ls -l web/content/temp/$generateClient
-              tar czf web/content/temp/$generateClient.tar.gz -C web/content/temp/$generateClient .
-          done
-
-          echo -e "${colorGreen}Copying generated clients ..."
-          mkdir -p server-saas-clients/web_clients
-          mv -f web/content/temp/* server-saas-clients/web_clients
-          mv -f $workDir/web/content/clientlibs/KalturaClient.xml server-saas-clients/web_clients/
-
-      - name: Archive production artifacts
+      - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: server-saas-clients/web_clients/*.tar.gz
+          path: dist/*.tar.gz
