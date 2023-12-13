@@ -9,8 +9,7 @@ outdir=$PWD/web/content
 distdir=$PWD/dist
 
 schema_url="https://www.kaltura.com/api_v3/api_schema.php"
-clientsList="php5 php53 php5Zend node nodePlayServer java android js flex35 ajax as3FlexClient cli pojoOld bpmn typescript swift ngx python nodeTypescript"
-# clientsList="php5 node" 
+clientsList='ajax android as3FlexClient bpmn cli flex35 java js ngx node nodePlayServer nodeTypescript php5 php53 php5Zend pojoOld python swift typescript'
 
 # Prepare Clients List
 clientName=$client_name
