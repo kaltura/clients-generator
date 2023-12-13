@@ -29,12 +29,13 @@ jobs:
       - name: Generate Clients
         run: |
           ./.github/workflows/gen.sh
+          tar czf dist.tar.gz dist
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: dist
+          path: dist.tgz
 
   build:
     runs-on: ubuntu-latest
@@ -43,5 +44,7 @@ jobs:
     - uses: actions/download-artifact@v3
       with:
         name: dist
-        path: dist
-    - run: ls -lR dist
+    - run: |
+      ls -l 
+      tar xzf dist.tgz
+      ls -lR dist
