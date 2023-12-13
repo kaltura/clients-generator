@@ -92,7 +92,8 @@ jobs:
                   echo "exit 1"
               fi
               mv -f web/content/clientlibs/$generateClient web/content/temp/
-              tar -zcf web/content/temp/$generateClient.tar.gz web/content/temp/$generateClient
+              ls -l web/content/temp/$generateClient
+              tar czf web/content/temp/$generateClient.tar.gz web/content/temp/$generateClient
           done
 
           echo -e "${colorGreen}Copying generated clients ..."
@@ -100,4 +101,8 @@ jobs:
           mv -f web/content/temp/* server-saas-clients/web_clients
           mv -f $workDir/web/content/clientlibs/KalturaClient.xml server-saas-clients/web_clients/
 
-          # clientDirs=$web_client_dirs
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: server-saas-clients/web_clients
