@@ -10,7 +10,8 @@ outdir=$workDir/web/content
 distdir=$PWD/dist
 
 schema_url="https://www.kaltura.com/api_v3/api_schema.php"
-clientsList='ajax android as3FlexClient cli csharp flex35 go java js ngx node nodeTypescript objc php53 php5Zend python ruby rxjs swift typescript'
+clientsList='go java js node nodeTypescript php53 python ruby swift typescript'
+moreClients='ajax android as3FlexClient cli csharp flex35  ngx  objc php53 php5Zend  rxjs '
 
 # php5 has issues
 
