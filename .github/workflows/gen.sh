@@ -47,8 +47,7 @@ do
         echo "exit 1"
     fi
     mv -f $outdir/clientlibs/$generateClient $outdir/temp/
-    ls -l $outdir/temp/$generateClient
-    tar czf $outdir/temp/$generateClient.tar.gz -C $outdir/temp/$generateClient .
+    # tar czf $outdir/temp/$generateClient.tar.gz -C $outdir/temp/$generateClient .
 done
 
 echo -e "${colorGreen}Copying generated clients ..."

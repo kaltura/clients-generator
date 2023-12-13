@@ -14,7 +14,7 @@ env:
   client_name: all
 
 jobs:
-  generate_clients:
+  generate:
     runs-on: ubuntu-latest
     steps:
       - name: Setup PHP
@@ -34,4 +34,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: dist/*.tar.gz
+          path: dist
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [generate]
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: dist
+        path: dist
+    - run: ls -lR dist
