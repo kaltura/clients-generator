@@ -4,9 +4,16 @@ on:
     branches:
       - cicd
   workflow_dispatch:
+    inputs:
+      server_branch:
+        description: "Server branch"
+        required: true
+        default: "Tucana-20.2.0"
 
 env:
   client_name: all
+  # SERVER_BRANCH should be given as a parameter to the workflow
+  SERVER_BRANCH: Tucana-20.2.0
 
 jobs:
   generate:
@@ -21,9 +28,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Generate XML
+        run: |
+          ./tools/gen-ovp-xml.sh
+
       - name: Generate Clients
         run: |
-          ./gen-ovp.sh
+          ./tools/gen-ovp-clients.sh
           tar czf dist.tar.gz dist
 
       - name: Archive artifacts
@@ -36,10 +47,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [generate]
     steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: dist
-    - run: |
-        ls -l 
-        tar xzf dist.tar.gz
-        ls -lR dist
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist
+      - run: |
+          ls -l 
+          tar xzf dist.tar.gz
+          ls -lR dist

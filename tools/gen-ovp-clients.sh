@@ -1,7 +1,6 @@
 #!/bin/bash -e
 
-# Make sure we're running from the root of the repo
-cd $(dirname $0)
+cd $(dirname $0)/..
 
 # Input env vars:
 workDir="$PWD/temp"
@@ -9,8 +8,9 @@ client_name=all
 outdir=$workDir/web/content
 distdir=$PWD/dist
 
-schema_url="https://www.kaltura.com/api_v3/api_schema.php"
-clientsList='go java js node nodeTypescript php53 python ruby swift typescript'
+#clientsList='go java js node nodeTypescript php53 python ruby swift typescript'
+# clientsList='js node nodeTypescript'
+clientsList=nodeTypescript
 moreClients='ajax android as3FlexClient cli csharp flex35  ngx  objc php53 php5Zend  rxjs '
 
 # php5 has issues
@@ -29,11 +29,8 @@ colorDefault="\033[0m"
 colorPurple="\033[0;35m"
 colorGreen="\033[0;32m"
 
-echo -e "${colorGreen}Creating required folders ..."
 mkdir -p $outdir/clientlibs
-
-echo -e "${colorGreen}Getting XML ..."
-curl -o "$outdir/clientlibs/KalturaClient.xml" "$schema_url"
+cp KalturaClient.xml "$outdir/clientlibs"
 
 rm -rf "$distdir"
 mkdir -p "$distdir"
