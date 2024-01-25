@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.net.Authenticator;
 // for Proxy support
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -137,7 +138,22 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		public int getProxyPort() {
 		    return 0;
 		}
+
+        @Override
+        public String getProxyType(){
+            return "HTTP";
+        }
 		
+        @Override
+        public String getProxyUsername(){
+            return null;
+        }
+
+        @Override
+        public String getProxyPassword(){
+            return null;
+        }
+
 		@Override
 		public boolean getIgnoreSslDomainVerification() {
 			return false;
@@ -247,7 +263,10 @@ public class APIOkRequestsExecutor implements RequestQueue {
 	if (config.getProxy() != null && config.getProxyPort() != 0){
 		logger.debug("Proxy host is: " + config.getProxy());
 		logger.debug("Proxy port is: " + config.getProxyPort());
-		builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(config.getProxy(), config.getProxyPort())));
+        Proxy proxy = new Proxy(Proxy.Type.HTTP,new InetSocketAddress(config.getProxy(), config.getProxyPort()));
+        
+        Authenticator.setDefault(null);
+        builder.proxy(proxy);
 	}else if (System.getProperty("http_proxy") !=null && System.getProperty("http_proxy_port") !=null){
 		int proxy_port = 0;
 		String proxy_host = System.getProperty("http_proxy");

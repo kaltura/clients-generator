@@ -17,6 +17,9 @@ public interface ConnectionConfiguration {
     String getEndpoint();
     String getProxy();
     int getProxyPort();
+    String getProxyUsername();
+    String getProxyPassword();
+    String getProxyType();
 
 	boolean getIgnoreSslDomainVerification();
 }

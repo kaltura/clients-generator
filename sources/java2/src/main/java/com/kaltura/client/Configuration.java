@@ -44,8 +44,11 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	private static final long serialVersionUID = 2096581946429839651L;
 	
 	public final static String EndPoint = "endpoint";
-	public final static String Proxy = null;
-	public final static String ProxyPort = "0";
+	public final static String Proxy = "proxy";
+	public final static String ProxyPort = "proxyPort";
+	public final static String ProxyType = "proxyType";
+	public final static String ProxyUsername = "proxyUsername";
+	public final static String ProxyPassword = "proxyPassword";
 	public final static String ConnectTimeout = "connectTimeout";
 	public final static String ReadTimeout = "readTimeout";
 	public final static String WriteTimeout = "writeTimeout";
@@ -103,6 +106,17 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		return (int) params.get(ProxyPort);
 	}
 
+	public String getProxyType(){
+		return (String) params.get(ProxyType);
+	}
+	public String getProxyUsername(){
+		return (String) params.get(ProxyUsername);
+	}
+	public String getProxyPassword(){
+		return (String) params.get(ProxyPassword);
+	}
+
+
 	@Override
 	public boolean getIgnoreSslDomainVerification() {
 		return (boolean) params.get(IgnoreSslDomainVerification);
@@ -120,6 +134,21 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	public void setProxyPort(int proxyPort) {
 		params.put(ProxyPort, proxyPort);
 		System.setProperty("http_proxy_port",String.valueOf(proxyPort));
+	}
+
+	public void setProxyType(String proxyType) {
+		params.put(ProxyPort, proxyType);
+		System.setProperty("http_proxy_type",String.valueOf(proxyType));
+	}
+	
+	public void setProxyUsername(String proxyUsername) {
+		params.put(ProxyPort, proxyUsername);
+		System.setProperty("http_proxy_username",String.valueOf(proxyUsername));
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		params.put(ProxyPort, proxyPassword);
+		System.setProperty("http_proxy_password",String.valueOf(proxyPassword));
 	}
 
 
