@@ -37,6 +37,7 @@
     
     var tasks: [URLSessionDataTask] = [URLSessionDataTask]()
     var taskIdByRequestID: [String: Int] = [String: Int]()
+    let tasksSemaphore = DispatchSemaphore(value: 1)
     
     enum ResponseError: Error {
         case emptyOrIncorrectURL
@@ -45,21 +46,21 @@
     
     public static let shared = USRExecutor()
     
-    public func send(request r: Request){
+    public func send(request r: Request) {
         
         var request: URLRequest = URLRequest(url: r.url)
         
         let jsonString: String = String(bytes: r.dataBody!, encoding: String.Encoding.utf8)!
         logger.debug("Request [\(r.requestId)] url: \(r.url) JSON: \(jsonString)")
         
-        //handle http method
+        // handle http method
         if let method = r.method {
             request.httpMethod = method.value
         }
         
         // handle headers
-        if let headers = r.headers{
-            for (headerKey,headerValue) in headers{
+        if let headers = r.headers {
+            for (headerKey,headerValue) in headers {
                 request.setValue(headerValue, forHTTPHeaderField: headerKey)
             }
         }
@@ -107,7 +108,6 @@
                 if let d = data {
                     let jsonString: String = String(bytes: d, encoding: String.Encoding.utf8)!
                     
-                    
                     var logMessage = "Response [\(r.requestId)] \nJSON: \n\(jsonString) \n"
                     if let httpUrlResponse = response as? HTTPURLResponse {
                         logMessage.append("Headers: \n\(httpUrlResponse.allHeaderFields) \n")
@@ -130,9 +130,11 @@
             }
         }
     
-        if let tsk = task{
+        if let tsk = task {
+            tasksSemaphore.wait()
             self.taskIdByRequestID[r.requestId] = task?.taskIdentifier
             self.tasks.append(tsk)
+            tasksSemaphore.signal()
             tsk.resume()
         }
     }
@@ -158,19 +160,20 @@
         return body as Data
     }
     
-    
     public func cancel(id requestId: String) {
+        tasksSemaphore.wait()
         let taskID = self.taskIdByRequestID[requestId]
-        
         let taskIndex = self.tasks.firstIndex { $0.taskIdentifier == taskID }
 
         if let index = taskIndex {
             let task = self.tasks[index]
             task.cancel()
         }
+        tasksSemaphore.signal()
     }
     
     public func remove(id requestId: String) {
+        tasksSemaphore.wait()
         let taskID = self.taskIdByRequestID[requestId]
         let taskIndex = self.tasks.firstIndex { $0.taskIdentifier == taskID }
         
@@ -178,27 +181,27 @@
             self.taskIdByRequestID.removeValue(forKey: requestId)
             self.tasks.remove(at: index)
         }
+        tasksSemaphore.signal()
     }
     
-    public func cancel(request:Request){
+    public func cancel(request:Request) {
         self.cancel(id: request.requestId)
     }
     
-    
-    public func clean(){
+    public func clean() {
         
     }
     
     // MARK: URLSessionDelegate
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?){
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         
     }
     
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void){
+    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Swift.Void) {
         
     }
     
-    public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession){
+    public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         
     }
 }
