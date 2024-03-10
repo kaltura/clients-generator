@@ -20,17 +20,12 @@ cd server-temp
 
 # Download server
 curl -L "https://github.com/kaltura/server/archive/refs/heads/$SERVER_BRANCH.tar.gz" | tar xz
-# cat ../$SERVER_BRANCH | tar xz
 mv "server-$SERVER_BRANCH" server
 
 # Download plugins ini from server-saas-config
 curl -O -H "Authorization: token $GH_TOKEN" \
   -H 'Accept: application/vnd.github.v3.raw' \
   -L https://api.github.com/repos/kaltura/server-saas-config/contents/configurations/plugins.ini.base
-
-echo "=== plugins.ini.base ===>>"
-cat plugins.ini.base
-echo "<<======================<<"
 
 # Comment out problematic lines in bootstrap.php
 bootstrapFile="server/api_v3/generator/bootstrap.php"
