@@ -2,16 +2,16 @@
 
 # Required env vars:
 # SERVER_BRANCH
-# GH_TOKEN or GITHUB_TOKEN that has read access to server-saas-config repo
+# GH_TOKEN that has read access to server-saas-config repo
 
 # Required tools:
 # php 7.2
-# GitHub CLI (gh)
-# jq
-# git
-# GNU sed 
+# GNU sed (sed on Linux or gsed on Mac)
 
 cd $(dirname $0)/..
+
+
+if which gsed; then SED=gsed; else SED=sed; fi
 
 rm -rf server-temp
 mkdir server-temp
@@ -19,7 +19,9 @@ mkdir server-temp
 cd server-temp
 
 # Download server
-git clone https://github.com/kaltura/server --depth=1 --branch=$SERVER_BRANCH --single-branch
+curl -L "https://github.com/kaltura/server/archive/refs/heads/$SERVER_BRANCH.tar.gz" | tar xz
+# cat ../$SERVER_BRANCH | tar xz
+mv "server-$SERVER_BRANCH" server
 
 # Download plugins ini from server-saas-config
 curl -O -H "Authorization: token $GH_TOKEN" \
@@ -32,9 +34,9 @@ echo "<<======================<<"
 
 # Comment out problematic lines in bootstrap.php
 bootstrapFile="server/api_v3/generator/bootstrap.php"
-sed -i 's/date_default_timezone_set/#date_default_timezone_set/g' "$bootstrapFile"
-sed -i 's/kLoggerCache/#kLoggerCache/g' "$bootstrapFile"
-sed -i 's/KalturaLog/#KalturaLog/g' "$bootstrapFile"
+$SED -i 's/date_default_timezone_set/#date_default_timezone_set/g' "$bootstrapFile"
+$SED -i 's/kLoggerCache/#kLoggerCache/g' "$bootstrapFile"
+$SED -i 's/KalturaLog/#KalturaLog/g' "$bootstrapFile"
 
 # Create required folders
 mkdir -p server/cache/api_v3
