@@ -29,8 +29,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate XML
+        env:
+          GH_TOKEN: ${{ secrets.SERVER_SAAS_CONFIG_READ_TOKEN }}
         run: |
-          export GH_TOKEN="$RUNNER_TOKEN"
           ./tools/gen-ovp-xml.sh
 
       - name: Generate Clients
