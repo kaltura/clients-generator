@@ -30,6 +30,7 @@ jobs:
 
       - name: Generate XML
         run: |
+          export GH_TOKEN="$RUNNER_TOKEN"
           ./tools/gen-ovp-xml.sh
 
       - name: Generate Clients
