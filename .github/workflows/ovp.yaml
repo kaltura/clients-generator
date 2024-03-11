@@ -3,17 +3,17 @@ on:
   push:
     branches:
       - cicd
+
   workflow_dispatch:
     inputs:
       server_branch:
         description: "Server branch"
         required: true
-        default: "Tucana-20.2.0"
 
 env:
   client_name: all
   # SERVER_BRANCH should be given as a parameter to the workflow
-  SERVER_BRANCH: Tucana-20.2.0
+  SERVER_BRANCH: Tucana-20.6.0-rel
 
 jobs:
   generate:
