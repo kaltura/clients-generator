@@ -19,7 +19,7 @@ mkdir server-temp
 cd server-temp
 
 # Download server
-curl -L "https://github.com/kaltura/server/archive/refs/heads/$SERVER_REF.tar.gz" | tar xz
+curl -L "https://github.com/kaltura/server/archive/refs/$SERVER_REF.tar.gz" | tar xz
 mv "server-$SERVER_REF" server
 
 # Download plugins ini from server-saas-config
