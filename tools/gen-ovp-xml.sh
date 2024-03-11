@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 # Required env vars:
-# SERVER_BRANCH
+# SERVER_REF (such as "tags/v14.14.0" or "heads/develop")
 # GH_TOKEN that has read access to server-saas-config repo
 
 # Required tools:
@@ -19,8 +19,8 @@ mkdir server-temp
 cd server-temp
 
 # Download server
-curl -L "https://github.com/kaltura/server/archive/refs/heads/$SERVER_BRANCH.tar.gz" | tar xz
-mv "server-$SERVER_BRANCH" server
+curl -L "https://github.com/kaltura/server/archive/refs/heads/$SERVER_REF.tar.gz" | tar xz
+mv "server-$SERVER_REF" server
 
 # Download plugins ini from server-saas-config
 curl -O -H "Authorization: token $GH_TOKEN" \

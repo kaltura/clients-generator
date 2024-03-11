@@ -6,14 +6,13 @@ on:
 
   workflow_dispatch:
     inputs:
-      server_branch:
-        description: "Server branch"
+      server_ref:
+        description: "Server ref"
         required: true
 
 env:
   client_name: all
-  # SERVER_BRANCH should be given as a parameter to the workflow
-  SERVER_BRANCH: Tucana-20.6.0-rel
+  SERVER_REF: tags/Tucana-20.6.0-rel
 
 jobs:
   generate:
