@@ -20,7 +20,7 @@ cd server-temp
 
 # Download server
 curl -L "https://github.com/kaltura/server/archive/refs/$SERVER_REF.tar.gz" | tar xz
-mv "server-$SERVER_REF" server
+mv "server-$(basename $SERVER_REF)" server
 
 # Download plugins ini from server-saas-config
 curl -O -H "Authorization: token $GH_TOKEN" \
