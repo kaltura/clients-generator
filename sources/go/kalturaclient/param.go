@@ -53,3 +53,11 @@ func ResponseProfile(value interface{}) Param {
 		inBody: true,
 	}
 }
+
+func HeaderParam(key string, value string) Param {
+	return Param{
+		key:    key,
+		value:  value,
+		inBody: false,
+	}
+}
