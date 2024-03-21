@@ -1,7 +1,7 @@
 {
   "name": "kaltura-node-typescript-client",
   "private": true,
-  "version": "1.0.0",
+  "version": "@VERSION@",
   "description": "Kaltura Node Typescript client",
   "keywords": [
     "Kaltura",
@@ -10,7 +10,7 @@
     "Client"
   ],
   "license": "AGPL-3.0",
-  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "author": "Kaltura Inc.",
   "contributors": [
     {
       "name": "Daniel Schwartz",
@@ -35,10 +35,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript.git"
+    "url": "https://github.com/kaltura/clients-generator.git"
   },
   "bugs": {
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/issues"
+    "url": "https://github.com/kaltura/clients-generator/issues"
   },
   "main": "./index.js",
   "dependencies": {
