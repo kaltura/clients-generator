@@ -1,13 +1,13 @@
 {
   "name": "kaltura-typescript-client",
   "private": true,
-  "version": "7.0.2",
+  "version": "@VERSION@",
   "description": "Kaltura Typescript client",
   "keywords": [
     "Kaltura"
   ],
   "license": "AGPL-3.0",
-  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "author": "Kaltura Inc.",
   "contributors": [
     {
       "name": "Eran Sakal",
@@ -28,10 +28,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript.git"
+    "url": "https://github.com/kaltura/clients-generator.git"
   },
   "bugs": {
-    "url": "https://github.com/kaltura/KalturaGeneratedAPIClientsTypescript/issues"
+    "url": "https://github.com/kaltura/clients-generator/issues"
   },
   "main": "./index.js",
   "dependencies": {
