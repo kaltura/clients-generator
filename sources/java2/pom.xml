@@ -172,7 +172,7 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <keyname>C95AAC9D4ED44976B3CB68CA557C7DF8B64C31A1</keyname>
+                            <keyname>${gpg.keyname}</keyname>
                         </configuration>
                     </execution>
                 </executions>
