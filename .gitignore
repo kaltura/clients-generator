@@ -31,3 +31,6 @@ KalturaClient*.xml
 /node_modules/
 /package-lock.json
 api_schema.php.xml
+
+**/target/classes/
+.gradle/
