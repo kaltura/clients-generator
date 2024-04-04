@@ -32,7 +32,7 @@
  */
 class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 {
-    public $value;
+    private $value;
 
     function __construct($value)
 	{
