@@ -32,7 +32,7 @@
  */
 class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 {
-    private $value;
+    public $value;
 
     function __construct($value)
 	{
@@ -46,7 +46,7 @@ class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 
     function __get($name)
 	{
-        return new Kaltura_Client_MultiRequestSubResult($this->value . ':' . $name);
+        return new $this->value . ':' . $name;
 	}
 	
 	#[\ReturnTypeWillChange]
