@@ -46,7 +46,7 @@ class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 
     function __get($name)
 	{
-        return new $this->value . ':' . $name;
+        return $this->value . ':' . $name;
 	}
 	
 	#[\ReturnTypeWillChange]
