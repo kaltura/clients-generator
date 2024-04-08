@@ -34,17 +34,17 @@ class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 {
 	private $value;
 
-	function __construct($value)
+	public function __construct($value)
 	{
 		$this->value = $value;
 	}
 
-	function __toString()
+	public function __toString()
 	{
 		return '{' . $this->value . '}';
 	}
 
-	function __get($name)
+	public function __get($name)
 	{
 		return $this->value . ':' . $name;
 	}
