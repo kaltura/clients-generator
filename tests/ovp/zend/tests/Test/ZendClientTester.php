@@ -172,16 +172,22 @@ class ZendClientTester
 		$entry = new Kaltura_Client_Type_BaseEntry();
 		$entry->name = "test entry 1";
 		$entry->tags = "test1";
-		$this->_client->baseEntry->add($entry);
+		$entryAddResult = $this->_client->baseEntry->add($entry);
+		$this->assertEqual((string)$entryAddResult, '{1:result}');
+		$this->assertEqual((int)$entryAddResult->value, 1);
 		$user = new Kaltura_Client_Type_User();
 		$user->id = "test1".rand(0, 10000000);
 		$user->type = Kaltura_Client_Enum_UserType::USER;
-		$this->_client->user->add($user);
+		$userAddResult = $this->_client->user->add($user);
+		$this->assertEqual((string)$userAddResult, '{2:result}');
+		$this->assertEqual((int)$userAddResult->value, 2);
 
 		$badUser = new Kaltura_Client_Type_User();
 		$badUser->id = "  test  1".rand(0, 10000000); // spaces in user ID not allowed, expected error
 		$badUser->type = Kaltura_Client_Enum_UserType::USER;
-		$this->_client->user->add($badUser);
+		$badUserAddResult = $this->_client->user->add($badUser);
+		$this->assertEqual((string)$badUserAddResult, '{3:result}');
+		$this->assertEqual((int)$badUserAddResult->value, 3);
 
 		$results = $this->_client->doMultiRequest();
 		$this->assertTrue($results[0]->name === $entry->name);
