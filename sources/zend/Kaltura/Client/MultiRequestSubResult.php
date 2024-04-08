@@ -32,23 +32,23 @@
  */
 class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 {
-    private $value;
+	private $value;
 
-    function __construct($value)
+	function __construct($value)
 	{
-        $this->value = $value;
-	}
-	
-    function __toString()
-	{
-        return '{' . $this->value . '}';
+		$this->value = $value;
 	}
 
-    function __get($name)
+	function __toString()
 	{
-        return $this->value . ':' . $name;
+		return '{' . $this->value . '}';
 	}
-	
+
+	function __get($name)
+	{
+		return $this->value . ':' . $name;
+	}
+
 	#[\ReturnTypeWillChange]
 	public function offsetExists($offset)
 	{
@@ -58,14 +58,14 @@ class Kaltura_Client_MultiRequestSubResult implements ArrayAccess
 	#[\ReturnTypeWillChange]
 	public function offsetGet($offset)
 	{
-	    return new Kaltura_Client_MultiRequestSubResult($this->value . ':' . $offset);
+		return new Kaltura_Client_MultiRequestSubResult($this->value . ':' . $offset);
 	}
 
 	#[\ReturnTypeWillChange]
 	public function offsetSet($offset, $value)
 	{
 	}
-	
+
 	#[\ReturnTypeWillChange]
 	public function offsetUnset($offset)
 	{
