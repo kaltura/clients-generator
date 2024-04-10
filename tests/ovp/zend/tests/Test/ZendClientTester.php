@@ -315,7 +315,31 @@ class ZendClientTester
 
 		$this->_client->setLanguage(null);
 	}
-	
+
+	public function testAccessControlProfile()
+	{
+		$accessControlProfileName = '__test_access_control_profile_' . rand(0, 10000);
+		$accessControlProfile = new Kaltura_Client_Type_AccessControlProfile();
+		$accessControlProfile->name = $accessControlProfileName;
+		$accessControlProfile->isDefault = Kaltura_Client_Enum_NullableBoolean::FALSE_VALUE;
+
+		$code = '1';
+		$message = 'Test Rule';
+		$rule = new Kaltura_Client_Type_Rule();
+		$rule->code = $code;
+		$rule->message = $message;
+
+		$accessControlProfile->rules = [$rule];
+
+		$accessControlProfile = $this->_client->accessControlProfile->add($accessControlProfile);
+
+		$this->assertEqual($accessControlProfile->name, $accessControlProfileName);
+		$this->assertEqual($accessControlProfile->rules[0]->code, $code);
+		$this->assertEqual($accessControlProfile->rules[0]->message, $message);
+
+		$this->_client->accessControlProfile->delete($accessControlProfile->id);
+	}
+
 	public function addImageEntry()
 	{
 	    $entry = new Kaltura_Client_Type_MediaEntry();
