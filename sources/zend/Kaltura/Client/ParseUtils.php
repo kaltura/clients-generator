@@ -95,7 +95,7 @@ class Kaltura_Client_ParseUtils
 		
 		if(is_object($value))
 		{
-			if(isset($value->message) && isset($value->code))
+			if(isset($value->message, $value->code) && (isset($value->objectType) ? $value->objectType : 'KalturaAPIException') === 'KalturaAPIException')
 			{
 				if(self::$isMultiRequest)
 				{
