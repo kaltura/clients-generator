@@ -342,26 +342,26 @@ class ZendClientTester
 
 	public function addImageEntry()
 	{
-	    $entry = new Kaltura_Client_Type_MediaEntry();
-	    $entry->name = self::ENTRY_NAME;
-	    $entry->mediaType = Kaltura_Client_Enum_MediaType::IMAGE;
-	    $entry->tags = uniqid('test_');
-	    $entry = $this->_client->media->add($entry);
-	    
-	    $uploadToken = new Kaltura_Client_Type_UploadToken();
-	    $uploadToken->fileName = self::UPLOAD_IMAGE_FILENAME;
-	    $uploadToken = $this->_client->uploadToken->add($uploadToken);
+		$entry = new Kaltura_Client_Type_MediaEntry();
+		$entry->name = self::ENTRY_NAME;
+		$entry->mediaType = Kaltura_Client_Enum_MediaType::IMAGE;
+		$entry->tags = uniqid('test_');
+		$entry = $this->_client->media->add($entry);
 
-	    $uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_IMAGE_FILENAME;
-	    $uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
-	    
-		    $resource = new Kaltura_Client_Type_UploadedFileTokenResource();
-	    $resource->token = $uploadToken->id;
-	    $entry = $this->_client->media->addContent($entry->id, $resource);
-	    
-	    return $entry;
+		$uploadToken = new Kaltura_Client_Type_UploadToken();
+		$uploadToken->fileName = self::UPLOAD_IMAGE_FILENAME;
+		$uploadToken = $this->_client->uploadToken->add($uploadToken);
+
+		$uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_IMAGE_FILENAME;
+		$uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
+
+		$resource = new Kaltura_Client_Type_UploadedFileTokenResource();
+		$resource->token = $uploadToken->id;
+		$entry = $this->_client->media->addContent($entry->id, $resource);
+
+		return $entry;
 	}
-	
+
 	protected function assertTrue($v)
 	{
 		if ($v !== true)
