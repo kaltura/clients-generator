@@ -594,7 +594,8 @@ describe("Kaltura server API request", () => {
 			);
 		});
 
-		test("parse string response property while provided value is of type number", (done) => {
+		// Skipping because this test is not stable (id of default conversion profile is not always 1001)
+		test.skip("parse string response property while provided value is of type number", (done) => {
 			expect.assertions(2);
 			kalturaClient.request(new PartnerGetAction({id: TestsConfig.partnerId})).then(
 				(response) => {
