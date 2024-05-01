@@ -9,15 +9,12 @@ import { EntryDistributionListAction } from "../api/types/EntryDistributionListA
 import { KalturaEntryDistributionListResponse } from "../api/types/KalturaEntryDistributionListResponse";
 import { KalturaEntryDistribution } from "../api/types/KalturaEntryDistribution";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { asyncAssert } from "./utils";
 
 describe(`service "Distribution" tests`, () => {
 	let kalturaClient: KalturaClient = null;
 
 	beforeAll(async () => {
-		LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
 		return getClient()
 			.then(client => {
 				kalturaClient = client;

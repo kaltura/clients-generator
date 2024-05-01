@@ -6,15 +6,12 @@ import { KalturaUiConfFilter } from "../api/types/KalturaUiConfFilter";
 import { KalturaUiConfObjType } from "../api/types/KalturaUiConfObjType";
 import { UiConfListTemplatesAction } from "../api/types/UiConfListTemplatesAction";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { asyncAssert } from "./utils";
 
 describe(`service "UIConf" tests`, () => {
   let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
-    LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
     return getClient()
       .then(client => {
         kalturaClient = client;

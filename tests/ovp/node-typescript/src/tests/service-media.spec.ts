@@ -4,15 +4,12 @@ import { KalturaMediaListResponse } from "../api/types/KalturaMediaListResponse"
 import { KalturaMediaEntry } from "../api/types/KalturaMediaEntry";
 import { KalturaMediaType } from "../api/types/KalturaMediaType";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { asyncAssert } from "./utils";
 
 describe(`service "Media" tests`, () => {
   let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
-    LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
     return getClient()
       .then(client => {
         kalturaClient = client;

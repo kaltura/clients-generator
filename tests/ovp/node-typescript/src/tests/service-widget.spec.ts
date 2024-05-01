@@ -2,15 +2,12 @@ import { KalturaClient } from "../kaltura-client-service";
 import { WidgetListAction } from "../api/types/WidgetListAction";
 import { KalturaWidgetListResponse } from "../api/types/KalturaWidgetListResponse";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { asyncAssert } from "./utils";
 
 describe(`service "Widget" tests`, () => {
   let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
-    LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
     return getClient()
       .then(client => {
         kalturaClient = client;
