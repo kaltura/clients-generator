@@ -19,8 +19,6 @@ describe("Kaltura server API multi request", () => {
 	let kalturaClient: KalturaClient = null;
 
 	beforeAll(async () => {
-		LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
 		return new Promise((resolve => {
 			getClient()
 				.then(client => {

@@ -315,29 +315,53 @@ class ZendClientTester
 
 		$this->_client->setLanguage(null);
 	}
-	
+
+	public function testAccessControlProfile()
+	{
+		$accessControlProfileName = '__test_access_control_profile_' . rand(0, 10000);
+		$accessControlProfile = new Kaltura_Client_Type_AccessControlProfile();
+		$accessControlProfile->name = $accessControlProfileName;
+		$accessControlProfile->isDefault = Kaltura_Client_Enum_NullableBoolean::FALSE_VALUE;
+
+		$code = '1';
+		$message = 'Test Rule';
+		$rule = new Kaltura_Client_Type_Rule();
+		$rule->code = $code;
+		$rule->message = $message;
+
+		$accessControlProfile->rules = [$rule];
+
+		$accessControlProfile = $this->_client->accessControlProfile->add($accessControlProfile);
+
+		$this->assertEqual($accessControlProfile->name, $accessControlProfileName);
+		$this->assertEqual($accessControlProfile->rules[0]->code, $code);
+		$this->assertEqual($accessControlProfile->rules[0]->message, $message);
+
+		$this->_client->accessControlProfile->delete($accessControlProfile->id);
+	}
+
 	public function addImageEntry()
 	{
-	    $entry = new Kaltura_Client_Type_MediaEntry();
-	    $entry->name = self::ENTRY_NAME;
-	    $entry->mediaType = Kaltura_Client_Enum_MediaType::IMAGE;
-	    $entry->tags = uniqid('test_');
-	    $entry = $this->_client->media->add($entry);
-	    
-	    $uploadToken = new Kaltura_Client_Type_UploadToken();
-	    $uploadToken->fileName = self::UPLOAD_IMAGE_FILENAME;
-	    $uploadToken = $this->_client->uploadToken->add($uploadToken);
+		$entry = new Kaltura_Client_Type_MediaEntry();
+		$entry->name = self::ENTRY_NAME;
+		$entry->mediaType = Kaltura_Client_Enum_MediaType::IMAGE;
+		$entry->tags = uniqid('test_');
+		$entry = $this->_client->media->add($entry);
 
-	    $uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_IMAGE_FILENAME;
-	    $uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
-	    
-		    $resource = new Kaltura_Client_Type_UploadedFileTokenResource();
-	    $resource->token = $uploadToken->id;
-	    $entry = $this->_client->media->addContent($entry->id, $resource);
-	    
-	    return $entry;
+		$uploadToken = new Kaltura_Client_Type_UploadToken();
+		$uploadToken->fileName = self::UPLOAD_IMAGE_FILENAME;
+		$uploadToken = $this->_client->uploadToken->add($uploadToken);
+
+		$uploadFilePath = dirname(__FILE__) . '/../resources/' . self::UPLOAD_IMAGE_FILENAME;
+		$uploadToken = $this->_client->uploadToken->upload($uploadToken->id, $uploadFilePath);
+
+		$resource = new Kaltura_Client_Type_UploadedFileTokenResource();
+		$resource->token = $uploadToken->id;
+		$entry = $this->_client->media->addContent($entry->id, $resource);
+
+		return $entry;
 	}
-	
+
 	protected function assertTrue($v)
 	{
 		if ($v !== true)

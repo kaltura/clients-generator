@@ -7,15 +7,12 @@ import { PlaylistAddAction } from "../api/types/PlaylistAddAction";
 import { PlaylistDeleteAction } from "../api/types/PlaylistDeleteAction";
 import { PlaylistUpdateAction } from "../api/types/PlaylistUpdateAction";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { asyncAssert } from "./utils";
 
 describe(`service "Playlist" tests`, () => {
   let kalturaClient: KalturaClient = null;
 
   beforeAll(async () => {
-    LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
     return getClient()
       .then(client => {
         kalturaClient = client;

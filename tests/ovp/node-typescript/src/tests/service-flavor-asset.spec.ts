@@ -6,7 +6,6 @@ import { KalturaMediaEntryFilter } from "../api/types/KalturaMediaEntryFilter";
 import { KalturaFlavorAsset } from "../api/types/KalturaFlavorAsset";
 import { KalturaFlavorAssetFilter } from "../api/types/KalturaFlavorAssetFilter";
 import { getClient } from "./utils";
-import { LoggerSettings, LogLevels } from "../api/kaltura-logger";
 import { asyncAssert } from "./utils";
 import { KalturaResponse } from '../api';
 
@@ -14,8 +13,6 @@ describe(`service "Flavor" tests`, () => {
 	let kalturaClient: KalturaClient = null;
 
 	beforeAll(async () => {
-		LoggerSettings.logLevel = LogLevels.error; // suspend warnings
-
 		return getClient()
 			.then(client => {
 				kalturaClient = client;
