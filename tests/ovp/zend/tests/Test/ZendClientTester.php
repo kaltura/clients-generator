@@ -175,12 +175,14 @@ class ZendClientTester
 		$entryAddResult = $this->_client->baseEntry->add($entry);
 		$this->assertEqual((string)$entryAddResult, '{1:result}');
 		$this->assertEqual((int)$entryAddResult->value, 1);
+		$this->assertEqual((string)$entryAddResult->creatorId, '{1:result:creatorId}');
 		$user = new Kaltura_Client_Type_User();
 		$user->id = "test1".rand(0, 10000000);
 		$user->type = Kaltura_Client_Enum_UserType::USER;
 		$userAddResult = $this->_client->user->add($user);
 		$this->assertEqual((string)$userAddResult, '{2:result}');
 		$this->assertEqual((int)$userAddResult->value, 2);
+		$this->assertEqual((string)$userAddResult->id, '{2:result:id}');
 
 		$badUser = new Kaltura_Client_Type_User();
 		$badUser->id = "  test  1".rand(0, 10000000); // spaces in user ID not allowed, expected error
