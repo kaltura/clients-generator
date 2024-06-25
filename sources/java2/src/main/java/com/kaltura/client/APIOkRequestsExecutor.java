@@ -29,9 +29,11 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.Authenticator;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.ConnectionPool;
+import okhttp3.Credentials;
 import okhttp3.Dispatcher;
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -41,6 +43,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.Route;
 import okhttp3.internal.Util;
 import okio.Buffer;
 import okio.BufferedSink;
@@ -137,7 +140,22 @@ public class APIOkRequestsExecutor implements RequestQueue {
 		public int getProxyPort() {
 		    return 0;
 		}
+
+        @Override
+        public Proxy.Type getProxyType(){
+            return Proxy.Type.HTTP;
+        }
 		
+        @Override
+        public String getProxyUsername(){
+            return null;
+        }
+
+        @Override
+        public String getProxyPassword(){
+            return null;
+        }
+
 		@Override
 		public boolean getIgnoreSslDomainVerification() {
 			return false;
@@ -244,47 +262,36 @@ public class APIOkRequestsExecutor implements RequestQueue {
         	builder.hostnameVerifier(hostnameVerifier);
         	builder.sslSocketFactory(trustAllSslSocketFactory, (X509TrustManager)trustAllCerts[0]);
         }
-	if (config.getProxy() != null && config.getProxyPort() != 0){
-		logger.debug("Proxy host is: " + config.getProxy());
-		logger.debug("Proxy port is: " + config.getProxyPort());
-		builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(config.getProxy(), config.getProxyPort())));
-	}else if (System.getProperty("http_proxy") !=null && System.getProperty("http_proxy_port") !=null){
-		int proxy_port = 0;
-		String proxy_host = System.getProperty("http_proxy");
-		String proxy_error = "`http_proxy_port` Java property is set but its value is invalid, will be ignored.";
-	        try {
-		    proxy_port = Integer.parseInt(System.getProperty("http_proxy_port"));
-		} catch(NumberFormatException e) {
-		    logger.debug(proxy_error);
-		} catch(NullPointerException e) {
-		    logger.debug(proxy_error);
-		}
-		if (proxy_port > 0){
-		    logger.debug("Proxy host (taken from Java property - http_proxy) is: " + proxy_host);
-		    logger.debug("Proxy port (taken from Java property - http_proxy_port) is: " + proxy_port);
-		    builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy_host, proxy_port)));
-		}
-	// if a proxy was configured at the Kaltura client level (using setProxy()), the ENV var is ignored
-	// This is meant as a fallback
-	}else if (System.getenv("http_proxy") !=null && System.getenv("http_proxy_port") !=null){
-		int proxy_port = 0;
-		String proxy_host = System.getenv("http_proxy");
-		String proxy_error = "`http_proxy_port` ENV var is set but its value is invalid, will be ignored.";
-		// make sure the port value can be cast to int
-	        try {
-		    proxy_port = Integer.parseInt(System.getenv("http_proxy_port"));
-		} catch(NumberFormatException e) {
-		    logger.debug(proxy_error);
-		} catch(NullPointerException e) {
-		    logger.debug(proxy_error);
-		}
-		// if we haven't got a valid port, no proxy will be used.
-		if (proxy_port > 0){
-		    logger.debug("Proxy host (taken from ENV var - http_proxy): " + proxy_host);
-		    logger.debug("Proxy port (taken from ENV var - http_proxy_port): " + proxy_port);
-		    builder.proxy(new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxy_host, proxy_port)));
-		}
-	}
+        if (config.getProxy() != null && config.getProxyPort() != 0){
+
+            this.configureProxy(builder,
+                                config.getProxy(),
+                                config.getProxyPort(),
+                                config.getProxyType(),
+                                config.getProxyUsername(),
+                                config.getProxyPassword());
+
+
+        }else if (System.getProperty("http_proxy") !=null && System.getProperty("http_proxy_port") !=null){
+            logger.debug("Proxy configuration found from java properties");
+            this.configureProxy(builder,
+                System.getProperty("http_proxy"),
+                System.getProperty("http_proxy_port"),
+                System.getProperty("http_proxy_type"),
+                System.getProperty("http_proxy_username"),
+                System.getProperty("http_proxy_password"));
+
+        // if a proxy was configured at the Kaltura client level (using setProxy()), the ENV var is ignored
+        // This is meant as a fallback
+        }else if (System.getenv("http_proxy") !=null && System.getenv("http_proxy_port") !=null){
+            logger.debug("Proxy configuration found from ENV properties");
+            this.configureProxy(builder,
+                System.getenv("http_proxy"),
+                System.getenv("http_proxy_port"),
+                System.getenv("http_proxy_type"),
+                System.getenv("http_proxy_username"),
+                System.getenv("http_proxy_password"));
+        }
 
         return builder;
     }
@@ -552,4 +559,62 @@ public class APIOkRequestsExecutor implements RequestQueue {
             return "did not work";
         }
     }
+
+    private void configureProxy(OkHttpClient.Builder builder,final String proxyHost, final String proxyPort, final String proxyType, final String username, final String password){
+
+        int proxy_port = 0;
+        Proxy.Type proxy_type = Proxy.Type.HTTP;
+        String proxy_host = proxyHost;
+        String proxy_username = username;
+        String proxy_password = password;
+        // make sure the port value can be cast to int
+        try {
+            proxy_port = Integer.parseInt(proxyPort);
+        } catch(NumberFormatException | NullPointerException e) {
+            logger.debug("http_proxy_port var is set but its value is invalid, will be ignored.");
+        } 
+
+        try {
+            proxy_type = Proxy.Type.valueOf(proxyType);
+        } catch(IllegalArgumentException |NullPointerException  e) {
+            logger.debug("http_proxy_type var is set but its value is invalid, will use default.");
+        } 
+
+        // if we haven't got a valid port, no proxy will be used.
+        if (proxy_port > 0){
+            this.configureProxy(builder,
+                    proxy_host ,
+                    proxy_port ,
+                    proxy_type,
+                    proxy_username,
+                    proxy_password);
+        }
+    }
+
+    private void configureProxy(OkHttpClient.Builder builder,final String proxyHost, final int proxyPort, final Proxy.Type proxyType, final String username, final String password){
+        logger.debug("Proxy host is: " + proxyHost);
+		logger.debug("Proxy port is: " + proxyPort);
+        if ((proxyPort == 0) || (proxyType == null)){
+            return ;
+        }
+        
+        Proxy proxy = new Proxy(proxyType,new InetSocketAddress(proxyHost, proxyPort));
+        builder.proxy(proxy);
+
+        if((username != null) && (password != null)){
+            Authenticator proxyAuthenticator = new Authenticator() {
+                @Override
+                public Request authenticate(Route route, Response response) throws IOException {
+                    String credential = Credentials.basic(username, password);
+                    return response
+                        .request()
+                        .newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();              
+                }
+            };
+            builder.proxyAuthenticator(proxyAuthenticator);
+        }
+    }
+
 }

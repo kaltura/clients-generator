@@ -32,6 +32,7 @@ import com.kaltura.client.utils.request.ConnectionConfiguration;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.net.Proxy;
 
 /**
  * This class holds information needed by the Kaltura client to establish a session.
@@ -43,9 +44,12 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 
 	private static final long serialVersionUID = 2096581946429839651L;
 	
-	public final static String EndPoint = "endpoint";
-	public final static String Proxy = null;
-	public final static String ProxyPort = "0";
+	public final static String Endpoint = "endpoint";
+	public final static String PROXY = "proxy";
+	public final static String PROXY_PORT = "proxyPort";
+	public final static String PROXY_TYPE = "proxyType";
+	public final static String PROXY_USERNAME = "proxyUsername";
+	public final static String PROXY_PASSWORD = "proxyPassword";
 	public final static String ConnectTimeout = "connectTimeout";
 	public final static String ReadTimeout = "readTimeout";
 	public final static String WriteTimeout = "writeTimeout";
@@ -77,7 +81,8 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(MaxRetry, config.getMaxRetry(2));
 		params.put(AcceptGzipEncoding, config.getAcceptGzipEncoding());
 		params.put(IgnoreSslDomainVerification, config.getIgnoreSslDomainVerification());
-		params.put(EndPoint, config.getEndpoint());
+		params.put(Endpoint, config.getEndpoint());
+		params.put(PROXY_TYPE, Proxy.Type.HTTP);
 	}
 
 	private void initDefaults() {
@@ -88,20 +93,37 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(MaxRetry, 3);
 		params.put(AcceptGzipEncoding, false);
 		params.put(IgnoreSslDomainVerification, false);
-		params.put(EndPoint, "http://www.kaltura.com/");
+		params.put(Endpoint, "http://www.kaltura.com/");
+		params.put(PROXY_TYPE, Proxy.Type.HTTP);
 	}
 
 
 	public String getEndpoint() {
-		return (String) params.get(EndPoint);
+		return (String) params.get(Endpoint);
 	}
 
 	public String getProxy() {
-		return (String) params.get(Proxy);
+		return (String) params.get(PROXY);
 	}
 	public int getProxyPort() {
-		return (int) params.get(ProxyPort);
+		try {
+			return Integer.parseInt(params.get(PROXY_PORT).toString());	
+		} catch (ClassCastException e) {
+			return 0;
+		}
+		
 	}
+
+	public Proxy.Type getProxyType(){
+		return (Proxy.Type) params.get(PROXY_TYPE);
+	}
+	public String getProxyUsername(){
+		return (String) params.get(PROXY_USERNAME);
+	}
+	public String getProxyPassword(){
+		return (String) params.get(PROXY_PASSWORD);
+	}
+
 
 	@Override
 	public boolean getIgnoreSslDomainVerification() {
@@ -109,17 +131,39 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 	}
 
 	public void setEndpoint(String endpoint) {
-		this.params.put(EndPoint, endpoint);
+		this.params.put(endpoint, endpoint);
 	}
 
 	public void setProxy(String proxy) {
-		params.put(Proxy, proxy);
+		params.put(PROXY, proxy);
 		System.setProperty("http_proxy",proxy);
 	}
 
 	public void setProxyPort(int proxyPort) {
-		params.put(ProxyPort, proxyPort);
+		params.put(PROXY_PORT, String.valueOf(proxyPort));
 		System.setProperty("http_proxy_port",String.valueOf(proxyPort));
+	}
+
+	public void setProxyType(String proxyType) {
+		
+		if("sock".equalsIgnoreCase(proxyType) || "https".equalsIgnoreCase(proxyType)){
+			params.put(PROXY_TYPE, Proxy.Type.SOCKS);
+			System.setProperty("http_proxy_type",Proxy.Type.SOCKS.toString());
+		}else if("http".equalsIgnoreCase(proxyType)){
+			params.put(PROXY_TYPE, Proxy.Type.HTTP);
+			System.setProperty("http_proxy_type",Proxy.Type.HTTP.toString());
+		}
+		
+	}
+	
+	public void setProxyUsername(String proxyUsername) {
+		params.put(PROXY_USERNAME, proxyUsername);
+		System.setProperty("http_proxy_username",String.valueOf(proxyUsername));
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		params.put(PROXY_PASSWORD, proxyPassword);
+		System.setProperty("http_proxy_password",String.valueOf(proxyPassword));
 	}
 
 
