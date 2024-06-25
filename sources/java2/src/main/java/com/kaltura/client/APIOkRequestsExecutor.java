@@ -272,25 +272,6 @@ public class APIOkRequestsExecutor implements RequestQueue {
                                 config.getProxyPassword());
 
 
-        }else if (System.getProperty("http_proxy") !=null && System.getProperty("http_proxy_port") !=null){
-            logger.debug("Proxy configuration found from java properties");
-            this.configureProxy(builder,
-                System.getProperty("http_proxy"),
-                System.getProperty("http_proxy_port"),
-                System.getProperty("http_proxy_type"),
-                System.getProperty("http_proxy_username"),
-                System.getProperty("http_proxy_password"));
-
-        // if a proxy was configured at the Kaltura client level (using setProxy()), the ENV var is ignored
-        // This is meant as a fallback
-        }else if (System.getenv("http_proxy") !=null && System.getenv("http_proxy_port") !=null){
-            logger.debug("Proxy configuration found from ENV properties");
-            this.configureProxy(builder,
-                System.getenv("http_proxy"),
-                System.getenv("http_proxy_port"),
-                System.getenv("http_proxy_type"),
-                System.getenv("http_proxy_username"),
-                System.getenv("http_proxy_password"));
         }
 
         return builder;

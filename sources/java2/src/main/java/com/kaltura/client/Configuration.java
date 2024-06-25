@@ -136,34 +136,28 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 
 	public void setProxy(String proxy) {
 		params.put(PROXY, proxy);
-		System.setProperty("http_proxy",proxy);
 	}
 
 	public void setProxyPort(int proxyPort) {
 		params.put(PROXY_PORT, String.valueOf(proxyPort));
-		System.setProperty("http_proxy_port",String.valueOf(proxyPort));
 	}
 
 	public void setProxyType(String proxyType) {
 		
 		if("sock".equalsIgnoreCase(proxyType) || "https".equalsIgnoreCase(proxyType)){
 			params.put(PROXY_TYPE, Proxy.Type.SOCKS);
-			System.setProperty("http_proxy_type",Proxy.Type.SOCKS.toString());
 		}else if("http".equalsIgnoreCase(proxyType)){
 			params.put(PROXY_TYPE, Proxy.Type.HTTP);
-			System.setProperty("http_proxy_type",Proxy.Type.HTTP.toString());
 		}
 		
 	}
 	
 	public void setProxyUsername(String proxyUsername) {
 		params.put(PROXY_USERNAME, proxyUsername);
-		System.setProperty("http_proxy_username",String.valueOf(proxyUsername));
 	}
 
 	public void setProxyPassword(String proxyPassword) {
 		params.put(PROXY_PASSWORD, proxyPassword);
-		System.setProperty("http_proxy_password",String.valueOf(proxyPassword));
 	}
 
 
