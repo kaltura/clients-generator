@@ -50,7 +50,7 @@ To build the API:
  - Build the project
 
 
-== HTTP Proxy Support ==
+== Proxy Support ==
 
 The following methods are supported:
 
@@ -58,13 +58,29 @@ The following methods are supported:
 config.setProxy("proxy.host");
 config.setProxyPort(int_port);
 
-1. Set the following Java properties:
-- http_proxy
-- http_proxy_port
+1. Proxy type can be toggle so it can connect either thru HTTP or SOCKS (https)
+If connection is thru an http proxy use 
+config.setProxyType("HTTP")
+If connection is thru https proxy use
+config.setProxyType("SOCKS")
 
-2. Export the following ENV vars:
+2. When a proxy requires basic authentication invoke the following methods:
+config.setProxyUsername("username");
+config.setProxyPassword("*****");
+
+3. Set the following Java properties:
 - http_proxy
 - http_proxy_port
+- http_proxy_type
+- http_proxy_username
+- http_proxy_password
+
+4. Export the following ENV vars:
+- http_proxy
+- http_proxy_port
+- http_proxy_type
+- http_proxy_username
+- http_proxy_password
 
 === Order of precedence ===
 - If proxy set on the client object, it will be used, otherwise:
