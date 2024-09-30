@@ -34,7 +34,7 @@ abstract public class KalturaLogger
 	// Creation & retrieval methods:
 	public static IKalturaLogger getLogger(String name)
 	{
-		return KalturaLoggerLog4j.get(name);
+		return new KalturaLoggerLog4j(name);
 	}
 	
 	public static IKalturaLogger getLogger(Class<?> clazz)
