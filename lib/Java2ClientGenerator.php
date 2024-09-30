@@ -510,10 +510,14 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 					$primitiveType = 'boolean';
 					$propEnumType = null;
 				}
-				if($isMultiLingual)
+				if ($isMultiLingual)
 				{
-					$propArrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
-					return "GsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class)";
+					return "if (jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray()) {
+						$propName = GsonParser.parseString(jsonObject.getAsJsonArray(\"$propName\").get(0).getAsJsonObject().get(\"value\"));
+					}
+					else {
+						$propName = GsonParser.parseString(jsonObject.get(\"$propName\"));
+					}";
 				}
 			break;
 
