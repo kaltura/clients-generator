@@ -511,14 +511,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 					$propEnumType = null;
 				}
 				if ($isMultiLingual)
-				{
-					return "if (jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray()) {
-						$propName = GsonParser.parseString(jsonObject.getAsJsonArray(\"$propName\").get(0).getAsJsonObject().get(\"value\"));
-					}
-					else {
-						$propName = GsonParser.parseString(jsonObject.get(\"$propName\"));
-					}";
-				}
+                {
+                    return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
+                    "\t\t\tGsonParser.parseString(jsonObject.getAsJsonArray(\"$propName\").get(0).getAsJsonObject().get(\"value\")) : \n" .
+                    "\t\t\tGsonParser.parseString(jsonObject.get(\"$propName\"))";
+                }
 			break;
 
 			case "map":
