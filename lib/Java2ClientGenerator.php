@@ -504,11 +504,18 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			case "string":
 				$primitiveType = $propType;
 				$propEnumType = $propertyNode->hasAttribute("enumType") ? $this->getJavaTypeName($propertyNode->getAttribute("enumType")): null;
+				$isMultiLingual = $propertyNode->getAttribute("multiLingual") == 1;
 				if($propEnumType === 'Boolean') 
 				{
 					$primitiveType = 'boolean';
 					$propEnumType = null;
 				}
+				if ($isMultiLingual)
+                {
+                    return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
+                    "\t\t\tGsonParser.parseString(jsonObject.getAsJsonArray(\"$propName\").get(0).getAsJsonObject().get(\"value\")) : \n" .
+                    "\t\t\tGsonParser.parseString(jsonObject.get(\"$propName\"))";
+                }
 			break;
 
 			case "map":
