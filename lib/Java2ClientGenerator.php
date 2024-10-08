@@ -487,6 +487,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 	public function getPropertyValue($propName, $propType, $propertyNode) {
 		$propEnumType = null;
 		$primitiveType = "";
+		$isMultiLingual = $propertyNode->getAttribute("multiLingual") == 1;
 		if ($propertyNode->hasAttribute("isTime"))
 			$propType = "time";
 		switch($propType) {
@@ -504,19 +505,18 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 			case "string":
 				$primitiveType = $propType;
 				$propEnumType = $propertyNode->hasAttribute("enumType") ? $this->getJavaTypeName($propertyNode->getAttribute("enumType")): null;
-				$isMultiLingual = $propertyNode->getAttribute("multiLingual") == 1;
 				if($propEnumType === 'Boolean') 
 				{
 					$primitiveType = 'boolean';
 					$propEnumType = null;
 				}
 				if ($isMultiLingual)
-                {
-                    return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
-                    "\t\t\tGsonParser.parseString(jsonObject.getAsJsonArray(\"$propName\").get(0).getAsJsonObject().get(\"value\")) : \n" .
-                    "\t\t\tGsonParser.parseString(jsonObject.get(\"$propName\"))";
-                }
-			break;
+				{
+					return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
+					"\t\t\tGsonParser.parseString(jsonObject.getAsJsonArray(\"$propName\").get(0).getAsJsonObject().get(\"value\")) : \n" .
+					"\t\t\tGsonParser.parseString(jsonObject.get(\"$propName\"))";
+				}
+				break;
 
 			case "map":
 				$propArrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
@@ -525,6 +525,11 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 
 			case "array":
 				$propArrayType = $this->getJavaTypeName($propertyNode->getAttribute("arrayType"));
+				if ($isMultiLingual)
+				{
+					//Multi lang object gets its values from the array element returned on the original property 
+					$propName = str_replace("multiLingual_", "", $propName);
+				}
 				return "GsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class)";
 				break;
 
