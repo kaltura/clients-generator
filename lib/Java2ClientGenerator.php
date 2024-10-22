@@ -532,7 +532,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 					$propName = str_replace("multiLingual_", "", $propName);
 					return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
 					"\t\t\tGsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class) : \n" .
-					"\t\t\tnew ArrayList<MultiLingualString>()";
+					"\t\t\tnew ArrayList<$propArrayType>()";
 				}
 				return "GsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class)";
 				break;
