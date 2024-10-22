@@ -419,7 +419,7 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 		
 		if($needsArrayList) {
 			$imports[] = "import java.util.List;";
-			$imports[] = "import java.util.Collections;";
+			$imports[] = "import java.util.ArrayList;";
 		}
 		if($needsHashMap) {
 			$imports[] = "import java.util.Map;";
@@ -530,9 +530,9 @@ class Java2ClientGenerator extends ClientGeneratorFromXml
 				{
 					//Multi lang object gets its values from the array element returned on the original property 
 					$propName = str_replace("multiLingual_", "", $propName);
-+                                       return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
-+                                       "\t\t\tGsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class) : \n" .
-+                                       "\t\t\tCollections.emptyList()";
+					return "jsonObject.has(\"$propName\") && jsonObject.get(\"$propName\").isJsonArray() ? \n" .
+					"\t\t\tGsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class) : \n" .
+					"\t\t\tnew ArrayList<MultiLingualString>()";
 				}
 				return "GsonParser.parseArray(jsonObject.getAsJsonArray(\"".$propName."\"), ". $propArrayType.".class)";
 				break;
