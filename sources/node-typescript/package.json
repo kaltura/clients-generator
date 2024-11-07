@@ -28,7 +28,7 @@
   "scripts": {
     "build": "gulp build",
     "build:prod": "gulp build --production",
-    "lint": "tslint src/**/*.ts",
+    "lint": "tslint src/**/*.ts -e src/tests/**/*.ts",
     "watch": "gulp watch",
     "deploy": "rm -rf dist && npm run build && cd dist && npm pack && npm link",
     "test": "jest"
@@ -42,7 +42,6 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "@types/node": "^18.11.18",
     "form-data": "^4.0.0",
     "got": "^11.8.6",
     "tslib": "^2.3.1"
@@ -51,6 +50,7 @@
     "@types/core-js": "^0.9.46",
     "@types/jest": "^21.1.10",
     "@types/jquery": "^2.0.57",
+    "@types/node": "16.11.1",
     "@types/ramda": "0.0.3",
     "awesome-typescript-loader": "^5.2.1",
     "core-js": "2.4.1",
@@ -73,8 +73,8 @@
     "yargs": "^5.0.0"
   },
   "engines": {
-    "node": ">= 7.0.0",
-    "npm": ">= 5.0.0"
+    "node": ">= 18.0.0",
+    "npm": ">= 8.0.0"
   },
   "jest": {
     "transform": {

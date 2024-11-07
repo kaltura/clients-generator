@@ -142,7 +142,7 @@ export class KalturaUploadRequestAdapter {
         { endpointUrl, form, searchParams }:{ endpointUrl: string, form: FormData, searchParams: URLSearchParams }
       ) => {
         if (isAborted) { return }
-        gotRequest = got.post(endpointUrl, { body: form, searchParams })
+        gotRequest = got.post(endpointUrl, { body: form, searchParams: <any>searchParams });
         // save headers and parse response:
         gotRequest.then(response => {
           isComplete = true

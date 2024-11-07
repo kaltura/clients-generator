@@ -58,7 +58,7 @@ function compileAppScripts() {
 function compileTS(opt) {
   var tsResult = gulp.src(opt.inPath, {base : opt.inBase})
     .pipe($.sourcemaps.init()) // sourcemaps will be generated
-    .pipe(opt.tsProject($.typescript.reporter.fullReporter(true)))
+    .pipe(opt.tsProject($.typescript.reporter.longReporter()))
     .on('error', function (error) {
       console.log('Gulp error:', error)
       process.exit(1);
