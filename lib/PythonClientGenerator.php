@@ -1,6 +1,10 @@
 <?php
 class PythonClientGenerator extends ClientGeneratorFromXml
 {
+	protected $_stubLines = [];
+
+	protected $_clientStubProperties = [];
+
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "python")
 	{
 		parent::__construct($xmlPath, $sourcePath, $config);
@@ -34,6 +38,8 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			if($serviceNodes->length || $classNodes->length || $enumNodes->length)
 				$this->writePlugin($pluginName, $enumNodes, $classNodes, $serviceNodes);
 		}
+
+		$this->writeMainClientStub();
 	}
 	
 	function writePlugin($pluginName, $enumNodes, $classNodes, $serviceNodes)
@@ -43,15 +49,17 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		{
 			$pluginClassName = "KalturaCoreClient";
 			$outputFileName = "KalturaClient/Plugins/Core.py";
+			$stubFileName = "KalturaClient/Plugins/Core.pyi";
 		}
 		else 
 		{
 			$pluginClassName = "Kaltura" . ucfirst($pluginName) . "ClientPlugin";
 			$outputFileName = "KalturaClient/Plugins/".ucfirst($pluginName).".py";
+			$stubFileName = "KalturaClient/Plugins/".ucfirst($pluginName).".pyi";
 		}
-		
+
     	$this->startNewTextBlock();
-		
+
 		if($this->generateDocs)
 		{
 			$this->appendLine("# @package $this->package");
@@ -60,16 +68,22 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 
         $this->appendLine('from __future__ import absolute_import');
         $this->appendLine('');
+		$this->appendStubLine('from typing import List, IO, Any');
 		
 		if ($pluginName != '')
 		{
 			$this->appendLine('from .Core import *');
+			$this->appendStubLine('from .Core import *');
 
 			$dependencyNodes = $xpath->query("/xml/plugins/plugin[@name = '$pluginName']/dependency");
-			foreach($dependencyNodes as $dependencyNode)
+			foreach($dependencyNodes as $dependencyNode) {
 				$this->appendLine('from .' .
-					ucfirst($dependencyNode->getAttribute("pluginName")) . 
+					ucfirst($dependencyNode->getAttribute("pluginName")) .
 					' import *');
+				$this->appendStubLine('from .' .
+					ucfirst($dependencyNode->getAttribute("pluginName")) .
+					' import *');
+			}
 		}
 		$this->appendLine('from ..Base import (');
 		$this->appendLine('    getXmlNodeBool,');
@@ -85,12 +99,16 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine(')');
 		$this->appendLine('');
 
+		$this->appendStubLine("from KalturaClient.Base import KalturaObjectBase, KalturaServiceBase");
+
 		if ($pluginName == '')
 		{
 			$apiVersion = $this->_doc->documentElement->getAttribute('apiVersion');
 			$this->appendLine("API_VERSION = '$apiVersion'");
 			$this->appendLine('');
 		}
+
+		$this->appendStubLine();
 		
 		$this->appendLine('########## enums ##########');
 		$enums = array();
@@ -117,13 +135,12 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			
 			if($classNode->hasAttribute('plugin') && $pluginName == '')
 				continue;
-				
+
 			$this->writeClass($classNode);
 			$classes[] = $type;
 		}
 	
 		$this->appendLine('########## services ##########');
-
 		$services = array();
 		foreach($serviceNodes as $serviceNode)
 		{
@@ -183,8 +200,67 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine('');
 		
     	$this->addFile($outputFileName, $this->getTextBlock());
+
+		// Write the proxy class that holds the plugin services
+		if ($pluginName) {
+			$pluginProxyClassName = "{$pluginClassName}ServicesProxy";
+			$this->appendStubLine("class $pluginProxyClassName:");
+			foreach($services as $service) {
+				$serviceName = ucfirst($service);
+				$this->appendStubLine("    $service: Kaltura{$serviceName}Service");
+			}
+			$importPath = "KalturaClient.Plugins." . ucfirst($pluginName);
+			$this->_clientStubProperties[] = new PythonClientStubFileProperty($pluginName, $pluginProxyClassName, $importPath);
+		}
+		$this->addStubFile($stubFileName);
 	}
-	
+
+	function writeMainClientStub(): void {
+		# Write stub pyi for main KalturaClass class
+		$mainStubFileName = "KalturaClient/Client.pyi";
+		$this->appendStubLine("from typing import List");
+		$this->appendStubLine("from KalturaClient import KalturaConfiguration");
+		$this->appendStubLine("from KalturaClient.Plugins.Core import KalturaObject");
+		$imports = [];
+		foreach ($this->_clientStubProperties as $serviceInfo) {
+			/** @var PythonClientStubFileProperty $serviceInfo */
+			$imports[$serviceInfo->class] = "from $serviceInfo->importPath import $serviceInfo->class";
+		}
+		foreach ($imports as $import) {
+			$this->appendStubLine($import);
+		}
+		$this->appendStubLine();
+		$this->appendStubLine('class MultiRequestSubResult(object):');
+		$this->appendStubLine('    def __init__(self, value): ...');
+		$this->appendStubLine('    def __getattr__(self, name) -> MultiRequestSubResult: ...');
+		$this->appendStubLine('    def __getitem__(self, key) -> MultiRequestSubResult: ...');
+		$this->appendStubLine();
+		$this->appendStubLine('class KalturaClient:');
+		$this->appendStubLine('    def __init__(self, config: KalturaConfiguration, remove_data_content: bool = False): ...');
+		$this->appendStubLine('    def getKs(self) -> str: ...');
+		$this->appendStubLine('    def setKs(self, ks: str): ...');
+		$this->appendStubLine('    def getLanguage(self) -> str: ...');
+		$this->appendStubLine('    def setLanguage(self, language: str): ...');
+		$this->appendStubLine('    def getPartnerId(self) -> int: ...');
+		$this->appendStubLine('    def setPartnerId(self, partner_id: int): ...');
+		$this->appendStubLine('    def getClientTag(self) -> str: ...');
+		$this->appendStubLine('    def setClientTag(self, client_tag: str): ...');
+		$this->appendStubLine('    def getApiVersion(self) -> str: ...');
+		$this->appendStubLine('    def setApiVersion(self, api_version: str): ...');
+		$this->appendStubLine('    def getConfig(self) -> KalturaConfiguration: ...');
+		$this->appendStubLine('    def setConfig(self, config: KalturaConfiguration): ...');
+		$this->appendStubLine('    def startMultiRequest(self): ...');
+		$this->appendStubLine('    def doMultiRequest(self) -> List[KalturaObject]: ...');
+
+
+		$this->appendStubLine();
+		foreach ($this->_clientStubProperties as $serviceInfo) {
+			/** @var PythonClientStubFileProperty $serviceInfo */
+			$this->appendStubLine("    $serviceInfo->name: $serviceInfo->class");
+		}
+		$this->addStubFile($mainStubFileName);
+	}
+
 	function writeEnum(DOMElement $enumNode)
 	{
 		$enumName = $enumNode->getAttribute("name");
@@ -197,6 +273,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		}
 		
 	 	$this->appendLine("class $enumName($enumBase):");
+		$this->appendStubLine("class $enumName($enumBase):");
 	 	foreach($enumNode->childNodes as $constNode)
 		{
 			if ($constNode->nodeType != XML_ELEMENT_NODE)
@@ -204,11 +281,16 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				
 			$propertyName = $constNode->getAttribute("name");
 			$propertyValue = $constNode->getAttribute("value");
-			if ($enumNode->getAttribute("enumType") == "string")
+			if ($enumNode->getAttribute("enumType") == "string") {
 				$this->appendLine("    $propertyName = \"$propertyValue\"");
-			else
+				$this->appendStubLine("    $propertyName = \"$propertyValue\"");
+			}
+			else {
 				$this->appendLine("    $propertyName = $propertyValue");
-		}		
+				$this->appendStubLine("    $propertyName = $propertyValue");
+			}
+		}
+		$this->appendStubLine();
 		$this->appendLine();
 		$this->appendLine("    def __init__(self, value):");
 		$this->appendLine("        self.value = value");
@@ -216,8 +298,14 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("    def getValue(self):");
 		$this->appendLine("        return self.value");
 		$this->appendLine();
+
+		$enumPythonPrimitiveType = $enumNode->getAttribute("enumType") == "string" ? "str" : "int";
+		$this->appendStubLine("    def __init__(self, value: $enumPythonPrimitiveType): ...");
+		$this->appendStubLine();
+		$this->appendStubLine("    def getValue(self) -> $enumPythonPrimitiveType: ...");
+		$this->appendStubLine();
 	}
-	
+
 	static function buildMultilineComment($description, $indent = "")
 	{
 		$description = trim($description);
@@ -266,10 +354,14 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		}
 		
 		// class definition
-		if ($classNode->hasAttribute("base"))
+		if ($classNode->hasAttribute("base")) {
 			$this->appendLine("class $type(" . $classNode->getAttribute("base") . "):");
-		else
+			$this->appendStubLine("class $type(" . $classNode->getAttribute("base") . "):");
+		}
+		else {
 			$this->appendLine("class $type(KalturaObjectBase):");
+			$this->appendStubLine("class $type(KalturaObjectBase):");
+		}
 			
 		$description = $this->buildMultilineString($classNode->getAttribute("description"), "    ");
 		if ($description)
@@ -282,6 +374,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		
 		// close class
 		$this->appendLine();
+		$this->appendStubLine();
 	}
 	
 	function getParentClassNode(DOMElement $classNode)
@@ -340,6 +433,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine("        $base.__init__($baseInitParams)");
 		$this->appendLine();
 		// class properties
+		$noProps = true;
 		foreach($classNode->childNodes as $propertyNode)
 		{
 			if ($propertyNode->nodeType != XML_ELEMENT_NODE)
@@ -349,20 +443,19 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			$isReadOnly = $propertyNode->getAttribute("readOnly") == 1;
 			$isInsertOnly = $propertyNode->getAttribute("insertOnly") == 1;
 			$isEnum = $propertyNode->hasAttribute("enumType");
+			$arrayType = $propertyNode->getAttribute("arrayType");
 			if ($isEnum)
 				$propType = $propertyNode->getAttribute("enumType");
 			else
 				$propType = $propertyNode->getAttribute("type");
 			
-			$propType = $this->getPythonType($propType); 
+			$propType = $this->getPythonType($propType, $arrayType);
 			$description = self::buildMultilineComment($propertyNode->getAttribute("description"), "        ");
 			if ($description)
 				$this->appendLine($description);
 			
-			if ($propType == "array")
-				$this->appendLine("        # @var $propType of {$propertyNode->getAttribute("arrayType")}");
-			else
-				$this->appendLine("        # @var $propType");
+			$this->appendLine("        # @var $propType");
+			$this->appendStubLine("    $propName: $propType");
 			if ($isReadOnly )
 				$this->appendLine("        # @readonly");
 			if ($isInsertOnly)
@@ -370,6 +463,12 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			
 			$this->appendLine("        self.$propName = $propName");
 			$this->appendLine("");
+			$noProps = false;
+		}
+		if ($noProps) {
+			$this->appendStubLine("    pass");
+		} else {
+			$this->appendStubLine();
 		}
 		$this->appendLine();
 	}
@@ -385,16 +484,31 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			$propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
 			$ucPropName = ucfirst($propName);
 			$isReadOnly = $propertyNode->getAttribute("readOnly") == 1;
+			$isEnum = $propertyNode->hasAttribute("enumType");
+			$arrayType = $propertyNode->getAttribute("arrayType");
+
+			if ($isEnum) {
+				$propType = $propertyNode->getAttribute("enumType");
+			}
+			else {
+				$propType = $propertyNode->getAttribute("type");
+			}
+
+			$pythonType = $this->getPythonType($propType, $arrayType);
 			
 			$this->appendLine("    def get$ucPropName(self):");
 			$this->appendLine("        return self.$propName");
 			$this->appendLine("");
+
+			$this->appendStubLine("    def get$ucPropName(self) -> $pythonType: ...");
 			
 			if (!$isReadOnly)
 			{
 				$this->appendLine("    def set$ucPropName(self, new$ucPropName):");
 				$this->appendLine("        self.$propName = new$ucPropName");
 				$this->appendLine("");
+
+				$this->appendStubLine("    def set$ucPropName(self, new$ucPropName: $pythonType) -> None: ...");
 			}
 		}
 	}
@@ -566,6 +680,11 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		
 		$serviceClassName = "Kaltura".$this->upperCaseFirstLetter($serviceName)."Service";
 		$this->appendLine();
+
+		if (!$serviceNode->hasAttribute("plugin")) {
+			$importPath = "KalturaClient.Plugins.Core";
+			$this->_clientStubProperties[] = new PythonClientStubFileProperty($serviceName, $serviceClassName, $importPath);
+		}
 		
 		if($this->generateDocs)
 		{
@@ -574,6 +693,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		}
 		
 		$this->appendLine("class $serviceClassName(KalturaServiceBase):");
+		$this->appendStubLine("class $serviceClassName(KalturaServiceBase):");
 		
 		$description = $this->buildMultilineString($serviceNode->getAttribute("description"), "    ");
 		if ($description)
@@ -591,6 +711,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		    $this->writeAction($serviceId, $serviceName, $actionNode);
 		}
 		$this->appendLine("");
+		$this->appendStubLine();
 	}
 	
 	function writeAction($serviceId, $serviceName, DOMElement $actionNode)
@@ -605,13 +726,16 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		
 		// method signature
 		$signature = "def ".$action."(";
-		
 		$paramNodes = $actionNode->getElementsByTagName("param");
 		$signature .= $this->getSignature($paramNodes);
 		$signature .= "):";
-		
+
+		$pythonOutputType = $this->getPythonType($resultType, $arrayObjectType);
+		$typedSignature = sprintf("def %s(%s) -> %s: ...", $action, $this->getSignature($paramNodes, true), $pythonOutputType);
+
 		$this->appendLine();	
 		$this->appendLine("    $signature");
+		$this->appendStubLine("    $typedSignature");
 		
 		$description = $this->buildMultilineString($actionNode->getAttribute("description"), "        ");
 		if ($description)
@@ -717,7 +841,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 	    }
 	}
 	
-	function getSignature($paramNodes)
+	function getSignature($paramNodes, $includeType = false)
 	{
 		$signature = "self, ";
 		foreach($paramNodes as $paramNode)
@@ -726,8 +850,12 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			$paramType = $paramNode->getAttribute("type");
 			$defaultValue = $paramNode->getAttribute("default");
 						
-			$signature .= $paramName;			
-			
+			$signature .= $paramName;
+			if ($includeType) {
+				$pythonType = $this->getPythonType($paramType);
+				$signature .= ": $pythonType";
+			}
+
 			if ($paramNode->getAttribute("optional"))
 			{
 				if ($this->isSimpleType($paramType))
@@ -787,15 +915,38 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		parent::addFile($fileName, $fileContents, $addLicense);
 	}
 	
-	public function getPythonType($propType)
+	public function getPythonType($propType, $arrayType = null)
 	{		
 		switch ($propType) 
 		{	
 			case "bigint" :
 				return "int";
-				
+
+			case "string":
+				return "str";
+
+			case "file":
+				return "IO[Any]";
+
+			case "array":
+				return "List[" . $this->getPythonType($arrayType) . "]";
+
+			case "":
+				return "None";
+
 			default :
 				return $propType;
 		}
+	}
+
+	public function appendStubLine($line = ""): void
+	{
+		$this->_stubLines[] = $line;
+	}
+
+	public function addStubFile($filename): void
+	{
+		$this->addFile($filename, implode("\n", $this->_stubLines));
+		$this->_stubLines = [];
 	}
 }
