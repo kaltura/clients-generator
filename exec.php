@@ -94,6 +94,9 @@ require_once(__DIR__ . '/lib/NestJsClientGenerator.php');
 require_once(__DIR__ . '/lib/NodeTypescriptClientGenerator.php');
 require_once(__DIR__ . '/lib/RxJSClientGenerator.php');
 
+// python files
+require_once(__DIR__ . '/lib/python/PythonClientStubFileProperty.php');
+
 //the name of the summary file that will be used by the UI -
 $summaryFileName = 'summary.kinf';
 $tmpXmlFileName = tempnam(sys_get_temp_dir(), 'kaltura.generator.');
