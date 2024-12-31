@@ -390,7 +390,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		return $parentClass->item(0);
 	}
 	
-	function getCtorArguments(DOMElement $classNode = null, $delimiter = ", ", $argumentPostfix = "")
+	function getCtorArguments(DOMElement $classNode = null, $delimiter = ", ", $argumentPostfix = "", $includeType = false)
 	{
 		if (!$classNode)
 		{
@@ -400,7 +400,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$parentNode = $this->getParentClassNode($classNode);
 		if ($parentNode)
 		{
-			$result = $this->getCtorArguments($parentNode, $delimiter, $argumentPostfix);
+			$result = $this->getCtorArguments($parentNode, $delimiter, $argumentPostfix, $includeType);
 		}
 		else
 		{
@@ -413,8 +413,13 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 				continue;
 			
 			$propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
+			$pythonType = '';
+			if ($includeType) {
+				$pythonType = ': ' . $this->getPythonTypeForProperty($propertyNode);
+			}
+
 			
-			$result .= $delimiter.$propName.$argumentPostfix;
+			$result .= $delimiter.$propName.$pythonType.$argumentPostfix;
 		}
 		return $result;
 	}
@@ -426,12 +431,13 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		else
 			$base = "KalturaObjectBase";
 
-		$initParams = $this->getCtorArguments($classNode, ",\n            ", "=NotImplemented");
+		$initParams = $this->getCtorArguments($classNode, ",\n            ", " = NotImplemented");
 		$baseInitParams = $this->getCtorArguments($this->getParentClassNode($classNode), ",\n            ");
 			
 		$this->appendLine("    def __init__($initParams):");
 		$this->appendLine("        $base.__init__($baseInitParams)");
 		$this->appendLine();
+
 		// class properties
 		$noProps = true;
 		foreach($classNode->childNodes as $propertyNode)
@@ -465,11 +471,15 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			$this->appendLine("");
 			$noProps = false;
 		}
+
+		$initParamsTypes = $this->getCtorArguments($classNode, ",\n            ", " = NotImplemented", true);
+		$this->appendStubLine("    def __init__($initParamsTypes): ...");
 		if ($noProps) {
-			$this->appendStubLine("    pass");
+			$this->appendStubLine("        pass");
 		} else {
 			$this->appendStubLine();
 		}
+
 		$this->appendLine();
 	}
 
@@ -484,17 +494,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 			$propName = $this->replaceReservedWords($propertyNode->getAttribute("name"));
 			$ucPropName = ucfirst($propName);
 			$isReadOnly = $propertyNode->getAttribute("readOnly") == 1;
-			$isEnum = $propertyNode->hasAttribute("enumType");
-			$arrayType = $propertyNode->getAttribute("arrayType");
-
-			if ($isEnum) {
-				$propType = $propertyNode->getAttribute("enumType");
-			}
-			else {
-				$propType = $propertyNode->getAttribute("type");
-			}
-
-			$pythonType = $this->getPythonType($propType, $arrayType);
+			$pythonType = $this->getPythonTypeForProperty($propertyNode);
 			
 			$this->appendLine("    def get$ucPropName(self):");
 			$this->appendLine("        return self.$propName");
@@ -914,8 +914,22 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		$fileContents = preg_replace($patterns, $replacements, $fileContents);
 		parent::addFile($fileName, $fileContents, $addLicense);
 	}
-	
-	public function getPythonType($propType, $arrayType = null)
+
+	public function getPythonTypeForProperty(DOMElement $propertyNode): string
+	{
+		$isEnum = $propertyNode->hasAttribute("enumType");
+		$arrayType = $propertyNode->getAttribute("arrayType");
+
+		if ($isEnum) {
+			$propType = $propertyNode->getAttribute("enumType");
+		} else {
+			$propType = $propertyNode->getAttribute("type");
+		}
+
+		return $this->getPythonType($propType, $arrayType);
+	}
+
+	public function getPythonType($propType, $arrayType = null): string
 	{		
 		switch ($propType) 
 		{	
