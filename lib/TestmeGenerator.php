@@ -425,7 +425,13 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		$this->appendLine('					var data = doc.getElementsByTagName("pre")[0];');
 		$this->appendLine('					text = data.innerHTML;');
 		$this->appendLine('				}');
-		$this->appendLine('			} else {');
+		$this->appendLine('			}');
+		$this->appendLine('			else if (format == "iCal" && typeof doc.body != "undefined" && typeof doc.body.innerText != "undefined")');
+		$this->appendLine('			{');
+		$this->appendLine('				format = "ical";');
+		$this->appendLine('				text = doc.body.innerText;');
+		$this->appendLine('			}');
+		$this->appendLine('			else {');
 		$this->appendLine('				text = doc;');
 		$this->appendLine('				format = "txt";');
 		$this->appendLine('			}');
@@ -450,7 +456,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		{
 			$this->appendLine('<body>');
 		}
-		
+
 		$this->appendLine('	<div class="left">');
 		$this->appendLine('		<form id="request" action="' . $this->formAction . '" method="post" target="hiddenResponse" enctype="multipart/form-data">');
 		$this->appendLine('			<div class="left-content">');
@@ -466,6 +472,7 @@ class TestmeGenerator extends ClientGeneratorFromXml
 		$this->appendLine('					<select name="format" id="format">');
 		$this->appendLine('						<option value="2">XML</option>');
 		$this->appendLine('						<option value="1">JSON</option>');
+		$this->appendLine('						<option value="ical">iCal</option>');
 		$this->appendLine('					</select>');
 		$this->appendLine('				</div>');
 		
