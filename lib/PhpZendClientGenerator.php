@@ -545,8 +545,10 @@ class PhpZendClientGenerator extends ClientGeneratorFromXml
 			$description = str_replace("\n", "\n	 * ", $propDescription); // to format multiline descriptions
 			$this->appendLine("	 * " . $description);
 			$this->appendLine("	 *");
-			if ($propType == "array")
-				$this->appendLine("	 * @var $propType of {$propertyNode->getAttribute("arrayType")}");
+			if ($propType == "array") {
+				$className = $this->getTypeClass($propertyNode->getAttribute("arrayType"));
+				$this->appendLine("	 * @var {$className}[]");
+			}
 			else
 				$this->appendLine("	 * @var $propType");
 			if ($isReadyOnly )
