@@ -1,5 +1,5 @@
 {
-  "name": "kaltura-node-typescript-client",
+  "name": "@kaltura/node-typescript-client",
   "private": true,
   "version": "@VERSION@",
   "description": "Kaltura Node Typescript client",
