@@ -23,7 +23,7 @@
 
 	function session_start(){
 		var config = new KalturaConfiguration(document.getElementById("partnerId").value);
-		config.serviceUrl = "http://www.kaltura.com";
+		config.serviceUrl = "https://www.kaltura.com";
 		
 		client = new KalturaClient(config);
 		

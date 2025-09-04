@@ -88,7 +88,7 @@ public class Configuration implements Serializable, ConnectionConfiguration {
 		params.put(MaxRetry, 3);
 		params.put(AcceptGzipEncoding, false);
 		params.put(IgnoreSslDomainVerification, false);
-		params.put(EndPoint, "http://www.kaltura.com/");
+		params.put(EndPoint, "https://www.kaltura.com/");
 	}
 
 

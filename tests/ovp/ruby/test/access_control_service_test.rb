@@ -53,7 +53,7 @@ class AccessControlServiceTest < Test::Unit::TestCase
 		country_rule.conditions << country_condition
 
 		site = Kaltura::KalturaStringValue.new
-		site.value = 'http://www.kaltura.com'
+		site.value = 'https://www.kaltura.com'
 		
 		site_condition = Kaltura::KalturaSiteCondition.new
 		site_condition.values = []

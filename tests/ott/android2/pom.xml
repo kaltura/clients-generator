@@ -51,19 +51,19 @@
             <name>Jess Portnoy</name>
             <email>jess.portnoy@kaltura.com</email>
             <organization>Kaltura</organization>
-            <organizationUrl>http://www.kaltura.com</organizationUrl>
+            <organizationUrl>https://www.kaltura.com</organizationUrl>
         </developer>
         <developer>
             <name>Tehila Rozin</name>
             <email>Tehila.Rozin@kaltura.com</email>
             <organization>Kaltura</organization>
-            <organizationUrl>http://www.kaltura.com</organizationUrl>
+            <organizationUrl>https://www.kaltura.com</organizationUrl>
         </developer>
         <developer>
             <name>Johnathan Amit-Kanarek</name>
             <email>Jonathan.Kanarek@kaltura.com</email>
             <organization>Kaltura</organization>
-            <organizationUrl>http://www.kaltura.com</organizationUrl>
+            <organizationUrl>https://www.kaltura.com</organizationUrl>
         </developer>
     </developers>
 

@@ -14,7 +14,7 @@ class NodeClientGenerator extends ClientGeneratorFromXml
 	/**
 	 * Constructor.
 	 * @param string $xmlPath path to schema xml.
-	 * @link http://www.kaltura.com/api_v3/api_schema.php
+	 * @link https://www.kaltura.com/api_v3/api_schema.php
 	 */
 	function __construct($xmlPath, Zend_Config $config, $sourcePath = "node")
 	{
