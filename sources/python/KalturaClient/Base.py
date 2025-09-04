@@ -309,7 +309,7 @@ class KalturaServiceBase(object):
 # Client configuration class
 class KalturaConfiguration(object):
     # Constructs new Kaltura configuration object
-    def __init__(self, serviceUrl="http://www.kaltura.com", logger=None):
+    def __init__(self, serviceUrl="https://www.kaltura.com", logger=None):
         self.logger = logger
         self.serviceUrl = serviceUrl
         self.format = KALTURA_SERVICE_FORMAT_XML

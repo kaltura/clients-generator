@@ -69,7 +69,7 @@ Notice! Your application bundle the whole package of kaltura-xxx-client (either 
 - Modify the file content to include valid information.
 - Run `npm run test` to test the library
 
-> If you want to test the library against the production server use the following as the endpoint in the config file: http://www.kaltura.com/api_v3/index.php/
+> If you want to test the library against the production server use the following as the endpoint in the config file: https://www.kaltura.com/api_v3/index.php/
 
 
 ## License and Copyright Information

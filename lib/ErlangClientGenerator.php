@@ -36,7 +36,7 @@ class ErlangClientGenerator extends ClientGeneratorFromXml
 		$this->appendLine();
 		
 		$this->appendLine('-record(kaltura_configuration, {');
-		$this->appendLine('	url = "http://www.kaltura.com/api_v3" :: string(),');
+		$this->appendLine('	url = "https://www.kaltura.com/api_v3" :: string(),');
 		$this->appendLine('	client_options = [{verbose, false}] :: httpc:options(),');
 		$this->appendLine('	request_options = [{timeout, 90000}] :: httpc:http_options()');
 		$this->appendLine('}).');
