@@ -38,7 +38,7 @@ public class Settings extends TemplateActivity {
         etPassword = (EditText) findViewById(R.id.et_login_password);
         etEmail.setText("user@email.com");
         etPassword.setText("password");
-        ApiHelper.setHost("http://www.kaltura.com/");
+        ApiHelper.setHost("https://www.kaltura.com/");
         ApiHelper.setCdnHost("http://cdnbakmi.kaltura.com/");
     }
 

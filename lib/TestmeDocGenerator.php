@@ -708,7 +708,7 @@ class TestmeDocGenerator extends ClientGeneratorFromXml
 		$this->appendLine('				<td colspan="5" class="title">Example HTTP Hit</td>');
 		$this->appendLine('			</tr>');
 		$this->appendLine('			<tr>');
-		$this->appendLine("				<td colspan=\"5\">http://www.kaltura.com/api_v3/service/$serviceId/action/$actionId<br />");
+		$this->appendLine("				<td colspan=\"5\">https://www.kaltura.com/api_v3/service/$serviceId/action/$actionId<br />");
 		$this->appendLine('				<strong>JSON object:</strong>');
 		$this->appendLine('				<pre>');
 		$this->appendLine('				<div class="post_fields">');

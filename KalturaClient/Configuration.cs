@@ -35,7 +35,7 @@ namespace Kaltura
     {
         #region Private Fields
 
-        private string _ServiceUrl = "http://www.kaltura.com/";
+        private string _ServiceUrl = "https://www.kaltura.com/";
         private EServiceFormat _ServiceFormat = EServiceFormat.RESPONSE_TYPE_XML;
         private ILogger _Logger;
         private int _Timeout = 120000;

@@ -398,7 +398,7 @@ namespace Kaltura
                 Console.WriteLine("4. iPad Flavor URL is: " + iPadFlavorUrl);
 
                 //Alternatively, download URL for a given flavor id can also be retrived by creating the playManifest URL -
-                string playManifestURL = "http://www.kaltura.com/p/{partnerId}/sp/0/playManifest/entryId/{entryId}/format/url/flavorParamId/{flavorParamId}/ks/{ks}/{fileName}.mp4";
+                string playManifestURL = "https://www.kaltura.com/p/{partnerId}/sp/0/playManifest/entryId/{entryId}/format/url/flavorParamId/{flavorParamId}/ks/{ks}/{fileName}.mp4";
                 playManifestURL = playManifestURL.Replace("{partnerId}", PARTNER_ID.ToString());
                 playManifestURL = playManifestURL.Replace("{entryId}", mediaEntry.Id);
                 playManifestURL = playManifestURL.Replace("{flavorParamId}", iPadFlavor.FlavorParamsId.ToString());

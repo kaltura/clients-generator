@@ -7,7 +7,7 @@ The code in this repo is used to auto generate the Kaltura client libraries for 
 ## Deployment Instructions
 The list of supported clients is [here](config/generator.all.ini)
 
-Download the API scheme XML from http://www.kaltura.com/api_v3/api_schema.php.
+Download the API scheme XML from https://www.kaltura.com/api_v3/api_schema.php.
 
 To generate one client run:
 ```

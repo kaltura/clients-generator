@@ -10,7 +10,7 @@ git clone https://github.com/kaltura/clients-generator
 
 2. Download latest published version of `KalturaClient.xml`.
 ```bash
-$ curl -O http://www.kaltura.com/api_v3/api_schema.php > KalturaClient.xml
+$ curl -O https://www.kaltura.com/api_v3/api_schema.php > KalturaClient.xml
 ```
 
 3. change source codes:

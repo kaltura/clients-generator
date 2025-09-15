@@ -34,7 +34,7 @@ class Kaltura_Client_Configuration
 {
 	private $logger;
 
-	public $serviceUrl    				= "http://www.kaltura.com/";
+	public $serviceUrl    				= "https://www.kaltura.com/";
 	public $format        				= Kaltura_Client_ClientBase::KALTURA_SERVICE_FORMAT_XML;
 	public $curlTimeout   				= 120;
 	public $startZendDebuggerSession 	= false;

@@ -8,7 +8,7 @@ const entryName = 'test';
 const entryDescription = 'test';
 
 let config = new kaltura.Configuration();
-config.serviceUrl = "http://www.kaltura.com";
+config.serviceUrl = "https://www.kaltura.com";
 
 const client = new kaltura.Client(config);
 
