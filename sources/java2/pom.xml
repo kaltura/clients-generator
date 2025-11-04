@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- -->
+<!-- Maven POM file for packaging and testing the -->
+<!-- KalturaApiClient Java library. -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -40,7 +44,6 @@
         </snapshotRepository>
         <repository>
             <id>central</id>
-            <!-- NEW staging API endpoint -->
             <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
