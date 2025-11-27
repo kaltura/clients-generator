@@ -11,6 +11,8 @@
     "*.md"
   ],
   "scripts": {
+    "security": "npx --yes --prefer-online --registry=https://npm.pkg.github.com --package @kaltura/kaltura-tools@latest kaltura-tools check --root=.",
+    "preinstall": "npm run security",
     "start:dev": "../node_modules/.bin/tsc -w",
     "build": "gulp build",
     "build:prod": "gulp build --production",

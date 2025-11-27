@@ -4,6 +4,8 @@
   "description": "Kaltura NodeJS client library (new implementation)",
   "main": "KalturaClient.js",
   "scripts": {
+    "security": "npx --yes --prefer-online --registry=https://npm.pkg.github.com --package @kaltura/kaltura-tools@latest kaltura-tools check --root=.",
+    "preinstall": "npm run security",
     "test": "./node_modules/.bin/mocha --timeout 60000"
   },
   "engines": {

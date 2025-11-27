@@ -3,6 +3,8 @@
     "version": "1.2.0",
     "description": "Ace (Ajax.org Cloud9 Editor)",
     "scripts": {
+        "security": "npx --yes --prefer-online --registry=https://npm.pkg.github.com --package @kaltura/kaltura-tools@latest kaltura-tools check --root=.",
+        "preinstall": "npm run security",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {

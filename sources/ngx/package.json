@@ -19,6 +19,8 @@
     }
   ],
   "scripts": {
+    "security": "npx --yes --prefer-online --registry=https://npm.pkg.github.com --package @kaltura/kaltura-tools@latest kaltura-tools check --root=.",
+    "preinstall": "npm run security",
     "build": "ng build && node ./scripts/update-dist-package-json.js",
     "lint": "tslint src/**/*.ts",
     "deploy": "rm -rf dist && npm run build && cd dist/kaltura-ngx-client && npm pack && npm link",

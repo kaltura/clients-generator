@@ -32,7 +32,8 @@ You can use `npm link` to test the library locally.
 
 1. link the library to global npm
 ```
-npm install
+npm run security
+npm ci
 npm run build
 cd dist
 npm link

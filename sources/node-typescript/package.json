@@ -26,6 +26,8 @@
     }
   ],
   "scripts": {
+    "security": "npx --yes --prefer-online --registry=https://npm.pkg.github.com --package @kaltura/kaltura-tools@latest kaltura-tools check --root=.",
+    "preinstall": "npm run security",
     "build": "gulp build",
     "build:prod": "gulp build --production",
     "lint": "tslint src/**/*.ts -e src/tests/**/*.ts",

@@ -24,7 +24,8 @@ View list of features [here](features.md).
 Since this library was designed to be consumed directly and not using npmjs repository, you will need to do the following steps to add it to your project:
 1. run the following to transpile the library:
 ```bash
-$ npm install
+$ npm run security
+$ npm ci
 $ npm run deploy
 ```
 2. open folder `dist` and find a `tar.gz` file starting with `kaltura-ngx-client-v`.
