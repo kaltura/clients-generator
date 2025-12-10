@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"emitDecoratorMetadata": true,
+		"declarationMap": true,
+    "emitDeclarationOnly": false,
+		"module": "commonjs",
+		"target": "es5",
+	}
+}
