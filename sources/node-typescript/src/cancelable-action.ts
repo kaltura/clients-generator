@@ -1,5 +1,5 @@
 export type CancelFn = () => void;
-export type ResolveFn<T> = (value: T | null) => any | void;
+export type ResolveFn<T> = (value: T) => any | void;
 export type RejectFn = (reason: Error) => any | void;
 
 export class CancelableAction<T>
