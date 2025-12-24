@@ -339,7 +339,7 @@ class RequestBuilder extends kaltura.VolatileRequestData {
 					sessionId = response.headers[header];
 				}
 			}
-			client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + response.data);
+			client.debug('Response server [' + serverId + '] session [' + sessionId + ']: ' + JSON.stringify(response.data));
 
 			let json;
 			try {
@@ -593,3 +593,4 @@ module.exports = {
 	MultiRequestBuilder: MultiRequestBuilder,
 	BaseObject: BaseObject
 };
+
