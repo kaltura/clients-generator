@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaltura NGX Client Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .config-section, .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .success {
+            background: #28a745;
+        }
+        .success:hover {
+            background: #218838;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .note {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ffeaa7;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Kaltura NGX Client Test Page</h1>
+
+        <div class="note">
+            <strong>Note:</strong> This page makes actual API calls to test the Kaltura API.
+            You can use your local Kaltura server (http://localhost/api_v3) or a remote Kaltura instance.
+            <br><br>
+            <strong>Steps:</strong>
+            <ol style="margin: 10px 0 0 20px;">
+                <li>Fill in the configuration fields below</li>
+                <li>Click "Save Configuration" button</li>
+                <li>Then click "Initialize Client & Test Connection"</li>
+                <li>Open browser DevTools (F12) to see Network requests</li>
+            </ol>
+        </div>
+
+        <div class="config-section">
+            <h2>Step 1: Configuration</h2>
+            <label for="serviceUrl">Service URL:</label>
+            <input type="text" id="serviceUrl" value="http://localhost/api_v3" placeholder="http://localhost/api_v3">
+
+            <label for="partnerId">Partner ID:</label>
+            <input type="number" id="partnerId" placeholder="Enter your partner ID">
+
+            <label for="adminSecret">Admin Secret:</label>
+            <input type="password" id="adminSecret" placeholder="Enter your admin secret">
+
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" value="testuser@example.com" placeholder="User ID">
+
+            <label for="clientTag">Client Tag:</label>
+            <input type="text" id="clientTag" value="ngx-test-page" placeholder="Client tag for tracking">
+
+            <button onclick="saveConfig()" class="success">Save Configuration</button>
+        </div>
+
+        <div class="test-section">
+            <h2>Step 2: Test Operations</h2>
+            <div class="status info" id="status">
+                Not connected. Please save configuration first, then initialize the client.
+            </div>
+
+            <div class="test-buttons">
+                <button onclick="testConnection()" id="btnConnect">1. Initialize Client & Test Connection</button>
+                <button onclick="listMedia()" id="btnListMedia" disabled>2. List Media Entries</button>
+                <button onclick="getPartnerInfo()" id="btnPartnerInfo" disabled>3. Get Partner Info</button>
+                <button onclick="listCategories()" id="btnCategories" disabled>4. List Categories</button>
+                <button onclick="clearOutput()">Clear Output</button>
+            </div>
+        </div>
+
+        <div>
+            <h2>Output</h2>
+            <div id="output">Waiting for operations...</div>
+        </div>
+    </div>
+
+    <script>
+        // Since the NGX client is an Angular library and requires a build process,
+        // this page demonstrates the expected API structure and provides a placeholder
+        // for testing once the library is properly built and integrated.
+
+        let config = {};
+        let clientInitialized = false;
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            output.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function saveConfig() {
+            console.log('saveConfig() called');
+            config = {
+                serviceUrl: document.getElementById('serviceUrl').value,
+                partnerId: parseInt(document.getElementById('partnerId').value),
+                adminSecret: document.getElementById('adminSecret').value,
+                userId: document.getElementById('userId').value,
+                clientTag: document.getElementById('clientTag').value
+            };
+
+            console.log('Config:', config);
+
+            if (!config.partnerId || !config.adminSecret) {
+                updateStatus('Please fill in Partner ID and Admin Secret', 'error');
+                log('Configuration error: Missing required fields', 'error');
+                return;
+            }
+
+            log('Configuration saved successfully', 'success');
+            log(JSON.stringify({
+                serviceUrl: config.serviceUrl,
+                partnerId: config.partnerId,
+                userId: config.userId,
+                clientTag: config.clientTag
+            }, null, 2));
+
+            updateStatus('Configuration saved. Ready to initialize client.', 'success');
+        }
+
+        async function testConnection() {
+            console.log('testConnection() called');
+            console.log('Config state:', config);
+            alert('Button clicked! Check console for details.');
+
+            if (!config.partnerId || !config.adminSecret) {
+                console.log('Missing config');
+                alert('Missing config - partner ID: ' + config.partnerId + ', has secret: ' + !!config.adminSecret);
+                updateStatus('Please click "Save Configuration" first!', 'error');
+                log('Error: Client not configured. Please click "Save Configuration" button first.', 'error');
+                return;
+            }
+
+            log('Attempting to start Kaltura session...');
+            updateStatus('Connecting to Kaltura API...', 'info');
+
+            try {
+                log(`Service URL: ${config.serviceUrl}`);
+                log(`Partner ID: ${config.partnerId}`);
+                log(`Client Tag: ${config.clientTag}`);
+
+                // Make actual API call to start session
+                const formData = new URLSearchParams({
+                    format: '1', // JSON format
+                    clientTag: config.clientTag,
+                    apiVersion: '3.3.0',
+                    secret: config.adminSecret,
+                    userId: config.userId,
+                    type: '2', // Admin session
+                    partnerId: config.partnerId.toString(),
+                    expiry: '86400'
+                });
+
+                log('\n🔄 Making API call to session/start...');
+
+                const response = await fetch(config.serviceUrl.replace('/api_v3', '') + '/api_v3/service/session/action/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData.toString()
+                });
+
+                const data = await response.json();
+                log('\n📥 Response received:');
+                log(JSON.stringify(data, null, 2));
+
+                if (data.objectType && data.objectType.includes('Exception')) {
+                    throw new Error(data.message || 'API Error');
+                }
+
+                // Store the KS (session token)
+                config.ks = data;
+                clientInitialized = true;
+
+                updateStatus('✅ Session started successfully! KS: ' + data.substring(0, 30) + '...', 'success');
+                log('✅ Session started successfully!', 'success');
+                log('KS Token: ' + data.substring(0, 50) + '...');
+
+                // Enable test buttons
+                document.getElementById('btnListMedia').disabled = false;
+                document.getElementById('btnPartnerInfo').disabled = false;
+                document.getElementById('btnCategories').disabled = false;
+
+                log('\n📦 NGX Client Equivalent:');
+                log(`
+// This is equivalent to:
+client.request(new SessionStartAction({
+    secret: '${config.adminSecret.substring(0, 4)}...',
+    userId: '${config.userId}',
+    type: KalturaSessionType.admin,
+    partnerId: ${config.partnerId}
+})).subscribe(ks => {
+    console.log('Session started:', ks);
+    client.setDefaultRequestOptions({ ks });
+});
+                `);
+
+            } catch (error) {
+                updateStatus('❌ Connection failed: ' + error.message, 'error');
+                log('❌ Error during session start: ' + error.message, 'error');
+                log('Stack trace: ' + error.stack);
+            }
+        }
+
+        async function listMedia() {
+            if (!clientInitialized || !config.ks) {
+                log('Please initialize the client first', 'error');
+                return;
+            }
+
+            log('\n🎬 Listing Media Entries...');
+            updateStatus('Fetching media entries...', 'info');
+
+            try {
+                const formData = new URLSearchParams({
+                    format: '1',
+                    clientTag: config.clientTag,
+                    apiVersion: '3.3.0',
+                    ks: config.ks,
+                    'filter:objectType': 'KalturaMediaEntryFilter',
+                    'pager:objectType': 'KalturaFilterPager',
+                    'pager:pageSize': '10'
+                });
+
+                log('🔄 Making API call to media/list...');
+
+                const response = await fetch(config.serviceUrl.replace('/api_v3', '') + '/api_v3/service/media/action/list', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData.toString()
+                });
+
+                const data = await response.json();
+                log('\n📥 Response received:');
+                log(JSON.stringify(data, null, 2));
+
+                if (data.objectType && data.objectType.includes('Exception')) {
+                    throw new Error(data.message || 'API Error');
+                }
+
+                updateStatus(`✅ Found ${data.totalCount} media entries`, 'success');
+                log(`✅ Total entries: ${data.totalCount}`);
+
+                if (data.objects && data.objects.length > 0) {
+                    log('\n📋 Media Entries:');
+                    data.objects.forEach((entry, index) => {
+                        log(`  ${index + 1}. ${entry.name || 'Untitled'} (ID: ${entry.id})`);
+                        log(`     Type: ${entry.mediaType}, Status: ${entry.status}`);
+                    });
+                } else {
+                    log('  No media entries found');
+                }
+
+                log('\n📦 NGX Client Equivalent:');
+                log(`
+client.request(new MediaListAction({
+    filter: new KalturaMediaEntryFilter(),
+    pager: new KalturaFilterPager({ pageSize: 10 })
+})).subscribe(response => {
+    console.log('Total:', response.totalCount);
+    console.log('Entries:', response.objects);
+});
+                `);
+
+            } catch (error) {
+                updateStatus('❌ Failed to list media: ' + error.message, 'error');
+                log('❌ Error listing media: ' + error.message, 'error');
+            }
+        }
+
+        async function getPartnerInfo() {
+            if (!clientInitialized || !config.ks) {
+                log('Please initialize the client first', 'error');
+                return;
+            }
+
+            log('\n🏢 Getting Partner Information...');
+            updateStatus('Fetching partner info...', 'info');
+
+            try {
+                const formData = new URLSearchParams({
+                    format: '1',
+                    clientTag: config.clientTag,
+                    apiVersion: '3.3.0',
+                    ks: config.ks,
+                    id: config.partnerId.toString()
+                });
+
+                log('🔄 Making API call to partner/get...');
+
+                const response = await fetch(config.serviceUrl.replace('/api_v3', '') + '/api_v3/service/partner/action/get', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData.toString()
+                });
+
+                const data = await response.json();
+                log('\n📥 Response received:');
+                log(JSON.stringify(data, null, 2));
+
+                if (data.objectType && data.objectType.includes('Exception')) {
+                    throw new Error(data.message || 'API Error');
+                }
+
+                updateStatus(`✅ Partner info retrieved: ${data.name}`, 'success');
+                log('✅ Partner Information:');
+                log(`  Name: ${data.name}`);
+                log(`  ID: ${data.id}`);
+                log(`  Status: ${data.status}`);
+                log(`  Admin Email: ${data.adminEmail || 'N/A'}`);
+
+                log('\n📦 NGX Client Equivalent:');
+                log(`
+client.request(new PartnerGetAction({
+    id: ${config.partnerId}
+})).subscribe(partner => {
+    console.log('Partner:', partner.name);
+});
+                `);
+
+            } catch (error) {
+                updateStatus('❌ Failed to get partner info: ' + error.message, 'error');
+                log('❌ Error getting partner info: ' + error.message, 'error');
+            }
+        }
+
+        async function listCategories() {
+            if (!clientInitialized || !config.ks) {
+                log('Please initialize the client first', 'error');
+                return;
+            }
+
+            log('\n📁 Listing Categories...');
+            updateStatus('Fetching categories...', 'info');
+
+            try {
+                const formData = new URLSearchParams({
+                    format: '1',
+                    clientTag: config.clientTag,
+                    apiVersion: '3.3.0',
+                    ks: config.ks,
+                    'filter:objectType': 'KalturaCategoryFilter',
+                    'pager:objectType': 'KalturaFilterPager',
+                    'pager:pageSize': '10'
+                });
+
+                log('🔄 Making API call to category/list...');
+
+                const response = await fetch(config.serviceUrl.replace('/api_v3', '') + '/api_v3/service/category/action/list', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData.toString()
+                });
+
+                const data = await response.json();
+                log('\n📥 Response received:');
+                log(JSON.stringify(data, null, 2));
+
+                if (data.objectType && data.objectType.includes('Exception')) {
+                    throw new Error(data.message || 'API Error');
+                }
+
+                updateStatus(`✅ Found ${data.totalCount} categories`, 'success');
+                log(`✅ Total categories: ${data.totalCount}`);
+
+                if (data.objects && data.objects.length > 0) {
+                    log('\n📋 Categories:');
+                    data.objects.forEach((category, index) => {
+                        log(`  ${index + 1}. ${category.name} (ID: ${category.id})`);
+                        log(`     Full Name: ${category.fullName || 'N/A'}`);
+                    });
+                } else {
+                    log('  No categories found');
+                }
+
+                log('\n📦 NGX Client Equivalent:');
+                log(`
+client.request(new CategoryListAction({
+    filter: new KalturaCategoryFilter(),
+    pager: new KalturaFilterPager({ pageSize: 10 })
+})).subscribe(response => {
+    console.log('Total:', response.totalCount);
+    console.log('Categories:', response.objects);
+});
+                `);
+
+            } catch (error) {
+                updateStatus('❌ Failed to list categories: ' + error.message, 'error');
+                log('❌ Error listing categories: ' + error.message, 'error');
+            }
+        }
+
+        function clearOutput() {
+            document.getElementById('output').textContent = '';
+            log('Output cleared');
+        }
+
+        // Initial log
+        log('🎥 Kaltura NGX Client Test Page Loaded');
+        log('This page makes REAL API calls to test the Kaltura API.');
+        log('\n📋 Instructions:');
+        log('1. Configure your Kaltura credentials above');
+        log('2. Click "Initialize Client & Test Connection" to start a session');
+        log('3. Use the other buttons to test different API operations');
+        log('4. Check the Network tab in your browser DevTools to see the actual API calls');
+        log('\n💡 The output shows both the actual API responses and the equivalent NGX client code.\n');
+    </script>
+</body>
+</html>
