@@ -112,6 +112,46 @@ An example of a valid command will be: `npm install file:libs/kaltura-ngx-client
 npm run test
 ```
 
+## Test Page Application
+
+A test page application is included to demonstrate the ngxModern client capabilities. This application allows you to:
+- Connect to any Kaltura server using your KS (Kaltura Session)
+- List media entries, users, and categories
+- See API responses displayed in the UI
+
+### Running the Test App
+
+1. First, generate the client types:
+```bash
+php exec.php ngxModern /path/to/output
+cd /path/to/output/ngxModern
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Run the test application:
+```bash
+npm run serve:test-app
+```
+
+4. The browser will open automatically. Enter:
+   - **Server API URL**: Your Kaltura API endpoint (e.g., `https://www.kaltura.com/api_v3`)
+   - **Kaltura Session (KS)**: Your authentication token
+   - **Partner ID**: Your Kaltura partner ID
+
+5. Click "Fetch Data" to list entries, users, and categories from your Kaltura account.
+
+### Building the Test App for Production
+
+```bash
+npm run build:test-app
+```
+
+The built application will be in `dist/test-app/`.
+
 ## Running integration tests
 
 - In `projects/kaltura-ngx-client/src/tests` folder you should duplicate file `tests-config.template.ts` and name it `tests-config.ts`.

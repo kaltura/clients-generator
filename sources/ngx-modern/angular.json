@@ -25,6 +25,57 @@
           "defaultConfiguration": "production"
         }
       }
+    },
+    "test-app": {
+      "projectType": "application",
+      "root": "projects/test-app",
+      "sourceRoot": "projects/test-app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/test-app",
+            "index": "projects/test-app/src/index.html",
+            "browser": "projects/test-app/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "projects/test-app/tsconfig.app.json",
+            "assets": [],
+            "styles": ["projects/test-app/src/styles.css"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "test-app:build:production"
+            },
+            "development": {
+              "buildTarget": "test-app:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   },
   "cli": {
