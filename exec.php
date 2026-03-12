@@ -90,6 +90,7 @@ require_once(__DIR__ . '/lib/typescript/EnumsGenerator.php');
 require_once(__DIR__ . '/lib/typescript/IndexFilesGenerator.php');
 require_once(__DIR__ . '/lib/TypescriptClientGenerator.php');
 require_once(__DIR__ . '/lib/NGXClientGenerator.php');
+require_once(__DIR__ . '/lib/NGXModernClientGenerator.php');
 require_once(__DIR__ . '/lib/NestJsClientGenerator.php');
 require_once(__DIR__ . '/lib/NodeTypescriptClientGenerator.php');
 require_once(__DIR__ . '/lib/RxJSClientGenerator.php');

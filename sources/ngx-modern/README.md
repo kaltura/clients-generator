@@ -19,6 +19,40 @@ This is the modern version of the Kaltura NGX client library, updated to support
 - npm >= 9.0.0
 - Angular >= 19.2.19
 
+## Building New Client with exec.php
+
+### Generating the Modern Angular Client
+
+To generate the modern Angular 19+ client library using the PHP generator:
+
+```bash
+# Generate the modern ngx client (Angular 19+)
+php exec.php ngxModern [output_path]
+
+# Example: Generate to a specific directory
+php exec.php ngxModern /path/to/output
+
+# For the legacy Angular 6.x client, use:
+php exec.php ngx [output_path]
+```
+
+### Building From Generated Sources
+
+After generation, build the library:
+
+```bash
+cd [output_path]/ngx-modern
+
+# Install dependencies
+npm install
+
+# Build the library
+npm run build
+
+# Create a distributable package
+npm run deploy
+```
+
 ## Instructions
 
 ### Getting Started
@@ -68,7 +102,7 @@ npm install file:the_path_to_the_file_including_its_name.tgz
 ```
 > Make sure you prefix the path with `file:` as shown above.
 
-An example of a valid command will be: `npm install file:libs/kaltura-ngx-client-v13.0.0-20260312-1234.tgz`
+An example of a valid command will be: `npm install file:libs/kaltura-ngx-client-v14.0.0-20260312-1234.tgz`
 
 5. If you already have older version, delete that file. You should do this only after you installed the new version.
 
@@ -105,6 +139,7 @@ For important security information about this library, please see [SECURITY.md](
 | TypeScript | 2.7 | 5.5 |
 | Module system | ES2015 | ES2022 |
 | Build tooling | ng-packagr 3.x | ng-packagr 19.x |
+| Generator command | `php exec.php ngx` | `php exec.php ngxModern` |
 
 ## Migration from legacy ngx library
 
