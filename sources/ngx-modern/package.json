@@ -20,7 +20,7 @@
     }
   ],
   "scripts": {
-    "build": "ng build && node ./scripts/update-dist-package-json.js",
+    "build": "ng build kaltura-ngx-client && node ./scripts/update-dist-package-json.js",
     "build:test-app": "npm run build && ng build test-app",
     "serve:test-app": "npm run build && ng serve test-app --open",
     "lint": "ng lint",
