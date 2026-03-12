@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { KalturaClient } from 'kaltura-ngx-client';
-
-// Note: After running exec.php ngxModern, the following imports will be available:
-// import { MediaListAction, UserListAction, CategoryListAction } from 'kaltura-ngx-client';
-// import { KalturaMediaEntry, KalturaUser, KalturaCategory, KalturaMediaListResponse, KalturaUserListResponse, KalturaCategoryListResponse } from 'kaltura-ngx-client';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 interface ApiResult {
   entries?: any[];
@@ -304,7 +301,7 @@ export class AppComponent {
   loading = false;
   result: ApiResult | null = null;
 
-  constructor(private kalturaClient: KalturaClient) {}
+  constructor(private http: HttpClient) {}
 
   async fetchData(): Promise<void> {
     if (!this.serverUrl || !this.ks) {
@@ -316,46 +313,80 @@ export class AppComponent {
     this.result = null;
 
     try {
-      // Configure the Kaltura client with provided options
-      this.kalturaClient.setOptions({
-        endpointUrl: this.serverUrl,
-        clientTag: 'ngx-modern-test-app'
-      });
-
-      this.kalturaClient.setDefaultRequestOptions({
+      // Make API calls directly using HttpClient
+      const baseParams = {
+        format: 1, // JSON format
         ks: this.ks,
+        clientTag: 'ngx-modern-test-app',
         ...(this.partnerId ? { partnerId: this.partnerId } : {})
-      });
+      };
 
-      // Note: The actual API calls require generated types from exec.php
-      // This is a placeholder that demonstrates the pattern.
-      // After generation, use:
-      //
-      // const entriesResult = await firstValueFrom(
-      //   this.kalturaClient.request(new MediaListAction({}))
-      // );
-      //
-      // const usersResult = await firstValueFrom(
-      //   this.kalturaClient.request(new UserListAction({}))
-      // );
-      //
-      // const categoriesResult = await firstValueFrom(
-      //   this.kalturaClient.request(new CategoryListAction({}))
-      // );
+      // Fetch media entries
+      const entriesResponse = await firstValueFrom(
+        this.http.post<any>(`${this.serverUrl}/service/media/action/list`, {
+          ...baseParams
+        })
+      );
+
+      // Fetch users  
+      const usersResponse = await firstValueFrom(
+        this.http.post<any>(`${this.serverUrl}/service/user/action/list`, {
+          ...baseParams
+        })
+      );
+
+      // Fetch categories
+      const categoriesResponse = await firstValueFrom(
+        this.http.post<any>(`${this.serverUrl}/service/category/action/list`, {
+          ...baseParams
+        })
+      );
+
+      // Handle API responses - check for errors in each response
+      const entries = this.extractResults(entriesResponse);
+      const users = this.extractResults(usersResponse);
+      const categories = this.extractResults(categoriesResponse);
+
+      // Check for API errors
+      const errors: string[] = [];
+      if (entries.error) errors.push(`Entries: ${entries.error}`);
+      if (users.error) errors.push(`Users: ${users.error}`);
+      if (categories.error) errors.push(`Categories: ${categories.error}`);
 
       this.result = {
-        entries: [],
-        users: [],
-        categories: [],
-        error: 'API types not yet generated. Run "php exec.php ngxModern" first to generate the client types, then uncomment the API calls in this component.'
+        entries: entries.data || [],
+        users: users.data || [],
+        categories: categories.data || [],
+        ...(errors.length > 0 ? { error: errors.join('\n') } : {})
       };
 
     } catch (error: any) {
       this.result = {
-        error: error?.message || 'An error occurred while fetching data'
+        error: error?.message || error?.error?.message || 'An error occurred while fetching data'
       };
     } finally {
       this.loading = false;
     }
+  }
+
+  private extractResults(response: any): { data?: any[]; error?: string } {
+    // Check if response contains an error
+    if (response?.objectType === 'KalturaAPIException') {
+      return { error: response.message || response.code };
+    }
+    
+    // Handle nested result format
+    const result = response?.result || response;
+    
+    if (result?.objectType === 'KalturaAPIException') {
+      return { error: result.message || result.code };
+    }
+    
+    if (result?.error) {
+      return { error: result.error.message || result.error.code };
+    }
+
+    // Extract objects array from list response
+    return { data: result?.objects || [] };
   }
 }
