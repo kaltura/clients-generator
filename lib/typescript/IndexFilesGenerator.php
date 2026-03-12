@@ -15,7 +15,7 @@ class IndexFilesGenerator extends TypescriptGeneratorBase
 
     public function generate()
     {
-        $isAngularFramework = $this->framework === 'ngx';
+        $isAngularFramework = $this->framework === 'ngx' || $this->framework === 'ngx-modern';
         $result = array();
 
         $classIndex = $this->classIndexFile();
