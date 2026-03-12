@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { KalturaClient } from 'kaltura-ngx-client';
+// Generated action types - available after running: php exec.php ngxModern
+import { MediaListAction } from 'kaltura-ngx-client';
+import { UserListAction } from 'kaltura-ngx-client';
+import { CategoryListAction } from 'kaltura-ngx-client';
 
 interface ApiResult {
   entries?: any[];
@@ -301,7 +305,7 @@ export class AppComponent {
   loading = false;
   result: ApiResult | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private kalturaClient: KalturaClient) {}
 
   async fetchData(): Promise<void> {
     if (!this.serverUrl || !this.ks) {
@@ -313,80 +317,42 @@ export class AppComponent {
     this.result = null;
 
     try {
-      // Make API calls directly using HttpClient
-      const baseParams = {
-        format: 1, // JSON format
+      // Configure the Kaltura client
+      this.kalturaClient.setOptions({
+        endpointUrl: this.serverUrl,
+        clientTag: 'ngx-modern-test-app'
+      });
+
+      this.kalturaClient.setDefaultRequestOptions({
         ks: this.ks,
-        clientTag: 'ngx-modern-test-app',
         ...(this.partnerId ? { partnerId: this.partnerId } : {})
-      };
+      });
 
-      // Fetch media entries
-      const entriesResponse = await firstValueFrom(
-        this.http.post<any>(`${this.serverUrl}/service/media/action/list`, {
-          ...baseParams
-        })
+      // Use the KalturaClient to make API calls with generated action types
+      const entriesResult = await firstValueFrom(
+        this.kalturaClient.request(new MediaListAction({}))
       );
 
-      // Fetch users  
-      const usersResponse = await firstValueFrom(
-        this.http.post<any>(`${this.serverUrl}/service/user/action/list`, {
-          ...baseParams
-        })
+      const usersResult = await firstValueFrom(
+        this.kalturaClient.request(new UserListAction({}))
       );
 
-      // Fetch categories
-      const categoriesResponse = await firstValueFrom(
-        this.http.post<any>(`${this.serverUrl}/service/category/action/list`, {
-          ...baseParams
-        })
+      const categoriesResult = await firstValueFrom(
+        this.kalturaClient.request(new CategoryListAction({}))
       );
-
-      // Handle API responses - check for errors in each response
-      const entries = this.extractResults(entriesResponse);
-      const users = this.extractResults(usersResponse);
-      const categories = this.extractResults(categoriesResponse);
-
-      // Check for API errors
-      const errors: string[] = [];
-      if (entries.error) errors.push(`Entries: ${entries.error}`);
-      if (users.error) errors.push(`Users: ${users.error}`);
-      if (categories.error) errors.push(`Categories: ${categories.error}`);
 
       this.result = {
-        entries: entries.data || [],
-        users: users.data || [],
-        categories: categories.data || [],
-        ...(errors.length > 0 ? { error: errors.join('\n') } : {})
+        entries: entriesResult?.objects || [],
+        users: usersResult?.objects || [],
+        categories: categoriesResult?.objects || []
       };
 
     } catch (error: any) {
       this.result = {
-        error: error?.message || error?.error?.message || 'An error occurred while fetching data'
+        error: error?.message || 'An error occurred while fetching data'
       };
     } finally {
       this.loading = false;
     }
-  }
-
-  private extractResults(response: any): { data?: any[]; error?: string } {
-    // Check if response contains an error
-    if (response?.objectType === 'KalturaAPIException') {
-      return { error: response.message || response.code };
-    }
-    
-    // Handle nested result format
-    const result = response?.result || response;
-    
-    if (result?.objectType === 'KalturaAPIException') {
-      return { error: result.message || result.code };
-    }
-    
-    if (result?.error) {
-      return { error: result.error.message || result.error.code };
-    }
-
-    // Extract objects array from list response
-    return { data: result?.objects || [] };
   }
 }
