@@ -59,9 +59,9 @@ export abstract class KalturaObjectBase {
     for (const property of properties) {
       const metadataProperty = metadata[property];
       if (!metadataProperty) {
-        logger.warn(`ignore property '${property}' flaged to allow empty array as it doesn't not exists on type (did you set the right property in method 'allowEmptyArray'?)`);
+        logger.warn(`ignore property '${property}' flagged to allow empty array as it does not exists on type (did you set the right property in method 'allowEmptyArray'?)`);
       } else if (metadataProperty.type !== 'a') {
-        logger.warn(`ignore property '${property}' flaged to allow empty array as it is not of type array (did you set the right property in method 'allowEmptyArray'?)`);
+        logger.warn(`ignore property '${property}' flagged to allow empty array as it is not of type array (did you set the right property in method 'allowEmptyArray'?)`);
       } else {
         this._allowedEmptyArray.push(property);
       }

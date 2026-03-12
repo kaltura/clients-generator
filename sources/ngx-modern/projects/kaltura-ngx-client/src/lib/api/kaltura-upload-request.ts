@@ -26,7 +26,7 @@ export class KalturaUploadRequest<T> extends KalturaRequest<T> {
     }
 
     public supportChunkUpload(): boolean {
-        // chunk upload currently assume support according to request/reseponse properties. Should get this information from the client-generator directly.
+        // chunk upload currently assume support according to request/response properties. Should get this information from the client-generator directly.
         const {properties} = this._getMetadata();
         const responseSupportChunk = this._responseConstructor ? (new this._responseConstructor()).hasMetadataProperty("uploadedFileSize") : false;
         return responseSupportChunk

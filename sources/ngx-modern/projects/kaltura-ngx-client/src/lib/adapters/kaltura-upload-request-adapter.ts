@@ -167,7 +167,7 @@ export class KalturaUploadRequestAdapter {
             console.warn(`user requested for invalid upload chunk size '${userChunkFileSize}'. minimal value 100Kb. using minimal value 100Kb instead`);
             actualChunkFileSize = 1e5;
           } else {
-            console.log(`using user requetsed chunk size '${userChunkFileSize}'`);
+            console.log(`using user requested chunk size '${userChunkFileSize}'`);
             actualChunkFileSize = userChunkFileSize;
           }
         } else {
