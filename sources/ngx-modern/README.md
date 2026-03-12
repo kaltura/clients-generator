@@ -1,23 +1,23 @@
-# Kaltura Angular Modern Client (Angular 18+)
+# Kaltura Angular Modern Client (Angular 19+)
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-> A modern Angular 18+ compatible client for Kaltura API with support for action requests, classes and enums.
+> A modern Angular 19+ compatible client for Kaltura API with support for action requests, classes and enums.
 
 ## Overview
 
 This is the modern version of the Kaltura NGX client library, updated to support:
-- **Angular 18+**
+- **Angular 19.2.19+** (security patched version)
 - **Node.js 18+** (including 20.x, 22.x, 24.x)
 - **RxJS 7.x**
-- **TypeScript 5.4+**
+- **TypeScript 5.5+**
 - Modern JavaScript features (ES2022)
 
 ## Requirements
 
 - Node.js >= 18.0.0
 - npm >= 9.0.0
-- Angular >= 18.0.0
+- Angular >= 19.2.19
 
 ## Instructions
 
@@ -92,23 +92,23 @@ For important security information about this library, please see [SECURITY.md](
 
 ### Key Points
 - This library is **auto-generated** and rebuilt with each Kaltura server deployment to match the latest API schema
-- The client infrastructure is now based on **modern Angular 18+** for improved security and compatibility
+- The client infrastructure is now based on **modern Angular 19.2.19+** for improved security and compatibility
 - Node.js or Angular framework vulnerabilities are runtime concerns that require updating your application's environment
 
 ## Differences from legacy ngx library
 
 | Feature | Legacy (ngx) | Modern (ngx-modern) |
 |---------|--------------|---------------------|
-| Angular version | 6.x | 18.x |
+| Angular version | 6.x | 19.2.19+ |
 | Node.js support | 8.x - 18.x | 18.x+ |
 | RxJS version | 6.x | 7.x |
-| TypeScript | 2.7 | 5.4 |
+| TypeScript | 2.7 | 5.5 |
 | Module system | ES2015 | ES2022 |
-| Build tooling | ng-packagr 3.x | ng-packagr 18.x |
+| Build tooling | ng-packagr 3.x | ng-packagr 19.x |
 
 ## Migration from legacy ngx library
 
-1. Update your project to Angular 18+
+1. Update your project to Angular 19+
 2. Update RxJS imports for deprecated APIs:
    - `throwError(error)` → `throwError(() => error)`
    - `Observable.create()` → `new Observable()`
