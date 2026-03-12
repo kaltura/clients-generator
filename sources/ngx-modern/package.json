@@ -1,0 +1,78 @@
+{
+  "name": "kaltura-ngx-client-modern",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Kaltura Angular based client - Modern Angular 19+ compatible version",
+  "keywords": [
+    "Kaltura",
+    "Angular"
+  ],
+  "license": "AGPL-3.0",
+  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "contributors": [
+    {
+      "name": "Eran Sakal",
+      "email": "eran@sakalim.com"
+    },
+    {
+      "name": "Amir Chervinsky",
+      "email": "amir.chr@gmail.com"
+    }
+  ],
+  "scripts": {
+    "build": "ng build kaltura-ngx-client && node ./scripts/update-dist-package-json.js",
+    "build:test-app": "npm run build && ng build test-app",
+    "serve:test-app": "npm run build && ng serve test-app --open",
+    "lint": "ng lint",
+    "deploy": "rm -rf dist && npm run build && cd dist/kaltura-ngx-client && npm pack && npm link",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --runInBand"
+  },
+  "main": "./index.js",
+  "dependencies": {
+    "@angular/common": "^19.2.19",
+    "@angular/compiler": "^19.2.19",
+    "@angular/core": "^19.2.19",
+    "@angular/forms": "^19.2.19",
+    "@angular/platform-browser": "^19.2.19",
+    "@angular/platform-browser-dynamic": "^19.2.19",
+    "@angular/router": "^19.2.19",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.6.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^19.2.0",
+    "@angular/cli": "^19.2.0",
+    "@angular/compiler-cli": "^19.2.19",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.7.0",
+    "jest-preset-angular": "^14.4.0",
+    "ng-packagr": "^19.2.0",
+    "ts-jest": "^29.2.0",
+    "typescript": "~5.5.0"
+  },
+  "engines": {
+    "node": ">= 18.0.0",
+    "npm": ">= 9.0.0"
+  },
+  "jest": {
+    "preset": "jest-preset-angular",
+    "setupFilesAfterEnv": ["<rootDir>/projects/kaltura-ngx-client/src/tests/setup-jest.ts"],
+    "testEnvironment": "jsdom",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testMatch": [
+      "<rootDir>/projects/**/*.spec.ts"
+    ],
+    "moduleNameMapper": {
+      "^kaltura-ngx-client$": "<rootDir>/dist/kaltura-ngx-client",
+      "^kaltura-ngx-client/(.*)$": "<rootDir>/dist/kaltura-ngx-client/$1"
+    }
+  }
+}

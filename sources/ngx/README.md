@@ -47,6 +47,17 @@ An example of a valid command will be: `npm install file:libs/kaltura-ngx-client
 > If you want to test the library against the production server use the following as the endpoint in the config file: https://www.kaltura.com/api_v3/index.php/
 
 
+## Security and Versioning
+
+For important information about the library's security posture, versioning, and upgrade guidance, please see [SECURITY.md](SECURITY.md).
+
+### Key Points
+- This library is **auto-generated** and rebuilt with each Kaltura server deployment to match the latest API schema
+- The client infrastructure has been **stable for 6+ years**; only API/service names evolve
+- **Upgrading the client library alone does not improve security posture**
+- Node.js or Angular framework vulnerabilities are runtime concerns that require updating your application's environment, not the client library
+- Requests for clients built on newer Angular versions should be submitted as **feature requests**
+
 ## License and Copyright Information
 All code in this project is released under the [AGPLv3 license](http://www.gnu.org/licenses/agpl-3.0.html) unless a different license for a particular library is specified in the applicable library path.
 

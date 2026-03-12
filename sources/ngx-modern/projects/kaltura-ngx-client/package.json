@@ -1,0 +1,18 @@
+{
+  "name": "kaltura-ngx-client",
+  "private": true,
+  "version": "14.0.0",
+  "description": "Kaltura Angular based client - Modern Angular 19+ compatible version",
+  "keywords": [
+    "Kaltura",
+    "Angular"
+  ],
+  "license": "AGPL-3.0",
+  "author": "https://github.com/kaltura-ng/graphs/contributors",
+  "peerDependencies": {
+    "@angular/core": "^19.2.19",
+    "@angular/common": "^19.2.19",
+    "rxjs": "^7.0.0"
+  },
+  "sideEffects": false
+}

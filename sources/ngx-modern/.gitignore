@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+out-tsc/
+*.tgz
+
+# IDE
+.idea/
+.vscode/
+
+# Misc
+*.log
+.DS_Store
+coverage/

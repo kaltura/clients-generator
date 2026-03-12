@@ -43,7 +43,7 @@ class ClassesGenerator extends TypescriptGeneratorBase
 
   function createClientServiceFile()
     {
-        $isAngularFramework = $this->framework === 'ngx';
+        $isAngularFramework = $this->framework === 'ngx' || $this->framework === 'ngx-modern';
         if (!$isAngularFramework) {
             return null;
         }
@@ -105,7 +105,7 @@ class ClassesGenerator extends TypescriptGeneratorBase
 
         $generatedCode = $this->createClassExp($createClassArgs);
 
-        $isAngularFramework = $this->framework === 'ngx';
+        $isAngularFramework = $this->framework === 'ngx' || $this->framework === 'ngx-modern';
 
         $fileContent = "{$this->getBanner()}
 import { KalturaObjectMetadata } from './kaltura-object-base';
@@ -168,7 +168,7 @@ export const environment: Environment = {
     function createClassFile(ClassType $class) //TODO
     {
         // TODO we need to figure out why those frameworks are using different factory implementation
-        $useTypesMapping = $this->framework === 'ngx' || $this->framework === 'nestjs' || $this->framework === 'rxjs';
+        $useTypesMapping = $this->framework === 'ngx' || $this->framework === 'ngx-modern' || $this->framework === 'nestjs' || $this->framework === 'rxjs';
 
         $createClassArgs = new stdClass();
         $createClassArgs->name = $class->name;
@@ -217,7 +217,7 @@ import { KalturaTypesFactory } from '../kaltura-types-factory';";
 
     function createServiceActionFile(Service $service,ServiceAction $serviceAction)
     {
-        $isAngularFramework = $this->framework === 'ngx';
+        $isAngularFramework = $this->framework === 'ngx' || $this->framework === 'ngx-modern';
         $className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
 
         $importedItems = array($className,'KalturaRequest');
