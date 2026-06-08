@@ -8,7 +8,7 @@ import { CancelableAction, ResolveFn } from '../cancelable-action';
 import { KalturaClientException } from '../api/kaltura-client-exception';
 import { environment } from '../environment';
 import got from 'got';
-import { Logger } from "../api/kaltura-logger";
+import { Logger, maskSecrets, isLevelEnabled } from '../api/kaltura-logger';
 
 export function createEndpoint(request: KalturaRequestBase, options: KalturaClientOptions, service: string, action?: string, additionalQueryParams?: {}): string {
   const endpoint = options.endpointUrl;
@@ -109,6 +109,9 @@ export function createCancelableAction<T>(
   const endPoint = data?.endpoint || ''
   const service = endPoint?.match('service/([^\/]+)')?.[1] || ''
   const action = endPoint?.match('action/([^\?]+)')?.[1] || ''
+  if (isLevelEnabled('verbose')) {
+    Logger.verbose(`Starting API request for ${service}/${action} with data: ${JSON.stringify(maskSecrets(data.body))}`);
+  }
 
   const result = new CancelableAction<T>((resolve, reject) => {
     const cancelableRequest = got.post(data.endpoint, {
@@ -128,6 +131,9 @@ export function createCancelableAction<T>(
 
     cancelableRequest[responseType]()
       .then(function (response) {
+        if (responseType === 'json' && isLevelEnabled('verbose')) {
+          Logger.verbose(`Kaltura response data for ${service}/${action}: ${JSON.stringify(maskSecrets(response))}`);
+        }
         if (typeof response === 'string' && response.includes('KalturaAPIException')) {
           response = safeJsonParse(response) || response
         }
@@ -139,7 +145,7 @@ export function createCancelableAction<T>(
       .then(<ResolveFn<any>>resolve)
       .catch(e => {
         Logger.error(`Kaltura Error: '${e.message}', for: ${service}/${action}, x-me: ${xMe}, x-kaltura-session: ${xKalturaSession}, url: ${endPoint}`)
-        const args = xMe || xKalturaSession ? { xMe, xKalturaSession } : undefined 
+        const args = xMe || xKalturaSession ? { xMe, xKalturaSession } : undefined
         const error = e.response?.statusCode === 200
           ? new Error(e.response?.body)
           : new KalturaClientException('client::failure', e.response?.body || e.message || 'failed to transmit request', args);
