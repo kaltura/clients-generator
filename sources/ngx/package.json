@@ -28,7 +28,7 @@
   },
   "main": "./index.js",
   "dependencies": {
-    "@angular/common": "^6.0.3",
+    "@angular/common": "^20.3.25",
     "@angular/compiler": "^6.0.3",
     "@angular/core": "^6.0.3",
     "@angular/forms": "^6.0.3",
