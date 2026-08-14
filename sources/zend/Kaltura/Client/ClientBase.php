@@ -248,6 +248,17 @@ class Kaltura_Client_ClientBase
 		$signature = $this->signature($params);
 		$this->addParam($params, "kalsig", $signature);
 
+		$queryParams = array();
+		if (!empty($this->clientConfiguration['clientTag']))
+		{
+			$queryParams['clientTag'] = $this->clientConfiguration['clientTag'];
+		}
+
+		if (count($queryParams))
+		{
+			$url .= '?' . http_build_query($queryParams);
+		}
+
 		list($postResult, $errorCode, $error) = $this->doHttpRequest($url, $params, $files);
 
 		if ($error || ($errorCode != 200 ))
