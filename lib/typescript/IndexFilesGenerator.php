@@ -37,8 +37,6 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 		$result[] = $file;
 
 		return $result;
-
-		return $result;
 	}
 
 	public function classIndexFile()
@@ -47,7 +45,7 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 
 		foreach ($this->serverMetadata->classTypes as $class) {
 			$className = ucfirst($class->name);
-			$classFileName = $className; // $this->utils->toLispCase($className);
+			$classFileName = $className;
 
 			$fileContent .= "export { {$className}, {$className}Args } from './{$classFileName}'" . NewLine;
 		}
@@ -55,7 +53,7 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 		$file = new GeneratedFileData();
 		$file->path = "./classes.ts";
 		$file->content = $fileContent;
-		$result[] = $file;
+
 		return $file;
 	}
 
@@ -66,7 +64,7 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 		foreach ($this->serverMetadata->enumTypes as $enum) {
 			if (count($enum->values) != "0") {
 				$className = ucfirst($enum->name);
-				$classFileName = $className; //$this->utils->toLispCase($className);
+				$classFileName = $className;
 
 				$fileContent .= "export { {$className} } from './{$classFileName}'" . NewLine;
 			}
@@ -75,7 +73,7 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 		$file = new GeneratedFileData();
 		$file->path = "./enums.ts";
 		$file->content = $fileContent;
-		$result[] = $file;
+
 		return $file;
 	}
 
@@ -86,7 +84,7 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 		foreach ($this->serverMetadata->services as $service) {
 			foreach ($service->actions as $serviceAction) {
 				$className = ucfirst($service->name) . ucfirst($serviceAction->name) . "Action";
-				$classFileName = $className; //$this->utils->toLispCase($className);
+				$classFileName = $className;
 
 				$fileContent .= "export { {$className}, {$className}Args } from './{$classFileName}'" . NewLine;
 			}
@@ -95,7 +93,7 @@ console.warn('Notice! Your application bundle the whole package of kaltura-xxx-c
 		$file = new GeneratedFileData();
 		$file->path = "./actions.ts";
 		$file->content = $fileContent;
-		$result[] = $file;
+
 		return $file;
 	}
 }
