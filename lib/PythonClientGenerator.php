@@ -390,7 +390,7 @@ class PythonClientGenerator extends ClientGeneratorFromXml
 		return $parentClass->item(0);
 	}
 	
-	function getCtorArguments(DOMElement $classNode = null, $delimiter = ", ", $argumentPostfix = "", $includeType = false)
+	function getCtorArguments(?DOMElement $classNode = null, $delimiter = ", ", $argumentPostfix = "", $includeType = false)
 	{
 		if (!$classNode)
 		{
