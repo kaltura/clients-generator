@@ -353,7 +353,7 @@ class NodeClientGenerator extends ClientGeneratorFromXml
 						}
 						$actionClass .= "{$extraTab}for(var index in $paramName)\n";
 						$actionClass .= "{$extraTab}{\n";
-						$actionClass .= "{$extraTab}	var obj = ${paramName}[index];\n";
+						$actionClass .= "{$extraTab}	var obj = {$paramName}[index];\n";
 						$actionClass .= "{$extraTab}	this.client.addParam(kparams, '$paramName:' + index, kaltura.toParams(obj));\n";
 						$actionClass .= "{$extraTab}}\n";
 						if($actionParam->attributes()->optional == '1')
