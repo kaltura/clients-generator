@@ -5,6 +5,7 @@ require_once(__DIR__ . '/GeneratedFileData.php');
 
 class IndexFilesGenerator extends TypescriptGeneratorBase
 {
+	private $framework;
 
 	function __construct($serverMetadata, $framework)
 	{
