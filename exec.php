@@ -327,7 +327,7 @@ foreach($config as $name => $item)
 		else
 			$clearPath = $copyPath;
 
-		if(!file_exists($clearPath))
+		if(!file_exists((string) $clearPath))
 			$clearPath = null;
 
 		if($clearPath || file_exists($outputPath))

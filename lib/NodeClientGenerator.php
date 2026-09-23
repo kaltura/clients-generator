@@ -240,7 +240,7 @@ class NodeClientGenerator extends ClientGeneratorFromXml
 					$paramType = $this->getJSType($paramType);
 					$paramName = $actionParam->attributes()->name;
 					$optionalp = (boolean) $actionParam->attributes()->optional;
-					$defaultValue = trim($actionParam->attributes()->default);
+					$defaultValue = trim($actionParam->attributes()->default ?? '');
 					$enumType = $actionParam->attributes()->enumType;
 					 
 					// to format multi-line descriptions

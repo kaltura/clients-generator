@@ -207,7 +207,7 @@ class JsClientGenerator extends ClientGeneratorFromXml
 					
 					$paramName = $actionParam->attributes()->name;
 					$optionalp = (boolean)$actionParam->attributes()->optional;
-					$defaultValue = trim($actionParam->attributes()->default);
+					$defaultValue = trim($actionParam->attributes()->default ?? '');
 					$enumType = $actionParam->attributes()->enumType;
 					$description = str_replace("\n", "\n *\t", $actionParam->attributes()->description); // to format multi-line descriptions
 					$info = array();
@@ -313,7 +313,7 @@ class JsClientGenerator extends ClientGeneratorFromXml
 						}
 						$actionClass .= "{$extraTab}for(var index in $paramName)\r\n";
 						$actionClass .= "{$extraTab}{\r\n";
-						$actionClass .= "{$extraTab}\tvar obj = ${paramName}[index];\r\n";
+						$actionClass .= "{$extraTab}\tvar obj = {$paramName}[index];\r\n";
 						$actionClass .= "{$extraTab}\tthis.client.addParam(kparams, \"$paramName:\" + index, toParams(obj));\r\n";
 						$actionClass .= "$extraTab}\r\n";
 						break;
