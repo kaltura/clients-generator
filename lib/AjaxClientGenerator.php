@@ -194,7 +194,7 @@ class AjaxClientGenerator extends ClientGeneratorFromXml
 						$paramType = 'HTMLElement';
 					
 					$paramName = $actionParam->attributes()->name;
-					$optionalp = (boolean)$actionParam->attributes()->optional;
+					$optionalp = (bool) $actionParam->attributes()->optional;
 					$defaultValue = trim($actionParam->attributes()->default);
 					$enumType = $actionParam->attributes()->enumType;
 					$description = str_replace("\n", "\n *\t", $actionParam->attributes()->description); // to format multi-line descriptions

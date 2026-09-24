@@ -239,8 +239,8 @@ class NodeClientGenerator extends ClientGeneratorFromXml
 					$paramType = $actionParam->attributes()->type;
 					$paramType = $this->getJSType($paramType);
 					$paramName = $actionParam->attributes()->name;
-					$optionalp = (boolean) $actionParam->attributes()->optional;
-					$defaultValue = trim($actionParam->attributes()->default);
+					$optionalp = (bool) $actionParam->attributes()->optional;
+					$defaultValue = trim($actionParam->attributes()->default ?? '');
 					$enumType = $actionParam->attributes()->enumType;
 					 
 					// to format multi-line descriptions
@@ -353,7 +353,7 @@ class NodeClientGenerator extends ClientGeneratorFromXml
 						}
 						$actionClass .= "{$extraTab}for(var index in $paramName)\n";
 						$actionClass .= "{$extraTab}{\n";
-						$actionClass .= "{$extraTab}	var obj = ${paramName}[index];\n";
+						$actionClass .= "{$extraTab}	var obj = {$paramName}[index];\n";
 						$actionClass .= "{$extraTab}	this.client.addParam(kparams, '$paramName:' + index, kaltura.toParams(obj));\n";
 						$actionClass .= "{$extraTab}}\n";
 						if($actionParam->attributes()->optional == '1')
